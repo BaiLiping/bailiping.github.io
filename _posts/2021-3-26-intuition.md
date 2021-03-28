@@ -1,6 +1,6 @@
 ---
 layout: post
-title: The Most Important Things
+title: Intuitions
 subtitle:
 tags: thoughts
 image:
