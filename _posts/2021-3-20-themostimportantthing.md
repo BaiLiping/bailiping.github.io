@@ -14,3 +14,4 @@ comments: true
 3. **Make Good Decisions Under Uncertainty**. This is actually the hardest skill to acquire.
 4. **Self Control**.
 5. **How to talk in a manner that helps your audience to see things through your angle**.
+6. **Decompose and Simplify a Problem, ask the right question**. If you look at a lot of analytical techniques, they start by making a problem more tractable yet still maintain enough resemblence to the realworld problem. Computers are good at matrix manipulation, which is why we linearize everything. Gaussian distribution comes with a lot of analytical tricks, which is why we use it all the time. The process of making progress on one research topic usually involves making strict assumptions such that the original problem is simplified or decomposed into its tractable format. Then slowly relaxing the assumpitions, finding approximations along the way. 
