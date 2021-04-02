@@ -3,6 +3,12 @@ layout: page
 title: RL Algorithms
 ---
 
+![1](/assets/img/rlalg/overview.jpg)
+
+![1](/assets/img/rlalg/overview2.jpg)
+
+![1](/assets/img/rlalg/DQN.jpg)
+
 ![1](/assets/img/rlalg/Policy_Evalution.png)
 
 ![1](/assets/img/rlalg/Policy_Iteration.png)
