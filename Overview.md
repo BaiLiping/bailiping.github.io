@@ -5,7 +5,7 @@ title: RL Algorithms
 
 ![1](/assets/img/overview/fromoptorl.PNG)
 
-![1](/assets/img/overview/tranform.PNG)
+![1](/assets/img/overview/transform.PNG)
 
 ![1](/assets/img/overview/neuralnetwork.PNG)
 
