@@ -24,4 +24,3 @@ title: RL Algorithms
 ![1](/assets/img/rlalg/Sarsa_TD.png)
 
 ![1](/assets/img/rlalg/Sarsa_lambda.png)
-
