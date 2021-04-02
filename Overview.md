@@ -1,6 +1,6 @@
 ---
 layout: page
-title: RL Algorithms
+title: Overview of Reinforcement Learning
 ---
 
 ![1](/assets/img/overview/fromoptorl.PNG)
