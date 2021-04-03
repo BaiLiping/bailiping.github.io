@@ -16,3 +16,4 @@ Here are the commonalities that I summerized based on good paers:
 4. **illuminating in the simplist possible example**.
 5. **intuition before formalism**.
 6. **Birds eye view before details and corner cases**.
+7. **Soemhow, there is a sense of conversation and dynamic to it**.
