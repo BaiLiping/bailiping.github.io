@@ -15,3 +15,4 @@ Here are the commonalities that I summerized based on good paers:
 3. **Language**. Temporal Aperture, Blackbelt of Mind, Seat the majority of the weight etc.
 4. **illuminating in the simplist possible example**.
 5. **intuition before formalism**.
+6. **Birds eye view before details and corner cases**.
