@@ -1,7 +1,6 @@
 ---
-layout: post
+layout: Page
 title: Blood Glucose Monitoring
-tags: [health]
 ---
 
 I have been monitoring my blood glucose. Information about glucose that I have been gathered so far.
@@ -17,7 +16,7 @@ From my own experiments, few conclusion can be drawn:
   - <img src="/assets/img/1-1-7.jpg" alt="1" style="zoom:5%">
   - <img src="/assets/img/1-2-7.jpg" alt="1" style="zoom:5%">
   - <img src="/assets/img/1-2-12.jpg" alt="1" style="zoom:5%">
-  
+
 - Carbohydrate Spikes up the Glucose level and it would take a long long time to get back to the normal range. Avoid it at all cost:
   - <img src="/assets/img/12-31-151.jpg" alt="1" style="zoom:5%">
   - <img src="/assets/img/12-31-15.jpg" alt="1" style="zoom:5%">
