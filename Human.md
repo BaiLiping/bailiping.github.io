@@ -1,12 +1,6 @@
 ---
-layout: post
-title: 人的对标
-subtitle: 如何判断一个人发展的程度
-tags: record
-image:
-show-avatar: false
-social-share: false
-comments: true
+layout: page
+title: 人的对标： 如何判断一个人发展的程度
 ---
 '''
 But the fruit of the Spirit is love, joy, peace, forbearance, kindness, goodness, faithfulness.
