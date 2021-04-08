@@ -50,7 +50,7 @@ title: Principles
 1. Ways to handle risk: Prevention/Avoidance; Transfer; Alleviate; Pooling; Hedging; Shouldering
 2. Reasoning: false premise; boundary of a logic; dynamic/hidden
 3. Ferminization: what must happen to lead up to the desired final outcome.
-
+4. Understand the reality, but say the right thing. notice that they are not the same. When you say or do anything, you should maximize your own return, but you should have a solid understanding of reality.
 
 All of a sudden I realized that I have spent so much time worrying about being alive, and how the future would turn out. I actually have never really thought about what kind of dream i have, what i want out of life.
 
