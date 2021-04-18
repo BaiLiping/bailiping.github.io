@@ -60,3 +60,15 @@ All of a sudden I realized that I have spent so much time worrying about being a
 4. **Build a Life**.
 5. **Be a balanced humanbeing**. Turns out, this might be a lot hard than I thought it would be. Chinese society are made of bunch of morbid systems. People started off as victims of that system and then they rise up to the position of power and they hold up that morbid structure. I don't want to have to reshape myself in order to build a life, and I hope I can go through life as a relatively balanced and clear-headed humanbeing.
 6. **Able to Productively engage with the world even when I am old**. Maybe my judgement, decision making process and techniques, observational skills, ability to ask poignant question, temporament, are the most important things I can get out of my existance. Those should be things of value regardless of age. I hope i can have something that is in demand even when I am older.  
+
+
+
+
+
+
+
+
+Techniques that works for me:
+1. Seems that my brain works better when it is prohibited. I should avoid stimulant such as coffee.
+2. Truth should not matter when it comes to planning for things. What matters is if what you do would be helpful in obtaining your goals. This would be true for both what you say and how you feel about things. Sometimes, you would feel one way or the other, depending on your perception of truth. But the only thing that matters should be what helps with the situation. Much like when an athlete fall, the only thing matters at that point is if he can keep with with the rest of the program.
+3. Invariant. There are sets of skills that would be valuable regardless of culture and times. Go after those.
