@@ -1,7 +1,7 @@
 ---
 layout: post
 title: Head Fake
-subtitle:
+subtitle: What I have learned from sports
 tags: thoughts
 image:
 show-avatar: false
@@ -15,4 +15,5 @@ Sports is one of the best training grounds for life. Here are some of the things
 3. **Detatchment**. For perfect exercusion, you are out of the loop, just techniques.
 4. **Forward Looking**. Sometimes your exercusions aren't perfect, but if you dwell on it, you are screwed. The only way is to look forward instead of backward.
 5. **Pressure**. There are lot of high stake situations. For normal people, the pressure alone is gonna break them. But there are group of people who won't react to pressure. This is a set of skill that can be trained.
-6. **How to Train Oneself**. 
+6. **How to Train Oneself**.
+7. **Don't be the victim of a morbid system**.
