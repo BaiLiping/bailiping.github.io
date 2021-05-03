@@ -17,3 +17,4 @@ Sports is one of the best training grounds for life. Here are some of the things
 5. **Pressure**. There are lot of high stake situations. For normal people, the pressure alone is gonna break them. But there are group of people who won't react to pressure. This is a set of skill that can be trained.
 6. **How to Train Oneself**.
 7. **Don't be the victim of a morbid system**.
+8. **Jump out of someone else's game**。
