@@ -15,7 +15,7 @@ title: Principles
 
 1. Aware/Avoidance/Hedging
 2. lock-in structural imbalance/invariance/predictability
-3. Phase Shift
+3. Phase Shift of liquidity.
 4. Buy Commercial Retirement Plan and Insurance Plan
 
 ##### Social:
@@ -30,45 +30,34 @@ title: Principles
 
 1. Decompose a complicated system
 2. Iterative Improvement/Bootstrap Vs. Hole in One
-3. Go afterh things that is universal/applicable in other circumstances.
+3. Go after things that is universal/applicable in other circumstances. i.e. invariant.
 
 ##### Heuristics/Thinking:
 
-1. Go with choices that give you the most options/max entropy.
+1. **Go with choices that give you the most options**.
 2. When no enough information is there to compute expected return, decide based on the downside. (most people can only see the upside)
 3. Secondary/Tertiary Consequences.
-4. Always leave room for things/rationle you can't see.  
+4. Always leave room for things/rationale you can't see.  
 
 ##### Ideology:
 
-1. Conservatism but leave room for change.
-2. 'This is water' is basically Chinese philosophy stated by a white dude. Truth are those that cut through time and culture, maybe under different presentation formats.
+1. **Conservatism**: when changes are called for, what are the least drastic steps that can bring about such a change? Leave room for changes, but also don't be the gini pigs.
+2. **'This is water'**: is basically Chinese philosophy stated by a white dude. Truth are those that cut through time and culture, maybe under different presentation formats.
 3. When perfection is obtainable, go for it. If not, bootstrap is just as good.
 
 ##### Techniques:
 
-1. Ways to handle risk: Prevention/Avoidance; Transfer; Alleviate; Pooling; Hedging; Shouldering
-2. Reasoning: false premise; boundary of a logic; dynamic/hidden
-3. Ferminization: what must happen to lead up to the desired final outcome.
-4. Understand the reality, but say the right thing. notice that they are not the same. When you say or do anything, you should maximize your own return, but you should have a solid understanding of reality.
-
-All of a sudden I realized that I have spent so much time worrying about being alive, and how the future would turn out. I actually have never really thought about what kind of dream i have, what i want out of life.
-
-1. **Be Able to Solve Problems**. Master enough tools such that I can analyse a problem and solve it. There are so much bullshit in the world, maybe 1% of the human population get to make progress on things. I want to be one of them.
-2. **Find a Productive Outlet for my Creativity**. I know I am creative, but so far it has not yield much. I hope one day I can make good use of that endowment.
-3. **Mastery**. There is one thing that I can do better than does anyone else.
-4. **Build a Life**.
-5. **Be a balanced humanbeing**. Turns out, this might be a lot hard than I thought it would be. Chinese society are made of bunch of morbid systems. People started off as victims of that system and then they rise up to the position of power and they hold up that morbid structure. I don't want to have to reshape myself in order to build a life, and I hope I can go through life as a relatively balanced and clear-headed humanbeing.
-6. **Able to Productively engage with the world even when I am old**. Maybe my judgement, decision making process and techniques, observational skills, ability to ask poignant question, temporament, are the most important things I can get out of my existance. Those should be things of value regardless of age. I hope i can have something that is in demand even when I am older.  
-
-
-
-
-
-
-
-
-Techniques that works for me:
-1. Seems that my brain works better when it is prohibited. I should avoid stimulant such as coffee.
-2. Truth should not matter when it comes to planning for things. What matters is if what you do would be helpful in obtaining your goals. This would be true for both what you say and how you feel about things. Sometimes, you would feel one way or the other, depending on your perception of truth. But the only thing that matters should be what helps with the situation. Much like when an athlete fall, the only thing matters at that point is if he can keep with with the rest of the program.
-3. Invariant. There are sets of skills that would be valuable regardless of culture and times. Go after those.
+1. **Risk**:
+- Be aware of the risks involved in a project. Strike a balance between understanding the reality and being cynical and pessimistic.
+- Prevention/Avoidance;
+- Transfer;
+- Alleviate;
+- Pooling;
+- Hedging;  
+- Defensive strategy: If time is an issue, assume the worst and act accordingly. When you have enough time, design your steps carefully such that the information extraction is maximized every step along the way and decisions in later steps are better than does the previous ones.
+2. **Reasoning**:
+- induction, what must be true if i assume the logic is correct;
+- false premise;
+- boundary of a logic; dynamic/hidden;
+- Ferminization/backward reasoning: what must happen to lead up to the desired final outcome.
+3. **Detachment**: put aside your own emotions and feelings about things, but see the reality and act accordingly. Probably the best illustration of this is in sports and other high stacks circumstances.
