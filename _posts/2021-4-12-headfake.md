@@ -8,8 +8,6 @@ show-avatar: false
 social-share: false
 comments: true
 ---
-Sports is one of the best training grounds for life. Here are some of the things I have learned from it.
-
 1. **Metabolism**. A lot things is just manifestation of your metabolic system.
 2. **Stress**. If you stress your body for just the right amount, it would adapt. Not too much which would break things, not too little that it would be ineffective.
 3. **Detachment**. For perfect exercusion, you are out of the loop, just techniques.
@@ -20,3 +18,4 @@ Sports is one of the best training grounds for life. Here are some of the things
 8. **Jump out of someone else's game**。
 9. **Overdone**.
 10. **In the Zone**.
+11. **Self Control**.
