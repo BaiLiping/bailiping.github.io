@@ -2,6 +2,7 @@
 layout: page
 title: Radar Project Management
 ---
+
 # TIMELINE
 1. 5月17-23日把RadarSense数据库接入PointNet++文件，尝试完成Semantic Assignment任务。如果这一步可行，则与CNN based Road User Detection using the 3D Cube文章结合，用基于PointNet++标注的Semantic点完成文章的复现。
 2. 5月24日-28日，将JPDA的matlab文件按照要求转化为Python文件。
