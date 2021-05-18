@@ -8,10 +8,10 @@ title: Overview of Reinforcement Learning
 ![1](/assets/img/overview/transform.PNG)
 - neural network decomposition
 ![1](/assets/img/overview/neuralnetwork.PNG)
-- dynamicprograming
+- dynamic programing
 ![1](/assets/img/overview/dynamicprogramming.png)
-- montecarlo
-![1](/assets/img/overview/mmontecarlo.png)
+- monte carlo
+![1](/assets/img/overview/montecarlo.png)
 - temporal difference
 ![1](/assets/img/overview/td.png)
 
