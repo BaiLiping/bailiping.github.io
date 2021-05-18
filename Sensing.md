@@ -3,6 +3,9 @@ layout: page
 title: Radar Project Management
 ---
 
+# MATLAB ACCESS
+1220055702@njupt.edu.cn
+
 # REPOSITORIES
 - [Radar_Perception_Project_2](https://github.com/chisyliu/Radar_Perception_Project_2)
 - [RadarProjectCode](https://github.com/BaiLiping/RadarProjectCode)
@@ -70,3 +73,6 @@ title: Radar Project Management
 # DONE
 1. **Organize Files**
 2. **Get DATABASE**
+
+# IDEAS
+1. FNet replace Transformer
