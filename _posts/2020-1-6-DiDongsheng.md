@@ -1,6 +1,11 @@
 ---
-layout: page
+layout: post
 title: Di Dongsheng
+tags: finance
+image:
+show-avatar: false
+social-share: false
+comments: true
 ---
 I actually took the time to look into his analysis in the past few days, not bad at all, and I actually like his logic very much.
 

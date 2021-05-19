@@ -1,6 +1,11 @@
 ---
 layout: post
-title: Uric Acid： Fructose and Hypertention
+title: Uric Acid
+tags: health
+image:
+show-avatar: false
+social-share: false
+comments: true
 ---
 
 [source](https://peterattiamd.com/rickjohnson/)

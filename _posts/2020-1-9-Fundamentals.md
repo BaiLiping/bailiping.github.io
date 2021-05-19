@@ -1,6 +1,11 @@
 ---
-layout: page
-title: Fundamentals of RL
+layout: post
+title: Fundamental of RL
+tags: rl
+image:
+show-avatar: false
+social-share: false
+comments: true
 ---
 
 <script src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"></script>
@@ -10,7 +15,7 @@ title: Fundamentals of RL
 You're now ready to begin the assignment! First, the city council would like you to evaluate the quality of the existing pricing scheme. Policy evaluation works by iteratively applying the Bellman equation for $$v_{\pi}$$ to a working value function, as an update rule, as shown below.
 
 $$\large v(s) \leftarrow \sum_a \pi(a | s) \sum_{s', r} p(s', r | s, a)[r + \gamma v(s')]$$
-This update can either occur "in-place" (i.e. the update rule is sequentially applied to each state) or with "two-arrays" (i.e. the update rule is simultaneously applied to each state). Both versions converge to $$v_{\pi}$$ but the in-place version usually converges faster. **In this assignment, we will be implementing all update rules in-place**, as is done in the pseudocode of chapter 4 of the textbook. 
+This update can either occur "in-place" (i.e. the update rule is sequentially applied to each state) or with "two-arrays" (i.e. the update rule is simultaneously applied to each state). Both versions converge to $$v_{\pi}$$ but the in-place version usually converges faster. **In this assignment, we will be implementing all update rules in-place**, as is done in the pseudocode of chapter 4 of the textbook.
 
 We have written an outline of the policy evaluation algorithm described in chapter 4.1 of the textbook. It is left to you to fill in the `bellman_update` function to complete the algorithm.
 
@@ -111,4 +116,3 @@ def value_iteration(env, gamma, theta):
         q_greedify_policy(env, V, pi, s, gamma)
     return V, pi
 ```
-
