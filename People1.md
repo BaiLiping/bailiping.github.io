@@ -1,9 +1,9 @@
 ---
 layout: page
-title: People I've Met
+title: Records
 ---
 
-I read somewhere that people are only alive in other's brain. So feel like writing down a few who live in mine.
+# people i met
 
 1. *a girl with small head*. I was travelling in Yunan once with a group of friends, some of whom are Caucasian. There is a village located at the end of a mountain range. When we go through that range, we hear a girl calling on us with strange sounds. I turned back. First, it struck me what a beautiful scene it is. Mountain range in Yunan, amist the fog. It is just like one of those Chinese paintings. Then I notice that girl. She is clearly abnormal, with extremely small head. I think it might be Hutchinson-Gilford progeria syndrome. She can't talk, but she is clearly excited to see those caucasions. She kept point at them and then her home. There is something very unbridled about her. Her excitement, her joy, amist that beautiful scene.
 
@@ -22,6 +22,17 @@ I read somewhere that people are only alive in other's brain. So feel like writi
 8. *my painter cousin*. For a long long time, I know that something doesn't quite add up to me. Life as a office worker just doesn't cut it for me, yet can't quite see the path for any other occupations. Then comes my painter cousin who I have not spoken to for decades. His studio is at the outskirt and apparently he is famous. There is an interesting sense of familiarity. I know him, dispite that we never speak. The struggles he described are mine as well. It was at that point, I have a piece of mind, holy crapy, it is possible to go through life not as an office worker. By the way, I think I make an excellent researcher. Tu Hongtao, if you ever read this, please fund me:)
 
 9. *Driver Who Did Not Horn*. People who drive scooters would horn my ass off should I stand in their way, even when I am in the pedestrian lane, yet, occasionally, there are those drivers who would not even horn in central Beijing. I wonder, which is cause which is effect? Do people have a personality to abuse however tiny bits of power they have would end up driving scooters by design? Or because people who drive nice cars in central Beijing can afford a more relaxed attitude towards life?
+
+# moments in life
+
+1. **2008 Financial Crisis**, I was at the China Life Plaza at central Beijing and the company TV was set at Phoenix Channel. It was a lunch break so the volume was unmuted. I stood in front of the TV, hearing all those words Credit Swaps, MBS etc, having no idea what the hell they were talking about. Never felt more like a moron in my life.
+2. **Mankiw's Macroeconomics**, before going to Singapore, I thought that knowledge has to be passed through by the teachers. Yet when I read Mankiw's books, I have this confidence that I have it. It was the first time I experienced that confidence, and it came many times in the later days.
+3. **Addicted to Gaming**, it is a rather perculiar feeling, like time does not exist. I literaly sit there unmoved for over 10hs. Amazing. At least I know that I have that level of focus and concentration, now it is just a matter of how to tap into it.
+4. **Calmness after Cans of Beers**, my default mental state seems to be anxiety ridden. Yet, after cans of beers I can experience a calmness that is foreign to me. Should figure out a way to access that state without beers.
+5. **Actors and How observant they are** I know that I am a relatively observant person, yet often time I would be amazed when actors share about their observation of the human race. It is very much the foundation of their entire industry, albeit sometimes they get carried away and focus on shit that dosen't matter. Mad men is definitely filled with wisdoms like that. Jone said: Sometimes when people get what they want, they realize how limited their goals were. Betsy said: that poor girl, she dosen't know that loving you is the worst way to get to you. Mathew Mckonohey talked about how he observed his father carried out a transaction of fake omega watch, and the happiness on his father's face. For that one second, his father was above the rules of the game, he won, however insignificant that might be. Mat Dammon talked about his experience when he was younger his mother asked him about what he wants out of life, he said something in the effect of "when I walk pass a crowd, people would say: here comes the great matt damon" and his mother replied 'that is pathetic'. He realized he was trying to fill a hole in his soul and he see people doing that not realizing the size of their hole.Charlieze Throne talked about how she feels that altruism never comes out of no where, whic is so sharp an observation.Seth Mcfarlen talked about that cartoon of wolf chasing a chick: how depressed that wolf must be if one day he actually catches that chick. Actually my father is also quite observant. When he and my mother bought a new car, he chose not not driving it. When asked why, he said he know it would be that much better, so might as well not to.
+6. **People Drawing Conclusions without knowing how limited their observations are** I observe this again and again in life. The first thing I feel when I come to Nanjing is how enclosed things are. Nanjinger's think they are the kings and queens. Also on twitter, single boys would draw conclusion about women, often derogative ones, without knowing that the women they encountered in the universe, often time engineering schools and engineering comapnies are a tiny tiny subset of what is possible. Also, sometimes people compare oranges to apples. For instance, during the pandamec, some older folks come on twitter to vent their dissatisfaction. In the mean time they would complain that twitter does not support certain functions they are accustumed to with other media outlet, little did they know that twitter implement that functionality under different structures. They can still accomplish their goal should they broadern their search and not be limited by what they are used to.
+
+# twits that made an impression on me
 
 ![1](/assets/img/Moment/1.png)
 ![1](/assets/img/Moment/2.png)
@@ -60,3 +71,4 @@ I read somewhere that people are only alive in other's brain. So feel like writi
 ![1](/assets/img/Moment/36.png)
 ![1](/assets/img/Moment/37.PNG)
 ![1](/assets/img/Moment/38.PNG)
+![1](/assets/img/Moment/39.png)
