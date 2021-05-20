@@ -92,8 +92,7 @@ title: Radar Project Management
 
 **7月份可以写论文，同时进行更novel的方案的探索：**
 
-    针对上面的方案1和2，可以各自写一篇论文（当然创新点不那么强，但是想发肯定可以发，可以投IEEE Radar，IEEE IV，IEEE ISTC这
-    会议，看诸老师怎么考虑）。然后方案4组合到一起至少可以投一篇比较偏向工程类一点的journal, 比如IEEE Sensor Journal，SENSOR, IEEE Access等（这里面后俩者口碑一般，IEEE Sensor Journal还可以）。我们可以争取7月搞定这些论文投出去。 同时可以开始讨论proposal pdf中的各种idea。有了上述基础，就可以开展一些偏向novel idea的方案了，这些我的proposal那个文件里已经提出了很多idea（包括各种加入time sequence feature fusion的方案，multi-view or multi-methods fusion方案，加入Transformer的方案，混合MLP的方案，结合self-supervised learning的方案等），我们可以一起讨论哪些合适。这些idea就更偏research，之后可以投一些level更好的会议和journal。
+    针对上面的方案1和2，可以各自写一篇论文（当然创新点不那么强，但是想发肯定可以发，可以投IEEE Radar，IEEE IV，IEEE ISTC这会议，看诸老师怎么考虑）。然后方案4组合到一起至少可以投一篇比较偏向工程类一点的journal, 比如IEEE Sensor Journal，SENSOR, IEEE Access等（这里面后俩者口碑一般，IEEE Sensor Journal还可以）。我们可以争取7月搞定这些论文投出去。 同时可以开始讨论proposal pdf中的各种idea。有了上述基础，就可以开展一些偏向novel idea的方案了，这些我的proposal那个文件里已经提出了很多idea（包括各种加入time sequence feature fusion的方案，multi-view or multi-methods fusion方案，加入Transformer的方案，混合MLP的方案，结合self-supervised learning的方案等），我们可以一起讨论哪些合适。这些idea就更偏research，之后可以投一些level更好的会议和journal。
 
 # TODO
 
