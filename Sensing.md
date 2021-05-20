@@ -40,7 +40,31 @@ title: Radar Sensing
 ![1](/assets/img/radarproject/projectoverview/objectdetection_currentsolution2.png)
 
 ## tracking
+
+### tracking overview
 ![1](/assets/img/radarproject/projectoverview/tracking.png)
+
+### lecture series on multi-object tracking
+<p>Lecture Series on MultiObject Tracking</p>
+<iframe width="560" height="315" src="https://www.youtube.com/embed/videoseries?list=PLTD_k0sZVYFqjFDkJV8GE2EwfxNK59fJY" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+<iframe width="560" height="315" src="https://www.youtube.com/embed/videoseries?list=PLadnyz93xCLhSlm2tMYJSKaik39EZV_Uk" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+<iframe width="560" height="315" src="https://www.youtube.com/embed/videoseries?list=PLadnyz93xCLiHWjLcLFdzc-SidNL1kRF7" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+<iframe width="560" height="315" src="https://www.youtube.com/embed/videoseries?list=PLadnyz93xCLiCBQq1105j5Jeqi1Q6wjoJ" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+<iframe width="560" height="315" src="https://www.youtube.com/embed/videoseries?list=PLadnyz93xCLhFinI8NO30-1e6SwCGRTIM" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+<iframe width="560" height="315" src="https://www.youtube.com/embed/videoseries?list=PLadnyz93xCLjl51PzSoFhLLSp2hAYDY0H" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+<iframe width="560" height="315" src="https://www.youtube.com/embed/videoseries?list=PLadnyz93xCLh0Wm8jkQYCdwpyGFl2c-6a" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+
+### important literature
+
+#### mathematical foundation of multiobject tracking
+<embed src="/assets/docs/Tracking/overview.pdf" type="application/pdf" width="100%" height=1000>
+
+
+<embed src="/assets/docs/Tracking/GM-PDA.pdf" type="application/pdf" width="100%" height=1000>
+<embed src="/assets/docs/Tracking/jpda.pdf" type="application/pdf" width="100%" height=1000>
+<embed src="/assets/docs/Tracking/jpda1.pdf" type="application/pdf" width="100%" height=1000>
+<embed src="/assets/docs/Tracking/PMBM.pdf" type="application/pdf" width="100%" height=430>
+
 
 ## fusing
 ![1](/assets/img/radarproject/projectoverview/radarcamerafusing.png)
