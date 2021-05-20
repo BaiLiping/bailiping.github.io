@@ -56,6 +56,11 @@ title: Phased Array Apparatus
 
 ## Controller
 
+### lecture on microcontroller
+<iframe width="560" height="315" src="https://www.youtube.com/embed/videoseries?list=PLPW8O6W-1chwyTzI3BHwBLbGQoPFxPAPM" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+
+### controller for phased array
+
 ```c
 #include "TM4C123GH6PM.h"
 #include "Configure.h"
@@ -211,6 +216,11 @@ GPIOC_AHB->DEN = GPIOC_AHB->DEN | (3U<<4);//digital enable pin4 and pin5
 ```
 
 ## PCB
+
+### altium designer lecture
+<iframe width="560" height="315" src="https://www.youtube.com/embed/videoseries?list=PLw6pGiQdoAREaUXhgRj4uuRnkvAsmvSyK" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+
+### pcb for phased array
 
 ![top1](/assets/docs/Hardware/top.png)
 ![top2](/assets/docs/Hardware/top2.png)
