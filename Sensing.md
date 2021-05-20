@@ -15,6 +15,7 @@ title: Radar Project Management
 
 # SERVER
 - [featurize](https://featurize.cn)
+![price](/assets/img/radarproject/featurizeprice.png)
 - [matpool](https://www.matpool.com/)
 ![price](/assets/img/radarproject/matpoolprice.jpg)
 
