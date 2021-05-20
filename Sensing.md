@@ -1,6 +1,6 @@
 ---
 layout: page
-title: Radar Project Management
+title: Radar Sensing
 ---
 
 ----
