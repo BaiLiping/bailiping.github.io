@@ -34,7 +34,7 @@ the true value is the realized reward of one step
 
 # algorithms
 
-## overview
+### overview
 ![1](/assets/img/rlalg/overview.jpg)
 ![1](/assets/img/rlalg/overview2.jpg)
 
