@@ -32,6 +32,19 @@ the true value is the data collected from an episode
 the true value is the realized reward of one step
 ![1](/assets/img/overview/td.png)
 
+# People who works on incorporating rl with control:
+
+1. Russ Tedrake [youtube](https://www.youtube.com/channel/UChfUOAhz7ynELF-s_1LPpWg) [website](http://underactuated.csail.mit.edu/)
+2. Sergey Levin [lecture](http://rail.eecs.berkeley.edu/deeprlcourse/)
+3. Pieter Abbeel [lecture](https://www.youtube.com/playlist?list=PLwRJQ4m4UJjNBPJdt8WamRAt4XKc639wF) [cs287](https://people.eecs.berkeley.edu/~pabbeel/cs287-fa19/)
+4. Ben Recht [website](http://people.eecs.berkeley.edu/~brecht/) [L4DC](https://www.youtube.com/playlist?list=PLYx2nCJDi_QFrGOmIM0ale8T_1Fqu8OIF)
+5. Shi Guanya [website](http://gshi.me/)
+6. Francesco Borrelli [lab](http://www.mpc.berkeley.edu/home)
+7. [11-785](https://deeplearning.cs.cmu.edu/F20/index.html)
+8. [CS480](https://cs.uwaterloo.ca/~ppoupart/teaching/cs480-spring19/index.html)
+9. [David Duvenaud](http://www.cs.toronto.edu/~duvenaud/) He is knowm for his works on Neural ODE and Latent SDE
+10. [Nathan Kutz](http://www.databookuw.com/) Data-drivern Sceince and Engineering. 
+
 # algorithms
 
 ## overview

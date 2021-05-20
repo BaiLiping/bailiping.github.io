@@ -1,6 +1,11 @@
 ---
-layout: page
-title: Matlibplot
+layout: post
+title: matplotlib
+tags: cs
+image:
+show-avatar: false
+social-share: false
+comments: true
 ---
 
 ```
