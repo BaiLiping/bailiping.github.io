@@ -32,7 +32,7 @@ the true value is the data collected from an episode
 the true value is the realized reward of one step
 ![1](/assets/img/overview/td.png)
 
-# People who works on incorporating rl with control:
+# People who works on incorporating rl with control
 
 1. Russ Tedrake [youtube](https://www.youtube.com/channel/UChfUOAhz7ynELF-s_1LPpWg) [website](http://underactuated.csail.mit.edu/)
 2. Sergey Levin [lecture](http://rail.eecs.berkeley.edu/deeprlcourse/)
