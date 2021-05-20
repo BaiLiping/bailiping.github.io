@@ -2042,7 +2042,7 @@ Action Value Estimates:
 Actions: [1, 3]
 ```
 
-### Expected Sarsa
+#### Expected Sarsa
 
 In this section you will implement an Expected Sarsa agent with $\epsilon$-greedy action selection (Section 6.6 in the textbook). 
 
