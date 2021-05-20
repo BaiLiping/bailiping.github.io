@@ -55,6 +55,9 @@ title: Radar Project Management
 [googledrive](https://drive.google.com/drive/folders/1v-AF873jP8p6waChF3pSSqz6HXOOZgkC)
 
 # TIMELINE
+![1](/assets/img/timeline.jpg)
+
+
 **在6月底之前完成包括：**
 
     1. 基于RadarScenes数据集
