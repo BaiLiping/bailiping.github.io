@@ -8,45 +8,43 @@ title: Radar Project Management
 {:toc}
 ----
 
-```
-No language indicated, so no syntax highlighting.
-But let's throw in a <b>tag</b>.
-```
-
 # MATLAB ACCESS
 ```
 1220055702@njupt.edu.cn
 ```
 
+# SERVER
+- [featurize](https://fearturize.cn)
+
 # REPOSITORIES
-```
+
 - [Radar_Perception_Project_2](https://github.com/BaiLiping/Radar_Perception_Project_2)
 - [RadarProjectCode](https://github.com/BaiLiping/RadarProjectCode)
 - [RadarProjectPaper](https://github.com/BaiLiping/RadarProjectPaper)
 - [Ángel García-Fernández(PMBA MATLAB)](https://github.com/Agarciafernandez/MTT)
-```
+
 
 # OVERVIEW
-```
-- project overview
+
+### project overview
 ![1](/assets/img/projectoverview/overview518.jpg)
 
-- object detection
+### object detection
 ![1](/assets/img/projectoverview/objectdetection_onestep.png)
 ![1](/assets/img/projectoverview/objectdetection_twosteps.png)
 ![1](/assets/img/projectoverview/objectdetection_static.png)
 ![1](/assets/img/projectoverview/objectdetection_currentsolution1.png)
 ![1](/assets/img/projectoverview/objectdetection_currentsolution2.png)
 
-- tracking
+### tracking
 ![1](/assets/img/projectoverview/tracking.png)
 
-- fusing
+### fusing
 ![1](/assets/img/projectoverview/radarcamerafusing.png)
-```
+
 
 # DATASETS
-```
+
 1. CARRADA Dataset:[paper](https://arxiv.org/abs/2005.01456) [repository](https://github.com/valeoai/carrada_dataset) [data](https://arthurouaknine.github.io/codeanddata/carrada)
 2. RADIATE DATASET:
 [paper](https://arxiv.org/abs/2010.09076)
@@ -70,7 +68,7 @@ But let's throw in a <b>tag</b>.
 [paper](https://arxiv.org/abs/2105.00363)
 [repository](https://github.com/ZhangAoCanada/RADDet)
 [googledrive](https://drive.google.com/drive/folders/1v-AF873jP8p6waChF3pSSqz6HXOOZgkC)
-```
+
 
 # TIMELINE
 ![1](/assets/img/timeline.jpg)
@@ -93,19 +91,17 @@ But let's throw in a <b>tag</b>.
 针对上面的方案1和2，可以各自写一篇论文（当然创新点不那么强，但是想发肯定可以发，可以投IEEE Radar，IEEE IV，IEEE ISTC这类会议，看诸老师怎么考虑）。然后方案4组合到一起至少可以投一篇比较偏向工程类一点的journal, 比如IEEE Sensor Journal，SENSOR, IEEE Access等（这里面后俩者口碑一般，IEEE Sensor Journal还可以）。我们可以争取7月搞定这些论文投出去。 同时可以开始讨论proposal pdf中的各种idea。有了上述基础，就可以开展一些偏向novel idea的方案了，这些我的proposal那个文件里已经提出了很多idea（包括各种加入time sequence feature fusion的方案，multi-view or multi-methods fusion方案，加入Transformer的方案，混合MLP的方案，结合self-supervised learning的方案等），我们可以一起讨论哪些合适。这些idea就更偏research，之后可以投一些level更好的会议和journal。
 ```
 # TODO
-```
-1. **Get Papers from 2021 Radar Conference**
-- Radar-PointGNN: Graph Based Object Recognition for Unstructured Radar Point-Cloud Data by Peter Svenningsson, Francesco Fioranelli, Alexander Yarovoy
-- An LSTM Approach to Short-Range Personnel Recognition Using Radar Signal by Zhenghui Li, Julien Le Kernec, Francesco Fioranelli, Oliver Romain, Lei Zhang, Shufan Yang
-- Investigation of Uncertainty of Deep Learning-Cased Object Classification on Radar Spectra by Kanil Petel, Willian Beluch, Kilian Rambach, Adriana-Eliza Cozma, Michael Pfeiffer, Bin Yang
-- Online Multi-Target Tracking for Pedestrian by Fusion of Millimeter Wave Radar and Vision by Fucheng Cui, Yuying Song, Jingxuan Wu, Zhouzhen Xie, Chunyi Song, Zhiwe Xu, Kai Ding
 
-2. **Interface with Remote Machine**
-3. **Point++file**
+    1. **Get Papers from 2021 Radar Conference**
+    - Radar-PointGNN: Graph Based Object Recognition for Unstructured Radar Point-Cloud Data by Peter Svenningsson, Francesco Fioranelli, Alexander Yarovoy
+    - An LSTM Approach to Short-Range Personnel Recognition Using Radar Signal by Zhenghui Li, Julien Le Kernec, Francesco Fioranelli, Oliver Romain, Lei Zhang, Shufan Yang
+    - Investigation of Uncertainty of Deep Learning-Cased Object Classification on Radar Spectra by Kanil Petel, Willian Beluch, Kilian Rambach, Adriana-Eliza Cozma, Michael Pfeiffer, Bin Yang
+    - Online Multi-Target Tracking for Pedestrian by Fusion of Millimeter Wave Radar and Vision by Fucheng Cui, Yuying Song, Jingxuan Wu, Zhouzhen Xie, Chunyi Song, Zhiwe Xu, Kai Ding
 
-```
+    2. **Interface with Remote Machine**
+    3. **Point++file**
+
 # DONE
-```
+
 1. **Organize Files**
 2. **Get DATABASE**
-```
