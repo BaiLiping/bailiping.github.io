@@ -12,26 +12,49 @@ title: RL Overview
 
 reinforcement learning is best seen as a part of the control literature. specifically, blackbox optimization where part of the strategies utilized in the control literature is replaced by function approximators.
 ![1](/assets/img/overview/fromoptorl.PNG)
+
+# function approximation
+
+## kernel transform
+![1](/assets/img/overview/transform.PNG)
+## neural network decomposition
+![1](/assets/img/overview/neuralnetwork.PNG)
+
+# what is the 'true' value?
+
+## dynamic programing
+the true value is the expectation over multiple episodes
+![1](/assets/img/overview/dynamicprogramming.png)
+## monte carlo
+the true value is the data collected from an episode
+![1](/assets/img/overview/montecarlo.png)
+## temporal difference
+the true value is the realized reward of one step
+![1](/assets/img/overview/td.png)
+
+# algorithms
+
+## overview
 ![1](/assets/img/rlalg/overview.jpg)
 ![1](/assets/img/rlalg/overview2.jpg)
 
-## feedback block diagram view
+### feedback block diagram view
 
-### model based learning
+#### model based learning
 ![1](/assets/img/overview/modelbased.PNG)
 
-### policy gradient
+#### policy gradient
 ![1](/assets/img/overview/policygradient.PNG)
 
-### value based learning (cost to go)
+### #value based learning (cost to go)
 ![1](/assets/img/overview/qlearning.PNG)
 
 ![1](/assets/img/overview/DQN.PNG)
 
-### bring it all together
+#### bring it all together
 ![1](/assets/img/overview/A2C.PNG)
 
-## pseudoalg view
+### pseudoalg view
 
 ![1](/assets/img/rlalg/DQN.jpg)
 
@@ -57,9 +80,9 @@ reinforcement learning is best seen as a part of the control literature. specifi
 
 ![1](/assets/img/rlalg/Sarsa_lambda.png)
 
-## code realization view
+### code realization view
 
-### Policy Evaluation
+#### Policy Evaluation
 
 You're now ready to begin the assignment! First, the city council would like you to evaluate the quality of the existing pricing scheme. Policy evaluation works by iteratively applying the Bellman equation for $$v_{\pi}$$ to a working value function, as an update rule, as shown below.
 
@@ -91,7 +114,7 @@ def evaluate_policy(env, V, pi, gamma, theta):
     return V
 ```
 
-### Policy Iteration
+#### Policy Iteration
 Policy iteration works by alternating between evaluating the existing policy and making the policy greedy with respect to the existing value function. We have written an outline of the policy iteration algorithm described in chapter 4.3 of the textbook. We will make use of the policy evaluation algorithm you completed in section 1. It is left to you to fill in the `q_greedify_policy` function, such that it modifies the policy at s to be greedy with respect to the q-values at s, to complete the policy improvement algorithm.
 
 ```python
@@ -131,7 +154,7 @@ def policy_iteration(env, gamma, theta):
     return V, pi
 ```
 
-### Value Iteration
+#### Value Iteration
 Value iteration works by iteratively applying the Bellman optimality equation for $$v_{\ast}$$ to a working value function, as an update rule, as shown below.
 
 $$\large v(s) \leftarrow \max_a \sum_{s', r} p(s', r | s, a)[r + \gamma v(s')]$$
@@ -166,7 +189,7 @@ def value_iteration(env, gamma, theta):
     return V, pi
 ```
 
-### Dyna-Q
+#### Dyna-Q
 
 First of all, check out the `agent_init` method below. As in earlier assignments, some of the attributes are initialized with the data passed inside `agent_info`. In particular, pay attention to the attributes which are new to `DynaQAgent`, since you shall be using them later.
 
@@ -1134,7 +1157,7 @@ Increasing the exploration via the $\epsilon$-greedy strategy does not seem to b
 
 Can we do better...?
 
-###Dyna-Q+
+#### Dyna-Q+
 
 The motivation behind Dyna-Q+ is to give a bonus reward for actions that haven't been tried for a long time, since there is a greater chance that the dynamics for that actions might have changed.
 
@@ -1799,7 +1822,7 @@ plot_state_visitations("results/Dyna-Q+.npy", ['Dyna-Q+ : State visitations befo
 ![png](/assets/img/rl/unit3/output_85_0.png)
 
 
-### Q-Learning
+#### Q-Learning
 
 In this section you will implement and test a Q-Learning agent with $\epsilon$-greedy action selection (Section 6.5 in the textbook). 
 
@@ -2437,23 +2460,5 @@ plt.show()
 ![png](/assets/img/rl/unit2/QandSASAR/output_40_1.png)
 
 
-# function approximation
-
-## kernel transform
-![1](/assets/img/overview/transform.PNG)
-## neural network decomposition
-![1](/assets/img/overview/neuralnetwork.PNG)
-
-# what is the 'true' value?
-
-## dynamic programing
-the true value is the expectation over multiple episodes
-![1](/assets/img/overview/dynamicprogramming.png)
-## monte carlo
-the true value is the data collected from an episode
-![1](/assets/img/overview/montecarlo.png)
-## temporal difference
-the true value is the realized reward of one step
-![1](/assets/img/overview/td.png)
 
 
