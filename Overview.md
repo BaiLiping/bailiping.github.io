@@ -1,6 +1,6 @@
 ---
 layout: page
-title: Overview of Reinforcement Learning
+title: RL Overview
 ---
 
 ----
