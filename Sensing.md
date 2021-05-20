@@ -34,6 +34,21 @@ title: Radar Sensing
 
 ## radar signal processing
 
+### review on EM
+<a href="https://www.youtube.com/user/profdurgin/playlists">Greg Durgin</a>
+<a href="https://www.youtube.com/channel/UCPC6uCfBVSK71MnPPcp8AGA/playlists">CEM Lectures</a>
+<a href="https://www.youtube.com/channel/UCYK3E9QGKUK9DRiLsUtqLkQ/playlists">Robert Health</a>
+<a href="https://www.youtube.com/channel/UCOrjRoYJPqGiR1SZvU3xcYQ/playlists">5G Systems</a>
+
+
+<embed src="/assets/docs/EM/1.pdf" type="application/pdf" width="100%" height=600>
+<embed src="/assets/docs/EM/2.pdf" type="application/pdf" width="100%" height=600>
+<embed src="/assets/docs/EM/3.pdf" type="application/pdf" width="100%" height=600>
+<embed src="/assets/docs/EM/4.pdf" type="application/pdf" width="100%" height=600>
+<embed src="/assets/docs/EM/5.pdf" type="application/pdf" width="100%" height=600>
+<embed src="/assets/docs/EM/6.pdf" type="application/pdf" width="100%" height=600>
+
+
 ### lecture series
 <iframe width="721" height="532" src="https://www.youtube.com/embed/videoseries?list=PLJAlx-5DOdeMNjpg4sRO6cty3gL_PZeCE" title="TI Training Material" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 <iframe width="721" height="532" src="https://www.youtube.com/embed/videoseries?list=PLJAlx-5DOdePomvfyvcM5mrmgxptfYPoa" title="mmWave Sensing" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>

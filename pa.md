@@ -3,8 +3,50 @@ layout: page
 title: Phased Array Apparatus
 ---
 
+----
+- TOC
+{:toc}
+----
 
-#### Hardware
+
+# Papers on Wireless Power Transfer & Beamforming
+<embed src="/assets/docs/Thesis/Papers/Codebook.pdf" type="application/pdf" width="100%" height=700>
+<embed src="/assets/docs/Thesis/Papers/IRS2.pdf" type="application/pdf" width="100%" height=700>
+<embed src="/assets/docs/Thesis/Papers/IRS.pdf" type="application/pdf" width="100%" height=700>
+<embed src="/assets/docs/Thesis/Papers/5G.pdf" type="application/pdf" width="100%" height=700>
+<embed src="/assets/docs/Thesis/Papers/one.pdf" type="application/pdf" width="100%" height=700>
+<embed src="/assets/docs/Thesis/Papers/park2013.pdf" type="application/pdf" width="100%" height=700>
+<embed src="/assets/docs/Thesis/Papers/FarField.pdf" type="application/pdf" width="100%" height=700>
+<embed src="/assets/docs/Thesis/Papers/wirelesslypowerednetwork.pdf" type="application/pdf" width="100%" height=700>
+<embed src="/assets/docs/Thesis/Papers/simultaneous.pdf" type="application/pdf" width="100%" height=700>
+<embed src="/assets/docs/Thesis/Papers/backscatter.pdf" type="application/pdf" width="100%" height=700>
+<embed src="/assets/docs/Thesis/Papers/WPT.pdf" type="application/pdf" width="100%" height=700>
+<embed src="/assets/docs/Thesis/Papers/MIMOBook.pdf" type="application/pdf" width="100%" height=700>
+<embed src="/assets/docs/Thesis/Papers/compare.pdf" type="application/pdf" width="100%" height=700>
+<embed src="/assets/docs/Thesis/Papers/multiagent2019.pdf" type="application/pdf" width="100%" height=700>
+<embed src="/assets/docs/Thesis/Papers/huang2020.pdf" type="application/pdf" width="100%" height=700>
+<embed src="/assets/docs/Thesis/Papers/phdthesis1.pdf" type="application/pdf" width="100%" height=700>
+<embed src="/assets/docs/Thesis/Papers/phdthesis2.pdf" type="application/pdf" width="100%" height=700>
+<embed src="/assets/docs/Thesis/Papers/choi2018.pdf" type="application/pdf" width="100%" height=700>
+<embed src="/assets/docs/Thesis/Papers/howmany.pdf" type="application/pdf" width="100%" height=700>
+<embed src="/assets/docs/Thesis/Papers/distributed.pdf" type="application/pdf" width="100%" height=700>
+
+
+
+# Lectures on Wireless Power Transfer & Beamforming
+<iframe width="721" height="532" src="https://www.youtube.com/embed/emuQ20ekF00" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+<iframe width="721" height="532" src="https://www.youtube.com/embed/b5nx4WQDxCk" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+<iframe width="709" height="532" src="https://www.youtube.com/embed/Un40BO9_v-A" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+<iframe width="709" height="532" src="https://www.youtube.com/embed/GVYEVhZ-BaE" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+<iframe width="721" height="532" src="https://www.youtube.com/embed/P12kzAXOUFY" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+<iframe width="721" height="532" src="https://www.youtube.com/embed/VwjvI-8m1MM" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+<iframe width="721" height="532" src="https://www.youtube.com/embed/ZGVxNneHJI8" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+<iframe width="1383" height="579" src="https://www.youtube.com/embed/N4qSpOpg4jQ?list=LLUWcEw8jvNgfOI_ZDAd1VxA" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+
+
+# Simplified Phased Array Project
+
+## Hardware
 
 ![1](/assets/docs/Hardware/pa1.png)
 ![2](/assets/docs/Hardware/pa2.png)
@@ -12,7 +54,7 @@ title: Phased Array Apparatus
 ![4](/assets/docs/Hardware/pa4.png)
 ![5](/assets/docs/Hardware/pa5.png)
 
-#### Controller
+## Controller
 
 ```c
 #include "TM4C123GH6PM.h"
@@ -168,18 +210,18 @@ GPIOC_AHB->DEN = GPIOC_AHB->DEN | (3U<<4);//digital enable pin4 and pin5
 }
 ```
 
-#### PCB
+## PCB
 
 ![top1](/assets/docs/Hardware/top.png)
 ![top2](/assets/docs/Hardware/top2.png)
 ![bottom](/assets/docs/Hardware/bottom.png)
 
-#### Oscilloscope
+## Oscilloscope
 
 ![1](/assets/docs/Hardware/phase1.png)
 ![2](/assets/docs/Hardware/phase2.png)
 
-#### Other Projects
+## Other Drawings
 
 ![1](/assets/docs/Hardware/stm1.png)
 ![2](/assets/docs/Hardware/stm2.png)
