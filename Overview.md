@@ -46,7 +46,7 @@ the true value is the realized reward of one step
 #### policy gradient
 ![1](/assets/img/overview/policygradient.PNG)
 
-### #value based learning (cost to go)
+#### #value based learning (cost to go)
 ![1](/assets/img/overview/qlearning.PNG)
 
 ![1](/assets/img/overview/DQN.PNG)
