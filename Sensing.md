@@ -19,8 +19,13 @@ title: Radar Sensing
 - [matpool](https://www.matpool.com/)
 ![price](/assets/img/radarproject/matpoolprice.jpg)
 
-# REPOSITORIES
+# WORKSTATION
+- Lenovo thinkstation p520
+- CPU Xeon w2125 4ghz
+- GPU rtx2080 8GMEM
+- MEM 32G，can be extended to 128G
 
+# REPOSITORIES
 - [Radar_Perception_Project_2](https://github.com/BaiLiping/Radar_Perception_Project_2)
 - [RadarProjectCode](https://github.com/BaiLiping/RadarProjectCode)
 - [RadarProjectPaper](https://github.com/BaiLiping/RadarProjectPaper)
@@ -84,6 +89,8 @@ title: Radar Sensing
 
 ### tracking overview
 ![1](/assets/img/radarproject/projectoverview/tracking.png)
+![2](/assets/img/radarproject/filters.png)
+![2](/assets/img/radarproject/filters2.png)
 
 ### lecture series on multi-object tracking
 <iframe width="560" height="315" src="https://www.youtube.com/embed/videoseries?list=PLTD_k0sZVYFqjFDkJV8GE2EwfxNK59fJY" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
@@ -98,6 +105,7 @@ title: Radar Sensing
 
 #### mathematical foundation of multiobject tracking
 <embed src="/assets/docs/Tracking/overview.pdf" type="application/pdf" width="100%" height=1000>
+<embed src="/assets/docs/Tracking/compare.pdf" type="application/pdf" width="100%" height=1000>
 
 #### GM-PHD
 ![1](/assets/img/radarproject/PHD1.PNG)
