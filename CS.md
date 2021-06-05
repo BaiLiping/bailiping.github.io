@@ -34,5 +34,5 @@ I find that the beset way to learn CS stuff is to just watch experts perform the
 ## Editor:
 <iframe width="560" height="315" src="https://www.youtube.com/embed/videoseries?list=PL-osiE80TeTtHH8BZngXEsLPGotQxZa6z" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 
-##Understand:
+## Understand:
 <iframe width="560" height="315" src="https://www.youtube.com/embed/videoseries?list=PLkhgTa3ULplzbLgl-BAe2vFNldHQ2DAw9" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
