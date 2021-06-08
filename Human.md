@@ -13,7 +13,7 @@ But the fruit of the Spirit is love, joy, peace, forbearance, kindness, goodness
 
 1. **观察与抽离**：人类存在最原始的状态是情绪导向。情绪能够反映出我们对事物的认知，从而指导我们的行为，然而随着社会的发展，这样原始的应对方案往往不是最优。我认为人发展到一定阶段就会学会把“自己”这个概念给抽离出来。例如游泳到精疲力竭时把注意力转到技术动作可以再游好久；说话做事不已自己的观点作为依据，而是以利益最大化作为思考的准则；知道自己能够参与或观察到的经历只是众多可能性中的一小部分，自己建立在那些经历上的对错观点也不是绝对真理，在新的环境中，能够先观察，不做评价，不把期许当作事实，再依照那个环境中的规则做事。
 2. **抽象与系统化思维**：靠本事吃饭是发部分人走完一辈子的形态，但是怎么知道这个人是真的懂了一门本事还是只是理顺了繁杂的信息？我认为一个重要的观测点是他是否能够把新的领域按照自己领域的逻辑进行抽象。例如前段时间四大会计师事务所的一位高管被爆出有特殊嗜好，但其用excel表格将所有选项归纳细分的能力还是让人佩服；一位精算师分析出轨的代价，加入一次幽会被看到的几率是5%，那么10次幽会被看到至少一次的几率就是1-0.95^10也就是几乎100%；再例如保守主义一个重要的思考工具是如何用最小的变化向期望的方向迈出最大步，而这个方法可以用KL Regulation来数学表达。能用不一样的视角去抽象习以为常的事务，我认为这样的抽象能力是一个重要的成长标的。
-3. **有自己的方法**：面对未知的事物，能够做一些基本的分析；学习一个新的东西，能够有四两拨千斤的方法。其实市面上大部分的讨论都是无用功，天赋还是努力之类的。废话，天赋差异当然是其绝对作用的，但有自己的可行的方法一样可以到达一个很不错的水平。
+3. **有自己的方法**：面对未知的事物，能够做一些基本的分析；学习一个新的东西，能够有四两拨千斤的方法。其实市面上大部分的讨论都是无用功，天赋还是努力之类的。废话，天赋差异当然是其绝对作用的，但有自己的可行的方法一样可以到达一个很不错的水平。 Probably the most important skill to have is the ability to train oneself. For instance, faced with the same situation, different people wuold secrete different neurotransmitters therefore react to it differently. This is something to be trained.
 4. **倒推**：大部分的人生存模式其实是模仿或者应激反应，能够思考到n步以外的就很少了。从只能想到一步到能够想到100步，从只能想到一种后果，到能够想到多重后果；从只能想到一种可能性到能够想到多种可能性。
 5. **克制与谨慎**：吃想吃的东西，说想说的话，发泄想发泄的情绪，做想做的事是小朋友的行为模式。大一点了就会知道一切行为、言语都有其后果。然而这种克制并非苦行僧，怎么难受怎么来，那也是一种病态。我认为好的克制是你知道自己本能的反应，但有更重要的目标趋势你去克制这样的本能。例如做空的人承受极大的压力，经常被人骂，一种做法是自己骗自己，说什么走自己的路让别人说去吧这样的屁话，另一种我认为更可行的方法是承认被人骂是难受的，哪个正常人不愿意被人喜欢？但一想到可能挣到的钱，也就不管了。我认为谨慎的定义就是为自己构造享受自己本能的空间，这是一种好的与自己相处的方式。
 6. **自己就是救世主**： 古今中外的人似乎都或多或少的有救世主情节，希望有一个万能的人帮助自己做决策。这样的情节催生了宗教、帝王、金胖子等等。疫情期间这样的情节更是被无限放大，到处都是江湖骗子。我认为人成长一个重要的标的就是自己学会做决策，自己就是救世主。
@@ -25,6 +25,7 @@ But the fruit of the Spirit is love, joy, peace, forbearance, kindness, goodness
 12. **抓主线**：好像一个很大的错误是把小的东西无限放大。
 13. **平衡**：其实慢慢会知道很多值得做的事情是一种平衡。我第一次感受到这个是一次在清华某个四大的总裁在那里做演讲，一个姑娘问他如何平衡公司的名誉与客户的需求，后来这样的例子越来越多。一个社会似乎更希望个体能够沿着一条逻辑线走到极端：如果你是个艺术家，那你就只能偏执地去理解世界；如果你是个科学家，你就只能用上帝视角去看世人；如果你是个商人，你就只能是个犹太式的存在。我觉得一个很重要的平衡是知道如何去找到自己在社会中的位置。社会总会有规则、模式、偏颇等等，其实制定规则的人水平不一定有多高，大部分在那个位置的人只是去为唯一的选择作解释而已，而不是真正的统筹全局；社会的既定模式其实也与历史沿革有关，其出发点可能是正确的，但最终的结论却又可能只是沿袭历史的眼光。我认为保守主义可能是获取这个平衡的一个思路。保守主义并不是简单的守护以往，而是应对变化的最佳策略。当你知道既定模式需要被变化时，如何走出最小的步子获得最大的变化。
 14. **chutzpah**：这两天我在申请北航，看到老师的成长经历。他的年龄与我差不多，一路走下来，现在已经是领域的专家。回头看我自己，总有点一事无成的感觉。现在就觉得我真是有Chutzpah敢去申请北航。
+15. **See Things in its Entirety**: When i was younger, i questioned why i need to read the stories that happend gazillion years ago. Turns out, those stories served me well. There are stages of human development and there are economical circumstances. One common fallacy is that we think that economical condition would last forever and the lessons learnt during our informative years are extrapolated without regard to reality. Things comes and go, in cycles, and it is a great skill and capacity, to be able to learn from someone else's experience, and incorporate that into your understanding of the world. One along can never see things in its entirely, unless he can do this.
 
 I have a theory, it is the same person who pushes time forward. In this post, I'd like to summerize what characteristics that person  has.
 
