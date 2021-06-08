@@ -112,7 +112,7 @@ HIT is a proven technique for cardiovascular health.
 Zone 2 is a bit more advanced for me at this point, I would just log it here in case I want to take it up one day. 
 
 ## Gout:
-![1](/assets/img/uricacid.git)
+![1](/assets/img/uricacid.gif)
 
 This is crystalized uric acid from urine. The shape edges are whats iritate the nerve cells and make it so painful.
 
