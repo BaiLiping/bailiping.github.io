@@ -8,6 +8,10 @@ I find that the beset way to learn CS stuff is to just watch experts perform the
 - TOC
 {:toc}
 ----
+
+## PyTorch
+<iframe width="560" height="315" src="https://www.youtube.com/embed/c36lUUr864M" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+
 ## Missing Semaster
 <iframe width="560" height="315" src="https://www.youtube.com/embed/videoseries?list=PLyzOVJj3bHQuloKGG59rS43e29ro7I57J" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 
