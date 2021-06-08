@@ -23,6 +23,9 @@ I find that the beset way to learn CS stuff is to just watch experts perform the
 ## Command Line:
 <iframe width="560" height="315" src="https://www.youtube.com/embed/videoseries?list=PL-osiE80TeTvGhHkpvfmKWOiIPF8UVy6c" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 
+## Notebook:
+<iframe width="560" height="315" src="https://www.youtube.com/embed/HW29067qVWk" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+
 ## Python:
 <iframe width="560" height="315" src="https://www.youtube.com/embed/videoseries?list=PL-osiE80TeTt2d9bfVyTiXJA-UTHn6WwU" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 
