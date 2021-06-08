@@ -176,6 +176,8 @@ This is an area that just exploded. While surgery is a bad idea, those routine t
 One of the most helpful resources I find. There are tactics that people developed over the years that is proven to be helpful such that we are more likely to act on things that are benefit to us.
 <iframe width="560" height="315" src="https://www.youtube.com/embed/videoseries?list=PLiUrrIiqidTWje-Oc4uA6LZZO8vSaHaDL" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 
+One the most important take away is that there is a mind-body connection via nerve system. For supporting evidence, one only need to look at stories with regard to white hairs throughout history. But the nerve system can be trained, just like that kid who climb mountains without a harness. There is a way to train yourself to be calm even when faced with life and death decision processes. And it is a valueable skill to acquire.
+
 It can be painful, that feeling of being left behind and don't have a path to follow. I think the key is to shift the driving force from comparative position to love and the ultimate questions: loneliness, freedom, death and meaninglessness.
 
 loneliness stems from the contradiction between the desire to share the life and the fact that truth is inherently an individual experience. Like all things that people have wrapped their brain one since antiquity, the key lies in the balance. 
