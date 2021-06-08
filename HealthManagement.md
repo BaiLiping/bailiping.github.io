@@ -9,6 +9,7 @@ For the non-accidental part of health management, there are the following compon
 - TOC
 {:toc}
 ----
+
 # DNA Damage as the Underlying Mechanism for Aging
 <embed src="/assets/docs/Health/DNA_Damage_and_Aging.pdf" type="application/pdf" width="100%" height=700>
 <embed src="/assets/docs/Health/Aging_Process_Theory.pdf" type="application/pdf" width="100%" height=700>
@@ -204,14 +205,3 @@ Metformin is beneficial for cancer prevention. However, recently FDA discovered 
 Sauna can be beneficial in terms of detoxification.
 
 Aluminum in Chinese food, particularly in the Northern part of the country.
-
-
-
-
-
-
-
-
-
-
-
