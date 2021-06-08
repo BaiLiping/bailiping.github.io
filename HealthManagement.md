@@ -29,7 +29,21 @@ Autophagy might be utilized as maintenance of the immune system. Autophagy only 
 
 most of modern diseases, including cancer(controversial) and Alzheimer can be seen as metabolic disease. There are three path ways for out body to sense availability of nutrient. Insulin pathway, which is mostly used to sense glucose; mTOR pathway, which is used to sense 3 amino-acid; AMPK pathway, which is used to sense level of ATP. 
 
-### Diet
+Statin is prescribed to lower LDL. However, it is later found the the smaller sized cholesterol is more damaging, since it would enter the blood cell, cause inflammation and a series of pathological changes. It would be ideal if there is a drug targeting small LDL directly. 
+
+Another thing surprise me is that the dietary recommendation might be completely wrong.  refined sugar is found to cause the liver to produce smaller sized LDL. There seems to be an awakening to this fact.
+
+What are the manifestations of cardiovascular disease?
+
+Hypertension, since the blood vessels get stiff (not necessarily narrowed);myocardial infraction, specific to coronary artery;stroke, when there is no blood flow or aneurysm travels to brain vessel; sudden death. 
+
+Also one should notice that men and women manifest the symptoms differently. The decline of physical capacity I experience is probably a sign that something is going on. 
+
+The best thing one can do is probably low salt intake (keep in mind that Chinese food has the highest salt level in the world and as a result the highest stroke rate); regular exercise, maybe considering high intensive exercise; no carbohydrate. 
+
+### Actions:
+
+#### Diet
 
 Insulin tells the muscle, adipose tissue and liver to take in blood glucose. It was found that people with better metabolic capacity have larger and more mitocondria. Exercise can increase muscle's intake and utilization of glucose. Ideally, one should have an average glucose level of 85mg/dl, with a deviation of less than 15mg/dl. If one can measure the amount of glucose secreted throughout the day, that number should be minimized.
 
@@ -43,7 +57,7 @@ Oil should be more important. I gave keto a try at the beginning of the week. Th
 
 There is a possibility that thin people are metabolically diseased. For instance, those vegetarian Indians who get most of the food intake from carbohydrate turns out to be insulin in-sensative. Depressed people would lose weight but cortisone would induce visceral fat accumulation. This is a very informative [article](https://culturalhealthsolutions.com/7-steps-to-preventing-and-curing-the-pcos-epidemic-in-young-women/).
 
-### Fasting
+#### Fasting
 
 This is a proven tactic that works. There are all kinds of fasting styles such as 16h fasting, 5-2 fasting etc. I think it would probably work if I rotate between them. To engage autophage, one need to do water only diet longer than 5 days. If you don't have the energy to do a long term fasting, then make sure everyday you feel hungry at certain point.
 
@@ -64,11 +78,11 @@ Tips on fasting:
 13. there might be withdrawn symptoms such as headache, uneasiness etc. This is more psychological than physical but it is OK
 14. the feeling of hunger is more psychological than physical, it is part of the withdrawn symptoms.
 
-### Keto Diet
+#### Keto Diet
 
 a guy inadvertently come across the fact that cancer cell on the keto substrate can't grow. Now there are clinical trials going on seems to suggest that keto diet plus inhibitor drugs could starve cancer cell, as a potential metabolic route of treatment. Other study seems to suggest that when out brain is burning keto instead  of glucose, the neuron is more active and the blood flow seems to have increased.
 
-### NO CARBOHYDRATE
+#### NO CARBOHYDRATE
 
 this seems to be a cross the board consensus. There are doctors hypothesis that PCOS could be the result of hyperinsulimia or could be related to excessive IGF1. Both of which could be reduced through a low carbohydrate diet. A lab test that could tell your average exposure to blood glucose is A1C test, which exams the amount of red blood cell with a glucose attachment. 
 
@@ -79,38 +93,23 @@ this seems to be a cross the board consensus. There are doctors hypothesis that 
 > - **Fatty liver** due to a carbohydrate-overwhelmed liver that desperately switches on fat synthesis
 > - **Elevated blood glucose**.  If your carbohydrate  intake overwhelms your parking capacity, especially that of muscle, your  blood glucose levels will rise.  We need our muscles to be sensitive to  insulin and we need to frequently create space in our muscles through  increased activity and exercise to effectively control our blood glucose  levels.
 
-### Supplement
+#### Supplement
 
 NMN looks promising
 
 [Dr. Vamsi Mootha](https://peterattiamd.com/vamsimootha/) hypothesis that Metformin blocks the mitocondria electron transport chain just enough to cause the homeostatic adaptation which could stimulate mitocondria growth. (this remind me of the physiology of high altitude training for increasing of blood cell seems that you can only disturb the dynamic equilibrium by a small amount before toxicity kicks in). 
 
-### Stress Exposure
+#### Stress Exposure
 
 Cold exposure in particular seems to activate the keto pathway. It is actually not hard to do. Try to expose to head in winter, alternating showering temperature. Again, take in the insight in homeostasis.
 
-### Exercise
+#### Exercise
 
 the key to exercise is to have a clear understanding of muscular loading. Try not to load the joint, let most of the force be taken by the muscles.
 
 HIT is a proven technique for cardiovascular health.
 
 Zone 2 is a bit more advanced for me at this point, I would just log it here in case I want to take it up one day. 
-
-## Cardiovascular Disease
-
-Statin is prescribed to lower LDL. However, it is later found the the smaller sized cholesterol is more damaging, since it would enter the blood cell, cause inflammation and a series of pathological changes. It would be ideal if there is a drug targeting small LDL directly. 
-
-Another thing surprise me is that the dietary recommendation might be completely wrong.  refined sugar is found to cause the liver to produce smaller sized LDL. There seems to be an awakening to this fact.
-
-What are the manifestations of cardiovascular disease?
-
-Hypertension, since the blood vessels get stiff (not necessarily narrowed);myocardial infraction, specific to coronary artery;stroke, when there is no blood flow or aneurysm travels to brain vessel; sudden death. 
-
-Also one should notice that men and women manifest the symptoms differently. The decline of physical capacity I experience is probably a sign that something is going on. 
-
-The best thing one can do is probably low salt intake (keep in mind that Chinese food has the highest salt level in the world and as a result the highest stroke rate); regular exercise, maybe considering high intensive exercise; no carbohydrate. 
-
 
 ## Gout:
 ![1](/assets/img/uricacid.git)
@@ -174,6 +173,9 @@ This is an area that just exploded. While surgery is a bad idea, those routine t
 
 ## Psychological Wellbeing
 
+One of the most helpful resources I find. There are tactics that people developed over the years that is proven to be helpful such that we are more likely to act on things that are benefit to us.
+<iframe width="560" height="315" src="https://www.youtube.com/embed/videoseries?list=PLiUrrIiqidTWje-Oc4uA6LZZO8vSaHaDL" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+
 It can be painful, that feeling of being left behind and don't have a path to follow. I think the key is to shift the driving force from comparative position to love and the ultimate questions: loneliness, freedom, death and meaninglessness.
 
 loneliness stems from the contradiction between the desire to share the life and the fact that truth is inherently an individual experience. Like all things that people have wrapped their brain one since antiquity, the key lies in the balance. 
@@ -205,3 +207,4 @@ Metformin is beneficial for cancer prevention. However, recently FDA discovered 
 Sauna can be beneficial in terms of detoxification.
 
 Aluminum in Chinese food, particularly in the Northern part of the country.
+
