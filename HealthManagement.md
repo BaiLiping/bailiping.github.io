@@ -1,7 +1,8 @@
 ---
-layout: post
+layout: page
 title: Health Management
 ---
+
 For the non-accidental part of health management, there are the following components:
 
 ----
