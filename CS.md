@@ -1,6 +1,6 @@
 ---
 layout: page
-title: Computer Science Stuff
+title: Coding Related
 ---
 I find that the beset way to learn CS stuff is to just watch experts perform their tasks. 
 
@@ -23,7 +23,7 @@ I find that the beset way to learn CS stuff is to just watch experts perform the
 ## Command Line:
 <iframe width="560" height="315" src="https://www.youtube.com/embed/videoseries?list=PL-osiE80TeTvGhHkpvfmKWOiIPF8UVy6c" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 
-## Notebook:
+## Jupyter Notebook:
 <iframe width="560" height="315" src="https://www.youtube.com/embed/HW29067qVWk" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 
 ## Python:
@@ -44,6 +44,12 @@ I find that the beset way to learn CS stuff is to just watch experts perform the
 ### Interact with System
 #### Read/Write File
 <iframe width="560" height="315" src="https://www.youtube.com/embed/Uh2ebFW8OYM" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+
+#### Setup environment
+<iframe width="560" height="315" src="https://www.youtube.com/embed/cY2NXB_Tqq0" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+<iframe width="560" height="315" src="https://www.youtube.com/embed/YJC6ldI3hWk" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+<iframe width="560" height="315" src="https://www.youtube.com/embed/zDYL22QNiWk" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+<iframe width="560" height="315" src="https://www.youtube.com/embed/videoseries?list=PL-osiE80TeTt66h8cVpmbayBKlMTuS55y" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 
 #### JSON
 <iframe width="560" height="315" src="https://www.youtube.com/embed/9N6a-VLBa2I" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
@@ -67,6 +73,7 @@ I find that the beset way to learn CS stuff is to just watch experts perform the
 ### Structures
 #### Argument
 <iframe width="560" height="315" src="https://www.youtube.com/embed/_JGmemuINww" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+<iframe width="560" height="315" src="https://www.youtube.com/embed/ve2pmm5JqmI" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 
 #### Decorators
 Decorators are functions that takes function as input, add some functionality to the original function and return another function.
@@ -93,21 +100,27 @@ Decorators are functions that takes function as input, add some functionality to
 #### Common Mistakes
 <iframe width="560" height="315" src="https://www.youtube.com/embed/zdJEYhA2AZQ" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 
+#### Habits
+<iframe width="560" height="315" src="https://www.youtube.com/embed/TtIJEQ6D9DE" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+
 #### Difference Between '==' and 'is'
 <iframe width="560" height="315" src="https://www.youtube.com/embed/mO_dS3rXDIs" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 
+#### Difference Between str() and restr()
+<iframe width="560" height="315" src="https://www.youtube.com/embed/5cvM-crlDvg" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 
-## Environment
-<iframe width="560" height="315" src="https://www.youtube.com/embed/videoseries?list=PL-osiE80TeTt66h8cVpmbayBKlMTuS55y" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+#### RAND
+<iframe width="560" height="315" src="https://www.youtube.com/embed/KzqSDvzOFNA" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 
-## Panda:
+#### Logging
+<iframe width="560" height="315" src="https://www.youtube.com/embed/-ARI4Cz-awo" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+<iframe width="560" height="315" src="https://www.youtube.com/embed/jxmzY9soFXg" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+
+### Panda:
 <iframe width="560" height="315" src="https://www.youtube.com/embed/videoseries?list=PL-osiE80TeTsWmV9i9c58mdDCSskIFdDS" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 
-## Matplotlib:
+### Matplotlib:
 <iframe width="560" height="315" src="https://www.youtube.com/embed/videoseries?list=PL-osiE80TeTvipOqomVEeZ1HRrcEvtZB_" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-
-## Editor:
-<iframe width="560" height="315" src="https://www.youtube.com/embed/videoseries?list=PL-osiE80TeTtHH8BZngXEsLPGotQxZa6z" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 
 ## Understand:
 <iframe width="560" height="315" src="https://www.youtube.com/embed/videoseries?list=PLkhgTa3ULplzbLgl-BAe2vFNldHQ2DAw9" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
