@@ -19,6 +19,11 @@ For the non-accidental part of health management, there are the following compon
 2. SIRT1 Pathway, DNA repair related pathways.
 3. Insulin Signal Pathway, Insulin might be the most important signaling molecule out there and its production should be minimized.
 
+# Stanford Health Library
+One of the best resources out there for general medical information.
+
+<iframe width="560" height="315" src="https://www.youtube.com/embed/videoseries?list=PLD19E86B953E3F1DB" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+
 # Disease States
 
 ## Autoimmune Disease
@@ -155,6 +160,9 @@ there are three types of cognitive function decline:
 1. metabolic kind, I read that someone actually called Alzimers disease the diabetes of the brain. 
 2. atrophic kind, somehow the brain is in the state of getting smaller and some of the functions are in jeopardy.
 3. toxic kind. apparently, the tooth filling thing could be a toxin for the brain. For me there might be a balance to strike between iron deficient anemia and excessive amount of blood iron. it would be a good information to have, blood iron level. Dental amalgam is a risk factor that I should monitor. I choose not to take it out for now, in accordance to [FDA recommentation](https://www.fda.gov/medical-devices/dental-amalgam/about-dental-amalgam-fillings). But I know now that it could be trouble for MRI imagery and Toxically Induced Mental Disorder. It should be monitored. Eating too much fish can also result in mercury accumulation. I think I read a study that people from mainland maintain a extremely high level of toxins. 
+
+## Osteoperosis
+<iframe width="560" height="315" src="https://www.youtube.com/embed/PG44scGtQxI" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 
 ## Dermatological Care
 
