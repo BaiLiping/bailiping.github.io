@@ -162,7 +162,7 @@ As we age, the skin would sag as a result of volume loss and collagen loss. Ther
 
 1. oral intake of collagen (gelatin in my case) with vitamin C and zinc.
 2. RF therapy for local heating. Collagen and fat respond to 45-70 heat.
-3. rapamycin turns out to help generate collagen, but this is way to advanced at this point
+3. rapamycin might be a wonder drug for skin [paper](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC6925069/)
 4. retin A, keep it going
 5. SUNSCREEN SUNSCREEN SUNSCREEN
 6. micro-current to stimulate ATP generation. it might be useful to use it with the NMN stuff. 
