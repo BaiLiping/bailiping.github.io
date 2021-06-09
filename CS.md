@@ -72,6 +72,17 @@ I find that the beset way to learn CS stuff is to just watch experts perform the
 
 ### Structures
 
+#### Comprehension
+an easier and more readable way to create a data structure. A short handle of for loops.
+
+Noted that there are two methods for create a data structure.
+a = [] or a = list(), mutable and iterable
+a = () or a = tuple(), not mutable but iterable
+a = {} for dictionary
+a = set() for set, which comes with methods such as union and intersection etc.
+
+<iframe width="560" height="315" src="https://www.youtube.com/embed/3dt4OGnU5sM" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+
 #### Decorators
 Decorators are functions that takes function as input, add some functionality to the original function and return another function.
 
@@ -83,6 +94,12 @@ Decorators are functions that takes function as input, add some functionality to
 
 #### Iterators
 <iframe width="560" height="315" src="https://www.youtube.com/embed/jTYiNjvnHZY" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+
+#### Iterable and Iterators
+<iframe width="560" height="315" src="https://www.youtube.com/embed/jTYiNjvnHZY" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+
+#### Itertools
+<iframe width="560" height="315" src="https://www.youtube.com/embed/Qu3dThVy6KQ" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 
 ### Programming in General
 #### Unit Testing
@@ -96,6 +113,9 @@ Decorators are functions that takes function as input, add some functionality to
 
 #### Common Mistakes
 <iframe width="560" height="315" src="https://www.youtube.com/embed/zdJEYhA2AZQ" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+
+#### Error Handling
+<iframe width="560" height="315" src="https://www.youtube.com/embed/NIWwJbo-9_8" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 
 #### Habits
 <iframe width="560" height="315" src="https://www.youtube.com/embed/TtIJEQ6D9DE" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
