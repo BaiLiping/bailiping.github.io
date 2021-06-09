@@ -71,9 +71,6 @@ I find that the beset way to learn CS stuff is to just watch experts perform the
 <iframe width="560" height="315" src="https://www.youtube.com/embed/2Fp1N6dof0Y" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 
 ### Structures
-#### Argument
-<iframe width="560" height="315" src="https://www.youtube.com/embed/_JGmemuINww" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-<iframe width="560" height="315" src="https://www.youtube.com/embed/ve2pmm5JqmI" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 
 #### Decorators
 Decorators are functions that takes function as input, add some functionality to the original function and return another function.
