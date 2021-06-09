@@ -31,10 +31,71 @@ I find that the beset way to learn CS stuff is to just watch experts perform the
 
 <iframe width="560" height="315" src="https://www.youtube.com/embed/videoseries?list=PL-osiE80TeTsqhIuOqKhwlXsIBIdSeYtc" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 
-### Decorators
+### Nonmanclature
+#### First Class Function
+<iframe width="560" height="315" src="https://www.youtube.com/embed/kr0mpwqttM0" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+
+#### Closure
+<iframe width="560" height="315" src="https://www.youtube.com/embed/swU3c34d2NQ" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+
+#### Scope
+<iframe width="560" height="315" src="https://www.youtube.com/embed/QVdf0LgmICw" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+
+### Interact with System
+#### Read/Write File
+<iframe width="560" height="315" src="https://www.youtube.com/embed/Uh2ebFW8OYM" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+
+#### JSON
+<iframe width="560" height="315" src="https://www.youtube.com/embed/9N6a-VLBa2I" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+
+#### ZIP
+<iframe width="560" height="315" src="https://www.youtube.com/embed/z0gguhEmWiY" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+
+#### OS module
+<iframe width="560" height="315" src="https://www.youtube.com/embed/tJxcKyFMTGo" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+
+#### Compute
+##### Threading
+<iframe width="560" height="315" src="https://www.youtube.com/embed/IEEhzQoKtQU" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+
+##### Multiprocessing
+<iframe width="560" height="315" src="https://www.youtube.com/embed/fKl2JW_qrso" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+
+##### Subprocessing
+<iframe width="560" height="315" src="https://www.youtube.com/embed/2Fp1N6dof0Y" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+
+### Structures
+#### Argument
+<iframe width="560" height="315" src="https://www.youtube.com/embed/_JGmemuINww" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+
+#### Decorators
 Decorators are functions that takes function as input, add some functionality to the original function and return another function.
 
 <iframe width="560" height="315" src="https://www.youtube.com/embed/FsAPt_9Bf3U" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+<iframe width="560" height="315" src="https://www.youtube.com/embed/KlBPCzcQNU8" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+
+#### Generators
+<iframe width="560" height="315" src="https://www.youtube.com/embed/bD05uGo_sVI" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+
+#### Iterators
+<iframe width="560" height="315" src="https://www.youtube.com/embed/jTYiNjvnHZY" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+
+### Programming in General
+#### Unit Testing
+<iframe width="560" height="315" src="https://www.youtube.com/embed/6tNS--WetLI" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+
+#### Regular Expression
+<iframe width="560" height="315" src="https://www.youtube.com/embed/K8L6KVGG-7o" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+
+#### Tips and Tricks
+<iframe width="560" height="315" src="https://www.youtube.com/embed/C-gEQdGVXbk" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+
+#### Common Mistakes
+<iframe width="560" height="315" src="https://www.youtube.com/embed/zdJEYhA2AZQ" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+
+#### Difference Between '==' and 'is'
+<iframe width="560" height="315" src="https://www.youtube.com/embed/mO_dS3rXDIs" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+
 
 ## Environment
 <iframe width="560" height="315" src="https://www.youtube.com/embed/videoseries?list=PL-osiE80TeTt66h8cVpmbayBKlMTuS55y" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
