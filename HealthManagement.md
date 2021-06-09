@@ -100,9 +100,13 @@ this seems to be a cross the board consensus. There are doctors hypothesis that 
 
 #### Supplement
 
-NMN looks promising
+1. NMN looks promising
 
-[Dr. Vamsi Mootha](https://peterattiamd.com/vamsimootha/) hypothesis that Metformin blocks the mitocondria electron transport chain just enough to cause the homeostatic adaptation which could stimulate mitocondria growth. (this remind me of the physiology of high altitude training for increasing of blood cell seems that you can only disturb the dynamic equilibrium by a small amount before toxicity kicks in). 
+2. [Dr. Vamsi Mootha](https://peterattiamd.com/vamsimootha/) hypothesis that Metformin blocks the mitocondria electron transport chain just enough to cause the homeostatic adaptation which could stimulate mitocondria growth. (this remind me of the physiology of high altitude training for increasing of blood cell seems that you can only disturb the dynamic equilibrium by a small amount before toxicity kicks in). 
+
+3. vitamin D
+![1](/assets/img/vitaminD.png)
+[NIH website](https://ods.od.nih.gov/factsheets/VitaminD-HealthProfessional/)
 
 #### Stress Exposure
 
