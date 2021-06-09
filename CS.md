@@ -31,6 +31,11 @@ I find that the beset way to learn CS stuff is to just watch experts perform the
 
 <iframe width="560" height="315" src="https://www.youtube.com/embed/videoseries?list=PL-osiE80TeTsqhIuOqKhwlXsIBIdSeYtc" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 
+### Decorators
+Decorators are functions that takes function as input, add some functionality to the original function and return another function.
+
+<iframe width="560" height="315" src="https://www.youtube.com/embed/FsAPt_9Bf3U" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+
 ## Environment
 <iframe width="560" height="315" src="https://www.youtube.com/embed/videoseries?list=PL-osiE80TeTt66h8cVpmbayBKlMTuS55y" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 
