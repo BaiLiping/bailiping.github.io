@@ -2,4 +2,4 @@ Liping Bai is newly hired for the 2021 PhD position in Beihang University, Schoo
 
 Control Theory and Reinforcement Learning are misnomers in her mind. What they truly are, is the efficient acquisition of information regarding a dynamic system and sequential decision making under uncertainty. She looks forward to her training with Beihang University and cultivates her expertise in merging reinforcement learning with classical control theory and multi-agent control.
 
-For over 5 years, Liping Bai worked in the hospital investment sector where she forged an in-depth understanding of the unique and Byzantine Chinese healthcare system. She provided due diligence reports to clients such as HCA Healthcare, Kaiser Permanente, UPMC and served as a third party provider to major consulting firms.
+For over 5 years, Liping Bai worked in the hospital investment sector where she forged an in-depth understanding of the Byzantine and ill-structured Chinese healthcare system. She provided due diligence reports to clients such as HCA Healthcare, Kaiser Permanente, UPMC and served as a third party provider to major consulting firms.
