@@ -26,6 +26,19 @@ One of the best resources out there for general medical information.
 
 # Disease States
 
+## Anemia
+One of the best [review article](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC2582401/) that I have come across. 
+
+The symptoms of anemia is shown in the following table.
+![1](/assets/img/anemia1.png)
+- Ferritin, 40ug/L
+- Serum iron, 50ug/dL
+- Red Cell Count, 4e+6
+- Red Cell Distribution Width, 14.5%
+- Hemoglobin 12g/dL
+
+The termination of the treatment should be determined by serum ferritin level. 
+
 ## Autoimmune Disease
 
 Autophagy might be utilized as maintenance of the immune system. Autophagy only kicks in after at least 5 days of water only fasting. Supposedly, your organ would shrink at that point. The same can be achieved through [fasting mimicking diet](/docs/Health/longo.pdf). One caveat is how to transfer from the fasting state into feeding state, if don't pay attention, then the entire fasting can be rendered useless.
