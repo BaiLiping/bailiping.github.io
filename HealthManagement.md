@@ -214,13 +214,22 @@ If I make "being aware" my goal, maybe the rest would follow.
 
 ## Pharmacological/Toxin Exposure
 
-甘草片 turns out to be Opium. 马蔸铃酸 cause liver failure. 
+1. 甘草片 turns out to be Opium. 马蔸铃酸 cause liver failure. 
+2. Generic drugs may contain carcinogen (it is best to use the branded version if possible)
+3. Metformin is beneficial for cancer prevention. However, recently FDA discovered that there might be [NDMA contamination](https://www.fda.gov/news-events/press-announcements/statement-janet-woodcock-md-director-fdas-center-drug-evaluation-and-research-impurities-found). I think I would wait and see.
+4. Sauna can be beneficial in terms of detoxification.
+5. Aluminum in Chinese food, particularly in the Northern part of the country.
 
-Generic drugs may contain carcinogen (it is best to use the branded version if possible)
+In many cases, medicines taken for one condition would cause another condition. This is like a never ending game for the healthcare system, once you are in it, you never get out of it.
+The best thing one can do for oneself is to never be in that system in the first place.
 
-Metformin is beneficial for cancer prevention. However, recently FDA discovered that there might be [NDMA contamination](https://www.fda.gov/news-events/press-announcements/statement-janet-woodcock-md-director-fdas-center-drug-evaluation-and-research-impurities-found). I think I would wait and see.
+## Ophthalmological Conditions
 
-Sauna can be beneficial in terms of detoxification.
+### Dry Eyes
+<iframe width="560" height="315" src="https://www.youtube.com/embed/SH7ELystIb0" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+<iframe width="560" height="315" src="https://www.youtube.com/embed/sn4FLJ2OR5w" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+<iframe width="560" height="315" src="https://www.youtube.com/embed/88JEbcuEVAE" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 
-Aluminum in Chinese food, particularly in the Northern part of the country.
+### Actions:
+<iframe width="560" height="315" src="https://www.youtube.com/embed/pw_efQRzk0k" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 
