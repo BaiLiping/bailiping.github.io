@@ -26,6 +26,9 @@ I find that the beset way to learn CS stuff is to just watch experts perform the
 ## Jupyter Notebook:
 <iframe width="560" height="315" src="https://www.youtube.com/embed/HW29067qVWk" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 
+## Drawing
+<iframe width="560" height="315" src="https://www.youtube.com/embed/videoseries?list=PLqazFFzUAPc5lOQwDoZ4Dw2YSXtO7lWNv" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+
 ## Python:
 <iframe width="560" height="315" src="https://www.youtube.com/embed/videoseries?list=PL-osiE80TeTt2d9bfVyTiXJA-UTHn6WwU" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 
