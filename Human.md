@@ -49,3 +49,12 @@ I have a theory, it is the same person who pushes time forward. In this post, I'
 6. **学会珍惜**。我觉得这是很重要的一步，学会独处，学会不回头看，学会不去与他人比较，学会专一，学会与人为善，学会乐观。一运二命三风水这样的话如果翻译成英文的话就是"Time and Chance happens to us all"。古今中外都有的体会，多半很是接近生命的本质了。这并不是消极的妥协，有机会去争取更好的结果我当然也会尽全力争取，平衡吧。
 
 因为疫情，我有机会重新看这个世界，却发现一切都变了。同龄人的收入都以亿计了，年轻的小伙都高，小姑娘都漂亮。其实之前自己对这个社会的理解并不准确，做成的选择也不是最优，但在那样一个家庭里走出来，也算是尽力了吧。当时的一些思考，也比较狭隘，问的问题也非常愚蠢。回头看总是唏嘘吧，但我想我在每一个时间节点上都做了当时最想做的事情：去北京，去了解了世界。
+
+
+### How Not to Live
+
+1. https://mp.weixin.qq.com/s/ASAm6HeeZ7h-uqouyiPe1A modern day Javert, thought if they toe the lies, they would have a life. Guess what, their naivete are ill suited for this era. People like her are there, throughout history, and cross different cultures. https://www.barrons.com/articles/legendary-value-manager-charles-de-vaulx-found-dead-51619564407 someone who believes in value investing when macros are what matters.
+
+How to strike that balance, bow your head down and cultivating a set of skills and but not doing so without looking at the road ahead and ended up become cannon fodder of someone else's war. Maybe one should have a combination of skillsets and outlooks for the world so that under different circumstances, one can still function optimally.
+
+
