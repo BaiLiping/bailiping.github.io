@@ -55,6 +55,11 @@ I have a theory, it is the same person who pushes time forward. In this post, I'
 
 1. https://mp.weixin.qq.com/s/ASAm6HeeZ7h-uqouyiPe1A modern day Javert, thought if they toe the lies, they would have a life. Guess what, their naivete are ill suited for this era. People like her are there, throughout history, and cross different cultures. https://www.barrons.com/articles/legendary-value-manager-charles-de-vaulx-found-dead-51619564407 someone who believes in value investing when macros are what matters.
 
-How to strike that balance, bow your head down and cultivating a set of skills and but not doing so without looking at the road ahead and ended up become cannon fodder of someone else's war. Maybe one should have a combination of skillsets and outlooks for the world so that under different circumstances, one can still function optimally.
+How to strike that balance, bow your head down and cultivating a set of skills and but not doing so without looking at the road ahead and ended up become cannon fodder of someone else's war. Maybe one should have a combination of skillsets and outlooks for the world so that under different circumstances, one can still function optimally. There isn't one set of principles that fit all the circumstances that one would met throughout his/her lifespan.
 
+- ![1](/assets/img/fudan1.jpeg)
+- ![1](/assets/img/fudan2.jpeg)
+- ![1](/assets/img/fudan3.jpeg)
 
+2. ![2](/assets/img/midage.jpeg) 
+This has happened so many times before throughout history. The life you think you are gonna be there is actually just a mirage. The skills that you thought are gonna carry you throughout life turns out to worth nothing.
