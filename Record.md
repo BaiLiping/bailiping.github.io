@@ -7,9 +7,6 @@ title: Records
 - TOC
 {:toc}
 ----
-
-
-
 # people i met
 
 1. *a girl with small head*. I was travelling in Yunan once with a group of friends, some of whom are Caucasian. There is a village located at the end of a mountain range. When we go through that range, we hear a girl calling on us with strange sounds. I turned back. First, it struck me what a beautiful scene it is. Mountain range in Yunan, amist the fog. It is just like one of those Chinese paintings. Then I notice that girl. She is clearly abnormal, with extremely small head. I think it might be Hutchinson-Gilford progeria syndrome. She can't talk, but she is clearly excited to see those caucasions. She kept point at them and then her home. There is something very unbridled about her. Her excitement, her joy, amist that beautiful scene.
@@ -85,3 +82,8 @@ title: Records
 ![1](/assets/img/Moment/44.png)
 ![1](/assets/img/Moment/45.png)
 ![1](/assets/img/Moment/46.png)
+![1](/assets/img/Moment/44.png)
+![1](/assets/img/Moment/45.png)
+![1](/assets/img/Moment/46.png)
+![1](/assets/img/Moment/47.png)
+![1](/assets/img/Moment/48.png)
