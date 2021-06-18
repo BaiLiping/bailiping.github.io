@@ -100,13 +100,13 @@ title: Radar Sensing
 <embed src="/assets/docs/Tracking/compare.pdf" type="application/pdf" width="100%" height=1000>
 
 #### Bayesian Filter
-![1](/assets/img/kalman/kalman1.PNG)
-![1](/assets/img/kalman/kalman2.PNG)
-![1](/assets/img/kalman/kalman3.PNG)
+![1](/assets/img/kalman/kalman1.png)
+![1](/assets/img/kalman/kalman2.png)
+![1](/assets/img/kalman/kalman3.png)
 
 #### Kalman Filter
-![1](/assets/img/kalman/kalman4.PNG)
-![1](/assets/img/kalman/kalman5.PNG)
+![1](/assets/img/kalman/kalman4.png)
+![1](/assets/img/kalman/kalman5.png)
 
 <embed src="/assets/docs/Tracking/BayesianFilter.pdf" type="application/pdf" width="100%" height=430>
 
