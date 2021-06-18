@@ -99,6 +99,17 @@ title: Radar Sensing
 <embed src="/assets/docs/Tracking/overview2.pdf" type="application/pdf" width="100%" height=1000>
 <embed src="/assets/docs/Tracking/compare.pdf" type="application/pdf" width="100%" height=1000>
 
+#### Bayesian Filter
+![1](/assets/img/kalman/kalman1.PNG)
+![1](/assets/img/kalman/kalman2.PNG)
+![1](/assets/img/kalman/kalman3.PNG)
+
+#### Kalman Filter
+![1](/assets/img/kalman/kalman4.PNG)
+![1](/assets/img/kalman/kalman5.PNG)
+
+<embed src="/assets/docs/Tracking/BayesianFilter.pdf" type="application/pdf" width="100%" height=430>
+
 #### GM-PHD
 ![1](/assets/img/radarproject/PHD1.PNG)
 ![1](/assets/img/radarproject/PHD2.PNG)
