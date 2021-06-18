@@ -8,23 +8,6 @@ title: Radar Sensing
 {:toc}
 ----
 
-# MATLAB ACCESS
-```
-1220055702@njupt.edu.cn
-```
-
-# SERVER
-- [featurize](https://featurize.cn)
-![price](/assets/img/radarproject/featurizeprice.png)
-- [matpool](https://www.matpool.com/)
-![price](/assets/img/radarproject/matpoolprice.jpg)
-- [gpushare](https://www.gpushare.com/)
-
-# WORKSTATION
-- Lenovo thinkstation p520
-- CPU Xeon w2125 4ghz
-- GPU rtx2080 8GMEM
-- MEM 32G，can be extended to 128G
 
 # REPOSITORIES
 - [US Naval Research](https://github.com/USNavalResearchLaboratory/TrackerComponentLibrary)
@@ -126,6 +109,10 @@ title: Radar Sensing
 <embed src="/assets/docs/Tracking/jpda.pdf" type="application/pdf" width="100%" height=1000>
 <embed src="/assets/docs/Tracking/jpda1.pdf" type="application/pdf" width="100%" height=1000>
 
+#### CPHD
+<embed src="/assets/docs/Tracking/cpda.pdf" type="application/pdf" width="100%" height=1000>
+<embed src="/assets/docs/Tracking/cpda1.pdf" type="application/pdf" width="100%" height=1000>
+
 #### PMBM
 <embed src="/assets/docs/Tracking/PMBM.pdf" type="application/pdf" width="100%" height=430>
 
@@ -161,5 +148,26 @@ title: Radar Sensing
 [googledrive](https://drive.google.com/drive/folders/1v-AF873jP8p6waChF3pSSqz6HXOOZgkC)
 
 
-# TIMELINE
-![1](/assets/img/radarproject/timeline.jpg)
+# Compute
+
+## MATLAB ACCESS
+```
+1220055702@njupt.edu.cn
+```
+
+## SERVER
+- [featurize](https://featurize.cn)
+![price](/assets/img/radarproject/featurizeprice.png)
+- [matpool](https://www.matpool.com/)
+![price](/assets/img/radarproject/matpoolprice.jpg)
+- [gpushare](https://www.gpushare.com/)
+
+## WORKSTATION
+- Lenovo thinkstation p520
+- CPU Xeon w2125 4ghz
+- GPU rtx2080 8GMEM
+- MEM 32G，can be extended to 128G
+
+## Beihang HPC
+<embed src="/assets/docs/Compute/HPC.pdf" type="application/pdf" width="100%" height=1000>
+<embed src="/assets/docs/Compute/HPC1.pdf" type="application/pdf" width="100%" height=1000>
