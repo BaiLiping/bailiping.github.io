@@ -74,6 +74,9 @@ title: Radar Sensing
 <iframe width="560" height="315" src="https://www.youtube.com/embed/videoseries?list=PL_IHmaMAvkVxdDOBRg2CbcJBq9SY7ZUvs" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 
 ### important papers
+<embed src="/assets/docs/ObjectDetection/ObjectDetection1.pdf" type="application/pdf" width="100%" height=1000>
+<embed src="/assets/docs/ObjectDetection/ObjectDetection2.pdf" type="application/pdf" width="100%" height=1000>
+<embed src="/assets/docs/ObjectDetection/ObjectDetection3.pdf" type="application/pdf" width="100%" height=1000>
 <embed src="/assets/docs/ObjectDetection/2d.pdf" type="application/pdf" width="100%" height=1000>
 
 ## tracking
@@ -106,6 +109,7 @@ title: Radar Sensing
 ![2](/assets/img/kalman/bayesian.jpg)
 
 #### Kalman Filter
+![1](/assets/img/kalman/kalman_block.jpg)
 ![1](/assets/img/kalman/kalman4.png)
 ![1](/assets/img/kalman/kalman5.png)
 ![1](/assets/img/kalman/linearguassian.jpg)
@@ -120,7 +124,9 @@ title: Radar Sensing
 
 
 #### JPDA
+![1](/assets/img/kalman/TrackManagement.png)
 ![1](/assets/img/kalman/pda.jpg)
+
 <embed src="/assets/docs/Tracking/jpda.pdf" type="application/pdf" width="100%" height=1000>
 <embed src="/assets/docs/Tracking/jpda1.pdf" type="application/pdf" width="100%" height=1000>
 
