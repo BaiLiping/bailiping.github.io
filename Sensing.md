@@ -58,7 +58,7 @@ title: Radar Sensing
 <embed src="/assets/docs/Radar/radar6.pdf" type="application/pdf" width="100%" height=1000>
 <embed src="/assets/docs/Radar/radar7.pdf" type="application/pdf" width="100%" height=1000>
 <embed src="/assets/docs/Radar/radar8.pdf" type="application/pdf" width="100%" height=1000>
-<embed src="/assets/docs/Radar/radar9.pdf" type="application/pdf" width="100%" height=430>
+<embed src="/assets/docs/Radar/radar9.pdf" type="application/pdf" width="100%" height=1000>
 
 
 
@@ -192,3 +192,6 @@ title: Radar Sensing
 ## Beihang HPC
 <embed src="/assets/docs/Compute/HPC.pdf" type="application/pdf" width="100%" height=1000>
 <embed src="/assets/docs/Compute/HPC1.pdf" type="application/pdf" width="100%" height=1000>
+
+### SLURM
+<iframe width="560" height="315" src="https://www.youtube.com/embed/videoseries?list=PLyqL4-20ZuTR6k-hwR0hzGp4wvWI377Wy" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
