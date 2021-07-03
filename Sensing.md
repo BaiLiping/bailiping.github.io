@@ -8,17 +8,6 @@ title: Radar Percetion General Documents
 {:toc}
 ----
 
-
-# REPOSITORIES
-- [ScaledYOLO](https://github.com/WongKinYiu/ScaledYOLOv4)
-- [US Naval Research](https://github.com/USNavalResearchLaboratory/TrackerComponentLibrary)
-- [Ba Tuong Vo](http://ba-tuong.vo-au.com/codes.html)
-- [Stone Soup](https://stonesoup.readthedocs.io/en/latest/index.html)
-- [Radar_Perception_Project_2](https://github.com/BaiLiping/Radar_Perception_Project_2)
-- [RadarProjectCode](https://github.com/BaiLiping/RadarProjectCode)
-- [RadarProjectPaper](https://github.com/BaiLiping/RadarProjectPaper)
-- [Ángel García-Fernández(PMBA MATLAB)](https://github.com/Agarciafernandez/MTT)
-
 # PROJECT OVERVIEW
 ![1](/assets/img/radarproject/projectoverview/overview518.jpg)
 

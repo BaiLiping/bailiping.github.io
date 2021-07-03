@@ -13,6 +13,15 @@ title: Radar Based Detection
 ![2](/assets/img/radarproject/filters.png)
 ![2](/assets/img/radarproject/filters2.png)
 
+### repositories
+- [US Naval Research](https://github.com/USNavalResearchLaboratory/TrackerComponentLibrary)
+- [Ba Tuong Vo](http://ba-tuong.vo-au.com/codes.html)
+- [Stone Soup](https://stonesoup.readthedocs.io/en/latest/index.html)
+- [Radar_Perception_Project_2](https://github.com/BaiLiping/Radar_Perception_Project_2)
+- [RadarProjectCode](https://github.com/BaiLiping/RadarProjectCode)
+- [RadarProjectPaper](https://github.com/BaiLiping/RadarProjectPaper)
+- [Ángel García-Fernández(PMBA MATLAB)](https://github.com/Agarciafernandez/MTT)
+
 ### lecture series on multi-object tracking
 <iframe width="560" height="315" src="https://www.youtube.com/embed/videoseries?list=PLTD_k0sZVYFqjFDkJV8GE2EwfxNK59fJY" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 <iframe width="560" height="315" src="https://www.youtube.com/embed/videoseries?list=PLadnyz93xCLhSlm2tMYJSKaik39EZV_Uk" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
@@ -49,9 +58,11 @@ title: Radar Based Detection
 #### PMBM
 <embed src="/assets/docs/Tracking/PMBM.pdf" type="application/pdf" width="100%" height=430>
 <embed src="/assets/docs/Tracking/conjugate_prior.pdf" type="application/pdf" width="100%" height=430>
-<embed src="/assets/docs/Tracking/comparison.pdf" type="application/pdf" width="100%" height=430>
-
+<embed src="/assets/docs/Tracking/comparison.pdf" type="application/pdf" width="100%" height=1000>
 
 ## fusing
 ![1](/assets/img/radarproject/projectoverview/radarcamerafusing.png)
 
+## statistically derive parameters
+<embed src="/assets/docs/Tracking/varingpd.pdf" type="application/pdf" width="100%" height=1000>
+<embed src="/assets/docs/Tracking/varingpd2.pdf" type="application/pdf" width="100%" height=1000>
