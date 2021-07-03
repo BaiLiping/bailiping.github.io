@@ -25,7 +25,7 @@ title: Radar Based Object Detection Detection
 
 ### lecture series
 <iframe width="560" height="315" src="https://www.youtube.com/embed/videoseries?list=PL_IHmaMAvkVxdDOBRg2CbcJBq9SY7ZUvs" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-<iframe src="//player.bilibili.com/player.html?aid=840800367&bvid=BV1Q54y1D7vj&cid=197256538&page=1" scrolling="no" border="0" frameborder="no" framespacing="0" allowfullscreen="true"> </iframe>
+<iframe width="560" height="315" src="//player.bilibili.com/player.html?aid=840800367&bvid=BV1Q54y1D7vj&cid=197256538&page=1" scrolling="no" frameborder="0" allowfullscreen="true"> </iframe>
 
 ### important papers
 <embed src="/assets/docs/ObjectDetection/PointNet.pdf" type="application/pdf" width="100%" height=1000>
