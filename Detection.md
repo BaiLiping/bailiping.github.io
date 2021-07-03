@@ -1,6 +1,6 @@
 ---
 layout: page
-title: Radar Based Object Detection Detection
+title: Radar Based Object Detection
 ---
 
 ----
