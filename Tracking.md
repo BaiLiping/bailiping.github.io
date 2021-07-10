@@ -37,6 +37,8 @@ title: Radar Based Tracking
 <embed src="/assets/docs/Tracking/overview.pdf" type="application/pdf" width="100%" height=1000>
 <embed src="/assets/docs/Tracking/overview2.pdf" type="application/pdf" width="100%" height=1000>
 <embed src="/assets/docs/Tracking/compare.pdf" type="application/pdf" width="100%" height=1000>
+<embed src="/assets/docs/Tracking/extendedtracking.pdf" type="application/pdf" width="100%" height=1000>
+<embed src="/assets/docs/Tracking/advances.pdf" type="application/pdf" width="100%" height=1000>
 
 #### GM-PHD
 ![1](/assets/img/radarproject/PHD1.PNG)
