@@ -68,3 +68,4 @@ title: Radar Based Tracking
 ## statistically derive parameters
 <embed src="/assets/docs/Tracking/varingpd.pdf" type="application/pdf" width="100%" height=1000>
 <embed src="/assets/docs/Tracking/varingpd2.pdf" type="application/pdf" width="100%" height=1000>
+<embed src="/assets/docs/Tracking/p_d.pdf" type="application/pdf" width="100%" height=1000>
