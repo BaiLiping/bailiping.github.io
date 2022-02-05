@@ -1,0 +1,379 @@
+---
+layout: post
+title: Reinforcement Learning
+subtitle: 
+tags: 
+image: 
+show-avatar: false
+social-share: false
+comments: true
+header-includes:
+  - \usepackage[ruled,vlined,linesnumbered]{algorithm2e}
+  - \usepackage{caption}
+  - \usepackage{algorithm}
+  - \usepackage{algpseudocode}
+---
+\DeclareMathOperator*{\argmax}{arg\,max}  
+\DeclareMathOperator*{\argmin}{arg\,min}  
+
+\section{Reinforcement Learning\label{tab:RL}}
+
+\subsection{problem setup and notation}
+The impetus of reinforcement learning is that an agent can learn by interacting with the environment. The agent can observe the state at each step, denoted as $S_{t}$, where t is the $t^{th}$step taken. For our discussion, we focus only on the subset of problem where state s is fully observable by the agent. There are action choices for each state denoted as $A_{t}$. A reward is given for each action taken at step t denoted as $R_{t}$. Terminal step is denoted as t=T. For an episodic problem, T is a finite number, for a non-episodic problem, T=$\infty$
+
+An episode of data is registered as an alternating sequence of state, action and reward:
+
+$$S_{0}, A_{0}, R_{0}, S_{1}, A_{1}, R_{1}.......S_{T-1},A_{T-1},R_{T-1},S_{T},A_{T},R_{T} $$
+
+Gain at step t is defined as the accumulative reward the agent can get from step t onward. A discounting factor $\gamma$between 0 to 1 is introduced to incorporate the sense of time, much like how interest rate encodes time in financial systems:
+
+\begin{equation}
+G_{t} := R_{t}+\gamma R_{t+1}+\gamma ^2 R_{t+2}+...+\gamma^{T-t}R_{T}
+\end{equation}
+
+
+This can be written in its recursive form, known as Bellman Equation, which is the basis for an iteratively implemented backward induction algorithm:
+
+\begin{equation}
+        G_{t}=R_{t}+\gamma G_{t+1}
+	\label{bellman}
+\end{equation}
+Transition matrix is intruduced to encode the stochastidy in the environmental dynamics. Transaction Matrix $\mathcal{P}$is defined as:
+
+\begin{equation}
+	\mathcal{P}_{ss'}^a := Pr\{S_{t+1}=s'|S_{t}=s,A_{t}=a\}
+\end{equation}
+
+
+State/Action Function q(s,a) is definied as expected gain starting from state s by taking action a:
+
+\begin{equation}
+	q(s,a) := \mathbb{E}\{G_t|S_t=s,A_t=a\}=\mathbb{E} \{\sum_{k=0}^{T-t} \gamma ^k R_{t+k+1}| S_t=s,A_t=a\}
+\end{equation}
+Policy is defined as:
+\begin{equation}
+	\pi(s,a):=Pr(A=a|S=s)
+\end{equation}
+Optimal Policy is defined as:
+\begin{equation}
+	\pi^*(s):=\argmax_a q(s,a)
+\end{equation}
+
+
+Value Function v(s) is defined as the expected gain starting from state s:
+
+\begin{equation}
+	v(s) :=  \mathbb{E}\{G_t|S_t=s\}=\mathbb{E} \{\sum_{k=0}^{T-t} \gamma ^k R_{t+k+1}| S_t=s\}=\sum_{a \in \mathcal{A}} \pi(s,a) q(s,a) 
+\end{equation}
+
+\subsection{Original Algorithms}
+\subsubsection{Brute Force Dynamic Programming}
+
+One obvious approch to learning is to construct a model of the environment from statistics. This approach is called Model Based Learning. Let N(s,a) be the number of times the agent choose action a at state s. N(s'|s,a) be the number of times the agent goes to state s' when action a is taken from state s. Transition matrix can be approaximated with the following computation:
+\begin{equation}
+	\mathcal{P}_{ss'}^a \approx \mathcal{\hat{P}}_{ss'}^a=\frac{N(s'|s,a)}{N(s,a)}
+\end{equation}
+
+The most primitive form of model based learning is Bellman Equation based backward induction. Let n denote $n^{th}$steps away from the terminal step T.the $n^{th}$update of Value Function v(s) under policy $\pi^{n}$is denoted as $v^{\pi^n}_{T-n}$. the $n^{th}$State/Action value update is denoted by $q_{T-n}(s,a)$.
+
+\begin{algorithm}[H]
+	\caption{Brute Force Backward Induction}\label{dp-alg}
+	\begin{algorithmic}
+		\State Generate data offline. Compute $\mathcal{P}_{ss'}^a = \hat{\mathcal{P}}_{ss'}^a$
+		\State Initialize $\pi^0(s,a)$as a uniform distribution$\forall a \in \mathcal{A}$
+		\State Initialize $v_{T-0}(s)=\displaystyle\sum_{a \in \mathcal{A}} \pi^0(s,a) \mathcal{P}_{ss'}^a R(s')$
+		\For {n = 1 to T}:
+			\If{$\pi^n(s) \neq \pi^*(s)$}
+				\State Compute for $\forall a \in \mathcal{A}$: 
+					   $q_{T-n}(s,a)=\displaystyle \sum_{ s' \in \mathcal{S}}\mathcal{P}_{ss'}^{a}\{R(s')+\gamma v_{T-(n-1)}(s')\}=\mathbb{E}\{R(s')+\gamma v_{T-(n-1)}(s')\}$
+				\If{$\exists \displaystyle\argmax_{a}\{q_{T-n}(s,a)\}$}
+				\State Update Policy: $\pi^*(s)=\displaystyle\argmax_{a}\{q_{T-n}(s,a)\}$
+			        \State Update Value Function: $v^{\pi^{*}}_{T-n}(s)=\displaystyle \sum_{a \in \mathcal{A}}\pi^{*}(s) q_{T-n}(s,a)$
+				\Else
+				\State No Update
+				\EndIf
+                        \EndIf
+			\EndFor
+        \end{algorithmic}
+\end{algorithm}
+
+\subsubsection{Model Free Learning}
+
+However, because model of the environment is implicitly embedded in v(s) and q(s,a), the model building process can be circumvented entirely. This style of learning is called Model Free Learning. Depending on the updating rules, model free learning can be subdivided into on policy learning and off policy learning. 
+
+One hinderance to the implementation of brute force backward induction algorithm is its memory requirement. If you can store all the experience, then of course backward induction is possible since one only need to extract the record out of memory in a reverse order. A smarter way is to update q value and v value after one episode, one step or n steps. They are called Monte Carlo Method, Temporal Difference Method, and $\lambda(n)$Method respectively. 
+
+A key idea in machine learning is "take mathematical expectation one step at a time". For instance, in gradient descent, the parameter w is updated with $w_{new}=w_{old}-\nabla_{w_{old}}f(w_{old})$and $\nabla_{w}f(w)$is usually a mathematical expectation over a distribution. One can approcimate this by collecting lots of experimental data first, then taking average, finally updating parameter w accordingly. A more convenient way of updating is called stochastic gradient descent. Instead of averaging over large number of experiments, the parameter is updated over every single experiment data. This way, the need to store large quantity of data is circumvented. The same is true here. Instead of figuring out the real q value and v value first by taking and storing large quantity of experiments, we update the values after every unit of data collection, be it one episode, one step or n steps. Let Real(s,a) and Real(s) represent the presumed "real" q and v value as indicated by one experiement. The update rule is: $q(s,a)_{new}=q(s,a)_{old}-\alpha (Real(s,a)-q(s,a)_{old})$and $v(s)_{new}=v(s)_{old}-\alpha (Real(s)-v(s)_{old})$where $\alpha$is the learning rate. This way of updating is stochastic, such that the updating does not always go along the right direction compare to figuring out the mathematical expectation first. However, this method alleviate the need to store large quantity of experimental data. The avaraging is done implicitly over time.
+
+\subsubsection{$\epsilon$-greedy}
+For online learning, $\epsilon$-greedy Policy $\pi_{\epsilon}(s)$is a frequently deployed to balance exploration and exploitation, such that the environment can be encoded in the most efficient manner. $\epsilon$is initiated set to 1 and then asymptotically goes to 0 as the episode counts increases.
+
+\begin{equation*}
+	\pi_{\epsilon}(s,a) = \begin{cases}
+		1-\epsilon+\frac{\epsilon}{|A|}& \displaystyle\argmax_{a} q_{\epsilon}(s,a)\\
+		\frac{\epsilon}{|A|}& \text{otherwise}\\
+           \end{cases}
+\end{equation*}
+
+
+\subsubsection{Model Free Reinforcement Learning Algorithms}
+
+\begin{algorithm}[H]
+	\caption{Monte Carlo}\label{mc-alg}
+	\begin{algorithmic}
+		\State Initialize $\epsilon=1$,  N(s,a)=0 and q(s,a)=0
+		\State Initialize $\pi^{0}(s,a) = \epsilon$-greedy\{q(s,a)\}
+			\For {n=1 to Number of Episodes}
+				\State Store one sequence of date \{$S_{n,1},A_{n,1},R_{n,1},S_{n,2},A_{n,2},R_{n,2},......,S_{n,T_n},A_{n,T_n},R_{n,T_n}$\} 
+				\For {t = 1 to $T_n$}
+				\State Compute $G_{n,t}=R_{n,t}+\gamma R_{n,t+1}+\gamma ^2 R_{n,t+2}+...+\gamma ^{T_i-1}R_{n,T_i}$
+
+				\If {$S_t=s, A_t=a$}
+				\State N(s,a)=N(s,a)+1
+				\State q(s,a)=q(s,a)+$\frac{1}{N(s,a)}\{G_{n,t}$-q(s,a)\}
+				\EndIf
+			        \EndFor
+				\EndFor
+				\State Update $\epsilon:$$\epsilon=\frac{1}{n+1}$
+				\State Update Policy: $\pi^n(s,a)=\epsilon$-greedy\{q(s,a)\}
+
+        \end{algorithmic}
+\end{algorithm}
+
+
+\begin{algorithm}[H]
+	\caption{Q-Learning(Temporal Difference based Learning)}\label{q-alg}
+	\begin{algorithmic}
+		\State {Initialize q(s,a)=0 Set Learning Rate $\alpha$}
+		\State Initialize $\pi^{0}(s,a) = \epsilon$-greedy\{q(s,a)\}
+		\State Start from random state $S_0=s$
+		     \For {t=0 to $\infty$} 
+				\State Sample action $A_t=a$based on $\pi(s,a)$
+				\State Observe $R_t=r, S_{t+1}=s'$
+				\State One Step Update: q(s,a)=q(s,a)+$\alpha \{r+\gamma \displaystyle\argmax_{a} q(s',a)-q(s,a)\}$
+				\State Policy Update: \[\pi(s,a) = \begin{cases}
+					1-\epsilon+\frac{\epsilon}{|A|}& \displaystyle\argmax_{a} q_(s,a)\\
+		\frac{\epsilon}{|A|}& \text{otherwise}\\
+           \end{cases}
+\]
+
+				\State s=s'
+				\If {s'=Terminal State}
+				\State s= a random state
+				\EndIf
+				\EndFor
+        \end{algorithmic}
+\end{algorithm}
+
+\subsection{Deep Reinforcement Learning Algorithms}
+\subsubsection{Approximation}
+When problem gets complex, state S become rather large vector and function approximation with neuronetworks is utlized to facilitate learning. Reinforcement learning as a self-sustaining mathematical framework has been refined by Rich Sutton et al. since 1980s. The progress made with Deep Learning has been successfully applied in the realm of Reinforcement Learning starting with >>>>>>a nature paper link.... This ...
+
+\begin{equation}
+	\hat{v}(s,\textbf{w}) \approx v(s)
+\end{equation}
+
+\begin{equation}
+	\hat{q}(s,a,\textbf{w}) \approx q(s,a)
+\end{equation}
+
+Let the $i^{th}$iteration of parameter be denoted as $\textbf{$w_i$}$. The Loss Function $\mathcal{L}(\textbf{$w_i$})$is defined as the following:
+\begin{equation}
+	\mathcal{L}(\textbf{$w_i$}) := \mathbb{E}\{[v(s)-\hat{v}(s,\textbf{$w_i$})]^2\}
+	\label{v_loss}
+\end{equation}
+
+
+\begin{equation}
+	\mathcal{L}(\textbf{$w_i$}) := \mathbb{E}\{[q(s,a)-\hat{q}(s,a,\textbf{$w_i$})]^2\}
+	\label{q_loss}
+\end{equation}
+
+q(s,a) is the real value, however it is not knowable under the circumstances. It should be approaximated as well.
+
+Let $S_t$=s, $A_t$=a, $R_t$=r, $S_{t+1}$=s',$A_{t+1}$=a':
+\begin{equation}
+	v(s) \approx \sum_{a \in A} R(s,a)+\gamma v(s',\textbf{w})
+	\label{v_approx}
+\end{equation}
+\begin{equation}
+	q(s,a) \approx r+\gamma \argmax_{a} q(s',a',\textbf{w})
+	\label{q_approx}
+\end{equation}
+
+The Gradient of weighing paramter \textbf{w} can be derived from \ref{v_loss} and \ref{q_loss} with the real values substituted by \ref{v_approx} and \ref{q_approx} respectively. By convention, constant is omitted:
+\begin{equation}
+	\nabla_{w_i} \mathcal{L}(w_i)=\mathbb{E}\{\sum_{a \in A} R(s,a)+\gamma v(s',w_{i-1})-v(s',w_i)\} \nabla_{w_i}v(s,w_i)
+	\label{v_gradient}
+\end{equation}
+\begin{equation}
+	\nabla_{w_i} \mathcal{L}(w_i)=\mathbb{E}\{r+\gamma \argmax_a q(s',a',w_{i-1})-q(s,a,w_i)\} \nabla_{w_i} q(s,a,w_i)
+	\label{q_gradient}
+\end{equation}
+
+Analytically, if we want to find the parameter \textbf{w} that minimize $\mathcal{L}(\textbf{w})$, we set the gradient $\nabla_w \mathcal{L}(w)$to 0 and compute \textbf{w} accordingly. Gradient descent is a numerical method to solve for \textbf{w}. The one step update rule is \textbf{w}=\textbf{w}-$\alpha \nabla_w \mathcal{L}(w)$.
+\subsubsection{DQN}
+The agent experience at each time step t is stored as the touple $e_t=(S_t,A_t,R_t,S_{t+1})$. Memory D with capacity N is used to store the exprience. $D=e_1,e_2,...,e_N$. M episodes of data are sampled out of memory D to allow data reuse. There is also an additional preprocessing step to convert each episodes into uniform sequence length, because training neuronetwork on input of varying length is not the most efficient route. A preprocessing step that maps vector $S_T$to $\phi(t)$might be there to make sure the input is uniform. To simplify the algorithm, preprocessing step is omitted.
+
+\begin{algorithm}[H]
+	\caption{Deep Q-Learning with Experience Replay}\label{dqn-alg}
+	\begin{algorithmic}
+		\State Initialize replay memory D to capacity N
+		\State Initialize $q(s,a,\textbf{w})$with random weights \textbf{w}
+		\State Initialize $\pi_{\epsilon}(s,a)$Set learning rate $\alpha$
+		\For{n = 1 to M}:
+			\State Initialize $S_0$=s
+			\For {t = 0 to T}
+			\State Select $A_t$=a based on $\pi_{\epsilon}(s)$
+			\State Observe $R_t=r$and $S_{t+1}=s'$
+			\State Store transitioning ($s,a,r,s'$) in D
+		        \State Sample minibatch of transitions ($s_j,a_j,r_j,s_{j+1}$) from D
+			\If {$s_{t+1}$is terminal state}
+			    \State $y_j=r_j$
+			\Else 
+			    \State $y_j=r_j+\gamma \displaystyle\argmax_{a}q(s_{j+1},a,\textbf{w})$
+			\EndIf
+			\State Loss Function $\mathcal{L}(\textbf{w})=[y_j-q(s_{j+1},a_j,\textbf{w})]^2$
+			\State Perform Gradient Descent Update:$\textbf{w}=\textbf{w}-\alpha\nabla_{\textbf{w}} \mathcal{L}(\textbf{w})$
+                        \EndFor
+		\EndFor
+        \end{algorithmic}
+\end{algorithm}
+
+\subsection{Policy Gradient Methods}
+Policy $\pi(s)$can be written as a function parameterized by $\theta$with s as input and a smooth distribution over all all actions as output.By adjusting parameter $\theta$we can adjust the distribution over action choices for different states. This style of learning is called policy gradient based learning.
+
+Let us register a path sequence taken by the agent as $\tau$such that the sequence is denoted as \{$S_{\tau 0},A_{\tau 0}, R_{\tau 0}...S_{\tau T},A_{\tau T},R_{\tau T}$\}. the gain of sequence $\tau$is defined as the gain of this entire sequence of state, action, reward:
+\begin{equation}
+	G(\tau):=\displaystyle\sum_{t=0}^{T}\gamma^t R_t
+\end{equation}
+
+Denote $P(\tau,\theta)$as the probability that path $\tau$is travesed when the policy is parameterized by $\theta$. The Objective Function can be defined in various ways. Here we adopt the definition as the following:
+\begin{equation}
+	U(\theta)=\sum_{\tau}P(\tau,\theta)G(\tau)
+\end{equation}
+
+
+The objective of policy gradient method is to find the parameter $\theta$to maximize objective function.
+
+The gradient of aforementioned utility function is:
+\begin{equation}
+	\nabla_{\theta} U(\theta)= \nabla_{\theta}\sum_{\tau}P(\tau,\theta) G(\tau)
+\end{equation}
+
+A mathematical sleight of hand called Importance Sampling is deployed to convert this theoretical expression of gradient into something that is algorithmically feasible.
+
+Importance Sampling is a Monto Carlo method where the expectation with respect to a target distribution is approximated by a weighted average of another distribution. 
+Let $\mu=\mathbb{E} f(\textbf{X})$where f(x) obey distribution p(x,$\theta$), where $\theta$is the parameter of the distribution.
+\begin{align}
+	\mu = \int f(x)p(x,\theta_{new})dx= \int \frac{f(x)p(x,\theta_{new})}{p(x,\theta_{old})}p(x,\theta_{old})dx= \mathbb{E}_{\theta_{old}}[\frac{f(x)p(x,\theta_{new})}{p(x,\theta_{old})}  \approx \frac{1}{N}\displaystyle\sum_{i=1}^{N}\frac{f(\textbf{X}_i)p(\textbf{X}_i,\theta_{new})}{p(\textbf{X}_i,\theta_{old})}
+\end{align}
+\begin{align}
+	\begin{split}	
+		\nabla_{\theta} U(\theta)&=\nabla_{\theta}[U(\theta)-b]\\
+		&=\nabla_{\theta} \displaystyle\sum_{\tau}P(\tau,\theta) [G(\tau)-b],\\
+		&=\displaystyle\sum_{\tau}[G(\tau)-b]\nabla_{\theta}P(\tau,\theta),\\
+		&=\displaystyle\sum_{\tau}[G(\tau)-b]\frac{P(\tau,\theta_{old})}{P(\tau,\theta_{old})}\nabla_{\theta}P(\tau,\theta),\\
+		&=\displaystyle\sum_{\tau}P(\tau,\theta_{old})[G(\tau)-b] \frac{\nabla_{\theta}P(\tau,\theta)}{P(\tau,\theta_{old})},\\
+		&=\mathbb{E}_{\theta_{old}}[G(\tau)-b]\nabla_{\theta}lnP(\tau,\theta)|_{\theta_{old}},\\
+		&=\mathbb{E}_{\theta_{old}}[G(\tau)-b]\nabla_{\theta}ln[\displaystyle\prod_{t=0}^{T-1} P(S_{t+1}=s'|S_t=s,A_t=a) \pi_{\theta}(S_t=s,A_t=a)]|_{\theta_{old}},\\
+		&=\mathbb{E}_{\theta_{old}}[G(\tau)-b]\nabla_{\theta}\{\displaystyle\sum_{t=0}^{T-1}[lnP(S_{t+1}=s/|S_t=s,A_t=a)+ln \pi_{\theta}(S_t=s,A_t=a)]|_{\theta_{old}}\},\\
+		&=\mathbb{E}_{\theta_{old}}[G(\tau)-b]\displaystyle\sum_{t=0}^{T-1} \nabla_{\theta} ln \pi_{\theta}(S_t=s,A_t=a)|_{\theta_{old}},\\
+		& \approx \frac{1}{N} \displaystyle\sum_{\tau=1}^N\{[\displaystyle\sum_{k=0}^{T-1}\gamma ^k r(S_k,A_k)-b]\displaystyle\sum_{t=0}^{T-1}\nabla_{\theta}ln\pi_{\theta}(S_t=s,A_t=a)|_{\theta_{old}}\},\\
+	\end{split}
+\end{align}
+\begin{align}
+	\begin{split}
+		&\approx\frac{1}{N}\displaystyle\sum_{\tau=1}^N \displaystyle\sum_{t=0}^{T-1}\nabla_{\theta} ln\pi_\theta(S_t=s,A_t=a)|_{\theta_{old}}[\displaystyle\sum_{k=0}^{t-1}\gamma ^k r(S_k,A_k)+\displaystyle\sum_{k=t}^{T-1} \gamma ^k r(S_k,A_k)-b],\\
+		&\approx \frac{1}{N}\displaystyle\sum_{\tau=1}^N \displaystyle\sum_{t=0}^{T-1} \nabla_{\theta}ln\pi_{\theta}(S_t=s,A_t=a)|_{\theta_{old}} [\displaystyle\sum_{k=t}^{T-1}\gamma ^k r(S_k,A_k)-b]\\
+		&\approx \frac{1}{N}\displaystyle\sum_{\tau=1}^{N}\displaystyle\sum_{t=0}^{T-1}\nabla_{\theta}ln\pi_{\theta}(S_t=s,A_t=a)|_{\theta_{old}}[q^{\pi_{\theta_{old}}}(S_t=s,A_t=a)-b]\\
+	\end{split}
+\end{align}
+Gradient Descent with learning rate $\alpha$update paramter based on the following formula:
+\begin{equation}
+	\theta=\theta- \alpha \nabla_{\theta} U(\theta)
+\end{equation}
+
+We can use stochastic gradient descent method to update $\theta$:
+\begin{equation}
+	\theta=\theta_{old}-\alpha \nabla_{\theta}ln\pi_{\theta}(s,a)|_{\theta_{old}}[q^{\pi_{\theta_{old}}}(s,a)-b]
+\end{equation}
+
+First, let us set b=0. Then we have one of the oldest policy gradient algorithm there is called REINFORCE:
+
+\begin{algorithm}
+	\caption{REINFORCE (Monte-Carlo Policy Gradient)}
+	\begin{algorithmic}
+		\State Initialize $\theta$arbitrarily
+		\For {n=1 to N}
+		\State generate episode data sequence ${S_{n,0},A_{n,0},R_{n,0},S_{n,1}....S_{n,T},A_{n,T},R{n,T}}$
+		\For {t=1 to T-1}
+		\State $\theta=\theta+\alpha \nabla_{\theta}ln\pi_{\theta}(S_t,A_t)q(S_t,A_t)$
+		\EndFor
+		\EndFor
+	\end{algorithmic}
+\end{algorithm}
+
+Actor-Critic Method takes advantage of both policy gradient and function approximation. state/action function for policy $\pi_{\theta}(s)$is approximated by $q^{\pi_{\theta}}(s,a,\textbf{w})$. It is called Actor Critic Method because the action is taken based on policy paramaterized by $\theta$(Actor), but the action is evaluated by a function parameterized by \textbf{w} (Critic).
+
+
+\begin{algorithm}[H]
+	\caption{Q Actor-Critic}\label{ac-alg}
+	\begin{algorithmic}
+		\State Initialize $S_0=s$, paramater $\theta$,\textbf{w} $q^{\pi_{\theta}}(s,a,\textbf{w})$, set learning rate $\alpha_{\theta}$and $\alpha_{w}$
+		\For{t = 1 to T}:
+			\State Sample action a based on policy $\pi_{\theta}(s)$
+			\State Take action a, observe reward $R_t=r$and $S_t=s'$
+			\State Sample action a' based on plicy $\pi_{\theta}(s')$
+			\State Compute TD error: $\delta=r+\gamma q(s',a',\textbf{w})-q(s,a,\textbf{w})$
+			\State Update Policy: $\theta=\theta+\alpha_{\theta}\nabla_{\theta}ln\pi_{\theta}(s,a)q(s,a,\textbf{w})$
+			\State Update \textbf{w}: $\textbf{w}=\textbf{w}+\alpha_{w}\delta$
+		\EndFor
+        \end{algorithmic}
+\end{algorithm}
+ 
+Baseline b is introduced into the derivation to forster convergence. Different algorithms define baseline differently. In advantage Actor-Critic algorithm, baseline is defined as a value function based on $\pi_{\theta}$
+
+\begin{equation}
+	b(s)=v^{\pi_{\theta}}(s)
+\end{equation}
+
+\begin{algorithm}[H]
+	\caption{Advantage Actor Critic (A2C)}
+	\begin{algorithmic}
+		\State Initialize $\theta, S_0=s,\pi_{\theta}(s),\textbf{w} and v(s,\textbf{w})$
+		\State Set learning rate $\alpha_{\theta}$and $\alpha_{w}$
+		\For {n=0 to N}
+		\State Prepare memory for minibatch n
+		\For {k=0 to n}
+		\State set $\delta_{\theta}=0$and $\delta_w=0$
+		\State sample action a based on $\pi_{\theta}(s)$
+		\State observe reward $R_t=r, S_{t+1}=s'$
+		\State store (s,a,r,s') in minibatch
+		\State s=s'
+		\If{s' $\neq$Terminal State}
+		      \State adfadfadfadsf
+		\Else
+		      \State asdfasdfadf
+		\EndIf
+		\EndFor
+		\For {k=n-1 to 0}
+		\State Extract $(s_k,a_k,r_k,s_k')$out of minibatch memory
+		\State Compute $G=r_k+\gamma G$
+		\State Compute $\delta_{\theta}=\delta_{\theta}+\nabla_{\theta}ln\pi_{\theta}(s_k)(G-v(s_k,\textbf{w}))$
+		\State Compute $\delta_{w}=\delta_{w}+\nabla_{w}(G-v(s_k,\textbf{w}))^2$
+		\EndFor
+		\State Update $\theta=\theta+\alpha_{\theta}\delta_{\theta}$and $w=w+\alpha_w \delta_w$
+		\EndFor
+	\end{algorithmic}
+\end{algorithm}
+\subsection{Asyncronous Reinforcement Learning}
+It is obvious that some of the aforementioned computations can be done in an asynchronous manner. Therefore the computation tasks can be distributed over multiple platforms.
+\begin{algorithm}[H]
+	\caption{Asynchronous Advantage Actor Critic (A3C)}
+	\begin{algorithmic}
+		\State //Assume global shared parameter $\theta$and \textbf{w}and global shared counter T=0
+		\State //Assume thread specific parameter $\theta'$and \textbf{w}'
+		\State FILL IN LATER
+         \end{algorithmic}
+\end{algorithm}

@@ -1,0 +1,19 @@
+---
+layout: post
+title: Research
+subtitle: how to be an effective researcher
+tags: [thoughts]
+---
+The job of research consists mainly of reading papers, knowing the field, being able to come up with new ideas and test the validity of that idea.
+
+The soft skills involved with research, how to decompose a task, coorperate with others. Also LaTeX.
+
+- **A Different Mode of Learning** I had this impulse to understand things at its most fundamental level. Given enough time, that would be a reasonable goal. However, a lot of times, the circumstances would be such that to push the project forward, you can only afford to devote a limited amount of time to a particular module of this project. In other words, research is more about picking up enough knowledge to push your project forward, as fast as possible. It is a very different mode of learning.
+- **Tooling** Tools are integral for research of any kind. Ideally, you need to have good command of all the tools such that you can conduct your research in the most effective manner. However, chasing after marginal efficiency gain with one try might turn out to be a waste of time. For instance, those coding language and editors. There are so many levels of using those tools, but sometimes it is about picking up enough of that skill-set such that you can finish your project. The same is true for knowledge. It is a resource management issue.
+- **Having a Prototype** Model after a prototype, at least at the initial part of the research process. 
+- **Key Ideas Comes up Everywhere** There are certain structures that only shows up in selected areas. Physics have lots of those, and mathematicians dreams up self-sustaining logic structures. Yet, there would be motif that shows up everywhere. There are few that I can think of right now. slicing the world into tiny steps where the options are manageable. Take it to the extreme, you get complexity. Applications using this principle: Poisson distribution,
+  at every time slice, it is a binary choice. Black-Shole formula, at each time step, the option price can only goes to Pu or goes down to Pd, but you increase the duration to infinity, you have a distribution. Iteration is an idea that comes up a lot. Can you solve it at one step removed from the final step? if so, can you make that step the final step and have a reasoning chain backward. Stochastic Planning, Contingency table.
+- **the Importance of Research Plan** Even the idea is good, if you can't decompose it, construct it, experiment with it, then nothing would come of a good idea. There might be some of those out there, for instance, relative information. I think information is coded in a relative sense instead of a absolute sense in a system. It could be an important intuition that hold the key to efficiency of human cognition, but I can't really think of a way to implement it in the existing neuro-network frame work, so probably nothing would come of it. The ideas that can be implemented might be more mechanical in nature, but could have more impact since it is implementable.
+- **Conference Presentation** I find that I absorb information much much faster from a presentation than does a paper. I am guessing it is the history side of presentation that illuminate an idea better than does static presentation. Most of the time, they did not come up with that idea out of blue, there is either presidency or faulty steps. Those background information really brings an idea to life.
+
+- **Health and Working for Long Hours** My ideal scenario for life would be that I devote long hours to a work that I can still contribute to even well into my senior years. This calls for health management more so than financial management. Research is an endeavor that  dedication is called for since the outcome might not be as straight as one would hope for. Trial and Error, picking up new ways to look at things, new tools etc, all of those calls for devotion. 
