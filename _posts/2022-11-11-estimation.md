@@ -7,7 +7,8 @@ show-avatar: false
 social-share: false
 comments: true
 ---
-![1](/assets/img/winter1.jpg)
-![1](/assets/img/winter2.jpg)
-![1](/assets/img/winter3.jpg)
-![1](/assets/img/winter4.jpg)
+
+- <embed src="/assets/docs/Estimation/StevenKay1.pdf" type="application/pdf" width="100%" height=1000>
+- <embed src="/assets/docs/Estimation/StevenKay2.pdf" type="application/pdf" width="100%" height=1000>
+
+![1](/assets/img/estimation/compare.png)
