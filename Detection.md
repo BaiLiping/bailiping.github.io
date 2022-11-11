@@ -40,11 +40,3 @@ title: Radar Based Object Detection
 ### tricks
 <embed src="/assets/docs/ObjectDetection/freebie.pdf" type="application/pdf" width="100%" height=1000>
 <embed src="/assets/docs/ObjectDetection/trick.pdf" type="application/pdf" width="100%" height=1000>
-
-- [深度学习 CNN tricks](https://mp.weixin.qq.com/s/BeZ0u4jTCHrLOkDwQp9wzQ)
-- [PyTorch Cookbook](https://mp.weixin.qq.com/s/aQcjnMnnjRD_7eRv0lyvCA)
-- [从SGD到NadaMax，十种优化算法原理及实现](https://mp.weixin.qq.com/s/S5tBdF03nuqppvZOx_AroQ)
-- [深度神经网络模型训练中的 tricks](https://mp.weixin.qq.com/s/MSWhnpUlG4nYkTUZrD_T2A)
-- [深度学习训练tricks总结](https://mp.weixin.qq.com/s/plOPlIGJRCLV99-Ubbquxg)
-- [深度学习有哪些trick](https://mp.weixin.qq.com/s/gDR75rEgFCnXHcw007g_yA)
-
