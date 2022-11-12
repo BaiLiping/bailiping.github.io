@@ -10,4 +10,4 @@ Here are high profile style of courage such as standing up for that is right and
 
 - It takes courage to hold your tongs. 
 - It takes courage to look the other way.
-- It takes courage to make things happen.  
+- It takes courage to focus on your path. 
