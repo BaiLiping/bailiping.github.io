@@ -2,6 +2,12 @@
 layout: page
 title: Ideas
 ---
+<blockquote class="twitter-tweet"><p lang="en" dir="ltr">Drone formation control can probably be utilized to create decoy RCS. One challenging scenario for multi-object tracking is parallel/intersecting tracks. Formation control + cleverly designed trajectories probably can go a long way in terms of deception of the enemy radar. <a href="https://t.co/wto6TTeShT">https://t.co/wto6TTeShT</a></p>&mdash; Bai Liping (白莉萍) (@bai_liping) <a href="https://twitter.com/bai_liping/status/1591391218218700801?ref_src=twsrc%5Etfw">November 12, 2022</a></blockquote> <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script> 
+
+<blockquote class="twitter-tweet"><p lang="en" dir="ltr">That is what it looks like<a href="https://t.co/jhnE6QEvUZ">https://t.co/jhnE6QEvUZ</a></p>&mdash; Bai Liping (白莉萍) (@bai_liping) <a href="https://twitter.com/bai_liping/status/1544187942842683392?ref_src=twsrc%5Etfw">July 5, 2022</a></blockquote> <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script> 
+
+<blockquote class="twitter-tweet"><p lang="zh" dir="ltr">AI看相 <a href="https://t.co/ShX4G4oVsq">https://t.co/ShX4G4oVsq</a> 那么多年高考人脸和分数数据应该可以训练一个网络，直接看人脸估分。</p>&mdash; Bai Liping (白莉萍) (@bai_liping) <a href="https://twitter.com/bai_liping/status/1280470625669148672?ref_src=twsrc%5Etfw">July 7, 2020</a></blockquote> <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script> 
+
 
 [1] **Human as an intricate mechanical computer**. Kinase is a group of enzyme that phosphorylation protein. With phosphorylation, protein would deform,  hence a programmable mechanical cog. On the programming side of the story, metalization of DNA controls what to transcribe. For instance, when the environment head up, certain part of the DNA is metalized and different set of protein, known as heatshock protein is transcribed to perform protective function such that other proteins would experience less deformation. **Is there a language for programming this mechanical computer**?
 
