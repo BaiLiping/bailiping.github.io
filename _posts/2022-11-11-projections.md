@@ -8,6 +8,10 @@ social-share: false
 comments: true
 ---
 
+Analysis of the situation is just to prepare myself for all the future outcomes. Does not mean that I am persimmistive. Just to remind of myself:
+<blockquote class="twitter-tweet"><p lang="zh" dir="ltr">这个可以说是这两年来自己经历的一个总结了，不会再害怕未来世界会怎么样 <a href="https://t.co/seSNqaQzbi">pic.twitter.com/seSNqaQzbi</a></p>&mdash; Yuwei Luo (@luoyuwei) <a href="https://twitter.com/luoyuwei/status/1569105693881372673?ref_src=twsrc%5Etfw">September 11, 2022</a></blockquote> <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script> 
+
+
 Lying with statistics:
 
 <iframe width="560" height="315" src="https://www.youtube.com/embed/ay9xnq7uhkM" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
