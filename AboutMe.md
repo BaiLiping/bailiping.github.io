@@ -1,5 +1,0 @@
-Liping Bai is newly hired for the 2021 PhD position in Beihang University, School of Automation Science and Electrical Engineering. She holds a master of engineering degree from Nanjing University of Posts and Telecommunications, College of Automation and AI.
-
-Control Theory and Reinforcement Learning are misnomers in her mind. What they truly are, is the study of efficient information acquisition and sequential decision making concerning a stochastic dynamic system. She looks forward to her training with Beihang University and cultivating her expertise in merging classical control theory with multi-agent reinforcement learning.
-
-For over 5 years, Liping Bai worked in the hospital investment sector where she forged an in-depth understanding of the Byzantine and ill-structured Chinese healthcare system. She provided due diligence reports to clients such as HCA Healthcare, Kaiser Permanente, UPMC and served as a third party provider to major consulting firms. 
