@@ -6,6 +6,7 @@ GitHub Pages site for `bailiping.com`.
 
 - `/` is the main website entry point.
 - `/sales/` is the static English second-hand sale catalog.
+- `/handover/` is the target-handover project page with paper, repository, and result animation links.
 
 ## Edit sale items
 
