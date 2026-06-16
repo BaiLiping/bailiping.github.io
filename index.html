@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Browse available second-hand sale items by seller and status.">
+    <title>Rotary Second-Hand Sale</title>
+    <link rel="stylesheet" href="./styles.css">
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="header-inner">
+        <a class="brand" href="./" aria-label="Rotary Second-Hand Sale home">
+          <span class="brand-mark" aria-hidden="true">R</span>
+          <span>Rotary Second-Hand Sale</span>
+        </a>
+        <nav class="top-nav" aria-label="Primary">
+          <a href="#items">Browse</a>
+          <a href="/sell">List Item</a>
+        </nav>
+      </div>
+    </header>
+
+    <main>
+      <section class="hero" aria-labelledby="pageTitle">
+        <div class="hero-inner">
+          <div>
+            <p class="eyebrow">Community sale</p>
+            <h1 id="pageTitle">Find useful second-hand items near you</h1>
+            <p class="intro">
+              Browse household items, furniture, electronics, and daily essentials. Availability is updated as items are reserved or sold.
+            </p>
+          </div>
+          <div class="summary" aria-live="polite">
+            <span id="summaryTotal">0 items</span>
+            <span id="summaryAvailable">0 available</span>
+          </div>
+        </div>
+      </section>
+
+      <section class="page-section sellers" aria-labelledby="sellerTitle">
+        <div class="section-heading">
+          <div>
+            <p class="section-kicker">Sellers</p>
+            <h2 id="sellerTitle">Choose a seller</h2>
+          </div>
+        </div>
+        <div id="sellerGrid" class="seller-grid" role="tablist" aria-label="Filter by seller"></div>
+      </section>
+
+      <section class="page-section toolbar" aria-label="Item filters">
+        <div class="filter-row">
+          <div class="filter-group" role="tablist" aria-label="Filter by availability">
+            <button class="filter-button is-active" type="button" data-filter="all" role="tab" aria-selected="true">All</button>
+            <button class="filter-button" type="button" data-filter="available" role="tab" aria-selected="false">Available</button>
+            <button class="filter-button" type="button" data-filter="reserved" role="tab" aria-selected="false">Reserved</button>
+            <button class="filter-button" type="button" data-filter="sold" role="tab" aria-selected="false">Sold</button>
+          </div>
+          <label class="search-field">
+            <span class="sr-only">Search items</span>
+            <input id="searchInput" type="search" placeholder="Search items">
+          </label>
+        </div>
+      </section>
+
+      <section id="contactPanel" class="page-section contact-panel" hidden></section>
+
+      <section id="items" class="page-section item-region" aria-label="Items for sale">
+        <div id="itemGrid" class="item-grid" aria-live="polite"></div>
+        <p id="emptyState" class="empty-state" hidden>No items match this filter.</p>
+      </section>
+    </main>
+
+    <dialog id="itemDialog" class="item-dialog" aria-labelledby="dialogTitle">
+      <button id="dialogClose" class="dialog-close" type="button" aria-label="Close item details">&times;</button>
+      <div class="dialog-layout">
+        <div class="gallery">
+          <div class="gallery-stage">
+            <img id="dialogImage" class="dialog-image" alt="">
+            <button id="galleryPrev" class="gallery-nav gallery-prev" type="button" aria-label="Previous image" hidden>&#8249;</button>
+            <button id="galleryNext" class="gallery-nav gallery-next" type="button" aria-label="Next image" hidden>&#8250;</button>
+            <span id="imageCounter" class="image-counter" hidden></span>
+          </div>
+          <div id="thumbStrip" class="thumb-strip" aria-label="Item images"></div>
+        </div>
+        <div class="dialog-content">
+          <span id="dialogStatus" class="status-badge"></span>
+          <p id="dialogSeller" class="dialog-seller"></p>
+          <h2 id="dialogTitle"></h2>
+          <p id="dialogPrice" class="dialog-price"></p>
+          <p id="dialogDescription" class="dialog-description"></p>
+          <p id="dialogNotes" class="dialog-notes"></p>
+        </div>
+      </div>
+    </dialog>
+
+    <footer class="site-footer">
+      <p>Rotary Second-Hand Sale</p>
+    </footer>
+
+    <script src="./data/items.js"></script>
+    <script src="./app.js"></script>
+  </body>
+</html>
