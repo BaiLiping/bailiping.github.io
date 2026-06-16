@@ -238,6 +238,7 @@ window.SALE_DATA = {
           "title": "Jabra Evolve2 65",
           "price": "1000Kr",
           "status": "later",
+          "hidden": true,
           "quantity": 1,
           "originalPrice": "2727Kr",
           "availableTime": "Daily after 7 pm",

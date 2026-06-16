@@ -43,7 +43,8 @@
   }
 
   function getSellerItems(seller) {
-    return Array.isArray(seller && seller.items) ? seller.items : [];
+    const items = Array.isArray(seller && seller.items) ? seller.items : [];
+    return items.filter((item) => !item.hidden);
   }
 
   function getVisibleItems() {
