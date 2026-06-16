@@ -1,16 +1,16 @@
 window.SALE_DATA = {
   "sourceDocument": "Feishu Base export: Second_Hand_Sales.base",
   "contact": {
-    "title": "Interested in an item?",
-    "message": "Pickup is in Gothenburg. Please include the item name when you get in touch.",
-    "note": "Available time: daily after 7 pm unless otherwise noted."
+    "title": "",
+    "message": "",
+    "note": ""
   },
   "sellers": [
     {
       "id": "gothenburg",
       "name": "Second-hand Sales",
-      "location": "Gothenburg",
-      "email": "",
+      "location": "Richertsgatan 2E (Rotary) or Chalmers main campus",
+      "email": "blp_engineer@outlook.com",
       "phone": "",
       "items": [
         {

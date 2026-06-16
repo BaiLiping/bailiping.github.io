@@ -149,19 +149,20 @@
     }
 
     const rows = [
-      seller.location ? `Pickup: ${seller.location}` : "",
-      "Payment and handover details are confirmed directly.",
       seller.email ? `Email: ${seller.email}` : "",
+      seller.location ? `Pickup: ${seller.location}` : "",
       seller.phone ? `Phone: ${seller.phone}` : "",
       contact.note || ""
     ].filter(Boolean);
+    const title = contact.title || "";
+    const message = contact.message || "";
 
     contactPanel.hidden = false;
     contactPanel.innerHTML = `
       <div class="contact-copy">
         <p class="contact-kicker">Contact</p>
-        <h3>${escapeHtml(contact.title || "Interested in an item?")}</h3>
-        <p class="contact-text">${escapeHtml(contact.message || "Contact the seller with the item name.")}</p>
+        ${title ? `<h3>${escapeHtml(title)}</h3>` : ""}
+        ${message ? `<p class="contact-text">${escapeHtml(message)}</p>` : ""}
         ${rows.length ? `<div class="contact-meta">${rows.map((row) => `<p>${escapeHtml(row)}</p>`).join("")}</div>` : ""}
       </div>
       <div class="contact-action">
