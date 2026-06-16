@@ -1,0 +1,25 @@
+.visitor-counter {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin: 12px auto 0;
+  padding: 7px 12px;
+  border: 1px solid rgba(47, 125, 91, 0.16);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.62);
+  color: var(--muted, #647067);
+  font-size: 0.86rem;
+  font-weight: 800;
+  line-height: 1.2;
+}
+
+.visitor-counter-value {
+  color: var(--accent-dark, #215c43);
+  font-variant-numeric: tabular-nums;
+  font-weight: 900;
+}
+
+.visitor-counter[data-state="error"] .visitor-counter-value {
+  color: var(--muted, #647067);
+}
