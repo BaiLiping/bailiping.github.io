@@ -421,6 +421,30 @@ window.SALE_DATA = {
           ]
         },
         {
+          "id": "sunglasses-with-case",
+          "recordId": "manual-sunglasses-with-case",
+          "title": "Sunglasses with case",
+          "price": "100Kr",
+          "status": "available",
+          "quantity": 1,
+          "originalPrice": "",
+          "availableTime": "Daily after 7 pm",
+          "rooms": [
+            "accessories"
+          ],
+          "category": "Accessories",
+          "website": "",
+          "sellingPrice": "100Kr",
+          "euroPrice": "",
+          "rmbPrice": "",
+          "description": "Available now · Quantity 1 · Accessories · Daily after 7 pm",
+          "notes": "",
+          "images": [
+            "./assets/items/sunglasses-with-case-1.jpeg",
+            "./assets/items/sunglasses-with-case-2.jpeg"
+          ]
+        },
+        {
           "id": "ekenaset-armchair",
           "recordId": "recvmCuH78xnHY",
           "title": "EKENÄSET Armchair",
