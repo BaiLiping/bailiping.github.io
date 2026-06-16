@@ -8,7 +8,7 @@ window.SALE_DATA = {
   "sellers": [
     {
       "id": "gothenburg",
-      "name": "Gothenburg Moving Sale",
+      "name": "Second-hand Sales",
       "location": "Gothenburg",
       "email": "",
       "phone": "",
