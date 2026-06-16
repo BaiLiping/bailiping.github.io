@@ -3,16 +3,16 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="description" content="Browse available second-hand sale items by seller and status.">
-    <title>Rotary Second-Hand Sale</title>
+    <meta name="description" content="Browse available second-hand moving-sale items in Gothenburg.">
+    <title>Gothenburg Moving Sale</title>
     <link rel="stylesheet" href="./styles.css">
   </head>
   <body>
     <header class="site-header">
       <div class="header-inner">
-        <a class="brand" href="./" aria-label="Rotary Second-Hand Sale home">
-          <span class="brand-mark" aria-hidden="true">R</span>
-          <span>Rotary Second-Hand Sale</span>
+        <a class="brand" href="./" aria-label="Gothenburg Moving Sale home">
+          <span class="brand-mark" aria-hidden="true">G</span>
+          <span>Gothenburg Moving Sale</span>
         </a>
         <nav class="top-nav" aria-label="Primary">
           <a href="/">Home</a>
@@ -26,10 +26,10 @@
       <section class="hero" aria-labelledby="pageTitle">
         <div class="hero-inner">
           <div>
-            <p class="eyebrow">Community sale</p>
-            <h1 id="pageTitle">Find useful second-hand items near you</h1>
+            <p class="eyebrow">Gothenburg moving sale</p>
+            <h1 id="pageTitle">Second-hand moving-sale items in Gothenburg</h1>
             <p class="intro">
-              Browse household items, furniture, electronics, and daily essentials. Availability is updated as items are reserved or sold.
+              Browse available-now and for-later furniture, storage, kitchen, electronics, and work items. Each listing includes quantity, price, pickup timing, and the original product link when available.
             </p>
           </div>
           <div class="summary" aria-live="polite">
@@ -42,8 +42,8 @@
       <section class="page-section sellers" aria-labelledby="sellerTitle">
         <div class="section-heading">
           <div>
-            <p class="section-kicker">Sellers</p>
-            <h2 id="sellerTitle">Choose a seller</h2>
+            <p class="section-kicker">Pickup</p>
+            <h2 id="sellerTitle">Gothenburg</h2>
           </div>
         </div>
         <div id="sellerGrid" class="seller-grid" role="tablist" aria-label="Filter by seller"></div>
@@ -51,15 +51,26 @@
 
       <section class="page-section toolbar" aria-label="Item filters">
         <div class="filter-row">
-          <div class="filter-group" role="tablist" aria-label="Filter by availability">
-            <button class="filter-button is-active" type="button" data-filter="all" role="tab" aria-selected="true">All</button>
-            <button class="filter-button" type="button" data-filter="available" role="tab" aria-selected="false">Available</button>
-            <button class="filter-button" type="button" data-filter="reserved" role="tab" aria-selected="false">Reserved</button>
-            <button class="filter-button" type="button" data-filter="sold" role="tab" aria-selected="false">Sold</button>
+          <div class="filter-stack">
+            <div class="filter-group" role="tablist" aria-label="Filter by status">
+              <button class="filter-button is-active" type="button" data-status="all" role="tab" aria-selected="true">All status</button>
+              <button class="filter-button" type="button" data-status="available" role="tab" aria-selected="false">Available</button>
+              <button class="filter-button" type="button" data-status="later" role="tab" aria-selected="false">For later</button>
+            </div>
+            <div class="filter-group" role="tablist" aria-label="Filter by room">
+              <button class="filter-button is-active" type="button" data-room="all" role="tab" aria-selected="true">All rooms</button>
+              <button class="filter-button" type="button" data-room="kitchen" role="tab" aria-selected="false">Kitchen</button>
+              <button class="filter-button" type="button" data-room="bedroom" role="tab" aria-selected="false">Bedroom</button>
+              <button class="filter-button" type="button" data-room="storage" role="tab" aria-selected="false">Storage</button>
+              <button class="filter-button" type="button" data-room="furniture" role="tab" aria-selected="false">Furniture</button>
+              <button class="filter-button" type="button" data-room="electronics" role="tab" aria-selected="false">Electronics</button>
+              <button class="filter-button" type="button" data-room="work" role="tab" aria-selected="false">Work</button>
+              <button class="filter-button" type="button" data-room="bathroom" role="tab" aria-selected="false">Bathroom</button>
+            </div>
           </div>
           <label class="search-field">
             <span class="sr-only">Search items</span>
-            <input id="searchInput" type="search" placeholder="Search items">
+            <input id="searchInput" type="search" placeholder="Search product, room, or price">
           </label>
         </div>
       </section>
@@ -90,13 +101,15 @@
           <h2 id="dialogTitle"></h2>
           <p id="dialogPrice" class="dialog-price"></p>
           <p id="dialogDescription" class="dialog-description"></p>
+          <dl id="dialogDetails" class="dialog-details"></dl>
+          <a id="dialogWebsite" class="product-link" href="#" target="_blank" rel="noreferrer" hidden>Open product page</a>
           <p id="dialogNotes" class="dialog-notes"></p>
         </div>
       </div>
     </dialog>
 
     <footer class="site-footer">
-      <p>Rotary Second-Hand Sale</p>
+      <p>Gothenburg Moving Sale</p>
     </footer>
 
     <script src="./data/items.js"></script>

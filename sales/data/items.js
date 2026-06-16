@@ -1,233 +1,471 @@
 window.SALE_DATA = {
-  sourceDocument: "https://my.feishu.cn/wiki/FxgnwOwjJi76fokGJbRcwMR7nse?from=from_copylink",
-  contact: {
-    title: "Interested in an item?",
-    message: "Contact the seller and include the item name so availability can be confirmed quickly.",
-    note: "Pickup details are confirmed directly with the seller."
+  "sourceDocument": "Feishu Base export: Second_Hand_Sales.base",
+  "contact": {
+    "title": "Interested in an item?",
+    "message": "Pickup is in Gothenburg. Please include the item name when you get in touch.",
+    "note": "Available time: daily after 7 pm unless otherwise noted."
   },
-  sellers: [
+  "sellers": [
     {
-      id: "seller-1",
-      name: "Seller 1",
-      location: "Motgangen 314",
-      email: "",
-      phone: "",
-      items: [
+      "id": "gothenburg",
+      "name": "Gothenburg Moving Sale",
+      "location": "Gothenburg",
+      "email": "",
+      "phone": "",
+      "items": [
         {
-          id: "fridge",
-          title: "Fridge",
-          price: "1300 RMB",
-          status: "available",
-          category: "Appliances",
-          condition: "Good",
-          description: "A private fridge for extra cold storage without relying on a shared kitchen.",
-          notes: "Cools well and has enough room for daily groceries.",
-          images: [
-            "https://moving-sale-items.netlify.app/%E7%89%A9%E5%93%81%E5%9B%BE%E7%89%87/%E7%A5%AD%E5%8F%B8/%E5%86%B0%E7%AE%B1.jpg",
-            "https://moving-sale-items.netlify.app/%E7%89%A9%E5%93%81%E5%9B%BE%E7%89%87/%E7%A5%AD%E5%8F%B8/%E5%86%B0%E7%AE%B11.jpg"
+          "id": "trolly",
+          "recordId": "recvmDbO6FGPuz",
+          "title": "Trolly",
+          "price": "150Kr",
+          "status": "available",
+          "quantity": 1,
+          "originalPrice": "",
+          "availableTime": "Daily after 7 pm",
+          "rooms": [
+            "storage"
+          ],
+          "category": "Storage",
+          "website": "",
+          "sellingPrice": "150Kr",
+          "euroPrice": "",
+          "rmbPrice": "",
+          "description": "Available now · Quantity 1 · Storage · Daily after 7 pm",
+          "notes": "",
+          "images": [
+            "./assets/items/trolley-1.jpeg",
+            "./assets/items/trolley-2.jpeg"
           ]
         },
         {
-          id: "microwave",
-          title: "Microwave",
-          price: "150 RMB",
-          status: "available",
-          category: "Appliances",
-          condition: "Good",
-          description: "Useful for quick meals, reheating leftovers, and avoiding extra trips to the shared kitchen.",
-          notes: "Simple, practical, and ready for everyday use.",
-          images: [
-            "https://moving-sale-items.netlify.app/%E7%89%A9%E5%93%81%E5%9B%BE%E7%89%87/%E7%A5%AD%E5%8F%B8/%E5%BE%AE%E6%B3%A2%E7%82%89.jpg",
-            "https://moving-sale-items.netlify.app/%E7%89%A9%E5%93%81%E5%9B%BE%E7%89%87/%E7%A5%AD%E5%8F%B8/%E5%BE%AE%E6%B3%A2%E7%82%891.jpg"
+          "id": "trofast-storage-cabin",
+          "recordId": "recviXW4FQoK8G",
+          "title": "TROFAST Storage Cabin",
+          "price": "EUR 20 / RMB 200",
+          "status": "later",
+          "quantity": 1,
+          "originalPrice": "",
+          "availableTime": "Daily after 7 pm",
+          "rooms": [
+            "bedroom",
+            "storage"
+          ],
+          "category": "Bedroom, Storage",
+          "website": "https://www.ikea.com/se/sv/p/trofast-foervaringskombination-med-backar-vit-gra-s49575204/",
+          "sellingPrice": "",
+          "euroPrice": "EUR 20",
+          "rmbPrice": "RMB 200",
+          "description": "For later · Quantity 1 · Bedroom, Storage · Daily after 7 pm",
+          "notes": "",
+          "images": [
+            "./assets/items/trofast-storage-cabin.png"
           ]
         },
         {
-          id: "monitor",
-          title: "HD Monitor",
-          price: "888 RMB",
-          status: "available",
-          category: "Electronics",
-          condition: "Good",
-          description: "A larger screen for study, coding, media, or a more comfortable desk setup.",
-          notes: "EU plug included.",
-          images: [
-            "https://moving-sale-items.netlify.app/%E7%89%A9%E5%93%81%E5%9B%BE%E7%89%87/%E7%A5%AD%E5%8F%B8/%E6%98%BE%E7%A4%BA%E5%99%A8.jpg",
-            "https://moving-sale-items.netlify.app/%E7%89%A9%E5%93%81%E5%9B%BE%E7%89%87/%E7%A5%AD%E5%8F%B8/%E6%98%BE%E7%A4%BA%E5%99%A81.jpg"
+          "id": "rigga-clothes-rack",
+          "recordId": "recvmCAJltIDGM",
+          "title": "RIGGA Clothes rack",
+          "price": "90Kr",
+          "status": "available",
+          "quantity": 1,
+          "originalPrice": "199Kr",
+          "availableTime": "Daily after 7 pm",
+          "rooms": [
+            "bedroom"
+          ],
+          "category": "Bedroom",
+          "website": "https://www.ikea.com/se/sv/p/rigga-klaedstaellning-vit-50231630/",
+          "sellingPrice": "90Kr",
+          "euroPrice": "",
+          "rmbPrice": "",
+          "description": "Available now · Quantity 1 · Bedroom · Daily after 7 pm",
+          "notes": "",
+          "images": [
+            "./assets/items/rigga-clothes-rack.png"
           ]
         },
         {
-          id: "router",
-          title: "Router",
-          price: "80 RMB",
-          status: "available",
-          category: "Electronics",
-          condition: "Good",
-          description: "A Wi-Fi router for extending network coverage around a room or apartment.",
-          notes: "Plug it in and connect your devices.",
-          images: [
-            "https://moving-sale-items.netlify.app/%E7%89%A9%E5%93%81%E5%9B%BE%E7%89%87/%E7%A5%AD%E5%8F%B8/%E8%B7%AF%E7%94%B1%E5%99%A8.jpg"
+          "id": "skubbstorage-with-6-compartments",
+          "recordId": "recvmDnWQUZ0GQ",
+          "title": "SKUBBStorage with 6 compartments",
+          "price": "30Kr",
+          "status": "available",
+          "quantity": 1,
+          "originalPrice": "99Kr",
+          "availableTime": "Daily after 7 pm",
+          "rooms": [
+            "bedroom",
+            "storage"
+          ],
+          "category": "Bedroom, Storage",
+          "website": "https://www.ikea.com/se/sv/p/skubb-foervaring-med-6-fack-vit-00245880/",
+          "sellingPrice": "30Kr",
+          "euroPrice": "",
+          "rmbPrice": "",
+          "description": "Available now · Quantity 1 · Bedroom, Storage · Daily after 7 pm",
+          "notes": "",
+          "images": [
+            "./assets/items/skubb-storage-with-6-compartments.png"
           ]
         },
         {
-          id: "floor-lamp",
-          title: "Round Floor Lamp",
-          price: "60 RMB",
-          status: "available",
-          category: "Home",
-          condition: "Good",
-          description: "A soft round lamp for warmer room lighting.",
-          notes: "A simple way to make the room feel more comfortable.",
-          images: [
-            "https://moving-sale-items.netlify.app/%E7%89%A9%E5%93%81%E5%9B%BE%E7%89%87/%E7%A5%AD%E5%8F%B8/%E5%9C%86%E7%81%AF.jpg",
-            "https://moving-sale-items.netlify.app/%E7%89%A9%E5%93%81%E5%9B%BE%E7%89%87/%E7%A5%AD%E5%8F%B8/%E5%9C%86%E7%81%AF1.jpg"
+          "id": "varierashelf-insert",
+          "recordId": "recvmCOn1CC304",
+          "title": "VARIERAShelf insert",
+          "price": "10Kr",
+          "status": "available",
+          "quantity": 2,
+          "originalPrice": "49Kr",
+          "availableTime": "Daily after 7 pm",
+          "rooms": [
+            "kitchen",
+            "storage"
+          ],
+          "category": "Kitchen, Storage",
+          "website": "https://www.ikea.com/se/sv/p/variera-hyllinsats-vit-60136623/",
+          "sellingPrice": "10Kr",
+          "euroPrice": "",
+          "rmbPrice": "",
+          "description": "Available now · Quantity 2 · Kitchen, Storage · Daily after 7 pm",
+          "notes": "",
+          "images": [
+            "./assets/items/variera-shelf-insert.png"
           ]
         },
         {
-          id: "adjustable-table",
-          title: "Small Adjustable Table",
-          price: "100 RMB",
-          status: "available",
-          category: "Furniture",
-          condition: "Good",
-          description: "A compact adjustable table for flexible use around the room.",
-          notes: "Lightweight and easy to move.",
-          images: [
-            "https://moving-sale-items.netlify.app/%E7%89%A9%E5%93%81%E5%9B%BE%E7%89%87/%E7%A5%AD%E5%8F%B8/%E5%B0%8F%E5%8D%87%E9%99%8D%E6%A1%8C.jpg",
-            "https://moving-sale-items.netlify.app/%E7%89%A9%E5%93%81%E5%9B%BE%E7%89%87/%E7%A5%AD%E5%8F%B8/%E5%B0%8F%E5%8D%87%E9%99%8D%E6%A1%8C1.jpg"
+          "id": "tigernu-15-6inch-laptop-backpack",
+          "recordId": "recvmDaAHVuHds",
+          "title": "Tigernu 15.6inch Laptop Backpack",
+          "price": "200Kr",
+          "status": "available",
+          "quantity": 1,
+          "originalPrice": "",
+          "availableTime": "Daily after 7 pm",
+          "rooms": [
+            "work"
+          ],
+          "category": "Work",
+          "website": "https://www.tigernu.com/products/tigernu-laptop-backpack-high-quality-backpack?variant=40511765840037",
+          "sellingPrice": "200Kr",
+          "euroPrice": "",
+          "rmbPrice": "",
+          "description": "Available now · Quantity 1 · Work · Daily after 7 pm",
+          "notes": "",
+          "images": [
+            "./assets/items/tigernu-laptop-backpack-1.jpeg",
+            "./assets/items/tigernu-laptop-backpack-2.jpeg",
+            "./assets/items/tigernu-laptop-backpack-3.jpeg",
+            "./assets/items/tigernu-laptop-backpack-4.jpeg",
+            "./assets/items/tigernu-laptop-backpack-5.jpg",
+            "./assets/items/tigernu-laptop-backpack-6.png",
+            "./assets/items/tigernu-laptop-backpack-7.webp",
+            "./assets/items/tigernu-laptop-backpack-8.webp"
           ]
         },
         {
-          id: "double-bed",
-          title: "Low Platform Double Bed",
-          price: "200 RMB",
-          status: "available",
-          category: "Furniture",
-          condition: "Good",
-          description: "A low double bed frame with a minimalist profile.",
-          notes: "Suggested with a 1.5 m by 2 m fitted sheet.",
-          images: [
-            "https://moving-sale-items.netlify.app/%E7%89%A9%E5%93%81%E5%9B%BE%E7%89%87/%E7%A5%AD%E5%8F%B8/%E6%A6%BB%E6%A6%BB%E7%B1%B3%E5%8F%8C%E4%BA%BA%E5%BA%8A.jpg",
-            "https://moving-sale-items.netlify.app/%E7%89%A9%E5%93%81%E5%9B%BE%E7%89%87/%E7%A5%AD%E5%8F%B8/%E6%A6%BB%E6%A6%BB%E7%B1%B3%E5%8F%8C%E4%BA%BA%E5%BA%8A1.jpg"
+          "id": "tjenastorage-box-with-lid",
+          "recordId": "recvmCNEaJhZAc",
+          "title": "TJENAStorage box with lid",
+          "price": "20Kr",
+          "status": "available",
+          "quantity": 2,
+          "originalPrice": "79Kr",
+          "availableTime": "Daily after 7 pm",
+          "rooms": [
+            "storage"
+          ],
+          "category": "Storage",
+          "website": "https://www.ikea.com/se/sv/p/tjena-foervaringslada-med-lock-vit-svart-prickar-50601056/",
+          "sellingPrice": "20Kr",
+          "euroPrice": "",
+          "rmbPrice": "",
+          "description": "Available now · Quantity 2 · Storage · Daily after 7 pm",
+          "notes": "",
+          "images": [
+            "./assets/items/tjena-storage-box-with-lid.png"
           ]
         },
         {
-          id: "gaming-chair",
-          title: "Gaming Chair",
-          price: "300 RMB",
-          status: "reserved",
-          category: "Furniture",
-          condition: "Fair",
-          description: "A clean chair suitable for study, gaming, or desk work.",
-          notes: "Has some wear, but remains usable.",
-          images: [
-            "https://moving-sale-items.netlify.app/%E7%89%A9%E5%93%81%E5%9B%BE%E7%89%87/%E7%A5%AD%E5%8F%B8/%E7%94%B5%E7%AB%9E%E6%A4%85.jpg"
+          "id": "smallen-desk-chair",
+          "recordId": "recvmCwakVTE1Y",
+          "title": "SMÄLLEN Desk Chair",
+          "price": "100Kr",
+          "status": "available",
+          "quantity": 1,
+          "originalPrice": "299Kr",
+          "availableTime": "Daily after 7 pm",
+          "rooms": [
+            "furniture"
+          ],
+          "category": "Furniture",
+          "website": "https://www.ikea.com/se/sv/p/smaellen-skrivbordsstol-svart-00503435/",
+          "sellingPrice": "100Kr",
+          "euroPrice": "EUR 10",
+          "rmbPrice": "RMB 100",
+          "description": "Available now · Quantity 1 · Furniture · Daily after 7 pm",
+          "notes": "",
+          "images": [
+            "./assets/items/smaellen-desk-chair.png"
           ]
         },
         {
-          id: "keyboard",
-          title: "Keyboard",
-          price: "150 RMB",
-          status: "reserved",
-          category: "Electronics",
-          condition: "Good",
-          description: "A practical keyboard for writing, coding, and everyday computer use.",
-          notes: "Responsive keys and a compact desk footprint.",
-          images: [
-            "https://moving-sale-items.netlify.app/%E7%89%A9%E5%93%81%E5%9B%BE%E7%89%87/%E7%A5%AD%E5%8F%B8/%E9%94%AE%E7%9B%98.jpg",
-            "https://moving-sale-items.netlify.app/%E7%89%A9%E5%93%81%E5%9B%BE%E7%89%87/%E7%A5%AD%E5%8F%B8/%E9%94%AE%E7%9B%981.jpg"
+          "id": "alefjall-office-chair",
+          "recordId": "recvmCv6KrXFVF",
+          "title": "ALEFJÄLL Office Chair",
+          "price": "EUR 200 / RMB 2000",
+          "status": "later",
+          "quantity": 1,
+          "originalPrice": "",
+          "availableTime": "Daily after 7 pm",
+          "rooms": [
+            "work",
+            "furniture"
+          ],
+          "category": "Work, Furniture",
+          "website": "https://www.ikea.com/se/sv/p/alefjaell-kontorsstol-grann-gyllenbrun-40419982/",
+          "sellingPrice": "",
+          "euroPrice": "EUR 200",
+          "rmbPrice": "RMB 2000",
+          "description": "For later · Quantity 1 · Work, Furniture · Daily after 7 pm",
+          "notes": "",
+          "images": [
+            "./assets/items/alefjall-office-chair.png"
           ]
         },
         {
-          id: "projector",
-          title: "Projector",
-          price: "200 RMB",
-          status: "reserved",
-          category: "Electronics",
-          condition: "Good",
-          description: "A projector for watching films or sharing media on a blank wall.",
-          notes: "Works best in a dim room.",
-          images: [
-            "https://moving-sale-items.netlify.app/%E7%89%A9%E5%93%81%E5%9B%BE%E7%89%87/%E7%A5%AD%E5%8F%B8/%E6%8A%95%E5%BD%B1%E4%BB%AA.jpg",
-            "https://moving-sale-items.netlify.app/%E7%89%A9%E5%93%81%E5%9B%BE%E7%89%87/%E7%A5%AD%E5%8F%B8/%E6%8A%95%E5%BD%B1%E4%BB%AA1.jpg"
+          "id": "jabra-evolve2-65",
+          "recordId": "recvmDPeTq6hfJ",
+          "title": "Jabra Evolve2 65",
+          "price": "1000Kr",
+          "status": "available",
+          "quantity": 1,
+          "originalPrice": "2727Kr",
+          "availableTime": "Daily after 7 pm",
+          "rooms": [
+            "electronics"
+          ],
+          "category": "Electronics",
+          "website": "https://www.jabra.com/sv-se/business/office-headsets/jabra-evolve/jabra-evolve2-65",
+          "sellingPrice": "1000Kr",
+          "euroPrice": "",
+          "rmbPrice": "",
+          "description": "Available now · Quantity 1 · Electronics · Daily after 7 pm",
+          "notes": "",
+          "images": [
+            "./assets/items/jabra-evolve2-65-1.jpeg",
+            "./assets/items/jabra-evolve2-65-2.png"
           ]
         },
         {
-          id: "multicooker",
-          title: "Multifunction Cooker",
-          price: "80 RMB",
-          status: "sold",
-          category: "Appliances",
-          condition: "Good",
-          description: "A compact cooker for several simple cooking tasks.",
-          notes: "Useful when you want one small appliance to do more than one job.",
-          images: [
-            "https://moving-sale-items.netlify.app/%E7%89%A9%E5%93%81%E5%9B%BE%E7%89%87/%E7%A5%AD%E5%8F%B8/%E5%A4%9A%E5%8A%9F%E8%83%BD%E9%94%85.jpg"
+          "id": "nissafors-trolley",
+          "recordId": "recvmCtVjUESLK",
+          "title": "NISSAFORS Trolley",
+          "price": "100Kr",
+          "status": "later",
+          "quantity": 2,
+          "originalPrice": "279Kr",
+          "availableTime": "Daily after 7 pm",
+          "rooms": [
+            "kitchen",
+            "storage"
+          ],
+          "category": "Kitchen, Storage",
+          "website": "https://www.ikea.com/se/sv/p/nissafors-rullvagn-vit-40465733/",
+          "sellingPrice": "100Kr",
+          "euroPrice": "EUR 10",
+          "rmbPrice": "RMB 100",
+          "description": "For later · Quantity 2 · Kitchen, Storage · Daily after 7 pm",
+          "notes": "",
+          "images": [
+            "./assets/items/nissafors-trolley.png"
           ]
         },
         {
-          id: "electric-heater",
-          title: "Electric Heater",
-          price: "100 RMB",
-          status: "sold",
-          category: "Home",
-          condition: "Good",
-          description: "A portable heater for extra warmth in colder months.",
-          notes: "Compact and easy to place near a desk or bed.",
-          images: [
-            "https://moving-sale-items.netlify.app/%E7%89%A9%E5%93%81%E5%9B%BE%E7%89%87/%E7%A5%AD%E5%8F%B8/%E7%94%B5%E6%9A%96%E6%B0%94.jpg"
+          "id": "intressant-spice-mill",
+          "recordId": "recvmCA9GK0YNo",
+          "title": "INTRESSANT Spice Mill",
+          "price": "70Kr",
+          "status": "available",
+          "quantity": 1,
+          "originalPrice": "149Kr",
+          "availableTime": "Daily after 7 pm",
+          "rooms": [
+            "kitchen"
+          ],
+          "category": "Kitchen",
+          "website": "https://www.ikea.com/se/sv/p/intressant-kryddkvarn-akacia-50301897/",
+          "sellingPrice": "70Kr",
+          "euroPrice": "",
+          "rmbPrice": "",
+          "description": "Available now · Quantity 1 · Kitchen · Daily after 7 pm",
+          "notes": "",
+          "images": [
+            "./assets/items/intressant-spice-mill.png"
           ]
         },
         {
-          id: "rice-cooker",
-          title: "Rice Cooker",
-          price: "50 RMB",
-          status: "sold",
-          category: "Appliances",
-          condition: "Good",
-          description: "A small rice cooker for simple daily meals.",
-          notes: "Good for one-person portions.",
-          images: [
-            "https://moving-sale-items.netlify.app/%E7%89%A9%E5%93%81%E5%9B%BE%E7%89%87/%E7%A5%AD%E5%8F%B8/%E7%94%B5%E9%A5%AD%E7%85%B2.jpg"
+          "id": "15-6-inch-laptop-carry-bag",
+          "recordId": "recvmDcqML5iyu",
+          "title": "15.6 Inch Laptop carry bag",
+          "price": "100Kr",
+          "status": "available",
+          "quantity": 1,
+          "originalPrice": "",
+          "availableTime": "Daily after 7 pm",
+          "rooms": [
+            "work"
+          ],
+          "category": "Work",
+          "website": "",
+          "sellingPrice": "100Kr",
+          "euroPrice": "",
+          "rmbPrice": "",
+          "description": "Available now · Quantity 1 · Work · Daily after 7 pm",
+          "notes": "",
+          "images": [
+            "./assets/items/laptop-carry-bag-1.jpeg",
+            "./assets/items/laptop-carry-bag-2.jpeg"
           ]
         },
         {
-          id: "air-fryer",
-          title: "Air Fryer",
-          price: "150 RMB",
-          status: "sold",
-          category: "Appliances",
-          condition: "Good",
-          description: "An air fryer for fries, chicken wings, steak, and other quick meals.",
-          notes: "Includes extra air-fryer paper.",
-          images: [
-            "https://moving-sale-items.netlify.app/%E7%89%A9%E5%93%81%E5%9B%BE%E7%89%87/%E7%A5%AD%E5%8F%B8/%E7%A9%BA%E6%B0%94%E7%82%B8%E9%94%85.jpg"
+          "id": "blaskata-mouse-pad",
+          "recordId": "recvmCBFOVMDo7",
+          "title": "BLÅSKATA mouse pad",
+          "price": "30Kr",
+          "status": "available",
+          "quantity": 1,
+          "originalPrice": "99Kr",
+          "availableTime": "Daily after 7 pm",
+          "rooms": [
+            "work"
+          ],
+          "category": "Work",
+          "website": "https://www.ikea.com/se/sv/p/blaskata-spelmusmatta-svart-gra-moenstrad-60569522/",
+          "sellingPrice": "30Kr",
+          "euroPrice": "",
+          "rmbPrice": "",
+          "description": "Available now · Quantity 1 · Work · Daily after 7 pm",
+          "notes": "",
+          "images": [
+            "./assets/items/blaskata-mouse-pad.png"
           ]
         },
         {
-          id: "kitchen-cart",
-          title: "Kitchen Cart",
-          price: "100 RMB",
-          status: "sold",
-          category: "Furniture",
-          condition: "Good",
-          description: "A small IKEA-style trolley for snacks, drinks, toiletries, or bedside storage.",
-          notes: "Moves easily and fits in small rooms.",
-          images: [
-            "https://moving-sale-items.netlify.app/%E7%89%A9%E5%93%81%E5%9B%BE%E7%89%87/%E7%A5%AD%E5%8F%B8/%E5%B0%8F%E5%90%83%E8%BD%A6.jpg",
-            "https://moving-sale-items.netlify.app/%E7%89%A9%E5%93%81%E5%9B%BE%E7%89%87/%E7%A5%AD%E5%8F%B8/%E5%B0%8F%E5%90%83%E8%BD%A61.jpg"
+          "id": "sihoo-m57-office-chair",
+          "recordId": "recviz86cvdCKy",
+          "title": "Sihoo M57 Office Chair",
+          "price": "EUR 150 / RMB 1500",
+          "status": "later",
+          "quantity": 1,
+          "originalPrice": "",
+          "availableTime": "Daily after 7 pm",
+          "rooms": [
+            "work",
+            "furniture"
+          ],
+          "category": "Work, Furniture",
+          "website": "https://de.sihoooffice.com/products/m57-ergonomischer-stuhl",
+          "sellingPrice": "",
+          "euroPrice": "EUR 150",
+          "rmbPrice": "RMB 1500",
+          "description": "For later · Quantity 1 · Work, Furniture · Daily after 7 pm",
+          "notes": "",
+          "images": [
+            "./assets/items/sihoo-m57-office-chair.png"
           ]
         },
         {
-          id: "artificial-flowers",
-          title: "Artificial Flowers",
-          price: "10 RMB",
-          status: "sold",
-          category: "Home",
-          condition: "Good",
-          description: "Decorative artificial flowers for adding color to a room.",
-          notes: "No watering required.",
-          images: [
-            "https://moving-sale-items.netlify.app/%E7%89%A9%E5%93%81%E5%9B%BE%E7%89%87/%E7%A5%AD%E5%8F%B8/%E7%A5%9E%E7%A7%98%E7%9A%84%E5%81%87%E8%8A%B1.jpg"
+          "id": "krokfjorden",
+          "recordId": "recvmCzBLdquQQ",
+          "title": "KROKFJORDEN",
+          "price": "40Kr",
+          "status": "available",
+          "quantity": 2,
+          "originalPrice": "129Kr",
+          "availableTime": "Daily after 7 pm",
+          "rooms": [
+            "bathroom"
+          ],
+          "category": "Bathroom",
+          "website": "https://www.ikea.com/se/sv/p/krokfjorden-hoernhylla-med-sugpropp-zinkplaeterad-30454004/",
+          "sellingPrice": "40Kr",
+          "euroPrice": "",
+          "rmbPrice": "",
+          "description": "Available now · Quantity 2 · Bathroom · Daily after 7 pm",
+          "notes": "",
+          "images": [
+            "./assets/items/krokfjorden.png"
+          ]
+        },
+        {
+          "id": "jall-ironing-board",
+          "recordId": "recvmCAuF424My",
+          "title": "JÄLL Ironing board",
+          "price": "30Kr",
+          "status": "available",
+          "quantity": 1,
+          "originalPrice": "99Kr",
+          "availableTime": "Daily after 7 pm",
+          "rooms": [
+            "bedroom"
+          ],
+          "category": "Bedroom",
+          "website": "http://ikea.com/se/sv/p/jaell-strykbraeda-bord-20242890/",
+          "sellingPrice": "30Kr",
+          "euroPrice": "",
+          "rmbPrice": "",
+          "description": "Available now · Quantity 1 · Bedroom · Daily after 7 pm",
+          "notes": "",
+          "images": [
+            "./assets/items/jall-ironing-board.png"
+          ]
+        },
+        {
+          "id": "ekenaset-armchair",
+          "recordId": "recvmCuH78xnHY",
+          "title": "EKENÄSET Armchair",
+          "price": "EUR 100 / RMB 1000",
+          "status": "later",
+          "quantity": 1,
+          "originalPrice": "",
+          "availableTime": "Daily after 7 pm",
+          "rooms": [
+            "bedroom",
+            "furniture"
+          ],
+          "category": "Bedroom, Furniture",
+          "website": "https://www.ikea.com/se/sv/p/ekenaeset-fatoelj-kilanda-ljusbeige-90533174/",
+          "sellingPrice": "",
+          "euroPrice": "EUR 100",
+          "rmbPrice": "RMB 1000",
+          "description": "For later · Quantity 1 · Bedroom, Furniture · Daily after 7 pm",
+          "notes": "",
+          "images": [
+            "./assets/items/ekenaset-armchair.png"
+          ]
+        },
+        {
+          "id": "jonaxel-storage-cabin",
+          "recordId": "recvmCw4OeAbhX",
+          "title": "JONAXEL Storage Cabin",
+          "price": "EUR 20 / RMB 200",
+          "status": "later",
+          "quantity": 1,
+          "originalPrice": "",
+          "availableTime": "Daily after 7 pm",
+          "rooms": [
+            "bedroom",
+            "storage"
+          ],
+          "category": "Bedroom, Storage",
+          "website": "https://www.ikea.com/se/sv/p/jonaxel-foervaringskombination-vit-s79305098/",
+          "sellingPrice": "",
+          "euroPrice": "EUR 20",
+          "rmbPrice": "RMB 200",
+          "description": "For later · Quantity 1 · Bedroom, Storage · Daily after 7 pm",
+          "notes": "",
+          "images": [
+            "./assets/items/jonaxel-storage-cabin.png"
           ]
         }
       ]

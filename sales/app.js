@@ -3,8 +3,7 @@
   const sellers = Array.isArray(data.sellers) ? data.sellers : [];
   const statusLabels = {
     available: "Available",
-    reserved: "Reserved",
-    sold: "Sold"
+    later: "For later"
   };
 
   const sellerGrid = document.querySelector("#sellerGrid");
@@ -13,7 +12,8 @@
   const summaryTotal = document.querySelector("#summaryTotal");
   const summaryAvailable = document.querySelector("#summaryAvailable");
   const contactPanel = document.querySelector("#contactPanel");
-  const filterButtons = Array.from(document.querySelectorAll(".filter-button"));
+  const statusFilterButtons = Array.from(document.querySelectorAll("[data-status]"));
+  const roomFilterButtons = Array.from(document.querySelectorAll("[data-room]"));
   const searchInput = document.querySelector("#searchInput");
   const dialog = document.querySelector("#itemDialog");
   const dialogClose = document.querySelector("#dialogClose");
@@ -23,6 +23,8 @@
   const dialogStatus = document.querySelector("#dialogStatus");
   const dialogPrice = document.querySelector("#dialogPrice");
   const dialogDescription = document.querySelector("#dialogDescription");
+  const dialogDetails = document.querySelector("#dialogDetails");
+  const dialogWebsite = document.querySelector("#dialogWebsite");
   const dialogNotes = document.querySelector("#dialogNotes");
   const galleryPrev = document.querySelector("#galleryPrev");
   const galleryNext = document.querySelector("#galleryNext");
@@ -30,7 +32,8 @@
   const thumbStrip = document.querySelector("#thumbStrip");
 
   let activeSellerId = sellers[0] ? sellers[0].id : "";
-  let activeFilter = "all";
+  let activeStatusFilter = "all";
+  let activeRoomFilter = "all";
   let searchTerm = "";
   let currentItems = [];
   let galleryImages = [];
@@ -50,8 +53,13 @@
     const normalizedSearch = searchTerm.trim().toLowerCase();
 
     return items.filter((item) => {
-      const statusMatch = activeFilter === "all" || item.status === activeFilter;
+      const statusMatch = activeStatusFilter === "all" || item.status === activeStatusFilter;
+      const roomMatch = activeRoomFilter === "all" || itemRooms(item).includes(activeRoomFilter);
       if (!statusMatch) {
+        return false;
+      }
+
+      if (!roomMatch) {
         return false;
       }
 
@@ -62,8 +70,13 @@
       return [
         item.title,
         item.category,
-        item.condition,
         item.description,
+        item.price,
+        item.originalPrice,
+        item.availableTime,
+        item.website,
+        formatQuantity(item.quantity),
+        formatRoomList(item),
         item.notes,
         seller && seller.name
       ]
@@ -75,7 +88,7 @@
   }
 
   function statusClass(status) {
-    return status === "reserved" || status === "sold" ? status : "available";
+    return status === "later" || status === "reserved" || status === "sold" ? status : "available";
   }
 
   function statusLabel(status) {
@@ -84,6 +97,31 @@
 
   function itemImages(item) {
     return Array.isArray(item.images) ? item.images.filter(Boolean) : [];
+  }
+
+  function itemRooms(item) {
+    return Array.isArray(item.rooms) ? item.rooms.filter(Boolean) : [];
+  }
+
+  function formatQuantity(quantity) {
+    return quantity || quantity === 0 ? `Qty ${quantity}` : "";
+  }
+
+  function formatRoomList(item) {
+    const rooms = itemRooms(item);
+    return rooms.map((room) => room.charAt(0).toUpperCase() + room.slice(1)).join(", ");
+  }
+
+  function detailRows(item) {
+    const rows = [
+      { label: "Status", value: statusLabel(item.status) },
+      { label: "Quantity", value: item.quantity || item.quantity === 0 ? String(item.quantity) : "" },
+      { label: "Rooms", value: formatRoomList(item) },
+      { label: "Available time", value: item.availableTime || "" },
+      { label: "Original price", value: item.originalPrice || "" },
+      { label: "Reference price", value: [item.euroPrice, item.rmbPrice].filter(Boolean).join(" / ") }
+    ];
+    return rows.filter((row) => row.value);
   }
 
   function render() {
@@ -99,6 +137,8 @@
     sellers.forEach((seller) => {
       const items = getSellerItems(seller);
       const available = items.filter((item) => item.status === "available").length;
+      const later = items.filter((item) => item.status === "later").length;
+      const times = Array.from(new Set(items.map((item) => item.availableTime).filter(Boolean)));
       const isActive = seller.id === activeSellerId;
       const button = document.createElement("button");
       button.type = "button";
@@ -108,7 +148,7 @@
       button.innerHTML = `
         <span class="seller-card-kicker">${escapeHtml(seller.name || "Seller")}</span>
         <strong>${escapeHtml(seller.location || "Pickup location to be confirmed")}</strong>
-        <span>${items.length} items · ${available} available</span>
+        <span>${items.length} items · ${available} available · ${later} for later${times.length ? ` · ${escapeHtml(times.join(", "))}` : ""}</span>
       `;
       button.addEventListener("click", () => {
         activeSellerId = seller.id;
@@ -122,8 +162,9 @@
     const seller = getActiveSeller();
     const items = getSellerItems(seller);
     const available = items.filter((item) => item.status === "available").length;
+    const later = items.filter((item) => item.status === "later").length;
     summaryTotal.textContent = `${items.length} item${items.length === 1 ? "" : "s"}`;
-    summaryAvailable.textContent = `${available} available`;
+    summaryAvailable.textContent = `${available} available · ${later} for later`;
   }
 
   function renderContact() {
@@ -138,6 +179,7 @@
 
     const rows = [
       seller.location ? `Pickup: ${seller.location}` : "",
+      "Payment and handover details are confirmed directly.",
       seller.email ? `Email: ${seller.email}` : "",
       seller.phone ? `Phone: ${seller.phone}` : "",
       contact.note || ""
@@ -168,6 +210,12 @@
       const images = itemImages(item);
       const image = images[0] || "";
       const status = statusClass(item.status);
+      const rooms = itemRooms(item);
+      const facts = [
+        formatQuantity(item.quantity),
+        item.availableTime || "",
+        item.originalPrice ? `Original ${item.originalPrice}` : ""
+      ].filter(Boolean);
       const card = document.createElement("article");
       card.className = `item-card status-${status}`;
       card.tabIndex = 0;
@@ -184,10 +232,10 @@
             <span class="price">${escapeHtml(item.price || "Price TBC")}</span>
           </div>
           <p class="description">${escapeHtml(item.description || "")}</p>
+          ${facts.length ? `<div class="card-facts">${facts.map((fact) => `<span>${escapeHtml(fact)}</span>`).join("")}</div>` : ""}
           <div class="card-meta">
-            ${item.category ? `<span>${escapeHtml(item.category)}</span>` : ""}
-            ${item.condition ? `<span>${escapeHtml(item.condition)}</span>` : ""}
-            ${seller && seller.location ? `<span>${escapeHtml(seller.location)}</span>` : ""}
+            ${rooms.map((room) => `<span>${escapeHtml(room.charAt(0).toUpperCase() + room.slice(1))}</span>`).join("")}
+            ${item.website ? "<span>Product link</span>" : ""}
           </div>
         </div>
       `;
@@ -212,11 +260,14 @@
     galleryImages = itemImages(item);
     galleryIndex = 0;
     dialogTitle.textContent = item.title || "Untitled item";
-    dialogSeller.textContent = seller ? seller.name : "";
-    dialogPrice.textContent = item.price || "Price TBC";
+    dialogSeller.textContent = seller ? seller.location || seller.name : "";
+    dialogPrice.textContent = item.price ? `Price: ${item.price}` : "Price TBC";
     dialogDescription.textContent = item.description || "";
-    dialogNotes.textContent = item.notes || "";
-    dialogNotes.hidden = !item.notes;
+    renderDetails(item);
+    renderProductLink(item);
+    const note = item.notes && !item.notes.startsWith("Original price:") ? item.notes : "";
+    dialogNotes.textContent = note;
+    dialogNotes.hidden = !note;
     dialogStatus.className = `status-badge status-${statusClass(item.status)}`;
     dialogStatus.textContent = statusLabel(item.status);
     renderGallery();
@@ -226,6 +277,37 @@
     } else {
       dialog.setAttribute("open", "");
     }
+  }
+
+  function renderDetails(item) {
+    if (!dialogDetails) {
+      return;
+    }
+
+    const rows = detailRows(item);
+    dialogDetails.innerHTML = rows
+      .map((row) => `
+        <div>
+          <dt>${escapeHtml(row.label)}</dt>
+          <dd>${escapeHtml(row.value)}</dd>
+        </div>
+      `)
+      .join("");
+  }
+
+  function renderProductLink(item) {
+    if (!dialogWebsite) {
+      return;
+    }
+
+    if (!item.website) {
+      dialogWebsite.hidden = true;
+      dialogWebsite.removeAttribute("href");
+      return;
+    }
+
+    dialogWebsite.hidden = false;
+    dialogWebsite.href = item.website;
   }
 
   function renderGallery() {
@@ -263,10 +345,23 @@
   }
 
   function bindEvents() {
-    filterButtons.forEach((button) => {
+    statusFilterButtons.forEach((button) => {
       button.addEventListener("click", () => {
-        activeFilter = button.dataset.filter || "all";
-        filterButtons.forEach((item) => {
+        activeStatusFilter = button.dataset.status || "all";
+        statusFilterButtons.forEach((item) => {
+          const isActive = item === button;
+          item.classList.toggle("is-active", isActive);
+          item.setAttribute("aria-selected", String(isActive));
+        });
+        renderSummary();
+        renderItems();
+      });
+    });
+
+    roomFilterButtons.forEach((button) => {
+      button.addEventListener("click", () => {
+        activeRoomFilter = button.dataset.room || "all";
+        roomFilterButtons.forEach((item) => {
           const isActive = item === button;
           item.classList.toggle("is-active", isActive);
           item.setAttribute("aria-selected", String(isActive));

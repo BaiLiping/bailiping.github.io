@@ -304,6 +304,11 @@ h1 {
   gap: 14px;
 }
 
+.filter-stack {
+  display: grid;
+  gap: 8px;
+}
+
 .filter-group {
   display: flex;
   flex-wrap: wrap;
@@ -496,6 +501,11 @@ h1 {
   color: var(--reserved);
 }
 
+.status-later {
+  background: #fff2d8;
+  color: #8a5814;
+}
+
 .status-sold {
   background: var(--sold-soft);
   color: var(--sold);
@@ -540,6 +550,19 @@ h1 {
   font-size: 0.93rem;
   -webkit-box-orient: vertical;
   -webkit-line-clamp: 2;
+}
+
+.card-facts {
+  display: grid;
+  gap: 6px;
+  color: #4d554d;
+  font-size: 0.85rem;
+  font-weight: 800;
+}
+
+.card-facts span {
+  min-width: 0;
+  overflow-wrap: anywhere;
 }
 
 .card-meta {
@@ -718,6 +741,54 @@ h1 {
 .dialog-notes {
   margin-bottom: 0;
   color: var(--muted);
+}
+
+.dialog-details {
+  display: grid;
+  gap: 10px;
+  margin: 2px 0 0;
+}
+
+.dialog-details div {
+  display: grid;
+  grid-template-columns: 128px minmax(0, 1fr);
+  gap: 12px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--line);
+}
+
+.dialog-details dt {
+  color: #5d675f;
+  font-size: 0.8rem;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+.dialog-details dd {
+  min-width: 0;
+  margin: 0;
+  color: var(--text);
+  font-weight: 800;
+  overflow-wrap: anywhere;
+}
+
+.product-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 42px;
+  padding: 0 16px;
+  border-radius: 8px;
+  background: var(--text);
+  color: #fff;
+  font-weight: 900;
+  text-decoration: none;
+}
+
+.product-link:hover,
+.product-link:focus-visible {
+  background: var(--accent-dark);
+  outline: none;
 }
 
 .dialog-notes {
