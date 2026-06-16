@@ -20,13 +20,13 @@ window.SALE_DATA = {
           "price": "100Kr",
           "status": "available",
           "quantity": 1,
-          "originalPrice": "",
+          "originalPrice": "270Kr",
           "availableTime": "",
           "rooms": [
             "storage"
           ],
           "category": "Storage",
-          "website": "",
+          "website": "https://www.amazon.se/dp/B082Y7QLPS",
           "sellingPrice": "100Kr",
           "euroPrice": "",
           "rmbPrice": "",
@@ -34,7 +34,8 @@ window.SALE_DATA = {
           "notes": "",
           "images": [
             "./assets/items/trolley-1.jpeg",
-            "./assets/items/trolley-2.jpeg"
+            "./assets/items/trolley-2.jpeg",
+            "./assets/items/trolley-amazon.png"
           ]
         },
         {
