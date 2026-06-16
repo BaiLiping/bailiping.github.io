@@ -237,7 +237,7 @@ window.SALE_DATA = {
           "recordId": "recvmDPeTq6hfJ",
           "title": "Jabra Evolve2 65",
           "price": "1000Kr",
-          "status": "available",
+          "status": "later",
           "quantity": 1,
           "originalPrice": "2727Kr",
           "availableTime": "Daily after 7 pm",
@@ -249,7 +249,7 @@ window.SALE_DATA = {
           "sellingPrice": "1000Kr",
           "euroPrice": "",
           "rmbPrice": "",
-          "description": "Available now · Quantity 1 · Electronics · Daily after 7 pm",
+          "description": "For later · Quantity 1 · Electronics · Daily after 7 pm",
           "notes": "",
           "images": [
             "./assets/items/jabra-evolve2-65-1.jpeg",
