@@ -70,8 +70,8 @@
         item.title,
         item.category,
         item.description,
-        item.price,
-        item.originalPrice,
+        shouldShowPrice(item) ? item.price : "",
+        shouldShowPrice(item) ? item.originalPrice : "",
         item.availableTime,
         item.website,
         formatQuantity(item.quantity),
@@ -111,14 +111,19 @@
     return rooms.map((room) => room.charAt(0).toUpperCase() + room.slice(1)).join(", ");
   }
 
+  function shouldShowPrice(item) {
+    return item && item.status !== "later";
+  }
+
   function detailRows(item) {
+    const showPrice = shouldShowPrice(item);
     const rows = [
       { label: "Status", value: statusLabel(item.status) },
       { label: "Quantity", value: item.quantity || item.quantity === 0 ? String(item.quantity) : "" },
       { label: "Rooms", value: formatRoomList(item) },
       { label: "Available time", value: item.availableTime || "" },
-      { label: "Original price", value: item.originalPrice || "" },
-      { label: "Reference price", value: [item.euroPrice, item.rmbPrice].filter(Boolean).join(" / ") }
+      { label: "Original price", value: showPrice ? item.originalPrice || "" : "" },
+      { label: "Reference price", value: showPrice ? [item.euroPrice, item.rmbPrice].filter(Boolean).join(" / ") : "" }
     ];
     return rows.filter((row) => row.value);
   }
@@ -183,10 +188,11 @@
       const image = images[0] || "";
       const status = statusClass(item.status);
       const rooms = itemRooms(item);
+      const showPrice = shouldShowPrice(item);
       const facts = [
         formatQuantity(item.quantity),
         item.availableTime || "",
-        item.originalPrice ? `Original ${item.originalPrice}` : ""
+        showPrice && item.originalPrice ? `Original ${item.originalPrice}` : ""
       ].filter(Boolean);
       const card = document.createElement("article");
       card.className = `item-card status-${status}`;
@@ -201,7 +207,7 @@
         <div class="card-body">
           <div class="card-title-row">
             <h2>${escapeHtml(item.title || "Untitled item")}</h2>
-            <span class="price">${escapeHtml(item.price || "Price TBC")}</span>
+            ${showPrice ? `<span class="price">${escapeHtml(item.price || "Price TBC")}</span>` : ""}
           </div>
           <p class="description">${escapeHtml(item.description || "")}</p>
           ${facts.length ? `<div class="card-facts">${facts.map((fact) => `<span>${escapeHtml(fact)}</span>`).join("")}</div>` : ""}
@@ -233,7 +239,13 @@
     galleryIndex = 0;
     dialogTitle.textContent = item.title || "Untitled item";
     dialogSeller.textContent = seller ? seller.location || seller.name : "";
-    dialogPrice.textContent = item.price ? `Price: ${item.price}` : "Price TBC";
+    if (shouldShowPrice(item)) {
+      dialogPrice.hidden = false;
+      dialogPrice.textContent = item.price ? `Price: ${item.price}` : "Price TBC";
+    } else {
+      dialogPrice.hidden = true;
+      dialogPrice.textContent = "";
+    }
     dialogDescription.textContent = item.description || "";
     renderDetails(item);
     renderProductLink(item);
