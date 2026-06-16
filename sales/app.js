@@ -6,7 +6,6 @@
     later: "For later"
   };
 
-  const sellerGrid = document.querySelector("#sellerGrid");
   const itemGrid = document.querySelector("#itemGrid");
   const emptyState = document.querySelector("#emptyState");
   const summaryTotal = document.querySelector("#summaryTotal");
@@ -125,37 +124,9 @@
   }
 
   function render() {
-    renderSellers();
     renderSummary();
     renderContact();
     renderItems();
-  }
-
-  function renderSellers() {
-    sellerGrid.innerHTML = "";
-
-    sellers.forEach((seller) => {
-      const items = getSellerItems(seller);
-      const available = items.filter((item) => item.status === "available").length;
-      const later = items.filter((item) => item.status === "later").length;
-      const times = Array.from(new Set(items.map((item) => item.availableTime).filter(Boolean)));
-      const isActive = seller.id === activeSellerId;
-      const button = document.createElement("button");
-      button.type = "button";
-      button.role = "tab";
-      button.className = `seller-card${isActive ? " is-active" : ""}`;
-      button.setAttribute("aria-selected", String(isActive));
-      button.innerHTML = `
-        <span class="seller-card-kicker">${escapeHtml(seller.name || "Seller")}</span>
-        <strong>${escapeHtml(seller.location || "Pickup location to be confirmed")}</strong>
-        <span>${items.length} items · ${available} available · ${later} for later${times.length ? ` · ${escapeHtml(times.join(", "))}` : ""}</span>
-      `;
-      button.addEventListener("click", () => {
-        activeSellerId = seller.id;
-        render();
-      });
-      sellerGrid.appendChild(button);
-    });
   }
 
   function renderSummary() {
