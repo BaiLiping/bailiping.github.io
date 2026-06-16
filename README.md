@@ -1,17 +1,18 @@
-# Rotary Second-Hand Catalog
+# bailiping.com
 
-Static English catalog modeled after `moving-sale-items.netlify.app`.
+GitHub Pages site for `bailiping.com`.
 
-## Edit items
+## Structure
 
-Update `data/items.js`. The data is grouped by seller:
+- `/` is the main website entry point.
+- `/sales/` is the static English second-hand sale catalog.
+
+## Edit sale items
+
+Update `sales/data/items.js`. The data is grouped by seller:
 
 - `status`: `available`, `reserved`, or `sold`
 - `images`: one or more image URLs
 - `price`: display text, so currencies can be written exactly as needed
 
 The Feishu link provided by the user is stored in `sourceDocument`, but it was not readable without Feishu login from this environment.
-
-## Deploy on Netlify
-
-Use this folder as the publish directory. No build command is required.
