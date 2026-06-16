@@ -21,7 +21,7 @@ window.SALE_DATA = {
           "status": "available",
           "quantity": 1,
           "originalPrice": "",
-          "availableTime": "Daily after 7 pm",
+          "availableTime": "",
           "rooms": [
             "storage"
           ],
@@ -30,7 +30,7 @@ window.SALE_DATA = {
           "sellingPrice": "100Kr",
           "euroPrice": "",
           "rmbPrice": "",
-          "description": "Available now · Quantity 1 · Storage · Daily after 7 pm",
+          "description": "Available now · Quantity 1 · Storage",
           "notes": "",
           "images": [
             "./assets/items/trolley-1.jpeg",
@@ -45,7 +45,7 @@ window.SALE_DATA = {
           "status": "later",
           "quantity": 1,
           "originalPrice": "",
-          "availableTime": "Daily after 7 pm",
+          "availableTime": "",
           "rooms": [
             "bedroom",
             "storage"
@@ -55,7 +55,7 @@ window.SALE_DATA = {
           "sellingPrice": "",
           "euroPrice": "EUR 20",
           "rmbPrice": "RMB 200",
-          "description": "For later · Quantity 1 · Bedroom, Storage · Daily after 7 pm",
+          "description": "For later · Quantity 1 · Bedroom, Storage",
           "notes": "",
           "images": [
             "./assets/items/trofast-storage-cabin.png"
@@ -69,7 +69,7 @@ window.SALE_DATA = {
           "status": "available",
           "quantity": 1,
           "originalPrice": "199Kr",
-          "availableTime": "Daily after 7 pm",
+          "availableTime": "",
           "rooms": [
             "bedroom"
           ],
@@ -78,7 +78,7 @@ window.SALE_DATA = {
           "sellingPrice": "90Kr",
           "euroPrice": "",
           "rmbPrice": "",
-          "description": "Available now · Quantity 1 · Bedroom · Daily after 7 pm",
+          "description": "Available now · Quantity 1 · Bedroom",
           "notes": "",
           "images": [
             "./assets/items/rigga-clothes-rack.png"
@@ -92,7 +92,7 @@ window.SALE_DATA = {
           "status": "available",
           "quantity": 1,
           "originalPrice": "99Kr",
-          "availableTime": "Daily after 7 pm",
+          "availableTime": "",
           "rooms": [
             "bedroom",
             "storage"
@@ -102,7 +102,7 @@ window.SALE_DATA = {
           "sellingPrice": "30Kr",
           "euroPrice": "",
           "rmbPrice": "",
-          "description": "Available now · Quantity 1 · Bedroom, Storage · Daily after 7 pm",
+          "description": "Available now · Quantity 1 · Bedroom, Storage",
           "notes": "",
           "images": [
             "./assets/items/skubb-storage-with-6-compartments.png"
@@ -116,7 +116,7 @@ window.SALE_DATA = {
           "status": "available",
           "quantity": 2,
           "originalPrice": "49Kr",
-          "availableTime": "Daily after 7 pm",
+          "availableTime": "",
           "rooms": [
             "kitchen",
             "storage"
@@ -126,7 +126,7 @@ window.SALE_DATA = {
           "sellingPrice": "10Kr",
           "euroPrice": "",
           "rmbPrice": "",
-          "description": "Available now · Quantity 2 · Kitchen, Storage · Daily after 7 pm",
+          "description": "Available now · Quantity 2 · Kitchen, Storage",
           "notes": "",
           "images": [
             "./assets/items/variera-shelf-insert.png"
@@ -140,7 +140,7 @@ window.SALE_DATA = {
           "status": "available",
           "quantity": 1,
           "originalPrice": "",
-          "availableTime": "Daily after 7 pm",
+          "availableTime": "",
           "rooms": [
             "work"
           ],
@@ -149,7 +149,7 @@ window.SALE_DATA = {
           "sellingPrice": "200Kr",
           "euroPrice": "",
           "rmbPrice": "",
-          "description": "Available now · Quantity 1 · Work · Daily after 7 pm",
+          "description": "Available now · Quantity 1 · Work",
           "notes": "",
           "images": [
             "./assets/items/tigernu-laptop-backpack-1.jpeg",
@@ -170,7 +170,7 @@ window.SALE_DATA = {
           "status": "available",
           "quantity": 2,
           "originalPrice": "79Kr",
-          "availableTime": "Daily after 7 pm",
+          "availableTime": "",
           "rooms": [
             "storage"
           ],
@@ -179,7 +179,7 @@ window.SALE_DATA = {
           "sellingPrice": "20Kr",
           "euroPrice": "",
           "rmbPrice": "",
-          "description": "Available now · Quantity 2 · Storage · Daily after 7 pm",
+          "description": "Available now · Quantity 2 · Storage",
           "notes": "",
           "images": [
             "./assets/items/tjena-storage-box-with-lid.png"
@@ -193,7 +193,7 @@ window.SALE_DATA = {
           "status": "available",
           "quantity": 1,
           "originalPrice": "299Kr",
-          "availableTime": "Daily after 7 pm",
+          "availableTime": "",
           "rooms": [
             "furniture"
           ],
@@ -202,7 +202,7 @@ window.SALE_DATA = {
           "sellingPrice": "100Kr",
           "euroPrice": "EUR 10",
           "rmbPrice": "RMB 100",
-          "description": "Available now · Quantity 1 · Furniture · Daily after 7 pm",
+          "description": "Available now · Quantity 1 · Furniture",
           "notes": "",
           "images": [
             "./assets/items/smaellen-desk-chair.png"
@@ -216,7 +216,7 @@ window.SALE_DATA = {
           "status": "later",
           "quantity": 1,
           "originalPrice": "",
-          "availableTime": "Daily after 7 pm",
+          "availableTime": "",
           "rooms": [
             "work",
             "furniture"
@@ -226,7 +226,7 @@ window.SALE_DATA = {
           "sellingPrice": "",
           "euroPrice": "EUR 200",
           "rmbPrice": "RMB 2000",
-          "description": "For later · Quantity 1 · Work, Furniture · Daily after 7 pm",
+          "description": "For later · Quantity 1 · Work, Furniture",
           "notes": "",
           "images": [
             "./assets/items/alefjall-office-chair.png"
@@ -241,7 +241,7 @@ window.SALE_DATA = {
           "hidden": true,
           "quantity": 1,
           "originalPrice": "2727Kr",
-          "availableTime": "Daily after 7 pm",
+          "availableTime": "",
           "rooms": [
             "electronics"
           ],
@@ -250,7 +250,7 @@ window.SALE_DATA = {
           "sellingPrice": "1000Kr",
           "euroPrice": "",
           "rmbPrice": "",
-          "description": "For later · Quantity 1 · Electronics · Daily after 7 pm",
+          "description": "For later · Quantity 1 · Electronics",
           "notes": "",
           "images": [
             "./assets/items/jabra-evolve2-65-1.jpeg",
@@ -265,7 +265,7 @@ window.SALE_DATA = {
           "status": "later",
           "quantity": 2,
           "originalPrice": "279Kr",
-          "availableTime": "Daily after 7 pm",
+          "availableTime": "",
           "rooms": [
             "kitchen",
             "storage"
@@ -275,7 +275,7 @@ window.SALE_DATA = {
           "sellingPrice": "100Kr",
           "euroPrice": "EUR 10",
           "rmbPrice": "RMB 100",
-          "description": "For later · Quantity 2 · Kitchen, Storage · Daily after 7 pm",
+          "description": "For later · Quantity 2 · Kitchen, Storage",
           "notes": "",
           "images": [
             "./assets/items/nissafors-trolley.png"
@@ -289,7 +289,7 @@ window.SALE_DATA = {
           "status": "available",
           "quantity": 1,
           "originalPrice": "149Kr",
-          "availableTime": "Daily after 7 pm",
+          "availableTime": "",
           "rooms": [
             "kitchen"
           ],
@@ -298,7 +298,7 @@ window.SALE_DATA = {
           "sellingPrice": "70Kr",
           "euroPrice": "",
           "rmbPrice": "",
-          "description": "Available now · Quantity 1 · Kitchen · Daily after 7 pm",
+          "description": "Available now · Quantity 1 · Kitchen",
           "notes": "",
           "images": [
             "./assets/items/intressant-spice-mill.png"
@@ -312,7 +312,7 @@ window.SALE_DATA = {
           "status": "available",
           "quantity": 1,
           "originalPrice": "",
-          "availableTime": "Daily after 7 pm",
+          "availableTime": "",
           "rooms": [
             "work"
           ],
@@ -321,7 +321,7 @@ window.SALE_DATA = {
           "sellingPrice": "100Kr",
           "euroPrice": "",
           "rmbPrice": "",
-          "description": "Available now · Quantity 1 · Work · Daily after 7 pm",
+          "description": "Available now · Quantity 1 · Work",
           "notes": "",
           "images": [
             "./assets/items/laptop-carry-bag-1.jpeg",
@@ -336,7 +336,7 @@ window.SALE_DATA = {
           "status": "available",
           "quantity": 1,
           "originalPrice": "99Kr",
-          "availableTime": "Daily after 7 pm",
+          "availableTime": "",
           "rooms": [
             "work"
           ],
@@ -345,7 +345,7 @@ window.SALE_DATA = {
           "sellingPrice": "30Kr",
           "euroPrice": "",
           "rmbPrice": "",
-          "description": "Available now · Quantity 1 · Work · Daily after 7 pm",
+          "description": "Available now · Quantity 1 · Work",
           "notes": "",
           "images": [
             "./assets/items/blaskata-mouse-pad.png"
@@ -359,7 +359,7 @@ window.SALE_DATA = {
           "status": "later",
           "quantity": 1,
           "originalPrice": "",
-          "availableTime": "Daily after 7 pm",
+          "availableTime": "",
           "rooms": [
             "work",
             "furniture"
@@ -369,7 +369,7 @@ window.SALE_DATA = {
           "sellingPrice": "",
           "euroPrice": "EUR 150",
           "rmbPrice": "RMB 1500",
-          "description": "For later · Quantity 1 · Work, Furniture · Daily after 7 pm",
+          "description": "For later · Quantity 1 · Work, Furniture",
           "notes": "",
           "images": [
             "./assets/items/sihoo-m57-office-chair.png"
@@ -383,7 +383,7 @@ window.SALE_DATA = {
           "status": "available",
           "quantity": 2,
           "originalPrice": "129Kr",
-          "availableTime": "Daily after 7 pm",
+          "availableTime": "",
           "rooms": [
             "bathroom"
           ],
@@ -392,7 +392,7 @@ window.SALE_DATA = {
           "sellingPrice": "40Kr",
           "euroPrice": "",
           "rmbPrice": "",
-          "description": "Available now · Quantity 2 · Bathroom · Daily after 7 pm",
+          "description": "Available now · Quantity 2 · Bathroom",
           "notes": "",
           "images": [
             "./assets/items/krokfjorden.png"
@@ -406,7 +406,7 @@ window.SALE_DATA = {
           "status": "available",
           "quantity": 1,
           "originalPrice": "99Kr",
-          "availableTime": "Daily after 7 pm",
+          "availableTime": "",
           "rooms": [
             "bedroom"
           ],
@@ -415,7 +415,7 @@ window.SALE_DATA = {
           "sellingPrice": "30Kr",
           "euroPrice": "",
           "rmbPrice": "",
-          "description": "Available now · Quantity 1 · Bedroom · Daily after 7 pm",
+          "description": "Available now · Quantity 1 · Bedroom",
           "notes": "",
           "images": [
             "./assets/items/jall-ironing-board.png"
@@ -429,7 +429,7 @@ window.SALE_DATA = {
           "status": "available",
           "quantity": 1,
           "originalPrice": "",
-          "availableTime": "Daily after 7 pm",
+          "availableTime": "",
           "rooms": [
             "accessories"
           ],
@@ -438,7 +438,7 @@ window.SALE_DATA = {
           "sellingPrice": "100Kr",
           "euroPrice": "",
           "rmbPrice": "",
-          "description": "Available now · Quantity 1 · Accessories · Daily after 7 pm",
+          "description": "Available now · Quantity 1 · Accessories",
           "notes": "",
           "images": [
             "./assets/items/sunglasses-with-case-1.jpeg",
@@ -453,7 +453,7 @@ window.SALE_DATA = {
           "status": "available",
           "quantity": 1,
           "originalPrice": "",
-          "availableTime": "Daily after 7 pm",
+          "availableTime": "",
           "rooms": [
             "accessories"
           ],
@@ -462,7 +462,7 @@ window.SALE_DATA = {
           "sellingPrice": "100Kr",
           "euroPrice": "",
           "rmbPrice": "",
-          "description": "Available now · Quantity 1 · Accessories · Daily after 7 pm",
+          "description": "Available now · Quantity 1 · Accessories",
           "notes": "",
           "images": [
             "./assets/items/sunglasses-set-2-1.jpeg",
@@ -477,7 +477,7 @@ window.SALE_DATA = {
           "status": "later",
           "quantity": 1,
           "originalPrice": "",
-          "availableTime": "Daily after 7 pm",
+          "availableTime": "",
           "rooms": [
             "bedroom",
             "furniture"
@@ -487,7 +487,7 @@ window.SALE_DATA = {
           "sellingPrice": "",
           "euroPrice": "EUR 100",
           "rmbPrice": "RMB 1000",
-          "description": "For later · Quantity 1 · Bedroom, Furniture · Daily after 7 pm",
+          "description": "For later · Quantity 1 · Bedroom, Furniture",
           "notes": "",
           "images": [
             "./assets/items/ekenaset-armchair.png"
@@ -501,7 +501,7 @@ window.SALE_DATA = {
           "status": "later",
           "quantity": 1,
           "originalPrice": "",
-          "availableTime": "Daily after 7 pm",
+          "availableTime": "",
           "rooms": [
             "bedroom",
             "storage"
@@ -511,7 +511,7 @@ window.SALE_DATA = {
           "sellingPrice": "",
           "euroPrice": "EUR 20",
           "rmbPrice": "RMB 200",
-          "description": "For later · Quantity 1 · Bedroom, Storage · Daily after 7 pm",
+          "description": "For later · Quantity 1 · Bedroom, Storage",
           "notes": "",
           "images": [
             "./assets/items/jonaxel-storage-cabin.png"
