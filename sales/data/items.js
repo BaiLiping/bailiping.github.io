@@ -67,7 +67,8 @@ window.SALE_DATA = {
           "recordId": "recvmCAJltIDGM",
           "title": "RIGGA Clothes rack",
           "price": "90Kr",
-          "status": "available",
+          "status": "sold",
+          "hidden": true,
           "quantity": 1,
           "originalPrice": "199Kr",
           "availableTime": "",
@@ -79,7 +80,7 @@ window.SALE_DATA = {
           "sellingPrice": "90Kr",
           "euroPrice": "",
           "rmbPrice": "",
-          "description": "Available now · Quantity 1 · Bedroom",
+          "description": "Sold · Quantity 1 · Bedroom",
           "notes": "",
           "images": [
             "./assets/items/rigga-clothes-rack.png"
