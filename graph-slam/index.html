@@ -1,0 +1,1578 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Graph SLAM, iSAM, bundle adjustment &amp; structure from motion — a notebook walkthrough | Bai Liping</title>
+<meta name="description" content="Graph SLAM step by step, Jupyter-notebook style: odometry, ICP scan matching, pose graphs, loop closure, batch optimization, and incremental smoothing with iSAM and iSAM2 — then bundle adjustment and structure from motion. All numerical cells and figures are reproducible.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+<script>
+window.MathJax = {
+  tex: { inlineMath: [['$', '$'], ['\\(', '\\)']], displayMath: [['$$', '$$']] },
+  options: { skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'] }
+};
+</script>
+<script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+<style>
+:root {
+  --page: #f2f3f5;
+  --paper: #ffffff;
+  --text: #1f2430;
+  --muted: #5f6b7a;
+  --line: #dcdfe4;
+  --code-bg: #f7f7f9;
+  --code-border: #e3e5e9;
+  --prompt-in: #303f9f;
+  --prompt-out: #b71c1c;
+  --accent: #2f7d5b;
+  --stream-bg: #ffffff;
+  --kw: #008000;
+  --str: #ba2121;
+  --com: #9199a3;
+  --num: #1750a5;
+  --fn: #0000ff;
+  --op: #a2632d;
+  --mono: "JetBrains Mono", ui-monospace, "SF Mono", Menlo, monospace;
+  --sans: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  background: var(--page);
+  color: var(--text);
+  font-family: var(--sans);
+  font-size: 16px;
+  line-height: 1.62;
+  -webkit-font-smoothing: antialiased;
+}
+a { color: var(--accent); text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+/* ---- site header, matching bailiping.com ---- */
+.site-header {
+  position: sticky; top: 0; z-index: 40;
+  border-bottom: 1px solid var(--line);
+  background: rgba(255, 255, 255, 0.92);
+  backdrop-filter: blur(12px);
+}
+.header-inner {
+  width: min(1020px, calc(100% - 32px));
+  margin-inline: auto;
+  display: flex; align-items: center; justify-content: space-between;
+  min-height: 56px; gap: 16px;
+}
+.brand { display: inline-flex; align-items: center; gap: 10px; font-weight: 800; color: var(--text); }
+.brand:hover { text-decoration: none; }
+.brand-mark {
+  display: grid; place-items: center; width: 30px; height: 30px;
+  border-radius: 8px; background: var(--accent); color: #fff; font-weight: 900;
+}
+.header-file { font-family: var(--mono); font-size: 13px; color: var(--muted); }
+.header-file b { color: var(--text); font-weight: 600; }
+.kernel {
+  display: inline-flex; align-items: center; gap: 7px;
+  font-family: var(--mono); font-size: 11.5px; color: var(--muted);
+}
+.kernel::before { content: ""; width: 9px; height: 9px; border-radius: 50%; background: #46a758; }
+@media (max-width: 620px) { .header-file { display: none; } }
+
+/* ---- notebook shell ---- */
+.notebook {
+  width: min(1020px, calc(100% - 24px));
+  margin: 28px auto 60px;
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  box-shadow: 0 14px 44px rgba(31, 36, 48, 0.08);
+  padding: 34px 0 46px;
+  overflow: hidden;
+}
+
+.cell { display: flex; gap: 0; padding: 7px 26px; }
+.cell:hover .prompt { opacity: 1; }
+.prompt {
+  flex: 0 0 84px;
+  padding: 9px 10px 0 0;
+  text-align: right;
+  font-family: var(--mono);
+  font-size: 12.5px;
+  white-space: nowrap;
+  user-select: none;
+  opacity: 0.85;
+}
+.prompt.in { color: var(--prompt-in); font-weight: 600; }
+.prompt.out { color: var(--prompt-out); font-weight: 600; }
+.cell-body { flex: 1; min-width: 0; }
+
+/* markdown cells */
+.cell.md .cell-body { padding: 8px 4px 10px; max-width: 800px; }
+.cell.md h1 { font-size: 2.05rem; line-height: 1.15; letter-spacing: -0.015em; margin: 6px 0 14px; }
+.cell.md h2 {
+  font-size: 1.5rem; margin: 26px 0 12px; letter-spacing: -0.01em;
+  padding-top: 14px; border-top: 1px solid var(--line);
+}
+.cell.md h2 .step {
+  display: inline-block; margin-right: 10px;
+  font-family: var(--mono); font-size: 0.72em; font-weight: 600;
+  color: var(--accent); letter-spacing: 0.08em; text-transform: uppercase;
+  transform: translateY(-2px);
+}
+.cell.md h3 { font-size: 1.13rem; margin: 18px 0 8px; }
+.cell.md p { margin: 0 0 13px; color: #2b3240; }
+.cell.md ul, .cell.md ol { margin: 0 0 13px 22px; color: #2b3240; }
+.cell.md li { margin-bottom: 5px; }
+.cell.md strong { font-weight: 650; }
+.cell.md code {
+  font-family: var(--mono); font-size: 0.86em;
+  background: var(--code-bg); border: 1px solid var(--code-border);
+  border-radius: 4px; padding: 1px 5px;
+}
+.cell.md .lede { font-size: 1.07rem; color: var(--muted); }
+.cell.md blockquote {
+  margin: 0 0 13px; padding: 10px 16px;
+  border-left: 3px solid var(--accent);
+  background: #f4f8f5; border-radius: 0 6px 6px 0;
+  color: #3a4453; font-size: 0.95em;
+}
+.jump-nav {
+  display: flex; flex-wrap: wrap; gap: 8px; margin: 4px 0 18px;
+}
+.jump-nav a {
+  display: inline-flex; align-items: center; min-height: 34px; padding: 5px 10px;
+  border: 1px solid var(--line); border-radius: 999px; background: #fff;
+  font-family: var(--mono); font-size: 12px; color: #344054;
+}
+.jump-nav a:hover { border-color: var(--accent); text-decoration: none; color: var(--accent); }
+.audit-note {
+  margin: 2px 0 18px; padding: 14px 16px;
+  border: 1px solid #cfe2d7; border-radius: 7px; background: #f4f8f5;
+}
+.audit-note h3 { margin: 0 0 7px !important; font-size: 1rem !important; }
+.audit-note ul { margin-bottom: 0 !important; }
+.cell.md h2[id] { scroll-margin-top: 108px; }
+.mjx-container { overflow-x: auto; overflow-y: hidden; max-width: 100%; }
+
+/* code cells */
+.cell.code .cell-body {
+  border: 1px solid var(--code-border);
+  border-radius: 4px;
+  background: var(--code-bg);
+}
+pre.src {
+  padding: 10px 14px;
+  overflow-x: auto;
+  font-family: var(--mono);
+  font-size: 13.2px;
+  line-height: 1.52;
+  tab-size: 4;
+}
+pre.src .kw { color: var(--kw); font-weight: 600; }
+pre.src .st { color: var(--str); }
+pre.src .cm { color: var(--com); font-style: italic; }
+pre.src .nu { color: var(--num); }
+pre.src .fn { color: var(--fn); }
+pre.src .op { color: var(--op); }
+pre.src .se { color: #a626a4; }
+
+/* output cells */
+.cell.output { padding-top: 0; }
+.cell.output .cell-body { padding: 6px 2px 8px; }
+pre.stream {
+  font-family: var(--mono);
+  font-size: 13.2px;
+  line-height: 1.5;
+  overflow-x: auto;
+  padding: 4px 2px;
+  color: #24292f;
+}
+.cell.output img {
+  display: block;
+  max-width: 100%;
+  height: auto;
+  margin: 6px 0 4px;
+  background: #fff;
+}
+
+.hr-cell { border: none; border-top: 1px solid var(--line); margin: 26px 26px; }
+
+/* reference table */
+table.refs { border-collapse: collapse; width: 100%; margin: 4px 0 14px; font-size: 0.93em; }
+table.refs caption { padding: 0 0 7px; text-align: left; font-weight: 650; color: #2b3240; }
+table.refs th, table.refs td { border: 1px solid var(--line); padding: 7px 11px; text-align: left; vertical-align: top; }
+table.refs th { background: var(--code-bg); font-weight: 650; }
+table.refs code { white-space: nowrap; }
+.table-scroll { overflow-x: auto; }
+.table-scroll table.refs { min-width: 760px; }
+
+.site-footer {
+  width: min(1020px, calc(100% - 32px));
+  margin: 0 auto 40px; text-align: center; color: var(--muted); font-size: 0.9em;
+}
+
+@media (max-width: 640px) {
+  .notebook { margin-top: 18px; padding-top: 24px; }
+  .cell.md, .cell.code, .cell.output { display: block; padding: 6px 18px; }
+  .cell.md .prompt, .cell.output .prompt { display: none; }
+  .cell.code .prompt {
+    padding: 2px 0 4px; text-align: left; font-size: 11px; opacity: 1;
+  }
+  .cell.md .cell-body { max-width: none; }
+  .cell.md h1 { font-size: 1.8rem; }
+  .hr-cell { margin: 22px 18px; }
+}
+</style>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="header-inner">
+    <a class="brand" href="/" aria-label="Bai Liping home">
+      <span class="brand-mark" aria-hidden="true">B</span>
+      <span>Bai Liping</span>
+    </a>
+    <span class="header-file"><b>graph_slam.ipynb</b> &nbsp;·&nbsp; numerical cells executed</span>
+    <span class="kernel">Python 3 · numpy</span>
+  </div>
+</header>
+
+<main class="notebook" aria-label="Graph SLAM notebook">
+
+  <!-- ============================ intro ============================ -->
+  <div class="cell md">
+    <div class="prompt"></div>
+    <div class="cell-body">
+      <h1>Graph SLAM, iSAM, bundle adjustment &amp; structure from motion</h1>
+      <p class="lede">
+        A robot that trusts only its wheel odometry drifts: every small error in a relative motion
+        estimate is <em>integrated forever</em>. Graph SLAM instead estimates many poses jointly from
+        retained constraints. A batch solver can re-optimize the trajectory when a new constraint arrives;
+        incremental solvers such as iSAM2 update affected Bayes-tree cliques and often avoid a full rebuild.
+      </p>
+      <p>
+        This page is an executed-notebook walkthrough. Every numbered <code>In&nbsp;[n]</code> cell below was
+        executed, and the printed outputs and figures are the real results. We build the entire
+        pipeline from scratch with <code>numpy</code> only — simulated lidar, ICP scan matching, pose-graph
+        construction, loop closure, and batch Gauss–Newton optimization. That is Part&nbsp;I.
+        Part&nbsp;II explains how <strong>iSAM</strong> and <strong>iSAM2</strong> reuse that work as the graph grows,
+        with a current GTSAM reference snippet. Part&nbsp;III then lets the structure into the optimization —
+        <strong>bundle adjustment</strong>, run on the same world with the lidar swapped for a bearing-only
+        “camera” — Part&nbsp;IV widens to <strong>structure from motion</strong>, and Part&nbsp;V lines the
+        three estimation problems up side by side.
+      </p>
+      <nav class="jump-nav" aria-label="On this page">
+        <a href="#pose-graph">I · Pose graph</a>
+        <a href="#isam">II · iSAM</a>
+        <a href="#bundle-adjustment">III · Bundle adjustment</a>
+        <a href="#structure-from-motion">IV · Structure from motion</a>
+        <a href="#comparison">V · Comparison</a>
+      </nav>
+      <div class="audit-note">
+        <h3>Scope of the demo</h3>
+        <ul>
+          <li><strong>Faithful:</strong> the $SE(2)$ residuals and Jacobians, gauge fixing, normal-equation assembly,
+              joint pose–landmark optimization, and Schur complement are the real algorithms.</li>
+          <li><strong>Simplified:</strong> scans and bearings are simulated; the loop candidate and landmark
+              identities are supplied; information matrices are illustrative hand-tuned weights; and the
+              solvers omit robust losses. Production SLAM must estimate all of these and reject outliers.</li>
+        </ul>
+      </div>
+      <blockquote>
+        <strong>A widely used implementation.</strong>
+        <a href="https://github.com/RainerKuemmerle/g2o" target="_blank" rel="noopener">g2o</a>
+        (<em>General Graph Optimization</em>, Kümmerle et&nbsp;al., ICRA 2011) is an influential C++
+        graph-optimization back-end. The official g2o README links to
+        <a href="https://github.com/miquelmassot/g2o-python" target="_blank" rel="noopener">g2o-python</a>
+        (<code>pip install g2o-python</code>), a separately maintained wrapper around g2o's experimental
+        <code>pymem</code> Python branch. There is also the older community binding
+        <a href="https://github.com/uoip/g2opy" target="_blank" rel="noopener">g2opy</a>.
+        There is also a pure-Python solver,
+        <a href="https://github.com/JeffLIrion/python-graphslam" target="_blank" rel="noopener">python-graphslam</a>
+        (<code>pip install graphslam</code>), which reads the same <code>.g2o</code> files.
+        Both APIs are shown later as reference snippets; the NumPy cells are the executed demo.
+      </blockquote>
+      <h3>A typical pose-graph pipeline</h3>
+      <ol>
+        <li><strong>Odometry (prediction):</strong> chain relative motion estimates → an initial guess that drifts.</li>
+        <li><strong>Scan matching (ICP):</strong> align overlapping lidar scans → relative-pose <em>measurements</em>.</li>
+        <li><strong>Graph construction:</strong> poses become nodes; each measurement becomes an edge with an information matrix.</li>
+        <li><strong>Loop closure:</strong> recognize a previously visited place, verify it geometrically, and add a long-range edge.</li>
+        <li><strong>Optimization (back-end):</strong> nonlinear least squares over all poses — the loop snaps shut, drift is redistributed.</li>
+      </ol>
+      <p>
+        Formally, with poses $\mathbf{x} = (\mathbf{x}_1,\dots,\mathbf{x}_n)$ and measured relative poses
+        $\mathbf{z}_{ij}$ with information matrices $\Omega_{ij}$, graph SLAM solves
+      </p>
+      <p>
+        $$\mathbf{x}^\star \;=\; \arg\min_{\mathbf{x}} \sum_{(i,j)\in\mathcal{E}}
+        \mathbf{e}_{ij}(\mathbf{x}_i,\mathbf{x}_j)^{\!\top}\, \Omega_{ij}\, \mathbf{e}_{ij}(\mathbf{x}_i,\mathbf{x}_j),
+        \qquad
+        \mathbf{e}_{ij} = \mathrm{t2v}\!\left(Z_{ij}^{-1}\,\big(X_i^{-1} X_j\big)\right),$$
+      </p>
+      <p>
+        i.e. the error of an edge is the mismatch between the <em>predicted</em> relative pose
+        $X_i^{-1}X_j$ and the <em>measured</em> one $Z_{ij}$. The front-end (steps 1–4) builds this
+        graph; the back-end (step 5) solves it.
+      </p>
+    </div>
+  </div>
+
+  <!-- ============================ cell 1 ============================ -->
+  <div class="cell md">
+    <div class="prompt"></div>
+    <div class="cell-body">
+      <h2 id="pose-graph"><span class="step">Part I · Setup</span>SE(2) in five functions</h2>
+      <p>
+        A 2-D pose $[x, y, \theta]$ is a rigid transform. Everything in graph SLAM is composing and
+        inverting these, so we define the classic helpers: <code>v2t</code>/<code>t2v</code> convert between
+        the vector and the $3{\times}3$ homogeneous-matrix form, <code>oplus</code> composes a pose with a
+        relative motion, and <code>ominus</code> gives the relative pose between two poses.
+      </p>
+    </div>
+  </div>
+
+  <div class="cell code">
+    <div class="prompt in">In&nbsp;[1]:</div>
+    <div class="cell-body"><pre class="src">import numpy as np
+
+def v2t(v):
+    """Pose vector [x, y, theta] -&gt; 3x3 homogeneous transform."""
+    x, y, th = v
+    c, s = np.cos(th), np.sin(th)
+    return np.array([[c, -s, x], [s, c, y], [0, 0, 1.0]])
+
+def t2v(T):
+    return np.array([T[0, 2], T[1, 2], np.arctan2(T[1, 0], T[0, 0])])
+
+def ominus(a, b):
+    """Relative pose of b in the frame of a."""
+    return t2v(np.linalg.inv(v2t(a)) @ v2t(b))
+
+def oplus(a, d):
+    """Compose pose a with relative motion d."""
+    return t2v(v2t(a) @ v2t(d))
+
+def wrap(th):
+    return (th + np.pi) % (2 * np.pi) - np.pi</pre></div>
+  </div>
+
+  <!-- ============================ cell 2 ============================ -->
+  <div class="cell md">
+    <div class="prompt"></div>
+    <div class="cell-body">
+      <h2><span class="step">Step 1</span>Odometry — the drifting initial guess</h2>
+      <p>
+        We simulate a robot driving one loop around a block inside a rectangular room, taking a
+        lidar scan (a point cloud in its own frame) at each of 64 poses. Its wheel odometry reports
+        each relative motion corrupted by noise <em>plus a small bias</em> — the realistic part, because
+        biased heading error is what makes dead reckoning bend away from the truth. Chaining
+        (<code>oplus</code>-ing) the noisy increments gives the dead-reckoned trajectory: our initial
+        guess, and nothing more.
+      </p>
+    </div>
+  </div>
+
+  <div class="cell code">
+    <div class="prompt in">In&nbsp;[2]:</div>
+    <div class="cell-body"><pre class="src">rng = np.random.default_rng(42)
+
+# room walls + an inner block, as dense point sets
+def wall(p0, p1, step=0.06):
+    p0, p1 = np.asarray(p0, float), np.asarray(p1, float)
+    n = max(int(np.linalg.norm(p1 - p0) / step), 2)
+    return p0 + np.linspace(0, 1, n)[:, None] * (p1 - p0)
+
+WORLD = np.vstack([
+    wall([-1, -1], [11, -1]), wall([11, -1], [11, 9]),
+    wall([11, 9], [-1, 9]),   wall([-1, 9], [-1, -1]),
+    wall([3.5, 2.5], [6.5, 2.5]), wall([6.5, 2.5], [6.5, 5.5]),
+    wall([6.5, 5.5], [3.5, 5.5]), wall([3.5, 5.5], [3.5, 2.5]),
+])
+
+def simulate_scan(pose, n_beams=180, max_range=8.0, noise=0.01):
+    """Lidar point cloud in the robot frame (crude ray sim)."""
+    Tinv = np.linalg.inv(v2t(pose))
+    pts = (Tinv @ np.hstack([WORLD, np.ones((len(WORLD), 1))]).T).T[:, :2]
+    pts = pts[np.linalg.norm(pts, axis=1) &lt; max_range]
+    pts = pts + rng.normal(0, noise, pts.shape)
+    ang = np.arctan2(pts[:, 1], pts[:, 0])            # thin to ~n_beams
+    bins = np.digitize(ang, np.linspace(-np.pi, np.pi, n_beams))
+    keep = [np.where(bins == b)[0][np.argmin(np.linalg.norm(pts[bins == b], axis=1))]
+            for b in np.unique(bins)]
+    return pts[np.array(keep)]
+
+# ground-truth loop: 64 poses through 8 waypoints, ending near the start
+waypoints = np.array([[1.0, 0.5], [9.0, 0.5], [9.5, 4.0], [9.0, 7.5],
+                      [5.0, 8.0], [1.0, 7.5], [0.5, 4.0], [1.0, 0.7]])
+true_poses = []
+for a, b in zip(waypoints[:-1], waypoints[1:]):
+    for t in np.linspace(0, 1, 9, endpoint=False):
+        true_poses.append([*(a + t * (b - a)), np.arctan2(*(b - a)[::-1])])
+true_poses.append([*waypoints[-1], np.arctan2(*(waypoints[0] - waypoints[-1])[::-1])])
+true_poses = np.array(true_poses)
+N = len(true_poses)
+
+# noisy, biased odometry -&gt; dead-reckoned trajectory
+odom_meas = []
+for i in range(N - 1):
+    d = ominus(true_poses[i], true_poses[i + 1])
+    d += [rng.normal(0, 0.015) + 0.008,     # forward noise + bias
+          rng.normal(0, 0.01),
+          rng.normal(0, 0.006) + 0.004]     # heading drift
+    odom_meas.append(d)
+
+odom_poses = [true_poses[0].copy()]
+for d in odom_meas:
+    odom_poses.append(oplus(odom_poses[-1], d))
+odom_poses = np.array(odom_poses)
+
+scans = [simulate_scan(p) for p in true_poses]
+print(f"simulated {N} poses, scan sizes ~{np.mean([len(s) for s in scans]):.0f} pts")
+print("final drift (odometry vs truth):", np.round(odom_poses[-1] - true_poses[-1], 3))</pre></div>
+  </div>
+
+  <div class="cell output">
+    <div class="prompt"></div>
+    <div class="cell-body"><pre class="stream">simulated 64 poses, scan sizes ~154 pts
+final drift (odometry vs truth): [ 0.922 -0.895  0.241]</pre></div>
+  </div>
+
+  <div class="cell md">
+    <div class="prompt"></div>
+    <div class="cell-body">
+      <p>
+        After one lap the dead-reckoned pose is off by almost a metre in each direction and
+        14° in heading — and the robot has no idea.
+      </p>
+    </div>
+  </div>
+
+  <!-- ============================ cell 3: ICP ============================ -->
+  <div class="cell md">
+    <div class="prompt"></div>
+    <div class="cell-body">
+      <h2><span class="step">Step 2</span>Scan matching — ICP</h2>
+      <p>
+        Odometry says <em>“I think I moved this much”</em>; scan matching checks that claim against
+        overlapping geometry. If two scans have enough non-degenerate overlap and the data association
+        is correct, the transform that aligns them estimates the relative pose between the viewpoints.
+        Depending on the scene and sensors this can improve on wheel odometry, but repetitive geometry,
+        moving objects, or a poor initial guess can also make it fail.
+      </p>
+      <p>
+        The classic algorithm is <strong>ICP</strong> (Iterative Closest Point, Besl &amp; McKay 1992). It
+        alternates two steps until the alignment stops improving:
+      </p>
+      <ol>
+        <li><strong>Correspond:</strong> transform the source scan by the current guess $T$ and pair every
+            point with its nearest neighbour in the target scan (rejecting the worst pairs as outliers);</li>
+        <li><strong>Align:</strong> solve
+          $\;\min_{R, t} \sum_k \lVert R\,\mathbf{p}_k + \mathbf{t} - \mathbf{q}_{\mathrm{nn}(k)} \rVert^2$
+          in closed form via SVD (the Kabsch solution: cross-covariance of the centered point sets),
+          and fold the correction into $T$.</li>
+      </ol>
+      <p>
+        Because the correspondences are only guesses, ICP needs a decent initial transform — which is
+        exactly the role odometry plays. This division of labour repeats at every level of SLAM:
+        <em>a cheap prediction seeds an accurate refinement.</em>
+      </p>
+    </div>
+  </div>
+
+  <div class="cell code">
+    <div class="prompt in">In&nbsp;[3]:</div>
+    <div class="cell-body"><pre class="src">def icp(source, target, T0=np.eye(3), max_iter=30, tol=1e-6):
+    """Point-to-point ICP: find T aligning source -&gt; target. Returns (T, errs)."""
+    T = T0.copy()
+    src_h = np.hstack([source, np.ones((len(source), 1))])
+    errs = []
+    for _ in range(max_iter):
+        moved = (T @ src_h.T).T[:, :2]
+        # 1. correspond: nearest neighbour in the target for every source point
+        d2 = ((moved[:, None, :] - target[None, :, :]) ** 2).sum(-1)
+        nn = d2.argmin(1)
+        dist = np.sqrt(d2[np.arange(len(moved)), nn])
+        m = dist &lt; np.percentile(dist, 80)        # reject worst matches
+        P, Q = moved[m], target[nn][m]
+        errs.append(float(dist[m].mean()))
+        # 2. align: closed-form best rigid transform (SVD / Kabsch)
+        Pc, Qc = P - P.mean(0), Q - Q.mean(0)
+        U, _, Vt = np.linalg.svd(Pc.T @ Qc)
+        R = Vt.T @ np.diag([1, np.sign(np.linalg.det(Vt.T @ U.T))]) @ U.T
+        t = Q.mean(0) - R @ P.mean(0)
+        dT = np.eye(3); dT[:2, :2] = R; dT[:2, 2] = t
+        T = dT @ T
+        if len(errs) &gt; 1 and abs(errs[-2] - errs[-1]) &lt; tol:
+            break
+    return T, errs</pre></div>
+  </div>
+
+  <div class="cell md">
+    <div class="prompt"></div>
+    <div class="cell-body">
+      <p>
+        To see the correction clearly, match scan 10 against scan 9 but pretend the odometry
+        guess is poor — as after a wheel slip — 40&nbsp;cm and 9° off:
+      </p>
+    </div>
+  </div>
+
+  <div class="cell code">
+    <div class="prompt in">In&nbsp;[4]:</div>
+    <div class="cell-body"><pre class="src">i = 9
+bad_guess = odom_meas[i] + np.array([0.35, -0.20, 0.16])   # simulated wheel slip
+T_icp, errs = icp(scans[i + 1], scans[i], T0=v2t(bad_guess))
+
+print("bad initial guess:", np.round(bad_guess, 4))
+print("ICP estimate     :", np.round(t2v(T_icp), 4))
+print("ground truth     :", np.round(ominus(true_poses[i], true_poses[i + 1]), 4))
+print(f"converged in {len(errs)} iterations, "
+      f"mean residual {errs[0]*100:.1f} cm -&gt; {errs[-1]*100:.2f} cm")</pre></div>
+  </div>
+
+  <div class="cell output">
+    <div class="prompt"></div>
+    <div class="cell-body"><pre class="stream">bad initial guess: [ 0.7563 -0.1959  0.1666]
+ICP estimate     : [ 0.3957 -0.0006 -0.0013]
+ground truth     : [ 0.3928  0.     -0.    ]
+converged in 25 iterations, mean residual 21.3 cm -&gt; 2.50 cm</pre></div>
+  </div>
+
+  <div class="cell output">
+    <div class="prompt out">Out&nbsp;[4]:</div>
+    <div class="cell-body">
+      <img src="assets/fig_icp.png" alt="Two lidar scans before ICP (walls visibly misaligned, 21.3 cm mean residual) and after ICP (walls coincide, 2.5 cm residual)." width="1158" height="518" loading="lazy">
+    </div>
+  </div>
+
+  <div class="cell md">
+    <div class="prompt"></div>
+    <div class="cell-body">
+      <p>
+        ICP recovers the true relative motion to a few millimetres despite the bad seed. From here
+        on, whenever we need the relative pose between two overlapping scans, we ask ICP — seeded by
+        whatever estimate we currently have.
+      </p>
+    </div>
+  </div>
+
+  <!-- ============================ cell 5: graph ============================ -->
+  <div class="cell md">
+    <div class="prompt"></div>
+    <div class="cell-body">
+      <h2><span class="step">Step 3</span>Build the pose graph</h2>
+      <p>Each edge stores three things:</p>
+      <ul>
+        <li>the pair of poses $(i, j)$ it constrains,</li>
+        <li>the measured relative pose $\mathbf{z}_{ij}$ — here, ICP refinements of the odometry between consecutive scans,</li>
+        <li>an <strong>information matrix</strong> $\Omega_{ij}$ (inverse covariance) saying how much to trust the
+            measurement and how its components correlate. Here we use simple diagonal weights; a production
+            system should estimate uncertainty from the registration geometry or calibrate it empirically.</li>
+      </ul>
+      <p>
+        The node values themselves are initialized from dead reckoning — wrong, but a good enough
+        starting point for the optimizer later.
+      </p>
+    </div>
+  </div>
+
+  <div class="cell code">
+    <div class="prompt in">In&nbsp;[5]:</div>
+    <div class="cell-body"><pre class="src">x = odom_poses.copy()          # vertices: initial guesses from dead reckoning
+edges = []                     # (i, j, z_ij, Omega_ij)
+
+Omega_seq = np.diag([120.0, 120.0, 800.0])   # illustrative, hand-tuned weight
+for k in range(N - 1):
+    T_k, _ = icp(scans[k + 1], scans[k], T0=v2t(odom_meas[k]))
+    edges.append((k, k + 1, t2v(T_k), Omega_seq))</pre></div>
+  </div>
+
+  <!-- ============================ cell 6: loop closure ============================ -->
+  <div class="cell md">
+    <div class="prompt"></div>
+    <div class="cell-body">
+      <h2><span class="step">Step 4</span>Loop closure — add global consistency</h2>
+      <p>
+        With only a chain, there is no redundant constraint: optimizing it is equivalent to chaining
+        the sequential measurements, so their errors still accumulate. A loop closure adds an independent
+        long-range constraint such as <em>“I am back where I started”</em>. Other global information —
+        re-observed landmarks, GNSS, or map priors — can play the same role. Loop closure has two halves:
+      </p>
+      <ul>
+        <li><strong>Detection:</strong> propose candidate revisits. Our code supplies the pair $(0,63)$ directly
+            so we can focus on the back-end. Real systems use appearance (bag-of-words over image features as in DBoW2/ORB-SLAM,
+            scan descriptors like Scan Context, or learned place recognition), because after heavy drift the
+            estimate itself can't be trusted to say what is nearby.</li>
+        <li><strong>Verification:</strong> scan matching again! Run ICP between the candidate pair, seeded by the current
+            estimates. Production systems test overlap, inlier count, residual geometry, and consistency with the
+            graph before adding an edge, usually with a robust loss or switchable constraint. A low ICP residual
+            alone is only a toy acceptance test: perceptual aliasing can produce a convincing wrong match.</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="cell code">
+    <div class="prompt in">In&nbsp;[6]:</div>
+    <div class="cell-body"><pre class="src"># Oracle candidate for this didactic demo: the last pose revisits pose 0.
+# Verify it with ICP, seeded by the relative pose in the current estimate.
+T0_loop = v2t(ominus(odom_poses[0], odom_poses[N - 1]))
+T_loop, errs_loop = icp(scans[N - 1], scans[0], T0=T0_loop)
+
+Omega_loop = np.diag([300.0, 300.0, 1500.0])  # illustrative loop weight
+edges.append((0, N - 1, t2v(T_loop), Omega_loop))
+print(f"loop closure 0 &lt;-&gt; {N-1}: ICP residual {errs_loop[-1]*100:.2f} cm, "
+      f"z = {np.round(t2v(T_loop), 3)}")
+print(f"graph: {N} vertices, {len(edges)} edges "
+      f"({len(edges)-1} sequential + 1 loop closure)")</pre></div>
+  </div>
+
+  <div class="cell output">
+    <div class="prompt"></div>
+    <div class="cell-body"><pre class="stream">loop closure 0 &lt;-&gt; 63: ICP residual 3.05 cm, z = [ 0.008  0.197 -1.568]
+graph: 64 vertices, 64 edges (63 sequential + 1 loop closure)</pre></div>
+  </div>
+
+  <div class="cell md">
+    <div class="prompt"></div>
+    <div class="cell-body">
+      <p>
+        The accepted toy loop edge says the last pose sits 20&nbsp;cm from the first, rotated $-90°$
+        (the robot arrives facing down the wall it left along) — while the dead-reckoned estimate
+        claims they are 1.3&nbsp;m apart. The graph now contains a contradiction, and resolving
+        contradictions is the back-end's job.
+      </p>
+    </div>
+  </div>
+
+  <!-- ============================ cell 7: optimize ============================ -->
+  <div class="cell md">
+    <div class="prompt"></div>
+    <div class="cell-body">
+      <h2><span class="step">Step 5</span>Optimize — nonlinear least squares on the graph</h2>
+      <p>
+        We minimize $F(\mathbf{x}) = \sum \mathbf{e}_{ij}^\top \Omega_{ij} \mathbf{e}_{ij}$ by
+        <strong>Gauss–Newton</strong>: linearize every edge error around the current estimate,
+        $\mathbf{e}_{ij}(\mathbf{x} + \Delta\mathbf{x}) \approx \mathbf{e}_{ij} + A_{ij}\Delta\mathbf{x}_i + B_{ij}\Delta\mathbf{x}_j$,
+        and solve the normal equations
+      </p>
+      <p>
+        $$H\,\Delta\mathbf{x} = -\mathbf{b}, \qquad
+          H = \textstyle\sum J_{ij}^\top \Omega_{ij} J_{ij}, \qquad
+          \mathbf{b} = \textstyle\sum J_{ij}^\top \Omega_{ij}\, \mathbf{e}_{ij}.$$
+      </p>
+      <p>
+        Two structural facts do all the work in practice:
+      </p>
+      <ul>
+        <li>$H$ is <strong>sparse</strong> — each edge touches only two poses, so it contributes a single
+            $6{\times}6$ block pattern. Real solvers (g2o, GTSAM, Ceres) exploit this with sparse Cholesky
+            factorization and scale to hundreds of thousands of poses.</li>
+        <li>The problem has a <strong>gauge freedom</strong>: shifting/rotating the whole map changes nothing, so
+            $H$ is singular until we pin one pose (the code holds pose 0 fixed and solves only for the rest).</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="cell code">
+    <div class="prompt in">In&nbsp;[7]:</div>
+    <div class="cell-body"><pre class="src">def error_and_jacobians(xi, xj, z):
+    """e_ij and its Jacobians A (d e/d xi), B (d e/d xj) — standard 2D PGO."""
+    e = t2v(np.linalg.inv(v2t(z)) @ np.linalg.inv(v2t(xi)) @ v2t(xj))
+    e[2] = wrap(e[2])
+    c, s = np.cos(xi[2]), np.sin(xi[2])
+    Ri = np.array([[c, -s], [s, c]])
+    Rz = v2t(z)[:2, :2]
+    dt = xj[:2] - xi[:2]
+    dRi_T = np.array([[-s, c], [-c, -s]])          # d(Ri^T)/d(theta_i)
+    A = np.zeros((3, 3))
+    A[:2, :2] = -Rz.T @ Ri.T
+    A[:2, 2] = Rz.T @ dRi_T @ dt
+    A[2, 2] = -1.0
+    B = np.zeros((3, 3))
+    B[:2, :2] = Rz.T @ Ri.T
+    B[2, 2] = 1.0
+    return e, A, B
+
+def optimize(x, edges, n_iter=10, verbose=True):
+    x = x.copy()
+    for it in range(n_iter):
+        H = np.zeros((3 * N, 3 * N))
+        b = np.zeros(3 * N)
+        chi2 = 0.0
+        for i, j, z, Om in edges:
+            e, A, B = error_and_jacobians(x[i], x[j], z)
+            chi2 += e @ Om @ e
+            si, sj = slice(3 * i, 3 * i + 3), slice(3 * j, 3 * j + 3)
+            H[si, si] += A.T @ Om @ A;  H[si, sj] += A.T @ Om @ B
+            H[sj, si] += B.T @ Om @ A;  H[sj, sj] += B.T @ Om @ B
+            b[si] += A.T @ Om @ e;      b[sj] += B.T @ Om @ e
+        if verbose:
+            print(f"iter {it}   chi2 = {chi2:12.4f}")
+        dx = np.zeros(3 * N)                   # gauge: hold the first pose fixed
+        dx[3:] = np.linalg.solve(H[3:, 3:], -b[3:])  # sparse factorization in real solvers
+        x += dx.reshape(-1, 3)
+        x[:, 2] = wrap(x[:, 2])
+        if np.abs(dx).max() &lt; 1e-8:
+            break
+    return x
+
+x_chain = optimize(x, edges[:-1], verbose=False)  # no loop: integrate ICP increments
+x_opt = optimize(x, edges)
+err_before = np.linalg.norm(odom_poses[:, :2] - true_poses[:, :2], axis=1).mean()
+err_chain  = np.linalg.norm(x_chain[:, :2]     - true_poses[:, :2], axis=1).mean()
+err_after  = np.linalg.norm(x_opt[:, :2]     - true_poses[:, :2], axis=1).mean()
+print(f"\nmean position error: odometry {err_before:.3f} m "
+      f"-&gt; sequential ICP {err_chain:.3f} m -&gt; with loop {err_after:.3f} m")</pre></div>
+  </div>
+
+  <div class="cell output">
+    <div class="prompt"></div>
+    <div class="cell-body"><pre class="stream">iter 0   chi2 =     577.7946
+iter 1   chi2 =       0.3565
+iter 2   chi2 =       0.1236
+iter 3   chi2 =       0.1236
+iter 4   chi2 =       0.1236
+
+mean position error: odometry 0.573 m -&gt; sequential ICP 0.218 m -&gt; with loop 0.046 m</pre></div>
+  </div>
+
+  <div class="cell md">
+    <div class="prompt"></div>
+    <div class="cell-body">
+      <p>
+        The sequential ICP constraints already improve the mean error from 57&nbsp;cm to 22&nbsp;cm,
+        but their chain still accumulates registration error. Adding one verified loop constraint reduces
+        it to under 5&nbsp;cm. The loop edge did not just fix the last pose — the optimizer redistributed the drift
+        over the <em>entire</em> trajectory, because every pose is connected to every other through
+        the chain. The printed objective is a weighted least-squares cost, but it should not be given a
+        formal $\chi^2$ interpretation here because the ICP weights were hand-tuned rather than calibrated covariances.
+      </p>
+    </div>
+  </div>
+
+  <div class="cell code">
+    <div class="prompt in">In&nbsp;[8]:</div>
+    <div class="cell-body"><pre class="src">import matplotlib.pyplot as plt
+
+fig, ax = plt.subplots(figsize=(7.4, 5.2))
+ax.scatter(*WORLD.T, s=1.5, c="#c9c9c9")
+ax.plot(*true_poses[:, :2].T, c="#42b06c", lw=2,            label="ground truth")
+ax.plot(*odom_poses[:, :2].T, c="#d65f5f", lw=1.6, ls="--", label="odometry (dead reckoning)")
+ax.plot(*x_opt[:, :2].T,      c="#4878cf", lw=1.8,          label="graph SLAM estimate")
+ax.plot([x_opt[0, 0], x_opt[N-1, 0]], [x_opt[0, 1], x_opt[N-1, 1]],
+        c="#e8a33d", lw=2.4, label="loop-closure edge")
+ax.set_aspect("equal"); ax.legend()
+ax.set_title("pose graph optimization closes the loop")</pre></div>
+  </div>
+
+  <div class="cell output">
+    <div class="prompt out">Out&nbsp;[8]:</div>
+    <div class="cell-body">
+      <img src="assets/fig_traj.png" alt="Ground-truth loop, red dashed dead-reckoning trajectory spiraling away, and blue optimized trajectory lying on top of the ground truth, with the orange loop-closure edge at the start." width="826" height="731" loading="lazy">
+    </div>
+  </div>
+
+  <!-- ============================ cell 9: map ============================ -->
+  <div class="cell md">
+    <div class="prompt"></div>
+    <div class="cell-body">
+      <h2><span class="step">Step 6</span>Fuse scans with the optimized poses</h2>
+      <p>
+        Once the poses are corrected, we can transform each stored scan into the world frame. This
+        simple point overlay is enough to reveal the benefit: drifted poses smear walls into double
+        images, while optimized poses align them. A deployable mapping system still needs an explicit
+        representation (for example an occupancy grid or surfel map), filtering, and treatment of dynamic objects.
+      </p>
+    </div>
+  </div>
+
+  <div class="cell code">
+    <div class="prompt in">In&nbsp;[9]:</div>
+    <div class="cell-body"><pre class="src">fig, axes = plt.subplots(1, 2, figsize=(8.8, 3.9))
+for ax, poses, title, color in [
+        (axes[0], odom_poses, "map from raw odometry",    "#d65f5f"),
+        (axes[1], x_opt,      "map from optimized poses", "#4878cf")]:
+    for p, s in zip(poses[::2], scans[::2]):
+        pts = (v2t(p) @ np.hstack([s, np.ones((len(s), 1))]).T).T[:, :2]
+        ax.scatter(*pts.T, s=0.6, c=color, alpha=0.28)
+    ax.plot(*poses[:, :2].T, c="#333333", lw=0.9)
+    ax.set_title(title); ax.set_aspect("equal")</pre></div>
+  </div>
+
+  <div class="cell output">
+    <div class="prompt out">Out&nbsp;[9]:</div>
+    <div class="cell-body">
+      <img src="assets/fig_map.png" alt="Left: map rendered from odometry poses with doubled, smeared walls. Right: map from optimized poses with sharp single walls." width="1243" height="578" loading="lazy">
+    </div>
+  </div>
+
+  <hr class="hr-cell">
+
+  <!-- ============================ libraries ============================ -->
+  <div class="cell md">
+    <div class="prompt"></div>
+    <div class="cell-body">
+      <h2><span class="step">In practice</span>The same thing with g2o (Python)</h2>
+      <p>
+        Our dense <code>np.linalg.solve</code> is $O(n^3)$; production back-ends exploit the sparsity of $H$.
+        A widely used choice is <a href="https://github.com/RainerKuemmerle/g2o" target="_blank" rel="noopener">g2o</a> —
+        the framework bundled by ORB-SLAM for pose-graph optimization and bundle adjustment. The
+        separately maintained <code>g2o-python</code> package wraps g2o's experimental Python branch,
+        and the back-end of this notebook becomes a handful of lines. The common <code>.g2o</code> text
+        format (<code>VERTEX_SE2</code> / <code>EDGE_SE2</code> lines — exactly our vertices and edges)
+        is supported by several SLAM tools; classic 2-D
+        benchmark datasets (INTEL, M3500, MIT) are collected in
+        <a href="https://lucacarlone.mit.edu/datasets/" target="_blank" rel="noopener">Luca Carlone's dataset page</a>.
+      </p>
+    </div>
+  </div>
+
+  <div class="cell code">
+    <div class="prompt in">In&nbsp;[&nbsp;]:</div>
+    <div class="cell-body"><pre class="src"># Reference snippet (API checked with g2o-python 0.0.12; dataset not bundled here)
+# pip install g2o-python
+import g2o
+
+opt = g2o.SparseOptimizer()
+opt.set_algorithm(g2o.OptimizationAlgorithmLevenberg(
+    g2o.BlockSolverSE2(g2o.LinearSolverEigenSE2())))
+
+opt.load("input_INTEL_g2o.g2o")     # 1228 poses, 1483 constraints
+opt.vertex(0).set_fixed(True)       # pin the gauge, as in In [7]
+opt.initialize_optimization()
+opt.optimize(30)                    # sparse Levenberg-Marquardt
+opt.save("intel_optimized.g2o")</pre></div>
+  </div>
+
+  <div class="cell md">
+    <div class="prompt"></div>
+    <div class="cell-body">
+      <p>
+        If you want to <em>read</em> a full solver in Python rather than call C++ through bindings,
+        <a href="https://github.com/JeffLIrion/python-graphslam" target="_blank" rel="noopener">python-graphslam</a>
+        mirrors the pipeline of cells 5–7 (with analytic Jacobians for $\mathbb{R}^2$,
+        $\mathbb{R}^3$, $SE(2)$ and $SE(3)$, plus landmark edges) and reads the same files:
+      </p>
+    </div>
+  </div>
+
+  <div class="cell code">
+    <div class="prompt in">In&nbsp;[&nbsp;]:</div>
+    <div class="cell-body"><pre class="src"># pip install graphslam         (pure-Python graph SLAM solver)
+from graphslam.graph import Graph
+
+g = Graph.from_g2o("input_INTEL_g2o.g2o")
+g.optimize()                     # Gauss-Newton, prints chi2 per iteration
+g.plot(vertex_markersize=1)</pre></div>
+  </div>
+
+  <hr class="hr-cell">
+
+  <!-- ============================ part II: iSAM ============================ -->
+  <div class="cell md">
+    <div class="prompt"></div>
+    <div class="cell-body">
+      <h2 id="isam"><span class="step">Part II</span>iSAM — reuse the solve as the graph grows</h2>
+      <p>
+        <strong>Graph SLAM defines what to optimize; iSAM changes how that optimization is updated
+        online.</strong> The batch solver in <code>In&nbsp;[7]</code> assembles and solves the whole
+        linearized graph again whenever a factor is added. That is perfectly reasonable for this small
+        notebook, but wasteful for a robot receiving one odometry or loop factor at a time.
+        <strong>Incremental Smoothing and Mapping (iSAM)</strong> targets the same full-trajectory smoothing
+        problem while retaining useful work from the previous solve.
+      </p>
+      <p>
+        To connect it directly to the normal equations above, let $S_{ij}^{\top}S_{ij}=\Omega_{ij}$,
+        $A_{ij}=S_{ij}J_{ij}$ and $\mathbf{c}_{ij}=-S_{ij}\mathbf{e}_{ij}$. Stack the blocks from every
+        factor to obtain the square-root least-squares problem
+      </p>
+      <p>
+        $$\Delta\mathbf{x}^{\star}=\arg\min_{\Delta\mathbf{x}}
+        \lVert A\Delta\mathbf{x}-\mathbf{c}\rVert^2,
+        \qquad H=A^{\top}A.$$
+      </p>
+      <p>
+        A batch solver refactorizes this system after the graph or linearization changes. The
+        <a href="https://www.cs.cmu.edu/~kaess/pub/Kaess08tro.html" target="_blank" rel="noopener">original iSAM</a>
+        instead maintains a sparse QR factor $R$. New factor rows are folded into $R$ with orthogonal
+        transformations, so unchanged work is not repeated. Because loop closures create fill-in and the
+        measurement models are nonlinear, original iSAM still performs periodic batch reordering,
+        refactorization, and relinearization.
+      </p>
+
+      <h3>iSAM2: make the dependencies explicit</h3>
+      <p>
+        <a href="https://www.cs.cmu.edu/~kaess/pub/Kaess12ijrr.html" target="_blank" rel="noopener">iSAM2</a>
+        represents the same square-root factorization as a <strong>Bayes tree</strong>. Each tree clique stores
+        a conditional $p(F_k\mid S_k)$ for frontal variables $F_k$ given separator variables $S_k$:
+      </p>
+      <p>
+        $$p(\Delta\mathbf{x})=\prod_k p(F_k\mid S_k).$$
+      </p>
+      <p>When measurements arrive, iSAM2 can:</p>
+      <ol>
+        <li>add the new factors and initial guesses for genuinely new variables;</li>
+        <li>remove the cliques affected by those factors, following their dependency paths toward the root;</li>
+        <li>selectively relinearize variables whose estimates moved far enough, and reorder/re-eliminate that subgraph;</li>
+        <li>reattach unchanged subtrees and propagate the updated solution only as far as needed.</li>
+      </ol>
+      <p>
+        This <em>fluid relinearization</em> and incremental reordering remove the scheduled whole-graph
+        batch rebuilds required by original iSAM. The target remains the same nonlinear MAP or
+        maximum-likelihood objective; the relinearization and partial-update thresholds control the
+        practical accuracy–latency trade-off.
+      </p>
+
+      <div class="table-scroll">
+      <table class="refs">
+        <caption>Batch and incremental back-ends</caption>
+        <tr>
+          <th scope="col">Property</th>
+          <th scope="col">Batch Gauss–Newton</th>
+          <th scope="col">Original iSAM (2008)</th>
+          <th scope="col">iSAM2 (2012)</th>
+        </tr>
+        <tr>
+          <th scope="row">What is reused</th>
+          <td>The notebook's dense solver reuses none between graph updates</td>
+          <td>The sparse QR factor $R$</td>
+          <td>Bayes-tree cliques and cached linear factors</td>
+        </tr>
+        <tr>
+          <th scope="row">New factor</th>
+          <td>Reassemble and refactorize the current linearized problem</td>
+          <td>Update $R$ incrementally; fill-in can spread</td>
+          <td>Re-eliminate affected cliques and reattach unchanged subtrees</td>
+        </tr>
+        <tr>
+          <th scope="row">Nonlinearity and ordering</th>
+          <td>Handled globally in each batch solve</td>
+          <td>Periodic batch relinearization and reordering</td>
+          <td>Selective relinearization and incremental reordering</td>
+        </tr>
+        <tr>
+          <th scope="row">History retained</th>
+          <td>Full trajectory</td>
+          <td>Full trajectory</td>
+          <td>Full trajectory by default; fixed-lag smoothing is a separate choice</td>
+        </tr>
+      </table>
+      </div>
+
+      <blockquote>
+        <strong>Incremental does not mean constant-time or sliding-window.</strong>
+        A sequential edge often changes only a small newest part of a well-ordered tree, but the
+        $x_0\leftrightarrow x_{63}$ loop closure in this notebook can awaken a much larger portion and
+        move old poses throughout the trajectory. “Affected” refers to dependencies in the Bayes tree,
+        not physical distance. iSAM2 is also only the back-end: it does not detect loop closures, run ICP,
+        or reject bad factors.
+      </blockquote>
+    </div>
+  </div>
+
+  <div class="cell code">
+    <div class="prompt in">In&nbsp;[&nbsp;]:</div>
+    <div class="cell-body"><pre class="src"># Reference snippet (API checked with GTSAM 4.2; package not bundled here)
+# Python 3.11+: pip install gtsam
+# Python 3.10:  pip install "numpy&lt;2" "gtsam==4.2"
+import gtsam
+from gtsam.symbol_shorthand import X
+
+def as_pose2(v):
+    return gtsam.Pose2(float(v[0]), float(v[1]), float(v[2]))
+
+def as_noise(Omega):
+    return gtsam.noiseModel.Gaussian.Information(Omega)
+
+params = gtsam.ISAM2Params()
+params.setRelinearizeThreshold(0.01)  # illustrative threshold for this small SE(2) graph
+params.relinearizeSkip = 1            # check relinearization on every update
+isam = gtsam.ISAM2(params)
+
+# Start the smoother with a tight prior: this removes the same gauge freedom as In [7].
+new_factors = gtsam.NonlinearFactorGraph()
+new_values = gtsam.Values()
+prior_noise = gtsam.noiseModel.Diagonal.Sigmas(np.array([1e-3, 1e-3, 1e-3]))
+new_factors.add(gtsam.PriorFactorPose2(X(0), as_pose2(x[0]), prior_noise))
+new_values.insert(X(0), as_pose2(x[0]))
+isam.update(new_factors, new_values)
+
+# Feed the sequential factors one at a time; only X(j) is new on each update.
+for i, j, z, Omega in edges[:-1]:
+    new_factors = gtsam.NonlinearFactorGraph()
+    new_values = gtsam.Values()
+    new_factors.add(gtsam.BetweenFactorPose2(X(i), X(j), as_pose2(z), as_noise(Omega)))
+    new_values.insert(X(j), as_pose2(x[j]))
+    isam.update(new_factors, new_values)
+
+# The loop factor connects existing poses, so it needs no new initial values.
+i, j, z, Omega = edges[-1]
+loop_factor = gtsam.NonlinearFactorGraph()
+loop_factor.add(gtsam.BetweenFactorPose2(X(i), X(j), as_pose2(z), as_noise(Omega)))
+isam.update(loop_factor, gtsam.Values())
+isam.update()  # one more selective relinearization pass after this large correction
+
+estimate = isam.calculateEstimate()
+x_isam = np.array([[estimate.atPose2(X(k)).x(),
+                    estimate.atPose2(X(k)).y(),
+                    estimate.atPose2(X(k)).theta()] for k in range(N)])</pre></div>
+  </div>
+
+  <div class="cell md">
+    <div class="prompt"></div>
+    <div class="cell-body">
+      <p>
+        The call pattern is the important part: every measurement update receives only new factors plus
+        guesses for new variables; a loop between existing poses passes an empty <code>Values</code> object.
+        Because this one loop causes a large nonlinear correction, the factor-free <code>update()</code> gives
+        iSAM2 another selective relinearization pass; it does not add a second copy of the graph.
+        <code>calculateEstimate()</code> then retrieves the current smoothed trajectory. GTSAM also exposes
+        relinearization thresholds, update frequency, factor removal, and marginal queries; see the
+        <a href="https://borglab.github.io/gtsam/isam2/" target="_blank" rel="noopener">official iSAM2 guide</a>
+        and <a href="https://gtsam.org/doxygen/a04947.html" target="_blank" rel="noopener">API contract</a>.
+      </p>
+    </div>
+  </div>
+
+  <hr class="hr-cell">
+
+  <!-- ============================ part III: bundle adjustment ============================ -->
+  <div class="cell md">
+    <div class="prompt"></div>
+    <div class="cell-body">
+      <h2 id="bundle-adjustment"><span class="step">Part III</span>Bundle adjustment — let the structure into the graph</h2>
+      <p>
+        Everything above treated the world as something to be <em>matched</em>, never <em>estimated</em>:
+        ICP condensed two whole lidar scans into a single relative-pose constraint, the graph contained
+        poses only, and the map was rebuilt afterwards from the optimized poses.
+        <strong>Bundle adjustment (BA)</strong> makes the opposite choice. It keeps individual feature observations and
+        puts the structure itself — the 3-D points — into the state vector, refining poses <em>and</em>
+        points jointly.
+      </p>
+      <p>
+        The name is photogrammetry vocabulary: each 3-D point sends a <em>bundle</em> of light rays to
+        every camera that observes it, and the solver <em>adjusts</em> points and cameras together until the
+        rays agree with the images. With camera poses $T_j$, points $\mathbf{X}_i$, observed pixels
+        $\mathbf{u}_{ij}$ and camera projection function $\pi$, BA solves
+      </p>
+      <p>
+        $$\{T_j, \mathbf{X}_i\}^\star \;=\; \arg\min_{T,\,\mathbf{X}} \sum_{(i,j)\in\mathcal{O}}
+        \big(\mathbf{u}_{ij} - \pi(T_j, \mathbf{X}_i)\big)^{\!\top}\, \Omega_{ij}\,
+        \big(\mathbf{u}_{ij} - \pi(T_j, \mathbf{X}_i)\big)$$
+      </p>
+      <p>
+        — the <strong>reprojection error</strong>. Put this next to the pose-graph objective at the top of the
+        page: the shape is identical, a sum of squared, information-weighted errors over a sparse graph.
+        Only the variables and the error function changed, so the same Gauss–Newton pattern from
+        <code>In&nbsp;[7]</code> applies, now with different Jacobians and a more useful block elimination.
+        (The standard reference is Triggs et&nbsp;al.,
+        <a href="https://doi.org/10.1007/3-540-44480-7_21" target="_blank" rel="noopener"><em>“Bundle Adjustment — A Modern Synthesis”</em></a>, 2000.)
+      </p>
+      <p>
+        To show the shared machinery, we run BA on the same simulated world — with the lidar
+        swapped for a <strong>monocular camera in Flatland</strong>: a sensor that reports only the
+        <em>bearing</em> of a landmark in the robot frame. A bearing is a useful 2-D analogue of a calibrated pixel
+        coordinate — a direction, but no depth. Wall corners and midpoints play the role of feature
+        points. Note what we give up: no ICP, no odometry factors, no explicit loop-closure factor.
+        Bearings are all the objective contains — but the demo still receives a good odometry initialization
+        and perfect landmark identities, assumptions a real front-end must earn.
+      </p>
+      <p>
+        The structure needs an initial guess too. Exactly as in structure from motion, we
+        <strong>triangulate</strong>: each observation defines a bearing line through its (drifted,
+        dead-reckoned) pose, and their least-squares intersection initializes the landmark. A real
+        triangulator also checks positive depth and rejects weak, nearly parallel geometry.
+      </p>
+    </div>
+  </div>
+
+  <div class="cell code">
+    <div class="prompt in">In&nbsp;[10]:</div>
+    <div class="cell-body"><pre class="src"># a monocular camera in Flatland measures only the BEARING to a landmark --
+# the 2-D analog of a pixel coordinate: a direction, but no depth.
+LANDMARKS = np.array([
+    [-1, -1], [11, -1], [11, 9], [-1, 9],              # room corners
+    [3.5, 2.5], [6.5, 2.5], [6.5, 5.5], [3.5, 5.5],    # block corners
+    [5, -1], [11, 4], [5, 9], [-1, 4],                 # wall midpoints
+])
+L = len(LANDMARKS)
+
+def bearing(pose, lm):
+    d = lm - pose[:2]
+    return wrap(np.arctan2(d[1], d[0]) - pose[2])
+
+SIGMA = 0.01                                # ~0.6 deg bearing noise
+obs = []                                    # (pose i, landmark k, measured bearing)
+for i, p in enumerate(true_poses):
+    for k, lm in enumerate(LANDMARKS):
+        if np.linalg.norm(lm - p[:2]) &lt; 8.0:
+            obs.append((i, k, bearing(p, lm) + rng.normal(0, SIGMA)))
+
+# initial structure: triangulate each landmark from the DRIFTED poses' rays
+lm_init = np.zeros((L, 2))
+for k in range(L):
+    A, b = np.zeros((2, 2)), np.zeros(2)
+    for i, kk, beta in obs:
+        if kk != k:
+            continue
+        p = odom_poses[i]
+        u = np.array([np.cos(p[2] + beta), np.sin(p[2] + beta)])
+        Pu = np.eye(2) - np.outer(u, u)     # projector onto the ray's normal
+        A += Pu
+        b += Pu @ p[:2]
+    lm_init[k] = np.linalg.solve(A, b)
+
+print(f"{len(obs)} bearing observations of {L} landmarks from {N} poses")
+print(f"unknowns: {3*N} pose components + {2*L} landmark components = {3*N + 2*L}")
+print("mean landmark error of the initial triangulation:",
+      f"{np.linalg.norm(lm_init - LANDMARKS, axis=1).mean():.3f} m")</pre></div>
+  </div>
+
+  <div class="cell output">
+    <div class="prompt"></div>
+    <div class="cell-body"><pre class="stream">516 bearing observations of 12 landmarks from 64 poses
+unknowns: 192 pose components + 24 landmark components = 216
+mean landmark error of the initial triangulation: 0.696 m</pre></div>
+  </div>
+
+  <div class="cell md">
+    <div class="prompt"></div>
+    <div class="cell-body">
+      <p>
+        The error of a single observation is scalar — with $\mathbf{d} = \mathbf{l}_k - \mathbf{p}_i$,
+      </p>
+      <p>
+        $$e_{ik} \;=\; \mathrm{wrap}\!\big(\operatorname{atan2}(d_y, d_x) - \theta_i - \beta_{ik}\big),$$
+      </p>
+      <p>
+        with a $1{\times}3$ Jacobian in the pose and a $1{\times}2$ Jacobian in the landmark. Two things
+        change relative to the pose-graph solver of <code>In&nbsp;[7]</code>:
+      </p>
+      <ul>
+        <li><strong>The gauge is bigger.</strong> A bearing-only (monocular) problem has no absolute scale:
+            shrink the whole world around pose 0 and every bearing stays identical. So besides translation
+            and rotation, scale is free — a 4-dof gauge in 2-D (7-dof for a monocular camera in 3-D:
+            rigid motion + scale). Monocular SfM fixes this by clamping the first camera plus exactly one
+            extra number: the <em>length</em> of the baseline to the second camera. Our demo is lazier —
+            it pins the first two poses outright, over-constraining the gauge (6&nbsp;dof pinned where 4
+            would do) and clamping pose&nbsp;1's heading and the baseline direction to their dead-reckoned
+            values along the way. Those small errors, like the scale, are frozen into the solution:
+            nothing in the bearings can ever correct them — the monocular gauge ambiguity in action.</li>
+        <li><strong>The Schur complement.</strong> Order the unknowns as (all poses, all landmarks) and the
+            normal equations take the block form
+            $$\begin{bmatrix} H_{pp} &amp; H_{pl} \\ H_{pl}^\top &amp; H_{ll} \end{bmatrix}
+              \begin{bmatrix} \Delta\mathbf{x}_p \\ \Delta\mathbf{x}_l \end{bmatrix}
+              = -\begin{bmatrix} \mathbf{b}_p \\ \mathbf{b}_l \end{bmatrix}.$$
+            No observation factor touches two landmarks at once, so $H_{ll}$ is <em>block-diagonal</em> and
+            can be eliminated with independent tiny solves. Eliminating the landmarks leaves the smaller
+            <strong>reduced camera system</strong>
+            $$S = H_{pp} - H_{pl}\, H_{ll}^{-1} H_{pl}^\top,$$
+            solved first for the poses, then back-substituted for the landmarks. Points commonly far
+            outnumber cameras, so this reduction is central to scalable bundle adjustment.</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="cell code">
+    <div class="prompt in">In&nbsp;[11]:</div>
+    <div class="cell-body"><pre class="src">def bundle_adjust(poses0, lms0, obs, n_iter=5):
+    """Bearing-only BA: jointly refine all poses and all landmarks."""
+    P, Lm = poses0.copy(), lms0.copy()
+    npose, nlm = 3 * len(P), 2 * len(Lm)
+    w = 1.0 / SIGMA**2
+    for it in range(n_iter):
+        Hpp = np.zeros((npose, npose)); Hll = np.zeros((nlm, nlm))
+        Hpl = np.zeros((npose, nlm))
+        bp, bl = np.zeros(npose), np.zeros(nlm)
+        chi2 = 0.0
+        for i, k, beta in obs:
+            d = Lm[k] - P[i, :2]; r2 = d @ d
+            e = wrap(np.arctan2(d[1], d[0]) - P[i, 2] - beta)
+            Jp = np.array([d[1] / r2, -d[0] / r2, -1.0])   # d e / d pose_i
+            Jl = np.array([-d[1] / r2, d[0] / r2])         # d e / d landmark_k
+            chi2 += w * e * e
+            si, sk = slice(3 * i, 3 * i + 3), slice(2 * k, 2 * k + 2)
+            Hpp[si, si] += w * np.outer(Jp, Jp)
+            Hll[sk, sk] += w * np.outer(Jl, Jl)
+            Hpl[si, sk] += w * np.outer(Jp, Jl)
+            bp[si] += w * Jp * e
+            bl[sk] += w * Jl * e
+        print(f"iter {it}   chi2 = {chi2:12.4f}")
+        # Schur trick: eliminate each independent 2x2 landmark block, then solve poses
+        Hll_inv = np.zeros_like(Hll)        # explicit blocks only for this tiny demo
+        for k in range(len(Lm)):
+            sk = slice(2 * k, 2 * k + 2)
+            Hll_inv[sk, sk] = np.linalg.inv(Hll[sk, sk])
+        S = Hpp - Hpl @ Hll_inv @ Hpl.T
+        rhs = -(bp - Hpl @ Hll_inv @ bl)
+        dp = np.zeros(npose)                 # gauge: hold poses 0 and 1 fixed
+        dp[6:] = np.linalg.solve(S[6:, 6:], rhs[6:])
+        dl = Hll_inv @ (-(bl + Hpl.T @ dp))
+        P += dp.reshape(-1, 3); P[:, 2] = wrap(P[:, 2])
+        Lm += dl.reshape(-1, 2)
+    return P, Lm, (Hpp, Hpl, Hll)
+
+x_ba, lm_ba, (Hpp, Hpl, Hll) = bundle_adjust(odom_poses, lm_init, obs)
+
+err_odo = np.linalg.norm(odom_poses[:, :2] - true_poses[:, :2], axis=1).mean()
+err_ba = np.linalg.norm(x_ba[:, :2] - true_poses[:, :2], axis=1).mean()
+err_lm = np.linalg.norm(lm_ba - LANDMARKS, axis=1).mean()
+print(f"\nmean position error: odometry {err_odo:.3f} m -&gt; BA {err_ba:.3f} m")
+print(f"mean landmark error: triangulation "
+      f"{np.linalg.norm(lm_init - LANDMARKS, axis=1).mean():.3f} m -&gt; BA {err_lm:.3f} m")</pre></div>
+  </div>
+
+  <div class="cell output">
+    <div class="prompt"></div>
+    <div class="cell-body"><pre class="stream">iter 0   chi2 =   19958.8383
+iter 1   chi2 =    2314.1810
+iter 2   chi2 =     372.0358
+iter 3   chi2 =     305.7937
+iter 4   chi2 =     305.7230
+
+mean position error: odometry 0.573 m -&gt; BA 0.051 m
+mean landmark error: triangulation 0.696 m -&gt; BA 0.045 m</pre></div>
+  </div>
+
+  <div class="cell md">
+    <div class="prompt"></div>
+    <div class="cell-body">
+      <p>
+        Three things worth savoring in that output:
+      </p>
+      <ul>
+        <li>The nominal residual degrees of freedom are $516$ scalar measurements minus $210$ free
+            parameters ($216$ unknowns less the $6$ pinned), or $306$. The final $\chi^2 \approx 305.7$
+            happens to be close. That is a useful sanity check, not a formal calibration result: the model
+            is nonlinear, the pinned poses are slightly biased, and real data violate the ideal Gaussian assumptions.</li>
+        <li>The accuracy, <strong>5.1&nbsp;cm</strong>, matches the pose-graph result of Part&nbsp;I
+            (4.6&nbsp;cm) — using bearings alone in the objective, conditional on supplied landmark
+            associations, a good odometry initialization, and the fixed first two poses.</li>
+        <li>The drift is gone even though we never added a loop-closure edge. Re-observing the same
+            room corner from both the first and the last poses ties the two ends of the trajectory
+            together <em>through the structure</em>. In feature-based visual SLAM, a correctly associated
+            feature track spanning the revisit provides this loop information implicitly.</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="cell code">
+    <div class="prompt in">In&nbsp;[12]:</div>
+    <div class="cell-body"><pre class="src">fig, axes = plt.subplots(1, 2, figsize=(8.8, 3.9))
+
+# left: the BA normal-matrix structure (the reason the Schur trick works)
+Hfull = np.block([[Hpp, Hpl], [Hpl.T, Hll]])
+axes[0].spy(np.abs(Hfull) &gt; 1e-9, markersize=0.8, color="#4878cf")
+axes[0].axhline(3 * N - 0.5, c="#d65f5f", lw=1); axes[0].axvline(3 * N - 0.5, c="#d65f5f", lw=1)
+axes[0].set_title("full BA normal matrix:\nblock-sparse pose–landmark coupling", fontsize=9)
+
+# right: the reconstruction
+axes[1].scatter(*WORLD.T, s=1.5, c="#c9c9c9")
+axes[1].plot(*true_poses[:, :2].T, c="#42b06c", lw=2, label="ground truth")
+axes[1].plot(*odom_poses[:, :2].T, c="#d65f5f", lw=1.4, ls="--", label="odometry")
+axes[1].plot(*x_ba[:, :2].T, c="#4878cf", lw=1.8, label="bundle adjustment")
+axes[1].scatter(*LANDMARKS.T, marker="*", s=90, c="#42b06c", zorder=5)
+axes[1].scatter(*lm_ba.T, marker="+", s=70, c="#4878cf", zorder=6, label="landmarks (est.)")
+axes[1].set_aspect("equal")
+axes[1].legend(fontsize=7.5, ncols=2, loc="lower center", bbox_to_anchor=(0.5, 0.14))
+axes[1].set_title("poses and structure, jointly optimized", fontsize=9)</pre></div>
+  </div>
+
+  <div class="cell output">
+    <div class="prompt out">Out&nbsp;[12]:</div>
+    <div class="cell-body">
+      <img src="assets/fig_ba.png" alt="Left: sparsity pattern of the bundle-adjustment normal matrix, with block-diagonal pose and landmark blocks connected by a sparse observation pattern. Right: the BA trajectory and estimated landmarks lying on top of the ground truth, with the drifted odometry dashed." width="1100" height="571" loading="lazy">
+    </div>
+  </div>
+
+  <div class="cell md">
+    <div class="prompt"></div>
+    <div class="cell-body">
+      <p>
+        The left panel shows the full BA normal matrix before elimination. With only reprojection
+        factors, $H_{pp}$ (top-left) and $H_{ll}$ (bottom-right) are block-diagonal; the sparse
+        off-diagonal block records which camera observes which landmark. Eliminating landmarks makes
+        cameras that share points couple in the reduced camera matrix $S$, which is generally much less
+        sparse than $H_{pp}$. Production solvers exploit this structure directly:
+        Ceres calls it the <code>SPARSE_SCHUR</code> linear solver, g2o marks point vertices as
+        <code>marginalized</code>.
+      </p>
+    </div>
+  </div>
+
+  <hr class="hr-cell">
+
+  <!-- ============================ part IV: structure from motion ============================ -->
+  <div class="cell md">
+    <div class="prompt"></div>
+    <div class="cell-body">
+      <h2 id="structure-from-motion"><span class="step">Part IV</span>Structure from motion — the offline sibling</h2>
+      <p>
+        Bundle adjustment is an optimizer, not a system. Something has to detect features, match them
+        across images, decide which matches to trust, and produce the initial poses and points that BA
+        polishes. <strong>Structure from motion (SfM)</strong> is the surrounding pipeline that recovers
+        camera motion and 3-D structure from multiple images. It is usually run offline and does not
+        require temporal order, although ordered video is a perfectly valid input. The
+        classic incremental recipe appeared in systems such as Photo Tourism (Snavely et&nbsp;al., 2006),
+        with a modern reference implementation in
+        <a href="https://colmap.github.io/" target="_blank" rel="noopener">COLMAP</a>
+        (Schönberger&nbsp;&amp;&nbsp;Frahm, 2016):
+      </p>
+      <ol>
+        <li><strong>Features:</strong> detect keypoints and descriptors (classically SIFT) in every image —
+            the counterpart of our simulated bearings;</li>
+        <li><strong>Matching + geometric verification:</strong> match descriptors between image pairs, then keep
+            only correspondences consistent with an epipolar geometry estimated robustly, typically with
+            RANSAC. Isolated wrong matches are expected and rejected; a coherent false image-pair geometry
+            is the dangerous analogue of a false loop closure;</li>
+        <li><strong>Initialization:</strong> pick one strong image pair, recover its relative pose from the
+            essential matrix, triangulate the first points (we did the miniature version: fix two poses,
+            intersect rays);</li>
+        <li><strong>Incremental growth:</strong> register each new image against the existing points
+            (PnP), then triangulate the new points it sees;</li>
+        <li><strong>Repeated bundle adjustment:</strong> local BA after registrations plus periodic global
+            refinement keeps the growing reconstruction consistent.</li>
+      </ol>
+      <p>
+        <em>Global</em> SfM variants estimate many cameras together rather than registering them one at a
+        time. The 2024 <a href="https://www.ecva.net/papers/eccv_2024/papers_ECCV/html/5646_ECCV_2024_paper.php" target="_blank" rel="noopener">GLOMAP</a>
+        method uses rotation averaging followed by joint global positioning of cameras and points. Its
+        standalone repository was archived in 2026 after the implementation moved into COLMAP as the
+        <a href="https://github.com/colmap/colmap/blob/main/doc/cli.rst" target="_blank" rel="noopener"><code>global_mapper</code></a>.
+        Either way, the output is camera poses plus a sparse point cloud. That output is a common starting point
+        for multi-view stereo, NeRFs and <a href="/gaussian-splatting/">Gaussian splatting</a> — when a
+        3DGS paper says “initialized from COLMAP”, this pipeline is what it means. It also scales
+        to very large collections: “Building Rome in a Day” (Agarwal et&nbsp;al., 2009) reconstructed
+        city-scale models from 150,000 internet photos. Modern pipelines use sparse BA solvers such as Ceres.
+      </p>
+    </div>
+  </div>
+
+  <div class="cell code">
+    <div class="prompt in">In&nbsp;[&nbsp;]:</div>
+    <div class="cell-body"><pre class="src"># Reference snippet for the current official PyCOLMAP API
+# pip install pycolmap
+import pycolmap
+
+pycolmap.extract_features(db_path, image_dir)   # 1. SIFT keypoints + descriptors
+pycolmap.match_exhaustive(db_path)              # 2. match pairs, RANSAC-verify geometry
+maps = pycolmap.incremental_mapping(db_path, image_dir, out_dir)   # 3-5. SfM loop
+print(maps.keys())                              # model id -&gt; Reconstruction; also written to out_dir</pre></div>
+  </div>
+
+  <!-- ============================ part V: comparison ============================ -->
+  <div class="cell md">
+    <div class="prompt"></div>
+    <div class="cell-body">
+      <h2 id="comparison"><span class="step">Part V</span>Related problems, shared machinery</h2>
+      <p>
+        iSAM is deliberately not a fourth column below: it is a solver strategy for a growing factor graph,
+        not a different estimation problem. The three problems are closely related, but they are not identical:
+        pose-graph optimization and bundle
+        adjustment are estimation problem families, while SfM is a reconstruction pipeline that uses BA.
+        All can be expressed with sparse factors and nonlinear least squares. With Gaussian measurement
+        noise and no priors that is maximum likelihood; adding priors gives a MAP problem. Their shared skeleton is:
+      </p>
+      <ul>
+        <li>a state vector of things to estimate — poses, points, or both;</li>
+        <li>measurements, each touching only a couple of variables, weighted by an information matrix;</li>
+        <li>the same solver loop: linearize, assemble sparse normal equations, Gauss–Newton or
+            Levenberg–Marquardt, iterate;</li>
+        <li>a gauge freedom — a global rigid transform, or a similarity transform when monocular scale is
+            unknown — removed with priors or explicit constraints;</li>
+        <li>sensitivity to structured outliers, handled with geometric verification and robust losses;</li>
+        <li>shared numerical tools: g2o and GTSAM provide pose and projection factors, while Ceres is a
+            general nonlinear least-squares framework with official pose-graph and BA examples.</li>
+      </ul>
+      <p>What actually differs:</p>
+      <div class="table-scroll">
+      <table class="refs">
+        <tr>
+          <th></th>
+          <th>Pose-graph SLAM <span style="font-weight:400">(Part&nbsp;I)</span></th>
+          <th>Bundle adjustment <span style="font-weight:400">(Part&nbsp;III)</span></th>
+          <th>Structure from motion <span style="font-weight:400">(Part&nbsp;IV)</span></th>
+        </tr>
+        <tr>
+          <th>What it is</th>
+          <td>trajectory optimization from relative-pose constraints</td>
+          <td>joint refinement of poses <em>and</em> structure</td>
+          <td>an end-to-end reconstruction pipeline (BA is its inner loop)</td>
+        </tr>
+        <tr>
+          <th>State vector</th>
+          <td>poses only</td>
+          <td>poses + 3-D points (often + camera intrinsics)</td>
+          <td>camera poses + points (grown incrementally or estimated globally)</td>
+        </tr>
+        <tr>
+          <th>One measurement</th>
+          <td>a relative pose between two poses (odometry, ICP, loop closure)</td>
+          <td>one 2-D observation of one point in one image</td>
+          <td>feature observations grouped into verified multi-view tracks</td>
+        </tr>
+        <tr>
+          <th>Error minimized</th>
+          <td>pose mismatch $\mathrm{t2v}(Z_{ij}^{-1}X_i^{-1}X_j)$</td>
+          <td>reprojection error $\mathbf{u}_{ij}-\pi(T_j,\mathbf{X}_i)$</td>
+          <td>reprojection error, via BA</td>
+        </tr>
+        <tr>
+          <th>Graph topology</th>
+          <td>a sparse pose–pose graph; often sequential edges plus loop constraints</td>
+          <td>bipartite: cameras&nbsp;↔&nbsp;points</td>
+          <td>bipartite and growing (PnP adds cameras, triangulation adds points)</td>
+        </tr>
+        <tr>
+          <th>Sparsity exploited by</th>
+          <td>sparse Cholesky on block-sparse $H$</td>
+          <td>Schur complement on the point block</td>
+          <td>repeated Schur-complement BA</td>
+        </tr>
+        <tr>
+          <th>When it runs</th>
+          <td>batch or incremental; online or offline</td>
+          <td>global batch or local/sliding-window refinement</td>
+          <td>usually offline, optimized for reconstruction quality and scale</td>
+        </tr>
+        <tr>
+          <th>Input ordering</th>
+          <td>no mathematical ordering requirement; robot graphs commonly start as a sequence</td>
+          <td>no ordering requirement once the observation graph is known</td>
+          <td>unordered photos or ordered image sequences</td>
+        </tr>
+        <tr>
+          <th>Gauge freedom</th>
+          <td>one rigid transform — pin one pose (3&nbsp;dof in 2-D, 6 in 3-D)</td>
+          <td>+ scale if monocular (7&nbsp;dof in 3-D) — fix one camera and the baseline length</td>
+          <td>same as monocular BA; absolute scale needs GPS or a known baseline</td>
+        </tr>
+        <tr>
+          <th>Common tools</th>
+          <td>g2o, GTSAM (iSAM2)</td>
+          <td>Ceres, g2o, GTSAM</td>
+          <td>COLMAP (incremental and global mappers), OpenMVG</td>
+        </tr>
+        <tr>
+          <th>Classic reference</th>
+          <td>Lu&nbsp;&amp;&nbsp;Milios 1997; Grisetti et&nbsp;al. 2010</td>
+          <td>Triggs et&nbsp;al. 2000</td>
+          <td>Snavely et&nbsp;al. 2006; Schönberger&nbsp;&amp;&nbsp;Frahm 2016</td>
+        </tr>
+      </table>
+      </div>
+      <p>
+        The relationships need one final nuance. An ICP factor summarizes many scan correspondences as
+        one relative-pose measurement, but a pose graph is <em>not literally</em> BA with landmarks eliminated:
+        exact Schur elimination creates induced camera correlations that need not reduce to fixed pairwise
+        relative-pose factors. Pose graphs are a deliberate compact model. Likewise, visual SLAM and SfM
+        share feature geometry and BA, but SLAM adds causal tracking, relocalization, map maintenance, and
+        bounded latency. ORB-SLAM illustrates the overlap: it runs local BA around the current keyframe,
+        optimizes a sparse essential pose graph after loop detection for fast global correction, and can
+        follow with global BA over keyframes and map points.
+      </p>
+    </div>
+  </div>
+
+  <div class="cell md">
+    <div class="prompt"></div>
+    <div class="cell-body">
+      <h2>Where to go from here</h2>
+      <table class="refs">
+        <tr><th>Resource</th><th>What it is</th></tr>
+        <tr>
+          <td><a href="https://github.com/RainerKuemmerle/g2o" target="_blank" rel="noopener">RainerKuemmerle/g2o</a></td>
+          <td>The influential C++ graph-optimization framework (ICRA 2011). Its README links to the
+              separately maintained <code>g2o-python</code> wrapper; or use
+              <a href="https://github.com/uoip/g2opy" target="_blank" rel="noopener">uoip/g2opy</a> (community, older).</td>
+        </tr>
+        <tr>
+          <td><a href="https://github.com/JeffLIrion/python-graphslam" target="_blank" rel="noopener">JeffLIrion/python-graphslam</a></td>
+          <td>Readable pure-Python solver (<code>pip install graphslam</code>), supports $SE(2)$/$SE(3)$, landmarks, <code>.g2o</code> I/O.</td>
+        </tr>
+        <tr>
+          <td><a href="https://github.com/AtsushiSakai/PythonRobotics" target="_blank" rel="noopener">AtsushiSakai/PythonRobotics</a></td>
+          <td>Includes a compact graph-based SLAM example in the same didactic spirit as this page.</td>
+        </tr>
+        <tr>
+          <td><a href="https://borglab.github.io/gtsam/isam2/" target="_blank" rel="noopener">GTSAM iSAM2</a> /
+              <a href="https://borglab.github.io/gtsam/pose2slamexample/" target="_blank" rel="noopener">Pose2 SLAM</a> /
+              <a href="https://ceres-solver.googlesource.com/ceres-solver/+/master/examples/slam/pose_graph_2d" target="_blank" rel="noopener">Ceres Pose Graph 2D</a></td>
+          <td>Official examples for incremental and batch factor-graph optimization with GTSAM, and general sparse nonlinear least squares with Ceres.</td>
+        </tr>
+        <tr>
+          <td><a href="https://doi.org/10.1109/TRO.2008.2006706" target="_blank" rel="noopener">Kaess et&nbsp;al., <em>“iSAM: Incremental Smoothing and Mapping”</em></a> (2008)</td>
+          <td>The original incremental sparse-QR method, including periodic batch reordering and relinearization.</td>
+        </tr>
+        <tr>
+          <td><a href="https://doi.org/10.1177/0278364911430419" target="_blank" rel="noopener">Kaess et&nbsp;al., <em>“iSAM2: Incremental Smoothing and Mapping Using the Bayes Tree”</em></a> (2012)</td>
+          <td>The Bayes-tree formulation behind incremental reordering, fluid relinearization, and partial updates.</td>
+        </tr>
+        <tr>
+          <td><a href="https://doi.org/10.1109/MITS.2010.939925" target="_blank" rel="noopener">Grisetti et&nbsp;al., <em>“A Tutorial on Graph-Based SLAM”</em></a> (2010)</td>
+          <td>The tutorial this notebook's derivation follows — error function, Jacobians, sparse structure, gauge.</td>
+        </tr>
+        <tr>
+          <td><a href="https://doi.org/10.1109/34.121791" target="_blank" rel="noopener">Besl &amp; McKay, <em>“A Method for Registration of 3-D Shapes”</em></a> (1992)</td>
+          <td>The original ICP paper behind the scan-matching step.</td>
+        </tr>
+        <tr>
+          <td><a href="https://doi.org/10.1007/3-540-44480-7_21" target="_blank" rel="noopener">Triggs et&nbsp;al., <em>“Bundle Adjustment — A Modern Synthesis”</em></a> (2000)</td>
+          <td>The BA bible behind Part&nbsp;III: projection models, the Schur complement, gauge freedom, and why sparsity is everything.</td>
+        </tr>
+        <tr>
+          <td><a href="https://colmap.github.io/" target="_blank" rel="noopener">COLMAP</a> and
+              <a href="https://colmap.github.io/pycolmap/" target="_blank" rel="noopener">PyCOLMAP</a></td>
+          <td>The incremental and global SfM pipelines of Part&nbsp;IV; the official Python bindings expose feature extraction, matching, mapping, and BA.</td>
+        </tr>
+      </table>
+      <p>
+        Natural extensions include robust losses and switchable constraints on loop edges,
+        point-to-line/plane ICP and NDT for better matching,
+        landmark vertices alongside poses (Part&nbsp;III did the monocular version), and comparing
+        full-history iSAM2 with fixed-lag smoothing when memory and latency must be bounded. The
+        <a href="/vslam/">visual SLAM note</a> on this site shows the camera version of the same story —
+        Part&nbsp;III's bearings become real pixels, feature tracking supplies associations, and triangulation
+        intersects camera rays — while the
+        <a href="/gaussian-splatting/">Gaussian splatting note</a> picks up exactly where Part&nbsp;IV's
+        COLMAP output ends.
+      </p>
+    </div>
+  </div>
+
+</main>
+
+<footer class="site-footer">
+  <p><a href="/">← all projects</a> · figures and printed outputs generated by running the numerical cells on this page</p>
+</footer>
+
+<script>
+// Minimal Python syntax highlighter for the code cells.
+(function () {
+  const KW = /\b(def|return|for|while|if|elif|else|in|and|or|not|import|from|as|break|continue|class|lambda|with|pass|None|True|False|print)\b/g;
+  const NUM = /\b(\d+\.?\d*(?:e-?\d+)?)\b/g;
+  const esc = s => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  const plain = s => esc(s)
+    .replace(KW, '<span class="kw">$1</span>')
+    .replace(NUM, '<span class="nu">$1</span>');
+  // comments and strings (triple-quoted, f-strings) win over everything else
+  const TOKEN = /(#[^\n]*)|("""[\s\S]*?"""|f?"(?:\\.|[^"\\\n])*"|f?'(?:\\.|[^'\\\n])*')/g;
+  document.querySelectorAll('pre.src').forEach(pre => {
+    const src = pre.textContent;
+    const out = [];
+    let last = 0, m;
+    TOKEN.lastIndex = 0;
+    while ((m = TOKEN.exec(src)) !== null) {
+      out.push(plain(src.slice(last, m.index)));
+      out.push(m[1] ? '<span class="cm">' + esc(m[1]) + '</span>'
+                    : '<span class="st">' + esc(m[2]) + '</span>');
+      last = TOKEN.lastIndex;
+    }
+    out.push(plain(src.slice(last)));
+    pre.innerHTML = out.join('');
+  });
+})();
+</script>
+</body>
+</html>

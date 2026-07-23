@@ -1,0 +1,1186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Partition uncertainty in extended-object multi-target tracking | Bai Liping</title>
+<style>
+:root{
+  --bg:#eef0ea;
+  --panel:#fdfdfb;
+  --ink:#1b2320;
+  --mut:#5b665f;
+  --line:#d8dcd1;
+  --famA:#6d4fc2;
+  --famB:#0f766e;
+  --famC:#b7355c;
+  --blue:#2456c8;
+  --orange:#e08607;
+  --green:#0e9f6e;
+  --clut:#8b929c;
+  --serif:"STIX Two Text","Charter","Iowan Old Style",Georgia,"Times New Roman",serif;
+  --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  --mono:ui-monospace,"SF Mono",Menlo,Consolas,"Liberation Mono",monospace;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+@media (prefers-reduced-motion: reduce){html{scroll-behavior:auto}}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:15.5px;line-height:1.55}
+a{color:inherit}
+nav{position:sticky;top:0;z-index:10;background:rgba(238,240,234,.92);backdrop-filter:blur(6px);border-bottom:1px solid var(--line)}
+nav .in{max-width:1080px;margin:0 auto;padding:9px 20px;display:flex;gap:6px;overflow-x:auto;white-space:nowrap}
+nav a{font-size:12.5px;text-decoration:none;color:var(--mut);padding:4px 10px;border-radius:99px;border:1px solid transparent}
+nav a:hover{border-color:var(--line);background:#fff;color:var(--ink)}
+nav a .b{font-weight:700}
+nav a.na .b{color:var(--famA)} nav a.nb .b{color:var(--famB)} nav a.nc .b{color:var(--famC)}
+.wrap{max-width:1080px;margin:0 auto;padding:0 20px}
+header.hero{padding:52px 0 8px}
+.eyebrow{font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--mut)}
+h1{font-family:var(--serif);font-weight:600;font-size:clamp(28px,4.4vw,44px);line-height:1.12;margin:.35em 0 .35em;letter-spacing:-.01em}
+h1 .big{font-variant-numeric:tabular-nums}
+.sub{max-width:720px;color:var(--mut);font-size:16.5px}
+.quote{margin:26px 0 10px;background:var(--panel);border:1px solid var(--line);border-left:4px solid var(--ink);border-radius:10px;padding:16px 20px;font-family:var(--serif);font-size:17px;line-height:1.65}
+.quote .lead{font-size:12px;font-family:var(--sans);letter-spacing:.1em;text-transform:uppercase;color:var(--mut);display:block;margin-bottom:6px}
+.quote a{text-decoration:none;border-bottom:2.5px solid;padding-bottom:1px;cursor:pointer}
+.quote a:hover{background:rgba(0,0,0,.045)}
+.quote a.qa{border-color:var(--famA);color:var(--famA)}
+.quote a.qb{border-color:var(--famB);color:var(--famB)}
+.quote a.qc{border-color:var(--famC);color:var(--famC)}
+.quote .r{font-family:var(--sans);font-size:12.5px;color:var(--mut)}
+section{padding:44px 0 8px;scroll-margin-top:58px}
+.shead{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap;margin-bottom:6px}
+.badge{font-family:var(--sans);font-weight:800;font-size:13px;color:#fff;border-radius:8px;padding:3px 9px;letter-spacing:.03em}
+.badge.a{background:var(--famA)} .badge.b{background:var(--famB)} .badge.c{background:var(--famC)} .badge.p{background:var(--ink)}
+h2{font-family:var(--serif);font-weight:600;font-size:clamp(21px,2.8vw,28px);margin:0;letter-spacing:-.005em}
+.refs-inline{font-size:13px;color:var(--mut)}
+.refs-inline a{text-decoration:none;color:var(--mut);border-bottom:1px dotted var(--mut)}
+.sec{display:grid;grid-template-columns:5fr 7fr;gap:26px;align-items:start;margin-top:14px}
+@media (max-width:940px){.sec{grid-template-columns:1fr}}
+.prose p{margin:.5em 0 .9em}
+.prose .math{font-family:var(--serif);font-style:italic}
+.prose .m{font-family:var(--serif)}
+.callout{border:1px solid var(--line);border-left:3px solid var(--famA);background:#fff;border-radius:8px;padding:10px 14px;font-size:14px;margin-top:10px}
+.callout.tb{border-left-color:var(--famB)}
+.callout.tc{border-left-color:var(--famC)}
+.callout b{font-family:var(--sans)}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:14px 14px 12px}
+svg.scene{width:100%;display:block;background:#fff;border:1px solid var(--line);border-radius:10px}
+svg.mini{width:100%;display:block;background:#fff;border-radius:6px}
+.ctrl{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-top:10px}
+.btn{font-family:var(--sans);font-size:13.5px;padding:6px 13px;border-radius:9px;border:1px solid var(--line);background:#fff;color:var(--ink);cursor:pointer}
+.btn:hover:not(:disabled){border-color:var(--ink)}
+.btn:disabled{opacity:.4;cursor:default}
+.btn:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
+.btn.primary{background:var(--ink);color:#fff;border-color:var(--ink)}
+input[type=range]{accent-color:var(--ink)}
+.note{font-size:13px;color:var(--mut);margin-top:8px}
+.stat{font-family:var(--mono);font-size:13px;background:#fff;border:1px solid var(--line);border-radius:8px;padding:4px 9px}
+.chips{display:grid;grid-template-columns:repeat(auto-fill,minmax(148px,1fr));gap:10px;margin-top:12px}
+.chip{background:#fff;border:1px solid var(--line);border-radius:10px;padding:7px;cursor:pointer;text-align:left}
+.chip:hover{border-color:var(--famA)}
+.chip.active{border-color:var(--famA);box-shadow:0 0 0 2px rgba(109,79,194,.18)}
+.chip .cw{display:flex;justify-content:space-between;font-size:11.5px;color:var(--mut);font-family:var(--mono);margin-top:5px}
+.wbar{height:5px;background:#edeee8;border-radius:99px;margin-top:4px;overflow:hidden}
+.wbar>span{display:block;height:100%;background:var(--famA);border-radius:99px}
+.hyps{display:grid;grid-template-columns:repeat(auto-fill,minmax(158px,1fr));gap:10px;margin-top:12px}
+.hcard{background:#fff;border:1px solid var(--line);border-radius:10px;padding:8px}
+.hcard .hl{font-size:11.5px;color:var(--mut);margin-top:5px;line-height:1.35;min-height:2.4em}
+.hcard .hw{font-family:var(--mono);font-size:12px;margin-top:4px}
+.hcard .wbar>span{background:var(--famB)}
+.hist{margin-top:12px}
+.hrow{display:grid;grid-template-columns:minmax(0,1fr) 62px;gap:8px;align-items:center;margin:5px 0}
+.hrow .hs{font-family:var(--mono);font-size:11.5px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.hrow .hb{height:9px;background:#edeee8;border-radius:99px;overflow:hidden}
+.hrow .hb>span{display:block;height:100%;background:var(--famB);border-radius:99px}
+.hrow .hn{font-family:var(--mono);font-size:11.5px;color:var(--mut);text-align:right}
+.bp-read{width:100%;border-collapse:collapse;font-family:var(--mono);font-size:12.5px;margin-top:10px}
+.bp-read th,.bp-read td{border:1px solid var(--line);padding:4px 7px;text-align:right;background:#fff}
+.bp-read th{font-family:var(--sans);font-weight:600;font-size:12px;color:var(--mut);text-align:right}
+.bp-read td:first-child,.bp-read th:first-child{text-align:left}
+.ebars{margin-top:10px;font-size:12.5px}
+.ebars .er{display:grid;grid-template-columns:150px 1fr 44px;gap:8px;align-items:center;margin:4px 0}
+.ebars .eb{height:8px;background:#edeee8;border-radius:99px;overflow:hidden}
+.ebars .eb>span{display:block;height:100%;border-radius:99px}
+.legend{font-size:12.5px;color:var(--mut);margin-top:8px}
+.legend .dot{display:inline-block;width:9px;height:9px;border-radius:99px;vertical-align:-1px;margin-right:3px}
+table.cmp{width:100%;border-collapse:collapse;margin-top:16px;font-size:14px;background:var(--panel)}
+table.cmp th,table.cmp td{border:1px solid var(--line);padding:9px 11px;vertical-align:top;text-align:left}
+table.cmp th{font-size:12px;text-transform:uppercase;letter-spacing:.07em;color:var(--mut);background:#f6f7f2}
+table.cmp td .fam{font-weight:700}
+table.cmp td .fa{color:var(--famA)} table.cmp td .fb{color:var(--famB)} table.cmp td .fc{color:var(--famC)}
+ol.refs{font-size:13.5px;color:var(--mut);padding-left:2.6em;line-height:1.6}
+ol.refs li{margin:.35em 0}
+ol.refs li::marker{font-family:var(--mono)}
+footer{margin:56px 0 40px;padding-top:18px;border-top:1px solid var(--line);font-size:12.5px;color:var(--mut)}
+.half{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+@media (max-width:700px){.half{grid-template-columns:1fr}}
+.smallcap{font-size:11.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--mut);margin:0 0 6px}
+.methods{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px}
+.mbtn{font-size:13px;padding:6px 12px;border-radius:99px;border:1px solid var(--line);background:#fff;color:var(--mut);cursor:pointer}
+.mbtn.on{background:var(--famA);color:#fff;border-color:var(--famA)}
+.mbtn:hover:not(.on){border-color:var(--famA);color:var(--ink)}
+.mbtn:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:9px;overflow:hidden}
+.seg button{border:none;background:#fff;padding:5px 12px;font-size:12.5px;cursor:pointer;color:var(--mut);border-right:1px solid var(--line);font-family:var(--sans)}
+.seg button:last-child{border-right:none}
+.seg button.on{background:var(--famA);color:#fff}
+.mrow{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin:8px 0}
+.mrow label{font-size:13px;color:var(--ink)}
+#tbBest .hb>span{background:var(--famA)}
+.tbcard{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:15px;margin-top:16px}
+.tbhead{display:flex;align-items:center;gap:9px;margin-bottom:12px}
+.tbhead h3{font-family:var(--serif);font-weight:600;font-size:18.5px;margin:0;letter-spacing:-.005em}
+.mdot{width:11px;height:11px;border-radius:99px;display:inline-block;flex:none}
+.tbgrid{display:grid;grid-template-columns:1.05fr .95fr;gap:20px;align-items:start}
+.tbgrid .note{margin-top:2px}
+@media (max-width:760px){.tbgrid{grid-template-columns:1fr}}
+@media (max-width:600px){
+  .wrap{padding:0 12px}
+  .panel,.tbcard{padding:10px}
+  table.cmp{display:block;max-width:100%;overflow-x:auto}
+  .ebars .er{grid-template-columns:minmax(90px,130px) 1fr 40px}
+}
+</style>
+<style>
+  .bl-site-header{border-bottom:1px solid rgba(29,37,32,.12);background:rgba(255,255,255,.86);backdrop-filter:blur(12px);font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif}
+  .bl-header-inner{width:min(960px,calc(100% - 32px));margin-inline:auto;display:flex;align-items:center;justify-content:space-between;min-height:64px;gap:16px}
+  .bl-brand{display:inline-flex;align-items:center;gap:10px;font-weight:800;color:#1d2520;text-decoration:none}
+  .bl-brand-mark{display:grid;place-items:center;width:32px;height:32px;border-radius:8px;background:#2f7d5b;color:#fff;font-weight:900}
+  .bl-top-nav a{color:#215c43;font-weight:700;text-decoration:none}
+</style>
+</head>
+<body>
+<header class="bl-site-header">
+  <div class="bl-header-inner">
+    <a class="bl-brand" href="/" aria-label="Bai Liping home">
+      <span class="bl-brand-mark" aria-hidden="true">B</span>
+      <span>Bai Liping</span>
+    </a>
+    <nav class="bl-top-nav" aria-label="Primary">
+      <a href="/">Home</a>
+    </nav>
+  </div>
+</header>
+
+
+<nav><div class="in">
+  <a href="#problem"><span class="b">§</span> The problem</a>
+  <a href="#famA" class="na"><span class="b">A</span> Candidate partitions</a>
+  <a href="#toolbox" class="na"><span class="b">✦</span> Partitioning toolbox</a>
+  <a href="#famB1" class="nb"><span class="b">B1</span> Retain hypotheses</a>
+  <a href="#famB2" class="nb"><span class="b">B2</span> Direct approximate inference</a>
+  <a href="#famC" class="nc"><span class="b">C</span> No hard partition</a>
+  <a href="#compare"><span class="b">≷</span> Compare</a>
+  <a href="#references"><span class="b">[·]</span> References</a>
+</div></nav>
+
+<div class="wrap">
+
+<header class="hero">
+  <div class="eyebrow">Interactive note · Extended-object multi-target tracking</div>
+  <h1>One cloud of detections,<br><span class="big">115&hairsp;975</span> ways to group it.</h1>
+  <p class="sub">An extended object returns <em>several</em> measurements per scan, so the tracker must decide which measurements belong together before it can decide which object they belong to. This page walks through the three families of solutions to that <em>partition-uncertainty</em> problem — each demonstrated on the same toy scene of two elliptical objects, one ambiguous detection, and one clutter point.</p>
+
+  <div class="quote">
+    <span class="lead">The sentence this page unpacks</span>
+    Existing approaches
+    <a class="qa" href="#famA">either marginalize over a restricted set of candidate partitions <span class="r">[25]–[28]</span></a>,
+    <a class="qb" href="#famB1">retain multiple hypotheses in the multi-object posterior <span class="r">[29], [30]</span></a>,
+    <a class="qb" href="#famB2">search the joint space by sampling, or approximate its marginals with BP <span class="r">[31], [32]</span></a>,
+    or <a class="qc" href="#famC">avoid explicit hard partitioning by proposing a new target with each measurement <span class="r">[33], [34]</span></a>.
+  </div>
+  <p class="note">The sections organize four mechanisms into three broad viewpoints. B2 deliberately places two distinct approximations side by side: [31] searches for high-weight partition–association hypotheses by stochastic methods, whereas [32] uses belief propagation to obtain marginals without enumerating them. Click any clause to jump to its demo.</p>
+</header>
+
+<!-- ============================ PROBLEM ============================ -->
+<section id="problem">
+  <div class="shead"><span class="badge p">§</span><h2>The problem: what is a partition, and why it explodes</h2></div>
+  <div class="sec">
+    <div class="prose">
+      <p>At one scan the sensor returns a measurement set <span class="math">Z</span> = {<span class="math">m</span><sub>1</sub>, …, <span class="math">m</span><sub>M</sub>}. Because each extended object can generate many detections, many standard updates sum over a <b>partition</b> <span class="math">P</span> of <span class="math">Z</span>: disjoint, non-empty cells whose union is <span class="math">Z</span>. A cell can be assigned to an existing or newly detected object. Under the usual Poisson point-clutter model, clutter measurements are normally handled as individual clutter events rather than one multi-measurement clutter source.</p>
+      <p>The exact multi-object likelihood is a <em>sum over all partitions</em> (and, inside each partition, over all cell-to-object assignments). The number of partitions of <span class="math">M</span> elements is the Bell number <span class="math">B</span>(<span class="math">M</span>) — and it grows super-exponentially. For the <span class="math">M</span> = 10 scene on the right there are already 115&hairsp;975 partitions; counting associations and clutter labels on top, far more.</p>
+      <p>Every filter below is a different answer to one question: <em>how do you avoid summing over all of them?</em></p>
+      <div class="callout" style="border-left-color:var(--ink)"><b>The toy scene.</b> Dashed ellipses are the (unknown) true objects. Measurements 1–4 and 5–8 sit on them; <b>m₉</b> falls between the objects and is genuinely ambiguous; <b>m₁₀</b> is a lone clutter point. All five demos below run on exactly these ten points.</div>
+    </div>
+    <div class="panel">
+      <p class="smallcap">Same ten measurements, many valid groupings</p>
+      <svg class="scene" id="sceneProblem" role="img" aria-label="Toy scene with ten measurements and example partitions"></svg>
+      <div class="ctrl">
+        <button class="btn primary" id="btnCycle">Show another valid partition</button>
+        <span class="stat" id="partIdx">partition 1 of 115 975</span>
+      </div>
+      <div class="note" id="partNote"></div>
+      <hr style="border:none;border-top:1px solid var(--line);margin:14px 0 10px">
+      <p class="smallcap">How fast it explodes</p>
+      <div class="ctrl">
+        <label for="bellM" style="font-size:13px">M&nbsp;=&nbsp;<b id="bellMv">10</b></label>
+        <input type="range" id="bellM" min="4" max="30" value="10" step="1" style="flex:1">
+        <span class="stat">B(M) = <span id="bellOut"></span></span>
+      </div>
+      <div class="note">B(20) ≈ 5×10<sup>13</sup>, B(30) ≈ 8×10<sup>23</sup>. Exhaustive enumeration is off the table almost immediately.</div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================ FAMILY A ============================ -->
+<section id="famA">
+  <div class="shead"><span class="badge a">A</span><h2>Marginalize over a restricted set of candidate partitions</h2>
+    <span class="refs-inline"><a href="#ref25">[25]</a> <a href="#ref26">[26]</a> <a href="#ref27">[27]</a> <a href="#ref28">[28]</a></span></div>
+  <div class="sec">
+    <div class="prose">
+      <p>Classical extended-target PHD-family updates contain a weighted sum over partitions, but practical implementations replace “all partitions” with a small, heuristically generated candidate set <span class="math">𝒫</span><sub>cand</sub> and make other approximation or moment-matching choices. A common workhorse is <b>distance partitioning</b> <a class="refs-inline" href="#ref25">[25]</a>: cluster measurements with single linkage at a threshold <span class="math">d</span>, then sweep <span class="math">d</span> over a range; every distinct clustering that appears becomes one candidate. Variants add prediction partitioning, EM or spectral sub-partitioning, and combining/splitting steps.</p>
+      <p>The update then marginalizes: <span class="m">ν(Z) ≈ Σ<sub>P∈𝒫cand</sub> ω<sub>P</sub> · (update given P)</span>, with weights ω<sub>P</sub> proportional to each partition’s likelihood. This is how the ET-GM-PHD <a class="refs-inline" href="#ref25">[25]</a>, the GGIW ET-CPHD <a class="refs-inline" href="#ref26">[26]</a>, the random-matrix PHD <a class="refs-inline" href="#ref27">[27]</a>, and labeled-RFS extended-target filters <a class="refs-inline" href="#ref28">[28]</a> stay tractable.</p>
+      <div class="callout"><b>The catch — visible in this demo.</b> Any partition outside the candidate set gets weight exactly zero. Here, sweeping <span class="math">d</span> produces <span id="candMiss">…</span> candidates out of 115&hairsp;975 partitions — and the plausible grouping <span style="font-family:var(--mono);font-size:12.5px">{1,2,3,4,9}{5,6,7,8}</span> is <em>never among them</em>, because single linkage attaches m₉ to the right-hand cluster first. The heuristic decides which hypotheses are even allowed to exist.</div>
+      <p class="note" style="margin-top:10px">That candidate set came from <em>one</em> clustering rule — single-linkage distance. But the choice is free: <a href="#toolbox" style="color:var(--famA);font-weight:600">the partitioning toolbox ↓</a> swaps in DBSCAN, k-means, spectral, and MCMC on the same ten points.</p>
+    </div>
+    <div class="panel">
+      <p class="smallcap">Distance partitioning — drag the threshold</p>
+      <svg class="scene" id="sceneDist" role="img" aria-label="Distance partitioning demo"></svg>
+      <div class="ctrl">
+        <label for="distD" style="font-size:13px">d&nbsp;=&nbsp;<b id="distDv">8.0</b></label>
+        <input type="range" id="distD" min="0.5" max="40" value="8" step="0.25" style="flex:1">
+        <span class="stat" id="distCells"></span>
+      </div>
+      <p class="smallcap" style="margin-top:14px">The full candidate set 𝒫<sub>cand</sub> from sweeping d, with illustrative likelihood weights ω<sub>P</sub></p>
+      <div class="chips" id="chipsDist"></div>
+      <div class="note">Click a candidate to jump the slider into its threshold window. Weights here come from a simple Gaussian-cluster likelihood with a per-cell penalty — schematic, but the ranking matches intuition.</div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================ TOOLBOX ============================ -->
+<section id="toolbox">
+  <div class="shead"><span class="badge a">✦</span><h2>The partitioning toolbox: many ways to build the candidate set</h2>
+    <span class="refs-inline"><a href="#ref25">[25]</a> <a href="#ref31">[31]</a></span></div>
+  <div class="prose" style="max-width:770px">
+    <p>Family A marginalizes over a candidate set 𝒫<sub>cand</sub> — but <em>which</em> partitions land in that set is entirely up to the clustering rule, and there are many. Each panel below is a <em>separate live example</em> of one method running on the same ten measurements. Drag every control and watch how m₉ (ambiguous) and m₁₀ (clutter) are treated differently. Single-linkage distance partitioning <a class="refs-inline" href="#ref25">[25]</a> is only the traditional default; no method here is “correct,” which is exactly why the candidate set is a modeling choice.</p>
+  </div>
+
+  <div class="tbcard">
+    <div class="tbhead"><span class="mdot" style="background:var(--famA)"></span><h3>Hierarchical &mdash; agglomerative linkage</h3></div>
+    <div class="tbgrid">
+      <div>
+        <svg class="scene" id="scene_hier" role="img" aria-label="Hierarchical clustering demo"></svg>
+        <div id="ctrl_hier"></div>
+        <div class="ctrl"><span class="stat" id="stat_hier"></span></div>
+      </div>
+      <div class="note">Repeatedly merge the two nearest clusters until the linkage distance passes the threshold <span class="math">d</span>. <b>Single</b> linkage scores cluster distance by the closest pair, so it <em>chains</em> across gaps — m₉ hops onto a cluster early, and past <span class="math">d</span>&#8239;≈&#8239;13 the two objects fuse into one cell. <b>Complete</b> uses the farthest pair (tight, compact groups); <b>average</b> sits between. Sweeping this threshold is precisely the distance partitioning of family A.</div>
+    </div>
+  </div>
+
+  <div class="tbcard">
+    <div class="tbhead"><span class="mdot" style="background:var(--blue)"></span><h3>K-means &mdash; centroid partitioning</h3></div>
+    <div class="tbgrid">
+      <div>
+        <svg class="scene" id="scene_kmeans" role="img" aria-label="K-means clustering demo"></svg>
+        <div id="ctrl_kmeans"></div>
+        <div class="ctrl"><span class="stat" id="stat_kmeans"></span></div>
+      </div>
+      <div class="note">Lloyd’s algorithm with k-means++ seeding: fix the number of groups <span class="math">K</span>, then alternate assigning points to the nearest centroid and recomputing centroids. Fast, but <span class="math">K</span> must be chosen up front and <em>every</em> point is forced into some cluster — at <span class="math">K</span>=2 the clutter point m₁₀ drags a whole centroid toward it; you need <span class="math">K</span>=4 before it gets its own cell. Hit <b>Re-seed</b> to land in a different local optimum.</div>
+    </div>
+  </div>
+
+  <div class="tbcard">
+    <div class="tbhead"><span class="mdot" style="background:var(--green)"></span><h3>DBSCAN &mdash; density clustering</h3></div>
+    <div class="tbgrid">
+      <div>
+        <svg class="scene" id="scene_dbscan" role="img" aria-label="DBSCAN clustering demo"></svg>
+        <div id="ctrl_dbscan"></div>
+        <div class="ctrl"><span class="stat" id="stat_dbscan"></span></div>
+      </div>
+      <div class="note">A point is a <em>core</em> point if it has at least minPts neighbours within radius ε; clusters grow outward from core points, and anything left over is <b>noise</b> (drawn hollow). DBSCAN discovers the cluster count itself and, unlike k-means, quarantines clutter — at ε=10, minPts=3 it cleanly labels both m₉ and m₁₀ as noise. Widen ε and m₉ gets absorbed; m₁₀ stays isolated. Its weakness: one global density can’t fit clusters of very different tightness.</div>
+    </div>
+  </div>
+
+  <div class="tbcard">
+    <div class="tbhead"><span class="mdot" style="background:var(--famC)"></span><h3>Spectral &mdash; graph-eigenvector clustering</h3></div>
+    <div class="tbgrid">
+      <div>
+        <svg class="scene" id="scene_spectral" role="img" aria-label="Spectral clustering demo"></svg>
+        <div id="ctrl_spectral"></div>
+        <div class="ctrl"><span class="stat" id="stat_spectral"></span></div>
+      </div>
+      <div class="note">Build an affinity graph with weights exp(&minus;dist²/2σ²), then k-means the smallest eigenvectors of its normalized Laplacian — cutting the graph where connections are weakest. It can separate groups a centroid method merges, and at <span class="math">K</span>=3 it produces <span style="font-family:var(--mono);font-size:12px">{1&ndash;4,9}{5&ndash;8}{10}</span> — the grouping of m₉ that single linkage can <em>never</em> reach. σ sets the neighbourhood scale: too large and all points fuse, too small and it shatters into singletons.</div>
+    </div>
+  </div>
+
+  <div class="tbcard">
+    <div class="tbhead"><span class="mdot" style="background:var(--famB)"></span><h3>MCMC &mdash; split / merge sampling</h3></div>
+    <div class="tbgrid">
+      <div>
+        <svg class="scene" id="scene_mcmc" role="img" aria-label="MCMC partition sampling demo"></svg>
+        <div id="ctrl_mcmc"></div>
+        <div class="ctrl"><span class="stat" id="stat_mcmc"></span></div>
+      </div>
+      <div>
+        <div class="note">A Metropolis&ndash;Hastings-style chain over partitions: each move proposes splitting, merging, or reassigning and accepts using the toy score ratio. It <em>searches</em> instead of enumerating; the best visited candidates illustrate the stochastic-optimization route of <a class="refs-inline" href="#ref31">[31]</a>. This page’s score is schematic, so its histogram is not a calibrated filter posterior.</div>
+        <div id="extra_mcmc"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================ FAMILY B1 ============================ -->
+<section id="famB1">
+  <div class="shead"><span class="badge b">B1</span><h2>Retain multiple hypotheses in the multi-object posterior</h2>
+    <span class="refs-inline"><a href="#ref29">[29]</a> <a href="#ref30">[30]</a></span></div>
+  <div class="sec">
+    <div class="prose">
+      <p>The Poisson multi-Bernoulli mixture (PMBM) filter <a class="refs-inline" href="#ref29">[29]</a> takes the opposite stance: don’t pick partitions — <em>keep</em> them. The PMBM density is a conjugate prior for extended-target models, so the posterior is exactly a mixture in which each <b>global hypothesis</b> corresponds to one history of partitions and cell-to-object associations, carrying a weight and its own multi-Bernoulli density.</p>
+      <p>The price is growth: at every scan each global hypothesis spawns one child per compatible partition–association of the new measurement set, so the mixture multiplies. Tractability comes from hypothesis management — gating, pruning low-weight hypotheses, capping their number, and recycling — exactly what the buttons on the right animate.</p>
+      <p>The PMB approximations of <a class="refs-inline" href="#ref30">[30]</a> go one step further: after the update, the mixture is approximated by a <em>single</em> multi-Bernoulli using track-oriented or variational/KL-based methods. Marginal association information survives, while correlations between global hypotheses are discarded (see the split-colored m₉ below).</p>
+    </div>
+    <div class="panel">
+      <p class="smallcap">Global hypotheses = partitions + associations, each with a weight</p>
+      <div class="ctrl">
+        <button class="btn primary" id="btnBranch">Update at t+1 (hypotheses branch)</button>
+        <button class="btn" id="btnPrune" disabled>Prune &amp; cap at 4</button>
+        <button class="btn" id="btnHypReset">Reset</button>
+      </div>
+      <div class="ctrl"><span class="stat" id="pmbmInfo"></span></div>
+      <div class="hyps" id="hypCards"></div>
+      <hr style="border:none;border-top:1px solid var(--line);margin:14px 0 10px">
+      <div class="half">
+        <div>
+          <p class="smallcap">PMB projection <a class="refs-inline" href="#ref30" style="text-transform:none;letter-spacing:0">[30]</a>: mixture → single density</p>
+          <svg class="scene" id="scenePMB" role="img" aria-label="PMB marginal association"></svg>
+        </div>
+        <div>
+          <p class="smallcap">Resulting marginals for m₉</p>
+          <table class="bp-read">
+            <tr><th>hypothesis about m₉</th><th>marginal prob.</th></tr>
+            <tr><td>from object 2</td><td>0.46</td></tr>
+            <tr><td>from object 1</td><td>0.31</td></tr>
+            <tr><td>births a new object</td><td>0.14</td></tr>
+            <tr><td>clutter</td><td>0.09</td></tr>
+          </table>
+          <div class="note">These numbers are illustrative. After projection, m₉ is represented through marginal contributions and a possible new Bernoulli rather than one retained global cell assignment. The mixture’s branching structure and cross-track correlations are gone; only selected marginal uncertainty remains.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================ FAMILY B2 ============================ -->
+<section id="famB2">
+  <div class="shead"><span class="badge b">B2</span><h2>Direct approximate inference without enumeration</h2>
+    <span class="refs-inline"><a href="#ref31">[31]</a> <a href="#ref32">[32]</a></span></div>
+  <div class="sec">
+    <div class="prose">
+      <p>Granström <em>et&nbsp;al.</em> <a class="refs-inline" href="#ref31">[31]</a> use Gibbs sampling and stochastic optimization to find high-likelihood joint partition–association hypotheses directly, avoiding a separate clustering-then-assignment stage. With an irreducible chain, correct target distribution, adequate mixing, and enough samples, sampling can explore support beyond a fixed heuristic candidate set; in finite time it can still miss modes.</p>
+      <p>Xia <em>et&nbsp;al.</em> <a class="refs-inline" href="#ref32">[32]</a> take a different route: a trajectory-PMB filter uses a factor-graph representation and belief propagation to approximate association marginals without enumerating hypotheses. It is not a partition sampler. The live panel on the right demonstrates only the sampling idea from [31].</p>
+      <div class="callout tb"><b>Watch for it.</b> Run the sampler and check the histogram: both <span style="font-family:var(--mono);font-size:12.5px">{1–4}{5–8,9}</span> <em>and</em> <span style="font-family:var(--mono);font-size:12.5px">{1–4,9}{5–8}</span> accumulate mass — including the partition family A could never produce.</div>
+    </div>
+    <div class="panel">
+      <p class="smallcap">Gibbs-style sampler over partitions (starts from one giant cell)</p>
+      <svg class="scene" id="sceneGibbs" role="img" aria-label="Gibbs sampling over partitions"></svg>
+      <div class="ctrl">
+        <button class="btn primary" id="btnGRun">Run 200 moves</button>
+        <button class="btn" id="btnGStep">Single move</button>
+        <button class="btn" id="btnGReset">Reset</button>
+        <span class="stat" id="gStat">0 moves</span>
+      </div>
+      <div class="hist" id="histGibbs"></div>
+      <div class="note">One “move” reassigns one measurement to an existing cell, a new cell, or clutter (∅), using a CRP-flavored Gaussian toy score. The bars are empirical visit frequencies for this toy Markov chain, not a calibrated posterior from [31]. Mixing, burn-in, and the stationary distribution all matter.</div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================ FAMILY C ============================ -->
+<section id="famC">
+  <div class="shead"><span class="badge c">C</span><h2>No explicit hard partitioning: a new potential object per measurement</h2>
+    <span class="refs-inline"><a href="#ref33">[33]</a> <a href="#ref34">[34]</a></span></div>
+  <div class="sec">
+    <div class="prose">
+      <p>Meyer and Williams <a class="refs-inline" href="#ref33">[33]</a>, <a class="refs-inline" href="#ref34">[34]</a> dissolve the partition variable altogether. Each measurement <span class="math">m<sub>i</sub></span> gets its own association variable <span class="math">a<sub>i</sub></span> ∈ {existing objects, new object, clutter}, and — crucially — <em>instantiates one new potential object</em>. The joint posterior over object states, existences, and all <span class="math">a<sub>i</sub></span> lives on a factor graph, and the sum-product algorithm (SPA) passes messages until the association <em>marginals</em> converge.</p>
+      <p>No explicit partition is enumerated; “groups” exist implicitly through measurements whose association beliefs concentrate on the same object. For fixed particle count and message iterations, the association layer touches measurement–object pairs and scales roughly as <span class="m">𝒪(n·M)</span> per iteration; the full particle implementation has additional state and shape-inference costs. <a class="refs-inline" href="#ref34">[34]</a> extends the machinery to explicit geometric shapes.</p>
+      <div class="callout tc"><b>Read the picture.</b> Edge opacity = current belief p(a<sub>i</sub> = object k). Core measurements lock on after one or two iterations; m₉ stays deliberately soft between blue and orange; m₁₀’s strongest explanation is clutter, and every measurement keeps a faint dashed circle — its own potential new object.</div>
+    </div>
+    <div class="panel">
+      <p class="smallcap">Message passing on the association factor graph (schematic SPA)</p>
+      <svg class="scene" id="sceneBP" role="img" aria-label="Belief propagation soft associations"></svg>
+      <div class="ctrl">
+        <button class="btn primary" id="btnBPIter">Iterate once</button>
+        <button class="btn" id="btnBPRun">Run to convergence</button>
+        <button class="btn" id="btnBPReset">Reset</button>
+        <span class="stat" id="bpStat">iteration 0</span>
+      </div>
+      <div class="ebars" id="bpE"></div>
+      <table class="bp-read" id="bpTable"></table>
+      <div class="half" style="margin-top:14px">
+        <div>
+          <p class="smallcap">The factor graph (4 of M measurements shown)</p>
+          <svg class="scene" id="fgSVG" role="img" aria-label="Factor graph sketch"></svg>
+        </div>
+        <div class="note" style="margin-top:22px">Circles x₁, x₂: legacy objects. Circles a<sub>i</sub>: per-measurement association variables. Dashed circles y<sub>i</sub>: the new potential object that measurement i proposes. Squares: likelihood / existence factors. SPA messages flow along the edges — M new-object nodes instead of B(M) partitions.</div>
+      </div>
+      <div class="note">The iteration shown is a simplified fixed-point version of the SPA in [33] (association beliefs ↔ existence probabilities), enough to see the qualitative behavior; the real algorithm also couples kinematic and extent states.</div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================ COMPARE ============================ -->
+<section id="compare">
+  <div class="shead"><span class="badge p">≷</span><h2>Side by side</h2></div>
+  <table class="cmp">
+    <tr><th style="width:16%">Family</th><th style="width:22%">Representative filters</th><th>How partition uncertainty is handled</th><th style="width:26%">Cost &amp; failure mode</th></tr>
+    <tr>
+      <td><span class="fam fa">A · Candidate set</span></td>
+      <td>ET-GM-PHD [25]; GGIW ET-CPHD [26]; random-matrix PHD [27]; labeled RFS [28]</td>
+      <td>Heuristics (distance / prediction partitioning, EM splits) generate a small 𝒫<sub>cand</sub>; the update marginalizes over it with likelihood weights.</td>
+      <td>Cheap and simple; but mass outside 𝒫<sub>cand</sub> is silently zero — the clustering heuristic caps achievable accuracy.</td>
+    </tr>
+    <tr>
+      <td><span class="fam fb">B1 · Retain hypotheses</span></td>
+      <td>PMBM conjugate prior [29]; PMB / PMBM approximations [30]</td>
+      <td>Under the assumed model, partition-and-association histories index a conjugate PMBM mixture; PMB approximates that mixture by one density, retaining selected marginals but dropping global correlations.</td>
+      <td>Statistically principled; hypothesis count multiplies per scan → needs aggressive gating, pruning, capping, recycling.</td>
+    </tr>
+    <tr>
+      <td><span class="fam fb">B2 · Direct inference</span></td>
+      <td>Gibbs / stochastic optimization [31]; trajectory PMB with BP associations [32]</td>
+      <td>[31] searches for high-weight joint hypotheses by sampling/optimization; [32] instead uses BP to approximate marginals without enumeration.</td>
+      <td>Sampling can mix slowly or miss modes; loopy BP can bias marginals. These are distinct approximations with different diagnostics.</td>
+    </tr>
+    <tr>
+      <td><span class="fam fc">C · No hard partition</span></td>
+      <td>SPA-based scalable EOT [33]; geometric extended objects [34]</td>
+      <td>One association variable and one new potential object per measurement; SPA on a factor graph yields soft association marginals — partitions never enumerated.</td>
+      <td>Association messaging is roughly 𝒪(n·M) per iteration for fixed particle count; the complete particle tracker costs more. Delivers approximate marginals, not an explicit best partition.</td>
+    </tr>
+  </table>
+  <p class="note">Same scene, three lenses: A asks “which few groupings shall we allow?”, B asks “how do we carry <em>many</em> groupings forward?”, C asks “why group at all?”.</p>
+</section>
+
+<!-- ============================ REFERENCES ============================ -->
+<section id="references">
+  <div class="shead"><span class="badge p">[·]</span><h2>References</h2></div>
+  <ol class="refs" start="25">
+    <li id="ref25"><a href="https://doi.org/10.1109/TAES.2012.6324703" target="_blank" rel="noopener">K. Granström <em>et al.</em>, “Extended target tracking using a Gaussian-mixture PHD filter,”</a> <em>IEEE Trans. Aerosp. Electron. Syst.</em>, vol. 48, no. 4, pp. 3268–3286, 2012.</li>
+    <li id="ref26"><a href="https://doi.org/10.1109/JSTSP.2013.2245632" target="_blank" rel="noopener">C. Lundquist <em>et al.</em>, “An extended target CPHD filter and a gamma Gaussian inverse Wishart implementation,”</a> <em>IEEE J. Sel. Topics Signal Process.</em>, vol. 7, no. 3, pp. 472–483, 2013.</li>
+    <li id="ref27"><a href="https://doi.org/10.1109/TSP.2012.2212888" target="_blank" rel="noopener">K. Granström <em>et al.</em>, “A PHD filter for tracking multiple extended targets using random matrices,”</a> <em>IEEE Trans. Signal Process.</em>, vol. 60, no. 11, pp. 5657–5671, 2012.</li>
+    <li id="ref28"><a href="https://doi.org/10.1109/TSP.2015.2505683" target="_blank" rel="noopener">M. Beard <em>et al.</em>, “Multiple extended target tracking with labeled random finite sets,”</a> <em>IEEE Trans. Signal Process.</em>, vol. 64, no. 7, pp. 1638–1653, 2016.</li>
+    <li id="ref29"><a href="https://arxiv.org/abs/1605.06311" target="_blank" rel="noopener">K. Granström <em>et al.</em>, “Poisson multi-Bernoulli mixture conjugate prior for multiple extended target filtering,”</a> <em>IEEE Trans. Aerosp. Electron. Syst.</em>, vol. 56, no. 1, pp. 208–225, 2020.</li>
+    <li id="ref30"><a href="https://arxiv.org/abs/1801.01353" target="_blank" rel="noopener">Y. Xia <em>et al.</em>, “Poisson multi-Bernoulli approximations for multiple extended object filtering,”</a> <em>IEEE Trans. Aerosp. Electron. Syst.</em>, vol. 58, no. 2, pp. 890–906, 2022.</li>
+    <li id="ref31"><a href="https://doi.org/10.1109/TIV.2017.2788184" target="_blank" rel="noopener">K. Granström <em>et al.</em>, “Likelihood-based data association for extended object tracking using sampling methods,”</a> <em>IEEE Trans. Intell. Veh.</em>, vol. 3, no. 1, pp. 30–45, 2018.</li>
+    <li id="ref32"><a href="https://arxiv.org/abs/2207.10164" target="_blank" rel="noopener">Y. Xia <em>et al.</em>, “Trajectory PMB filters for extended object tracking using belief propagation,”</a> <em>IEEE Trans. Aerosp. Electron. Syst.</em>, vol. 59, no. 6, pp. 9312–9331, 2023.</li>
+    <li id="ref33"><a href="https://doi.org/10.1109/TSIPN.2020.2995967" target="_blank" rel="noopener">F. Meyer <em>et al.</em>, “Scalable data association for extended object tracking,”</a> <em>IEEE Trans. Signal Inf. Process. Netw.</em>, vol. 6, pp. 491–507, 2020.</li>
+    <li id="ref34"><a href="https://arxiv.org/abs/2103.11279" target="_blank" rel="noopener">F. Meyer <em>et al.</em>, “Scalable detection and tracking of geometric extended objects,”</a> <em>IEEE Trans. Signal Process.</em>, vol. 69, pp. 6283–6298, 2021.</li>
+  </ol>
+</section>
+
+<footer>
+  All weights and probabilities on this page are computed live from the toy geometry with deliberately simplified likelihood models — schematic illustrations of each family’s <em>mechanism</em>, not implementations of the exact filter equations. Single self-contained HTML file; works offline.
+</footer>
+
+</div><!-- /wrap -->
+
+<script>
+/* ============================ shared data ============================ */
+var W=100,H=66,AREA=W*H;
+var MEAS=[
+ {x:28,y:42.5},{x:31,y:48},{x:36.5,y:44.5},{x:29.5,y:46},
+ {x:59,y:49.5},{x:66,y:53.5},{x:67.5,y:49},{x:62,y:52.5},
+ {x:48.5,y:48.5},
+ {x:86,y:18}
+];
+var T1={x:32,y:45.2,rx:9,ry:5,ang:-12,color:'#2456c8'};
+var T2={x:63.5,y:51,rx:8.5,ry:4.6,ang:15,color:'#e08607'};
+var PAL=['#2456c8','#e08607','#0e9f6e','#8b5cf6','#d13c4b','#0694a2','#c026d3','#65a30d'];
+var CLUT='#8b929c';
+
+/* ============================ svg helpers ============================ */
+var NS='http://www.w3.org/2000/svg';
+function E(tag,at,parent){var e=document.createElementNS(NS,tag);for(var k in at)e.setAttribute(k,at[k]);if(parent)parent.appendChild(e);return e;}
+function clearG(g){while(g.firstChild)g.removeChild(g.firstChild);}
+function drawEll(g,T){E('ellipse',{cx:T.x,cy:T.y,rx:T.rx,ry:T.ry,transform:'rotate('+T.ang+' '+T.x+' '+T.y+')',fill:T.color,'fill-opacity':0.06,stroke:T.color,'stroke-opacity':0.45,'stroke-width':0.45,'stroke-dasharray':'1.8 1.4'},g);}
+function mkScene(id,opts){
+  var svg=document.getElementById(id);
+  svg.setAttribute('viewBox','0 0 '+W+' '+H);
+  var gg=E('g',{},svg),x,y;
+  for(x=10;x<W;x+=10)E('line',{x1:x,y1:0,x2:x,y2:H,stroke:'#000','stroke-opacity':0.05,'stroke-width':0.22},gg);
+  for(y=10;y<H;y+=10)E('line',{x1:0,y1:y,x2:W,y2:y,stroke:'#000','stroke-opacity':0.05,'stroke-width':0.22},gg);
+  var g={svg:svg,gEll:E('g',{},svg),gHull:E('g',{},svg),gEdge:E('g',{},svg),gPts:E('g',{},svg),gTop:E('g',{},svg)};
+  if(!opts||opts.ellipses!==false){drawEll(g.gEll,T1);drawEll(g.gEll,T2);}
+  return g;
+}
+function drawPts(g,colorFn,labels){
+  clearG(g);
+  MEAS.forEach(function(m,i){
+    var c=colorFn(i);
+    if(c==='clutter'){
+      E('circle',{cx:m.x,cy:m.y,r:1.25,fill:'#fff',stroke:CLUT,'stroke-width':0.55},g);
+    }else{
+      E('circle',{cx:m.x,cy:m.y,r:1.3,fill:c,stroke:'#fff','stroke-width':0.35},g);
+    }
+    if(labels!==false){
+      var t=E('text',{x:m.x+1.7,y:m.y-1.4,'font-size':2.5,fill:'#79808a','font-family':'sans-serif'},g);
+      t.textContent=String(i+1);
+    }
+  });
+}
+function hullOf(pts){
+  var P=pts.slice().sort(function(a,b){return a.x-b.x||a.y-b.y;});
+  if(P.length<3)return P;
+  function cr(o,a,b){return (a.x-o.x)*(b.y-o.y)-(a.y-o.y)*(b.x-o.x);}
+  var lo=[],up=[],i,p;
+  for(i=0;i<P.length;i++){p=P[i];while(lo.length>1&&cr(lo[lo.length-2],lo[lo.length-1],p)<=0)lo.pop();lo.push(p);}
+  for(i=P.length-1;i>=0;i--){p=P[i];while(up.length>1&&cr(up[up.length-2],up[up.length-1],p)<=0)up.pop();up.push(p);}
+  lo.pop();up.pop();return lo.concat(up);
+}
+function drawBlob(g,idxs,color,dashed){
+  var pts=idxs.map(function(i){return MEAS[i];}),pad=2.6;
+  var dash=dashed?'2 1.5':'none';
+  if(pts.length===1){
+    E('circle',{cx:pts[0].x,cy:pts[0].y,r:pad+0.4,fill:color,'fill-opacity':0.12,stroke:color,'stroke-width':0.5,'stroke-opacity':0.75,'stroke-dasharray':dash},g);
+    return;
+  }
+  if(pts.length===2){
+    E('line',{x1:pts[0].x,y1:pts[0].y,x2:pts[1].x,y2:pts[1].y,stroke:color,'stroke-opacity':0.14,'stroke-width':2*(pad+0.4),'stroke-linecap':'round'},g);
+    return;
+  }
+  var h=hullOf(pts),cx=0,cy=0,k;
+  for(k=0;k<h.length;k++){cx+=h[k].x;cy+=h[k].y;}
+  cx/=h.length;cy/=h.length;
+  var d='M'+h.map(function(p){var dx=p.x-cx,dy=p.y-cy,L=Math.hypot(dx,dy)||1;return (p.x+dx/L*pad).toFixed(1)+','+(p.y+dy/L*pad).toFixed(1);}).join('L')+'Z';
+  E('path',{d:d,fill:color,'fill-opacity':0.10,stroke:color,'stroke-width':0.5,'stroke-opacity':0.75,'stroke-linejoin':'round','stroke-dasharray':dash},g);
+}
+function drawPartition(gh,gp,cells,opts){
+  opts=opts||{};clearG(gh);
+  var clut={},i;(opts.clutter||[]).forEach(function(i){clut[i]=true;});
+  var colOf={};
+  cells.forEach(function(c,k){var col=PAL[k%PAL.length];c.forEach(function(i){colOf[i]=col;});drawBlob(gh,c,col,false);});
+  (opts.newcells||[]).forEach(function(c){c.forEach(function(i){colOf[i]=PAL[2];});drawBlob(gh,c,PAL[2],true);});
+  drawPts(gp,function(i){return clut[i]?'clutter':(colOf[i]||'#3a4148');},opts.labels);
+}
+function halfDot(g,x,y,r,c1,c2){
+  E('path',{d:'M '+(x-r)+' '+y+' A '+r+' '+r+' 0 0 1 '+(x+r)+' '+y+' Z',fill:c2},g);
+  E('path',{d:'M '+(x-r)+' '+y+' A '+r+' '+r+' 0 0 0 '+(x+r)+' '+y+' Z',fill:c1},g);
+  E('circle',{cx:x,cy:y,r:r,fill:'none',stroke:'#fff','stroke-width':0.35},g);
+}
+function miniScene(parent,cells,opts){
+  var svg=E('svg',{viewBox:'0 0 '+W+' '+H,'class':'mini'},parent);
+  drawEll(svg,T1);drawEll(svg,T2);
+  var gh=E('g',{},svg),gp=E('g',{},svg);
+  var o=opts||{};o.labels=false;
+  drawPartition(gh,gp,cells,o);
+  return svg;
+}
+function gauss2(d2,v){return Math.exp(-d2/(2*v))/(2*Math.PI*v);}
+
+/* ============================ bell numbers ============================ */
+function bellUpTo(n){
+  var B=[1n],row=[1n],k,j,nr;
+  for(k=1;k<=n;k++){
+    nr=[row[row.length-1]];
+    for(j=0;j<row.length;j++)nr.push(nr[j]+row[j]);
+    row=nr;B.push(row[0]);
+  }
+  return B;
+}
+var BELL=bellUpTo(30);
+function fmtBig(b){
+  var s=b.toString();
+  var t=s.replace(/\B(?=(\d{3})+(?!\d))/g,'\u2009');
+  if(s.length>7)return t+' \u2248 '+s[0]+'.'+s.slice(1,3)+'\u00d710<sup>'+(s.length-1)+'</sup>';
+  return t;
+}
+
+/* ============================ partitions: shared ============================ */
+function sig(cells){return cells.map(function(c){return '{'+c.map(function(i){return i+1;}).join(',')+'}';}).join('');}
+function singleLinkage(d){
+  var n=MEAS.length,par=[],i,j;
+  for(i=0;i<n;i++)par.push(i);
+  function find(i){while(par[i]!==i){par[i]=par[par[i]];i=par[i];}return i;}
+  for(i=0;i<n;i++)for(j=i+1;j<n;j++){
+    if(Math.hypot(MEAS[i].x-MEAS[j].x,MEAS[i].y-MEAS[j].y)<=d){
+      var a=find(i),b=find(j);if(a!==b)par[a]=b;
+    }
+  }
+  var m={};
+  for(i=0;i<n;i++){var r=find(i);(m[r]=m[r]||[]).push(i);}
+  return Object.keys(m).map(function(k){return m[k].sort(function(a,b){return a-b;});})
+    .sort(function(a,b){return a[0]-b[0];});
+}
+function partScore(cells){
+  var s2=2*5.5*5.5,ll=0;
+  cells.forEach(function(c){
+    var pts=c.map(function(i){return MEAS[i];}),mx=0,my=0;
+    pts.forEach(function(p){mx+=p.x;my+=p.y;});mx/=pts.length;my/=pts.length;
+    var ss=0;pts.forEach(function(p){ss+=(p.x-mx)*(p.x-mx)+(p.y-my)*(p.y-my);});
+    ll+=-ss/s2-3.0;
+  });
+  return ll;
+}
+var CAND=[];
+(function(){
+  var seen={},d;
+  for(d=0.5;d<=40.001;d+=0.25){
+    var c=singleLinkage(d),s=sig(c);
+    if(!seen[s]){seen[s]=true;CAND.push({d:Math.round(d*100)/100,cells:c,s:s});}
+  }
+  var mx=-1e9;CAND.forEach(function(c){var v=partScore(c.cells);c.ll=v;if(v>mx)mx=v;});
+  var Z=0;CAND.forEach(function(c){c.w=Math.exp(c.ll-mx);Z+=c.w;});
+  CAND.forEach(function(c,i){c.w/=Z;c.dmax=(i+1<CAND.length)?CAND[i+1].d:40;});
+})();
+
+/* ============================ problem section ============================ */
+var DEMO_PARTS=[
+ {cells:[[0,1,2,3],[4,5,6,7],[8],[9]],note:'The “intuitive” one: two clusters, two singletons.'},
+ {cells:[[0,1,2,3],[4,5,6,7,8],[9]],note:'m\u2089 grouped with the right-hand cluster.'},
+ {cells:[[0,1,2,3,8],[4,5,6,7],[9]],note:'m\u2089 grouped with the left-hand cluster \u2014 equally valid a priori.'},
+ {cells:[[0,1,2,3],[4,5,6,7,8,9]],note:'Even the far point m\u2081\u2080 can be pulled into a cell. Still a valid partition.'},
+ {cells:[[0,3],[1,2],[4,6],[5,7],[8,9]],note:'Nothing in the definition forbids partitions that look wrong.'},
+ {cells:[[0,1,2,3,4,5,6,7,8,9]],note:'One giant cell \u2014 also a valid partition. The likelihood must rule these out; the definition does not.'}
+];
+var probScene,probIdx=0;
+function renderProblem(){
+  var p=DEMO_PARTS[probIdx];
+  drawPartition(probScene.gHull,probScene.gPts,p.cells,{});
+  document.getElementById('partIdx').textContent='partition '+(probIdx+1)+' of 115\u2009975';
+  document.getElementById('partNote').textContent=p.note;
+}
+
+/* ============================ family A ============================ */
+var distScene,chipEls=[];
+function renderDist(){
+  var d=parseFloat(document.getElementById('distD').value);
+  document.getElementById('distDv').textContent=d.toFixed(1);
+  var cells=singleLinkage(d);
+  drawPartition(distScene.gHull,distScene.gPts,cells,{});
+  document.getElementById('distCells').textContent=cells.length+(cells.length===1?' cell':' cells');
+  CAND.forEach(function(c,i){
+    var on=(d>=c.d&&d<c.dmax)||(i===CAND.length-1&&d>=c.d);
+    chipEls[i].className='chip'+(on?' active':'');
+  });
+}
+function buildChips(){
+  var host=document.getElementById('chipsDist');
+  CAND.forEach(function(c,i){
+    var b=document.createElement('button');
+    b.className='chip';b.type='button';
+    miniScene(b,c.cells,{});
+    var cw=document.createElement('div');cw.className='cw';
+    cw.innerHTML='<span>\u03c9\u2248'+(c.w*100<0.05?'&lt;0.1':(c.w*100).toFixed(1))+'%</span><span>d\u2208['+c.d.toFixed(1)+','+(i===CAND.length-1?'\u221e':c.dmax.toFixed(1))+')</span>';
+    b.appendChild(cw);
+    var wb=document.createElement('div');wb.className='wbar';
+    var sp=document.createElement('span');sp.style.width=Math.max(2,c.w*100)+'%';wb.appendChild(sp);
+    b.appendChild(wb);
+    b.addEventListener('click',function(){
+      var mid=(c.d+((i===CAND.length-1)?c.d+4:c.dmax))/2;
+      document.getElementById('distD').value=mid;
+      renderDist();
+    });
+    host.appendChild(b);chipEls.push(b);
+  });
+  document.getElementById('candMiss').textContent='only '+CAND.length;
+}
+
+/* ============================ family B1: PMBM ============================ */
+var HYPS=[
+ {w:0.46,cells:[[0,1,2,3],[4,5,6,7,8]],clutter:[9],newc:[],lbl:'m\u2089 from object 2'},
+ {w:0.31,cells:[[0,1,2,3,8],[4,5,6,7]],clutter:[9],newc:[],lbl:'m\u2089 from object 1'},
+ {w:0.14,cells:[[0,1,2,3],[4,5,6,7]],clutter:[9],newc:[[8]],lbl:'m\u2089 births new object'},
+ {w:0.09,cells:[[0,1,2,3],[4,5,6,7]],clutter:[8,9],newc:[],lbl:'m\u2089 is clutter'}
+];
+function cloneH(h){return {w:h.w,cells:h.cells.map(function(c){return c.slice();}),clutter:h.clutter.slice(),newc:h.newc.map(function(c){return c.slice();}),lbl:h.lbl};}
+var hypList=[],pmbmStage=0,pmbmScan=0;
+function renderHyps(msg){
+  var host=document.getElementById('hypCards');host.innerHTML='';
+  hypList.forEach(function(h){
+    var card=document.createElement('div');card.className='hcard';
+    miniScene(card,h.cells,{clutter:h.clutter,newcells:h.newc});
+    var hw=document.createElement('div');hw.className='hw';hw.textContent='w = '+h.w.toFixed(3);
+    var wb=document.createElement('div');wb.className='wbar';
+    var sp=document.createElement('span');sp.style.width=Math.max(2,h.w*100)+'%';wb.appendChild(sp);
+    var hl=document.createElement('div');hl.className='hl';hl.textContent=h.lbl;
+    card.appendChild(hw);card.appendChild(wb);card.appendChild(hl);
+    host.appendChild(card);
+  });
+  document.getElementById('pmbmInfo').textContent=msg;
+  document.getElementById('btnBranch').disabled=(pmbmStage!==0);
+  document.getElementById('btnPrune').disabled=(pmbmStage!==1);
+}
+function hypReset(){
+  hypList=HYPS.map(cloneH);pmbmStage=0;pmbmScan=0;
+  renderHyps('4 global hypotheses \u00b7 one per partition\u2013association of the current scan');
+}
+function hypBranch(){
+  pmbmScan++;
+  var kids=[],F=[[0.55,'assoc \u03b1'],[0.30,'assoc \u03b2'],[0.15,'assoc \u03b3']];
+  hypList.forEach(function(h){
+    F.forEach(function(f){
+      var c=cloneH(h);c.w=h.w*f[0];c.lbl=h.lbl+' \u00b7 '+f[1]+' @ t+'+pmbmScan;
+      kids.push(c);
+    });
+  });
+  hypList=kids;pmbmStage=1;
+  renderHyps('12 global hypotheses \u2014 each parent spawned one child per compatible partition\u2013association of the new scan. Left unmanaged: 4 \u2192 12 \u2192 36 \u2192 108 \u2026');
+}
+function hypPrune(){
+  hypList.sort(function(a,b){return b.w-a.w;});
+  var kept=hypList.slice(0,4),sum=0;
+  kept.forEach(function(h){sum+=h.w;});
+  var tot=0;hypList.forEach(function(h){tot+=h.w;});
+  var discarded=tot-sum;
+  kept.forEach(function(h){h.w=h.w/sum;});
+  hypList=kept;pmbmStage=0;
+  renderHyps('Capped at N\u2098\u2090\u2093 = 4 \u00b7 discarded weight '+discarded.toFixed(3)+' renormalized away. This pruning is what keeps PMBM tractable \u2014 and what it can lose.');
+}
+function renderPMB(){
+  var sc=mkScene('scenePMB',{});
+  var colOf={};[0,1,2,3].forEach(function(i){colOf[i]=T1.color;});
+  [4,5,6,7].forEach(function(i){colOf[i]=T2.color;});
+  drawBlob(sc.gHull,[0,1,2,3],T1.color,false);
+  drawBlob(sc.gHull,[4,5,6,7],T2.color,false);
+  MEAS.forEach(function(m,i){
+    if(i===8)return;
+    if(i===9){E('circle',{cx:m.x,cy:m.y,r:1.25,fill:'#fff',stroke:CLUT,'stroke-width':0.55},sc.gPts);}
+    else E('circle',{cx:m.x,cy:m.y,r:1.3,fill:colOf[i],stroke:'#fff','stroke-width':0.35},sc.gPts);
+    var t=E('text',{x:m.x+1.7,y:m.y-1.4,'font-size':2.5,fill:'#79808a','font-family':'sans-serif'},sc.gPts);
+    t.textContent=String(i+1);
+  });
+  halfDot(sc.gPts,MEAS[8].x,MEAS[8].y,1.7,T1.color,T2.color);
+  var t9=E('text',{x:MEAS[8].x+2.2,y:MEAS[8].y-1.6,'font-size':2.5,fill:'#79808a','font-family':'sans-serif'},sc.gPts);
+  t9.textContent='9';
+  E('circle',{cx:MEAS[8].x,cy:MEAS[8].y,r:3.4,fill:'none',stroke:PAL[2],'stroke-width':0.4,'stroke-dasharray':'1.6 1.3','stroke-opacity':0.7},sc.gTop);
+}
+
+/* ============================ family B2: Gibbs ============================ */
+var gibbsScene,gAssign,gCounts,gMoves,gPtr,gLast;
+function gCellsFromAssign(){
+  var m={};
+  gAssign.forEach(function(a,i){if(a>=0)(m[a]=m[a]||[]).push(i);});
+  return Object.keys(m).map(function(k){return m[k].sort(function(a,b){return a-b;});})
+    .sort(function(a,b){return a[0]-b[0];});
+}
+function gSig(){
+  var cells=gCellsFromAssign();
+  var cl=[];gAssign.forEach(function(a,i){if(a<0)cl.push(i);});
+  return sig(cells)+(cl.length?' \u2205{'+cl.map(function(i){return i+1;}).join(',')+'}':'');
+}
+function gRecord(){
+  var s=gSig();
+  gCounts[s]=(gCounts[s]||0)+1;
+}
+function gStep(){
+  var i=gPtr;gPtr=(gPtr+1)%MEAS.length;gLast=i;
+  var groups={},mxid=-1;
+  gAssign.forEach(function(a,j){
+    if(j===i)return;
+    if(a>=0){(groups[a]=groups[a]||[]).push(j);if(a>mxid)mxid=a;}
+  });
+  var opts=[],ws=[];
+  Object.keys(groups).forEach(function(key){
+    var c=groups[key],n=c.length,mx=0,my=0;
+    c.forEach(function(j){mx+=MEAS[j].x;my+=MEAS[j].y;});mx/=n;my/=n;
+    var v=5.5*5.5*(1+1/n)+2;
+    var d2=(MEAS[i].x-mx)*(MEAS[i].x-mx)+(MEAS[i].y-my)*(MEAS[i].y-my);
+    opts.push(+key);ws.push(n*gauss2(d2,v));
+  });
+  opts.push(mxid+1);ws.push(1.0/AREA);
+  opts.push(-1);ws.push(2.0/AREA);
+  var Z=0;ws.forEach(function(w){Z+=w;});
+  var r=Math.random()*Z,k=0;
+  while(k<ws.length-1&&r>ws[k]){r-=ws[k];k++;}
+  gAssign[i]=opts[k];
+  gMoves++;gRecord();
+}
+function gRender(){
+  var cells=gCellsFromAssign();
+  var cl=[];gAssign.forEach(function(a,i){if(a<0)cl.push(i);});
+  drawPartition(gibbsScene.gHull,gibbsScene.gPts,cells,{clutter:cl});
+  clearG(gibbsScene.gTop);
+  if(gLast!==null&&gLast!==undefined){
+    E('circle',{cx:MEAS[gLast].x,cy:MEAS[gLast].y,r:2.6,fill:'none',stroke:'#111','stroke-width':0.45,'stroke-opacity':0.7},gibbsScene.gTop);
+  }
+  document.getElementById('gStat').textContent=gMoves+' moves';
+  var entries=Object.keys(gCounts).map(function(s){return [s,gCounts[s]];});
+  entries.sort(function(a,b){return b[1]-a[1];});
+  var tot=0;entries.forEach(function(e){tot+=e[1];});
+  var host=document.getElementById('histGibbs');host.innerHTML='';
+  var head=document.createElement('p');head.className='smallcap';
+  head.textContent='Visit histogram \u2014 top '+Math.min(5,entries.length)+' of '+entries.length+' distinct partitions visited';
+  host.appendChild(head);
+  entries.slice(0,5).forEach(function(e){
+    var row=document.createElement('div');row.className='hrow';
+    var l=document.createElement('div');l.className='hs';l.textContent=e[0];l.title=e[0];
+    var b=document.createElement('div');b.className='hb';
+    var sp=document.createElement('span');sp.style.width=(100*e[1]/tot).toFixed(1)+'%';
+    b.appendChild(sp);
+    var n=document.createElement('div');n.className='hn';n.textContent=(100*e[1]/tot).toFixed(1)+'%';
+    row.appendChild(l);row.appendChild(n);
+    host.appendChild(row);
+    var row2=document.createElement('div');row2.style.margin='0 0 7px';row2.appendChild(b);
+    host.appendChild(row2);
+  });
+}
+function gReset(){
+  gAssign=MEAS.map(function(){return 0;});
+  gCounts={};gMoves=0;gPtr=0;gLast=null;
+  gRecord();gRender();
+}
+
+/* ============================ family C: BP ============================ */
+var bpScene,BP={};
+var GAM=4,LNEW=1.0/AREA,LCLUT=2.0/AREA;
+function bpLik(i,k){
+  var T=(k===0)?T1:T2,v=(k===0)?57:51;
+  var d2=(MEAS[i].x-T.x)*(MEAS[i].x-T.x)+(MEAS[i].y-T.y)*(MEAS[i].y-T.y);
+  return gauss2(d2,v);
+}
+function bpCompute(){
+  BP.p=MEAS.map(function(m,i){
+    var w=[BP.e[0]*GAM*bpLik(i,0),BP.e[1]*GAM*bpLik(i,1),LNEW,LCLUT];
+    var Z=w[0]+w[1]+w[2]+w[3];
+    return w.map(function(x){return x/Z;});
+  });
+}
+function bpIterCore(){
+  var S=[0,0];
+  BP.p.forEach(function(p){S[0]+=p[0];S[1]+=p[1];});
+  BP.e=[Math.min(0.95,S[0]/(S[0]+0.7)),Math.min(0.95,S[1]/(S[1]+0.7))];
+  BP.it++;bpCompute();
+}
+function bpRender(){
+  clearG(bpScene.gEdge);clearG(bpScene.gTop);
+  MEAS.forEach(function(m,i){
+    [0,1].forEach(function(k){
+      var p=BP.p[i][k];
+      if(p>0.03){
+        var T=(k===0)?T1:T2;
+        E('line',{x1:m.x,y1:m.y,x2:T.x,y2:T.y,stroke:T.color,'stroke-width':0.55,'stroke-opacity':Math.min(0.95,p)},bpScene.gEdge);
+      }
+    });
+    var pn=BP.p[i][2];
+    E('circle',{cx:m.x,cy:m.y,r:2.3,fill:'none',stroke:PAL[2],'stroke-width':0.45,'stroke-dasharray':'1.4 1.2','stroke-opacity':Math.min(0.9,0.12+pn*2.2)},bpScene.gTop);
+    var pc=BP.p[i][3];
+    if(pc>0.3){
+      var t=E('text',{x:m.x-3.6,y:m.y-2.2,'font-size':3.4,fill:CLUT,'fill-opacity':Math.min(1,pc+0.2),'font-family':'sans-serif'},bpScene.gTop);
+      t.textContent='\u00d7';
+    }
+  });
+  drawPts(bpScene.gPts,function(){return '#3a4148';},true);
+  document.getElementById('bpStat').textContent='iteration '+BP.it;
+  var eh=document.getElementById('bpE');
+  eh.innerHTML='';
+  [['object 1 existence e\u2081',BP.e[0],T1.color],['object 2 existence e\u2082',BP.e[1],T2.color]].forEach(function(r){
+    var row=document.createElement('div');row.className='er';
+    var l=document.createElement('div');l.textContent=r[0];
+    var b=document.createElement('div');b.className='eb';
+    var sp=document.createElement('span');sp.style.width=(r[1]*100).toFixed(0)+'%';sp.style.background=r[2];
+    b.appendChild(sp);
+    var v=document.createElement('div');v.textContent=r[1].toFixed(2);v.style.fontFamily='var(--mono)';
+    row.appendChild(l);row.appendChild(b);row.appendChild(v);
+    eh.appendChild(row);
+  });
+  var tb=document.getElementById('bpTable');
+  function sub(n){return String(n).replace(/\d/g,function(d){return String.fromCharCode(0x2080+(+d));});}
+  function fr(i){
+    var p=BP.p[i];
+    return '<tr><td>m'+sub(i+1)+' \u2192</td>'+
+      '<td style="color:'+T1.color+'">'+(p[0]*100).toFixed(1)+'%</td>'+
+      '<td style="color:'+T2.color+'">'+(p[1]*100).toFixed(1)+'%</td>'+
+      '<td style="color:'+PAL[2]+'">'+(p[2]*100).toFixed(1)+'%</td>'+
+      '<td style="color:'+CLUT+'">'+(p[3]*100).toFixed(1)+'%</td></tr>';
+  }
+  tb.innerHTML='<tr><th>belief p(a\u1d62)</th><th>object 1</th><th>object 2</th><th>new obj.</th><th>clutter</th></tr>'+fr(8)+fr(9);
+}
+function bpReset(){BP.e=[0.5,0.5];BP.it=0;bpCompute();bpRender();}
+function bpIter(){bpIterCore();bpRender();}
+function bpRun(){
+  var t,old,d,i,j;
+  for(t=0;t<15;t++){
+    old=BP.p.map(function(r){return r.slice();});
+    bpIterCore();
+    d=0;
+    for(i=0;i<BP.p.length;i++)for(j=0;j<4;j++)d=Math.max(d,Math.abs(BP.p[i][j]-old[i][j]));
+    if(d<1e-4)break;
+  }
+  bpRender();
+}
+function drawFactorGraph(){
+  var svg=document.getElementById('fgSVG');
+  svg.setAttribute('viewBox','0 0 100 58');
+  var g=E('g',{},svg);
+  var xs=[{x:30,y:9,c:T1.color,l:'x\u2081'},{x:70,y:9,c:T2.color,l:'x\u2082'}];
+  var as=[14,38,62,86].map(function(x,i){return {x:x,y:32,l:'a'+String.fromCharCode(0x2081+i)};});
+  as.forEach(function(a,i){
+    xs.forEach(function(xn){
+      E('line',{x1:xn.x,y1:xn.y+4.5,x2:a.x,y2:21.5,stroke:'#5b665f','stroke-width':0.35,'stroke-opacity':0.55},g);
+    });
+    E('line',{x1:a.x,y1:24.5,x2:a.x,y2:29,stroke:'#5b665f','stroke-width':0.35,'stroke-opacity':0.55},g);
+    E('rect',{x:a.x-1.6,y:21.5,width:3.2,height:3.2,fill:'#5b665f'},g);
+    E('line',{x1:a.x,y1:35,x2:a.x,y2:39.5,stroke:'#5b665f','stroke-width':0.35,'stroke-opacity':0.55},g);
+    E('rect',{x:a.x-1.6,y:39.5,width:3.2,height:3.2,fill:'#5b665f'},g);
+    E('line',{x1:a.x,y1:42.7,x2:a.x,y2:46,stroke:'#5b665f','stroke-width':0.35,'stroke-opacity':0.55},g);
+    E('circle',{cx:a.x,cy:32,r:3,fill:'#fff',stroke:'#1b2320','stroke-width':0.5},g);
+    var t=E('text',{x:a.x,y:33.1,'font-size':2.9,'text-anchor':'middle',fill:'#1b2320','font-family':'serif','font-style':'italic'},g);
+    t.textContent=a.l;
+    E('circle',{cx:a.x,cy:49.5,r:3.4,fill:'none',stroke:PAL[2],'stroke-width':0.5,'stroke-dasharray':'1.6 1.3'},g);
+    var ty=E('text',{x:a.x,y:50.7,'font-size':2.9,'text-anchor':'middle',fill:PAL[2],'font-family':'serif','font-style':'italic'},g);
+    ty.textContent='y'+String.fromCharCode(0x2081+i);
+  });
+  xs.forEach(function(xn){
+    E('circle',{cx:xn.x,cy:xn.y,r:4.5,fill:'#fff',stroke:xn.c,'stroke-width':0.7},g);
+    var t=E('text',{x:xn.x,y:xn.y+1.2,'font-size':3.4,'text-anchor':'middle',fill:xn.c,'font-family':'serif','font-style':'italic'},g);
+    t.textContent=xn.l;
+  });
+  var cap=E('text',{x:98,y:50.6,'font-size':2.7,'text-anchor':'end',fill:'#5b665f','font-family':'sans-serif'},g);
+  cap.textContent='one new potential object per measurement';
+}
+
+/* ============================ partitioning toolbox ============================ */
+var PTS=MEAS.map(function(m){return [m.x,m.y];});
+function mulberry32(a){return function(){a|=0;a=a+0x6D2B79F5|0;var t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return ((t^t>>>14)>>>0)/4294967296;};}
+function dist(i,j){return Math.hypot(MEAS[i].x-MEAS[j].x,MEAS[i].y-MEAS[j].y);}
+function assignToCells(assign){var m={};assign.forEach(function(a,i){(m[a]=m[a]||[]).push(i);});return Object.keys(m).map(function(k){return m[k].slice().sort(function(a,b){return a-b;});}).sort(function(a,b){return a[0]-b[0];});}
+function compactLabels(assign){var map={},c=0;return assign.map(function(l){if(!(l in map))map[l]=c++;return map[l];});}
+
+function agglomerative(linkage,thr){
+  var clusters=MEAS.map(function(_,i){return [i];});
+  function linkDist(A,B){
+    var v=(linkage==='complete')?-Infinity:(linkage==='single'?Infinity:0),sum=0,cnt=0,a,b,d;
+    for(a=0;a<A.length;a++)for(b=0;b<B.length;b++){
+      d=dist(A[a],B[b]);
+      if(linkage==='single')v=Math.min(v,d);
+      else if(linkage==='complete')v=Math.max(v,d);
+      else {sum+=d;cnt++;}
+    }
+    return linkage==='average'?sum/cnt:v;
+  }
+  while(clusters.length>1){
+    var bi=-1,bj=-1,bd=Infinity,i,j,d;
+    for(i=0;i<clusters.length;i++)for(j=i+1;j<clusters.length;j++){d=linkDist(clusters[i],clusters[j]);if(d<bd){bd=d;bi=i;bj=j;}}
+    if(bd>thr)break;
+    clusters[bi]=clusters[bi].concat(clusters[bj]);clusters.splice(bj,1);
+  }
+  return clusters.map(function(c){return c.slice().sort(function(a,b){return a-b;});}).sort(function(a,b){return a[0]-b[0];});
+}
+
+function kmeansData(data,K,rng){
+  var n=data.length,dim=data[0].length,i,c,k;
+  function d2(a,b){var s=0,t;for(k=0;k<dim;k++){t=a[k]-b[k];s+=t*t;}return s;}
+  var cent=[data[Math.floor(rng()*n)].slice()];
+  while(cent.length<K){
+    var dd=data.map(function(p){var best=Infinity;cent.forEach(function(c){best=Math.min(best,d2(p,c));});return best;});
+    var sum=dd.reduce(function(a,b){return a+b;},0)||1,r=rng()*sum,kk=0;
+    while(kk<dd.length-1&&r>dd[kk]){r-=dd[kk];kk++;}
+    cent.push(data[kk].slice());
+  }
+  var assign=new Array(n).fill(0),changed=true,it=0;
+  while(changed&&it<100){changed=false;it++;
+    for(i=0;i<n;i++){var b=0,bd=Infinity,dd2;for(c=0;c<K;c++){dd2=d2(data[i],cent[c]);if(dd2<bd){bd=dd2;b=c;}}if(assign[i]!==b){assign[i]=b;changed=true;}}
+    var sums=[],cn=new Array(K).fill(0);for(c=0;c<K;c++)sums.push(new Array(dim).fill(0));
+    for(i=0;i<n;i++){cn[assign[i]]++;for(k=0;k<dim;k++)sums[assign[i]][k]+=data[i][k];}
+    for(c=0;c<K;c++)if(cn[c]>0)for(k=0;k<dim;k++)cent[c][k]=sums[c][k]/cn[c];
+  }
+  return assign;
+}
+
+function dbscan(eps,minPts){
+  var n=MEAS.length,UNSET,NOISE=-1,label=new Array(n).fill(UNSET),i;
+  function region(p){var out=[],q;for(q=0;q<n;q++)if(dist(p,q)<=eps)out.push(q);return out;}
+  var C=-1,p;
+  for(p=0;p<n;p++){
+    if(label[p]!==UNSET)continue;
+    var N=region(p);
+    if(N.length<minPts){label[p]=NOISE;continue;}
+    C++;label[p]=C;
+    var seeds=N.slice(),s;
+    for(s=0;s<seeds.length;s++){
+      var q=seeds[s];
+      if(label[q]===NOISE)label[q]=C;
+      if(label[q]!==UNSET)continue;
+      label[q]=C;
+      var N2=region(q);
+      if(N2.length>=minPts)for(var x=0;x<N2.length;x++)if(seeds.indexOf(N2[x])<0)seeds.push(N2[x]);
+    }
+  }
+  var cells={},noise=[];
+  for(i=0;i<n;i++){if(label[i]===NOISE)noise.push(i);else (cells[label[i]]=cells[label[i]]||[]).push(i);}
+  var cl=Object.keys(cells).map(function(k){return cells[k].sort(function(a,b){return a-b;});}).sort(function(a,b){return a[0]-b[0];});
+  return {cells:cl,noise:noise};
+}
+
+function jacobiEig(A){
+  var n=A.length,a=A.map(function(r){return r.slice();}),V=[],i,p,q,k,sweep;
+  for(i=0;i<n;i++){V.push(new Array(n).fill(0));V[i][i]=1;}
+  for(sweep=0;sweep<100;sweep++){
+    var off=0;for(p=0;p<n;p++)for(q=p+1;q<n;q++)off+=a[p][q]*a[p][q];
+    if(off<1e-13)break;
+    for(p=0;p<n;p++)for(q=p+1;q<n;q++){
+      if(Math.abs(a[p][q])<1e-15)continue;
+      var theta=(a[q][q]-a[p][p])/(2*a[p][q]);
+      var t=(theta>=0?1:-1)/(Math.abs(theta)+Math.sqrt(theta*theta+1));
+      var c=1/Math.sqrt(t*t+1),s=t*c,akp,akq,apk,aqk,vkp,vkq;
+      for(k=0;k<n;k++){akp=a[k][p];akq=a[k][q];a[k][p]=c*akp-s*akq;a[k][q]=s*akp+c*akq;}
+      for(k=0;k<n;k++){apk=a[p][k];aqk=a[q][k];a[p][k]=c*apk-s*aqk;a[q][k]=s*apk+c*aqk;}
+      for(k=0;k<n;k++){vkp=V[k][p];vkq=V[k][q];V[k][p]=c*vkp-s*vkq;V[k][q]=s*vkp+c*vkq;}
+    }
+  }
+  var vals=[];for(i=0;i<n;i++)vals.push(a[i][i]);
+  return {values:vals,vectors:V};
+}
+
+function spectral(K,sigma,rng){
+  var n=MEAS.length,W=[],i,j;
+  for(i=0;i<n;i++){W.push([]);for(j=0;j<n;j++)W[i][j]=(i===j)?0:Math.exp(-dist(i,j)*dist(i,j)/(2*sigma*sigma));}
+  var deg=W.map(function(row){return row.reduce(function(a,b){return a+b;},0)||1e-9;});
+  var L=[];for(i=0;i<n;i++){L.push([]);for(j=0;j<n;j++)L[i][j]=(i===j?1:0)-W[i][j]/Math.sqrt(deg[i]*deg[j]);}
+  var e=jacobiEig(L);
+  var order=e.values.map(function(v,i){return i;}).sort(function(a,b){return e.values[a]-e.values[b];}).slice(0,K);
+  var U=[];for(i=0;i<n;i++){var row=order.map(function(c){return e.vectors[i][c];});var nrm=Math.sqrt(row.reduce(function(a,b){return a+b*b;},0))||1;U.push(row.map(function(x){return x/nrm;}));}
+  return {cells:assignToCells(kmeansData(U,K,rng))};
+}
+
+/* MCMC split-merge over partitions */
+var MHS={};
+function mhRecord(){var s=sig(assignToCells(MHS.assign));if(!MHS.seen[s])MHS.seen[s]={n:0};MHS.seen[s].n++;}
+function mhReset(){MHS.assign=MEAS.map(function(){return 0;});MHS.best=MHS.assign.slice();MHS.bestScore=partScore(assignToCells(MHS.assign));MHS.steps=0;MHS.acc=0;MHS.seen={};MHS.T=1.5;mhRecord();}
+function mhStep(){
+  MHS.steps++;
+  var labels=MHS.assign.slice(),oldScore=partScore(assignToCells(labels));
+  var r=Math.random(),na=labels.slice(),maxL=Math.max.apply(null,labels),uniq=[],idx;
+  labels.forEach(function(l){if(uniq.indexOf(l)<0)uniq.push(l);});
+  if(r<0.5){var i=Math.floor(Math.random()*MEAS.length);na[i]=Math.floor(Math.random()*(maxL+2));}
+  else if(r<0.75){if(uniq.length>1){var A=uniq[Math.floor(Math.random()*uniq.length)],B=uniq[Math.floor(Math.random()*uniq.length)];if(A!==B)na=labels.map(function(l){return l===B?A:l;});}}
+  else {var Asp=uniq[Math.floor(Math.random()*uniq.length)],mem=[];labels.forEach(function(l,ix){if(l===Asp)mem.push(ix);});if(mem.length>1){var nl=maxL+1;mem.forEach(function(ix){if(Math.random()<0.5)na[ix]=nl;});}}
+  na=compactLabels(na);
+  var newScore=partScore(assignToCells(na));
+  if(Math.random()<Math.min(1,Math.exp((newScore-oldScore)/MHS.T))){MHS.assign=na;MHS.acc++;if(newScore>MHS.bestScore){MHS.bestScore=newScore;MHS.best=na.slice();}}
+  mhRecord();
+}
+
+var tbScenes={};
+var tbState={hier:{linkage:'single',thr:8},kmeans:{K:3,seed:1},dbscan:{eps:10,minPts:3},spectral:{K:3,sigma:8}};
+
+function tbControlsHTML(id){
+  var st=tbState[id]||{};
+  if(id==='hier')return '<div class="mrow"><span style="font-size:13px">linkage:</span><span class="seg" id="tbLink">'+
+    ['single','complete','average'].map(function(l){return '<button type="button" data-l="'+l+'" class="'+(st.linkage===l?'on':'')+'">'+l+'</button>';}).join('')+'</span></div>'+
+    '<div class="mrow"><label>threshold d = <b id="tbThrV">'+st.thr.toFixed(1)+'</b></label><input type="range" id="tbThr" min="1" max="40" step="0.5" value="'+st.thr+'" style="flex:1"></div>';
+  if(id==='kmeans')return '<div class="mrow"><label>K = <b id="tbKV">'+st.K+'</b></label><input type="range" id="tbK" min="1" max="6" step="1" value="'+st.K+'" style="flex:1"><button class="btn" id="tbReseed" type="button">Re-seed</button></div>';
+  if(id==='dbscan')return '<div class="mrow"><label>\u03b5 = <b id="tbEpsV">'+st.eps.toFixed(1)+'</b></label><input type="range" id="tbEps" min="3" max="40" step="0.5" value="'+st.eps+'" style="flex:1"></div>'+
+    '<div class="mrow"><label>minPts = <b id="tbMpV">'+st.minPts+'</b></label><input type="range" id="tbMp" min="1" max="5" step="1" value="'+st.minPts+'" style="flex:1"></div>';
+  if(id==='spectral')return '<div class="mrow"><label>clusters K = <b id="tbSKV">'+st.K+'</b></label><input type="range" id="tbSK" min="2" max="5" step="1" value="'+st.K+'" style="flex:1"></div>'+
+    '<div class="mrow"><label>affinity \u03c3 = <b id="tbSigV">'+st.sigma.toFixed(1)+'</b></label><input type="range" id="tbSig" min="2" max="20" step="0.5" value="'+st.sigma+'" style="flex:1"></div>';
+  if(id==='mcmc')return '<div class="mrow"><button class="btn primary" id="tbMhRun" type="button">Run 300 moves</button><button class="btn" id="tbMhStep" type="button">Single move</button><button class="btn" id="tbMhReset" type="button">Reset</button></div>';
+  return '';
+}
+function wireControls(id){
+  var st=tbState[id]||{};
+  if(id==='hier'){
+    Array.prototype.forEach.call(document.getElementById('tbLink').children,function(b){b.addEventListener('click',function(){
+      st.linkage=b.getAttribute('data-l');
+      Array.prototype.forEach.call(document.getElementById('tbLink').children,function(x){x.className=(x.getAttribute('data-l')===st.linkage)?'on':'';});
+      renderMethod('hier');
+    });});
+    document.getElementById('tbThr').addEventListener('input',function(e){st.thr=parseFloat(e.target.value);document.getElementById('tbThrV').textContent=st.thr.toFixed(1);renderMethod('hier');});
+  } else if(id==='kmeans'){
+    document.getElementById('tbK').addEventListener('input',function(e){st.K=parseInt(e.target.value,10);document.getElementById('tbKV').textContent=st.K;renderMethod('kmeans');});
+    document.getElementById('tbReseed').addEventListener('click',function(){st.seed=(st.seed||1)+1;renderMethod('kmeans');});
+  } else if(id==='dbscan'){
+    document.getElementById('tbEps').addEventListener('input',function(e){st.eps=parseFloat(e.target.value);document.getElementById('tbEpsV').textContent=st.eps.toFixed(1);renderMethod('dbscan');});
+    document.getElementById('tbMp').addEventListener('input',function(e){st.minPts=parseInt(e.target.value,10);document.getElementById('tbMpV').textContent=st.minPts;renderMethod('dbscan');});
+  } else if(id==='spectral'){
+    document.getElementById('tbSK').addEventListener('input',function(e){st.K=parseInt(e.target.value,10);document.getElementById('tbSKV').textContent=st.K;renderMethod('spectral');});
+    document.getElementById('tbSig').addEventListener('input',function(e){st.sigma=parseFloat(e.target.value);document.getElementById('tbSigV').textContent=st.sigma.toFixed(1);renderMethod('spectral');});
+  } else if(id==='mcmc'){
+    document.getElementById('tbMhRun').addEventListener('click',function(){var i;for(i=0;i<300;i++)mhStep();renderMethod('mcmc');});
+    document.getElementById('tbMhStep').addEventListener('click',function(){mhStep();renderMethod('mcmc');});
+    document.getElementById('tbMhReset').addEventListener('click',function(){mhReset();renderMethod('mcmc');});
+  }
+}
+function tbRenderMHBest(hostId){
+  var host=document.getElementById(hostId);
+  host.innerHTML='<p class="smallcap" style="margin-top:8px">Best partition found (highest likelihood) \u2192 added to 𝒫<sub>cand</sub></p>';
+  miniScene(host,assignToCells(compactLabels(MHS.best)),{});
+  var ent=Object.keys(MHS.seen).map(function(s){return [s,MHS.seen[s].n];}).sort(function(a,b){return b[1]-a[1];});
+  var tot=0;ent.forEach(function(e){tot+=e[1];});
+  var wrap=document.createElement('div');wrap.className='hist';
+  var h=document.createElement('p');h.className='smallcap';h.style.marginTop='12px';h.textContent='Most-visited partitions ('+ent.length+' distinct)';wrap.appendChild(h);
+  ent.slice(0,4).forEach(function(e){
+    var row=document.createElement('div');row.className='hrow';
+    var l=document.createElement('div');l.className='hs';l.textContent=e[0];l.title=e[0];
+    var n=document.createElement('div');n.className='hn';n.textContent=(100*e[1]/tot).toFixed(1)+'%';
+    row.appendChild(l);row.appendChild(n);wrap.appendChild(row);
+    var b=document.createElement('div');b.className='hb';var sp=document.createElement('span');sp.style.width=(100*e[1]/tot).toFixed(1)+'%';b.appendChild(sp);
+    var r2=document.createElement('div');r2.style.margin='0 0 7px';r2.appendChild(b);wrap.appendChild(r2);
+  });
+  host.appendChild(wrap);
+}
+function renderMethod(id){
+  var st=tbState[id]||{},cells,noise=[],extra='';
+  if(id==='hier'){cells=agglomerative(st.linkage,st.thr);extra=st.linkage+' linkage \u00b7 '+cells.length+(cells.length===1?' cell':' cells');}
+  else if(id==='kmeans'){cells=assignToCells(kmeansData(PTS,st.K,mulberry32(1000+st.seed*7+st.K)));extra='K = '+st.K+' \u00b7 every point assigned';}
+  else if(id==='dbscan'){var r=dbscan(st.eps,st.minPts);cells=r.cells;noise=r.noise;extra=cells.length+(cells.length===1?' cluster':' clusters')+' \u00b7 '+noise.length+' noise point'+(noise.length===1?'':'s');}
+  else if(id==='spectral'){cells=spectral(st.K,st.sigma,mulberry32(99)).cells;extra=st.K+' clusters via graph eigenvectors';}
+  else if(id==='mcmc'){cells=assignToCells(compactLabels(MHS.assign));extra=MHS.steps+' moves \u00b7 '+(100*MHS.acc/Math.max(1,MHS.steps)).toFixed(0)+'% accepted';tbRenderMHBest('extra_mcmc');}
+  drawPartition(tbScenes[id].gHull,tbScenes[id].gPts,cells,{clutter:noise});
+  document.getElementById('stat_'+id).textContent=extra;
+}
+function initToolbox(){
+  ['hier','kmeans','dbscan','spectral','mcmc'].forEach(function(id){
+    tbScenes[id]=mkScene('scene_'+id,{});
+    document.getElementById('ctrl_'+id).innerHTML=tbControlsHTML(id);
+    if(id==='mcmc'&&!MHS.assign)mhReset();
+    wireControls(id);
+    renderMethod(id);
+  });
+}
+
+/* ============================ init ============================ */
+function init(){
+  /* problem */
+  probScene=mkScene('sceneProblem',{});
+  renderProblem();
+  document.getElementById('btnCycle').addEventListener('click',function(){
+    probIdx=(probIdx+1)%DEMO_PARTS.length;renderProblem();
+  });
+  var bellSl=document.getElementById('bellM');
+  function bellOut(){
+    var m=parseInt(bellSl.value,10);
+    document.getElementById('bellMv').textContent=m;
+    document.getElementById('bellOut').innerHTML=fmtBig(BELL[m]);
+  }
+  bellSl.addEventListener('input',bellOut);bellOut();
+
+  /* family A */
+  distScene=mkScene('sceneDist',{});
+  buildChips();
+  document.getElementById('distD').addEventListener('input',renderDist);
+  renderDist();
+
+  /* family B1 */
+  hypReset();
+  document.getElementById('btnBranch').addEventListener('click',hypBranch);
+  document.getElementById('btnPrune').addEventListener('click',hypPrune);
+  document.getElementById('btnHypReset').addEventListener('click',hypReset);
+  renderPMB();
+
+  /* family B2 */
+  gibbsScene=mkScene('sceneGibbs',{});
+  gReset();
+  document.getElementById('btnGStep').addEventListener('click',function(){gStep();gRender();});
+  document.getElementById('btnGRun').addEventListener('click',function(){
+    for(var t=0;t<200;t++)gStep();
+    gRender();
+  });
+  document.getElementById('btnGReset').addEventListener('click',gReset);
+
+  /* family C */
+  bpScene=mkScene('sceneBP',{});
+  bpReset();
+  document.getElementById('btnBPIter').addEventListener('click',bpIter);
+  document.getElementById('btnBPRun').addEventListener('click',bpRun);
+  document.getElementById('btnBPReset').addEventListener('click',bpReset);
+  drawFactorGraph();
+
+  /* partitioning toolbox */
+  initToolbox();
+}
+document.addEventListener('DOMContentLoaded',init);
+</script>
+</body>
+</html>
