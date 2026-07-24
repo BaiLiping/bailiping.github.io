@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Frame registration — from Kabsch to NDT to MMD-Reg | Bai Liping</title>
-<meta name="description" content="One interactive note on frame registration: the correspondence ladder (Kabsch, RANSAC, ICP, point-to-plane, GICP), the Normal Distributions Transform, and the method families — hard, soft, and correspondence-free — raced on one problem. Nine live demos in your browser.">
+<meta name="description" content="One interactive note on frame registration: the correspondence ladder (Kabsch, RANSAC, ICP, point-to-plane, GICP), the Normal Distributions Transform, and the method families — hard, soft, and correspondence-free — raced on one problem. Ten live demos in your browser.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap" rel="stylesheet">
@@ -50,6 +50,8 @@ table.cmp td b{color:var(--ink);font-weight:600}
 .swatch{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:6px;vertical-align:baseline}
 .grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px}
 @media(max-width:640px){.grid2{grid-template-columns:1fr}}
+.grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-top:14px}
+@media(max-width:860px){.grid3{grid-template-columns:1fr}}
 .cell h3{font-size:13.5px;font-weight:600;margin:0 0 8px;color:var(--ink);display:flex;align-items:center;gap:7px}
 .cell .mstat{font-size:12px;color:var(--dim);margin-top:8px;font-variant-numeric:tabular-nums;min-height:16px}
 .card{background:var(--panel);border:1px solid var(--border);border-radius:14px;padding:12px}
@@ -399,6 +401,60 @@ input[type=range]{accent-color:var(--accent);width:140px}
     <p>so the squared MMD becomes the squared distance between two <strong>feature means</strong> — one pass over each cloud, linear in the number of points. Registration is then the nonlinear least-squares problem — here $X$ is the moving cloud and $Y$ the fixed one, the reverse of CPD's lettering —</p>
     <div class="math">$$F(\theta)=\big\lVert \hat\mu_{T_\theta(X)}-\hat\mu_Y\big\rVert_2^2=\sum_{k=1}^{2D} r_k(\theta)^2,$$</div>
     <p>handed to Levenberg–Marquardt. Two knobs matter. The kernel scale $\ell$ sets what the objective can see: <strong>large $\ell$ gives a wide, smooth, forgiving basin; small $\ell$ gives a sharp, accurate, narrow one</strong> — so standalone MMD-Reg runs a decreasing $\ell$-schedule, coarse to fine (the paper uses $\ell$ from 4.0 down to 0.25 on outdoor LiDAR). The feature count $D$ sets how faithfully the random surrogate approximates the true MMD: small $D$ is fast but noisy, large $D$ smooth but slower. And because the optimum $\theta^\star$ is defined implicitly by $\nabla F=0$, its derivative with respect to the input clouds exists via the <strong>implicit function theorem</strong> — that is what lets Neural MMD-Reg backpropagate through the solver and learn an initializer plus a per-problem kernel scale.</p>
+  </div>
+
+  <!-- ============ one scene, three memories ============ -->
+  <div class="section" id="memories">
+    <p class="kicker">The wider field · one scene, three memories</p>
+    <h2>What each method keeps</h2>
+    <p>The soft family and the mean-embedding objective are now both on the table, and the cleanest way to see how far apart they truly are is a bookkeeping question: between two sweeps, <strong>what does each method remember about "who matches whom"?</strong> CPD keeps every soft pair — the full $M\times N$ responsibility matrix. FilterReg compresses each row of that matrix before it is ever stored: one filtered target $\bar y_i$ and one confidence $\alpha_i$ per moving point. MMD-Reg refuses to keep correspondences at all — each cloud is averaged into a fixed-size feature signature, and all that survives is a single residual between the two signatures. <em>Every soft pair; one soft target per point; one residual for both clouds.</em></p>
+    <p>The panels below run all three live on one scene — same fish, same start, two planted junk points in <em>each</em> cloud. The violet web on the left is CPD's matrix drawn literally (entries above a threshold, or the panel would be solid violet). The middle panel draws FilterReg's one arrow per moving point, fading with its confidence. The right panel draws no connections at all: just the clouds and, underneath, the first eight channels of each cloud's wave signature sliding into agreement as the fit improves. And one deliberate asymmetry to try — switch the scene to <em>moving cloud 15% smaller</em>: CPD's "rigid" model is actually a similarity with a uniform scale $s$, so it recovers the shrink exactly (watch its $s$ readout), while FilterReg and MMD-Reg are rotation-plus-translation only and park with an honest size mismatch. That is not a bug; it is a modeling choice each paper states.</p>
+    <div class="grid3">
+      <div class="cell">
+        <h3><span class="swatch" style="background:var(--violet)"></span>CPD — every soft pair</h3>
+        <div class="card"><canvas id="memC1" width="440" height="400" style="aspect-ratio:440/400" aria-label="CPD panel: full responsibility matrix drawn as a web of soft pairs"></canvas></div>
+        <div class="mstat" id="memStat1">–</div>
+      </div>
+      <div class="cell">
+        <h3><span class="swatch" style="background:var(--violet)"></span>FilterReg — one target per point</h3>
+        <div class="card"><canvas id="memC2" width="440" height="400" style="aspect-ratio:440/400" aria-label="FilterReg panel: one filtered soft target and confidence per moving point"></canvas></div>
+        <div class="mstat" id="memStat2">–</div>
+      </div>
+      <div class="cell">
+        <h3><span class="swatch" style="background:var(--good)"></span>MMD-Reg — one residual, no pairs</h3>
+        <div class="card"><canvas id="memC3" width="440" height="400" style="aspect-ratio:440/400" aria-label="MMD-Reg panel: no correspondences, two feature signatures and one residual"></canvas></div>
+        <div class="mstat" id="memStat3">–</div>
+      </div>
+    </div>
+    <div class="controls">
+      <button id="memPlay" class="primary">▶ Fit all three</button>
+      <button id="memStep">Step</button>
+      <button id="memReset">Reset</button>
+      <select id="memScene" aria-label="Scene selector">
+        <option value="equal" selected>equal scale</option>
+        <option value="scale">moving cloud 15% smaller</option>
+      </select>
+      <label class="slider">CPD outlier w <input type="range" id="memW" min="0.02" max="0.4" step="0.01" value="0.12"><b id="memWV">0.12</b></label>
+      <label class="slider">FilterReg σ <input type="range" id="memSig" min="0.06" max="0.3" step="0.01" value="0.10"><b id="memSigV">0.10</b></label>
+      <label class="slider">MMD ℓ <input type="range" id="memEll" min="0.3" max="1.5" step="0.05" value="0.5"><b id="memEllV">0.50</b></label>
+    </div>
+    <div class="legend"><span><span class="swatch" style="background:var(--fixed)"></span>fixed cloud</span><span><span class="swatch" style="background:var(--accent)"></span>moving cloud</span><span><span class="swatch" style="background:var(--violet)"></span>what the method keeps (pairs / targets)</span><span>bars = the two feature signatures</span></div>
+    <p class="fignote"><strong>What to look for.</strong> Watch the counts under each panel: CPD carries a responsibility matrix of ~23&nbsp;000 entries between sweeps, FilterReg carries 152 targets, MMD-Reg carries a single 96-number residual — the whole trichotomy in three integers. Watch the junk: CPD's uniform bin owns the two planted points in the <em>fixed</em> cloud (its data), FilterReg's confidence gate $\alpha_i$ zeroes out the two planted points in the <em>moving</em> cloud (<em>its</em> data — the mixture flip swaps which cloud is "data," so the same junk is handled from opposite sides), and MMD-Reg, which has no outlier bin at all, folds all four into both signatures — its residual floors above zero and the fit drags a touch toward the junk, exactly the price its paper's neural variant pays learned per-point weights to remove. Honest small print: everything is planar; CPD runs its full similarity EM ($R$, $s$, $t$, and the closed-form $\sigma^2$ update); FilterReg runs the sparse-grid filter E-step with a coarse-to-fine σ schedule ending at the slider's value and one Gauss–Newton twist step per sweep; MMD-Reg runs 48 random frequencies, Levenberg–Marquardt, and an ℓ-schedule ending at the slider's value; both mixtures share a uniform outlier density of 1/area of the demo box.</p>
+    <table class="cmp">
+      <thead><tr><th>Design choice</th><th>Rigid CPD</th><th>FilterReg</th><th>MMD-Reg</th></tr></thead>
+      <tbody>
+        <tr><td><b>Representation</b></td><td>moving points are the GMM centroids</td><td>fixed observations are the GMM centroids</td><td>no mixture — both sets as empirical distributions in an RKHS</td></tr>
+        <tr><td><b>"Matching" output</b></td><td>full soft responsibility matrix $P$</td><td>one soft target $\bar y_i$ + confidence $\alpha_i$ per moving point</td><td>none pairwise; one global residual $r=\hat\mu_{T(X)}-\hat\mu_Y$</td></tr>
+        <tr><td><b>Pose update</b></td><td>EM M-step: weighted Procrustes — SVD for $R$, closed-form $s$, $t$</td><td>EM M-step: weighted residuals, $SE(3)$ twist, Gauss–Newton</td><td>direct nonlinear least squares, Levenberg–Marquardt</td></tr>
+        <tr><td><b>Rigid model</b></td><td>similarity — includes uniform scale $s$</td><td>$SE(3)$: rotation + translation, no scale</td><td>$SE(3)$: rotation + translation, no scale</td></tr>
+        <tr><td><b>Bandwidth knob</b></td><td>$\sigma^2$, updated in closed form each sweep</td><td>$\sigma$, usually fixed (updating optional)</td><td>kernel scale $\ell$, coarse-to-fine schedule</td></tr>
+        <tr><td><b>Computational route</b></td><td>all pairs; fast Gauss transform proposed</td><td>Gaussian filtering on a permutohedral lattice</td><td>random-feature means — $O((m{+}n)D)$ at fixed $D$</td></tr>
+        <tr><td><b>Junk / partial overlap</b></td><td>explicit uniform outlier component</td><td>the same bin, plus per-point confidence weighting</td><td>none standalone; the neural variant predicts point weights</td></tr>
+        <tr><td><b>As a differentiable layer</b></td><td>not the focus</td><td>not the focus</td><td>designed for it — gradients via the implicit function theorem</td></tr>
+        <tr><td><b>Reach for it when…</b></td><td>you want the cleanest exact similarity update: compact code, moderate clouds, explicit scale</td><td>you need dense 3-D registration to run fast: large clouds, a reusable fixed cloud, point-to-plane</td><td>you want a scalable differentiable objective: very large clouds, GPU-friendly fixed-size features, learned pipelines — given a decent init</td></tr>
+      </tbody>
+    </table>
+    <p>The speed ledger behind that middle column was already tallied in the soft-family section — 6.1&nbsp;s for baseline CPD against 38&nbsp;ms for FilterReg on the same 3&nbsp;500-point bunny, robust ICP between them at 218&nbsp;ms — and it bears its own caveat: those are paper-specific 2019 measurements on the authors' hardware, not universal guarantees. What this section adds is the part speed alone cannot show: the three methods are not three speeds of one idea but three different answers to what a correspondence <em>is</em> — a matrix, a target, or nothing at all.</p>
   </div>
 
   <!-- ============ demo 1: the race ============ -->
@@ -3755,6 +3811,404 @@ frame();
 })();
 </script>
 
+
+<script>
+(function(){
+'use strict';
+/* One scene, three memories: similarity CPD vs FilterReg vs mini MMD-Reg. */
+
+const $=id=>document.getElementById(id);
+
+// makeView: world-box → canvas-region mapping with uniform scale and centering
+function makeView(W,H,wx0,wy0,wx1,wy1){
+  const s=Math.min(W/(wx1-wx0),H/(wy1-wy0));
+  const ox=(W-s*(wx1-wx0))/2,oy=(H-s*(wy1-wy0))/2;
+  return{sx:x=>ox+(x-wx0)*s,sy:y=>H-oy-(y-wy0)*s,s};
+}
+
+// mulberry32: deterministic PRNG from a 32-bit seed; returns () => float in [0,1)
+function mulberry32(a){return function(){let t=(a+=0x6d2b79f5);t=Math.imul(t^(t>>>15),t|1);t^=t+Math.imul(t^(t>>>7),t|61);return((t^(t>>>14))>>>0)/4294967296;};}
+// randn: Box-Muller standard normal draw using rnd
+function randn(rnd){const u=Math.max(rnd(),1e-12),v=rnd();return Math.sqrt(-2*Math.log(u))*Math.cos(2*Math.PI*v);}
+// applyTS: similarity transform {th,s,tx,ty} applied to point p; returns new point
+function applyTS(T,p){const c=Math.cos(T.th),sn=Math.sin(T.th),s=T.s;return[s*(c*p[0]-sn*p[1])+T.tx,s*(sn*p[0]+c*p[1])+T.ty];}
+// solve3: solves a 3x3 linear system A x = b by Gaussian elimination; returns x
+function solve3(A,b){const M=A.map((r,i)=>[...r,b[i]]);for(let c=0;c<3;c++){let piv=c;for(let r=c+1;r<3;r++)if(Math.abs(M[r][c])>Math.abs(M[piv][c]))piv=r;[M[c],M[piv]]=[M[piv],M[c]];for(let r=0;r<3;r++){if(r===c||Math.abs(M[c][c])<1e-15)continue;const f=M[r][c]/M[c][c];for(let k=c;k<4;k++)M[r][k]-=f*M[c][k];}}return[M[0][3]/M[0][0],M[1][3]/M[1][1],M[2][3]/M[2][2]];}
+// makeShape: N points along a fish-like closed curve; returns [[x,y],...]
+function makeShape(N){const pts=[];for(let i=0;i<N;i++){const t=2*Math.PI*(i/N);pts.push([2*(Math.cos(t)-0.55*Math.cos(2*t)),2*(0.62*Math.sin(t)+0.12*Math.sin(3*t))]);}return pts;}
+
+const AREA=36; // uniform-outlier-bin support area shared by both mixtures
+
+// makeScene3: fixed X (+2 junk), moving Y = Ttrue^-1(X)+noise (+2 junk); returns {X,Y,Tt}
+function makeScene3(seed,sTrue){
+  const rnd=mulberry32(seed);
+  const X=makeShape(150);
+  const Tt={th:0.5,s:sTrue,tx:0.7,ty:-0.45};
+  const c=Math.cos(-Tt.th),sn=Math.sin(-Tt.th);
+  const Y=[];
+  for(const x of X){
+    const px=(x[0]-Tt.tx)/Tt.s,py=(x[1]-Tt.ty)/Tt.s;
+    Y.push([c*px-sn*py+0.05*randn(rnd),sn*px+c*py+0.05*randn(rnd)]);
+  }
+  X.push([-3.4,2.2],[3.3,-2.4]);
+  Y.push([-2.9,-2.2],[2.7,2.3]);
+  return{X,Y,Tt};
+}
+
+/* ---------- similarity CPD ---------- */
+
+// cpdSimIter: one similarity-CPD EM sweep (R, s, t, closed-form sigma^2).
+// Returns {T,sigma2,pairs:[{a,b,p}]} where pairs are matrix entries above a draw threshold.
+function cpdSimIter(X,Y,T,sigma2,w){
+  const M=Y.length,N=X.length,d=2;
+  const TY=Y.map(y=>applyTS(T,y));
+  const cU=Math.pow(2*Math.PI*sigma2,d/2)*(w/(1-w))*(M/AREA);
+  const K=[];const colDen=new Array(N).fill(cU);
+  for(let m=0;m<M;m++){K.push(new Array(N));
+    for(let n=0;n<N;n++){const dx=X[n][0]-TY[m][0],dy=X[n][1]-TY[m][1];
+      const kk=Math.exp(-(dx*dx+dy*dy)/(2*sigma2));K[m][n]=kk;colDen[n]+=kk;}}
+  let Np=0,mux=[0,0],muy=[0,0];
+  for(let m=0;m<M;m++)for(let n=0;n<N;n++){const p=K[m][n]/colDen[n];K[m][n]=p;Np+=p;
+    mux[0]+=p*X[n][0];mux[1]+=p*X[n][1];muy[0]+=p*Y[m][0];muy[1]+=p*Y[m][1];}
+  mux=[mux[0]/Np,mux[1]/Np];muy=[muy[0]/Np,muy[1]/Np];
+  let a00=0,a01=0,a10=0,a11=0,yhSq=0;
+  for(let m=0;m<M;m++){
+    const yh0=Y[m][0]-muy[0],yh1=Y[m][1]-muy[1];
+    let pm=0;
+    for(let n=0;n<N;n++){
+      const p=K[m][n];if(p<1e-12)continue;
+      pm+=p;
+      const xh0=X[n][0]-mux[0],xh1=X[n][1]-mux[1];
+      a00+=p*xh0*yh0;a01+=p*xh0*yh1;a10+=p*xh1*yh0;a11+=p*xh1*yh1;
+    }
+    yhSq+=pm*(yh0*yh0+yh1*yh1);
+  }
+  const th=Math.atan2(a10-a01,a00+a11);
+  const cc=Math.cos(th),ss=Math.sin(th);
+  const trAR=cc*(a00+a11)+ss*(a10-a01);
+  const s=Math.max(trAR/Math.max(yhSq,1e-12),1e-3);
+  const Tn={th,s,tx:mux[0]-s*(cc*muy[0]-ss*muy[1]),ty:mux[1]-s*(ss*muy[0]+cc*muy[1])};
+  let s2=0;
+  for(let m=0;m<M;m++){
+    const t2=applyTS(Tn,Y[m]);
+    for(let n=0;n<N;n++){const p=K[m][n];if(p<1e-12)continue;
+      const dx=X[n][0]-t2[0],dy=X[n][1]-t2[1];s2+=p*(dx*dx+dy*dy);}
+  }
+  s2=Math.max(s2/(Np*d),1e-6);
+  const pairs=[];
+  for(let m=0;m<M;m++)for(let n=0;n<N;n++)if(K[m][n]>0.03)pairs.push({a:applyTS(Tn,Y[m]),b:X[n],p:K[m][n]});
+  return{T:Tn,sigma2:s2,pairs};
+}
+
+/* ---------- FilterReg (SE(2), sparse-grid filter E-step) ---------- */
+
+// frGridBuild: splat+blur the fixed cloud onto a sparse grid with cell size sigma;
+// returns {cells:Map,h,CH,STRIDE,OFF} to be sliced repeatedly.
+function frGridBuild(X,sigma2){
+  const h=Math.sqrt(sigma2),CH=3;
+  const STRIDE=1<<16,OFF=1<<15;
+  const key=(i,j)=>(j+OFF)*STRIDE+(i+OFF);
+  let cells=new Map();
+  const add=(map,kk,vals,w)=>{
+    let c=map.get(kk);
+    if(!c){c=new Float64Array(CH);map.set(kk,c);}
+    for(let ch=0;ch<CH;ch++)c[ch]+=w*vals[ch];
+  };
+  for(let n=0;n<X.length;n++){
+    const gx=X[n][0]/h,gy=X[n][1]/h;
+    const i0=Math.floor(gx),j0=Math.floor(gy),fx=gx-i0,fy=gy-j0;
+    const vals=[1,X[n][0],X[n][1]];
+    for(let di=0;di<=1;di++)for(let dj=0;dj<=1;dj++)
+      add(cells,key(i0+di,j0+dj),vals,(di?fx:1-fx)*(dj?fy:1-fy));
+  }
+  const kern=[];let ks=0;
+  for(let k=-2;k<=2;k++){const v=Math.exp(-k*k/2);kern.push(v);ks+=v;}
+  for(let k=0;k<kern.length;k++)kern[k]/=ks;
+  for(const axis of[0,1]){
+    const next=new Map();
+    for(const[kk,c]of cells){
+      const i=(kk%STRIDE)-OFF,j=Math.floor(kk/STRIDE)-OFF;
+      for(let k=-2;k<=2;k++)add(next,axis===0?key(i+k,j):key(i,j+k),c,kern[k+2]);
+    }
+    cells=next;
+  }
+  return{cells,h,CH,STRIDE,OFF};
+}
+
+// frSliceMoments: bilinear slice at moving points Z; 2*pi rescales the mass-normalized
+// grid to the peak-1 kernel scale so the outlier gate stays calibrated. Returns {M0,MU}.
+function frSliceMoments(G,Z){
+  const{cells,h,CH,STRIDE,OFF}=G;
+  const key=(i,j)=>(j+OFF)*STRIDE+(i+OFF);
+  const SCALE=2*Math.PI;
+  const M0=new Array(Z.length).fill(0),MU=[];
+  for(let m=0;m<Z.length;m++){
+    const gx=Z[m][0]/h,gy=Z[m][1]/h;
+    const i0=Math.floor(gx),j0=Math.floor(gy),fx=gx-i0,fy=gy-j0;
+    const acc=[0,0,0];
+    for(let di=0;di<=1;di++)for(let dj=0;dj<=1;dj++){
+      const c=cells.get(key(i0+di,j0+dj));
+      if(!c)continue;
+      const wgt=(di?fx:1-fx)*(dj?fy:1-fy);
+      for(let ch=0;ch<CH;ch++)acc[ch]+=wgt*c[ch];
+    }
+    M0[m]=SCALE*acc[0];MU.push([SCALE*acc[1],SCALE*acc[2]]);
+  }
+  return{M0,MU};
+}
+
+// frIter: outlier-gated Gauss-Newton twist step from filtered moments.
+// Returns {T,pulls:[{from,to,w}],meanA}.
+function frIter(Zm,mom,T,sigma2,w,N){
+  const cU=Math.pow(2*Math.PI*sigma2,1)*(w/(1-w))*(N/AREA);
+  const A=[[0,0,0],[0,0,0],[0,0,0]],b=[0,0,0];
+  const pulls=[];
+  let aSum=0,aN=0;
+  for(let m=0;m<Zm.length;m++){
+    if(mom.M0[m]<1e-12){aN++;continue;}
+    const wgt=mom.M0[m]/(mom.M0[m]+cU);
+    const mu=[mom.MU[m][0]/mom.M0[m],mom.MU[m][1]/mom.M0[m]];
+    const p=Zm[m];
+    pulls.push({from:p,to:mu,w:wgt});
+    aSum+=wgt;aN++;
+    const r=[p[0]-mu[0],p[1]-mu[1]];
+    const J=[[-p[1],1,0],[p[0],0,1]];
+    for(let a=0;a<3;a++){for(let bb=0;bb<3;bb++)A[a][bb]+=wgt*(J[0][a]*J[0][bb]+J[1][a]*J[1][bb]);
+      b[a]-=wgt*(J[0][a]*r[0]+J[1][a]*r[1]);}
+  }
+  for(let a=0;a<3;a++)A[a][a]+=1e-9;
+  const dz=solve3(A,b);
+  const om=dz[0],cc=Math.cos(om),ss=Math.sin(om);
+  return{T:{th:T.th+om,s:1,tx:cc*T.tx-ss*T.ty+dz[1],ty:ss*T.tx+cc*T.ty+dz[2]},pulls,meanA:aSum/Math.max(aN,1)};
+}
+
+/* ---------- mini MMD-Reg (random Fourier features + LM) ---------- */
+
+// mmdBank: D random frequencies at length scale ell (deterministic); returns {W,D}
+function mmdBank(ell,D,seed){
+  const rnd=mulberry32(seed);
+  const W=[];
+  for(let k=0;k<D;k++)W.push([randn(rnd)/ell,randn(rnd)/ell]);
+  return{W,D};
+}
+// mmdSig: feature mean of a cloud under the bank; returns Float64Array(2D)
+function mmdSig(bank,pts){
+  const{W,D}=bank;
+  const mu=new Float64Array(2*D);
+  for(const p of pts)for(let k=0;k<D;k++){
+    const a=W[k][0]*p[0]+W[k][1]*p[1];
+    mu[2*k]+=Math.cos(a);mu[2*k+1]+=Math.sin(a);
+  }
+  const c=1/(pts.length*Math.sqrt(D));
+  for(let i=0;i<2*D;i++)mu[i]*=c;
+  return mu;
+}
+// mmdIter: one Levenberg-Marquardt step on (th,tx,ty); rotation taken about the current
+// translation so the analytic Jacobian and the update agree exactly. Returns {T,F,lam,accepted}.
+function mmdIter(bank,sigX,Y,T,lam){
+  const{W,D}=bank;
+  const M=Y.length,c=1/(M*Math.sqrt(D));
+  const TY=Y.map(y=>applyTS(T,y));
+  const mu=new Float64Array(2*D);
+  const Jc=new Float64Array(2*D*3);
+  for(let m=0;m<M;m++){
+    const p=TY[m];
+    const dpdth=[-p[1]+T.ty,p[0]-T.tx];
+    for(let k=0;k<D;k++){
+      const a=W[k][0]*p[0]+W[k][1]*p[1];
+      const ca=Math.cos(a),sa=Math.sin(a);
+      mu[2*k]+=ca;mu[2*k+1]+=sa;
+      const dadth=W[k][0]*dpdth[0]+W[k][1]*dpdth[1];
+      Jc[(2*k)*3]+=-sa*dadth;Jc[(2*k)*3+1]+=-sa*W[k][0];Jc[(2*k)*3+2]+=-sa*W[k][1];
+      Jc[(2*k+1)*3]+=ca*dadth;Jc[(2*k+1)*3+1]+=ca*W[k][0];Jc[(2*k+1)*3+2]+=ca*W[k][1];
+    }
+  }
+  const r=new Float64Array(2*D);
+  let F=0;
+  for(let i=0;i<2*D;i++){r[i]=mu[i]*c-sigX[i];F+=r[i]*r[i];}
+  const A=[[0,0,0],[0,0,0],[0,0,0]],b=[0,0,0];
+  for(let i=0;i<2*D;i++)for(let a2=0;a2<3;a2++){
+    const Ji=Jc[i*3+a2]*c;
+    b[a2]-=Ji*r[i];
+    for(let b2=0;b2<3;b2++)A[a2][b2]+=Ji*(Jc[i*3+b2]*c);
+  }
+  for(let a2=0;a2<3;a2++)A[a2][a2]*=(1+lam);
+  const dz=solve3(A,b);
+  const Tn={th:T.th+dz[0],s:1,tx:T.tx+dz[1],ty:T.ty+dz[2]};
+  const mu2=mmdSig(bank,Y.map(y=>applyTS(Tn,y)));
+  let F2=0;for(let i=0;i<2*D;i++){const rr=mu2[i]-sigX[i];F2+=rr*rr;}
+  if(F2<F)return{T:Tn,F:F2,lam:Math.max(lam*0.5,1e-4),accepted:true};
+  return{T,F,lam:Math.min(lam*3,1e3),accepted:false};
+}
+
+/* ---------- panel state machines + UI ---------- */
+
+const cv1=$('memC1'),cv2=$('memC2'),cv3=$('memC3');
+if(!cv1||!cv2||!cv3)return;
+const ctx1=cv1.getContext('2d'),ctx2=cv2.getContext('2d'),ctx3=cv3.getContext('2d');
+const D_MMD=48;
+let seed=42,scene=null,st=null,timer=null;
+
+// params: reads sliders; returns {w, sf2, ell}
+function params(){
+  const w=parseFloat($('memW').value),sf=parseFloat($('memSig').value),ell=parseFloat($('memEll').value);
+  $('memWV').textContent=w.toFixed(2);$('memSigV').textContent=sf.toFixed(2);$('memEllV').textContent=ell.toFixed(2);
+  return{w,sf2:sf*sf,ell};
+}
+
+// build: fresh scene + solver states from the current controls
+function build(){
+  const p=params();
+  scene=makeScene3(seed,$('memScene').value==='scale'?1.15:1.0);
+  const sf2=p.sf2;
+  st={
+    p,
+    cpd:{T:{th:0,s:1,tx:0,ty:0},s2:1.0,it:0,done:false,pairs:[]},
+    fr:{T:{th:0,s:1,tx:0,ty:0},it:0,done:false,pulls:[],meanA:0,stage:0,
+        sched:[Math.max(0.25,sf2*4),Math.max(0.04,sf2*2),sf2],grid:null,gridSig:-1},
+    mmd:{T:{th:0,s:1,tx:0,ty:0},lam:1e-2,stage:0,it:0,done:false,stall:0,lastF:1/0,
+         ells:[p.ell*3,p.ell*1.6,p.ell],bank:null,sigX:null},
+  };
+  st.mmd.bank=mmdBank(st.mmd.ells[0],D_MMD,7);
+  st.mmd.sigX=mmdSig(st.mmd.bank,scene.X);
+  draw();
+}
+
+// stepAll: advance each unconverged solver by one sweep
+function stepAll(){
+  const{X,Y}=scene;
+  if(!st.cpd.done){
+    const c=st.cpd;
+    const r=cpdSimIter(X,Y,c.T,c.s2,st.p.w);
+    const dT=Math.hypot(r.T.tx-c.T.tx,r.T.ty-c.T.ty)+Math.abs(r.T.th-c.T.th)+Math.abs(r.T.s-c.T.s);
+    c.T=r.T;c.s2=r.sigma2;c.pairs=r.pairs;c.it++;
+    if(dT<1e-4||c.it>=140)c.done=true;
+  }
+  if(!st.fr.done){
+    const f=st.fr;
+    const s2=f.sched[f.stage];
+    if(Math.abs(f.gridSig-s2)>1e-12){f.grid=frGridBuild(X,s2);f.gridSig=s2;}
+    const Zm=Y.map(y=>applyTS(f.T,y));
+    const mom=frSliceMoments(f.grid,Zm);
+    const r=frIter(Zm,mom,f.T,s2,0.25,X.length);
+    const dT=Math.hypot(r.T.tx-f.T.tx,r.T.ty-f.T.ty)+Math.abs(r.T.th-f.T.th);
+    f.T=r.T;f.pulls=r.pulls;f.meanA=r.meanA;f.it++;
+    if(dT<1.5e-3){
+      if(f.stage<f.sched.length-1)f.stage++;
+      else if(dT<1e-4)f.done=true;
+    }
+    if(f.it>=140)f.done=true;
+  }
+  if(!st.mmd.done){
+    const m=st.mmd;
+    const r=mmdIter(m.bank,m.sigX,Y,m.T,m.lam);
+    const rel=(m.lastF-r.F)/Math.max(m.lastF,1e-12);
+    m.T=r.T;m.lam=r.lam;m.lastF=r.F;m.it++;
+    if(!r.accepted||rel<1e-4)m.stall++;else m.stall=0;
+    if(m.stall>=4){
+      if(m.stage<m.ells.length-1){
+        m.stage++;m.bank=mmdBank(m.ells[m.stage],D_MMD,7);m.sigX=mmdSig(m.bank,scene.X);
+        m.lastF=1/0;m.lam=1e-2;m.stall=0;
+      }else m.done=true;
+    }
+    if(m.it>=200)m.done=true;
+  }
+  draw();
+  if(st.cpd.done&&st.fr.done&&st.mmd.done&&timer){
+    clearInterval(timer);timer=null;$('memPlay').textContent='▶ Fit all three';
+  }
+}
+
+// drawClouds: fixed (blue) + transformed moving (orange) into a view region
+function drawClouds(ctx,view,T){
+  ctx.fillStyle='#3B6ECC';
+  for(const x of scene.X){ctx.beginPath();ctx.arc(view.sx(x[0]),view.sy(x[1]),2.2,0,7);ctx.fill();}
+  ctx.fillStyle='#D97757';
+  for(const y of scene.Y){const p=applyTS(T,y);ctx.beginPath();ctx.arc(view.sx(p[0]),view.sy(p[1]),2.2,0,7);ctx.fill();}
+}
+
+// draw: renders all three panels + stat lines
+function draw(){
+  const box=[-4.7,-3.2,4.7,3.2];
+  // CPD panel: the responsibility web
+  {
+    const view=makeView(cv1.width,cv1.height,...box);
+    ctx1.clearRect(0,0,cv1.width,cv1.height);
+    const pr=st.cpd.pairs;
+    const step=Math.max(1,Math.ceil(pr.length/1200));
+    ctx1.lineWidth=1;
+    for(let i=0;i<pr.length;i+=step){
+      const q=pr[i];
+      ctx1.strokeStyle=`rgba(138,99,184,${Math.min(0.5,0.65*q.p).toFixed(3)})`;
+      ctx1.beginPath();ctx1.moveTo(view.sx(q.a[0]),view.sy(q.a[1]));ctx1.lineTo(view.sx(q.b[0]),view.sy(q.b[1]));ctx1.stroke();
+    }
+    drawClouds(ctx1,view,st.cpd.T);
+    const c=st.cpd,M=scene.Y.length,N=scene.X.length;
+    $('memStat1').innerHTML=`iter <b>${c.it}</b> · R <b>${(c.T.th*180/Math.PI).toFixed(1)}°</b> · s <b>${c.T.s.toFixed(3)}</b> · t <b>(${c.T.tx.toFixed(2)}, ${c.T.ty.toFixed(2)})</b> · σ <b>${Math.sqrt(c.s2).toFixed(3)}</b> · keeps <b>P: ${M}×${N} ≈ ${Math.round(M*N/1000)}k entries</b>${c.done?' · <b style="color:var(--good)">converged</b>':''}`;
+  }
+  // FilterReg panel: one arrow per point + faint lattice
+  {
+    const view=makeView(cv2.width,cv2.height,...box);
+    ctx2.clearRect(0,0,cv2.width,cv2.height);
+    const f=st.fr;
+    if(f.grid){
+      const G=f.grid;
+      ctx2.fillStyle='rgba(59,110,204,0.04)';
+      for(const kk of G.cells.keys()){
+        const i=(kk%G.STRIDE)-G.OFF,j=Math.floor(kk/G.STRIDE)-G.OFF;
+        ctx2.fillRect(view.sx(i*G.h),view.sy((j+1)*G.h),G.h*view.s,G.h*view.s);
+      }
+    }
+    ctx2.lineWidth=1.2;
+    for(const p of f.pulls){
+      ctx2.strokeStyle=`rgba(138,99,184,${(0.55*p.w).toFixed(3)})`;
+      ctx2.beginPath();ctx2.moveTo(view.sx(p.from[0]),view.sy(p.from[1]));ctx2.lineTo(view.sx(p.to[0]),view.sy(p.to[1]));ctx2.stroke();
+    }
+    drawClouds(ctx2,view,f.T);
+    $('memStat2').innerHTML=`iter <b>${f.it}</b> · θ <b>${(f.T.th*180/Math.PI).toFixed(1)}°</b> · t <b>(${f.T.tx.toFixed(2)}, ${f.T.ty.toFixed(2)})</b> · mean α <b>${f.meanA.toFixed(2)}</b> · keeps <b>${scene.Y.length} targets</b>${f.done?' · <b style="color:var(--good)">converged</b>':''}`;
+  }
+  // MMD panel: clouds on top, signature strip below
+  {
+    const sceneH=300;
+    const view=makeView(cv3.width,sceneH,...box);
+    ctx3.clearRect(0,0,cv3.width,cv3.height);
+    drawClouds(ctx3,view,st.mmd.T);
+    // signature strip
+    const m=st.mmd;
+    const muT=mmdSig(m.bank,scene.Y.map(y=>applyTS(m.T,y)));
+    const y0=308;
+    ctx3.strokeStyle='#E3E0D5';
+    ctx3.beginPath();ctx3.moveTo(8,y0);ctx3.lineTo(cv3.width-8,y0);ctx3.stroke();
+    ctx3.fillStyle='#6E6D66';ctx3.font='10.5px Instrument Sans,sans-serif';
+    ctx3.fillText(`first 8 of ${2*D_MMD} signature channels · orange = moving μ̂, blue = fixed μ̂`,12,y0+14);
+    const mid=y0+58;
+    ctx3.strokeStyle='#E3E0D5';
+    ctx3.beginPath();ctx3.moveTo(8,mid);ctx3.lineTo(cv3.width-8,mid);ctx3.stroke();
+    for(let k=0;k<8;k++){
+      const x=26+k*52;
+      const vT=muT[k]*260,vX=m.sigX[k]*260;
+      ctx3.fillStyle='rgba(217,119,87,0.85)';
+      ctx3.fillRect(x,vT>0?mid-vT:mid,14,Math.abs(vT));
+      ctx3.fillStyle='rgba(59,110,204,0.85)';
+      ctx3.fillRect(x+16,vX>0?mid-vX:mid,14,Math.abs(vX));
+    }
+    let F=0;for(let i=0;i<2*D_MMD;i++){const r=muT[i]-m.sigX[i];F+=r*r;}
+    $('memStat3').innerHTML=`iter <b>${m.it}</b> · θ <b>${(m.T.th*180/Math.PI).toFixed(1)}°</b> · t <b>(${m.T.tx.toFixed(2)}, ${m.T.ty.toFixed(2)})</b> · MMD²×1000 <b>${(F*1000).toFixed(2)}</b> · ℓ stage <b>${m.ells[m.stage].toFixed(2)}</b> · keeps <b>none — one ${2*D_MMD}-number residual</b>${m.done?' · <b style="color:var(--good)">converged</b>':''}`;
+  }
+}
+
+$('memPlay').addEventListener('click',()=>{
+  if(timer){clearInterval(timer);timer=null;$('memPlay').textContent='▶ Fit all three';return;}
+  if(st.cpd.done&&st.fr.done&&st.mmd.done)build();
+  timer=setInterval(stepAll,60);$('memPlay').textContent='❚❚ Pause';
+});
+$('memStep').addEventListener('click',()=>{if(!(st.cpd.done&&st.fr.done&&st.mmd.done))stepAll();});
+$('memReset').addEventListener('click',()=>{seed++;build();});
+$('memScene').addEventListener('change',build);
+for(const id of['memW','memSig','memEll'])$(id).addEventListener('input',build);
+build();
+})();
+</script>
 
 </body>
 </html>
