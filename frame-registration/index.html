@@ -52,6 +52,11 @@ table.cmp td b{color:var(--ink);font-weight:600}
 @media(max-width:640px){.grid2{grid-template-columns:1fr}}
 .grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-top:14px}
 @media(max-width:860px){.grid3{grid-template-columns:1fr}}
+.stagebar{display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-top:8px}
+button.mini{padding:4px 10px;font-size:11.5px;border-radius:8px;min-width:0}
+.stagechips{display:inline-flex;flex-wrap:wrap;gap:3px}
+.stagechips button{padding:3px 7px;font-size:10.5px;border-radius:999px;border:1px solid var(--border);background:#fff;color:var(--dim);cursor:pointer;min-width:0}
+.stagechips button.on{background:var(--accent);border-color:var(--accent);color:#fff}
 .cell h3{font-size:13.5px;font-weight:600;margin:0 0 8px;color:var(--ink);display:flex;align-items:center;gap:7px}
 .cell .mstat{font-size:12px;color:var(--dim);margin-top:8px;font-variant-numeric:tabular-nums;min-height:16px}
 .card{background:var(--panel);border:1px solid var(--border);border-radius:14px;padding:12px}
@@ -406,40 +411,47 @@ input[type=range]{accent-color:var(--accent);width:140px}
   <!-- ============ one scene, three memories ============ -->
   <div class="section" id="memories">
     <p class="kicker">The wider field · one scene, three memories</p>
-    <h2>What each method keeps</h2>
+    <h2>What each method keeps — step by step</h2>
     <p>The soft family and the mean-embedding objective are now both on the table, and the cleanest way to see how far apart they truly are is a bookkeeping question: between two sweeps, <strong>what does each method remember about "who matches whom"?</strong> CPD keeps every soft pair — the full $M\times N$ responsibility matrix. FilterReg compresses each row of that matrix before it is ever stored: one filtered target $\bar y_i$ and one confidence $\alpha_i$ per moving point. MMD-Reg refuses to keep correspondences at all — each cloud is averaged into a fixed-size feature signature, and all that survives is a single residual between the two signatures. <em>Every soft pair; one soft target per point; one residual for both clouds.</em></p>
-    <p>The panels below run all three live on one scene — same fish, same start, two planted junk points in <em>each</em> cloud. The violet web on the left is CPD's matrix drawn literally (entries above a threshold, or the panel would be solid violet). The middle panel draws FilterReg's one arrow per moving point, fading with its confidence. The right panel draws no connections at all: just the clouds and, underneath, the first eight channels of each cloud's wave signature sliding into agreement as the fit improves. And one deliberate asymmetry to try — switch the scene to <em>moving cloud 15% smaller</em>: CPD's "rigid" model is actually a similarity with a uniform scale $s$, so it recovers the shrink exactly (watch its $s$ readout), while FilterReg and MMD-Reg are rotation-plus-translation only and park with an honest size mismatch. That is not a bug; it is a modeling choice each paper states.</p>
+    <p>Below, each method walks its own loop <strong>stage by stage</strong> — press <em>next</em> or <em>auto</em> under a panel, or click any stage chip directly. CPD's eight beats: the problem, the mixture, the E-step web, then the closed-form M-step split into its three moves — center, rotate, move&nbsp;+&nbsp;scale — then the $\sigma^2$ tighten, then sweeps to convergence. FilterReg's four: density, filter, query, twist. MMD-Reg's four: encode, average, compare, optimize. The scene opens <strong>noisy with planted junk in both clouds</strong>; set the starting misalignment yourself with the initial-rotation and initial-shift sliders. And the scale switch stays the sharpest separator: CPD's "rigid" model is actually a similarity with a uniform scale $s$, so it recovers a 15% shrink exactly (watch its $s$ readout), while FilterReg and MMD-Reg are rotation-plus-translation by design and park with an honest size mismatch.</p>
+    <div class="controls">
+      <button id="memWalk" class="primary">▶ Walk all three</button>
+      <button id="memReset">Reset</button>
+      <select id="memScene" aria-label="Scene selector">
+        <option value="clean">clean</option>
+        <option value="noisy">noisy</option>
+        <option value="mean" selected>noisy + junk in both clouds</option>
+      </select>
+      <label class="toggle"><input type="checkbox" id="memScale"> moving cloud 15% smaller</label>
+      <label class="slider">init rotation <input type="range" id="memRot" min="-180" max="180" step="5" value="60"><b id="memRotV">60°</b></label>
+      <label class="slider">init shift x <input type="range" id="memDx" min="-1.5" max="1.5" step="0.05" value="0.7"><b id="memDxV">0.70</b></label>
+      <label class="slider">init shift y <input type="range" id="memDy" min="-1.5" max="1.5" step="0.05" value="-0.45"><b id="memDyV">-0.45</b></label>
+    </div>
     <div class="grid3">
       <div class="cell">
         <h3><span class="swatch" style="background:var(--violet)"></span>CPD — every soft pair</h3>
-        <div class="card"><canvas id="memC1" width="440" height="400" style="aspect-ratio:440/400" aria-label="CPD panel: full responsibility matrix drawn as a web of soft pairs"></canvas></div>
+        <div class="card"><canvas id="memC1" width="440" height="400" style="aspect-ratio:440/400" aria-label="CPD stage walkthrough: problem, GMM, E-step, center, rotate, move and scale, tighten, result"></canvas></div>
+        <div class="stagebar"><button class="mini" id="memAuto1">▶ auto</button><button class="mini" id="memNext1">next ›</button><span class="stagechips" id="memChips1"></span></div>
         <div class="mstat" id="memStat1">–</div>
+        <label class="slider">outlier w <input type="range" id="memW" min="0.02" max="0.4" step="0.01" value="0.12"><b id="memWV">0.12</b></label>
       </div>
       <div class="cell">
         <h3><span class="swatch" style="background:var(--violet)"></span>FilterReg — one target per point</h3>
-        <div class="card"><canvas id="memC2" width="440" height="400" style="aspect-ratio:440/400" aria-label="FilterReg panel: one filtered soft target and confidence per moving point"></canvas></div>
+        <div class="card"><canvas id="memC2" width="440" height="400" style="aspect-ratio:440/400" aria-label="FilterReg stage walkthrough: density, filter, query, twist"></canvas></div>
+        <div class="stagebar"><button class="mini" id="memAuto2">▶ auto</button><button class="mini" id="memNext2">next ›</button><span class="stagechips" id="memChips2"></span></div>
         <div class="mstat" id="memStat2">–</div>
+        <label class="slider">σ (final) <input type="range" id="memSig" min="0.06" max="0.3" step="0.01" value="0.10"><b id="memSigV">0.10</b></label>
       </div>
       <div class="cell">
         <h3><span class="swatch" style="background:var(--good)"></span>MMD-Reg — one residual, no pairs</h3>
-        <div class="card"><canvas id="memC3" width="440" height="400" style="aspect-ratio:440/400" aria-label="MMD-Reg panel: no correspondences, two feature signatures and one residual"></canvas></div>
+        <div class="card"><canvas id="memC3" width="440" height="400" style="aspect-ratio:440/400" aria-label="MMD-Reg stage walkthrough: encode, average, compare, optimize"></canvas></div>
+        <div class="stagebar"><button class="mini" id="memAuto3">▶ auto</button><button class="mini" id="memNext3">next ›</button><span class="stagechips" id="memChips3"></span></div>
         <div class="mstat" id="memStat3">–</div>
+        <label class="slider">kernel ℓ (final) <input type="range" id="memEll" min="0.3" max="1.5" step="0.05" value="0.5"><b id="memEllV">0.50</b></label>
       </div>
     </div>
-    <div class="controls">
-      <button id="memPlay" class="primary">▶ Fit all three</button>
-      <button id="memStep">Step</button>
-      <button id="memReset">Reset</button>
-      <select id="memScene" aria-label="Scene selector">
-        <option value="equal" selected>equal scale</option>
-        <option value="scale">moving cloud 15% smaller</option>
-      </select>
-      <label class="slider">CPD outlier w <input type="range" id="memW" min="0.02" max="0.4" step="0.01" value="0.12"><b id="memWV">0.12</b></label>
-      <label class="slider">FilterReg σ <input type="range" id="memSig" min="0.06" max="0.3" step="0.01" value="0.10"><b id="memSigV">0.10</b></label>
-      <label class="slider">MMD ℓ <input type="range" id="memEll" min="0.3" max="1.5" step="0.05" value="0.5"><b id="memEllV">0.50</b></label>
-    </div>
-    <div class="legend"><span><span class="swatch" style="background:var(--fixed)"></span>fixed cloud</span><span><span class="swatch" style="background:var(--accent)"></span>moving cloud</span><span><span class="swatch" style="background:var(--violet)"></span>what the method keeps (pairs / targets)</span><span>bars = the two feature signatures</span></div>
-    <p class="fignote"><strong>What to look for.</strong> Watch the counts under each panel: CPD carries a responsibility matrix of ~23&nbsp;000 entries between sweeps, FilterReg carries 152 targets, MMD-Reg carries a single 96-number residual — the whole trichotomy in three integers. Watch the junk: CPD's uniform bin owns the two planted points in the <em>fixed</em> cloud (its data), FilterReg's confidence gate $\alpha_i$ zeroes out the two planted points in the <em>moving</em> cloud (<em>its</em> data — the mixture flip swaps which cloud is "data," so the same junk is handled from opposite sides), and MMD-Reg, which has no outlier bin at all, folds all four into both signatures — its residual floors above zero and the fit drags a touch toward the junk, exactly the price its paper's neural variant pays learned per-point weights to remove. Honest small print: everything is planar; CPD runs its full similarity EM ($R$, $s$, $t$, and the closed-form $\sigma^2$ update); FilterReg runs the sparse-grid filter E-step with a coarse-to-fine σ schedule ending at the slider's value and one Gauss–Newton twist step per sweep; MMD-Reg runs 48 random frequencies, Levenberg–Marquardt, and an ℓ-schedule ending at the slider's value; both mixtures share a uniform outlier density of 1/area of the demo box.</p>
+    <div class="legend"><span><span class="swatch" style="background:var(--fixed)"></span>fixed cloud</span><span><span class="swatch" style="background:var(--accent)"></span>moving cloud</span><span><span class="swatch" style="background:var(--violet)"></span>what the method keeps (pairs / targets)</span><span>bars = the two feature signatures</span><span>halo = carries the Gaussians</span></div>
+    <p class="fignote"><strong>What to look for.</strong> Watch the counts in each caption: CPD carries a responsibility matrix of ~23&nbsp;000 entries between sweeps, FilterReg carries one target per moving point, MMD-Reg carries a single 96-number residual — the whole trichotomy in three integers. Watch the junk: CPD's uniform bin owns the planted points in the <em>fixed</em> cloud (its data), FilterReg's confidence gate $\alpha_i$ zeroes out the planted points in the <em>moving</em> cloud (<em>its</em> data — the mixture flip swaps which cloud is "data," so the same junk is handled from opposite sides), and MMD-Reg, which has no outlier bin at all, folds all of it into both signatures — its residual floors above zero and the fit drags a touch toward the junk, exactly the price its paper's neural variant pays learned per-point weights to remove. Crank the initial rotation past ±90° and watch all three fall into the same trap — a confident wrong basin; none of these objectives is global, and each paper says so. Honest small print: everything is planar; CPD runs its full similarity EM ($R$, $s$, $t$, closed-form $\sigma^2$), with the M-step's three closed-form moves shown as separate beats of one sweep; FilterReg runs the sparse-grid filter E-step with a coarse-to-fine σ schedule ending at its slider and one Gauss–Newton twist step per sweep; MMD-Reg runs 48 random frequencies, Levenberg–Marquardt, and an ℓ-schedule ending at its slider; both mixtures share a uniform outlier density of 1/area of the demo box.</p>
     <table class="cmp">
       <thead><tr><th>Design choice</th><th>Rigid CPD</th><th>FilterReg</th><th>MMD-Reg</th></tr></thead>
       <tbody>
@@ -3815,7 +3827,9 @@ frame();
 <script>
 (function(){
 'use strict';
-/* One scene, three memories: similarity CPD vs FilterReg vs mini MMD-Reg. */
+/* One scene, three memories — stage-by-stage walkthrough of similarity CPD,
+   FilterReg, and mini MMD-Reg. Panels replay deterministically, so any stage
+   chip can be jumped to directly. */
 
 const $=id=>document.getElementById(id);
 
@@ -3825,7 +3839,6 @@ function makeView(W,H,wx0,wy0,wx1,wy1){
   const ox=(W-s*(wx1-wx0))/2,oy=(H-s*(wy1-wy0))/2;
   return{sx:x=>ox+(x-wx0)*s,sy:y=>H-oy-(y-wy0)*s,s};
 }
-
 // mulberry32: deterministic PRNG from a 32-bit seed; returns () => float in [0,1)
 function mulberry32(a){return function(){let t=(a+=0x6d2b79f5);t=Math.imul(t^(t>>>15),t|1);t^=t+Math.imul(t^(t>>>7),t|61);return((t^(t>>>14))>>>0)/4294967296;};}
 // randn: Box-Muller standard normal draw using rnd
@@ -3837,36 +3850,35 @@ function solve3(A,b){const M=A.map((r,i)=>[...r,b[i]]);for(let c=0;c<3;c++){let 
 // makeShape: N points along a fish-like closed curve; returns [[x,y],...]
 function makeShape(N){const pts=[];for(let i=0;i<N;i++){const t=2*Math.PI*(i/N);pts.push([2*(Math.cos(t)-0.55*Math.cos(2*t)),2*(0.62*Math.sin(t)+0.12*Math.sin(3*t))]);}return pts;}
 
-const AREA=36; // uniform-outlier-bin support area shared by both mixtures
+const AREA=36,D_MMD=48;
 
-// makeScene3: fixed X (+2 junk), moving Y = Ttrue^-1(X)+noise (+2 junk); returns {X,Y,Tt}
-function makeScene3(seed,sTrue){
+// makeScene3: fixed X + moving Y = Ttrue^-1(X)+noise, junk per cfg; returns {X,Y,Tt,nJx,nJy}
+function makeScene3(seed,cfg){
   const rnd=mulberry32(seed);
   const X=makeShape(150);
-  const Tt={th:0.5,s:sTrue,tx:0.7,ty:-0.45};
+  const Tt={th:cfg.th,s:cfg.s,tx:cfg.dx,ty:cfg.dy};
   const c=Math.cos(-Tt.th),sn=Math.sin(-Tt.th);
   const Y=[];
   for(const x of X){
     const px=(x[0]-Tt.tx)/Tt.s,py=(x[1]-Tt.ty)/Tt.s;
-    Y.push([c*px-sn*py+0.05*randn(rnd),sn*px+c*py+0.05*randn(rnd)]);
+    Y.push([c*px-sn*py+cfg.noise*randn(rnd),sn*px+c*py+cfg.noise*randn(rnd)]);
   }
-  X.push([-3.4,2.2],[3.3,-2.4]);
-  Y.push([-2.9,-2.2],[2.7,2.3]);
-  return{X,Y,Tt};
+  for(let i=0;i<cfg.junkX;i++)X.push([(rnd()-0.5)*6.4,(rnd()-0.5)*4.8]);
+  for(let i=0;i<cfg.junkY;i++)Y.push([(rnd()-0.5)*5.2,(rnd()-0.5)*3.8]);
+  return{X,Y,Tt,nJx:cfg.junkX,nJy:cfg.junkY};
 }
 
-/* ---------- similarity CPD ---------- */
+/* ---------- similarity CPD, split for the walkthrough ---------- */
 
-// cpdSimIter: one similarity-CPD EM sweep (R, s, t, closed-form sigma^2).
-// Returns {T,sigma2,pairs:[{a,b,p}]} where pairs are matrix entries above a draw threshold.
-function cpdSimIter(X,Y,T,sigma2,w){
+// cpdSweep: one full E+M computation at (T,s2). Returns {pairs:[{m,n,p}], mux, muyRaw, Tn, s2n}
+function cpdSweep(X,Y,T,s2v,w){
   const M=Y.length,N=X.length,d=2;
   const TY=Y.map(y=>applyTS(T,y));
-  const cU=Math.pow(2*Math.PI*sigma2,d/2)*(w/(1-w))*(M/AREA);
+  const cU=Math.pow(2*Math.PI*s2v,d/2)*(w/(1-w))*(M/AREA);
   const K=[];const colDen=new Array(N).fill(cU);
   for(let m=0;m<M;m++){K.push(new Array(N));
     for(let n=0;n<N;n++){const dx=X[n][0]-TY[m][0],dy=X[n][1]-TY[m][1];
-      const kk=Math.exp(-(dx*dx+dy*dy)/(2*sigma2));K[m][n]=kk;colDen[n]+=kk;}}
+      const kk=Math.exp(-(dx*dx+dy*dy)/(2*s2v));K[m][n]=kk;colDen[n]+=kk;}}
   let Np=0,mux=[0,0],muy=[0,0];
   for(let m=0;m<M;m++)for(let n=0;n<N;n++){const p=K[m][n]/colDen[n];K[m][n]=p;Np+=p;
     mux[0]+=p*X[n][0];mux[1]+=p*X[n][1];muy[0]+=p*Y[m][0];muy[1]+=p*Y[m][1];}
@@ -3888,22 +3900,21 @@ function cpdSimIter(X,Y,T,sigma2,w){
   const trAR=cc*(a00+a11)+ss*(a10-a01);
   const s=Math.max(trAR/Math.max(yhSq,1e-12),1e-3);
   const Tn={th,s,tx:mux[0]-s*(cc*muy[0]-ss*muy[1]),ty:mux[1]-s*(ss*muy[0]+cc*muy[1])};
-  let s2=0;
+  let s2n=0;
   for(let m=0;m<M;m++){
     const t2=applyTS(Tn,Y[m]);
     for(let n=0;n<N;n++){const p=K[m][n];if(p<1e-12)continue;
-      const dx=X[n][0]-t2[0],dy=X[n][1]-t2[1];s2+=p*(dx*dx+dy*dy);}
+      const dx=X[n][0]-t2[0],dy=X[n][1]-t2[1];s2n+=p*(dx*dx+dy*dy);}
   }
-  s2=Math.max(s2/(Np*d),1e-6);
+  s2n=Math.max(s2n/(Np*d),1e-6);
   const pairs=[];
-  for(let m=0;m<M;m++)for(let n=0;n<N;n++)if(K[m][n]>0.03)pairs.push({a:applyTS(Tn,Y[m]),b:X[n],p:K[m][n]});
-  return{T:Tn,sigma2:s2,pairs};
+  for(let m=0;m<M;m++)for(let n=0;n<N;n++)if(K[m][n]>0.03)pairs.push({m,n,p:K[m][n]});
+  return{pairs,mux,muyRaw:muy,Tn,s2n};
 }
 
-/* ---------- FilterReg (SE(2), sparse-grid filter E-step) ---------- */
+/* ---------- FilterReg pieces (sparse-grid filter E-step) ---------- */
 
-// frGridBuild: splat+blur the fixed cloud onto a sparse grid with cell size sigma;
-// returns {cells:Map,h,CH,STRIDE,OFF} to be sliced repeatedly.
+// frGridBuild: splat+blur the fixed cloud onto a sparse lattice with cell size sigma
 function frGridBuild(X,sigma2){
   const h=Math.sqrt(sigma2),CH=3;
   const STRIDE=1<<16,OFF=1<<15;
@@ -3934,9 +3945,7 @@ function frGridBuild(X,sigma2){
   }
   return{cells,h,CH,STRIDE,OFF};
 }
-
-// frSliceMoments: bilinear slice at moving points Z; 2*pi rescales the mass-normalized
-// grid to the peak-1 kernel scale so the outlier gate stays calibrated. Returns {M0,MU}.
+// frSliceMoments: bilinear slice at Z (2*pi rescale to the peak-1 kernel scale); returns {M0,MU}
 function frSliceMoments(G,Z){
   const{cells,h,CH,STRIDE,OFF}=G;
   const key=(i,j)=>(j+OFF)*STRIDE+(i+OFF);
@@ -3956,10 +3965,8 @@ function frSliceMoments(G,Z){
   }
   return{M0,MU};
 }
-
-// frIter: outlier-gated Gauss-Newton twist step from filtered moments.
-// Returns {T,pulls:[{from,to,w}],meanA}.
-function frIter(Zm,mom,T,sigma2,w,N){
+// frStep: outlier-gated Gauss-Newton twist step from moments; returns {T,pulls,meanA}
+function frStep(Zm,mom,T,sigma2,w,N){
   const cU=Math.pow(2*Math.PI*sigma2,1)*(w/(1-w))*(N/AREA);
   const A=[[0,0,0],[0,0,0],[0,0,0]],b=[0,0,0];
   const pulls=[];
@@ -3982,7 +3989,7 @@ function frIter(Zm,mom,T,sigma2,w,N){
   return{T:{th:T.th+om,s:1,tx:cc*T.tx-ss*T.ty+dz[1],ty:ss*T.tx+cc*T.ty+dz[2]},pulls,meanA:aSum/Math.max(aN,1)};
 }
 
-/* ---------- mini MMD-Reg (random Fourier features + LM) ---------- */
+/* ---------- mini MMD-Reg pieces ---------- */
 
 // mmdBank: D random frequencies at length scale ell (deterministic); returns {W,D}
 function mmdBank(ell,D,seed){
@@ -4003,9 +4010,8 @@ function mmdSig(bank,pts){
   for(let i=0;i<2*D;i++)mu[i]*=c;
   return mu;
 }
-// mmdIter: one Levenberg-Marquardt step on (th,tx,ty); rotation taken about the current
-// translation so the analytic Jacobian and the update agree exactly. Returns {T,F,lam,accepted}.
-function mmdIter(bank,sigX,Y,T,lam){
+// mmdStep: one LM step on (th,tx,ty), rotation about the current translation; returns {T,F,lam,accepted}
+function mmdStep(bank,sigX,Y,T,lam){
   const{W,D}=bank;
   const M=Y.length,c=1/(M*Math.sqrt(D));
   const TY=Y.map(y=>applyTS(T,y));
@@ -4041,172 +4047,360 @@ function mmdIter(bank,sigX,Y,T,lam){
   return{T,F,lam:Math.min(lam*3,1e3),accepted:false};
 }
 
-/* ---------- panel state machines + UI ---------- */
+/* ---------- stage engine ---------- */
 
-const cv1=$('memC1'),cv2=$('memC2'),cv3=$('memC3');
-if(!cv1||!cv2||!cv3)return;
-const ctx1=cv1.getContext('2d'),ctx2=cv2.getContext('2d'),ctx3=cv3.getContext('2d');
-const D_MMD=48;
-let seed=42,scene=null,st=null,timer=null;
+const cv=[$('memC1'),$('memC2'),$('memC3')];
+if(!cv[0]||!cv[1]||!cv[2])return;
+const ctx=cv.map(c=>c.getContext('2d'));
+const CHIPS=[
+  ['01 problem','02 GMM','03 E-step','04 center','05 rotate','06 move+s','07 tighten','08 result'],
+  ['01 density','02 filter','03 query','04 twist'],
+  ['01 encode','02 average','03 compare','04 optimize'],
+];
+let seed=42,scene=null,P=[null,null,null],tick=null,autoTimer=null,auto=[false,false,false];
 
-// params: reads sliders; returns {w, sf2, ell}
-function params(){
+// cfgNow: reads all global controls; returns scene+solver config
+function cfgNow(){
+  const sc=$('memScene').value;
+  const base={clean:{noise:0.02,junkX:0,junkY:0},noisy:{noise:0.08,junkX:0,junkY:0},mean:{noise:0.05,junkX:4,junkY:6}}[sc];
+  const th=parseInt($('memRot').value,10)*Math.PI/180;
+  const dx=parseFloat($('memDx').value),dy=parseFloat($('memDy').value);
   const w=parseFloat($('memW').value),sf=parseFloat($('memSig').value),ell=parseFloat($('memEll').value);
+  $('memRotV').textContent=$('memRot').value+'°';$('memDxV').textContent=dx.toFixed(2);$('memDyV').textContent=dy.toFixed(2);
   $('memWV').textContent=w.toFixed(2);$('memSigV').textContent=sf.toFixed(2);$('memEllV').textContent=ell.toFixed(2);
-  return{w,sf2:sf*sf,ell};
+  return{...base,th,dx,dy,s:$('memScale').checked?1.15:1.0,w,sf2:sf*sf,ell};
 }
 
-// build: fresh scene + solver states from the current controls
-function build(){
-  const p=params();
-  scene=makeScene3(seed,$('memScene').value==='scale'?1.15:1.0);
-  const sf2=p.sf2;
-  st={
-    p,
-    cpd:{T:{th:0,s:1,tx:0,ty:0},s2:1.0,it:0,done:false,pairs:[]},
-    fr:{T:{th:0,s:1,tx:0,ty:0},it:0,done:false,pulls:[],meanA:0,stage:0,
-        sched:[Math.max(0.25,sf2*4),Math.max(0.04,sf2*2),sf2],grid:null,gridSig:-1},
-    mmd:{T:{th:0,s:1,tx:0,ty:0},lam:1e-2,stage:0,it:0,done:false,stall:0,lastF:1/0,
-         ells:[p.ell*3,p.ell*1.6,p.ell],bank:null,sigX:null},
-  };
-  st.mmd.bank=mmdBank(st.mmd.ells[0],D_MMD,7);
-  st.mmd.sigX=mmdSig(st.mmd.bank,scene.X);
-  draw();
-}
-
-// stepAll: advance each unconverged solver by one sweep
-function stepAll(){
-  const{X,Y}=scene;
-  if(!st.cpd.done){
-    const c=st.cpd;
-    const r=cpdSimIter(X,Y,c.T,c.s2,st.p.w);
-    const dT=Math.hypot(r.T.tx-c.T.tx,r.T.ty-c.T.ty)+Math.abs(r.T.th-c.T.th)+Math.abs(r.T.s-c.T.s);
-    c.T=r.T;c.s2=r.sigma2;c.pairs=r.pairs;c.it++;
-    if(dT<1e-4||c.it>=140)c.done=true;
+// freshPanel: initial state for panel i under config c
+function freshPanel(i,c){
+  if(i===0)return{stage:0,T:{th:0,s:1,tx:0,ty:0},s2:1.0,it:0,cache:null,anim:false,done:false};
+  if(i===1){
+    const sf2=c.sf2;
+    return{stage:0,T:{th:0,s:1,tx:0,ty:0},it:0,solStage:0,sched:[Math.max(0.25,sf2*4),Math.max(0.04,sf2*2),sf2],
+      grid:null,gridSig:-1,cache:null,pulls:[],meanA:0,anim:false,done:false};
   }
-  if(!st.fr.done){
-    const f=st.fr;
-    const s2=f.sched[f.stage];
-    if(Math.abs(f.gridSig-s2)>1e-12){f.grid=frGridBuild(X,s2);f.gridSig=s2;}
-    const Zm=Y.map(y=>applyTS(f.T,y));
-    const mom=frSliceMoments(f.grid,Zm);
-    const r=frIter(Zm,mom,f.T,s2,0.25,X.length);
-    const dT=Math.hypot(r.T.tx-f.T.tx,r.T.ty-f.T.ty)+Math.abs(r.T.th-f.T.th);
-    f.T=r.T;f.pulls=r.pulls;f.meanA=r.meanA;f.it++;
+  const st={stage:0,T:{th:0,s:1,tx:0,ty:0},lam:1e-2,solStage:0,ells:[c.ell*3,c.ell*1.6,c.ell],
+    bank:null,sigX:null,lastF:1/0,stall:0,it:0,anim:false,done:false};
+  st.bank=mmdBank(st.ells[0],D_MMD,7);
+  st.sigX=mmdSig(st.bank,scene.X);
+  return st;
+}
+
+// transition: advance panel i one stage (deterministic)
+function transition(i,c){
+  const p=P[i];
+  if(p.stage>=CHIPS[i].length-1)return;
+  if(i===0){
+    if(p.stage===1)p.cache=cpdSweep(scene.X,scene.Y,p.T,p.s2,c.w);
+    if(p.stage===5){p.T=p.cache.Tn;p.s2=p.cache.s2n;p.it++;}
+    p.stage++;
+    if(p.stage===7)p.anim=true;
+  }else if(i===1){
+    if(p.stage===0){p.grid=frGridBuild(scene.X,p.sched[0]);p.gridSig=p.sched[0];}
+    if(p.stage===1){
+      const Zm=scene.Y.map(y=>applyTS(p.T,y));
+      const mom=frSliceMoments(p.grid,Zm);
+      p.cache=frStep(Zm,mom,p.T,p.sched[p.solStage],0.25,scene.X.length);
+      p.pulls=p.cache.pulls;p.meanA=p.cache.meanA;
+    }
+    if(p.stage===2){p.T=p.cache.T;p.it++;}
+    p.stage++;
+    if(p.stage===3)p.anim=true;
+  }else{
+    p.stage++;
+    if(p.stage===3)p.anim=true;
+  }
+  ensureTick();
+}
+
+// animSweep: one convergence sweep for panel i while in its final stage
+function animSweep(i,c){
+  const p=P[i];
+  if(p.done)return;
+  if(i===0){
+    const r=cpdSweep(scene.X,scene.Y,p.T,p.s2,c.w);
+    const dT=Math.hypot(r.Tn.tx-p.T.tx,r.Tn.ty-p.T.ty)+Math.abs(r.Tn.th-p.T.th)+Math.abs(r.Tn.s-p.T.s);
+    p.T=r.Tn;p.s2=r.s2n;p.cache=r;p.it++;
+    if(dT<1e-4||p.it>=140){p.done=true;p.anim=false;}
+  }else if(i===1){
+    const s2v=p.sched[p.solStage];
+    if(Math.abs(p.gridSig-s2v)>1e-12){p.grid=frGridBuild(scene.X,s2v);p.gridSig=s2v;}
+    const Zm=scene.Y.map(y=>applyTS(p.T,y));
+    const mom=frSliceMoments(p.grid,Zm);
+    const r=frStep(Zm,mom,p.T,s2v,0.25,scene.X.length);
+    const dT=Math.hypot(r.T.tx-p.T.tx,r.T.ty-p.T.ty)+Math.abs(r.T.th-p.T.th);
+    p.T=r.T;p.pulls=r.pulls;p.meanA=r.meanA;p.it++;
     if(dT<1.5e-3){
-      if(f.stage<f.sched.length-1)f.stage++;
-      else if(dT<1e-4)f.done=true;
+      if(p.solStage<p.sched.length-1)p.solStage++;
+      else if(dT<1e-4){p.done=true;p.anim=false;}
     }
-    if(f.it>=140)f.done=true;
-  }
-  if(!st.mmd.done){
-    const m=st.mmd;
-    const r=mmdIter(m.bank,m.sigX,Y,m.T,m.lam);
-    const rel=(m.lastF-r.F)/Math.max(m.lastF,1e-12);
-    m.T=r.T;m.lam=r.lam;m.lastF=r.F;m.it++;
-    if(!r.accepted||rel<1e-4)m.stall++;else m.stall=0;
-    if(m.stall>=4){
-      if(m.stage<m.ells.length-1){
-        m.stage++;m.bank=mmdBank(m.ells[m.stage],D_MMD,7);m.sigX=mmdSig(m.bank,scene.X);
-        m.lastF=1/0;m.lam=1e-2;m.stall=0;
-      }else m.done=true;
+    if(p.it>=140){p.done=true;p.anim=false;}
+  }else{
+    const r=mmdStep(p.bank,p.sigX,scene.Y,p.T,p.lam);
+    const rel=(p.lastF-r.F)/Math.max(p.lastF,1e-12);
+    p.T=r.T;p.lam=r.lam;p.lastF=r.F;p.it++;
+    if(!r.accepted||rel<1e-4)p.stall++;else p.stall=0;
+    if(p.stall>=4){
+      if(p.solStage<p.ells.length-1){
+        p.solStage++;p.bank=mmdBank(p.ells[p.solStage],D_MMD,7);p.sigX=mmdSig(p.bank,scene.X);
+        p.lastF=1/0;p.lam=1e-2;p.stall=0;
+      }else{p.done=true;p.anim=false;}
     }
-    if(m.it>=200)m.done=true;
+    if(p.it>=200){p.done=true;p.anim=false;}
   }
+}
+
+// replayTo: rebuild panel i and deterministically fast-forward to stage k
+function replayTo(i,k){
+  const c=cfgNow();
+  P[i]=freshPanel(i,c);
+  for(let s=0;s<k;s++)transition(i,c);
   draw();
-  if(st.cpd.done&&st.fr.done&&st.mmd.done&&timer){
-    clearInterval(timer);timer=null;$('memPlay').textContent='▶ Fit all three';
+}
+
+// rebuildAll: fresh scene + all panels at stage 0
+function rebuildAll(){
+  const c=cfgNow();
+  scene=makeScene3(seed,c);
+  for(let i=0;i<3;i++)P[i]=freshPanel(i,c);
+  draw();
+}
+
+// ensureTick: run the 70 ms animation loop while any panel is animating
+function ensureTick(){
+  if(tick)return;
+  tick=setInterval(()=>{
+    const c=cfgNow();
+    let any=false;
+    for(let i=0;i<3;i++)if(P[i].anim&&!P[i].done){animSweep(i,c);any=true;}
+    draw();
+    if(!any){clearInterval(tick);tick=null;}
+  },70);
+}
+
+/* ---------- drawing ---------- */
+
+const BOX=[-4.7,-3.2,4.7,3.2];
+
+// dispT: the transform panel i should draw its moving cloud at, per stage
+function dispT(i){
+  const p=P[i];
+  if(i!==0)return p.T;
+  if(p.stage<4||!p.cache)return p.T;
+  if(p.stage===4){
+    const cch=p.cache;
+    const cCur=applyTS(p.T,cch.muyRaw);
+    const th=cch.Tn.th,s=p.T.s,cc=Math.cos(th),ss=Math.sin(th);
+    return{th,s,tx:cCur[0]-s*(cc*cch.muyRaw[0]-ss*cch.muyRaw[1]),ty:cCur[1]-s*(ss*cch.muyRaw[0]+cc*cch.muyRaw[1])};
   }
+  if(p.stage===5)return p.cache.Tn;
+  return p.T;
 }
 
-// drawClouds: fixed (blue) + transformed moving (orange) into a view region
-function drawClouds(ctx,view,T){
-  ctx.fillStyle='#3B6ECC';
-  for(const x of scene.X){ctx.beginPath();ctx.arc(view.sx(x[0]),view.sy(x[1]),2.2,0,7);ctx.fill();}
-  ctx.fillStyle='#D97757';
-  for(const y of scene.Y){const p=applyTS(T,y);ctx.beginPath();ctx.arc(view.sx(p[0]),view.sy(p[1]),2.2,0,7);ctx.fill();}
+// drawClouds: fixed (blue) + moving (orange) at transform T
+function drawClouds(g,view,T){
+  g.fillStyle='#3B6ECC';
+  for(const x of scene.X){g.beginPath();g.arc(view.sx(x[0]),view.sy(x[1]),2.2,0,7);g.fill();}
+  g.fillStyle='#D97757';
+  for(const y of scene.Y){const q=applyTS(T,y);g.beginPath();g.arc(view.sx(q[0]),view.sy(q[1]),2.2,0,7);g.fill();}
 }
+// fmtT: compact transform readout
+function fmtT(T,withS){return`θ <b>${(T.th*180/Math.PI).toFixed(1)}°</b>${withS?` · s <b>${T.s.toFixed(3)}</b>`:''} · t <b>(${T.tx.toFixed(2)}, ${T.ty.toFixed(2)})</b>`;}
 
-// draw: renders all three panels + stat lines
+const CAP1=[
+  'Two unordered sets, correspondence genuinely unknown — plus planted junk. Orange must reach blue.',
+  'Each moving point becomes a Gaussian centroid (halos, width σ); one flat uniform bin of weight w stands ready to own the junk.',
+  'E-step: every blue point splits one unit of belief across all centroids and the bin — the violet web <b>is</b> the responsibility matrix P.',
+  'M-step ① center: responsibility-weighted centroids of both clouds (crosses); the closed form works relative to them.',
+  'M-step ② rotate: R from the weighted cross-covariance — the SVD step, exact in one shot.',
+  'M-step ③ move + scale: closed-form s and t land the cloud. CPD\'s rigid model is a similarity — watch s.',
+  'Tighten: σ² gets its own closed-form update — the halos shrink, the assignment sharpens. That was one full EM sweep.',
+  'Result: sweeps repeat until nothing moves.',
+];
+const CAP2=[
+  'The flip: the <b>fixed</b> cloud carries the Gaussians now (halos) — a density over space, built from points that never move.',
+  'Filter: splat the fixed cloud onto a sparse lattice and blur once — the density becomes a lookup table (faint cells), built once per σ.',
+  'Query: each moving point slices the lattice → one soft target ȳᵢ + confidence αᵢ (arrows fade with α) — a row of CPD\'s matrix, pre-compressed.',
+  'Twist: one Gauss–Newton step on (θ, t) per sweep; query + twist repeat, σ coarse-to-fine.',
+];
+const CAP3=[
+  'Encode: no mixture, no pairs — every point is read by a fixed bank of random waves (one wave shown as the striped field).',
+  'Average: each cloud collapses into one fixed-size signature (bars) — 96 numbers per cloud, junk averaged in; there is no outlier bin.',
+  'Compare: subtract the two signatures — one residual vector (violet); its squared norm is MMD², the entire objective.',
+  'Optimize: Levenberg–Marquardt drives (θ, t) down the residual, ℓ coarse-to-fine — the bars slide into agreement.',
+];
+
+// draw: renders all three panels, captions, chip states
 function draw(){
-  const box=[-4.7,-3.2,4.7,3.2];
-  // CPD panel: the responsibility web
+  const c=cfgNow();
+  // --- CPD ---
   {
-    const view=makeView(cv1.width,cv1.height,...box);
-    ctx1.clearRect(0,0,cv1.width,cv1.height);
-    const pr=st.cpd.pairs;
-    const step=Math.max(1,Math.ceil(pr.length/1200));
-    ctx1.lineWidth=1;
-    for(let i=0;i<pr.length;i+=step){
-      const q=pr[i];
-      ctx1.strokeStyle=`rgba(138,99,184,${Math.min(0.5,0.65*q.p).toFixed(3)})`;
-      ctx1.beginPath();ctx1.moveTo(view.sx(q.a[0]),view.sy(q.a[1]));ctx1.lineTo(view.sx(q.b[0]),view.sy(q.b[1]));ctx1.stroke();
-    }
-    drawClouds(ctx1,view,st.cpd.T);
-    const c=st.cpd,M=scene.Y.length,N=scene.X.length;
-    $('memStat1').innerHTML=`iter <b>${c.it}</b> · R <b>${(c.T.th*180/Math.PI).toFixed(1)}°</b> · s <b>${c.T.s.toFixed(3)}</b> · t <b>(${c.T.tx.toFixed(2)}, ${c.T.ty.toFixed(2)})</b> · σ <b>${Math.sqrt(c.s2).toFixed(3)}</b> · keeps <b>P: ${M}×${N} ≈ ${Math.round(M*N/1000)}k entries</b>${c.done?' · <b style="color:var(--good)">converged</b>':''}`;
-  }
-  // FilterReg panel: one arrow per point + faint lattice
-  {
-    const view=makeView(cv2.width,cv2.height,...box);
-    ctx2.clearRect(0,0,cv2.width,cv2.height);
-    const f=st.fr;
-    if(f.grid){
-      const G=f.grid;
-      ctx2.fillStyle='rgba(59,110,204,0.04)';
-      for(const kk of G.cells.keys()){
-        const i=(kk%G.STRIDE)-G.OFF,j=Math.floor(kk/G.STRIDE)-G.OFF;
-        ctx2.fillRect(view.sx(i*G.h),view.sy((j+1)*G.h),G.h*view.s,G.h*view.s);
+    const g=ctx[0],cvs=cv[0],p=P[0];
+    const view=makeView(cvs.width,cvs.height,...BOX);
+    g.clearRect(0,0,cvs.width,cvs.height);
+    const T=dispT(0);
+    if(p.stage>=2&&p.cache){
+      const pr=p.cache.pairs,step=Math.max(1,Math.ceil(pr.length/1200));
+      g.lineWidth=1;
+      for(let q=0;q<pr.length;q+=step){
+        const e=pr[q];
+        const a=applyTS(T,scene.Y[e.m]);
+        g.strokeStyle=`rgba(138,99,184,${Math.min(0.5,0.65*e.p).toFixed(3)})`;
+        g.beginPath();g.moveTo(view.sx(a[0]),view.sy(a[1]));g.lineTo(view.sx(scene.X[e.n][0]),view.sy(scene.X[e.n][1]));g.stroke();
       }
     }
-    ctx2.lineWidth=1.2;
-    for(const p of f.pulls){
-      ctx2.strokeStyle=`rgba(138,99,184,${(0.55*p.w).toFixed(3)})`;
-      ctx2.beginPath();ctx2.moveTo(view.sx(p.from[0]),view.sy(p.from[1]));ctx2.lineTo(view.sx(p.to[0]),view.sy(p.to[1]));ctx2.stroke();
+    if(p.stage>=1){
+      const sig=Math.sqrt(p.s2);
+      g.strokeStyle='rgba(217,119,87,0.22)';g.lineWidth=1;
+      scene.Y.forEach((y,i2)=>{
+        if(i2%8)return;
+        const q=applyTS(T,y);
+        g.beginPath();g.arc(view.sx(q[0]),view.sy(q[1]),Math.min(sig*view.s,200),0,7);g.stroke();
+      });
     }
-    drawClouds(ctx2,view,f.T);
-    $('memStat2').innerHTML=`iter <b>${f.it}</b> · θ <b>${(f.T.th*180/Math.PI).toFixed(1)}°</b> · t <b>(${f.T.tx.toFixed(2)}, ${f.T.ty.toFixed(2)})</b> · mean α <b>${f.meanA.toFixed(2)}</b> · keeps <b>${scene.Y.length} targets</b>${f.done?' · <b style="color:var(--good)">converged</b>':''}`;
+    drawClouds(g,view,T);
+    if(p.stage>=3&&p.stage<=5&&p.cache){
+      const cross=(pt,col)=>{const x=view.sx(pt[0]),y=view.sy(pt[1]);
+        g.strokeStyle=col;g.lineWidth=2.5;
+        g.beginPath();g.moveTo(x-8,y);g.lineTo(x+8,y);g.moveTo(x,y-8);g.lineTo(x,y+8);g.stroke();};
+      cross(p.cache.mux,'#3B6ECC');
+      cross(applyTS(T,p.cache.muyRaw),'#D97757');
+    }
+    let cap=`<b>${CHIPS[0][p.stage].slice(3)}</b> — ${CAP1[p.stage]}`;
+    if(p.stage>=4)cap+=`<br>${fmtT(T,true)} · σ <b>${Math.sqrt(p.s2).toFixed(3)}</b>`;
+    if(p.stage>=2)cap+=` · keeps <b>P: ${scene.Y.length}×${scene.X.length} ≈ ${Math.round(scene.Y.length*scene.X.length/1000)}k entries</b>`;
+    if(p.stage===7)cap+=` · iter <b>${p.it}</b>${p.done?' · <b style="color:var(--good)">converged</b>':''}`;
+    $('memStat1').innerHTML=cap;
   }
-  // MMD panel: clouds on top, signature strip below
+  // --- FilterReg ---
   {
-    const sceneH=300;
-    const view=makeView(cv3.width,sceneH,...box);
-    ctx3.clearRect(0,0,cv3.width,cv3.height);
-    drawClouds(ctx3,view,st.mmd.T);
-    // signature strip
-    const m=st.mmd;
-    const muT=mmdSig(m.bank,scene.Y.map(y=>applyTS(m.T,y)));
-    const y0=308;
-    ctx3.strokeStyle='#E3E0D5';
-    ctx3.beginPath();ctx3.moveTo(8,y0);ctx3.lineTo(cv3.width-8,y0);ctx3.stroke();
-    ctx3.fillStyle='#6E6D66';ctx3.font='10.5px Instrument Sans,sans-serif';
-    ctx3.fillText(`first 8 of ${2*D_MMD} signature channels · orange = moving μ̂, blue = fixed μ̂`,12,y0+14);
-    const mid=y0+58;
-    ctx3.strokeStyle='#E3E0D5';
-    ctx3.beginPath();ctx3.moveTo(8,mid);ctx3.lineTo(cv3.width-8,mid);ctx3.stroke();
-    for(let k=0;k<8;k++){
-      const x=26+k*52;
-      const vT=muT[k]*260,vX=m.sigX[k]*260;
-      ctx3.fillStyle='rgba(217,119,87,0.85)';
-      ctx3.fillRect(x,vT>0?mid-vT:mid,14,Math.abs(vT));
-      ctx3.fillStyle='rgba(59,110,204,0.85)';
-      ctx3.fillRect(x+16,vX>0?mid-vX:mid,14,Math.abs(vX));
+    const g=ctx[1],cvs=cv[1],p=P[1];
+    const view=makeView(cvs.width,cvs.height,...BOX);
+    g.clearRect(0,0,cvs.width,cvs.height);
+    if(p.stage>=1&&p.grid){
+      const G=p.grid;
+      g.fillStyle='rgba(59,110,204,0.05)';
+      for(const kk of G.cells.keys()){
+        const i2=(kk%G.STRIDE)-G.OFF,j2=Math.floor(kk/G.STRIDE)-G.OFF;
+        g.fillRect(view.sx(i2*G.h),view.sy((j2+1)*G.h),G.h*view.s,G.h*view.s);
+      }
     }
-    let F=0;for(let i=0;i<2*D_MMD;i++){const r=muT[i]-m.sigX[i];F+=r*r;}
-    $('memStat3').innerHTML=`iter <b>${m.it}</b> · θ <b>${(m.T.th*180/Math.PI).toFixed(1)}°</b> · t <b>(${m.T.tx.toFixed(2)}, ${m.T.ty.toFixed(2)})</b> · MMD²×1000 <b>${(F*1000).toFixed(2)}</b> · ℓ stage <b>${m.ells[m.stage].toFixed(2)}</b> · keeps <b>none — one ${2*D_MMD}-number residual</b>${m.done?' · <b style="color:var(--good)">converged</b>':''}`;
+    {
+      const sig=Math.sqrt(p.sched[p.solStage]);
+      g.strokeStyle='rgba(59,110,204,0.22)';g.lineWidth=1;
+      scene.X.forEach((x,i2)=>{
+        if(i2%8)return;
+        g.beginPath();g.arc(view.sx(x[0]),view.sy(x[1]),sig*view.s,0,7);g.stroke();
+      });
+    }
+    if(p.stage>=2){
+      g.lineWidth=1.2;
+      for(const q of p.pulls){
+        g.strokeStyle=`rgba(138,99,184,${(0.55*q.w).toFixed(3)})`;
+        g.beginPath();g.moveTo(view.sx(q.from[0]),view.sy(q.from[1]));g.lineTo(view.sx(q.to[0]),view.sy(q.to[1]));g.stroke();
+      }
+    }
+    drawClouds(g,view,p.T);
+    let cap=`<b>${CHIPS[1][p.stage].slice(3)}</b> — ${CAP2[p.stage]}`;
+    if(p.stage>=2)cap+=`<br>mean α <b>${p.meanA.toFixed(2)}</b> · keeps <b>${scene.Y.length} targets</b>`;
+    if(p.stage>=3)cap+=` · ${fmtT(p.T,false)} · iter <b>${p.it}</b>${p.done?' · <b style="color:var(--good)">converged</b>':''}`;
+    $('memStat2').innerHTML=cap;
+  }
+  // --- MMD ---
+  {
+    const g=ctx[2],cvs=cv[2],p=P[2];
+    const sceneH=300;
+    const view=makeView(cvs.width,sceneH,...BOX);
+    g.clearRect(0,0,cvs.width,cvs.height);
+    if(p.stage===0){
+      const w0=p.bank.W[0];
+      for(let gx=0;gx<44;gx++)for(let gy=0;gy<30;gy++){
+        const wx=BOX[0]+(gx+0.5)*(BOX[2]-BOX[0])/44,wy=BOX[1]+(gy+0.5)*(BOX[3]-BOX[1])/30;
+        const v=(Math.cos(w0[0]*wx+w0[1]*wy)+1)/2;
+        g.fillStyle=`rgba(65,123,75,${(v*0.13).toFixed(3)})`;
+        g.fillRect(view.sx(wx)-5,view.sy(wy)-5,10,10);
+      }
+    }
+    drawClouds(g,view,p.T);
+    if(p.stage>=1){
+      const muT=mmdSig(p.bank,scene.Y.map(y=>applyTS(p.T,y)));
+      const y0=308;
+      g.strokeStyle='#E3E0D5';
+      g.beginPath();g.moveTo(8,y0);g.lineTo(cvs.width-8,y0);g.stroke();
+      g.fillStyle='#6E6D66';g.font='10.5px Instrument Sans,sans-serif';
+      g.fillText(`first 8 of ${2*D_MMD} signature channels · orange = moving μ̂ · blue = fixed μ̂${p.stage>=2?' · violet = residual':''}`,12,y0+14);
+      const mid=y0+58;
+      g.strokeStyle='#E3E0D5';
+      g.beginPath();g.moveTo(8,mid);g.lineTo(cvs.width-8,mid);g.stroke();
+      let F=0;
+      for(let i2=0;i2<2*D_MMD;i2++){const r=muT[i2]-p.sigX[i2];F+=r*r;}
+      for(let k=0;k<8;k++){
+        const x=22+k*52;
+        const vT=muT[k]*260,vX=p.sigX[k]*260;
+        g.fillStyle='rgba(217,119,87,0.85)';
+        g.fillRect(x,vT>0?mid-vT:mid,13,Math.abs(vT));
+        g.fillStyle='rgba(59,110,204,0.85)';
+        g.fillRect(x+15,vX>0?mid-vX:mid,13,Math.abs(vX));
+        if(p.stage>=2){
+          const d=(muT[k]-p.sigX[k])*260;
+          g.fillStyle='rgba(138,99,184,0.9)';
+          g.fillRect(x+30,d>0?mid-d:mid,6,Math.max(Math.abs(d),1));
+        }
+      }
+      p.curF=F;
+    }
+    let cap=`<b>${CHIPS[2][p.stage].slice(3)}</b> — ${CAP3[p.stage]}`;
+    if(p.stage>=1)cap+=`<br>MMD²×1000 <b>${((p.curF||0)*1000).toFixed(2)}</b> · keeps <b>none — one ${2*D_MMD}-number residual</b>`;
+    if(p.stage>=3)cap+=` · ${fmtT(p.T,false)} · ℓ <b>${p.ells[p.solStage].toFixed(2)}</b> · iter <b>${p.it}</b>${p.done?' · <b style="color:var(--good)">converged</b>':''}`;
+    $('memStat3').innerHTML=cap;
+  }
+  // chips active state
+  for(let i=0;i<3;i++){
+    const el=$('memChips'+(i+1));
+    Array.from(el.children).forEach((b,k)=>b.classList.toggle('on',k===P[i].stage));
   }
 }
 
-$('memPlay').addEventListener('click',()=>{
-  if(timer){clearInterval(timer);timer=null;$('memPlay').textContent='▶ Fit all three';return;}
-  if(st.cpd.done&&st.fr.done&&st.mmd.done)build();
-  timer=setInterval(stepAll,60);$('memPlay').textContent='❚❚ Pause';
+/* ---------- wiring ---------- */
+
+for(let i=0;i<3;i++){
+  const el=$('memChips'+(i+1));
+  CHIPS[i].forEach((lb,k)=>{
+    const b=document.createElement('button');
+    b.type='button';b.textContent=lb;
+    b.addEventListener('click',()=>{auto[i]=false;replayTo(i,k);});
+    el.appendChild(b);
+  });
+  $('memNext'+(i+1)).addEventListener('click',()=>{auto[i]=false;transition(i,cfgNow());draw();});
+  $('memAuto'+(i+1)).addEventListener('click',()=>{auto[i]=!auto[i];ensureAuto();});
+}
+// ensureAuto: advance auto-flagged panels one stage every 1.4 s
+function ensureAuto(){
+  if(autoTimer)return;
+  autoTimer=setInterval(()=>{
+    let any=false;
+    for(let i=0;i<3;i++){
+      if(!auto[i])continue;
+      if(P[i].stage>=CHIPS[i].length-1){auto[i]=false;continue;}
+      transition(i,cfgNow());any=true;
+    }
+    draw();
+    if(!any&&!auto.some(a=>a)){clearInterval(autoTimer);autoTimer=null;}
+  },1400);
+}
+$('memWalk').addEventListener('click',()=>{
+  rebuildAll();
+  auto=[true,true,true];
+  ensureAuto();
 });
-$('memStep').addEventListener('click',()=>{if(!(st.cpd.done&&st.fr.done&&st.mmd.done))stepAll();});
-$('memReset').addEventListener('click',()=>{seed++;build();});
-$('memScene').addEventListener('change',build);
-for(const id of['memW','memSig','memEll'])$(id).addEventListener('input',build);
-build();
+$('memReset').addEventListener('click',()=>{seed++;auto=[false,false,false];rebuildAll();});
+$('memScene').addEventListener('change',rebuildAll);
+$('memScale').addEventListener('change',rebuildAll);
+for(const id of['memRot','memDx','memDy'])$(id).addEventListener('input',rebuildAll);
+$('memW').addEventListener('input',()=>replayTo(0,P[0].stage));
+$('memSig').addEventListener('input',()=>replayTo(1,P[1].stage));
+$('memEll').addEventListener('input',()=>replayTo(2,P[2].stage));
+rebuildAll();
 })();
 </script>
 
