@@ -263,6 +263,10 @@ main { width: min(1080px, calc(100% - 40px)); margin-inline: auto; padding: 40px
 
 .method-tabs button[aria-pressed="true"] { background: var(--ink); border-color: var(--ink); color: var(--paper-raised); }
 
+.lab-crossref { margin: -4px 2px 14px; font-size: 0.85rem; color: var(--ink-soft); }
+
+.lab-crossref a { color: var(--coral); font-weight: 600; }
+
 .plot-wrap { position: relative; }
 
 canvas.lab-canvas {
@@ -669,6 +673,7 @@ button:focus-visible, a:focus-visible, input:focus-visible { outline: 2px solid 
       <button type="button" data-method="hmc" aria-pressed="false">HMC</button>
       <button type="button" data-method="slice" aria-pressed="false">Slice</button>
     </div>
+    <p class="lab-crossref">These four are the chain samplers. The other three of the seven — importance, rejection, and SMC — are population methods and run in <a href="#population">their own lab below ↘</a>.</p>
 
     <div class="plot-wrap">
       <canvas class="lab-canvas" id="chainCanvas" width="640" height="480" role="img" aria-label="Sampler path over a correlated Gaussian target"></canvas>
