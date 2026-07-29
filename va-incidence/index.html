@@ -113,13 +113,13 @@ footer a{color:var(--ink-soft)}
     <span class="c2"><b>angle</b> φ (AoA at the UE)</span> : a <b>ray</b> out of the UE — the direction the energy came from. With arrays at both ends there is a twin, <span class="c2">ψ (AoD at the BS)</span>: a ray out of the BS — the direction the energy left in.<br>
     <span class="c3"><b>pathloss</b> → a weight</span> : how much energy survived; it does not move any geometry, it says how much to <b>trust / how brightly to paint</b> whatever the geometry produces.
   </div>
-  <p class="lede">The ray and the ellipse intersect in exactly one point on the UE side — that intersection is the <em>incidence point</em>. Walking the full length L along the same ray lands on the <em>virtual anchor</em>. In both demos below, <b>the drawing is constructed from the data</b>: the two orange sliders <em>are</em> the measurement (τ·c and φ), and every curve and marker follows from them. Drag the UE and the sliders re-sync to what that UE would actually measure; nudge a slider and you inject estimation error. And the ellipses are not just displayed — press the <b>✏ trace</b> buttons to watch each one <em>drawn by its definition</em>: a string of length L pinned at the two foci, kept taut by the moving pencil, the two segment lengths always summing to L.</p>
+  <p class="lede">The ray and the ellipse intersect in exactly one point on the UE side — that intersection is the <em>incidence point</em>. Walking the full length L along the same ray lands on the <em>virtual anchor</em>. In both demos below, <b>the drawing is constructed from the data</b>: the orange sliders <em>are</em> the measurement — delay τ·c, AoA φ at the UE, AoD ψ at the BS — and every curve and marker follows from them. Drag the UE and the sliders re-sync to what that UE would actually measure; nudge a slider and you inject estimation error. And the ellipses are not just displayed — press the <b>✏ trace</b> buttons to watch each one <em>drawn by its definition</em>: a string of length L pinned at the two foci, kept taut by the moving pencil, the two segment lengths always summing to L.</p>
 </section>
 
 <!-- ============ 02 single bounce ============ -->
 <section class="sec" id="single">
-  <h2><span class="no">02</span>Single bounce: draw everything from (τ, φ)</h2>
-  <p class="lede">One wall — but the receiver does not know it. From the data alone: the <span style="color:var(--meas-deep)"><b>delay</b></span> draws the ellipse, the <span style="color:var(--meas-deep)"><b>angle</b></span> draws the ray, their intersection is the incidence point P, the full-length walk is the VA — and the wall itself is <em>inferred</em> as the perpendicular bisector of BS↔VA through P. With clean data the inferred wall lands exactly on the true wall (faint grey). Now perturb τ or φ with the sliders: watch the ellipse breathe, P slide, and the inferred wall tilt away from the truth — measurement error becoming map error.</p>
+  <h2><span class="no">02</span>Single bounce: draw everything from (τ, φ, ψ)</h2>
+  <p class="lede">One wall — but the receiver does not know it. From the data alone: the <span style="color:var(--meas-deep)"><b>delay</b></span> draws the ellipse, the <span style="color:var(--meas-deep)"><b>angle</b></span> draws the ray, their intersection is the incidence point P, the full-length walk is the VA — and the wall itself is <em>inferred</em> as the perpendicular bisector of BS↔VA through P. With clean data the inferred wall lands exactly on the true wall (faint grey). The AoD ψ measured at the BS is data too, and it over-determines P: its ray must cross the delay ellipse at the <em>same</em> point the AoA ray does. Perturb τ, φ or ψ with the sliders: the ellipse breathes, P slides, the inferred wall tilts — and when the two angle estimates disagree, a second hollow point P(ψ) splits off from P(φ). That gap is the bistatic consistency residual an estimator gates on.</p>
 
   <div class="fig"><div class="body split">
     <svg id="svg1" viewBox="-170 50 810 590" role="img" aria-label="single bounce virtual anchor and incidence point demo, constructed from delay and angle data"></svg>
@@ -128,14 +128,16 @@ footer a{color:var(--ink-soft)}
       <div class="ctl">
         <label><span>delay L = cτ</span> <output id="o1L"></output></label>
         <input type="range" class="meas" id="s1L" min="-3" max="3" step="0.05" value="0">
-        <label style="margin-top:7px"><span>AoA φ</span> <output id="o1P"></output></label>
+        <label style="margin-top:7px"><span>AoA φ (at the UE)</span> <output id="o1P"></output></label>
         <input type="range" class="meas" id="s1P" min="-6" max="6" step="0.1" value="0">
+        <label style="margin-top:7px"><span>AoD ψ (at the BS)</span> <output id="o1D"></output></label>
+        <input type="range" class="meas" id="s1D" min="-6" max="6" step="0.1" value="0">
         <button class="reset" id="b1R" style="margin-top:7px">reset to specular data</button>
         <button class="reset" id="b1T" style="margin-top:5px">✏ trace ellipse: string of length L pinned at BS &amp; UE</button>
       </div>
       <h4>layers</h4>
       <label class="ck"><input type="checkbox" id="c1_ell" checked> <span class="sw" style="background:var(--meas)"></span> delay ellipse (foci BS, UE)</label>
-      <label class="ck"><input type="checkbox" id="c1_ray" checked> <span class="sw" style="background:var(--ink)"></span> AoA ray at the UE</label>
+      <label class="ck"><input type="checkbox" id="c1_ray" checked> <span class="sw" style="background:var(--ink)"></span> measured rays: AoA (UE) &amp; AoD (BS)</label>
       <label class="ck"><input type="checkbox" id="c1_va" checked> <span class="sw" style="background:var(--va)"></span> virtual anchor (walk full L)</label>
       <label class="ck"><input type="checkbox" id="c1_ip" checked> <span class="sw" style="background:var(--ip)"></span> incidence point + inferred wall</label>
       <label class="ck"><input type="checkbox" id="c1_mir" checked> <span class="sw" style="background:var(--ink-faint)"></span> mirror construction</label>
@@ -273,6 +275,7 @@ const vaDot=p=>`<rect x="${p[0]-4}" y="${p[1]-4}" width="8" height="8" transform
 const ipMark=(p,label,dx,dy)=>`<circle cx="${p[0]}" cy="${p[1]}" r="5" fill="#0e8f7e"/>`+txt(p[0]+(dx??9),p[1]+(dy??-8),label,"#0a6b5e",12);
 function fmt(Lpx){const m=Lpx*M_PER_PX;return `${m.toFixed(1)} m · τ ${(m/C_M_PER_NS).toFixed(0)} ns`;}
 const aoaOf=u=>((-Math.atan2(u[1],u[0])*180/Math.PI)+360)%360;
+const degFmt=a=>{const d=((a%360)+540)%360-180;return d.toFixed(1)+"°";};   // display in (−180°, 180°]
 const dirOf=phiDeg=>{const a=phiDeg*Math.PI/180;return [Math.cos(a),-Math.sin(a)];};
 /* seeded gaussians (deterministic across loads) */
 function gaussians(seed,n){
@@ -312,7 +315,9 @@ D1.VAtrue=[2*D1.WX-D1.BS[0],D1.BS[1]];
 const ck1=id=>$(id).checked;
 function specular1(){ // the data a clean estimator would return at the current UE
   const u=unit(sub(D1.VAtrue,D1.UE));
-  return {L:dist(D1.UE,D1.VAtrue), phi:aoaOf(u)};
+  const t=(D1.WX-D1.UE[0])/u[0];
+  const Pt=[D1.WX,D1.UE[1]+t*u[1]];
+  return {L:dist(D1.UE,D1.VAtrue), phi:aoaOf(u), psi:aoaOf(unit(sub(Pt,D1.BS)))};
 }
 function render1(){
   const {BS,UE,WX,WY0,WY1}=D1;
@@ -320,10 +325,14 @@ function render1(){
   const L=sp.L + (+$("s1L").value)/M_PER_PX;   // measured length (data)
   const phi=sp.phi + (+$("s1P").value);        // measured AoA (data)
   const u=dirOf(phi);
-  const P=rayEllipse(BS,UE,u,L);               // incidence point from data
+  const psi=sp.psi + (+$("s1D").value);        // measured AoD (data)
+  const ud=dirOf(psi);
+  const P=rayEllipse(BS,UE,u,L);               // incidence point from AoA side
+  const Pd=rayEllipse(UE,BS,ud,L);             // incidence point from AoD side
   const VA=[UE[0]+L*u[0],UE[1]+L*u[1]];        // virtual anchor from data
   $("o1L").textContent=(L*M_PER_PX).toFixed(1)+" m";
-  $("o1P").textContent=phi.toFixed(1)+"°";
+  $("o1P").textContent=degFmt(phi);
+  $("o1D").textContent=degFmt(psi);
   let s="";
   /* ghost true wall (unknown to the receiver) */
   s+=seg([WX,WY0],[WX,WY1],"#8a97a3",3,null,0.35)+txt(WX+10,WY0+16,"true wall","#8a97a3",10.5);
@@ -344,6 +353,8 @@ function render1(){
   if(ck1("c1_ray")){
     s+=arrow(UE,[UE[0]+u[0]*(L+34),UE[1]+u[1]*(L+34)],"#16222e",1.4,"6 4",0.55);
     s+=txt(UE[0]+u[0]*40+8,UE[1]+u[1]*40-6,"AoA φ","#16222e",11);
+    s+=arrow(BS,[BS[0]+ud[0]*(dist(BS,Pd)+40),BS[1]+ud[1]*(dist(BS,Pd)+40)],"#16222e",1.4,"6 4",0.55);
+    s+=txt(BS[0]+ud[0]*58+6,BS[1]+ud[1]*58-8,"AoD ψ","#16222e",11);
   }
   if(ck1("c1_va")){
     s+=seg(P,VA,"#7c4dbe",1.8,"5 4",0.9);
@@ -361,6 +372,10 @@ function render1(){
     }
     s+=txt(b[0]+6,b[1]+4,"wall inferred from (τ, φ)","#16222e",10.5);
     s+=ipMark(P,"P (incidence)",10,-10);
+    if(dist(P,Pd)>4){
+      s+=`<circle cx="${Pd[0]}" cy="${Pd[1]}" r="5" fill="none" stroke="#0a6b5e" stroke-width="2"/>`
+        +txt(Pd[0]+9,Pd[1]+13,"P from ψ","#0a6b5e",10.5);
+    }
     s+=txt((UE[0]+P[0])/2-26,(UE[1]+P[1])/2+16,"d₁","#0a6b5e",11)
       +txt((BS[0]+P[0])/2-10,(BS[1]+P[1])/2-8,"d₂","#51606e",11);
   }
@@ -376,11 +391,13 @@ function render1(){
   const n=unit(sub(VA,BS));
   const tilt=Math.acos(Math.min(1,Math.abs(n[0])))*180/Math.PI;
   const offm=Math.abs(P[0]-WX)*M_PER_PX;
-  const consistent=tilt<0.3&&offm<0.15;
+  const mism=dist(P,Pd)*M_PER_PX;
+  const consistent=tilt<0.3&&offm<0.15&&mism<0.15;
   $("stat1").innerHTML=
-    `<b>L</b> = ${fmt(L)}<br><b>φ</b> = ${phi.toFixed(1)}°  ·  ‖UE→VA‖ = L by construction<br>`+
-    (consistent?`<span class="ok">✓ data specular-consistent — inferred wall = true wall</span>`
-               :`<span class="off">inferred wall: tilt ${tilt.toFixed(1)}°, P off true wall ${offm.toFixed(2)} m</span>`);
+    `<b>L</b> = ${fmt(L)}<br><b>φ</b> = ${degFmt(phi)} · <b>ψ</b> = ${degFmt(psi)}<br>`+
+    `bistatic ‖P(φ)−P(ψ)‖ ${mism.toFixed(2)} m · wall tilt ${tilt.toFixed(1)}° · P off wall ${offm.toFixed(2)} m<br>`+
+    (consistent?`<span class="ok">✓ data specular-consistent — both angles hit one wall point</span>`
+               :`<span class="off">✗ inconsistent — a bistatic gate would reject this triple</span>`);
 }
 function stop1(){T1.on=false;if(raf1){cancelAnimationFrame(raf1);raf1=null;}}
 function trace1(){
@@ -397,10 +414,10 @@ function trace1(){
   raf1=requestAnimationFrame(tick);
 }
 ["c1_ell","c1_ray","c1_va","c1_ip","c1_mir"].forEach(id=>$(id).addEventListener("change",()=>{stop1();render1();}));
-["s1L","s1P"].forEach(id=>$(id).addEventListener("input",()=>{stop1();render1();}));
-$("b1R").addEventListener("click",()=>{$("s1L").value=0;$("s1P").value=0;stop1();render1();});
+["s1L","s1P","s1D"].forEach(id=>$(id).addEventListener("input",()=>{stop1();render1();}));
+$("b1R").addEventListener("click",()=>{$("s1L").value=0;$("s1P").value=0;$("s1D").value=0;stop1();render1();});
 $("b1T").addEventListener("click",trace1);
-makeDraggable(svg1,()=>D1.UE,p=>{D1.UE=p;$("s1L").value=0;$("s1P").value=0;stop1();},[120,300,240,440],render1);
+makeDraggable(svg1,()=>D1.UE,p=>{D1.UE=p;$("s1L").value=0;$("s1P").value=0;$("s1D").value=0;stop1();},[120,300,240,440],render1);
 render1();
 trace1();
 
@@ -424,7 +441,7 @@ function render2(){
   const phi=sp.phi + (+$("s2P").value);        // measured AoA (data)
   const u=dirOf(phi);
   $("o2L").textContent=(L2*M_PER_PX).toFixed(1)+" m";
-  $("o2P").textContent=phi.toFixed(1)+"°";
+  $("o2P").textContent=degFmt(phi);
   /* true specular geometry (for the physical path + diffuse clouds) */
   const ut=unit(sub(VA2,UE));
   let tt=(BX-UE[0])/ut[0]; const P2t=[BX,UE[1]+tt*ut[1]];
@@ -432,7 +449,7 @@ function render2(){
   /* the other measured angle: AoD at the BS (specular value + slider deviation) */
   const psi=aoaOf(unit(sub(P1t,BS))) + (+$("s2D").value);
   const ud=dirOf(psi);
-  $("o2D").textContent=psi.toFixed(1)+"°";
+  $("o2D").textContent=degFmt(psi);
   /* estimates from the data */
   const P2=rayEllipse(VA1,UE,u,L2);            // AoA ray ∩ bounce-2 ellipse
   const Lseg=L2-dist(UE,P2);                   // leftover string after the direct leg
@@ -545,7 +562,7 @@ function render2(){
   const consistent=offB<0.15&&offA<0.15&&dist(VA2d,VA2)*M_PER_PX<0.2;
   $("o2L1").textContent=((L2-dist(UE,P2))*M_PER_PX).toFixed(1)+" m";
   $("stat2").innerHTML=
-    `<b>L₂</b> = ${fmt(L2)}<br><b>φ</b> = ${phi.toFixed(1)}°<br>`+
+    `<b>L₂</b> = ${fmt(L2)}<br><b>φ</b> = ${degFmt(phi)} · <b>ψ</b> = ${degFmt(psi)}<br>`+
     (consistent?`<span class="ok">✓ data specular-consistent — P₂ on wall B, VA² on the mirror point</span>`
                :`<span class="off">P₂ off wall B by ${offB.toFixed(2)} m · P₁ off wall A by ${offA.toFixed(2)} m · VA² off by ${(dist(VA2d,VA2)*M_PER_PX).toFixed(2)} m</span>`)+
     `<br>${sig>0?`${N} scattered points / wall`:"specular (σ = 0)"}`;
