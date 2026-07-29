@@ -547,7 +547,7 @@ const STEP2CAP=["",
  "③ <b>Bootstrap VA¹ from path 1.</b> Path 1’s delay L⁽¹⁾ draws the orange ellipse (foci BS &amp; UE) — and the test that failed for path 2 passes here: path 1’s AoA and AoD rays cross its ellipse at the <em>same</em> point ✓, confirming a genuine single bounce on wall A. Walking the full L⁽¹⁾ lands on VA¹.",
  "④ <b>Bounce-2 ellipse.</b> With VA¹ fixed, re-pin the same L₂ string at VA¹ &amp; UE (teal). The AoA ray now crosses it exactly on wall B → P₂.",
  "⑤ <b>Bounce-1 segment.</b> Peel off ‖UE→P₂‖; the leftover string pinned at BS &amp; P₂ (green) meets the AoD ray on wall A → P₁. The two-bounce interpretation is complete and both angles are satisfied.",
- "⑥ <b>The full picture:</b> the map-reference VA², the mirror construction, path 2’s VA¹ candidate curve, and diffuse scattering (σ slider)."];
+ "⑥ <b>The full picture:</b> the map-reference VA², the mirror construction, path 2’s VA¹ candidate curve, and diffuse scattering on <em>every</em> bounce — including path 1’s (orange cloud), whose scatter smears the bootstrapped VA¹ into a cloud (σ slider)."];
 let step2=1;
 const T2={on:false,th:0,key:null}; let raf2=null;
 function stop2(){T2.on=false;T2.key=null;if(raf2){cancelAnimationFrame(raf2);raf2=null;}}
@@ -740,6 +740,15 @@ function render2(){
         const uq=unit(sub(q2,UE));
         const vq=[UE[0]+Lq*uq[0],UE[1]+Lq*uq[1]];
         s+=`<circle cx="${vq[0]}" cy="${vq[1]}" r="${(1.6+2.2*w).toFixed(1)}" fill="#7c4dbe" opacity="${(0.12+0.55*w).toFixed(2)}"/>`;
+        /* path 1's bounce is dispersive too — its scatter smears the bootstrapped VA1 */
+        const q3=[Math.max(AX0+6,Math.min(AX1-6,Pst[0]+sig*G2[i])),AY];
+        const w3=Math.exp(-(G2[i]*G2[i])/2);
+        if(i<5) s+=`<path d="M${BS[0]},${BS[1]} L${q3[0]},${q3[1]} L${UE[0]},${UE[1]}" fill="none" stroke="#e8720c" stroke-width="1" opacity="${(0.06+0.2*w3).toFixed(2)}"/>`;
+        s+=`<circle cx="${q3[0]}" cy="${q3[1]-3}" r="${(2+2.6*w3).toFixed(1)}" fill="#e8720c" opacity="${(0.15+0.6*w3).toFixed(2)}"/>`;
+        const Lq3=dist(BS,q3)+dist(q3,UE);
+        const uq3=unit(sub(q3,UE));
+        const vq3=[UE[0]+Lq3*uq3[0],UE[1]+Lq3*uq3[1]];
+        s+=`<circle cx="${vq3[0]}" cy="${vq3[1]}" r="${(1.5+2*w3).toFixed(1)}" fill="#7c4dbe" opacity="${(0.12+0.5*w3).toFixed(2)}"/>`;
       }
     }
     s+=seg(P2,VA2d,"#7c4dbe",1.8,"5 4",0.9);
@@ -787,7 +796,7 @@ const STEP3CAP=["",
  "③ <b>Bootstrap VA¹ from path 1.</b> Path 1’s delay L⁽¹⁾ draws the orange ellipse (foci BS &amp; UE) — and the test that failed for path 2 passes here: path 1’s AoA and AoD rays cross its ellipse at the <em>same</em> point ✓, confirming a genuine single bounce on wall R. Walking the full L⁽¹⁾ lands on VA¹.",
  "④ <b>Bounce-2 ellipse.</b> With VA¹ fixed, re-pin the same L₂ string at VA¹ &amp; UE (teal). The AoA ray now crosses it exactly on wall L → P₂.",
  "⑤ <b>Bounce-1 segment.</b> Peel off ‖UE→P₂‖; the leftover string pinned at BS &amp; P₂ (green) meets the AoD ray on wall R → P₁. Both measured angles are satisfied.",
- "⑥ <b>The full picture:</b> the reference VA², the mirror construction (the image-source ladder), path 2’s VA¹ candidate curve, and diffuse scattering (σ slider)."];
+ "⑥ <b>The full picture:</b> the reference VA², the mirror construction (the image-source ladder), path 2’s VA¹ candidate curve, and diffuse scattering on <em>every</em> bounce — including path 1’s (orange cloud), whose scatter smears the bootstrapped VA¹ into a cloud (σ slider)."];
 let step3=1;
 const T3={on:false,th:0,key:null}; let raf3=null;
 function stop3(){T3.on=false;T3.key=null;if(raf3){cancelAnimationFrame(raf3);raf3=null;}}
@@ -970,6 +979,15 @@ function render3(){
         const uq=unit(sub(q2,UE));
         const vq=[UE[0]+Lq*uq[0],UE[1]+Lq*uq[1]];
         s+=`<circle cx="${vq[0]}" cy="${vq[1]}" r="${(1.6+2.2*w).toFixed(1)}" fill="#7c4dbe" opacity="${(0.12+0.55*w).toFixed(2)}"/>`;
+        /* path 1's bounce is dispersive too — its scatter smears the bootstrapped VA1 */
+        const q3=[RX,Math.max(WY0+6,Math.min(WY1-6,Pst[1]+sig*G2[i]))];
+        const w3=Math.exp(-(G2[i]*G2[i])/2);
+        if(i<5) s+=`<path d="M${BS[0]},${BS[1]} L${q3[0]},${q3[1]} L${UE[0]},${UE[1]}" fill="none" stroke="#e8720c" stroke-width="1" opacity="${(0.06+0.2*w3).toFixed(2)}"/>`;
+        s+=`<circle cx="${q3[0]+3}" cy="${q3[1]}" r="${(2+2.6*w3).toFixed(1)}" fill="#e8720c" opacity="${(0.15+0.6*w3).toFixed(2)}"/>`;
+        const Lq3=dist(BS,q3)+dist(q3,UE);
+        const uq3=unit(sub(q3,UE));
+        const vq3=[UE[0]+Lq3*uq3[0],UE[1]+Lq3*uq3[1]];
+        s+=`<circle cx="${vq3[0]}" cy="${vq3[1]}" r="${(1.5+2*w3).toFixed(1)}" fill="#7c4dbe" opacity="${(0.12+0.5*w3).toFixed(2)}"/>`;
       }
     }
     s+=seg(P2,VA2d,"#7c4dbe",1.8,"5 4",0.9);
