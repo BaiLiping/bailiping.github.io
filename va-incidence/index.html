@@ -153,7 +153,7 @@ footer a{color:var(--ink-soft)}
 <!-- ============ 03 double bounce ============ -->
 <section class="sec" id="double">
   <h2><span class="no">03</span>Double bounce: two virtual anchors, two incidence points</h2>
-  <p class="lede">Now the path bounces twice: BS → P₁ (wall A) → P₂ (wall B) → UE. Mirroring composes: <b>VA¹</b> = BS mirrored in wall A (the first-bounce anchor), <b>VA²</b> = VA¹ mirrored in wall B. The UE still sees a clean LOS-like anchor — ‖UE − VA²‖ = L₂ and the AoA ray points at VA² — which is exactly why BP-SLAM can treat second-order paths as just another static feature. The incidence points need care, because the receiver must first <em>guess the bounce order</em>. <b>Hypothesis 1 — a single bounce:</b> pin the string at BS and UE (red). One bounce must then absorb <em>the entire measured length</em> — the full BS → wall A → wall B → UE trip — so its bounce point lands <em>beyond</em> wall B (the two red distances sum to the full L₂), on an implied wall of its own, tilted through the corner. Perfectly coherent — but that wall matches neither wall A nor wall B, and that is how the hypothesis dies. <b>Hypothesis 2 — double bounce off A then B:</b> pin the string at <b>VA¹ and the UE</b> — the ellipse with the same measured L₂ passes exactly through P₂. The first bounce then gets an ellipse of its own (green): peel off the direct leg ‖UE→P₂‖ from the string — what remains is the length of the BS → P₁ → P₂ sub-trip, a single-bounce path between BS and P₂, so the leftover string pinned at <b>BS and P₂</b> traces an ellipse through P₁. And the angle that picks P₁ off that ellipse is the path’s <em>other</em> measured angle: the <b>AoD at the BS</b> — a MIMO sounder measures each path at both ends, and bounce 1 is seen from the BS exactly as bounce 2 is seen from the UE. (With a map instead, you could aim from P₂ at VA¹; the two constructions agree exactly when data and map are consistent.) Be precise about what is data and what is map, though: (τ, φ, ψ) alone do <em>not</em> pin the split — slide P₁ outward along the AoD ray while P₂ slides inward along the AoA ray and the total length stays L₂, a one-parameter family of explanations. The single piece of map knowledge in this construction is <b>VA¹</b>: it selects P₂ on the AoA ray, and everything else follows. A single bounce needs no map at all; every extra bounce costs one anchor of map knowledge — and here that anchor is <em>earned in-scene</em>, not assumed: wall A also returns a single-bounce path (path 1, orange), whose measured (τ⁽¹⁾, φ⁽¹⁾) bootstrap VA¹ by the full-length walk before the double-bounce machinery runs. Two measured paths, five numbers, no prior map. That recursion is the general recipe: strip the last leg, and an n-bounce problem becomes an (n−1)-bounce problem one wall earlier. The ✏ trace draws the two-bounce construction in propagation order — the bounce-1 segment ellipse through P₁ first, then the bounce-2 ellipse through P₂. Note that the virtual anchor is blind to this choice: walking the full L₂ lands on the same VA under either hypothesis — bounce order is a question only the incidence-point reading must answer, and the map is what answers it. Here too the drawing runs on the data: perturb τ, φ or ψ and the estimated points slide <em>off the walls</em> while the diffuse clouds stay on the true surface. (Why is wall B tilted 20° off perpendicular? Because exactly perpendicular walls form a <em>corner retroreflector</em>: the double bounce returns every ray anti-parallel to how it left, forcing the measured AoD to equal the AoA for any UE position. The tilt is what lets the two measured angles differ.) Slide the roughness up to let the wall scatter: the specular points diffuse into clouds of reflection points, and the once point-like VA² smears into a cloud too.</p>
+  <p class="lede">Now the path bounces twice: BS → P₁ (wall A) → P₂ (wall B) → UE. Mirroring composes: <b>VA¹</b> = BS mirrored in wall A (the first-bounce anchor), <b>VA²</b> = VA¹ mirrored in wall B. The UE still sees a clean LOS-like anchor — ‖UE − VA²‖ = L₂ and the AoA ray points at VA² — which is exactly why BP-SLAM can treat second-order paths as just another static feature. The incidence points need care, because the receiver must first <em>guess the bounce order</em>. <b>Hypothesis 1 — a single bounce:</b> pin the string at BS and UE (red). One bounce must then absorb <em>the entire measured length</em> — the full BS → wall A → wall B → UE trip — so its bounce point lands <em>beyond</em> wall B (the two red distances sum to the full L₂), on an implied wall of its own, tilted through the corner. Perfectly coherent — but that wall matches neither wall A nor wall B, and that is how the hypothesis dies. <b>Hypothesis 2 — double bounce off A then B:</b> pin the string at <b>VA¹ and the UE</b> — the ellipse with the same measured L₂ passes exactly through P₂. The first bounce then gets an ellipse of its own (green): peel off the direct leg ‖UE→P₂‖ from the string — what remains is the length of the BS → P₁ → P₂ sub-trip, a single-bounce path between BS and P₂, so the leftover string pinned at <b>BS and P₂</b> traces an ellipse through P₁. And the angle that picks P₁ off that ellipse is the path’s <em>other</em> measured angle: the <b>AoD at the BS</b> — a MIMO sounder measures each path at both ends, and bounce 1 is seen from the BS exactly as bounce 2 is seen from the UE. (With a map instead, you could aim from P₂ at VA¹; the two constructions agree exactly when data and map are consistent.) Be precise about what is data and what is map, though: (τ, φ, ψ) alone do <em>not</em> pin the split — slide P₁ outward along the AoD ray while P₂ slides inward along the AoA ray and the total length stays L₂, a one-parameter family of explanations. The single piece of map knowledge in this construction is <b>VA¹</b>: it selects P₂ on the AoA ray, and everything else follows. A single bounce needs no map at all; every extra bounce costs one anchor of map knowledge — and here that anchor is <em>earned in-scene</em>, not assumed: wall A also returns a single-bounce path (path 1, orange), whose measured (τ⁽¹⁾, φ⁽¹⁾) bootstrap VA¹ by the full-length walk before the double-bounce machinery runs. Two measured paths, five numbers, no prior map. That recursion is the general recipe: strip the last leg, and an n-bounce problem becomes an (n−1)-bounce problem one wall earlier. The construction is now <b>stepped</b> — advance with <b>next ▶</b>: the 1-bounce hypothesis first, its AoD test (which rejects it), then the bootstrap of VA¹ from path 1, then the bounce-2 ellipse, then the bounce-1 segment — each ellipse drawn by its string as it enters. Note that the virtual anchor is blind to this choice: walking the full L₂ lands on the same VA under either hypothesis — bounce order is a question only the incidence-point reading must answer, and the map is what answers it. Here too the drawing runs on the data: perturb τ, φ or ψ and the estimated points slide <em>off the walls</em> while the diffuse clouds stay on the true surface. (Why is wall B tilted 20° off perpendicular? Because exactly perpendicular walls form a <em>corner retroreflector</em>: the double bounce returns every ray anti-parallel to how it left, forcing the measured AoD to equal the AoA for any UE position. The tilt is what lets the two measured angles differ.) Slide the roughness up to let the wall scatter: the specular points diffuse into clouds of reflection points, and the once point-like VA² smears into a cloud too.</p>
 
   <div class="fig"><div class="body split">
     <svg id="svg2" viewBox="-150 -45 850 685" role="img" aria-label="double bounce demo with two virtual anchors, incidence points, and diffuse scattering, constructed from delay and angle data"></svg>
@@ -176,21 +176,15 @@ footer a{color:var(--ink-soft)}
         <label style="margin-top:9px"><span>derived L₁ (BS→P₁→P₂)</span> <output id="o2L1"></output></label>
         <div class="hint" style="margin-top:0">not an input — and not fixed by path 2’s (τ, φ, ψ) alone: locating P₂ needs VA¹, bootstrapped here from path 1. Given it, the AoA pins P₂ and L₁ = L₂ − ‖UE→P₂‖ follows.</div>
         <button class="reset" id="b2R" style="margin-top:7px">reset to specular data</button>
-        <button class="reset" id="b2T" style="margin-top:5px">✏ trace all ellipses with their strings</button>
       </div>
-      <h4>the map (bootstrapped live)</h4>
-      <div class="hint" style="margin-top:-4px">VA¹ is <b>not assumed</b>: walking path 1’s full measured L⁽¹⁾ along its AoA ray estimates VA¹ (§02’s construction) — the double-bounce machinery runs on that estimate. Perturb path 1 and the error propagates into everything below.</div>
-      <h4>layers</h4>
-      <label class="ck"><input type="checkbox" id="c2_boot" checked> <span class="sw" style="background:var(--meas)"></span> bootstrap: 1-bounce path → VA¹</label>
-      <label class="ck"><input type="checkbox" id="c2_fam" checked> <span class="sw" style="background:var(--va)"></span> VA¹ candidate curve (path 2 alone)</label>
-      <label class="ck"><input type="checkbox" id="c2_mir" checked> <span class="sw" style="background:var(--ink-faint)"></span> mirror construction</label>
-      <label class="ck"><input type="checkbox" id="c2_ray" checked> <span class="sw" style="background:var(--ink)"></span> measured rays: AoA (UE) &amp; AoD (BS)</label>
-      <label class="ck"><input type="checkbox" id="c2_bad" checked> <span class="sw" style="background:var(--err)"></span> 1-bounce hypothesis (foci BS, UE)</label>
-      <label class="ck"><input type="checkbox" id="c2_e1" checked> <span class="sw" style="background:var(--ue)"></span> bounce-1 segment ellipse (foci BS, P₂)</label>
-      <label class="ck"><input type="checkbox" id="c2_good" checked> <span class="sw" style="background:var(--ip)"></span> bounce-2 ellipse (foci VA¹, UE)</label>
-      <label class="ck"><input type="checkbox" id="c2_vacld" checked> <span class="sw" style="background:var(--va)"></span> VA cloud (diffuse)</label>
+      <h4>construction — step <output id="o2Step" style="font-family:var(--mono)"></output></h4>
+      <div style="display:flex;gap:8px">
+        <button class="reset" id="b2Prev">◀ back</button>
+        <button class="reset" id="b2Next" style="flex:1">next step ▶</button>
+      </div>
+      <div class="hint" id="cap2"></div>
       <div class="ctl">
-        <label><span>surface roughness σ</span> <output id="oSig"></output></label>
+        <label><span>surface roughness σ (step ⑥)</span> <output id="oSig"></output></label>
         <input type="range" id="sSig" min="0" max="28" step="1" value="12">
       </div>
       <div class="statline" id="stat2"></div>
@@ -225,21 +219,15 @@ footer a{color:var(--ink-soft)}
         <input type="range" class="meas" id="s3D" min="-6" max="6" step="0.1" value="0">
         <label style="margin-top:9px"><span>derived L₁ (BS→P₁→P₂)</span> <output id="o3L1"></output></label>
         <button class="reset" id="b3R" style="margin-top:7px">reset to specular data</button>
-        <button class="reset" id="b3T" style="margin-top:5px">✏ trace all ellipses with their strings</button>
       </div>
-      <h4>the map (bootstrapped live)</h4>
-      <div class="hint" style="margin-top:-4px">VA¹ is <b>not assumed</b>: wall R also returns a single-bounce path (path 1, orange); walking its full L⁽¹⁾ estimates VA¹, and the double-bounce machinery runs on that estimate.</div>
-      <h4>layers</h4>
-      <label class="ck"><input type="checkbox" id="c3_boot" checked> <span class="sw" style="background:var(--meas)"></span> bootstrap: 1-bounce path → VA¹</label>
-      <label class="ck"><input type="checkbox" id="c3_fam" checked> <span class="sw" style="background:var(--va)"></span> VA¹ candidate curve (path 2 alone)</label>
-      <label class="ck"><input type="checkbox" id="c3_mir" checked> <span class="sw" style="background:var(--ink-faint)"></span> mirror construction</label>
-      <label class="ck"><input type="checkbox" id="c3_ray" checked> <span class="sw" style="background:var(--ink)"></span> measured rays: AoA (UE) &amp; AoD (BS)</label>
-      <label class="ck"><input type="checkbox" id="c3_bad" checked> <span class="sw" style="background:var(--err)"></span> 1-bounce hypothesis (foci BS, UE)</label>
-      <label class="ck"><input type="checkbox" id="c3_e1" checked> <span class="sw" style="background:var(--ue)"></span> bounce-1 segment ellipse (foci BS, P₂)</label>
-      <label class="ck"><input type="checkbox" id="c3_good" checked> <span class="sw" style="background:var(--ip)"></span> bounce-2 ellipse (foci VA¹, UE)</label>
-      <label class="ck"><input type="checkbox" id="c3_vacld" checked> <span class="sw" style="background:var(--va)"></span> VA cloud (diffuse)</label>
+      <h4>construction — step <output id="o3Step" style="font-family:var(--mono)"></output></h4>
+      <div style="display:flex;gap:8px">
+        <button class="reset" id="b3Prev">◀ back</button>
+        <button class="reset" id="b3Next" style="flex:1">next step ▶</button>
+      </div>
+      <div class="hint" id="cap3"></div>
       <div class="ctl">
-        <label><span>surface roughness σ</span> <output id="oSig3"></output></label>
+        <label><span>surface roughness σ (step ⑥)</span> <output id="oSig3"></output></label>
         <input type="range" id="sSig3" min="0" max="28" step="1" value="12">
       </div>
       <div class="statline" id="stat3"></div>
@@ -532,9 +520,8 @@ makeDraggable(svg1,()=>D1.UE,p=>{D1.UE=p;$("s1L").value=0;$("s1P").value=0;$("s1
 render1();
 trace1();
 
-/* =================== DEMO 2: double bounce + diffuse, data-driven =================== */
+/* =================== DEMO 2: double bounce (tilted corner) — stepped construction =================== */
 const svg2=$("svg2");
-const T2={on:false,idx:0,th:0,queue:[]}; let raf2=null;
 /* wall B is tilted 20° off perpendicular — exactly perpendicular walls would form a
    corner retroreflector and force AoD ∥ AoA for every UE position */
 const TILT=20*Math.PI/180;
@@ -546,43 +533,74 @@ const mirrorB=p=>{const d=(p[0]-D2.BC[0])*D2.BN[0]+(p[1]-D2.BC[1])*D2.BN[1];
   return [p[0]-2*d*D2.BN[0],p[1]-2*d*D2.BN[1]];};
 D2.VA1=[D2.BS[0],2*D2.AY-D2.BS[1]];          // mirror of BS in wall A (1st bounce)
 D2.VA2=mirrorB(D2.VA1);                      // mirror of VA1 in wall B (2nd bounce)
-const ck2=id=>$(id).checked;
 function specular2(){
   const u=unit(sub(D2.VA2,D2.UE));
   return {L:dist(D2.UE,D2.VA2), phi:aoaOf(u)};
+}
+const STEP2CAP=["",
+ "① <b>Hypothesis: one bounce.</b> Path 2’s delay L₂ pins a string at BS &amp; UE (red). If the path bounced once, its point would sit where the AoA ray crosses this ellipse: P(φ).",
+ "② <b>Test it with the AoD.</b> A single bounce must satisfy both measured angles at the same point — but the AoD ray from the BS crosses the ellipse at a different point P(ψ). The gap between P(φ) and P(ψ) → hypothesis rejected.",
+ "③ <b>Bootstrap VA¹ from path 1.</b> Path 1’s delay L⁽¹⁾ draws the orange ellipse (foci BS &amp; UE); its AoA ray picks the bounce point on wall A, and walking the full L⁽¹⁾ lands on VA¹.",
+ "④ <b>Bounce-2 ellipse.</b> With VA¹ fixed, re-pin the same L₂ string at VA¹ &amp; UE (teal). The AoA ray now crosses it exactly on wall B → P₂.",
+ "⑤ <b>Bounce-1 segment.</b> Peel off ‖UE→P₂‖; the leftover string pinned at BS &amp; P₂ (green) meets the AoD ray on wall A → P₁. The two-bounce interpretation is complete and both angles are satisfied.",
+ "⑥ <b>The full picture:</b> the map-reference VA², the mirror construction, path 2’s VA¹ candidate curve, and diffuse scattering (σ slider)."];
+let step2=1;
+const T2={on:false,th:0,key:null}; let raf2=null;
+function stop2(){T2.on=false;T2.key=null;if(raf2){cancelAnimationFrame(raf2);raf2=null;}}
+const STEP2KEY={1:"bad",3:"boot",4:"good",5:"e1"};
+function goStep2(sN,animate){
+  stop2();
+  step2=Math.max(1,Math.min(6,sN));
+  $("cap2").innerHTML=STEP2CAP[step2];
+  $("b2Prev").disabled=step2===1; $("b2Next").disabled=step2===6;
+  $("o2Step").textContent=step2+" / 6";
+  const key=STEP2KEY[step2];
+  if(animate&&key&&!reduced){
+    T2.on=true;T2.key=key;
+    const t0=performance.now(),DUR=2600;
+    const tick=now=>{
+      const f=Math.min(1,(now-t0)/DUR);
+      T2.th=2*Math.PI*f;
+      render2();
+      if(f<1){raf2=requestAnimationFrame(tick);}else{stop2();render2();}
+    };
+    raf2=requestAnimationFrame(tick);
+  } else render2();
 }
 function render2(){
   const {BS,UE,VA1,VA2,AY,AX0,AX1,BC,BD,BN,BLEN,BEND}=D2;
   const sig=+$("sSig").value;
   $("oSig").textContent=(sig*M_PER_PX).toFixed(1)+" m";
   const sp=specular2();
-  const L2=sp.L + (+$("s2L").value)/M_PER_PX;  // measured length (data)
-  const phi=sp.phi + (+$("s2P").value);        // measured AoA (data)
+  const L2=sp.L + (+$("s2L").value)/M_PER_PX;
+  const phi=sp.phi + (+$("s2P").value);
   const u=dirOf(phi);
   $("o2L").textContent=(L2*M_PER_PX).toFixed(1)+" m";
   $("o2P").textContent=degFmt(phi);
-  /* true specular geometry (for the physical path + diffuse clouds) */
+  /* true specular geometry (ground truth + AoD specular value) */
   const dV=sub(VA2,UE);
   const tB=((BC[0]-UE[0])*BN[0]+(BC[1]-UE[1])*BN[1])/(dV[0]*BN[0]+dV[1]*BN[1]);
   const P2t=[UE[0]+tB*dV[0],UE[1]+tB*dV[1]];
   const tA=(AY-P2t[1])/(VA1[1]-P2t[1]); const P1t=[P2t[0]+tA*(VA1[0]-P2t[0]),AY];
-  /* the other measured angle: AoD at the BS (specular value + slider deviation) */
   const psi=aoaOf(unit(sub(P1t,BS))) + (+$("s2D").value);
   const ud=dirOf(psi);
   $("o2D").textContent=degFmt(psi);
-  /* bootstrap VA1 from the in-scene single-bounce path off wall A (path 1's own data) */
-  const Ls=dist(UE,VA1) + (+$("s2Lb").value)/M_PER_PX;      // measured delay of path 1
-  const phib=aoaOf(unit(sub(VA1,UE))) + (+$("s2Pb").value); // measured AoA of path 1
+  /* bootstrap VA1 from path 1 (single bounce off wall A) */
+  const Ls=dist(UE,VA1) + (+$("s2Lb").value)/M_PER_PX;
+  const phib=aoaOf(unit(sub(VA1,UE))) + (+$("s2Pb").value);
   const us=dirOf(phib);
   $("o2Lb").textContent=(Ls*M_PER_PX).toFixed(1)+" m";
   $("o2Pb").textContent=degFmt(phib);
-  const Ps=rayEllipse(BS,UE,us,Ls);            // path 1's own incidence point (§02)
-  const VA1e=[UE[0]+Ls*us[0],UE[1]+Ls*us[1]];  // = walk path 1's full length
+  const Ps=rayEllipse(BS,UE,us,Ls);
+  const VA1e=[UE[0]+Ls*us[0],UE[1]+Ls*us[1]];
   /* estimates from the data */
-  const P2=rayEllipse(VA1e,UE,u,L2);           // AoA ray ∩ bounce-2 ellipse
-  const Lseg=L2-dist(UE,P2);                   // leftover string after the direct leg
-  const P1=rayEllipse(P2,BS,ud,Lseg);          // AoD ray ∩ bounce-1 segment ellipse
-  const VA2d=[UE[0]+L2*u[0],UE[1]+L2*u[1]];    // VA² from data: walk full L₂
+  const P2=rayEllipse(VA1e,UE,u,L2);
+  const Lseg=L2-dist(UE,P2);
+  const P1=rayEllipse(P2,BS,ud,Lseg);
+  const VA2d=[UE[0]+L2*u[0],UE[1]+L2*u[1]];
+  $("o2L1").textContent=(Lseg*M_PER_PX).toFixed(1)+" m";
+  const ph=rayEllipse(BS,UE,u,L2);           // 1-bounce candidate from the AoA
+  const phD=rayEllipse(UE,BS,ud,L2);         // 1-bounce candidate from the AoD
   let s="";
   /* walls */
   s+=seg([AX0,AY],[AX1,AY],"#16222e",5);
@@ -593,164 +611,145 @@ function render2(){
     s+=seg(q,[q[0]+7*(BN[0]+BD[0]),q[1]+7*(BN[1]+BD[1])],"#8a97a3",1.2);}
   s+=txt(BC[0]+BD[0]*128+BN[0]*16,BC[1]+BD[1]*128+BN[1]*16,"wall B","#51606e",11)
     +txt(BC[0]+BD[0]*142+BN[0]*16,BC[1]+BD[1]*142+BN[1]*16,"2nd bounce","#51606e",11);
-  if(ck2("c2_mir")){
+  /* true physical path — ground truth, faint */
+  s+=arrow(BS,P1t,"#8a97a3",1.6,null,0.5)+arrow(P1t,P2t,"#8a97a3",1.6,null,0.5)+arrow(P2t,UE,"#8a97a3",1.6,null,0.5);
+  const tracing=k=>T2.on&&T2.key===k;
+  /* STEP 1+: the 1-bounce hypothesis */
+  {
+    const ep=ellParams(BS,UE,L2);
+    if(tracing("bad")&&ep){
+      s+=ellPartial(ep,T2.th,"#c22f2f",1.8,"7 5");
+      s+=stringViz(BS,UE,ellPoint(ep,T2.th),"#c22f2f","1-bounce hyp. — string at BS &amp; UE: ‖x−UE‖ + ‖x−BS‖",[-140,4]);
+    } else {
+      s+=ellipse(BS,UE,L2,"#c22f2f",1.5,"7 5",step2<=2?0.8:0.2);
+      if(step2<=2) s+=pin(BS,"#c22f2f",11)+pin(UE,"#c22f2f",16);
+      s+=arrow(UE,[UE[0]+u[0]*(dist(UE,ph)+40),UE[1]+u[1]*(dist(UE,ph)+40)],"#16222e",1.4,"6 4",step2<=2?0.6:0.3);
+      if(step2<=2) s+=txt(UE[0]+u[0]*46+6,UE[1]+u[1]*46+14,"AoA φ","#16222e",11);
+      s+=`<circle cx="${ph[0]}" cy="${ph[1]}" r="4.5" fill="none" stroke="#c22f2f" stroke-width="2" opacity="${step2<=2?1:0.3}"/>`;
+      if(step2<=2){
+        s+=seg(BS,ph,"#c22f2f",1.1,"2 3",0.6)+seg(UE,ph,"#c22f2f",1.1,"2 3",0.6);
+        const dbs=dist(ph,BS)*M_PER_PX,due=dist(ph,UE)*M_PER_PX;
+        s+=txt(ph[0]+10,ph[1]-9,"P(φ) if 1 bounce","#c22f2f",10.5)
+          +txt(ph[0]+10,ph[1]+5,`${dbs.toFixed(1)}+${due.toFixed(1)} = ${(dbs+due).toFixed(1)} m`,"#c22f2f",10);
+      }
+      if(step2>=3) s+=txt(ph[0]+9,ph[1]-8,"rejected ✗","#c22f2f",10);
+    }
+  }
+  /* STEP 2+: the AoD test */
+  if(step2>=2&&!tracing("bad")){
+    s+=arrow(BS,[BS[0]+ud[0]*(dist(BS,phD)+40),BS[1]+ud[1]*(dist(BS,phD)+40)],"#16222e",1.4,"6 4",step2===2?0.6:0.3);
+    if(step2===2){
+      s+=txt(BS[0]+ud[0]*58+6,BS[1]+ud[1]*58-8,"AoD ψ","#16222e",11);
+      s+=`<circle cx="${phD[0]}" cy="${phD[1]}" r="4.5" fill="none" stroke="#c22f2f" stroke-width="2"/>`
+        +txt(phD[0]-9,phD[1]-9,"P(ψ)","#c22f2f",10.5,"end");
+      s+=seg(ph,phD,"#c22f2f",2,"3 3",0.9);
+      const mm=dist(ph,phD)*M_PER_PX;
+      s+=txt((ph[0]+phD[0])/2+10,(ph[1]+phD[1])/2,`${mm.toFixed(1)} m apart → reject`,"#c22f2f",11);
+    }
+  }
+  /* STEP 3+: bootstrap VA1 from path 1 */
+  if(step2>=3){
+    const ep=ellParams(BS,UE,Ls);
+    if(tracing("boot")&&ep){
+      s+=ellPartial(ep,T2.th,"#e8720c",2);
+      s+=stringViz(BS,UE,ellPoint(ep,T2.th),"#b45607","path 1 — string of L⁽¹⁾ at BS &amp; UE: ‖x−UE‖ + ‖x−BS‖",[-140,4]);
+    } else {
+      s+=ellipse(BS,UE,Ls,"#e8720c",1.8,null,step2===3?0.9:0.35);
+      if(step2===3) s+=pin(BS,"#e8720c",11)+pin(UE,"#e8720c",16);
+      s+=arrow(BS,Ps,"#e8720c",1.8,null,0.85)+arrow(Ps,UE,"#e8720c",1.8,null,0.85);
+      s+=arrow(UE,[UE[0]+us[0]*(Ls+24),UE[1]+us[1]*(Ls+24)],"#b45607",1.3,"6 4",0.7);
+      s+=`<circle cx="${Ps[0]}" cy="${Ps[1]}" r="4" fill="#e8720c"/>`;
+      if(step2===3) s+=txt(Ps[0]-8,Ps[1]-10,"path-1 bounce","#b45607",10.5,"end");
+      s+=vaMark(VA1e,"VA¹ (bootstrapped)");
+      if(step2===3) s+=txt(VA1e[0]+12,VA1e[1]+22,"walk the full L⁽¹⁾ → VA¹","#b45607",10.5);
+    }
+  }
+  /* STEP 4+: bounce-2 ellipse */
+  if(step2>=4&&!tracing("boot")){
+    const ep=ellParams(VA1e,UE,L2);
+    if(tracing("good")&&ep){
+      s+=ellPartial(ep,T2.th,"#0e8f7e",2);
+      s+=stringViz(VA1e,UE,ellPoint(ep,T2.th),"#0a6b5e","bounce-2 — same L₂, string at VA¹ &amp; UE: ‖x−UE‖ + ‖x−VA¹‖",[-140,4]);
+    } else {
+      s+=ellipse(VA1e,UE,L2,"#0e8f7e",1.8,null,step2===4?0.9:0.45);
+      if(step2===4) s+=pin(VA1e,"#0e8f7e",11)+pin(UE,"#0e8f7e",20);
+      s+=arrow(UE,[UE[0]+u[0]*(dist(UE,P2)+34),UE[1]+u[1]*(dist(UE,P2)+34)],"#16222e",1.4,"6 4",0.5);
+      s+=ipMark(P2,"P₂",10,4);
+    }
+  }
+  /* STEP 5+: bounce-1 segment ellipse */
+  if(step2>=5&&!tracing("good")){
+    const ep=ellParams(BS,P2,Lseg);
+    if(tracing("e1")&&ep){
+      s+=ellPartial(ep,T2.th,"#2ca02c",2);
+      s+=stringViz(BS,P2,ellPoint(ep,T2.th),"#1d7a1d","bounce-1 — leftover L₂ − ‖UE→P₂‖, string at BS &amp; P₂: ‖x−P₂‖ + ‖x−BS‖",[-140,4]);
+    } else if(ep){
+      s+=ellipse(BS,P2,Lseg,"#2ca02c",1.7,null,step2===5?0.9:0.45);
+      if(step2===5) s+=pin(BS,"#2ca02c",15)+pin(P2,"#2ca02c",10);
+      s+=arrow(BS,[BS[0]+ud[0]*(dist(BS,P1)+42),BS[1]+ud[1]*(dist(BS,P1)+42)],"#16222e",1.4,"6 4",0.5);
+      s+=ipMark(P1,"P₁",-6,-12);
+      s+=seg(BS,P1,"#0e8f7e",1.6,null,0.8)+seg(P1,P2,"#0e8f7e",1.6,null,0.8)+seg(P2,UE,"#0e8f7e",1.6,null,0.8);
+    }
+  }
+  /* STEP 6: the full picture */
+  if(step2===6){
     s+=seg([AX1,AY],[640,AY],"#8a97a3",1,"3 4",0.55)
       +seg([BC[0]-BD[0]*190,BC[1]-BD[1]*190],BC,"#8a97a3",1,"3 4",0.55);
     s+=seg(BS,VA1,"#8a97a3",1.2,"5 4",0.85)+seg(VA1,VA2,"#8a97a3",1.2,"5 4",0.85);
     s+=txt(BS[0]-12,262,"mirror in A","#8a97a3",10.5,"end")
       +txt((VA1[0]+VA2[0])/2-36,(VA1[1]+VA2[1])/2-12,"mirror in B","#8a97a3",10.5);
-  }
-  /* ellipses from the data — during a trace they are drawn by the string, in queue order */
-  const tState=k=>{ if(!T2.on) return "full"; const p=T2.queue.indexOf(k);
-    return p<0||p<T2.idx?"full":(p===T2.idx?"trace":"hidden"); };
-  if(ck2("c2_bad")){
-    const st=tState("bad"), ep=ellParams(BS,UE,L2);
-    if(st==="trace"&&ep){
-      s+=ellPartial(ep,T2.th,"#c22f2f",1.6,"7 5");
-      s+=`<circle cx="${BS[0]}" cy="${BS[1]}" r="3" fill="#c22f2f"/><circle cx="${UE[0]}" cy="${UE[1]}" r="3" fill="#c22f2f"/>`;
-      s+=stringViz(BS,UE,ellPoint(ep,T2.th),"#c22f2f","1-bounce hyp. — string at BS &amp; UE: ‖x−UE‖ + ‖x−BS‖",[-140,4]);
-    } else if(st==="full"){
-      s+=ellipse(BS,UE,L2,"#c22f2f",1.5,"7 5",0.75)
-        +pin(BS,"#c22f2f",11)+pin(UE,"#c22f2f",16);
-      /* the full single-bounce hypothesis: one bounce must absorb the ENTIRE measured
-         length, so its bounce point lands beyond wall B on an implied wall of its own */
-      const ph=rayEllipse(BS,UE,u,L2);
-      const n1=unit(sub(VA2d,BS)), w1=[-n1[1],n1[0]];
-      s+=seg(BS,ph,"#c22f2f",1.1,"2 3",0.65)+seg(UE,ph,"#c22f2f",1.1,"2 3",0.65);
-      const dbs=dist(ph,BS)*M_PER_PX, due=dist(ph,UE)*M_PER_PX;
-      s+=txt((BS[0]+ph[0])/2-4,(BS[1]+ph[1])/2-8,dbs.toFixed(1),"#c22f2f",10)
-        +txt((UE[0]+ph[0])/2+8,(UE[1]+ph[1])/2+13,due.toFixed(1),"#c22f2f",10);
-      s+=seg([ph[0]-120*w1[0],ph[1]-120*w1[1]],[ph[0]+120*w1[0],ph[1]+120*w1[1]],"#c22f2f",3,"6 4",0.5);
-      s+=`<circle cx="${ph[0]}" cy="${ph[1]}" r="4.5" fill="none" stroke="#c22f2f" stroke-width="2"/>`
-        +txt(ph[0]+11,ph[1]-9,"P if 1 bounce","#c22f2f",10.5)
-        +txt(ph[0]+11,ph[1]+5,`${dbs.toFixed(1)}+${due.toFixed(1)} = ${(dbs+due).toFixed(1)} m — the full length`,"#c22f2f",10)
-        +txt(ph[0]+120*w1[0]+8,ph[1]+120*w1[1]+2,"implied wall — in no map","#c22f2f",10.5);
-    }
-  }
-  if(ck2("c2_good")){
-    const st=tState("good"), ep=ellParams(VA1e,UE,L2);
-    if(st==="trace"&&ep){
-      s+=ellPartial(ep,T2.th,"#0e8f7e",2);
-      s+=`<circle cx="${VA1e[0]}" cy="${VA1e[1]}" r="3" fill="#0a6b5e"/><circle cx="${UE[0]}" cy="${UE[1]}" r="3" fill="#0a6b5e"/>`;
-      s+=stringViz(VA1e,UE,ellPoint(ep,T2.th),"#0a6b5e","2-bounce hyp. — same L₂, string at VA¹ &amp; UE: ‖x−UE‖ + ‖x−VA¹‖",[-140,4]);
-    } else if(st==="full"){
-      s+=ellipse(VA1e,UE,L2,"#0e8f7e",1.8,null,0.85)
-        +pin(VA1e,"#0e8f7e",11)+pin(UE,"#0e8f7e",20);
-    }
-  }
-  /* bounce-1 segment: peel off the direct leg UE->P2; the leftover string,
-     pinned at BS and P2, is the single-bounce ellipse of the BS->P1->P2 trip */
-  if(ck2("c2_e1")){
-    const st=tState("e1"), ep=ellParams(BS,P2,Lseg);
-    if(st==="trace"&&ep){
-      s+=ellPartial(ep,T2.th,"#2ca02c",2);
-      s+=`<circle cx="${BS[0]}" cy="${BS[1]}" r="3" fill="#1d7a1d"/><circle cx="${P2[0]}" cy="${P2[1]}" r="3" fill="#1d7a1d"/>`;
-      s+=stringViz(BS,P2,ellPoint(ep,T2.th),"#1d7a1d","bounce-1 segment — leftover string L₂ − ‖UE→P₂‖ at BS &amp; P₂: ‖x−P₂‖ + ‖x−BS‖",[-140,4]);
-    } else if(st==="full"&&ep){
-      s+=ellipse(BS,P2,Lseg,"#2ca02c",1.7,null,0.85)
-        +pin(BS,"#2ca02c",15)+pin(P2,"#2ca02c",10);
-    }
-  }
-  /* diffuse clouds (physics of the true walls) */
-  const N=G1.length;
-  if(sig>0){
-    for(let i=0;i<N;i++){
-      const q1=[Math.max(AX0+6,Math.min(AX1-6,P1t[0]+sig*G1[i])),AY];
-      const sP2=(P2t[0]-BC[0])*BD[0]+(P2t[1]-BC[1])*BD[1];
-      const s2=Math.max(8,Math.min(BLEN-8,sP2+sig*G2[i]));
-      const q2=[BC[0]+BD[0]*s2,BC[1]+BD[1]*s2];
-      const w=Math.exp(-(G1[i]*G1[i]+G2[i]*G2[i])/2);
-      if(i<7) s+=`<path d="M${BS[0]},${BS[1]} L${q1[0]},${q1[1]} L${q2[0]},${q2[1]} L${UE[0]},${UE[1]}" fill="none" stroke="#0e8f7e" stroke-width="1" opacity="${(0.08+0.22*w).toFixed(2)}"/>`;
-      s+=`<circle cx="${q1[0]}" cy="${q1[1]-3}" r="${(2.2+2.8*w).toFixed(1)}" fill="#0e8f7e" opacity="${(0.16+0.62*w).toFixed(2)}"/>`;
-      s+=`<circle cx="${q2[0]+3*BN[0]}" cy="${q2[1]+3*BN[1]}" r="${(2.2+2.8*w).toFixed(1)}" fill="#0e8f7e" opacity="${(0.16+0.62*w).toFixed(2)}"/>`;
-      if(ck2("c2_vacld")){
-        const Lq=dist(BS,q1)+dist(q1,q2)+dist(q2,UE);
-        const uq=unit(sub(q2,UE));
-        const vq=[UE[0]+Lq*uq[0],UE[1]+Lq*uq[1]];
-        s+=`<circle cx="${vq[0]}" cy="${vq[1]}" r="${(1.6+2.2*w).toFixed(1)}" fill="#7c4dbe" opacity="${(0.12+0.55*w).toFixed(2)}"/>`;
-      }
-    }
-  }
-  /* physical specular path (truth) */
-  s+=arrow(BS,P1t,"#51606e",2)+arrow(P1t,P2t,"#51606e",2)+arrow(P2t,UE,"#51606e",2);
-  /* AoA ray from the data */
-  if(ck2("c2_ray")){
-    s+=seg(P2,VA2d,"#7c4dbe",1.8,"5 4",0.9);
-    s+=arrow(UE,[UE[0]+u[0]*(L2+30),UE[1]+u[1]*(L2+30)],"#16222e",1.4,"6 4",0.5);
-    s+=txt(UE[0]+u[0]*46+6,UE[1]+u[1]*46+14,"AoA φ","#16222e",11);
-    s+=txt((P2[0]+VA2d[0])/2+8,(P2[1]+VA2d[1])/2,"…continue to L₂","#5d3691",10.5);
-    const dP1=dist(BS,P1);
-    s+=arrow(BS,[BS[0]+ud[0]*(dP1+42),BS[1]+ud[1]*(dP1+42)],"#16222e",1.4,"6 4",0.5);
-    s+=txt(BS[0]+ud[0]*58+6,BS[1]+ud[1]*58-8,"AoD ψ","#16222e",11);
-  }
-  /* what path 2's data alone says about VA1: the one-parameter candidate curve */
-  if(ck2("c2_fam")){
     const fam=family({BS,UE,L:L2,u,ud});
     if(fam.length>1){
       s+=`<path d="${poly4(fam)}" fill="none" stroke="#7c4dbe" stroke-width="1.4" opacity="0.5"/>`;
       const e=fam[Math.min(10,fam.length-1)];
       s+=txt(e.cand[0]-8,e.cand[1]-12,"VA¹ family (path 2 alone)","#5d3691",10,"end");
     }
+    if(sig>0){
+      for(let i=0;i<G1.length;i++){
+        const q1=[Math.max(AX0+6,Math.min(AX1-6,P1t[0]+sig*G1[i])),AY];
+        const sP2=(P2t[0]-BC[0])*BD[0]+(P2t[1]-BC[1])*BD[1];
+        const s2v=Math.max(8,Math.min(BLEN-8,sP2+sig*G2[i]));
+        const q2=[BC[0]+BD[0]*s2v,BC[1]+BD[1]*s2v];
+        const w=Math.exp(-(G1[i]*G1[i]+G2[i]*G2[i])/2);
+        if(i<7) s+=`<path d="M${BS[0]},${BS[1]} L${q1[0]},${q1[1]} L${q2[0]},${q2[1]} L${UE[0]},${UE[1]}" fill="none" stroke="#0e8f7e" stroke-width="1" opacity="${(0.08+0.22*w).toFixed(2)}"/>`;
+        s+=`<circle cx="${q1[0]}" cy="${q1[1]-3}" r="${(2.2+2.8*w).toFixed(1)}" fill="#0e8f7e" opacity="${(0.16+0.62*w).toFixed(2)}"/>`;
+        s+=`<circle cx="${q2[0]+3*BN[0]}" cy="${q2[1]+3*BN[1]}" r="${(2.2+2.8*w).toFixed(1)}" fill="#0e8f7e" opacity="${(0.16+0.62*w).toFixed(2)}"/>`;
+        const Lq=dist(BS,q1)+dist(q1,q2)+dist(q2,UE);
+        const uq=unit(sub(q2,UE));
+        const vq=[UE[0]+Lq*uq[0],UE[1]+Lq*uq[1]];
+        s+=`<circle cx="${vq[0]}" cy="${vq[1]}" r="${(1.6+2.2*w).toFixed(1)}" fill="#7c4dbe" opacity="${(0.12+0.55*w).toFixed(2)}"/>`;
+      }
+    }
+    s+=seg(P2,VA2d,"#7c4dbe",1.8,"5 4",0.9);
+    s+=vaMark(VA2,"VA² (bounce 2 · ref)");
+    s+=vaDot(VA2d);
   }
-  /* bootstrap path drawing */
-  if(ck2("c2_boot")){
-    s+=arrow(BS,Ps,"#e8720c",1.8,null,0.85)+arrow(Ps,UE,"#e8720c",1.8,null,0.85);
-    s+=arrow(UE,[UE[0]+us[0]*(Ls+24),UE[1]+us[1]*(Ls+24)],"#b45607",1.3,"6 4",0.7);
-    s+=`<circle cx="${Ps[0]}" cy="${Ps[1]}" r="4" fill="#e8720c"/>`;
-    s+=txt(VA1e[0]+12,VA1e[1]+22,"walk path 1’s full L⁽¹⁾ → VA¹","#b45607",10.5);
-  }
-  /* markers: bootstrapped VA¹, truth-reference hollow VA², data-derived points */
-  s+=vaMark(VA1e,"VA¹ (bootstrapped)");
-  s+=vaMark(VA2,"VA² (bounce 2 · ref)");
-  s+=vaDot(VA2d);
-  s+=`<circle cx="${P1t[0]}" cy="${P1t[1]}" r="2.6" fill="#0a6b5e" opacity="0.85"/><circle cx="${P2t[0]}" cy="${P2t[1]}" r="2.6" fill="#0a6b5e" opacity="0.85"/>`;
-  s+=ipMark(P1,"P₁",-6,-12)+ipMark(P2,"P₂",10,4);
   s+=bsMark(BS,"BS",-30,4)+ueMark(UE);
   svg2.innerHTML=s;
   const offB=Math.abs((P2[0]-BC[0])*BN[0]+(P2[1]-BC[1])*BN[1])*M_PER_PX, offA=Math.abs(P1[1]-AY)*M_PER_PX;
   const va1err=dist(VA1e,VA1)*M_PER_PX;
-  const consistent=offB<0.15&&offA<0.15&&dist(VA2d,VA2)*M_PER_PX<0.2&&va1err<0.15;
-  $("o2L1").textContent=((L2-dist(UE,P2))*M_PER_PX).toFixed(1)+" m";
+  const mm=dist(ph,phD)*M_PER_PX;
+  const consistent=offB<0.15&&offA<0.15&&va1err<0.15;
   $("stat2").innerHTML=
-    `<b>L₂</b> = ${fmt(L2)}<br><b>φ</b> = ${degFmt(phi)} · <b>ψ</b> = ${degFmt(psi)}<br>`+
+    `<b>L₂</b> = ${fmt(L2)} · <b>φ</b> = ${degFmt(phi)} · <b>ψ</b> = ${degFmt(psi)}<br>`+
+    `1-bounce test: P(φ) ↔ P(ψ) ${mm.toFixed(1)} m apart → ${mm>0.5?"reject":"cannot reject"}<br>`+
     `bootstrapped VA¹ error: ${va1err.toFixed(2)} m<br>`+
-    (consistent?`<span class="ok">✓ data specular-consistent — P₂ on wall B, VA² on the mirror point</span>`
-               :`<span class="off">P₂ off wall B by ${offB.toFixed(2)} m · P₁ off wall A by ${offA.toFixed(2)} m · VA² off by ${(dist(VA2d,VA2)*M_PER_PX).toFixed(2)} m</span>`)+
-    `<br>${sig>0?`${N} scattered points / wall`:"specular (σ = 0)"}`;
+    (consistent?`<span class="ok">✓ 2-bounce interpretation consistent — P₁ on wall A, P₂ on wall B</span>`
+               :`<span class="off">P₂ off wall B by ${offB.toFixed(2)} m · P₁ off wall A by ${offA.toFixed(2)} m</span>`)+
+    (step2===6?`<br>${sig>0?`${G1.length} scattered points / wall`:"specular (σ = 0)"}`:"");
 }
-function stop2(){T2.on=false;if(raf2){cancelAnimationFrame(raf2);raf2=null;}}
-function trace2(){
-  stop2();
-  T2.queue=["bad","e1","good"].filter(k=>ck2("c2_"+k));
-  if(!T2.queue.length||reduced){render2();return;}
-  T2.on=true;T2.idx=0;T2.th=0;
-  const DUR=3200; let t0=performance.now();
-  const tick=now=>{
-    let f=(now-t0)/DUR;
-    if(f>=1){
-      T2.idx++; t0=now; f=0;
-      if(T2.idx>=T2.queue.length){stop2();render2();return;}
-    }
-    T2.th=2*Math.PI*Math.min(1,f);
-    render2();
-    raf2=requestAnimationFrame(tick);
-  };
-  raf2=requestAnimationFrame(tick);
-}
-["c2_boot","c2_fam","c2_mir","c2_ray","c2_bad","c2_good","c2_e1","c2_vacld"].forEach(id=>$(id).addEventListener("change",()=>{stop2();render2();}));
 ["sSig","s2L","s2P","s2D","s2Lb","s2Pb"].forEach(id=>$(id).addEventListener("input",()=>{stop2();render2();}));
 $("b2R").addEventListener("click",()=>{["s2L","s2P","s2D","s2Lb","s2Pb"].forEach(id=>$(id).value=0);stop2();render2();});
-$("b2T").addEventListener("click",trace2);
+$("b2Prev").addEventListener("click",()=>goStep2(step2-1,false));
+$("b2Next").addEventListener("click",()=>goStep2(step2+1,true));
 makeDraggable(svg2,()=>D2.UE,p=>{D2.UE=p;["s2L","s2P","s2D","s2Lb","s2Pb"].forEach(id=>$(id).value=0);stop2();},[230,430,300,510],render2);
-render2();
+goStep2(1,true);
 
-/* =================== DEMO 3: double bounce between parallel walls =================== */
+/* =================== DEMO 3: double bounce between parallel walls — stepped construction =================== */
 const svg3=$("svg3");
-const T3={on:false,idx:0,th:0,queue:[]}; let raf3=null;
 const D3={BS:[150,480],UE:[250,230],LX:100,RX:320,WY0:150,WY1:600};
 D3.VA1=[2*D3.RX-D3.BS[0],D3.BS[1]];   // mirror of BS in wall R (1st bounce)
 D3.VA2=[2*D3.LX-D3.VA1[0],D3.VA1[1]]; // mirror of VA1 in wall L (2nd bounce)
-const ck3=id=>$(id).checked;
 function specular3(){
   const dV=sub(D3.VA2,D3.UE);
   const t=(D3.LX-D3.UE[0])/dV[0];
@@ -758,6 +757,36 @@ function specular3(){
   const t1=(D3.RX-P2t[0])/(D3.VA1[0]-P2t[0]);
   const P1t=[D3.RX,P2t[1]+t1*(D3.VA1[1]-P2t[1])];
   return {L:dist(D3.UE,D3.VA2),phi:aoaOf(unit(dV)),psi:aoaOf(unit(sub(P1t,D3.BS))),P1t,P2t};
+}
+const STEP3CAP=["",
+ "① <b>Hypothesis: one bounce.</b> Path 2’s delay L₂ pins a string at BS &amp; UE (red); the AoA ray crosses it at the hypothesized bounce point P(φ).",
+ "② <b>Test it with the AoD.</b> The AoD ray from the BS crosses the same ellipse at P(ψ) — on the other side of the corridor. The two points are far apart → hypothesis rejected.",
+ "③ <b>Bootstrap VA¹ from path 1.</b> Path 1’s delay L⁽¹⁾ draws the orange ellipse (foci BS &amp; UE); its AoA ray picks the bounce point on wall R, and walking the full L⁽¹⁾ lands on VA¹.",
+ "④ <b>Bounce-2 ellipse.</b> With VA¹ fixed, re-pin the same L₂ string at VA¹ &amp; UE (teal). The AoA ray now crosses it exactly on wall L → P₂.",
+ "⑤ <b>Bounce-1 segment.</b> Peel off ‖UE→P₂‖; the leftover string pinned at BS &amp; P₂ (green) meets the AoD ray on wall R → P₁. Both measured angles are satisfied.",
+ "⑥ <b>The full picture:</b> the reference VA², the mirror construction (the image-source ladder), path 2’s VA¹ candidate curve, and diffuse scattering (σ slider)."];
+let step3=1;
+const T3={on:false,th:0,key:null}; let raf3=null;
+function stop3(){T3.on=false;T3.key=null;if(raf3){cancelAnimationFrame(raf3);raf3=null;}}
+const STEP3KEY={1:"bad",3:"boot",4:"good",5:"e1"};
+function goStep3(sN,animate){
+  stop3();
+  step3=Math.max(1,Math.min(6,sN));
+  $("cap3").innerHTML=STEP3CAP[step3];
+  $("b3Prev").disabled=step3===1; $("b3Next").disabled=step3===6;
+  $("o3Step").textContent=step3+" / 6";
+  const key=STEP3KEY[step3];
+  if(animate&&key&&!reduced){
+    T3.on=true;T3.key=key;
+    const t0=performance.now(),DUR=2600;
+    const tick=now=>{
+      const f=Math.min(1,(now-t0)/DUR);
+      T3.th=2*Math.PI*f;
+      render3();
+      if(f<1){raf3=requestAnimationFrame(tick);}else{stop3();render3();}
+    };
+    raf3=requestAnimationFrame(tick);
+  } else render3();
 }
 function render3(){
   const {BS,UE,VA1,VA2,LX,RX,WY0,WY1}=D3;
@@ -781,12 +810,14 @@ function render3(){
   $("o3Pb").textContent=degFmt(phib);
   const Ps=rayEllipse(BS,UE,us,Ls);
   const VA1e=[UE[0]+Ls*us[0],UE[1]+Ls*us[1]];
-  /* estimates from the data — identical constructions to the tilted-corner demo */
+  /* estimates from the data */
   const P2=rayEllipse(VA1e,UE,u,L2);
   const Lseg=L2-dist(UE,P2);
   const P1=rayEllipse(P2,BS,ud,Lseg);
   const VA2d=[UE[0]+L2*u[0],UE[1]+L2*u[1]];
   $("o3L1").textContent=(Lseg*M_PER_PX).toFixed(1)+" m";
+  const ph=rayEllipse(BS,UE,u,L2);
+  const phD=rayEllipse(UE,BS,ud,L2);
   let s="";
   /* walls */
   s+=seg([LX,WY0],[LX,WY1],"#16222e",5);
@@ -795,148 +826,136 @@ function render3(){
   s+=seg([RX,WY0],[RX,WY1],"#16222e",5);
   for(let y=WY0;y<WY1;y+=18)s+=seg([RX,y],[RX+9,y+9],"#8a97a3",1.2);
   s+=txt(RX+14,WY0+16,"wall R — 1st bounce","#51606e",11);
-  if(ck3("c3_mir")){
+  /* true physical path — ground truth, faint */
+  s+=arrow(BS,P1t,"#8a97a3",1.6,null,0.5)+arrow(P1t,P2t,"#8a97a3",1.6,null,0.5)+arrow(P2t,UE,"#8a97a3",1.6,null,0.5);
+  const tracing=k=>T3.on&&T3.key===k;
+  /* STEP 1+: the 1-bounce hypothesis */
+  {
+    const ep=ellParams(BS,UE,L2);
+    if(tracing("bad")&&ep){
+      s+=ellPartial(ep,T3.th,"#c22f2f",1.8,"7 5");
+      s+=stringViz(BS,UE,ellPoint(ep,T3.th),"#c22f2f","1-bounce hyp. — string at BS &amp; UE: ‖x−UE‖ + ‖x−BS‖",[-390,56]);
+    } else {
+      s+=ellipse(BS,UE,L2,"#c22f2f",1.5,"7 5",step3<=2?0.8:0.2);
+      if(step3<=2) s+=pin(BS,"#c22f2f",11)+pin(UE,"#c22f2f",16);
+      s+=arrow(UE,[UE[0]+u[0]*(dist(UE,ph)+40),UE[1]+u[1]*(dist(UE,ph)+40)],"#16222e",1.4,"6 4",step3<=2?0.6:0.3);
+      if(step3<=2) s+=txt(UE[0]+u[0]*60+6,UE[1]+u[1]*60-8,"AoA φ","#16222e",11);
+      s+=`<circle cx="${ph[0]}" cy="${ph[1]}" r="4.5" fill="none" stroke="#c22f2f" stroke-width="2" opacity="${step3<=2?1:0.3}"/>`;
+      if(step3<=2){
+        s+=seg(BS,ph,"#c22f2f",1.1,"2 3",0.6)+seg(UE,ph,"#c22f2f",1.1,"2 3",0.6);
+        const dbs=dist(ph,BS)*M_PER_PX,due=dist(ph,UE)*M_PER_PX;
+        s+=txt(ph[0]+10,ph[1]-9,"P(φ) if 1 bounce","#c22f2f",10.5)
+          +txt(ph[0]+10,ph[1]+5,`${dbs.toFixed(1)}+${due.toFixed(1)} = ${(dbs+due).toFixed(1)} m`,"#c22f2f",10);
+      }
+      if(step3>=3) s+=txt(ph[0]+9,ph[1]-8,"rejected ✗","#c22f2f",10);
+    }
+  }
+  /* STEP 2+: the AoD test */
+  if(step3>=2&&!tracing("bad")){
+    s+=arrow(BS,[BS[0]+ud[0]*(dist(BS,phD)+40),BS[1]+ud[1]*(dist(BS,phD)+40)],"#16222e",1.4,"6 4",step3===2?0.6:0.3);
+    if(step3===2){
+      s+=txt(BS[0]+ud[0]*58+6,BS[1]+ud[1]*58+16,"AoD ψ","#16222e",11);
+      s+=`<circle cx="${phD[0]}" cy="${phD[1]}" r="4.5" fill="none" stroke="#c22f2f" stroke-width="2"/>`
+        +txt(phD[0]+10,phD[1]-9,"P(ψ)","#c22f2f",10.5);
+      s+=seg(ph,phD,"#c22f2f",2,"3 3",0.9);
+      const mm=dist(ph,phD)*M_PER_PX;
+      s+=txt((ph[0]+phD[0])/2-30,(ph[1]+phD[1])/2-10,`${mm.toFixed(1)} m apart → reject`,"#c22f2f",11);
+    }
+  }
+  /* STEP 3+: bootstrap VA1 from path 1 */
+  if(step3>=3){
+    const ep=ellParams(BS,UE,Ls);
+    if(tracing("boot")&&ep){
+      s+=ellPartial(ep,T3.th,"#e8720c",2);
+      s+=stringViz(BS,UE,ellPoint(ep,T3.th),"#b45607","path 1 — string of L⁽¹⁾ at BS &amp; UE: ‖x−UE‖ + ‖x−BS‖",[-390,56]);
+    } else {
+      s+=ellipse(BS,UE,Ls,"#e8720c",1.8,null,step3===3?0.9:0.35);
+      if(step3===3) s+=pin(BS,"#e8720c",11)+pin(UE,"#e8720c",16);
+      s+=arrow(BS,Ps,"#e8720c",1.8,null,0.85)+arrow(Ps,UE,"#e8720c",1.8,null,0.85);
+      s+=arrow(UE,[UE[0]+us[0]*(Ls+24),UE[1]+us[1]*(Ls+24)],"#b45607",1.3,"6 4",0.7);
+      s+=`<circle cx="${Ps[0]}" cy="${Ps[1]}" r="4" fill="#e8720c"/>`;
+      if(step3===3) s+=txt(Ps[0]+10,Ps[1]+14,"path-1 bounce","#b45607",10.5);
+      s+=vaMark(VA1e,"VA¹ (bootstrapped)");
+      if(step3===3) s+=txt(VA1e[0]+12,VA1e[1]+22,"walk the full L⁽¹⁾ → VA¹","#b45607",10.5);
+    }
+  }
+  /* STEP 4+: bounce-2 ellipse */
+  if(step3>=4&&!tracing("boot")){
+    const ep=ellParams(VA1e,UE,L2);
+    if(tracing("good")&&ep){
+      s+=ellPartial(ep,T3.th,"#0e8f7e",2);
+      s+=stringViz(VA1e,UE,ellPoint(ep,T3.th),"#0a6b5e","bounce-2 — same L₂, string at VA¹ &amp; UE: ‖x−UE‖ + ‖x−VA¹‖",[-390,56]);
+    } else {
+      s+=ellipse(VA1e,UE,L2,"#0e8f7e",1.8,null,step3===4?0.9:0.45);
+      if(step3===4) s+=pin(VA1e,"#0e8f7e",11)+pin(UE,"#0e8f7e",20);
+      s+=arrow(UE,[UE[0]+u[0]*(dist(UE,P2)+34),UE[1]+u[1]*(dist(UE,P2)+34)],"#16222e",1.4,"6 4",0.5);
+      s+=ipMark(P2,"P₂",-30,-10);
+    }
+  }
+  /* STEP 5+: bounce-1 segment ellipse */
+  if(step3>=5&&!tracing("good")){
+    const ep=ellParams(BS,P2,Lseg);
+    if(tracing("e1")&&ep){
+      s+=ellPartial(ep,T3.th,"#2ca02c",2);
+      s+=stringViz(BS,P2,ellPoint(ep,T3.th),"#1d7a1d","bounce-1 — leftover L₂ − ‖UE→P₂‖, string at BS &amp; P₂: ‖x−P₂‖ + ‖x−BS‖",[-390,56]);
+    } else if(ep){
+      s+=ellipse(BS,P2,Lseg,"#2ca02c",1.7,null,step3===5?0.9:0.45);
+      if(step3===5) s+=pin(BS,"#2ca02c",15)+pin(P2,"#2ca02c",10);
+      s+=arrow(BS,[BS[0]+ud[0]*(dist(BS,P1)+42),BS[1]+ud[1]*(dist(BS,P1)+42)],"#16222e",1.4,"6 4",0.5);
+      s+=ipMark(P1,"P₁",12,-10);
+      s+=seg(BS,P1,"#0e8f7e",1.6,null,0.8)+seg(P1,P2,"#0e8f7e",1.6,null,0.8)+seg(P2,UE,"#0e8f7e",1.6,null,0.8);
+    }
+  }
+  /* STEP 6: the full picture */
+  if(step3===6){
     s+=seg(BS,VA1,"#8a97a3",1.2,"5 4",0.85)+seg(VA1,VA2,"#8a97a3",1.2,"5 4",0.85);
     s+=txt((BS[0]+VA1[0])/2+40,BS[1]-8,"mirror in R","#8a97a3",10.5)
       +txt((VA1[0]+VA2[0])/2-120,VA1[1]-8,"mirror in L","#8a97a3",10.5);
-  }
-  /* ellipses from the data, traced in queue order */
-  const tS=k=>{ if(!T3.on) return "full"; const p=T3.queue.indexOf(k);
-    return p<0||p<T3.idx?"full":(p===T3.idx?"trace":"hidden"); };
-  if(ck3("c3_bad")){
-    const st=tS("bad"), ep=ellParams(BS,UE,L2);
-    if(st==="trace"&&ep){
-      s+=ellPartial(ep,T3.th,"#c22f2f",1.6,"7 5");
-      s+=`<circle cx="${BS[0]}" cy="${BS[1]}" r="3" fill="#c22f2f"/><circle cx="${UE[0]}" cy="${UE[1]}" r="3" fill="#c22f2f"/>`;
-      s+=stringViz(BS,UE,ellPoint(ep,T3.th),"#c22f2f","1-bounce hyp. — string at BS &amp; UE: ‖x−UE‖ + ‖x−BS‖",[-390,56]);
-    } else if(st==="full"){
-      s+=ellipse(BS,UE,L2,"#c22f2f",1.5,"7 5",0.75)
-        +pin(BS,"#c22f2f",11)+pin(UE,"#c22f2f",16);
-      const ph=rayEllipse(BS,UE,u,L2);
-      const n1=unit(sub(VA2d,BS)), w1=[-n1[1],n1[0]];
-      s+=seg(BS,ph,"#c22f2f",1.1,"2 3",0.65)+seg(UE,ph,"#c22f2f",1.1,"2 3",0.65);
-      const dbs=dist(ph,BS)*M_PER_PX, due=dist(ph,UE)*M_PER_PX;
-      s+=txt((BS[0]+ph[0])/2-4,(BS[1]+ph[1])/2-8,dbs.toFixed(1),"#c22f2f",10)
-        +txt((UE[0]+ph[0])/2+8,(UE[1]+ph[1])/2+13,due.toFixed(1),"#c22f2f",10);
-      s+=seg([ph[0]-120*w1[0],ph[1]-120*w1[1]],[ph[0]+120*w1[0],ph[1]+120*w1[1]],"#c22f2f",3,"6 4",0.5);
-      s+=`<circle cx="${ph[0]}" cy="${ph[1]}" r="4.5" fill="none" stroke="#c22f2f" stroke-width="2"/>`
-        +txt(ph[0]-12,ph[1]-10,"P if 1 bounce","#c22f2f",10.5,"end")
-        +txt(ph[0]-12,ph[1]+4,`${dbs.toFixed(1)}+${due.toFixed(1)} = ${(dbs+due).toFixed(1)} m — the full length`,"#c22f2f",10,"end")
-        +txt(ph[0]-120*w1[0]-8,ph[1]-120*w1[1]-4,"implied wall — in no map","#c22f2f",10.5,"end");
-    }
-  }
-  if(ck3("c3_good")){
-    const st=tS("good"), ep=ellParams(VA1e,UE,L2);
-    if(st==="trace"&&ep){
-      s+=ellPartial(ep,T3.th,"#0e8f7e",2);
-      s+=`<circle cx="${VA1e[0]}" cy="${VA1e[1]}" r="3" fill="#0a6b5e"/><circle cx="${UE[0]}" cy="${UE[1]}" r="3" fill="#0a6b5e"/>`;
-      s+=stringViz(VA1e,UE,ellPoint(ep,T3.th),"#0a6b5e","2-bounce hyp. — same L₂, string at VA¹ &amp; UE: ‖x−UE‖ + ‖x−VA¹‖",[-390,56]);
-    } else if(st==="full"){
-      s+=ellipse(VA1e,UE,L2,"#0e8f7e",1.8,null,0.85)
-        +pin(VA1e,"#0e8f7e",11)+pin(UE,"#0e8f7e",20);
-    }
-  }
-  if(ck3("c3_e1")){
-    const st=tS("e1"), ep=ellParams(BS,P2,Lseg);
-    if(st==="trace"&&ep){
-      s+=ellPartial(ep,T3.th,"#2ca02c",2);
-      s+=`<circle cx="${BS[0]}" cy="${BS[1]}" r="3" fill="#1d7a1d"/><circle cx="${P2[0]}" cy="${P2[1]}" r="3" fill="#1d7a1d"/>`;
-      s+=stringViz(BS,P2,ellPoint(ep,T3.th),"#1d7a1d","bounce-1 segment — leftover string L₂ − ‖UE→P₂‖ at BS &amp; P₂: ‖x−P₂‖ + ‖x−BS‖",[-390,56]);
-    } else if(st==="full"&&ep){
-      s+=ellipse(BS,P2,Lseg,"#2ca02c",1.7,null,0.85)
-        +pin(BS,"#2ca02c",15)+pin(P2,"#2ca02c",10);
-    }
-  }
-  /* diffuse clouds on both walls */
-  const N=G1.length;
-  if(sig>0){
-    for(let i=0;i<N;i++){
-      const q1=[RX,Math.max(WY0+6,Math.min(WY1-6,P1t[1]+sig*G1[i]))];
-      const q2=[LX,Math.max(WY0+6,Math.min(WY1-6,P2t[1]+sig*G2[i]))];
-      const w=Math.exp(-(G1[i]*G1[i]+G2[i]*G2[i])/2);
-      if(i<7) s+=`<path d="M${BS[0]},${BS[1]} L${q1[0]},${q1[1]} L${q2[0]},${q2[1]} L${UE[0]},${UE[1]}" fill="none" stroke="#0e8f7e" stroke-width="1" opacity="${(0.08+0.22*w).toFixed(2)}"/>`;
-      s+=`<circle cx="${q1[0]+3}" cy="${q1[1]}" r="${(2.2+2.8*w).toFixed(1)}" fill="#0e8f7e" opacity="${(0.16+0.62*w).toFixed(2)}"/>`;
-      s+=`<circle cx="${q2[0]-3}" cy="${q2[1]}" r="${(2.2+2.8*w).toFixed(1)}" fill="#0e8f7e" opacity="${(0.16+0.62*w).toFixed(2)}"/>`;
-      if(ck3("c3_vacld")){
-        const Lq=dist(BS,q1)+dist(q1,q2)+dist(q2,UE);
-        const uq=unit(sub(q2,UE));
-        const vq=[UE[0]+Lq*uq[0],UE[1]+Lq*uq[1]];
-        s+=`<circle cx="${vq[0]}" cy="${vq[1]}" r="${(1.6+2.2*w).toFixed(1)}" fill="#7c4dbe" opacity="${(0.12+0.55*w).toFixed(2)}"/>`;
-      }
-    }
-  }
-  /* physical specular path */
-  s+=arrow(BS,P1t,"#51606e",2)+arrow(P1t,P2t,"#51606e",2)+arrow(P2t,UE,"#51606e",2);
-  /* measured rays */
-  if(ck3("c3_ray")){
-    s+=seg(P2,VA2d,"#7c4dbe",1.8,"5 4",0.9);
-    s+=arrow(UE,[UE[0]+u[0]*(L2+30),UE[1]+u[1]*(L2+30)],"#16222e",1.4,"6 4",0.5);
-    s+=txt(UE[0]+u[0]*60+6,UE[1]+u[1]*60-8,"AoA φ","#16222e",11);
-    s+=txt((P2[0]+VA2d[0])/2+8,(P2[1]+VA2d[1])/2-6,"…continue to L₂","#5d3691",10.5);
-    const dP1=dist(BS,P1);
-    s+=arrow(BS,[BS[0]+ud[0]*(dP1+42),BS[1]+ud[1]*(dP1+42)],"#16222e",1.4,"6 4",0.5);
-    s+=txt(BS[0]+ud[0]*58+6,BS[1]+ud[1]*58+16,"AoD ψ","#16222e",11);
-  }
-  /* what path 2's data alone says about VA1: the one-parameter candidate curve */
-  if(ck3("c3_fam")){
     const fam=family({BS,UE,L:L2,u,ud});
     if(fam.length>1){
       s+=`<path d="${poly4(fam)}" fill="none" stroke="#7c4dbe" stroke-width="1.4" opacity="0.5"/>`;
       const e=fam[Math.min(10,fam.length-1)];
       s+=txt(e.cand[0]-8,e.cand[1]-12,"VA¹ family (path 2 alone)","#5d3691",10,"end");
     }
+    if(sig>0){
+      for(let i=0;i<G1.length;i++){
+        const q1=[RX,Math.max(WY0+6,Math.min(WY1-6,P1t[1]+sig*G1[i]))];
+        const q2=[LX,Math.max(WY0+6,Math.min(WY1-6,P2t[1]+sig*G2[i]))];
+        const w=Math.exp(-(G1[i]*G1[i]+G2[i]*G2[i])/2);
+        if(i<7) s+=`<path d="M${BS[0]},${BS[1]} L${q1[0]},${q1[1]} L${q2[0]},${q2[1]} L${UE[0]},${UE[1]}" fill="none" stroke="#0e8f7e" stroke-width="1" opacity="${(0.08+0.22*w).toFixed(2)}"/>`;
+        s+=`<circle cx="${q1[0]+3}" cy="${q1[1]}" r="${(2.2+2.8*w).toFixed(1)}" fill="#0e8f7e" opacity="${(0.16+0.62*w).toFixed(2)}"/>`;
+        s+=`<circle cx="${q2[0]-3}" cy="${q2[1]}" r="${(2.2+2.8*w).toFixed(1)}" fill="#0e8f7e" opacity="${(0.16+0.62*w).toFixed(2)}"/>`;
+        const Lq=dist(BS,q1)+dist(q1,q2)+dist(q2,UE);
+        const uq=unit(sub(q2,UE));
+        const vq=[UE[0]+Lq*uq[0],UE[1]+Lq*uq[1]];
+        s+=`<circle cx="${vq[0]}" cy="${vq[1]}" r="${(1.6+2.2*w).toFixed(1)}" fill="#7c4dbe" opacity="${(0.12+0.55*w).toFixed(2)}"/>`;
+      }
+    }
+    s+=seg(P2,VA2d,"#7c4dbe",1.8,"5 4",0.9);
+    s+=vaMark(VA2,"VA² (bounce 2 · ref)");
+    s+=vaDot(VA2d);
   }
-  /* bootstrap path drawing */
-  if(ck3("c3_boot")){
-    s+=arrow(BS,Ps,"#e8720c",1.8,null,0.85)+arrow(Ps,UE,"#e8720c",1.8,null,0.85);
-    s+=arrow(UE,[UE[0]+us[0]*(Ls+24),UE[1]+us[1]*(Ls+24)],"#b45607",1.3,"6 4",0.7);
-    s+=`<circle cx="${Ps[0]}" cy="${Ps[1]}" r="4" fill="#e8720c"/>`;
-    s+=txt(VA1e[0]+12,VA1e[1]+22,"walk path 1’s full L⁽¹⁾ → VA¹","#b45607",10.5);
-  }
-  /* markers */
-  s+=vaMark(VA1e,"VA¹ (bootstrapped)");
-  s+=vaMark(VA2,"VA² (bounce 2 · ref)");
-  s+=vaDot(VA2d);
-  s+=`<circle cx="${P1t[0]}" cy="${P1t[1]}" r="2.6" fill="#0a6b5e" opacity="0.85"/><circle cx="${P2t[0]}" cy="${P2t[1]}" r="2.6" fill="#0a6b5e" opacity="0.85"/>`;
-  s+=ipMark(P1,"P₁",12,-10)+ipMark(P2,"P₂",-30,-10);
   s+=bsMark(BS,"BS",12,20)+ueMark(UE);
   svg3.innerHTML=s;
   const offR=Math.abs(P1[0]-RX)*M_PER_PX, offL=Math.abs(P2[0]-LX)*M_PER_PX;
   const va1err=dist(VA1e,VA1)*M_PER_PX;
-  const consistent=offR<0.15&&offL<0.15&&dist(VA2d,VA2)*M_PER_PX<0.2&&va1err<0.15;
+  const mm=dist(ph,phD)*M_PER_PX;
+  const consistent=offR<0.15&&offL<0.15&&va1err<0.15;
   $("stat3").innerHTML=
-    `<b>L₂</b> = ${fmt(L2)}<br><b>φ</b> = ${degFmt(phi)} · <b>ψ</b> = ${degFmt(psi)}<br>`+
-    `bootstrapped VA¹ error: ${va1err.toFixed(2)} m<br>`+
+    `<b>L₂</b> = ${fmt(L2)} · <b>φ</b> = ${degFmt(phi)} · <b>ψ</b> = ${degFmt(psi)}<br>`+
     `corridor lock: ψ = φ ± 180° — first &amp; last legs parallel<br>`+
-    (consistent?`<span class="ok">✓ data specular-consistent — P₁ on wall R, P₂ on wall L</span>`
-               :`<span class="off">P₁ off wall R by ${offR.toFixed(2)} m · P₂ off wall L by ${offL.toFixed(2)} m · VA² off by ${(dist(VA2d,VA2)*M_PER_PX).toFixed(2)} m</span>`)+
-    `<br>${sig>0?`${N} scattered points / wall`:"specular (σ = 0)"}`;
+    `1-bounce test: P(φ) ↔ P(ψ) ${mm.toFixed(1)} m apart → ${mm>0.5?"reject":"cannot reject"}<br>`+
+    `bootstrapped VA¹ error: ${va1err.toFixed(2)} m<br>`+
+    (consistent?`<span class="ok">✓ 2-bounce interpretation consistent — P₁ on wall R, P₂ on wall L</span>`
+               :`<span class="off">P₁ off wall R by ${offR.toFixed(2)} m · P₂ off wall L by ${offL.toFixed(2)} m</span>`)+
+    (step3===6?`<br>${sig>0?`${G1.length} scattered points / wall`:"specular (σ = 0)"}`:"");
 }
-function stop3(){T3.on=false;if(raf3){cancelAnimationFrame(raf3);raf3=null;}}
-function trace3(){
-  stop3();
-  T3.queue=["bad","e1","good"].filter(k=>ck3("c3_"+k));
-  if(!T3.queue.length||reduced){render3();return;}
-  T3.on=true;T3.idx=0;T3.th=0;
-  const DUR=3200; let t0=performance.now();
-  const tick=now=>{
-    let f=(now-t0)/DUR;
-    if(f>=1){
-      T3.idx++; t0=now; f=0;
-      if(T3.idx>=T3.queue.length){stop3();render3();return;}
-    }
-    T3.th=2*Math.PI*Math.min(1,f);
-    render3();
-    raf3=requestAnimationFrame(tick);
-  };
-  raf3=requestAnimationFrame(tick);
-}
-["c3_boot","c3_fam","c3_mir","c3_ray","c3_bad","c3_good","c3_e1","c3_vacld"].forEach(id=>$(id).addEventListener("change",()=>{stop3();render3();}));
 ["sSig3","s3L","s3P","s3D","s3Lb","s3Pb"].forEach(id=>$(id).addEventListener("input",()=>{stop3();render3();}));
 $("b3R").addEventListener("click",()=>{["s3L","s3P","s3D","s3Lb","s3Pb"].forEach(id=>$(id).value=0);stop3();render3();});
-$("b3T").addEventListener("click",trace3);
+$("b3Prev").addEventListener("click",()=>goStep3(step3-1,false));
+$("b3Next").addEventListener("click",()=>goStep3(step3+1,true));
 makeDraggable(svg3,()=>D3.UE,p=>{D3.UE=p;["s3L","s3P","s3D","s3Lb","s3Pb"].forEach(id=>$(id).value=0);stop3();},[160,200,300,400],render3);
-render3();
+goStep3(1,true);
 
 /* =================== DEMO 4: map estimation — curves of VA¹ candidates =================== */
 const svg4=$("svg4");
