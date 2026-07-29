@@ -149,7 +149,7 @@ footer a{color:var(--ink-soft)}
 <!-- ============ 03 double bounce ============ -->
 <section class="sec" id="double">
   <h2><span class="no">03</span>Double bounce: two virtual anchors, two incidence points</h2>
-  <p class="lede">Now the path bounces twice: BS → P₁ (wall A) → P₂ (wall B) → UE. Mirroring composes: <b>VA¹</b> = BS mirrored in wall A (the first-bounce anchor), <b>VA²</b> = VA¹ mirrored in wall B. The UE still sees a clean LOS-like anchor — ‖UE − VA²‖ = L₂ and the AoA ray points at VA² — which is exactly why BP-SLAM can treat second-order paths as just another static feature. The incidence points need care: <b>the naive BS–UE delay ellipse no longer passes through any bounce point</b> (the red ✗ is where it cuts the AoA ray — off the wall). The fix: use <b>VA¹ and the UE as the foci</b> — the ellipse with the same measured L₂ then passes exactly through P₂, and P₁ follows by aiming from P₂ at VA¹. Here too the drawing runs on the data: perturb τ or φ and the estimated P₂ slides <em>off the wall</em> while the diffuse clouds stay on the true surface. Slide the roughness up to let the wall scatter: the specular points diffuse into clouds of reflection points, and the once point-like VA² smears into a cloud too.</p>
+  <p class="lede">Now the path bounces twice: BS → P₁ (wall A) → P₂ (wall B) → UE. Mirroring composes: <b>VA¹</b> = BS mirrored in wall A (the first-bounce anchor), <b>VA²</b> = VA¹ mirrored in wall B. The UE still sees a clean LOS-like anchor — ‖UE − VA²‖ = L₂ and the AoA ray points at VA² — which is exactly why BP-SLAM can treat second-order paths as just another static feature. The incidence points need care, because the receiver must first <em>guess the bounce order</em>. <b>Hypothesis 1 — a single bounce:</b> pin the string at BS and UE (red). It is a perfectly coherent reading of the same (τ, φ), and it is drawn in full: its own incidence point <em>and</em> the wall it would imply — but that wall exists nowhere in the map, and that is how the hypothesis dies. <b>Hypothesis 2 — double bounce off A then B:</b> pin the string at <b>VA¹ and the UE</b> — the ellipse with the same measured L₂ passes exactly through P₂, and P₁ follows by aiming from P₂ at VA¹. Note that the virtual anchor is blind to this choice: walking the full L₂ lands on the same VA under either hypothesis — bounce order is a question only the incidence-point reading must answer, and the map is what answers it. Here too the drawing runs on the data: perturb τ or φ and the estimated P₂ slides <em>off the wall</em> while the diffuse clouds stay on the true surface. Slide the roughness up to let the wall scatter: the specular points diffuse into clouds of reflection points, and the once point-like VA² smears into a cloud too.</p>
 
   <div class="fig"><div class="body split">
     <svg id="svg2" viewBox="-150 -20 850 660" role="img" aria-label="double bounce demo with two virtual anchors, incidence points, and diffuse scattering, constructed from delay and angle data"></svg>
@@ -166,8 +166,8 @@ footer a{color:var(--ink-soft)}
       <h4>layers</h4>
       <label class="ck"><input type="checkbox" id="c2_mir" checked> <span class="sw" style="background:var(--ink-faint)"></span> mirror construction</label>
       <label class="ck"><input type="checkbox" id="c2_ray" checked> <span class="sw" style="background:var(--ink)"></span> AoA ray → VA²</label>
-      <label class="ck"><input type="checkbox" id="c2_bad" checked> <span class="sw" style="background:var(--err)"></span> naive ellipse (foci BS, UE)</label>
-      <label class="ck"><input type="checkbox" id="c2_good" checked> <span class="sw" style="background:var(--ip)"></span> correct ellipse (foci VA¹, UE)</label>
+      <label class="ck"><input type="checkbox" id="c2_bad" checked> <span class="sw" style="background:var(--err)"></span> 1-bounce hypothesis (foci BS, UE)</label>
+      <label class="ck"><input type="checkbox" id="c2_good" checked> <span class="sw" style="background:var(--ip)"></span> 2-bounce hypothesis (foci VA¹, UE)</label>
       <label class="ck"><input type="checkbox" id="c2_vacld" checked> <span class="sw" style="background:var(--va)"></span> VA cloud (diffuse)</label>
       <div class="ctl">
         <label><span>surface roughness σ</span> <output id="oSig"></output></label>
@@ -177,7 +177,7 @@ footer a{color:var(--ink-soft)}
       <div class="hint">drag the green UE dot · σ = 0 recovers pure specular</div>
     </div>
   </div>
-  <div class="figcap"><b>Legend.</b> ■ BS · ● UE (draggable) · ◆ purple = virtual anchors VA¹ (bounce 1), VA² (bounce 2; hollow = geometric, filled = from data) · ● teal = incidence points P₁, P₂ estimated from the data, with the diffuse clouds on the true walls · dot size/opacity ∝ pathloss weight of that scattered sub-path · ✗ red = phantom point where the naive BS–UE ellipse cuts the AoA ray (on no wall).</div></div>
+  <div class="figcap"><b>Legend.</b> ■ BS · ● UE (draggable) · ◆ purple = virtual anchors VA¹ (bounce 1), VA² (bounce 2; hollow = geometric, filled = from data) · ● teal = incidence points P₁, P₂ estimated from the data, with the diffuse clouds on the true walls · dot size/opacity ∝ pathloss weight of that scattered sub-path · red ○ + dashed red segment = the rejected single-bounce hypothesis: its incidence point and the wall it would imply, which matches no wall in the map.</div></div>
 </section>
 
 <!-- ============ 04 diffuse & splats ============ -->
@@ -447,12 +447,16 @@ function render2(){
     if(st==="trace"&&ep){
       s+=ellPartial(ep,T2.th,"#c22f2f",1.6,"7 5");
       s+=`<circle cx="${BS[0]}" cy="${BS[1]}" r="3" fill="#c22f2f"/><circle cx="${UE[0]}" cy="${UE[1]}" r="3" fill="#c22f2f"/>`;
-      s+=stringViz(BS,UE,ellPoint(ep,T2.th),"#c22f2f","string pinned at BS &amp; UE: ‖x−UE‖ + ‖x−BS‖",[-140,4]);
+      s+=stringViz(BS,UE,ellPoint(ep,T2.th),"#c22f2f","1-bounce hyp. — string at BS &amp; UE: ‖x−UE‖ + ‖x−BS‖",[-140,4]);
     } else if(st==="full"){
       s+=ellipse(BS,UE,L2,"#c22f2f",1.5,"7 5",0.75);
+      /* the full single-bounce hypothesis: its incidence point + the wall it would imply */
       const ph=rayEllipse(BS,UE,u,L2);
-      s+=`<g stroke="#c22f2f" stroke-width="2"><line x1="${ph[0]-6}" y1="${ph[1]-6}" x2="${ph[0]+6}" y2="${ph[1]+6}"/><line x1="${ph[0]-6}" y1="${ph[1]+6}" x2="${ph[0]+6}" y2="${ph[1]-6}"/></g>`
-        +txt(ph[0]+12,ph[1]+4,"phantom — on no wall","#c22f2f",10.5);
+      const n1=unit(sub(VA2d,BS)), w1=[-n1[1],n1[0]];
+      s+=seg([ph[0]-95*w1[0],ph[1]-95*w1[1]],[ph[0]+95*w1[0],ph[1]+95*w1[1]],"#c22f2f",3,"6 4",0.5);
+      s+=`<circle cx="${ph[0]}" cy="${ph[1]}" r="4.5" fill="none" stroke="#c22f2f" stroke-width="2"/>`
+        +txt(ph[0]+11,ph[1]-8,"P if 1 bounce","#c22f2f",10.5)
+        +txt(ph[0]+95*w1[0]+8,ph[1]+95*w1[1]+2,"implied wall — in no map","#c22f2f",10.5);
     }
   }
   if(ck2("c2_good")){
@@ -460,7 +464,7 @@ function render2(){
     if(st==="trace"&&ep){
       s+=ellPartial(ep,T2.th,"#0e8f7e",2);
       s+=`<circle cx="${VA1[0]}" cy="${VA1[1]}" r="3" fill="#0a6b5e"/><circle cx="${UE[0]}" cy="${UE[1]}" r="3" fill="#0a6b5e"/>`;
-      s+=stringViz(VA1,UE,ellPoint(ep,T2.th),"#0a6b5e","same L₂, string re-pinned at VA¹ &amp; UE: ‖x−UE‖ + ‖x−VA¹‖",[-140,4]);
+      s+=stringViz(VA1,UE,ellPoint(ep,T2.th),"#0a6b5e","2-bounce hyp. — same L₂, string at VA¹ &amp; UE: ‖x−UE‖ + ‖x−VA¹‖",[-140,4]);
     } else if(st==="full"){
       s+=ellipse(VA1,UE,L2,"#0e8f7e",1.8,null,0.85);
     }
