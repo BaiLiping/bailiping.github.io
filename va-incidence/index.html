@@ -90,6 +90,7 @@ footer a{color:var(--ink-soft)}
     <a href="#measurement">the measurement</a>
     <a href="#single">single bounce</a>
     <a href="#double">double bounce</a>
+    <a href="#corridor">corridor</a>
     <a href="#diffuse">diffuse &amp; splats</a>
     <a href="/">← bailiping.com</a>
   </nav>
@@ -119,10 +120,10 @@ footer a{color:var(--ink-soft)}
 <!-- ============ 02 single bounce ============ -->
 <section class="sec" id="single">
   <h2><span class="no">02</span>Single bounce: draw everything from (τ, φ, ψ)</h2>
-  <p class="lede">One wall — but the receiver does not know it. From the data alone: the <span style="color:var(--meas-deep)"><b>delay</b></span> draws the ellipse, the <span style="color:var(--meas-deep)"><b>angle</b></span> draws the ray, their intersection is the incidence point P, the full-length walk is the VA — and the wall itself is <em>inferred</em> as the perpendicular bisector of BS↔VA through P. With clean data the inferred wall lands exactly on the true wall (faint grey). The AoD ψ measured at the BS is data too, and it over-determines P: its ray must cross the delay ellipse at the <em>same</em> point the AoA ray does. Perturb τ, φ or ψ with the sliders: the ellipse breathes, P slides, the inferred wall tilts — and when the two angle estimates disagree, a second hollow point P(ψ) splits off from P(φ). That gap is the bistatic consistency residual an estimator gates on.</p>
+  <p class="lede">One wall — but the receiver does not know it. From the data alone: the <span style="color:var(--meas-deep)"><b>delay</b></span> draws the ellipse, the <span style="color:var(--meas-deep)"><b>angle</b></span> draws the ray, their intersection is the incidence point P, the full-length walk is the VA — and the wall itself is <em>inferred</em> as the perpendicular bisector of BS↔VA through P. (The wall is tilted on purpose: AoA and AoD are tied only through the reflection law — equal angles about the wall <em>normal</em> — so in global coordinates they are generally different numbers; an axis-aligned wall would misleadingly make them mirror images.) With clean data the inferred wall lands exactly on the true wall (faint grey). The AoD ψ measured at the BS is data too, and it over-determines P: its ray must cross the delay ellipse at the <em>same</em> point the AoA ray does. Perturb τ, φ or ψ with the sliders: the ellipse breathes, P slides, the inferred wall tilts — and when the two angle estimates disagree, a second hollow point P(ψ) splits off from P(φ). That gap is the bistatic consistency residual an estimator gates on.</p>
 
   <div class="fig"><div class="body split">
-    <svg id="svg1" viewBox="-170 50 810 590" role="img" aria-label="single bounce virtual anchor and incidence point demo, constructed from delay and angle data"></svg>
+    <svg id="svg1" viewBox="-170 40 830 600" role="img" aria-label="single bounce virtual anchor and incidence point demo, constructed from delay and angle data"></svg>
     <div class="rail">
       <h4>the data (drives the drawing)</h4>
       <div class="ctl">
@@ -151,10 +152,10 @@ footer a{color:var(--ink-soft)}
 <!-- ============ 03 double bounce ============ -->
 <section class="sec" id="double">
   <h2><span class="no">03</span>Double bounce: two virtual anchors, two incidence points</h2>
-  <p class="lede">Now the path bounces twice: BS → P₁ (wall A) → P₂ (wall B) → UE. Mirroring composes: <b>VA¹</b> = BS mirrored in wall A (the first-bounce anchor), <b>VA²</b> = VA¹ mirrored in wall B. The UE still sees a clean LOS-like anchor — ‖UE − VA²‖ = L₂ and the AoA ray points at VA² — which is exactly why BP-SLAM can treat second-order paths as just another static feature. The incidence points need care, because the receiver must first <em>guess the bounce order</em>. <b>Hypothesis 1 — a single bounce:</b> pin the string at BS and UE (red). One bounce must then absorb <em>the entire measured length</em> — the full BS → wall A → wall B → UE trip — so its bounce point lands <em>beyond</em> wall B (the two red distances sum to the full L₂), on an implied wall of its own, tilted through the corner. Perfectly coherent — but that wall matches neither wall A nor wall B, and that is how the hypothesis dies. <b>Hypothesis 2 — double bounce off A then B:</b> pin the string at <b>VA¹ and the UE</b> — the ellipse with the same measured L₂ passes exactly through P₂. The first bounce then gets an ellipse of its own (green): peel off the direct leg ‖UE→P₂‖ from the string — what remains is the length of the BS → P₁ → P₂ sub-trip, a single-bounce path between BS and P₂, so the leftover string pinned at <b>BS and P₂</b> traces an ellipse through P₁. And the angle that picks P₁ off that ellipse is the path’s <em>other</em> measured angle: the <b>AoD at the BS</b> — a MIMO sounder measures each path at both ends, and bounce 1 is seen from the BS exactly as bounce 2 is seen from the UE. (With a map instead, you could aim from P₂ at VA¹; the two constructions agree exactly when data and map are consistent.) That recursion is the general recipe: strip the last leg, and an n-bounce problem becomes an (n−1)-bounce problem one wall earlier. The ✏ trace draws the two-bounce construction in propagation order — the bounce-1 segment ellipse through P₁ first, then the bounce-2 ellipse through P₂. Note that the virtual anchor is blind to this choice: walking the full L₂ lands on the same VA under either hypothesis — bounce order is a question only the incidence-point reading must answer, and the map is what answers it. Here too the drawing runs on the data: perturb τ or φ and the estimated P₂ slides <em>off the wall</em> while the diffuse clouds stay on the true surface. Slide the roughness up to let the wall scatter: the specular points diffuse into clouds of reflection points, and the once point-like VA² smears into a cloud too.</p>
+  <p class="lede">Now the path bounces twice: BS → P₁ (wall A) → P₂ (wall B) → UE. Mirroring composes: <b>VA¹</b> = BS mirrored in wall A (the first-bounce anchor), <b>VA²</b> = VA¹ mirrored in wall B. The UE still sees a clean LOS-like anchor — ‖UE − VA²‖ = L₂ and the AoA ray points at VA² — which is exactly why BP-SLAM can treat second-order paths as just another static feature. The incidence points need care, because the receiver must first <em>guess the bounce order</em>. <b>Hypothesis 1 — a single bounce:</b> pin the string at BS and UE (red). One bounce must then absorb <em>the entire measured length</em> — the full BS → wall A → wall B → UE trip — so its bounce point lands <em>beyond</em> wall B (the two red distances sum to the full L₂), on an implied wall of its own, tilted through the corner. Perfectly coherent — but that wall matches neither wall A nor wall B, and that is how the hypothesis dies. <b>Hypothesis 2 — double bounce off A then B:</b> pin the string at <b>VA¹ and the UE</b> — the ellipse with the same measured L₂ passes exactly through P₂. The first bounce then gets an ellipse of its own (green): peel off the direct leg ‖UE→P₂‖ from the string — what remains is the length of the BS → P₁ → P₂ sub-trip, a single-bounce path between BS and P₂, so the leftover string pinned at <b>BS and P₂</b> traces an ellipse through P₁. And the angle that picks P₁ off that ellipse is the path’s <em>other</em> measured angle: the <b>AoD at the BS</b> — a MIMO sounder measures each path at both ends, and bounce 1 is seen from the BS exactly as bounce 2 is seen from the UE. (With a map instead, you could aim from P₂ at VA¹; the two constructions agree exactly when data and map are consistent.) That recursion is the general recipe: strip the last leg, and an n-bounce problem becomes an (n−1)-bounce problem one wall earlier. The ✏ trace draws the two-bounce construction in propagation order — the bounce-1 segment ellipse through P₁ first, then the bounce-2 ellipse through P₂. Note that the virtual anchor is blind to this choice: walking the full L₂ lands on the same VA under either hypothesis — bounce order is a question only the incidence-point reading must answer, and the map is what answers it. Here too the drawing runs on the data: perturb τ, φ or ψ and the estimated points slide <em>off the walls</em> while the diffuse clouds stay on the true surface. (Why is wall B tilted 20° off perpendicular? Because exactly perpendicular walls form a <em>corner retroreflector</em>: the double bounce returns every ray anti-parallel to how it left, forcing the measured AoD to equal the AoA for any UE position. The tilt is what lets the two measured angles differ.) Slide the roughness up to let the wall scatter: the specular points diffuse into clouds of reflection points, and the once point-like VA² smears into a cloud too.</p>
 
   <div class="fig"><div class="body split">
-    <svg id="svg2" viewBox="-150 -20 850 660" role="img" aria-label="double bounce demo with two virtual anchors, incidence points, and diffuse scattering, constructed from delay and angle data"></svg>
+    <svg id="svg2" viewBox="-150 -45 850 685" role="img" aria-label="double bounce demo with two virtual anchors, incidence points, and diffuse scattering, constructed from delay and angle data"></svg>
     <div class="rail">
       <h4>the data (drives the drawing)</h4>
       <div class="ctl">
@@ -187,9 +188,47 @@ footer a{color:var(--ink-soft)}
   <div class="figcap"><b>Legend.</b> ■ BS · ● UE (draggable) · ◆ purple = virtual anchors VA¹ (bounce 1), VA² (bounce 2; hollow = geometric, filled = from data) · ● teal = incidence points P₁, P₂ estimated from the data, with the diffuse clouds on the true walls · dot size/opacity ∝ pathloss weight of that scattered sub-path · red ○ + dashed red segments = the single-bounce hypothesis drawn in full: its bounce point must absorb the whole measured length (the two red distances sum to L₂), forcing an implied wall beyond wall B that matches no wall in the map · green ellipse = the bounce-1 segment: leftover string L₂ − ‖UE→P₂‖ pinned at BS &amp; P₂, passing through P₁ · dashed rings = the two foci (pins) of the same-colored ellipse: red at BS &amp; UE, teal at VA¹ &amp; UE, green at BS &amp; P₂.</div></div>
 </section>
 
-<!-- ============ 04 diffuse & splats ============ -->
+<!-- ============ 04 corridor double bounce ============ -->
+<section class="sec" id="corridor">
+  <h2><span class="no">04</span>Double bounce, corridor edition: two parallel walls</h2>
+  <p class="lede">Same machinery, opposite degeneracy. Put the UE <em>between two parallel walls</em> with the BS down the corridor: the double bounce zig-zags off wall R, then wall L. Two reflections in parallel walls compose to a pure <em>translation</em>, so the first and last legs are exactly parallel — the measured AoD is locked 180° from the measured AoA <em>no matter where the UE stands</em> (the perpendicular corner locked them equal; the corridor locks them opposite). And the image sources march sideways: VA¹ sits one mirror-step to the right, VA² two corridor-widths to the left — the first rungs of the classic image-source ladder that higher bounce orders continue. The three ellipses need no new ideas: same measured L₂, same three pinnings — BS &amp; UE (1-bounce hypothesis), VA¹ &amp; UE (bounce 2), BS &amp; P₂ with the leftover string (bounce 1).</p>
+
+  <div class="fig"><div class="body split">
+    <svg id="svg3" viewBox="-400 30 1120 650" role="img" aria-label="double bounce between two parallel walls with virtual anchors, incidence points, and diffuse scattering"></svg>
+    <div class="rail">
+      <h4>the data (drives the drawing)</h4>
+      <div class="ctl">
+        <label><span>delay L₂ = cτ</span> <output id="o3L"></output></label>
+        <input type="range" class="meas" id="s3L" min="-3" max="3" step="0.05" value="0">
+        <label style="margin-top:7px"><span>AoA φ (at the UE)</span> <output id="o3P"></output></label>
+        <input type="range" class="meas" id="s3P" min="-6" max="6" step="0.1" value="0">
+        <label style="margin-top:7px"><span>AoD ψ (at the BS)</span> <output id="o3D"></output></label>
+        <input type="range" class="meas" id="s3D" min="-6" max="6" step="0.1" value="0">
+        <label style="margin-top:9px"><span>derived L₁ (BS→P₁→P₂)</span> <output id="o3L1"></output></label>
+        <button class="reset" id="b3R" style="margin-top:7px">reset to specular data</button>
+        <button class="reset" id="b3T" style="margin-top:5px">✏ trace all ellipses with their strings</button>
+      </div>
+      <h4>layers</h4>
+      <label class="ck"><input type="checkbox" id="c3_mir" checked> <span class="sw" style="background:var(--ink-faint)"></span> mirror construction</label>
+      <label class="ck"><input type="checkbox" id="c3_ray" checked> <span class="sw" style="background:var(--ink)"></span> measured rays: AoA (UE) &amp; AoD (BS)</label>
+      <label class="ck"><input type="checkbox" id="c3_bad" checked> <span class="sw" style="background:var(--err)"></span> 1-bounce hypothesis (foci BS, UE)</label>
+      <label class="ck"><input type="checkbox" id="c3_e1" checked> <span class="sw" style="background:var(--ue)"></span> bounce-1 segment ellipse (foci BS, P₂)</label>
+      <label class="ck"><input type="checkbox" id="c3_good" checked> <span class="sw" style="background:var(--ip)"></span> bounce-2 ellipse (foci VA¹, UE)</label>
+      <label class="ck"><input type="checkbox" id="c3_vacld" checked> <span class="sw" style="background:var(--va)"></span> VA cloud (diffuse)</label>
+      <div class="ctl">
+        <label><span>surface roughness σ</span> <output id="oSig3"></output></label>
+        <input type="range" id="sSig3" min="0" max="28" step="1" value="12">
+      </div>
+      <div class="statline" id="stat3"></div>
+      <div class="hint">drag the green UE dot · σ = 0 recovers pure specular</div>
+    </div>
+  </div>
+  <div class="figcap"><b>Legend.</b> Same as the demo above — dashed rings mark each ellipse's foci · red = rejected 1-bounce hypothesis with its implied wall · note the AoD arrow at the BS is exactly anti-parallel to the AoA arrow at the UE, and stays so while you drag: that lock is the parallel-wall signature.</div></div>
+</section>
+
+<!-- ============ 05 diffuse & splats ============ -->
 <section class="sec" id="diffuse">
-  <h2><span class="no">04</span>Why the diffuse case decides the representation</h2>
+  <h2><span class="no">05</span>Why the diffuse case decides the representation</h2>
   <p class="lede">With smooth walls the two readings are equivalent bookkeeping. Rough walls break the tie. A diffuse surface returns energy from a whole patch, not a point: the measurement becomes a family of slightly different (τ, φ, PL) triples. Map those into incidence points and you get a <em>weighted point cloud hugging the physical wall</em> — each point carrying its pathloss as a weight. Exactly the kind of data a splat-style surface representation wants (this is what the point-cloud view in <code>Gaussian_Splatting_Test</code> exports, and what the SAGE bistatic triangulation estimates). Map the same family into virtual anchors and the crisp mirror-image anchor smears into a blob that no longer behaves like a point feature — the VA cloud in the demo above.</p>
   <div class="fig"><div class="body" style="overflow-x:auto">
   <table>
@@ -310,17 +349,25 @@ const $=id=>document.getElementById(id);
 /* =================== DEMO 1: single bounce, data-driven =================== */
 const svg1=$("svg1");
 const T1={on:false,th:0}; let raf1=null;
-const D1={BS:[110,280],WX:300,WY0:150,WY1:520,UE:[170,380]};
-D1.VAtrue=[2*D1.WX-D1.BS[0],D1.BS[1]];
+/* the wall is tilted 18° off vertical: an axis-aligned wall would make the global
+   AoA and AoD come out as mirror images (equal magnitudes) — the reflection law only
+   ties the two legs to equal angles about the wall NORMAL, not to each other */
+const W1TILT=18*Math.PI/180;
+const D1={BS:[110,280],UE:[170,380],WC:[300,150],WD:[Math.sin(W1TILT),Math.cos(W1TILT)],WLEN:330};
+D1.WN=[D1.WD[1],-D1.WD[0]];
+D1.WEND=[D1.WC[0]+D1.WD[0]*D1.WLEN,D1.WC[1]+D1.WD[1]*D1.WLEN];
+const mirrorW=p=>{const d=(p[0]-D1.WC[0])*D1.WN[0]+(p[1]-D1.WC[1])*D1.WN[1];
+  return [p[0]-2*d*D1.WN[0],p[1]-2*d*D1.WN[1]];};
+D1.VAtrue=mirrorW(D1.BS);
 const ck1=id=>$(id).checked;
 function specular1(){ // the data a clean estimator would return at the current UE
-  const u=unit(sub(D1.VAtrue,D1.UE));
-  const t=(D1.WX-D1.UE[0])/u[0];
-  const Pt=[D1.WX,D1.UE[1]+t*u[1]];
-  return {L:dist(D1.UE,D1.VAtrue), phi:aoaOf(u), psi:aoaOf(unit(sub(Pt,D1.BS)))};
+  const dV=sub(D1.VAtrue,D1.UE);
+  const t=((D1.WC[0]-D1.UE[0])*D1.WN[0]+(D1.WC[1]-D1.UE[1])*D1.WN[1])/(dV[0]*D1.WN[0]+dV[1]*D1.WN[1]);
+  const Pt=[D1.UE[0]+t*dV[0],D1.UE[1]+t*dV[1]];
+  return {L:dist(D1.UE,D1.VAtrue), phi:aoaOf(unit(dV)), psi:aoaOf(unit(sub(Pt,D1.BS)))};
 }
 function render1(){
-  const {BS,UE,WX,WY0,WY1}=D1;
+  const {BS,UE,WC,WN,WEND}=D1;
   const sp=specular1();
   const L=sp.L + (+$("s1L").value)/M_PER_PX;   // measured length (data)
   const phi=sp.phi + (+$("s1P").value);        // measured AoA (data)
@@ -335,7 +382,7 @@ function render1(){
   $("o1D").textContent=degFmt(psi);
   let s="";
   /* ghost true wall (unknown to the receiver) */
-  s+=seg([WX,WY0],[WX,WY1],"#8a97a3",3,null,0.35)+txt(WX+10,WY0+16,"true wall","#8a97a3",10.5);
+  s+=seg(WC,WEND,"#8a97a3",3,null,0.35)+txt(WC[0]+16,WC[1]+14,"true wall","#8a97a3",10.5);
   if(ck1("c1_ell")){
     const ep=ellParams(BS,UE,L);
     if(T1.on&&ep){
@@ -389,8 +436,8 @@ function render1(){
   svg1.innerHTML=s;
   /* wall consistency check */
   const n=unit(sub(VA,BS));
-  const tilt=Math.acos(Math.min(1,Math.abs(n[0])))*180/Math.PI;
-  const offm=Math.abs(P[0]-WX)*M_PER_PX;
+  const tilt=Math.acos(Math.min(1,Math.abs(n[0]*WN[0]+n[1]*WN[1])))*180/Math.PI;
+  const offm=Math.abs((P[0]-WC[0])*WN[0]+(P[1]-WC[1])*WN[1])*M_PER_PX;
   const mism=dist(P,Pd)*M_PER_PX;
   const consistent=tilt<0.3&&offm<0.15&&mism<0.15;
   $("stat1").innerHTML=
@@ -424,16 +471,24 @@ trace1();
 /* =================== DEMO 2: double bounce + diffuse, data-driven =================== */
 const svg2=$("svg2");
 const T2={on:false,idx:0,th:0,queue:[]}; let raf2=null;
-const D2={BS:[90,300],AY:225,AX0:40,AX1:330,BX:330,BY0:225,BY1:540,UE:[160,420]};
+/* wall B is tilted 20° off perpendicular — exactly perpendicular walls would form a
+   corner retroreflector and force AoD ∥ AoA for every UE position */
+const TILT=20*Math.PI/180;
+const D2={BS:[90,300],AY:225,AX0:40,AX1:330,UE:[250,470],
+  BC:[330,225], BD:[Math.sin(TILT),Math.cos(TILT)], BLEN:320};
+D2.BN=[D2.BD[1],-D2.BD[0]];                                    // outward wall-B normal
+D2.BEND=[D2.BC[0]+D2.BD[0]*D2.BLEN,D2.BC[1]+D2.BD[1]*D2.BLEN];
+const mirrorB=p=>{const d=(p[0]-D2.BC[0])*D2.BN[0]+(p[1]-D2.BC[1])*D2.BN[1];
+  return [p[0]-2*d*D2.BN[0],p[1]-2*d*D2.BN[1]];};
 D2.VA1=[D2.BS[0],2*D2.AY-D2.BS[1]];          // mirror of BS in wall A (1st bounce)
-D2.VA2=[2*D2.BX-D2.VA1[0],D2.VA1[1]];        // mirror of VA1 in wall B (2nd bounce)
+D2.VA2=mirrorB(D2.VA1);                      // mirror of VA1 in wall B (2nd bounce)
 const ck2=id=>$(id).checked;
 function specular2(){
   const u=unit(sub(D2.VA2,D2.UE));
   return {L:dist(D2.UE,D2.VA2), phi:aoaOf(u)};
 }
 function render2(){
-  const {BS,UE,VA1,VA2,AY,AX0,AX1,BX,BY0,BY1}=D2;
+  const {BS,UE,VA1,VA2,AY,AX0,AX1,BC,BD,BN,BLEN,BEND}=D2;
   const sig=+$("sSig").value;
   $("oSig").textContent=(sig*M_PER_PX).toFixed(1)+" m";
   const sp=specular2();
@@ -443,9 +498,10 @@ function render2(){
   $("o2L").textContent=(L2*M_PER_PX).toFixed(1)+" m";
   $("o2P").textContent=degFmt(phi);
   /* true specular geometry (for the physical path + diffuse clouds) */
-  const ut=unit(sub(VA2,UE));
-  let tt=(BX-UE[0])/ut[0]; const P2t=[BX,UE[1]+tt*ut[1]];
-  const u1t=unit(sub(VA1,P2t)); tt=(AY-P2t[1])/u1t[1]; const P1t=[P2t[0]+tt*u1t[0],AY];
+  const dV=sub(VA2,UE);
+  const tB=((BC[0]-UE[0])*BN[0]+(BC[1]-UE[1])*BN[1])/(dV[0]*BN[0]+dV[1]*BN[1]);
+  const P2t=[UE[0]+tB*dV[0],UE[1]+tB*dV[1]];
+  const tA=(AY-P2t[1])/(VA1[1]-P2t[1]); const P1t=[P2t[0]+tA*(VA1[0]-P2t[0]),AY];
   /* the other measured angle: AoD at the BS (specular value + slider deviation) */
   const psi=aoaOf(unit(sub(P1t,BS))) + (+$("s2D").value);
   const ud=dirOf(psi);
@@ -460,14 +516,17 @@ function render2(){
   s+=seg([AX0,AY],[AX1,AY],"#16222e",5);
   for(let x=AX0;x<AX1;x+=18)s+=seg([x,AY],[x-9,AY-9],"#8a97a3",1.2);
   s+=txt(AX0+4,AY-14,"wall A — 1st bounce","#51606e",11);
-  s+=seg([BX,BY0],[BX,BY1],"#16222e",5);
-  for(let y=BY0;y<BY1;y+=18)s+=seg([BX,y],[BX+9,y+9],"#8a97a3",1.2);
-  s+=txt(BX+14,BY0+30,"wall B","#51606e",11)+txt(BX+14,BY0+44,"2nd bounce","#51606e",11);
+  s+=seg(BC,BEND,"#16222e",5);
+  for(let k=10;k<BLEN;k+=18){const q=[BC[0]+BD[0]*k,BC[1]+BD[1]*k];
+    s+=seg(q,[q[0]+7*(BN[0]+BD[0]),q[1]+7*(BN[1]+BD[1])],"#8a97a3",1.2);}
+  s+=txt(BC[0]+BD[0]*128+BN[0]*16,BC[1]+BD[1]*128+BN[1]*16,"wall B","#51606e",11)
+    +txt(BC[0]+BD[0]*142+BN[0]*16,BC[1]+BD[1]*142+BN[1]*16,"2nd bounce","#51606e",11);
   if(ck2("c2_mir")){
-    s+=seg([AX1,AY],[640,AY],"#8a97a3",1,"3 4",0.55)+seg([BX,10],[BX,BY0],"#8a97a3",1,"3 4",0.55);
+    s+=seg([AX1,AY],[640,AY],"#8a97a3",1,"3 4",0.55)
+      +seg([BC[0]-BD[0]*190,BC[1]-BD[1]*190],BC,"#8a97a3",1,"3 4",0.55);
     s+=seg(BS,VA1,"#8a97a3",1.2,"5 4",0.85)+seg(VA1,VA2,"#8a97a3",1.2,"5 4",0.85);
     s+=txt(BS[0]-12,262,"mirror in A","#8a97a3",10.5,"end")
-      +txt((VA1[0]+VA2[0])/2-30,VA1[1]-10,"mirror in B","#8a97a3",10.5);
+      +txt((VA1[0]+VA2[0])/2-36,(VA1[1]+VA2[1])/2-12,"mirror in B","#8a97a3",10.5);
   }
   /* ellipses from the data — during a trace they are drawn by the string, in queue order */
   const tState=k=>{ if(!T2.on) return "full"; const p=T2.queue.indexOf(k);
@@ -525,11 +584,13 @@ function render2(){
   if(sig>0){
     for(let i=0;i<N;i++){
       const q1=[Math.max(AX0+6,Math.min(AX1-6,P1t[0]+sig*G1[i])),AY];
-      const q2=[BX,Math.max(BY0+6,Math.min(BY1-6,P2t[1]+sig*G2[i]))];
+      const sP2=(P2t[0]-BC[0])*BD[0]+(P2t[1]-BC[1])*BD[1];
+      const s2=Math.max(8,Math.min(BLEN-8,sP2+sig*G2[i]));
+      const q2=[BC[0]+BD[0]*s2,BC[1]+BD[1]*s2];
       const w=Math.exp(-(G1[i]*G1[i]+G2[i]*G2[i])/2);
       if(i<7) s+=`<path d="M${BS[0]},${BS[1]} L${q1[0]},${q1[1]} L${q2[0]},${q2[1]} L${UE[0]},${UE[1]}" fill="none" stroke="#0e8f7e" stroke-width="1" opacity="${(0.08+0.22*w).toFixed(2)}"/>`;
       s+=`<circle cx="${q1[0]}" cy="${q1[1]-3}" r="${(2.2+2.8*w).toFixed(1)}" fill="#0e8f7e" opacity="${(0.16+0.62*w).toFixed(2)}"/>`;
-      s+=`<circle cx="${q2[0]+3}" cy="${q2[1]}" r="${(2.2+2.8*w).toFixed(1)}" fill="#0e8f7e" opacity="${(0.16+0.62*w).toFixed(2)}"/>`;
+      s+=`<circle cx="${q2[0]+3*BN[0]}" cy="${q2[1]+3*BN[1]}" r="${(2.2+2.8*w).toFixed(1)}" fill="#0e8f7e" opacity="${(0.16+0.62*w).toFixed(2)}"/>`;
       if(ck2("c2_vacld")){
         const Lq=dist(BS,q1)+dist(q1,q2)+dist(q2,UE);
         const uq=unit(sub(q2,UE));
@@ -558,7 +619,7 @@ function render2(){
   s+=ipMark(P1,"P₁",-6,-12)+ipMark(P2,"P₂",10,4);
   s+=bsMark(BS,"BS",-30,4)+ueMark(UE);
   svg2.innerHTML=s;
-  const offB=Math.abs(P2[0]-BX)*M_PER_PX, offA=Math.abs(P1[1]-AY)*M_PER_PX;
+  const offB=Math.abs((P2[0]-BC[0])*BN[0]+(P2[1]-BC[1])*BN[1])*M_PER_PX, offA=Math.abs(P1[1]-AY)*M_PER_PX;
   const consistent=offB<0.15&&offA<0.15&&dist(VA2d,VA2)*M_PER_PX<0.2;
   $("o2L1").textContent=((L2-dist(UE,P2))*M_PER_PX).toFixed(1)+" m";
   $("stat2").innerHTML=
@@ -590,8 +651,176 @@ function trace2(){
 ["sSig","s2L","s2P","s2D"].forEach(id=>$(id).addEventListener("input",()=>{stop2();render2();}));
 $("b2R").addEventListener("click",()=>{$("s2L").value=0;$("s2P").value=0;$("s2D").value=0;stop2();render2();});
 $("b2T").addEventListener("click",trace2);
-makeDraggable(svg2,()=>D2.UE,p=>{D2.UE=p;$("s2L").value=0;$("s2P").value=0;$("s2D").value=0;stop2();},[80,330,300,500],render2);
+makeDraggable(svg2,()=>D2.UE,p=>{D2.UE=p;$("s2L").value=0;$("s2P").value=0;$("s2D").value=0;stop2();},[230,430,300,510],render2);
 render2();
+
+/* =================== DEMO 3: double bounce between parallel walls =================== */
+const svg3=$("svg3");
+const T3={on:false,idx:0,th:0,queue:[]}; let raf3=null;
+const D3={BS:[150,480],UE:[250,230],LX:100,RX:320,WY0:150,WY1:600};
+D3.VA1=[2*D3.RX-D3.BS[0],D3.BS[1]];   // mirror of BS in wall R (1st bounce)
+D3.VA2=[2*D3.LX-D3.VA1[0],D3.VA1[1]]; // mirror of VA1 in wall L (2nd bounce)
+const ck3=id=>$(id).checked;
+function specular3(){
+  const dV=sub(D3.VA2,D3.UE);
+  const t=(D3.LX-D3.UE[0])/dV[0];
+  const P2t=[D3.LX,D3.UE[1]+t*dV[1]];
+  const t1=(D3.RX-P2t[0])/(D3.VA1[0]-P2t[0]);
+  const P1t=[D3.RX,P2t[1]+t1*(D3.VA1[1]-P2t[1])];
+  return {L:dist(D3.UE,D3.VA2),phi:aoaOf(unit(dV)),psi:aoaOf(unit(sub(P1t,D3.BS))),P1t,P2t};
+}
+function render3(){
+  const {BS,UE,VA1,VA2,LX,RX,WY0,WY1}=D3;
+  const sig=+$("sSig3").value;
+  $("oSig3").textContent=(sig*M_PER_PX).toFixed(1)+" m";
+  const sp=specular3();
+  const L2=sp.L + (+$("s3L").value)/M_PER_PX;
+  const phi=sp.phi + (+$("s3P").value);
+  const u=dirOf(phi);
+  const psi=sp.psi + (+$("s3D").value);
+  const ud=dirOf(psi);
+  $("o3L").textContent=(L2*M_PER_PX).toFixed(1)+" m";
+  $("o3P").textContent=degFmt(phi);
+  $("o3D").textContent=degFmt(psi);
+  const {P1t,P2t}=sp;
+  /* estimates from the data — identical constructions to the tilted-corner demo */
+  const P2=rayEllipse(VA1,UE,u,L2);
+  const Lseg=L2-dist(UE,P2);
+  const P1=rayEllipse(P2,BS,ud,Lseg);
+  const VA2d=[UE[0]+L2*u[0],UE[1]+L2*u[1]];
+  $("o3L1").textContent=(Lseg*M_PER_PX).toFixed(1)+" m";
+  let s="";
+  /* walls */
+  s+=seg([LX,WY0],[LX,WY1],"#16222e",5);
+  for(let y=WY0;y<WY1;y+=18)s+=seg([LX,y],[LX-9,y+9],"#8a97a3",1.2);
+  s+=txt(LX-14,WY0+16,"wall L — 2nd bounce","#51606e",11,"end");
+  s+=seg([RX,WY0],[RX,WY1],"#16222e",5);
+  for(let y=WY0;y<WY1;y+=18)s+=seg([RX,y],[RX+9,y+9],"#8a97a3",1.2);
+  s+=txt(RX+14,WY0+16,"wall R — 1st bounce","#51606e",11);
+  if(ck3("c3_mir")){
+    s+=seg(BS,VA1,"#8a97a3",1.2,"5 4",0.85)+seg(VA1,VA2,"#8a97a3",1.2,"5 4",0.85);
+    s+=txt((BS[0]+VA1[0])/2+40,BS[1]-8,"mirror in R","#8a97a3",10.5)
+      +txt((VA1[0]+VA2[0])/2-120,VA1[1]-8,"mirror in L","#8a97a3",10.5);
+  }
+  /* ellipses from the data, traced in queue order */
+  const tS=k=>{ if(!T3.on) return "full"; const p=T3.queue.indexOf(k);
+    return p<0||p<T3.idx?"full":(p===T3.idx?"trace":"hidden"); };
+  if(ck3("c3_bad")){
+    const st=tS("bad"), ep=ellParams(BS,UE,L2);
+    if(st==="trace"&&ep){
+      s+=ellPartial(ep,T3.th,"#c22f2f",1.6,"7 5");
+      s+=`<circle cx="${BS[0]}" cy="${BS[1]}" r="3" fill="#c22f2f"/><circle cx="${UE[0]}" cy="${UE[1]}" r="3" fill="#c22f2f"/>`;
+      s+=stringViz(BS,UE,ellPoint(ep,T3.th),"#c22f2f","1-bounce hyp. — string at BS &amp; UE: ‖x−UE‖ + ‖x−BS‖",[-390,56]);
+    } else if(st==="full"){
+      s+=ellipse(BS,UE,L2,"#c22f2f",1.5,"7 5",0.75)
+        +pin(BS,"#c22f2f",11)+pin(UE,"#c22f2f",16);
+      const ph=rayEllipse(BS,UE,u,L2);
+      const n1=unit(sub(VA2d,BS)), w1=[-n1[1],n1[0]];
+      s+=seg(BS,ph,"#c22f2f",1.1,"2 3",0.65)+seg(UE,ph,"#c22f2f",1.1,"2 3",0.65);
+      const dbs=dist(ph,BS)*M_PER_PX, due=dist(ph,UE)*M_PER_PX;
+      s+=txt((BS[0]+ph[0])/2-4,(BS[1]+ph[1])/2-8,dbs.toFixed(1),"#c22f2f",10)
+        +txt((UE[0]+ph[0])/2+8,(UE[1]+ph[1])/2+13,due.toFixed(1),"#c22f2f",10);
+      s+=seg([ph[0]-120*w1[0],ph[1]-120*w1[1]],[ph[0]+120*w1[0],ph[1]+120*w1[1]],"#c22f2f",3,"6 4",0.5);
+      s+=`<circle cx="${ph[0]}" cy="${ph[1]}" r="4.5" fill="none" stroke="#c22f2f" stroke-width="2"/>`
+        +txt(ph[0]-12,ph[1]-10,"P if 1 bounce","#c22f2f",10.5,"end")
+        +txt(ph[0]-12,ph[1]+4,`${dbs.toFixed(1)}+${due.toFixed(1)} = ${(dbs+due).toFixed(1)} m — the full length`,"#c22f2f",10,"end")
+        +txt(ph[0]-120*w1[0]-8,ph[1]-120*w1[1]-4,"implied wall — in no map","#c22f2f",10.5,"end");
+    }
+  }
+  if(ck3("c3_good")){
+    const st=tS("good"), ep=ellParams(VA1,UE,L2);
+    if(st==="trace"&&ep){
+      s+=ellPartial(ep,T3.th,"#0e8f7e",2);
+      s+=`<circle cx="${VA1[0]}" cy="${VA1[1]}" r="3" fill="#0a6b5e"/><circle cx="${UE[0]}" cy="${UE[1]}" r="3" fill="#0a6b5e"/>`;
+      s+=stringViz(VA1,UE,ellPoint(ep,T3.th),"#0a6b5e","2-bounce hyp. — same L₂, string at VA¹ &amp; UE: ‖x−UE‖ + ‖x−VA¹‖",[-390,56]);
+    } else if(st==="full"){
+      s+=ellipse(VA1,UE,L2,"#0e8f7e",1.8,null,0.85)
+        +pin(VA1,"#0e8f7e",11)+pin(UE,"#0e8f7e",20);
+    }
+  }
+  if(ck3("c3_e1")){
+    const st=tS("e1"), ep=ellParams(BS,P2,Lseg);
+    if(st==="trace"&&ep){
+      s+=ellPartial(ep,T3.th,"#2ca02c",2);
+      s+=`<circle cx="${BS[0]}" cy="${BS[1]}" r="3" fill="#1d7a1d"/><circle cx="${P2[0]}" cy="${P2[1]}" r="3" fill="#1d7a1d"/>`;
+      s+=stringViz(BS,P2,ellPoint(ep,T3.th),"#1d7a1d","bounce-1 segment — leftover string L₂ − ‖UE→P₂‖ at BS &amp; P₂: ‖x−P₂‖ + ‖x−BS‖",[-390,56]);
+    } else if(st==="full"&&ep){
+      s+=ellipse(BS,P2,Lseg,"#2ca02c",1.7,null,0.85)
+        +pin(BS,"#2ca02c",15)+pin(P2,"#2ca02c",10);
+    }
+  }
+  /* diffuse clouds on both walls */
+  const N=G1.length;
+  if(sig>0){
+    for(let i=0;i<N;i++){
+      const q1=[RX,Math.max(WY0+6,Math.min(WY1-6,P1t[1]+sig*G1[i]))];
+      const q2=[LX,Math.max(WY0+6,Math.min(WY1-6,P2t[1]+sig*G2[i]))];
+      const w=Math.exp(-(G1[i]*G1[i]+G2[i]*G2[i])/2);
+      if(i<7) s+=`<path d="M${BS[0]},${BS[1]} L${q1[0]},${q1[1]} L${q2[0]},${q2[1]} L${UE[0]},${UE[1]}" fill="none" stroke="#0e8f7e" stroke-width="1" opacity="${(0.08+0.22*w).toFixed(2)}"/>`;
+      s+=`<circle cx="${q1[0]+3}" cy="${q1[1]}" r="${(2.2+2.8*w).toFixed(1)}" fill="#0e8f7e" opacity="${(0.16+0.62*w).toFixed(2)}"/>`;
+      s+=`<circle cx="${q2[0]-3}" cy="${q2[1]}" r="${(2.2+2.8*w).toFixed(1)}" fill="#0e8f7e" opacity="${(0.16+0.62*w).toFixed(2)}"/>`;
+      if(ck3("c3_vacld")){
+        const Lq=dist(BS,q1)+dist(q1,q2)+dist(q2,UE);
+        const uq=unit(sub(q2,UE));
+        const vq=[UE[0]+Lq*uq[0],UE[1]+Lq*uq[1]];
+        s+=`<circle cx="${vq[0]}" cy="${vq[1]}" r="${(1.6+2.2*w).toFixed(1)}" fill="#7c4dbe" opacity="${(0.12+0.55*w).toFixed(2)}"/>`;
+      }
+    }
+  }
+  /* physical specular path */
+  s+=arrow(BS,P1t,"#51606e",2)+arrow(P1t,P2t,"#51606e",2)+arrow(P2t,UE,"#51606e",2);
+  /* measured rays */
+  if(ck3("c3_ray")){
+    s+=seg(P2,VA2d,"#7c4dbe",1.8,"5 4",0.9);
+    s+=arrow(UE,[UE[0]+u[0]*(L2+30),UE[1]+u[1]*(L2+30)],"#16222e",1.4,"6 4",0.5);
+    s+=txt(UE[0]+u[0]*60+6,UE[1]+u[1]*60-8,"AoA φ","#16222e",11);
+    s+=txt((P2[0]+VA2d[0])/2+8,(P2[1]+VA2d[1])/2-6,"…continue to L₂","#5d3691",10.5);
+    const dP1=dist(BS,P1);
+    s+=arrow(BS,[BS[0]+ud[0]*(dP1+42),BS[1]+ud[1]*(dP1+42)],"#16222e",1.4,"6 4",0.5);
+    s+=txt(BS[0]+ud[0]*58+6,BS[1]+ud[1]*58+16,"AoD ψ","#16222e",11);
+  }
+  /* markers */
+  s+=vaMark(VA1,"VA¹ (bounce 1)");
+  s+=vaMark(VA2,"VA² (bounce 2)");
+  s+=vaDot(VA2d);
+  s+=`<circle cx="${P1t[0]}" cy="${P1t[1]}" r="2.6" fill="#0a6b5e" opacity="0.85"/><circle cx="${P2t[0]}" cy="${P2t[1]}" r="2.6" fill="#0a6b5e" opacity="0.85"/>`;
+  s+=ipMark(P1,"P₁",12,-10)+ipMark(P2,"P₂",-30,-10);
+  s+=bsMark(BS,"BS",12,20)+ueMark(UE);
+  svg3.innerHTML=s;
+  const offR=Math.abs(P1[0]-RX)*M_PER_PX, offL=Math.abs(P2[0]-LX)*M_PER_PX;
+  const consistent=offR<0.15&&offL<0.15&&dist(VA2d,VA2)*M_PER_PX<0.2;
+  $("stat3").innerHTML=
+    `<b>L₂</b> = ${fmt(L2)}<br><b>φ</b> = ${degFmt(phi)} · <b>ψ</b> = ${degFmt(psi)}<br>`+
+    `corridor lock: ψ = φ ± 180° — first &amp; last legs parallel<br>`+
+    (consistent?`<span class="ok">✓ data specular-consistent — P₁ on wall R, P₂ on wall L</span>`
+               :`<span class="off">P₁ off wall R by ${offR.toFixed(2)} m · P₂ off wall L by ${offL.toFixed(2)} m · VA² off by ${(dist(VA2d,VA2)*M_PER_PX).toFixed(2)} m</span>`)+
+    `<br>${sig>0?`${N} scattered points / wall`:"specular (σ = 0)"}`;
+}
+function stop3(){T3.on=false;if(raf3){cancelAnimationFrame(raf3);raf3=null;}}
+function trace3(){
+  stop3();
+  T3.queue=["bad","e1","good"].filter(k=>ck3("c3_"+k));
+  if(!T3.queue.length||reduced){render3();return;}
+  T3.on=true;T3.idx=0;T3.th=0;
+  const DUR=3200; let t0=performance.now();
+  const tick=now=>{
+    let f=(now-t0)/DUR;
+    if(f>=1){
+      T3.idx++; t0=now; f=0;
+      if(T3.idx>=T3.queue.length){stop3();render3();return;}
+    }
+    T3.th=2*Math.PI*Math.min(1,f);
+    render3();
+    raf3=requestAnimationFrame(tick);
+  };
+  raf3=requestAnimationFrame(tick);
+}
+["c3_mir","c3_ray","c3_bad","c3_good","c3_e1","c3_vacld"].forEach(id=>$(id).addEventListener("change",()=>{stop3();render3();}));
+["sSig3","s3L","s3P","s3D"].forEach(id=>$(id).addEventListener("input",()=>{stop3();render3();}));
+$("b3R").addEventListener("click",()=>{$("s3L").value=0;$("s3P").value=0;$("s3D").value=0;stop3();render3();});
+$("b3T").addEventListener("click",trace3);
+makeDraggable(svg3,()=>D3.UE,p=>{D3.UE=p;$("s3L").value=0;$("s3P").value=0;$("s3D").value=0;stop3();},[160,200,300,400],render3);
+render3();
 })();
 </script>
 </body>
