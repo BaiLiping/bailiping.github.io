@@ -252,7 +252,7 @@ footer a{color:var(--ink-soft)}
       <div class="hint">drag pose a (green) · pose b is a second, fixed snapshot of the same static map · data at both poses is perfectly specular</div>
     </div>
   </div>
-  <div class="figcap"><b>Read it.</b> Each purple curve is everything one pose can say about VA¹ from its own (τ, φ, ψ): a one-parameter family of coherent double-bounce explanations. The static-map constraint is that all poses’ curves pass through the <em>same</em> VA¹ — their crossing. The faint walls are ground truth, drawn only for reference; nothing in the construction uses them.</div></div>
+  <div class="figcap"><b>Read it.</b> Each purple curve is everything one pose can say about VA¹ from its own (τ, φ, ψ): a one-parameter family of coherent double-bounce explanations. The static-map constraint is that all poses’ curves pass through the <em>same</em> VA¹ — their crossing. Arrowheads give the direction of the family parameter — the last leg growing, L₁ shrinking — and the labels at pose a’s endpoints give the L₁ range. The faint walls are ground truth, drawn only for reference; nothing in the construction uses them.</div></div>
 </section>
 
 <!-- ============ 06 diffuse & splats ============ -->
@@ -904,11 +904,16 @@ function render4(){
   /* candidate curves */
   if(ck4("c4_famA")&&famA.length){
     s+=`<path d="${poly4(famA)}" fill="none" stroke="#7c4dbe" stroke-width="2" opacity="0.85"/>`;
+    s+=curveArrows(famA,"#7c4dbe",0.9);
     const e=famA[2]||famA[0];
     s+=txt(e.cand[0]-8,e.cand[1]-10,"VA¹ candidates — pose a","#5d3691",10.5,"end");
+    const c0=famA[0], c1=famA[famA.length-1];
+    s+=txt(c0.cand[0]+10,c0.cand[1]+4,`L₁ = ${((spA.L-c0.t2)*M_PER_PX).toFixed(1)} m`,"#5d3691",10)
+      +txt(c1.cand[0]+10,c1.cand[1]+4,`L₁ = ${((spA.L-c1.t2)*M_PER_PX).toFixed(1)} m`,"#5d3691",10);
   }
   if(ck4("c4_famB")&&famB.length){
     s+=`<path d="${poly4(famB)}" fill="none" stroke="#7c4dbe" stroke-width="1.8" stroke-dasharray="5 4" opacity="0.75"/>`;
+    s+=curveArrows(famB,"#7c4dbe",0.55);
     const e=famB[famB.length-3]||famB[famB.length-1];
     s+=txt(e.cand[0]+10,e.cand[1]+4,"pose b","#5d3691",10.5);
   }
@@ -948,6 +953,18 @@ function render4(){
   }
 }
 function poly4(fam){return "M"+fam.map(m=>m.cand[0].toFixed(1)+","+m.cand[1].toFixed(1)).join(" L");}
+/* small arrowheads along a candidate curve, pointing toward growing t2 (shrinking L1) */
+function curveArrows(fam,color,o){
+  let s="";
+  for(const fr of [0.28,0.58,0.88]){
+    const i=Math.max(1,Math.min(fam.length-2,Math.round(fr*(fam.length-1))));
+    const t=unit(sub(fam[i+1].cand,fam[i-1].cand));
+    const p=fam[i].cand,h=8;
+    const q1=[p[0]-h*t[0]+4*t[1],p[1]-h*t[1]-4*t[0]],q2=[p[0]-h*t[0]-4*t[1],p[1]-h*t[1]+4*t[0]];
+    s+=`<path d="M${p[0]},${p[1]} L${q1[0]},${q1[1]} L${q2[0]},${q2[1]} Z" fill="${color}" opacity="${o??0.9}"/>`;
+  }
+  return s;
+}
 ["c4_famA","c4_famB","c4_mem"].forEach(id=>$(id).addEventListener("change",render4));
 $("s4t").addEventListener("input",render4);
 makeDraggable(svg4,()=>D4.UEa,p=>{D4.UEa=p;},[230,430,300,510],render4);
