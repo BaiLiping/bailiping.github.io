@@ -54,10 +54,10 @@ p em{font-style:italic}
 .fig .body{padding:16px}
 .figcap{border-top:1px solid var(--line);padding:9px 16px;font:11.5px/1.55 var(--mono);color:var(--ink-soft);background:#fbfcfd}
 .figcap b{color:var(--ink);font-weight:600}
-.split{display:grid;grid-template-columns:1fr 240px;gap:16px}
+.split{display:grid;grid-template-columns:1fr 250px;gap:16px}
 @media (max-width:840px){ .split{grid-template-columns:1fr} }
 .fig svg{display:block;width:100%;height:auto;background:#fdfefe;border:1px solid var(--line);border-radius:4px;touch-action:none}
-.rail{display:flex;flex-direction:column;gap:12px;font-family:var(--sans)}
+.rail{display:flex;flex-direction:column;gap:11px;font-family:var(--sans)}
 .rail h4{margin:2px 0 0;font:600 11px var(--mono);letter-spacing:.12em;text-transform:uppercase;color:var(--ink-faint)}
 .rail label.ck{display:flex;gap:8px;align-items:center;font:13px var(--sans);color:var(--ink);cursor:pointer}
 .rail label.ck input{accent-color:var(--ink)}
@@ -65,8 +65,12 @@ p em{font-style:italic}
 .ctl label{display:flex;justify-content:space-between;font:12.5px var(--sans);color:var(--ink-soft);margin:0 0 3px}
 .ctl label output{font-family:var(--mono);color:var(--ink)}
 input[type=range]{width:100%;accent-color:var(--ip)}
+.ctl input.meas{accent-color:var(--meas)}
+button.reset{font:12px var(--mono);cursor:pointer;padding:5px 10px;border:1px solid var(--line);border-radius:5px;background:#fff;color:var(--ink)}
+button.reset:hover{border-color:var(--ink-soft)}
 .statline{font:12px/1.8 var(--mono);color:var(--ink-soft);border-top:1px dashed var(--line);padding-top:10px}
 .statline b{color:var(--ink);font-weight:600}
+.statline .ok{color:#1d7a1d} .statline .off{color:var(--err)}
 .hint{font:12.5px var(--sans);color:var(--ink-faint)}
 button:focus-visible,input:focus-visible,a:focus-visible{outline:2px solid var(--va);outline-offset:2px}
 table{border-collapse:collapse;width:100%;font:14px/1.55 var(--sans);background:#fff}
@@ -109,38 +113,54 @@ footer a{color:var(--ink-soft)}
     <span class="c2"><b>angle</b> φ (AoA at the UE)</span> : a <b>ray</b> out of the UE — the direction the energy came from.<br>
     <span class="c3"><b>pathloss</b> → a weight</span> : how much energy survived; it does not move any geometry, it says how much to <b>trust / how brightly to paint</b> whatever the geometry produces.
   </div>
-  <p class="lede">The ray and the ellipse intersect in exactly one point on the UE side — that intersection is the <em>incidence point</em>. Walking the full length L along the same ray lands on the <em>virtual anchor</em>. The two demos below make this concrete, first for one bounce, then for two.</p>
+  <p class="lede">The ray and the ellipse intersect in exactly one point on the UE side — that intersection is the <em>incidence point</em>. Walking the full length L along the same ray lands on the <em>virtual anchor</em>. In both demos below, <b>the drawing is constructed from the data</b>: the two orange sliders <em>are</em> the measurement (τ·c and φ), and every curve and marker follows from them. Drag the UE and the sliders re-sync to what that UE would actually measure; nudge a slider and you inject estimation error.</p>
 </section>
 
 <!-- ============ 02 single bounce ============ -->
 <section class="sec" id="single">
-  <h2><span class="no">02</span>Single bounce: the duality, live</h2>
-  <p class="lede">One wall. The path BS → P → UE is specular, so the virtual anchor <b>VA</b> is the mirror image of the BS behind the wall. Two facts do all the work: <i>‖UE − VA‖ = L</i> (the mirror preserves the path length) and the AoA ray from the UE points straight at VA. <b>Drag the UE</b> — the VA never moves (it is a property of BS + wall only), while the incidence point slides along the wall.</p>
+  <h2><span class="no">02</span>Single bounce: draw everything from (τ, φ)</h2>
+  <p class="lede">One wall — but the receiver does not know it. From the data alone: the <span style="color:var(--meas-deep)"><b>delay</b></span> draws the ellipse, the <span style="color:var(--meas-deep)"><b>angle</b></span> draws the ray, their intersection is the incidence point P, the full-length walk is the VA — and the wall itself is <em>inferred</em> as the perpendicular bisector of BS↔VA through P. With clean data the inferred wall lands exactly on the true wall (faint grey). Now perturb τ or φ with the sliders: watch the ellipse breathe, P slide, and the inferred wall tilt away from the truth — measurement error becoming map error.</p>
 
   <div class="fig"><div class="body split">
-    <svg id="svg1" viewBox="-120 60 760 560" role="img" aria-label="single bounce virtual anchor and incidence point demo"></svg>
+    <svg id="svg1" viewBox="-170 50 810 590" role="img" aria-label="single bounce virtual anchor and incidence point demo, constructed from delay and angle data"></svg>
     <div class="rail">
+      <h4>the data (drives the drawing)</h4>
+      <div class="ctl">
+        <label><span>delay L = cτ</span> <output id="o1L"></output></label>
+        <input type="range" class="meas" id="s1L" min="-3" max="3" step="0.05" value="0">
+        <label style="margin-top:7px"><span>AoA φ</span> <output id="o1P"></output></label>
+        <input type="range" class="meas" id="s1P" min="-6" max="6" step="0.1" value="0">
+        <button class="reset" id="b1R" style="margin-top:7px">reset to specular data</button>
+      </div>
       <h4>layers</h4>
       <label class="ck"><input type="checkbox" id="c1_ell" checked> <span class="sw" style="background:var(--meas)"></span> delay ellipse (foci BS, UE)</label>
       <label class="ck"><input type="checkbox" id="c1_ray" checked> <span class="sw" style="background:var(--ink)"></span> AoA ray at the UE</label>
       <label class="ck"><input type="checkbox" id="c1_va" checked> <span class="sw" style="background:var(--va)"></span> virtual anchor (walk full L)</label>
-      <label class="ck"><input type="checkbox" id="c1_ip" checked> <span class="sw" style="background:var(--ip)"></span> incidence point (stop at ellipse)</label>
+      <label class="ck"><input type="checkbox" id="c1_ip" checked> <span class="sw" style="background:var(--ip)"></span> incidence point + inferred wall</label>
       <label class="ck"><input type="checkbox" id="c1_mir"> <span class="sw" style="background:var(--ink-faint)"></span> mirror construction</label>
       <div class="statline" id="stat1"></div>
-      <div class="hint">drag the green UE dot</div>
+      <div class="hint">drag the green UE dot — sliders re-sync to its specular measurement</div>
     </div>
   </div>
-  <div class="figcap"><b>Read it.</b> d₁ + d₂ = L puts P on the orange ellipse; the mirror makes ‖P→VA‖ = d₂, so the same ray, extended to the full measured length L, ends exactly at VA. Delay + angle alone cannot tell the two readings apart — you choose the representation.</div></div>
+  <div class="figcap"><b>Read it.</b> d₁ + d₂ = L puts P on the orange ellipse; the mirror makes ‖P→VA‖ = d₂, so the same ray, extended to the full measured length L, ends exactly at VA. The dark wall segment is drawn purely from (τ, φ): perpendicular bisector of BS↔VA, through P. Delay + angle cannot tell the two readings apart — you choose the representation.</div></div>
 </section>
 
 <!-- ============ 03 double bounce ============ -->
 <section class="sec" id="double">
   <h2><span class="no">03</span>Double bounce: two virtual anchors, two incidence points</h2>
-  <p class="lede">Now the path bounces twice: BS → P₁ (wall A) → P₂ (wall B) → UE. Mirroring composes: <b>VA¹</b> = BS mirrored in wall A (the first-bounce anchor), <b>VA²</b> = VA¹ mirrored in wall B. The UE still sees a clean LOS-like anchor — ‖UE − VA²‖ = L₂ and the AoA ray points at VA² — which is exactly why BP-SLAM can treat second-order paths as just another static feature. But the incidence points need care: <b>the naive BS–UE delay ellipse no longer passes through any bounce point</b> (the red ✗ is where it cuts the AoA ray — off the wall). The fix: use <b>VA¹ and the UE as the foci</b>. Then the ellipse with the same L₂ passes exactly through P₂, and P₁ follows by aiming from P₂ at VA¹. Slide the roughness up to let the wall scatter: the two specular points diffuse into <em>clouds</em> of reflection points, and the once point-like VA² smears into a cloud too.</p>
+  <p class="lede">Now the path bounces twice: BS → P₁ (wall A) → P₂ (wall B) → UE. Mirroring composes: <b>VA¹</b> = BS mirrored in wall A (the first-bounce anchor), <b>VA²</b> = VA¹ mirrored in wall B. The UE still sees a clean LOS-like anchor — ‖UE − VA²‖ = L₂ and the AoA ray points at VA² — which is exactly why BP-SLAM can treat second-order paths as just another static feature. The incidence points need care: <b>the naive BS–UE delay ellipse no longer passes through any bounce point</b> (the red ✗ is where it cuts the AoA ray — off the wall). The fix: use <b>VA¹ and the UE as the foci</b> — the ellipse with the same measured L₂ then passes exactly through P₂, and P₁ follows by aiming from P₂ at VA¹. Here too the drawing runs on the data: perturb τ or φ and the estimated P₂ slides <em>off the wall</em> while the diffuse clouds stay on the true surface. Slide the roughness up to let the wall scatter: the specular points diffuse into clouds of reflection points, and the once point-like VA² smears into a cloud too.</p>
 
   <div class="fig"><div class="body split">
-    <svg id="svg2" viewBox="-150 30 850 540" role="img" aria-label="double bounce demo with two virtual anchors, incidence points, and diffuse scattering"></svg>
+    <svg id="svg2" viewBox="-150 -20 850 660" role="img" aria-label="double bounce demo with two virtual anchors, incidence points, and diffuse scattering, constructed from delay and angle data"></svg>
     <div class="rail">
+      <h4>the data (drives the drawing)</h4>
+      <div class="ctl">
+        <label><span>delay L₂ = cτ</span> <output id="o2L"></output></label>
+        <input type="range" class="meas" id="s2L" min="-3" max="3" step="0.05" value="0">
+        <label style="margin-top:7px"><span>AoA φ</span> <output id="o2P"></output></label>
+        <input type="range" class="meas" id="s2P" min="-6" max="6" step="0.1" value="0">
+        <button class="reset" id="b2R" style="margin-top:7px">reset to specular data</button>
+      </div>
       <h4>layers</h4>
       <label class="ck"><input type="checkbox" id="c2_mir" checked> <span class="sw" style="background:var(--ink-faint)"></span> mirror construction</label>
       <label class="ck"><input type="checkbox" id="c2_ray" checked> <span class="sw" style="background:var(--ink)"></span> AoA ray → VA²</label>
@@ -148,14 +168,14 @@ footer a{color:var(--ink-soft)}
       <label class="ck"><input type="checkbox" id="c2_good" checked> <span class="sw" style="background:var(--ip)"></span> correct ellipse (foci VA¹, UE)</label>
       <label class="ck"><input type="checkbox" id="c2_vacld" checked> <span class="sw" style="background:var(--va)"></span> VA cloud (diffuse)</label>
       <div class="ctl">
-        <label><span>surface roughness σ</span> <output id="oSig">0.6 m</output></label>
+        <label><span>surface roughness σ</span> <output id="oSig"></output></label>
         <input type="range" id="sSig" min="0" max="28" step="1" value="12">
       </div>
       <div class="statline" id="stat2"></div>
       <div class="hint">drag the green UE dot · σ = 0 recovers pure specular</div>
     </div>
   </div>
-  <div class="figcap"><b>Legend.</b> ■ BS · ● UE (draggable) · ◆ purple = virtual anchors VA¹ (bounce 1), VA² (bounce 2) · ● teal = incidence points P₁, P₂ and their diffuse clouds · dot size/opacity ∝ pathloss weight of that scattered sub-path · ✗ red = phantom point where the naive BS–UE ellipse cuts the AoA ray (on no wall).</div></div>
+  <div class="figcap"><b>Legend.</b> ■ BS · ● UE (draggable) · ◆ purple = virtual anchors VA¹ (bounce 1), VA² (bounce 2; hollow = geometric, filled = from data) · ● teal = incidence points P₁, P₂ estimated from the data, with the diffuse clouds on the true walls · dot size/opacity ∝ pathloss weight of that scattered sub-path · ✗ red = phantom point where the naive BS–UE ellipse cuts the AoA ray (on no wall).</div></div>
 </section>
 
 <!-- ============ 04 diffuse & splats ============ -->
@@ -215,9 +235,11 @@ function rayEllipse(F,O,u,L){
 const bsMark=(p,label,lx,ly)=>`<rect x="${p[0]-6}" y="${p[1]-6}" width="12" height="12" fill="#16222e"/>`+txt(p[0]+(lx??10),p[1]+(ly??4),label??"BS","#16222e",12);
 const ueMark=(p,label)=>`<circle cx="${p[0]}" cy="${p[1]}" r="7" fill="#2ca02c" stroke="#fff" stroke-width="2"/><circle cx="${p[0]}" cy="${p[1]}" r="12" fill="none" stroke="#2ca02c" stroke-dasharray="2 3" opacity="0.7"/>`+txt(p[0]+15,p[1]+4,label??"UE","#1d7a1d",12);
 const vaMark=(p,label,o)=>`<g opacity="${o??1}"><rect x="${p[0]-5.5}" y="${p[1]-5.5}" width="11" height="11" transform="rotate(45 ${p[0]} ${p[1]})" fill="none" stroke="#7c4dbe" stroke-width="2.4"/></g>`+txt(p[0]+14,p[1]-10,label,"#5d3691",12);
+const vaDot=p=>`<rect x="${p[0]-4}" y="${p[1]-4}" width="8" height="8" transform="rotate(45 ${p[0]} ${p[1]})" fill="#7c4dbe"/>`;
 const ipMark=(p,label,dx,dy)=>`<circle cx="${p[0]}" cy="${p[1]}" r="5" fill="#0e8f7e"/>`+txt(p[0]+(dx??9),p[1]+(dy??-8),label,"#0a6b5e",12);
 function fmt(Lpx){const m=Lpx*M_PER_PX;return `${m.toFixed(1)} m · τ ${(m/C_M_PER_NS).toFixed(0)} ns`;}
-function aoaDeg(u){return ((-Math.atan2(u[1],u[0])*180/Math.PI)+360)%360;}
+const aoaOf=u=>((-Math.atan2(u[1],u[0])*180/Math.PI)+360)%360;
+const dirOf=phiDeg=>{const a=phiDeg*Math.PI/180;return [Math.cos(a),-Math.sin(a)];};
 /* seeded gaussians (deterministic across loads) */
 function gaussians(seed,n){
   let s=seed>>>0; const out=[];
@@ -243,35 +265,36 @@ function makeDraggable(svg,getP,setP,box,render){
     setP([Math.max(box[0],Math.min(box[2],p[0])),Math.max(box[1],Math.min(box[3],p[1]))]);
     render();
   });
-  const up=ev=>{drag=false;};
+  const up=()=>{drag=false;};
   svg.addEventListener("pointerup",up); svg.addEventListener("pointercancel",up);
 }
+const $=id=>document.getElementById(id);
 
-/* =================== DEMO 1: single bounce =================== */
-const svg1=document.getElementById("svg1");
+/* =================== DEMO 1: single bounce, data-driven =================== */
+const svg1=$("svg1");
 const D1={BS:[110,280],WX:300,WY0:150,WY1:520,UE:[170,380]};
-D1.VA=[2*D1.WX-D1.BS[0],D1.BS[1]];
-const ck1=id=>document.getElementById(id).checked;
+D1.VAtrue=[2*D1.WX-D1.BS[0],D1.BS[1]];
+const ck1=id=>$(id).checked;
+function specular1(){ // the data a clean estimator would return at the current UE
+  const u=unit(sub(D1.VAtrue,D1.UE));
+  return {L:dist(D1.UE,D1.VAtrue), phi:aoaOf(u)};
+}
 function render1(){
-  const {BS,UE,VA,WX,WY0,WY1}=D1;
-  const L=dist(UE,VA);
-  const u=unit(sub(VA,UE));
-  const t=(WX-UE[0])/u[0], P=[WX,UE[1]+t*u[1]];
-  const d1=dist(UE,P), d2=dist(P,BS);
+  const {BS,UE,WX,WY0,WY1}=D1;
+  const sp=specular1();
+  const L=sp.L + (+$("s1L").value)/M_PER_PX;   // measured length (data)
+  const phi=sp.phi + (+$("s1P").value);        // measured AoA (data)
+  const u=dirOf(phi);
+  const P=rayEllipse(BS,UE,u,L);               // incidence point from data
+  const VA=[UE[0]+L*u[0],UE[1]+L*u[1]];        // virtual anchor from data
+  $("o1L").textContent=(L*M_PER_PX).toFixed(1)+" m";
+  $("o1P").textContent=phi.toFixed(1)+"°";
   let s="";
-  /* wall */
-  s+=seg([WX,WY0],[WX,WY1],"#16222e",5);
-  for(let y=WY0;y<WY1;y+=18)s+=seg([WX,y],[WX+9,y+9],"#8a97a3",1.2);
-  s+=txt(WX+14,WY0+16,"wall","#51606e",11);
-  if(ck1("c1_mir")){
-    s+=seg([WX,80],[WX,WY0],"#8a97a3",1,"3 4",0.7)+seg([WX,WY1],[WX,600],"#8a97a3",1,"3 4",0.7);
-    s+=seg(BS,VA,"#8a97a3",1.2,"5 4",0.85)
-      +`<path d="M${WX-8},${BS[1]-8} h8 v8" fill="none" stroke="#8a97a3" stroke-width="1.2"/>`
-      +txt((BS[0]+VA[0])/2-30,BS[1]-10,"mirror in the wall","#8a97a3",10.5);
-  }
+  /* ghost true wall (unknown to the receiver) */
+  s+=seg([WX,WY0],[WX,WY1],"#8a97a3",3,null,0.35)+txt(WX+10,WY0+16,"true wall","#8a97a3",10.5);
   if(ck1("c1_ell")) s+=ellipse(BS,UE,L,"#e8720c",1.8,null,0.9)
-    +txt(UE[0]-165,UE[1]+120,"‖x−BS‖+‖x−UE‖ = L","#b45607",11);
-  /* physical path */
+    +txt(UE[0]-165,UE[1]+128,"‖x−BS‖+‖x−UE‖ = L","#b45607",11);
+  /* implied physical path from the data */
   s+=arrow(BS,P,"#51606e",2)+arrow(P,UE,"#51606e",2);
   if(ck1("c1_ray")){
     s+=arrow(UE,[UE[0]+u[0]*(L+34),UE[1]+u[1]*(L+34)],"#16222e",1.4,"6 4",0.55);
@@ -279,37 +302,75 @@ function render1(){
   }
   if(ck1("c1_va")){
     s+=seg(P,VA,"#7c4dbe",1.8,"5 4",0.9);
-    s+=vaMark(VA,"VA = mirror(BS)");
+    s+=vaMark(VA,"VA = UE + L·û");
     s+=txt((P[0]+VA[0])/2-6,(P[1]+VA[1])/2-8,"d₂ (mirrored)","#5d3691",10.5);
   }
   if(ck1("c1_ip")){
+    /* inferred wall: perpendicular bisector of BS–VA, through P */
+    const n=unit(sub(VA,BS)), w=[-n[1],n[0]];
+    const a=[P[0]-130*w[0],P[1]-130*w[1]], b=[P[0]+130*w[0],P[1]+130*w[1]];
+    s+=seg(a,b,"#16222e",4.5);
+    for(let i=-120;i<=120;i+=18){
+      const q=[P[0]+i*w[0],P[1]+i*w[1]];
+      s+=seg(q,[q[0]+8*(n[0]+w[0])*0.8,q[1]+8*(n[1]+w[1])*0.8],"#8a97a3",1.2);
+    }
+    s+=txt(b[0]+6,b[1]+4,"wall inferred from (τ, φ)","#16222e",10.5);
     s+=ipMark(P,"P (incidence)",10,-10);
     s+=txt((UE[0]+P[0])/2-26,(UE[1]+P[1])/2+16,"d₁","#0a6b5e",11)
       +txt((BS[0]+P[0])/2-10,(BS[1]+P[1])/2-8,"d₂","#51606e",11);
   }
+  if(ck1("c1_mir")){
+    const mid=[(BS[0]+VA[0])/2,(BS[1]+VA[1])/2];
+    s+=seg(BS,VA,"#8a97a3",1.2,"5 4",0.85)
+      +`<circle cx="${mid[0]}" cy="${mid[1]}" r="2.4" fill="#8a97a3"/>`
+      +txt(mid[0]-8,mid[1]-10,"mirror plane bisects BS↔VA","#8a97a3",10.5,"end");
+  }
   s+=bsMark(BS)+ueMark(UE);
   svg1.innerHTML=s;
-  document.getElementById("stat1").innerHTML=
-    `<b>L = d₁+d₂</b> = ${fmt(L)}<br>‖UE→VA‖ = ${(dist(UE,VA)*M_PER_PX).toFixed(1)} m = L ✓<br>AoA φ = ${aoaDeg(u).toFixed(1)}°`;
+  /* wall consistency check */
+  const n=unit(sub(VA,BS));
+  const tilt=Math.acos(Math.min(1,Math.abs(n[0])))*180/Math.PI;
+  const offm=Math.abs(P[0]-WX)*M_PER_PX;
+  const consistent=tilt<0.3&&offm<0.15;
+  $("stat1").innerHTML=
+    `<b>L</b> = ${fmt(L)}<br><b>φ</b> = ${phi.toFixed(1)}°  ·  ‖UE→VA‖ = L by construction<br>`+
+    (consistent?`<span class="ok">✓ data specular-consistent — inferred wall = true wall</span>`
+               :`<span class="off">inferred wall: tilt ${tilt.toFixed(1)}°, P off true wall ${offm.toFixed(2)} m</span>`);
 }
-["c1_ell","c1_ray","c1_va","c1_ip","c1_mir"].forEach(id=>document.getElementById(id).addEventListener("change",render1));
-makeDraggable(svg1,()=>D1.UE,p=>{D1.UE=p;},[120,300,240,440],render1);
+["c1_ell","c1_ray","c1_va","c1_ip","c1_mir"].forEach(id=>$(id).addEventListener("change",render1));
+["s1L","s1P"].forEach(id=>$(id).addEventListener("input",render1));
+$("b1R").addEventListener("click",()=>{$("s1L").value=0;$("s1P").value=0;render1();});
+makeDraggable(svg1,()=>D1.UE,p=>{D1.UE=p;$("s1L").value=0;$("s1P").value=0;},[120,300,240,440],render1);
 render1();
 
-/* =================== DEMO 2: double bounce + diffuse =================== */
-const svg2=document.getElementById("svg2");
+/* =================== DEMO 2: double bounce + diffuse, data-driven =================== */
+const svg2=$("svg2");
 const D2={BS:[90,300],AY:225,AX0:40,AX1:330,BX:330,BY0:225,BY1:540,UE:[160,420]};
 D2.VA1=[D2.BS[0],2*D2.AY-D2.BS[1]];          // mirror of BS in wall A (1st bounce)
 D2.VA2=[2*D2.BX-D2.VA1[0],D2.VA1[1]];        // mirror of VA1 in wall B (2nd bounce)
-const ck2=id=>document.getElementById(id).checked;
+const ck2=id=>$(id).checked;
+function specular2(){
+  const u=unit(sub(D2.VA2,D2.UE));
+  return {L:dist(D2.UE,D2.VA2), phi:aoaOf(u)};
+}
 function render2(){
   const {BS,UE,VA1,VA2,AY,AX0,AX1,BX,BY0,BY1}=D2;
-  const sig=+document.getElementById("sSig").value;
-  document.getElementById("oSig").textContent=(sig*M_PER_PX).toFixed(1)+" m";
-  const L2=dist(UE,VA2);
-  const u=unit(sub(VA2,UE));
-  let t=(BX-UE[0])/u[0]; const P2=[BX,UE[1]+t*u[1]];
-  const u1=unit(sub(VA1,P2)); t=(AY-P2[1])/u1[1]; const P1=[P2[0]+t*u1[0],AY];
+  const sig=+$("sSig").value;
+  $("oSig").textContent=(sig*M_PER_PX).toFixed(1)+" m";
+  const sp=specular2();
+  const L2=sp.L + (+$("s2L").value)/M_PER_PX;  // measured length (data)
+  const phi=sp.phi + (+$("s2P").value);        // measured AoA (data)
+  const u=dirOf(phi);
+  $("o2L").textContent=(L2*M_PER_PX).toFixed(1)+" m";
+  $("o2P").textContent=phi.toFixed(1)+"°";
+  /* true specular geometry (for the physical path + diffuse clouds) */
+  const ut=unit(sub(VA2,UE));
+  let tt=(BX-UE[0])/ut[0]; const P2t=[BX,UE[1]+tt*ut[1]];
+  const u1t=unit(sub(VA1,P2t)); tt=(AY-P2t[1])/u1t[1]; const P1t=[P2t[0]+tt*u1t[0],AY];
+  /* estimates from the data */
+  const P2=rayEllipse(VA1,UE,u,L2);            // AoA ray ∩ correct ellipse
+  const u1=unit(sub(VA1,P2)); const t1=(AY-P2[1])/u1[1]; const P1=[P2[0]+t1*u1[0],AY];
+  const VA2d=[UE[0]+L2*u[0],UE[1]+L2*u[1]];    // VA² from data: walk full L₂
   let s="";
   /* walls */
   s+=seg([AX0,AY],[AX1,AY],"#16222e",5);
@@ -319,12 +380,12 @@ function render2(){
   for(let y=BY0;y<BY1;y+=18)s+=seg([BX,y],[BX+9,y+9],"#8a97a3",1.2);
   s+=txt(BX+14,BY0+30,"wall B","#51606e",11)+txt(BX+14,BY0+44,"2nd bounce","#51606e",11);
   if(ck2("c2_mir")){
-    s+=seg([AX1,AY],[640,AY],"#8a97a3",1,"3 4",0.55)+seg([BX,60],[BX,BY0],"#8a97a3",1,"3 4",0.55);
+    s+=seg([AX1,AY],[640,AY],"#8a97a3",1,"3 4",0.55)+seg([BX,10],[BX,BY0],"#8a97a3",1,"3 4",0.55);
     s+=seg(BS,VA1,"#8a97a3",1.2,"5 4",0.85)+seg(VA1,VA2,"#8a97a3",1.2,"5 4",0.85);
     s+=txt(BS[0]-12,262,"mirror in A","#8a97a3",10.5,"end")
       +txt((VA1[0]+VA2[0])/2-30,VA1[1]-10,"mirror in B","#8a97a3",10.5);
   }
-  /* ellipses */
+  /* ellipses from the data */
   if(ck2("c2_bad")){
     s+=ellipse(BS,UE,L2,"#c22f2f",1.5,"7 5",0.75);
     const ph=rayEllipse(BS,UE,u,L2);
@@ -332,12 +393,12 @@ function render2(){
       +txt(ph[0]+12,ph[1]+4,"phantom — on no wall","#c22f2f",10.5);
   }
   if(ck2("c2_good")) s+=ellipse(VA1,UE,L2,"#0e8f7e",1.8,null,0.85);
-  /* diffuse clouds */
+  /* diffuse clouds (physics of the true walls) */
   const N=G1.length;
   if(sig>0){
     for(let i=0;i<N;i++){
-      const q1=[Math.max(AX0+6,Math.min(AX1-6,P1[0]+sig*G1[i])),AY];
-      const q2=[BX,Math.max(BY0+6,Math.min(BY1-6,P2[1]+sig*G2[i]))];
+      const q1=[Math.max(AX0+6,Math.min(AX1-6,P1t[0]+sig*G1[i])),AY];
+      const q2=[BX,Math.max(BY0+6,Math.min(BY1-6,P2t[1]+sig*G2[i]))];
       const w=Math.exp(-(G1[i]*G1[i]+G2[i]*G2[i])/2);
       if(i<7) s+=`<path d="M${BS[0]},${BS[1]} L${q1[0]},${q1[1]} L${q2[0]},${q2[1]} L${UE[0]},${UE[1]}" fill="none" stroke="#0e8f7e" stroke-width="1" opacity="${(0.08+0.22*w).toFixed(2)}"/>`;
       s+=`<circle cx="${q1[0]}" cy="${q1[1]-3}" r="${(2.2+2.8*w).toFixed(1)}" fill="#0e8f7e" opacity="${(0.16+0.62*w).toFixed(2)}"/>`;
@@ -350,27 +411,35 @@ function render2(){
       }
     }
   }
-  /* physical specular path */
-  s+=arrow(BS,P1,"#51606e",2)+arrow(P1,P2,"#51606e",2)+arrow(P2,UE,"#51606e",2);
-  /* AoA ray */
+  /* physical specular path (truth) */
+  s+=arrow(BS,P1t,"#51606e",2)+arrow(P1t,P2t,"#51606e",2)+arrow(P2t,UE,"#51606e",2);
+  /* AoA ray from the data */
   if(ck2("c2_ray")){
-    s+=seg(P2,VA2,"#7c4dbe",1.8,"5 4",0.9);
+    s+=seg(P2,VA2d,"#7c4dbe",1.8,"5 4",0.9);
     s+=arrow(UE,[UE[0]+u[0]*(L2+30),UE[1]+u[1]*(L2+30)],"#16222e",1.4,"6 4",0.5);
     s+=txt(UE[0]+u[0]*46+6,UE[1]+u[1]*46+14,"AoA φ","#16222e",11);
-    s+=txt((P2[0]+VA2[0])/2+8,(P2[1]+VA2[1])/2,"…continue to L₂","#5d3691",10.5);
+    s+=txt((P2[0]+VA2d[0])/2+8,(P2[1]+VA2d[1])/2,"…continue to L₂","#5d3691",10.5);
   }
-  /* markers */
-  s+=vaMark(D2.VA1,"VA¹ (bounce 1)");
-  s+=vaMark(D2.VA2,"VA² (bounce 2)");
+  /* markers: geometric VAs (hollow), data-derived VA² (filled), data-derived incidence points */
+  s+=vaMark(VA1,"VA¹ (bounce 1)");
+  s+=vaMark(VA2,"VA² (bounce 2)");
+  s+=vaDot(VA2d);
+  s+=`<circle cx="${P1t[0]}" cy="${P1t[1]}" r="2.6" fill="#0a6b5e" opacity="0.85"/><circle cx="${P2t[0]}" cy="${P2t[1]}" r="2.6" fill="#0a6b5e" opacity="0.85"/>`;
   s+=ipMark(P1,"P₁",-6,-12)+ipMark(P2,"P₂",10,4);
   s+=bsMark(BS,"BS",-30,4)+ueMark(UE);
   svg2.innerHTML=s;
-  document.getElementById("stat2").innerHTML=
-    `<b>L₂</b> = ${fmt(L2)}<br>‖UE→VA²‖ = ${(L2*M_PER_PX).toFixed(1)} m = L₂ ✓<br>AoA φ = ${aoaDeg(u).toFixed(1)}°<br>${sig>0?`${N} scattered points / wall`:"specular (σ = 0)"}`;
+  const offB=Math.abs(P2[0]-BX)*M_PER_PX, offA=Math.abs(P1[1]-AY)*M_PER_PX;
+  const consistent=offB<0.15&&dist(VA2d,VA2)*M_PER_PX<0.2;
+  $("stat2").innerHTML=
+    `<b>L₂</b> = ${fmt(L2)}<br><b>φ</b> = ${phi.toFixed(1)}°<br>`+
+    (consistent?`<span class="ok">✓ data specular-consistent — P₂ on wall B, VA² on the mirror point</span>`
+               :`<span class="off">P₂ estimate off wall B by ${offB.toFixed(2)} m · VA² off by ${(dist(VA2d,VA2)*M_PER_PX).toFixed(2)} m</span>`)+
+    `<br>${sig>0?`${N} scattered points / wall`:"specular (σ = 0)"}`;
 }
-["c2_mir","c2_ray","c2_bad","c2_good","c2_vacld"].forEach(id=>document.getElementById(id).addEventListener("change",render2));
-document.getElementById("sSig").addEventListener("input",render2);
-makeDraggable(svg2,()=>D2.UE,p=>{D2.UE=p;},[80,330,300,500],render2);
+["c2_mir","c2_ray","c2_bad","c2_good","c2_vacld"].forEach(id=>$(id).addEventListener("change",render2));
+["sSig","s2L","s2P"].forEach(id=>$(id).addEventListener("input",render2));
+$("b2R").addEventListener("click",()=>{$("s2L").value=0;$("s2P").value=0;render2();});
+makeDraggable(svg2,()=>D2.UE,p=>{D2.UE=p;$("s2L").value=0;$("s2P").value=0;},[80,330,300,500],render2);
 render2();
 })();
 </script>
