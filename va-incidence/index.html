@@ -149,7 +149,7 @@ footer a{color:var(--ink-soft)}
 <!-- ============ 03 double bounce ============ -->
 <section class="sec" id="double">
   <h2><span class="no">03</span>Double bounce: two virtual anchors, two incidence points</h2>
-  <p class="lede">Now the path bounces twice: BS → P₁ (wall A) → P₂ (wall B) → UE. Mirroring composes: <b>VA¹</b> = BS mirrored in wall A (the first-bounce anchor), <b>VA²</b> = VA¹ mirrored in wall B. The UE still sees a clean LOS-like anchor — ‖UE − VA²‖ = L₂ and the AoA ray points at VA² — which is exactly why BP-SLAM can treat second-order paths as just another static feature. The incidence points need care, because the receiver must first <em>guess the bounce order</em>. <b>Hypothesis 1 — a single bounce:</b> pin the string at BS and UE (red). It is a perfectly coherent reading of the same (τ, φ), and it is drawn in full: its own incidence point <em>and</em> the wall it would imply — but that wall exists nowhere in the map, and that is how the hypothesis dies. <b>Hypothesis 2 — double bounce off A then B:</b> pin the string at <b>VA¹ and the UE</b> — the ellipse with the same measured L₂ passes exactly through P₂, and P₁ follows by aiming from P₂ at VA¹. Note that the virtual anchor is blind to this choice: walking the full L₂ lands on the same VA under either hypothesis — bounce order is a question only the incidence-point reading must answer, and the map is what answers it. Here too the drawing runs on the data: perturb τ or φ and the estimated P₂ slides <em>off the wall</em> while the diffuse clouds stay on the true surface. Slide the roughness up to let the wall scatter: the specular points diffuse into clouds of reflection points, and the once point-like VA² smears into a cloud too.</p>
+  <p class="lede">Now the path bounces twice: BS → P₁ (wall A) → P₂ (wall B) → UE. Mirroring composes: <b>VA¹</b> = BS mirrored in wall A (the first-bounce anchor), <b>VA²</b> = VA¹ mirrored in wall B. The UE still sees a clean LOS-like anchor — ‖UE − VA²‖ = L₂ and the AoA ray points at VA² — which is exactly why BP-SLAM can treat second-order paths as just another static feature. The incidence points need care, because the receiver must first <em>guess the bounce order</em>. <b>Hypothesis 1 — a single bounce:</b> pin the string at BS and UE (red). One bounce must then absorb <em>the entire measured length</em> — the full BS → wall A → wall B → UE trip — so its bounce point lands <em>beyond</em> wall B (the two red distances sum to the full L₂), on an implied wall of its own, tilted through the corner. Perfectly coherent — but that wall matches neither wall A nor wall B, and that is how the hypothesis dies. <b>Hypothesis 2 — double bounce off A then B:</b> pin the string at <b>VA¹ and the UE</b> — the ellipse with the same measured L₂ passes exactly through P₂, and P₁ follows by aiming from P₂ at VA¹. Note that the virtual anchor is blind to this choice: walking the full L₂ lands on the same VA under either hypothesis — bounce order is a question only the incidence-point reading must answer, and the map is what answers it. Here too the drawing runs on the data: perturb τ or φ and the estimated P₂ slides <em>off the wall</em> while the diffuse clouds stay on the true surface. Slide the roughness up to let the wall scatter: the specular points diffuse into clouds of reflection points, and the once point-like VA² smears into a cloud too.</p>
 
   <div class="fig"><div class="body split">
     <svg id="svg2" viewBox="-150 -20 850 660" role="img" aria-label="double bounce demo with two virtual anchors, incidence points, and diffuse scattering, constructed from delay and angle data"></svg>
@@ -177,7 +177,7 @@ footer a{color:var(--ink-soft)}
       <div class="hint">drag the green UE dot · σ = 0 recovers pure specular</div>
     </div>
   </div>
-  <div class="figcap"><b>Legend.</b> ■ BS · ● UE (draggable) · ◆ purple = virtual anchors VA¹ (bounce 1), VA² (bounce 2; hollow = geometric, filled = from data) · ● teal = incidence points P₁, P₂ estimated from the data, with the diffuse clouds on the true walls · dot size/opacity ∝ pathloss weight of that scattered sub-path · red ○ + dashed red segment = the rejected single-bounce hypothesis: its incidence point and the wall it would imply, which matches no wall in the map.</div></div>
+  <div class="figcap"><b>Legend.</b> ■ BS · ● UE (draggable) · ◆ purple = virtual anchors VA¹ (bounce 1), VA² (bounce 2; hollow = geometric, filled = from data) · ● teal = incidence points P₁, P₂ estimated from the data, with the diffuse clouds on the true walls · dot size/opacity ∝ pathloss weight of that scattered sub-path · red ○ + dashed red segments = the single-bounce hypothesis drawn in full: its bounce point must absorb the whole measured length (the two red distances sum to L₂), forcing an implied wall beyond wall B that matches no wall in the map.</div></div>
 </section>
 
 <!-- ============ 04 diffuse & splats ============ -->
@@ -450,13 +450,19 @@ function render2(){
       s+=stringViz(BS,UE,ellPoint(ep,T2.th),"#c22f2f","1-bounce hyp. — string at BS &amp; UE: ‖x−UE‖ + ‖x−BS‖",[-140,4]);
     } else if(st==="full"){
       s+=ellipse(BS,UE,L2,"#c22f2f",1.5,"7 5",0.75);
-      /* the full single-bounce hypothesis: its incidence point + the wall it would imply */
+      /* the full single-bounce hypothesis: one bounce must absorb the ENTIRE measured
+         length, so its bounce point lands beyond wall B on an implied wall of its own */
       const ph=rayEllipse(BS,UE,u,L2);
       const n1=unit(sub(VA2d,BS)), w1=[-n1[1],n1[0]];
-      s+=seg([ph[0]-95*w1[0],ph[1]-95*w1[1]],[ph[0]+95*w1[0],ph[1]+95*w1[1]],"#c22f2f",3,"6 4",0.5);
+      s+=seg(BS,ph,"#c22f2f",1.1,"2 3",0.65)+seg(UE,ph,"#c22f2f",1.1,"2 3",0.65);
+      const dbs=dist(ph,BS)*M_PER_PX, due=dist(ph,UE)*M_PER_PX;
+      s+=txt((BS[0]+ph[0])/2-4,(BS[1]+ph[1])/2-8,dbs.toFixed(1),"#c22f2f",10)
+        +txt((UE[0]+ph[0])/2+8,(UE[1]+ph[1])/2+13,due.toFixed(1),"#c22f2f",10);
+      s+=seg([ph[0]-120*w1[0],ph[1]-120*w1[1]],[ph[0]+120*w1[0],ph[1]+120*w1[1]],"#c22f2f",3,"6 4",0.5);
       s+=`<circle cx="${ph[0]}" cy="${ph[1]}" r="4.5" fill="none" stroke="#c22f2f" stroke-width="2"/>`
-        +txt(ph[0]+11,ph[1]-8,"P if 1 bounce","#c22f2f",10.5)
-        +txt(ph[0]+95*w1[0]+8,ph[1]+95*w1[1]+2,"implied wall — in no map","#c22f2f",10.5);
+        +txt(ph[0]+11,ph[1]-9,"P if 1 bounce","#c22f2f",10.5)
+        +txt(ph[0]+11,ph[1]+5,`${dbs.toFixed(1)}+${due.toFixed(1)} = ${(dbs+due).toFixed(1)} m — the full length`,"#c22f2f",10)
+        +txt(ph[0]+120*w1[0]+8,ph[1]+120*w1[1]+2,"implied wall — in no map","#c22f2f",10.5);
     }
   }
   if(ck2("c2_good")){
