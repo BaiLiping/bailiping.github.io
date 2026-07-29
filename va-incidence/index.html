@@ -143,7 +143,7 @@ footer a{color:var(--ink-soft)}
       <div class="hint">drag the green UE dot — sliders re-sync to its specular measurement</div>
     </div>
   </div>
-  <div class="figcap"><b>Read it.</b> d₁ + d₂ = L puts P on the orange ellipse; the mirror makes ‖P→VA‖ = d₂, so the same ray, extended to the full measured length L, ends exactly at VA. The dark wall segment is drawn purely from (τ, φ): perpendicular bisector of BS↔VA, through P. Delay + angle cannot tell the two readings apart — you choose the representation.</div></div>
+  <div class="figcap"><b>Read it.</b> d₁ + d₂ = L puts P on the orange ellipse; the mirror makes ‖P→VA‖ = d₂, so the same ray, extended to the full measured length L, ends exactly at VA. The dark wall segment is drawn purely from (τ, φ): perpendicular bisector of BS↔VA, through P. The dashed orange rings mark the two foci (the pins) of the ellipse. Delay + angle cannot tell the two readings apart — you choose the representation.</div></div>
 </section>
 
 <!-- ============ 03 double bounce ============ -->
@@ -160,6 +160,8 @@ footer a{color:var(--ink-soft)}
         <input type="range" class="meas" id="s2L" min="-3" max="3" step="0.05" value="0">
         <label style="margin-top:7px"><span>AoA φ</span> <output id="o2P"></output></label>
         <input type="range" class="meas" id="s2P" min="-6" max="6" step="0.1" value="0">
+        <label style="margin-top:9px"><span>derived L₁ (BS→P₁→P₂)</span> <output id="o2L1"></output></label>
+        <div class="hint" style="margin-top:0">not an input — one path yields one delay. L₁ = L₂ − ‖UE→P₂‖ falls out once the AoA fixes P₂.</div>
         <button class="reset" id="b2R" style="margin-top:7px">reset to specular data</button>
         <button class="reset" id="b2T" style="margin-top:5px">✏ trace all ellipses with their strings</button>
       </div>
@@ -178,7 +180,7 @@ footer a{color:var(--ink-soft)}
       <div class="hint">drag the green UE dot · σ = 0 recovers pure specular</div>
     </div>
   </div>
-  <div class="figcap"><b>Legend.</b> ■ BS · ● UE (draggable) · ◆ purple = virtual anchors VA¹ (bounce 1), VA² (bounce 2; hollow = geometric, filled = from data) · ● teal = incidence points P₁, P₂ estimated from the data, with the diffuse clouds on the true walls · dot size/opacity ∝ pathloss weight of that scattered sub-path · red ○ + dashed red segments = the single-bounce hypothesis drawn in full: its bounce point must absorb the whole measured length (the two red distances sum to L₂), forcing an implied wall beyond wall B that matches no wall in the map · green dotted ellipse = the bounce-1 segment: leftover string L₂ − ‖UE→P₂‖ pinned at BS &amp; P₂, passing through P₁.</div></div>
+  <div class="figcap"><b>Legend.</b> ■ BS · ● UE (draggable) · ◆ purple = virtual anchors VA¹ (bounce 1), VA² (bounce 2; hollow = geometric, filled = from data) · ● teal = incidence points P₁, P₂ estimated from the data, with the diffuse clouds on the true walls · dot size/opacity ∝ pathloss weight of that scattered sub-path · red ○ + dashed red segments = the single-bounce hypothesis drawn in full: its bounce point must absorb the whole measured length (the two red distances sum to L₂), forcing an implied wall beyond wall B that matches no wall in the map · green dotted ellipse = the bounce-1 segment: leftover string L₂ − ‖UE→P₂‖ pinned at BS &amp; P₂, passing through P₁ · dashed rings = the two foci (pins) of the same-colored ellipse: red at BS &amp; UE, teal at VA¹ &amp; UE, green at BS &amp; P₂.</div></div>
 </section>
 
 <!-- ============ 04 diffuse & splats ============ -->
@@ -254,6 +256,8 @@ function stringViz(F1,F2,E,color,eq,labelPos){
     +txt((F1[0]+E[0])/2+6,(F1[1]+E[1])/2-6,d2.toFixed(1),color,10)
     +txt(labelPos[0],labelPos[1],`${eq} = ${d1.toFixed(1)} + ${d2.toFixed(1)} = ${(d1+d2).toFixed(1)} m — constant`,color,11.5);
 }
+/* dashed ring marking a focus (pin) of an ellipse, in that ellipse's color */
+const pin=(p,c,r)=>`<circle cx="${p[0]}" cy="${p[1]}" r="${r}" fill="none" stroke="${c}" stroke-width="1.6" stroke-dasharray="3 3" opacity="0.9"/>`;
 const reduced=matchMedia("(prefers-reduced-motion: reduce)").matches;
 /* intersection of ray (origin O = one focus, direction u) with ellipse foci (F,O), sum L */
 function rayEllipse(F,O,u,L){
@@ -329,6 +333,7 @@ function render1(){
       s+=stringViz(BS,UE,ellPoint(ep,T1.th),"#b45607","‖x−UE‖ + ‖x−BS‖",[-150,86]);
     } else {
       s+=ellipse(BS,UE,L,"#e8720c",1.8,null,0.9)
+        +pin(BS,"#e8720c",11)+pin(UE,"#e8720c",16)
         +txt(UE[0]-165,UE[1]+128,"‖x−BS‖+‖x−UE‖ = L","#b45607",11);
     }
   }
@@ -450,7 +455,8 @@ function render2(){
       s+=`<circle cx="${BS[0]}" cy="${BS[1]}" r="3" fill="#c22f2f"/><circle cx="${UE[0]}" cy="${UE[1]}" r="3" fill="#c22f2f"/>`;
       s+=stringViz(BS,UE,ellPoint(ep,T2.th),"#c22f2f","1-bounce hyp. — string at BS &amp; UE: ‖x−UE‖ + ‖x−BS‖",[-140,4]);
     } else if(st==="full"){
-      s+=ellipse(BS,UE,L2,"#c22f2f",1.5,"7 5",0.75);
+      s+=ellipse(BS,UE,L2,"#c22f2f",1.5,"7 5",0.75)
+        +pin(BS,"#c22f2f",11)+pin(UE,"#c22f2f",16);
       /* the full single-bounce hypothesis: one bounce must absorb the ENTIRE measured
          length, so its bounce point lands beyond wall B on an implied wall of its own */
       const ph=rayEllipse(BS,UE,u,L2);
@@ -473,7 +479,8 @@ function render2(){
       s+=`<circle cx="${VA1[0]}" cy="${VA1[1]}" r="3" fill="#0a6b5e"/><circle cx="${UE[0]}" cy="${UE[1]}" r="3" fill="#0a6b5e"/>`;
       s+=stringViz(VA1,UE,ellPoint(ep,T2.th),"#0a6b5e","2-bounce hyp. — same L₂, string at VA¹ &amp; UE: ‖x−UE‖ + ‖x−VA¹‖",[-140,4]);
     } else if(st==="full"){
-      s+=ellipse(VA1,UE,L2,"#0e8f7e",1.8,null,0.85);
+      s+=ellipse(VA1,UE,L2,"#0e8f7e",1.8,null,0.85)
+        +pin(VA1,"#0e8f7e",11)+pin(UE,"#0e8f7e",20);
     }
   }
   /* bounce-1 segment: peel off the direct leg UE->P2; the leftover string,
@@ -486,7 +493,8 @@ function render2(){
       s+=`<circle cx="${BS[0]}" cy="${BS[1]}" r="3" fill="#1d7a1d"/><circle cx="${P2[0]}" cy="${P2[1]}" r="3" fill="#1d7a1d"/>`;
       s+=stringViz(BS,P2,ellPoint(ep,T2.th),"#1d7a1d","bounce-1 segment — leftover string L₂ − ‖UE→P₂‖ at BS &amp; P₂: ‖x−P₂‖ + ‖x−BS‖",[-140,4]);
     } else if(st==="full"&&ep){
-      s+=ellipse(BS,P2,Lseg,"#2ca02c",1.7,"2 4",0.85);
+      s+=ellipse(BS,P2,Lseg,"#2ca02c",1.7,"2 4",0.85)
+        +pin(BS,"#2ca02c",15)+pin(P2,"#2ca02c",10);
     }
   }
   /* diffuse clouds (physics of the true walls) */
@@ -526,9 +534,9 @@ function render2(){
   svg2.innerHTML=s;
   const offB=Math.abs(P2[0]-BX)*M_PER_PX, offA=Math.abs(P1[1]-AY)*M_PER_PX;
   const consistent=offB<0.15&&dist(VA2d,VA2)*M_PER_PX<0.2;
+  $("o2L1").textContent=((L2-dist(UE,P2))*M_PER_PX).toFixed(1)+" m";
   $("stat2").innerHTML=
     `<b>L₂</b> = ${fmt(L2)}<br><b>φ</b> = ${phi.toFixed(1)}°<br>`+
-    `bounce-1 segment: L₂ − ‖UE→P₂‖ = ${((L2-dist(UE,P2))*M_PER_PX).toFixed(1)} m<br>`+
     (consistent?`<span class="ok">✓ data specular-consistent — P₂ on wall B, VA² on the mirror point</span>`
                :`<span class="off">P₂ estimate off wall B by ${offB.toFixed(2)} m · VA² off by ${(dist(VA2d,VA2)*M_PER_PX).toFixed(2)} m</span>`)+
     `<br>${sig>0?`${N} scattered points / wall`:"specular (σ = 0)"}`;
