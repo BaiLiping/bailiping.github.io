@@ -234,7 +234,7 @@ footer a{color:var(--ink-soft)}
 <!-- ============ 05 estimating the map ============ -->
 <section class="sec" id="estimate">
   <h2><span class="no">05</span>Estimating the map: motion collapses the family</h2>
-  <p class="lede">The double-bounce constructions above <em>spent</em> one anchor of map knowledge, VA¹ — but in SLAM the map is unknown; VA¹ is the thing to estimate. Two mechanisms deliver it. <b>Bootstrap up the ladder:</b> single-bounce paths are map-free — every snapshot of demo&nbsp;02 yields a wall and its VA from data alone, and once wall A is mapped, VA¹ exists and double-bounce paths become interpretable (each of which then maps wall B): order-n paths become usable exactly when the order-(n−1) anchors exist — the image-source ladder is also the estimation ladder. <b>Motion kills the leftover ambiguity:</b> even <em>perfect</em> (τ, φ, ψ) leave the one-parameter family of bounce-point splits at a single pose. But the walls are static. Every family member implies a wall at P₁, hence a VA¹ candidate — so each pose draws a <em>curve</em> of possible maps. Curves from different poses must agree, and they can only agree at the true VA¹. One pose = a curve of maps; two poses = a point. Slide the family parameter and watch the candidate travel along pose&nbsp;a’s curve until it hits pose&nbsp;b’s — that crossing <em>is</em> the map. (In reality the associations and bounce orders are unknown too, so all of this runs inside probabilistic machinery — BP data association over VA features in BP-SLAM, or one joint posterior over trajectory, map and associations, the theme of the <a href="/jvs-slam/">JVS-SLAM note</a>.)</p>
+  <p class="lede">The double-bounce constructions above <em>spent</em> one anchor of map knowledge, VA¹ — but in SLAM the map is unknown; VA¹ is the thing to estimate. Two mechanisms deliver it. <b>Bootstrap up the ladder:</b> single-bounce paths are map-free — every snapshot of demo&nbsp;02 yields a wall and its VA from data alone, and once wall A is mapped, VA¹ exists and double-bounce paths become interpretable (each of which then maps wall B): order-n paths become usable exactly when the order-(n−1) anchors exist — the image-source ladder is also the estimation ladder. (The orange layer in the demo draws exactly this: the same wall A also returns a <em>single-bounce</em> path, and walking its full measured length along its own AoA ray lands on VA¹ directly — one clean order-1 path does the work of a second pose.) <b>Motion kills the leftover ambiguity:</b> even <em>perfect</em> (τ, φ, ψ) leave the one-parameter family of bounce-point splits at a single pose. But the walls are static. Every family member implies a wall at P₁, hence a VA¹ candidate — so each pose draws a <em>curve</em> of possible maps. Curves from different poses must agree, and they can only agree at the true VA¹. One pose = a curve of maps; two poses = a point. Slide the family parameter and watch the candidate travel along pose&nbsp;a’s curve until it hits pose&nbsp;b’s — that crossing <em>is</em> the map. (In reality the associations and bounce orders are unknown too, so all of this runs inside probabilistic machinery — BP data association over VA features in BP-SLAM, or one joint posterior over trajectory, map and associations, the theme of the <a href="/jvs-slam/">JVS-SLAM note</a>.)</p>
 
   <div class="fig"><div class="body split">
     <svg id="svg4" viewBox="-150 -45 850 685" role="img" aria-label="map estimation demo: curves of VA1 candidates from two UE poses intersect at the true VA1"></svg>
@@ -248,11 +248,28 @@ footer a{color:var(--ink-soft)}
       <label class="ck"><input type="checkbox" id="c4_famA" checked> <span class="sw" style="background:var(--va)"></span> VA¹ candidates from pose a</label>
       <label class="ck"><input type="checkbox" id="c4_famB" checked> <span class="sw" style="background:var(--va)"></span> VA¹ candidates from pose b (fixed)</label>
       <label class="ck"><input type="checkbox" id="c4_mem" checked> <span class="sw" style="background:var(--ip)"></span> selected member: P₁, P₂ + implied walls</label>
+      <label class="ck"><input type="checkbox" id="c4_boot" checked> <span class="sw" style="background:var(--meas)"></span> bootstrap: 1-bounce path off wall A → VA¹</label>
       <div class="statline" id="stat4"></div>
       <div class="hint">drag pose a (green) · pose b is a second, fixed snapshot of the same static map · data at both poses is perfectly specular</div>
     </div>
   </div>
-  <div class="figcap"><b>Read it.</b> Each purple curve is everything one pose can say about VA¹ from its own (τ, φ, ψ): a one-parameter family of coherent double-bounce explanations. The static-map constraint is that all poses’ curves pass through the <em>same</em> VA¹ — their crossing. Arrowheads give the direction of the family parameter — the last leg growing, L₁ shrinking — and the labels at pose a’s endpoints give the L₁ range. The faint walls are ground truth, drawn only for reference; nothing in the construction uses them.</div></div>
+  <div class="figcap"><b>Read it.</b> Each purple curve is everything one pose can say about VA¹ from its own (τ, φ, ψ): a one-parameter family of coherent double-bounce explanations. The static-map constraint is that all poses’ curves pass through the <em>same</em> VA¹ — their crossing. Arrowheads give the direction of the family parameter — the last leg growing, L₁ shrinking — and the labels at pose a’s endpoints give the L₁ range. Orange = the bootstrap: the single-bounce path off wall A; extending its AoA ray to its own full measured length lands exactly on VA¹, no curves needed. The faint walls are ground truth, drawn only for reference; nothing in the construction uses them.</div></div>
+
+  <p class="lede">And the same collapse, played out in time — the UE walks a short trajectory, measuring the same double-bounce path at every step:</p>
+  <div class="fig"><div class="body split">
+    <svg id="svg5" viewBox="-150 -45 850 685" role="img" aria-label="motion collapse step by step: each pose adds a VA1 candidate curve, the second pose collapses the family to a point"></svg>
+    <div class="rail">
+      <h4>motion, step by step</h4>
+      <div class="ctl">
+        <label><span>poses observed</span> <output id="o5n"></output></label>
+        <input type="range" id="s5n" min="1" max="4" step="1" value="1">
+      </div>
+      <button class="reset" id="b5P">▶ walk the trajectory</button>
+      <div class="statline" id="stat5"></div>
+      <div class="hint">each pose contributes one curve of VA¹ candidates; the second already collapses the family to a point — later poses just keep confirming it</div>
+    </div>
+  </div>
+  <div class="figcap"><b>Motion, quantified.</b> The UE walks t₁ → t₄. One pose constrains VA¹ to a curve; the second pose’s curve intersects it in a point (teal ring, found numerically — not read off the ground truth); every further pose must pass through the same point. That over-consistency across motion is what makes VA¹ a reliable static feature to hang SLAM on.</div></div>
 </section>
 
 <!-- ============ 06 diffuse & splats ============ -->
@@ -900,7 +917,7 @@ function render4(){
   /* ground-truth walls, faint, reference only */
   s+=seg([D2.AX0,D2.AY],[D2.AX1,D2.AY],"#8a97a3",3,null,0.3)
     +seg(D2.BC,D2.BEND,"#8a97a3",3,null,0.3)
-    +txt(D2.AX0+4,D2.AY-10,"true walls (unknown to the estimator)","#8a97a3",10.5);
+    +txt(D2.AX0+4,D2.AY+18,"true walls (unknown to the estimator)","#8a97a3",10.5);
   /* candidate curves */
   if(ck4("c4_famA")&&famA.length){
     s+=`<path d="${poly4(famA)}" fill="none" stroke="#7c4dbe" stroke-width="2" opacity="0.85"/>`;
@@ -934,6 +951,19 @@ function render4(){
     s+=`<circle cx="${cand[0]}" cy="${cand[1]}" r="4.5" fill="#7c4dbe"/>`;
     s+=seg(P1,cand,"#7c4dbe",1,"2 3",0.5);
   }
+  /* the bootstrap: the same wall A also returns a single-bounce path, which is map-free */
+  const boot=ck4("c4_boot");
+  if(boot){
+    const Ls=dist(UEa,D2.VA1);
+    const us=unit(sub(D2.VA1,UEa));
+    const tps=(D2.AY-UEa[1])/(D2.VA1[1]-UEa[1]);
+    const Ps=[UEa[0]+tps*(D2.VA1[0]-UEa[0]),D2.AY];
+    s+=arrow(BS,Ps,"#e8720c",1.8,null,0.85)+arrow(Ps,UEa,"#e8720c",1.8,null,0.85);
+    s+=arrow(UEa,[UEa[0]+us[0]*(Ls+26),UEa[1]+us[1]*(Ls+26)],"#b45607",1.3,"6 4",0.7);
+    s+=`<circle cx="${Ps[0]}" cy="${Ps[1]}" r="4" fill="#e8720c"/>`
+      +txt(Ps[0]-9,Ps[1]-10,"1-bounce path","#b45607",10.5,"end")
+      +txt(D2.VA1[0]+12,D2.VA1[1]+20,"walk its full L → VA¹, from data alone","#b45607",10.5);
+  }
   s+=bsMark(BS,"BS",-30,4)+ueMark(UEa,"UE, pose a");
   s+=`<circle cx="${UEb[0]}" cy="${UEb[1]}" r="6" fill="none" stroke="#2ca02c" stroke-width="2" opacity="0.75"/>`
     +txt(UEb[0]+11,UEb[1]+4,"pose b","#1d7a1d",11);
@@ -965,10 +995,79 @@ function curveArrows(fam,color,o){
   }
   return s;
 }
-["c4_famA","c4_famB","c4_mem"].forEach(id=>$(id).addEventListener("change",render4));
+["c4_famA","c4_famB","c4_mem","c4_boot"].forEach(id=>$(id).addEventListener("change",render4));
 $("s4t").addEventListener("input",render4);
 makeDraggable(svg4,()=>D4.UEa,p=>{D4.UEa=p;},[230,430,300,510],render4);
 render4();
+
+/* =================== DEMO 5: motion collapse, step by step =================== */
+const svg5=$("svg5");
+const POSES=[[235,435],[258,462],[280,487],[298,506]];
+let tmr5=null;
+function render5(){
+  const n=+$("s5n").value;
+  $("o5n").textContent=n+" / "+POSES.length;
+  const BS=D2.BS;
+  let s="";
+  s+=seg([D2.AX0,D2.AY],[D2.AX1,D2.AY],"#8a97a3",3,null,0.3)+seg(D2.BC,D2.BEND,"#8a97a3",3,null,0.3);
+  s+=txt(D2.AX0+4,D2.AY+18,"true walls (reference)","#8a97a3",10.5);
+  for(let i=0;i<POSES.length-1;i++) s+=arrow(POSES[i],POSES[i+1],"#8a97a3",1.3,null,0.7);
+  POSES.forEach((p,i)=>{
+    const active=i<n;
+    s+=`<circle cx="${p[0]}" cy="${p[1]}" r="${active?6:4}" fill="${active?"#2ca02c":"#fff"}" stroke="#2ca02c" stroke-width="1.8" opacity="${active?1:0.5}"/>`
+      +txt(p[0]+10,p[1]+4,"t"+(i+1),"#1d7a1d",10.5);
+  });
+  const fams=[];
+  for(let i=0;i<n;i++){
+    const fam=family(specAt(POSES[i]));
+    fams.push(fam);
+    s+=`<path d="${poly4(fam)}" fill="none" stroke="#7c4dbe" stroke-width="${i===n-1?2.2:1.4}" ${i%2?'stroke-dasharray="5 4"':""} opacity="${(0.3+0.55*(i+1)/n).toFixed(2)}"/>`;
+  }
+  if(n===1){
+    s+=txt(-130,60,"1 pose: VA¹ can be anywhere on this curve","#5d3691",11.5);
+  } else {
+    /* numeric crossing of the first two observed curves — nothing read off the truth.
+       The curves run nearly parallel over a stretch, so take the most TRANSVERSAL
+       segment intersection, not the closest approach. */
+    let q=null,bestSin=0;
+    const A=fams[0],B=fams[1];
+    for(let i=0;i<A.length-1;i++){
+      const a1=A[i].cand,a2=A[i+1].cand,r=[a2[0]-a1[0],a2[1]-a1[1]];
+      for(let j=0;j<B.length-1;j++){
+        const b1=B[j].cand,b2=B[j+1].cand,v=[b2[0]-b1[0],b2[1]-b1[1]];
+        const den=r[0]*v[1]-r[1]*v[0];
+        if(Math.abs(den)<1e-9)continue;
+        const w=[b1[0]-a1[0],b1[1]-a1[1]];
+        const t=(w[0]*v[1]-w[1]*v[0])/den, uu=(w[0]*r[1]-w[1]*r[0])/den;
+        if(t<0||t>1||uu<0||uu>1)continue;
+        const sn=Math.abs(den)/((Math.hypot(r[0],r[1])*Math.hypot(v[0],v[1]))||1);
+        if(sn>bestSin){bestSin=sn;q=[a1[0]+t*r[0],a1[1]+t*r[1]];}
+      }
+    }
+    if(q){
+      s+=`<circle cx="${q[0]}" cy="${q[1]}" r="9" fill="none" stroke="#0e8f7e" stroke-width="2.4"/>`
+        +`<circle cx="${q[0]}" cy="${q[1]}" r="2.6" fill="#0e8f7e"/>`
+        +txt(q[0]+15,q[1]-8,n===2?"2 poses: collapsed to a point — this is VA¹":"further poses pass through the same point","#0a6b5e",11.5);
+    }
+  }
+  s+=bsMark(BS,"BS",-30,4);
+  svg5.innerHTML=s;
+  $("stat5").innerHTML=[
+    "1 pose → a curve of possible maps",
+    "2 poses → the curves intersect: a point",
+    "3 poses → the third curve passes through it too",
+    "4 poses → still consistent: a static feature"
+  ].slice(0,n).map((t,i)=>(i===n-1?`<b>${t}</b>`:t)).join("<br>");
+}
+function play5(){
+  if(tmr5)clearTimeout(tmr5);
+  let k=1;
+  const step=()=>{ $("s5n").value=k; render5(); if(k<POSES.length){k++; tmr5=setTimeout(step,reduced?300:1100);} };
+  step();
+}
+$("s5n").addEventListener("input",()=>{if(tmr5)clearTimeout(tmr5);render5();});
+$("b5P").addEventListener("click",play5);
+render5();
 })();
 </script>
 </body>
