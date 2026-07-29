@@ -182,6 +182,7 @@ footer a{color:var(--ink-soft)}
       <div class="hint" style="margin-top:-4px">VA¹ is <b>not assumed</b>: walking path 1’s full measured L⁽¹⁾ along its AoA ray estimates VA¹ (§02’s construction) — the double-bounce machinery runs on that estimate. Perturb path 1 and the error propagates into everything below.</div>
       <h4>layers</h4>
       <label class="ck"><input type="checkbox" id="c2_boot" checked> <span class="sw" style="background:var(--meas)"></span> bootstrap: 1-bounce path → VA¹</label>
+      <label class="ck"><input type="checkbox" id="c2_fam" checked> <span class="sw" style="background:var(--va)"></span> VA¹ candidate curve (path 2 alone)</label>
       <label class="ck"><input type="checkbox" id="c2_mir" checked> <span class="sw" style="background:var(--ink-faint)"></span> mirror construction</label>
       <label class="ck"><input type="checkbox" id="c2_ray" checked> <span class="sw" style="background:var(--ink)"></span> measured rays: AoA (UE) &amp; AoD (BS)</label>
       <label class="ck"><input type="checkbox" id="c2_bad" checked> <span class="sw" style="background:var(--err)"></span> 1-bounce hypothesis (foci BS, UE)</label>
@@ -196,7 +197,7 @@ footer a{color:var(--ink-soft)}
       <div class="hint">drag the green UE dot · σ = 0 recovers pure specular</div>
     </div>
   </div>
-  <div class="figcap"><b>Legend.</b> ■ BS · ● UE (draggable) · ◆ purple = virtual anchors: VA¹ bootstrapped live from path 1, VA² (hollow = ground-truth reference, filled = from the data) · orange = path 1, the single-bounce path whose full-length walk supplies VA¹ · ● teal = incidence points P₁, P₂ estimated from the data, with the diffuse clouds on the true walls · dot size/opacity ∝ pathloss weight of that scattered sub-path · red ○ + dashed red segments = the single-bounce hypothesis drawn in full: its bounce point must absorb the whole measured length (the two red distances sum to L₂), forcing an implied wall beyond wall B that matches no wall in the map · green ellipse = the bounce-1 segment: leftover string L₂ − ‖UE→P₂‖ pinned at BS &amp; P₂, passing through P₁ · dashed rings = the two foci (pins) of the same-colored ellipse: red at BS &amp; UE, teal at VA¹ &amp; UE, green at BS &amp; P₂.</div></div>
+  <div class="figcap"><b>Legend.</b> ■ BS · ● UE (draggable) · ◆ purple = virtual anchors: VA¹ bootstrapped live from path 1, VA² (hollow = ground-truth reference, filled = from the data) · orange = path 1, the single-bounce path whose full-length walk supplies VA¹ · thin purple curve = the one-parameter family of VA¹ candidates that path 2’s data alone allows — the bootstrapped VA¹ must land on it, and does exactly when both paths’ data are clean · ● teal = incidence points P₁, P₂ estimated from the data, with the diffuse clouds on the true walls · dot size/opacity ∝ pathloss weight of that scattered sub-path · red ○ + dashed red segments = the single-bounce hypothesis drawn in full: its bounce point must absorb the whole measured length (the two red distances sum to L₂), forcing an implied wall beyond wall B that matches no wall in the map · green ellipse = the bounce-1 segment: leftover string L₂ − ‖UE→P₂‖ pinned at BS &amp; P₂, passing through P₁ · dashed rings = the two foci (pins) of the same-colored ellipse: red at BS &amp; UE, teal at VA¹ &amp; UE, green at BS &amp; P₂.</div></div>
 </section>
 
 <!-- ============ 04 corridor double bounce ============ -->
@@ -230,6 +231,7 @@ footer a{color:var(--ink-soft)}
       <div class="hint" style="margin-top:-4px">VA¹ is <b>not assumed</b>: wall R also returns a single-bounce path (path 1, orange); walking its full L⁽¹⁾ estimates VA¹, and the double-bounce machinery runs on that estimate.</div>
       <h4>layers</h4>
       <label class="ck"><input type="checkbox" id="c3_boot" checked> <span class="sw" style="background:var(--meas)"></span> bootstrap: 1-bounce path → VA¹</label>
+      <label class="ck"><input type="checkbox" id="c3_fam" checked> <span class="sw" style="background:var(--va)"></span> VA¹ candidate curve (path 2 alone)</label>
       <label class="ck"><input type="checkbox" id="c3_mir" checked> <span class="sw" style="background:var(--ink-faint)"></span> mirror construction</label>
       <label class="ck"><input type="checkbox" id="c3_ray" checked> <span class="sw" style="background:var(--ink)"></span> measured rays: AoA (UE) &amp; AoD (BS)</label>
       <label class="ck"><input type="checkbox" id="c3_bad" checked> <span class="sw" style="background:var(--err)"></span> 1-bounce hypothesis (foci BS, UE)</label>
@@ -681,6 +683,15 @@ function render2(){
     s+=arrow(BS,[BS[0]+ud[0]*(dP1+42),BS[1]+ud[1]*(dP1+42)],"#16222e",1.4,"6 4",0.5);
     s+=txt(BS[0]+ud[0]*58+6,BS[1]+ud[1]*58-8,"AoD ψ","#16222e",11);
   }
+  /* what path 2's data alone says about VA1: the one-parameter candidate curve */
+  if(ck2("c2_fam")){
+    const fam=family({BS,UE,L:L2,u,ud});
+    if(fam.length>1){
+      s+=`<path d="${poly4(fam)}" fill="none" stroke="#7c4dbe" stroke-width="1.4" opacity="0.5"/>`;
+      const e=fam[Math.min(10,fam.length-1)];
+      s+=txt(e.cand[0]-8,e.cand[1]-12,"VA¹ family (path 2 alone)","#5d3691",10,"end");
+    }
+  }
   /* bootstrap path drawing */
   if(ck2("c2_boot")){
     s+=arrow(BS,Ps,"#e8720c",1.8,null,0.85)+arrow(Ps,UE,"#e8720c",1.8,null,0.85);
@@ -726,7 +737,7 @@ function trace2(){
   };
   raf2=requestAnimationFrame(tick);
 }
-["c2_boot","c2_mir","c2_ray","c2_bad","c2_good","c2_e1","c2_vacld"].forEach(id=>$(id).addEventListener("change",()=>{stop2();render2();}));
+["c2_boot","c2_fam","c2_mir","c2_ray","c2_bad","c2_good","c2_e1","c2_vacld"].forEach(id=>$(id).addEventListener("change",()=>{stop2();render2();}));
 ["sSig","s2L","s2P","s2D","s2Lb","s2Pb"].forEach(id=>$(id).addEventListener("input",()=>{stop2();render2();}));
 $("b2R").addEventListener("click",()=>{["s2L","s2P","s2D","s2Lb","s2Pb"].forEach(id=>$(id).value=0);stop2();render2();});
 $("b2T").addEventListener("click",trace2);
@@ -866,6 +877,15 @@ function render3(){
     s+=arrow(BS,[BS[0]+ud[0]*(dP1+42),BS[1]+ud[1]*(dP1+42)],"#16222e",1.4,"6 4",0.5);
     s+=txt(BS[0]+ud[0]*58+6,BS[1]+ud[1]*58+16,"AoD ψ","#16222e",11);
   }
+  /* what path 2's data alone says about VA1: the one-parameter candidate curve */
+  if(ck3("c3_fam")){
+    const fam=family({BS,UE,L:L2,u,ud});
+    if(fam.length>1){
+      s+=`<path d="${poly4(fam)}" fill="none" stroke="#7c4dbe" stroke-width="1.4" opacity="0.5"/>`;
+      const e=fam[Math.min(10,fam.length-1)];
+      s+=txt(e.cand[0]-8,e.cand[1]-12,"VA¹ family (path 2 alone)","#5d3691",10,"end");
+    }
+  }
   /* bootstrap path drawing */
   if(ck3("c3_boot")){
     s+=arrow(BS,Ps,"#e8720c",1.8,null,0.85)+arrow(Ps,UE,"#e8720c",1.8,null,0.85);
@@ -911,7 +931,7 @@ function trace3(){
   };
   raf3=requestAnimationFrame(tick);
 }
-["c3_boot","c3_mir","c3_ray","c3_bad","c3_good","c3_e1","c3_vacld"].forEach(id=>$(id).addEventListener("change",()=>{stop3();render3();}));
+["c3_boot","c3_fam","c3_mir","c3_ray","c3_bad","c3_good","c3_e1","c3_vacld"].forEach(id=>$(id).addEventListener("change",()=>{stop3();render3();}));
 ["sSig3","s3L","s3P","s3D","s3Lb","s3Pb"].forEach(id=>$(id).addEventListener("input",()=>{stop3();render3();}));
 $("b3R").addEventListener("click",()=>{["s3L","s3P","s3D","s3Lb","s3Pb"].forEach(id=>$(id).value=0);stop3();render3();});
 $("b3T").addEventListener("click",trace3);
@@ -929,11 +949,11 @@ function specAt(UE){
   const P2t=[UE[0]+tB*dV[0],UE[1]+tB*dV[1]];
   const tA=(D2.AY-P2t[1])/(D2.VA1[1]-P2t[1]);
   const P1t=[P2t[0]+tA*(D2.VA1[0]-P2t[0]),D2.AY];
-  return {UE,L:dist(UE,D2.VA2),u:unit(dV),ud:unit(sub(P1t,D2.BS))};
+  return {BS:D2.BS,UE,L:dist(UE,D2.VA2),u:unit(dV),ud:unit(sub(P1t,D2.BS))};
 }
 /* one family member: choose the last-leg length t2, everything else follows from the data */
 function member(sp,t2){
-  const BS=D2.BS;
+  const BS=sp.BS;
   const P2=[sp.UE[0]+t2*sp.u[0],sp.UE[1]+t2*sp.u[1]];
   const R=sp.L-t2, d=sub(P2,BS);
   const den=R-(sp.ud[0]*d[0]+sp.ud[1]*d[1]);
