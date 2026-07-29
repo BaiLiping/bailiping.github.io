@@ -1,0 +1,378 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Virtual anchors &amp; incidence points — two readings of one multipath measurement | Bai Liping</title>
+<meta name="description" content="Interactive note: how delay + angle from a multipath component can be read as a virtual anchor (BP-SLAM) or, with the BS–UE delay ellipse, as a physical incidence point on the wall — including the double-bounce case and diffuse scattering.">
+<style>
+:root{
+  --paper:#f4f6f8; --panel:#ffffff; --ink:#16222e; --ink-soft:#51606e; --ink-faint:#8a97a3;
+  --line:#d7dee5; --grid:#e6ebef;
+  --va:#7c4dbe; --va-deep:#5d3691; --va-wash:#f0eaf9;
+  --ip:#0e8f7e; --ip-deep:#0a6b5e; --ip-wash:#e3f2ef;
+  --meas:#e8720c; --meas-deep:#b45607;
+  --ue:#2ca02c; --err:#c22f2f;
+  --serif:"Charter","Bitstream Charter","Sitka Text",Cambria,Georgia,serif;
+  --mono:ui-monospace,"SF Mono","Cascadia Mono",Menlo,Consolas,monospace;
+  --sans:system-ui,-apple-system,"Segoe UI",sans-serif;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0; color:var(--ink); font:17px/1.62 var(--serif); background:var(--paper);
+  background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);
+  background-size:26px 26px;
+}
+@media (prefers-reduced-motion: reduce){ html{scroll-behavior:auto} }
+.topbar{position:sticky;top:0;z-index:50;background:rgba(244,246,248,.92);backdrop-filter:blur(6px);border-bottom:1px solid var(--line)}
+.topbar .in{max-width:1120px;margin:0 auto;padding:9px 20px;display:flex;gap:18px;align-items:baseline;flex-wrap:wrap}
+.brand{font:700 15px var(--serif)}
+.brand .v{color:var(--va-deep)} .brand .i{color:var(--ip-deep)} .brand .x{color:var(--ink-faint);padding:0 4px}
+.topnav{display:flex;gap:14px;flex-wrap:wrap;margin-left:auto}
+.topnav a{font:11.5px var(--mono);color:var(--ink-soft);text-decoration:none}
+.topnav a:hover{color:var(--ink);text-decoration:underline}
+main{max-width:1120px;margin:0 auto;padding:0 20px 90px}
+.hero{padding:54px 0 26px;max-width:880px}
+.eyebrow{font:10.5px var(--mono);letter-spacing:.16em;text-transform:uppercase;color:var(--ink-faint)}
+h1{font:700 clamp(29px,4.4vw,42px)/1.14 var(--serif);margin:.35em 0 .4em;letter-spacing:-.01em}
+h1 .v{color:var(--va-deep)} h1 .i{color:var(--ip-deep)}
+.thesis{font-size:18.5px;color:var(--ink-soft);max-width:68ch}
+.thesis strong{color:var(--ink)}
+.accuracy{max-width:82ch;margin:18px 0 0;padding:13px 16px;border:1px solid var(--line);border-left:3px solid var(--va);border-radius:0 6px 6px 0;background:#fff;color:var(--ink-soft);font:13px/1.55 var(--sans)}
+.accuracy strong{color:var(--ink)}
+.accuracy a{color:var(--va-deep)}
+.sec{margin-top:64px;scroll-margin-top:64px}
+h2{font:700 27px/1.25 var(--serif);margin:0 0 10px}
+h2 .no{font:400 15px var(--mono);vertical-align:.14em;margin-right:10px;color:var(--ink-faint)}
+.lede{max-width:76ch;color:var(--ink-soft)}
+p em{font-style:italic}
+.eq{font:15.5px/1.9 var(--serif);background:#fff;border:1px solid var(--line);border-radius:6px;padding:14px 18px;margin:16px 0;overflow-x:auto}
+.eq i{font-style:italic}
+.eq .c1{color:var(--meas-deep)} .eq .c2{color:var(--va-deep)} .eq .c3{color:var(--ip-deep)}
+.fig{background:var(--panel);border:1px solid var(--line);border-radius:6px;margin:22px 0;overflow:hidden}
+.fig .body{padding:16px}
+.figcap{border-top:1px solid var(--line);padding:9px 16px;font:11.5px/1.55 var(--mono);color:var(--ink-soft);background:#fbfcfd}
+.figcap b{color:var(--ink);font-weight:600}
+.split{display:grid;grid-template-columns:1fr 240px;gap:16px}
+@media (max-width:840px){ .split{grid-template-columns:1fr} }
+.fig svg{display:block;width:100%;height:auto;background:#fdfefe;border:1px solid var(--line);border-radius:4px;touch-action:none}
+.rail{display:flex;flex-direction:column;gap:12px;font-family:var(--sans)}
+.rail h4{margin:2px 0 0;font:600 11px var(--mono);letter-spacing:.12em;text-transform:uppercase;color:var(--ink-faint)}
+.rail label.ck{display:flex;gap:8px;align-items:center;font:13px var(--sans);color:var(--ink);cursor:pointer}
+.rail label.ck input{accent-color:var(--ink)}
+.rail .sw{display:inline-block;width:14px;height:3px;border-radius:2px;vertical-align:middle}
+.ctl label{display:flex;justify-content:space-between;font:12.5px var(--sans);color:var(--ink-soft);margin:0 0 3px}
+.ctl label output{font-family:var(--mono);color:var(--ink)}
+input[type=range]{width:100%;accent-color:var(--ip)}
+.statline{font:12px/1.8 var(--mono);color:var(--ink-soft);border-top:1px dashed var(--line);padding-top:10px}
+.statline b{color:var(--ink);font-weight:600}
+.hint{font:12.5px var(--sans);color:var(--ink-faint)}
+button:focus-visible,input:focus-visible,a:focus-visible{outline:2px solid var(--va);outline-offset:2px}
+table{border-collapse:collapse;width:100%;font:14px/1.55 var(--sans);background:#fff}
+th,td{border:1px solid var(--line);padding:10px 13px;text-align:left;vertical-align:top}
+th{font:600 12px var(--mono);letter-spacing:.06em;text-transform:uppercase;color:var(--ink-soft);background:#fbfcfd}
+td:first-child{font-family:var(--mono);font-size:12px;color:var(--ink-soft);white-space:nowrap}
+th.va,td.vac{background:var(--va-wash)} th.ip,td.ipc{background:var(--ip-wash)}
+footer{margin-top:70px;border-top:1px solid var(--line);padding-top:16px;font:12.5px/1.7 var(--sans);color:var(--ink-faint)}
+footer a{color:var(--ink-soft)}
+</style>
+</head>
+<body>
+
+<div class="topbar"><div class="in">
+  <span class="brand"><span class="v">Virtual anchor</span><span class="x">⇄</span><span class="i">incidence point</span></span>
+  <nav class="topnav">
+    <a href="#measurement">the measurement</a>
+    <a href="#single">single bounce</a>
+    <a href="#double">double bounce</a>
+    <a href="#diffuse">diffuse &amp; splats</a>
+    <a href="/">← bailiping.com</a>
+  </nav>
+</div></div>
+
+<main>
+
+<header class="hero">
+  <div class="eyebrow">Interactive note · multipath geometry for radio SLAM</div>
+  <h1>One multipath measurement, two geometries: the <span class="v">virtual anchor</span> and the <span class="i">incidence point</span></h1>
+  <p class="thesis">A reflected radio path hands you three numbers: a <strong>delay</strong> (a path length), an <strong>angle</strong>, and a <strong>pathloss</strong>. Read the delay and angle one way — walk the <em>full</em> measured length along the arrival direction — and you get a <strong>virtual anchor</strong>: a fictitious, wall-agnostic transmitter that BP-SLAM treats as a static feature. Read them the other way — stop where the arrival ray crosses the <em>delay ellipse</em> whose foci are the BS and the UE — and you get the <strong>incidence point</strong>: the physical spot on the wall where the ray actually bounced. Same data, two maps.</p>
+  <div class="accuracy"><strong>Context.</strong> The inputs mirror the per-path estimates (delay, AoA/AoD, amplitude) produced by the SAGE estimator in the <code>Gaussian_Splatting_Test</code> pipeline. The virtual-anchor reading is the feature model of E. Leitinger et&nbsp;al., <a href="https://arxiv.org/abs/1801.04463">“A Belief Propagation Algorithm for Multipath-Based SLAM,”</a> <i>IEEE Trans. Wireless Commun.</i> 18(12), 2019; the anchor-mirroring idea goes back to Channel-SLAM (Gentner et&nbsp;al., <i>IEEE TWC</i> 15(9), 2016). Scene and numbers here are illustrative (scale: 1&nbsp;px ≙ 0.1&nbsp;m).</div>
+</header>
+
+<!-- ============ 01 the measurement ============ -->
+<section class="sec" id="measurement">
+  <h2><span class="no">01</span>What a single path actually tells you</h2>
+  <p class="lede">For one multipath component the channel estimator (SAGE, ESPRIT, …) returns a triple. Each element has its own geometric meaning:</p>
+  <div class="eq">
+    <span class="c1"><b>delay</b> τ → a length L = cτ</span> : the locus <i>‖x − BS‖ + ‖x − UE‖ = L</i> is an <b>ellipse with foci BS and UE</b> — every point that could have produced this delay by a single bounce.<br>
+    <span class="c2"><b>angle</b> φ (AoA at the UE)</span> : a <b>ray</b> out of the UE — the direction the energy came from.<br>
+    <span class="c3"><b>pathloss</b> → a weight</span> : how much energy survived; it does not move any geometry, it says how much to <b>trust / how brightly to paint</b> whatever the geometry produces.
+  </div>
+  <p class="lede">The ray and the ellipse intersect in exactly one point on the UE side — that intersection is the <em>incidence point</em>. Walking the full length L along the same ray lands on the <em>virtual anchor</em>. The two demos below make this concrete, first for one bounce, then for two.</p>
+</section>
+
+<!-- ============ 02 single bounce ============ -->
+<section class="sec" id="single">
+  <h2><span class="no">02</span>Single bounce: the duality, live</h2>
+  <p class="lede">One wall. The path BS → P → UE is specular, so the virtual anchor <b>VA</b> is the mirror image of the BS behind the wall. Two facts do all the work: <i>‖UE − VA‖ = L</i> (the mirror preserves the path length) and the AoA ray from the UE points straight at VA. <b>Drag the UE</b> — the VA never moves (it is a property of BS + wall only), while the incidence point slides along the wall.</p>
+
+  <div class="fig"><div class="body split">
+    <svg id="svg1" viewBox="-120 60 760 560" role="img" aria-label="single bounce virtual anchor and incidence point demo"></svg>
+    <div class="rail">
+      <h4>layers</h4>
+      <label class="ck"><input type="checkbox" id="c1_ell" checked> <span class="sw" style="background:var(--meas)"></span> delay ellipse (foci BS, UE)</label>
+      <label class="ck"><input type="checkbox" id="c1_ray" checked> <span class="sw" style="background:var(--ink)"></span> AoA ray at the UE</label>
+      <label class="ck"><input type="checkbox" id="c1_va" checked> <span class="sw" style="background:var(--va)"></span> virtual anchor (walk full L)</label>
+      <label class="ck"><input type="checkbox" id="c1_ip" checked> <span class="sw" style="background:var(--ip)"></span> incidence point (stop at ellipse)</label>
+      <label class="ck"><input type="checkbox" id="c1_mir"> <span class="sw" style="background:var(--ink-faint)"></span> mirror construction</label>
+      <div class="statline" id="stat1"></div>
+      <div class="hint">drag the green UE dot</div>
+    </div>
+  </div>
+  <div class="figcap"><b>Read it.</b> d₁ + d₂ = L puts P on the orange ellipse; the mirror makes ‖P→VA‖ = d₂, so the same ray, extended to the full measured length L, ends exactly at VA. Delay + angle alone cannot tell the two readings apart — you choose the representation.</div></div>
+</section>
+
+<!-- ============ 03 double bounce ============ -->
+<section class="sec" id="double">
+  <h2><span class="no">03</span>Double bounce: two virtual anchors, two incidence points</h2>
+  <p class="lede">Now the path bounces twice: BS → P₁ (wall A) → P₂ (wall B) → UE. Mirroring composes: <b>VA¹</b> = BS mirrored in wall A (the first-bounce anchor), <b>VA²</b> = VA¹ mirrored in wall B. The UE still sees a clean LOS-like anchor — ‖UE − VA²‖ = L₂ and the AoA ray points at VA² — which is exactly why BP-SLAM can treat second-order paths as just another static feature. But the incidence points need care: <b>the naive BS–UE delay ellipse no longer passes through any bounce point</b> (the red ✗ is where it cuts the AoA ray — off the wall). The fix: use <b>VA¹ and the UE as the foci</b>. Then the ellipse with the same L₂ passes exactly through P₂, and P₁ follows by aiming from P₂ at VA¹. Slide the roughness up to let the wall scatter: the two specular points diffuse into <em>clouds</em> of reflection points, and the once point-like VA² smears into a cloud too.</p>
+
+  <div class="fig"><div class="body split">
+    <svg id="svg2" viewBox="-150 30 850 540" role="img" aria-label="double bounce demo with two virtual anchors, incidence points, and diffuse scattering"></svg>
+    <div class="rail">
+      <h4>layers</h4>
+      <label class="ck"><input type="checkbox" id="c2_mir" checked> <span class="sw" style="background:var(--ink-faint)"></span> mirror construction</label>
+      <label class="ck"><input type="checkbox" id="c2_ray" checked> <span class="sw" style="background:var(--ink)"></span> AoA ray → VA²</label>
+      <label class="ck"><input type="checkbox" id="c2_bad" checked> <span class="sw" style="background:var(--err)"></span> naive ellipse (foci BS, UE)</label>
+      <label class="ck"><input type="checkbox" id="c2_good" checked> <span class="sw" style="background:var(--ip)"></span> correct ellipse (foci VA¹, UE)</label>
+      <label class="ck"><input type="checkbox" id="c2_vacld" checked> <span class="sw" style="background:var(--va)"></span> VA cloud (diffuse)</label>
+      <div class="ctl">
+        <label><span>surface roughness σ</span> <output id="oSig">0.6 m</output></label>
+        <input type="range" id="sSig" min="0" max="28" step="1" value="12">
+      </div>
+      <div class="statline" id="stat2"></div>
+      <div class="hint">drag the green UE dot · σ = 0 recovers pure specular</div>
+    </div>
+  </div>
+  <div class="figcap"><b>Legend.</b> ■ BS · ● UE (draggable) · ◆ purple = virtual anchors VA¹ (bounce 1), VA² (bounce 2) · ● teal = incidence points P₁, P₂ and their diffuse clouds · dot size/opacity ∝ pathloss weight of that scattered sub-path · ✗ red = phantom point where the naive BS–UE ellipse cuts the AoA ray (on no wall).</div></div>
+</section>
+
+<!-- ============ 04 diffuse & splats ============ -->
+<section class="sec" id="diffuse">
+  <h2><span class="no">04</span>Why the diffuse case decides the representation</h2>
+  <p class="lede">With smooth walls the two readings are equivalent bookkeeping. Rough walls break the tie. A diffuse surface returns energy from a whole patch, not a point: the measurement becomes a family of slightly different (τ, φ, PL) triples. Map those into incidence points and you get a <em>weighted point cloud hugging the physical wall</em> — each point carrying its pathloss as a weight. Exactly the kind of data a splat-style surface representation wants (this is what the point-cloud view in <code>Gaussian_Splatting_Test</code> exports, and what the SAGE bistatic triangulation estimates). Map the same family into virtual anchors and the crisp mirror-image anchor smears into a blob that no longer behaves like a point feature — the VA cloud in the demo above.</p>
+  <div class="fig"><div class="body" style="overflow-x:auto">
+  <table>
+    <thead><tr><th></th><th class="va">Virtual anchor (BP-SLAM)</th><th class="ip">Incidence point (this pipeline)</th></tr></thead>
+    <tbody>
+      <tr><td>construction</td><td class="vac">walk the full length L along the AoA ray</td><td class="ipc">stop where the AoA ray crosses the delay ellipse (foci BS &amp; UE; for bounce ≥ 2: foci VA¹ &amp; UE)</td></tr>
+      <tr><td>needs walls?</td><td class="vac">no — wall-agnostic, that is its superpower</td><td class="ipc">no wall model either, but multi-bounce needs the previous-order VA (a hypothesis about the bounce sequence)</td></tr>
+      <tr><td>as the UE moves</td><td class="vac">fixed — behaves like a static LOS anchor, ideal as a SLAM feature with BP data association</td><td class="ipc">slides along the surface — successive positions <em>paint</em> the wall</td></tr>
+      <tr><td>double bounce</td><td class="vac">still one clean point: VA² = mirror(mirror(BS, A), B)</td><td class="ipc">two points P₁, P₂; naive BS–UE ellipse fails, VA¹–UE ellipse fixes it</td></tr>
+      <tr><td>diffuse walls</td><td class="vac">anchor smears into a cloud — point-feature model degrades</td><td class="ipc">cloud lands <em>on the wall</em> — weighted by pathloss, it is a surface sample: a splat</td></tr>
+      <tr><td>natural output</td><td class="vac">anchor map + UE trajectory (positioning)</td><td class="ipc">surface point cloud (environment mapping / Gaussian splatting)</td></tr>
+    </tbody>
+  </table>
+  </div><div class="figcap"><b>The one-liner.</b> The VA answers “where do I hear a phantom transmitter?” — great for localizing the UE. The incidence point answers “where is the physical wall?” — great for mapping. Delay + angle feed both; pathloss weights both.</div></div>
+</section>
+
+<footer>
+  Interactive note by Bai Liping · scale 1 px ≙ 0.1 m, c ≈ 0.3 m/ns ·
+  BP-SLAM: <a href="https://arxiv.org/abs/1801.04463">Leitinger et&nbsp;al., IEEE TWC 18(12), 2019</a> ·
+  Channel-SLAM: Gentner et&nbsp;al., IEEE TWC 15(9), 2016 ·
+  companion pipeline: <code>Gaussian_Splatting_Test</code> (Sionna RT + SAGE)
+</footer>
+</main>
+
+<script>
+(function(){
+"use strict";
+/* ---------- shared helpers ---------- */
+const M_PER_PX=0.1, C_M_PER_NS=0.2998;
+const dist=(a,b)=>Math.hypot(a[0]-b[0],a[1]-b[1]);
+const sub=(a,b)=>[a[0]-b[0],a[1]-b[1]];
+const unit=v=>{const n=Math.hypot(v[0],v[1])||1;return [v[0]/n,v[1]/n];};
+const txt=(x,y,s,c,sz,anchor)=>`<text x="${x}" y="${y}" fill="${c??'#51606e'}" font-size="${sz??11}" font-family="ui-monospace,Menlo,monospace" text-anchor="${anchor??'start'}">${s}</text>`;
+const seg=(a,b,c,w,dash,o)=>`<line x1="${a[0]}" y1="${a[1]}" x2="${b[0]}" y2="${b[1]}" stroke="${c}" stroke-width="${w??1.6}" ${dash?`stroke-dasharray="${dash}"`:""} opacity="${o??1}"/>`;
+function arrow(a,b,c,w,dash,o){
+  const ang=Math.atan2(b[1]-a[1],b[0]-a[0]),h=7;
+  const p1=[b[0]-h*Math.cos(ang-0.42),b[1]-h*Math.sin(ang-0.42)],p2=[b[0]-h*Math.cos(ang+0.42),b[1]-h*Math.sin(ang+0.42)];
+  return `<g opacity="${o??1}">`+seg(a,b,c,w,dash)+`<path d="M${b[0]},${b[1]} L${p1[0]},${p1[1]} L${p2[0]},${p2[1]} Z" fill="${c}"/></g>`;
+}
+function ellipse(F1,F2,L,stroke,w,dash,o){
+  const c2=dist(F1,F2)/2; if(L/2<=c2+1) return "";
+  const a=L/2,b=Math.sqrt(a*a-c2*c2);
+  const cx=(F1[0]+F2[0])/2, cy=(F1[1]+F2[1])/2;
+  const ang=Math.atan2(F2[1]-F1[1],F2[0]-F1[0])*180/Math.PI;
+  return `<ellipse cx="${cx}" cy="${cy}" rx="${a}" ry="${b}" transform="rotate(${ang.toFixed(2)} ${cx} ${cy})" fill="none" stroke="${stroke}" stroke-width="${w??1.6}" ${dash?`stroke-dasharray="${dash}"`:""} opacity="${o??1}"/>`;
+}
+/* intersection of ray (origin O = one focus, direction u) with ellipse foci (F,O), sum L */
+function rayEllipse(F,O,u,L){
+  const d=sub(F,O), t=(L*L-(d[0]*d[0]+d[1]*d[1]))/(2*(L-(u[0]*d[0]+u[1]*d[1])));
+  return [O[0]+t*u[0],O[1]+t*u[1]];
+}
+const bsMark=(p,label,lx,ly)=>`<rect x="${p[0]-6}" y="${p[1]-6}" width="12" height="12" fill="#16222e"/>`+txt(p[0]+(lx??10),p[1]+(ly??4),label??"BS","#16222e",12);
+const ueMark=(p,label)=>`<circle cx="${p[0]}" cy="${p[1]}" r="7" fill="#2ca02c" stroke="#fff" stroke-width="2"/><circle cx="${p[0]}" cy="${p[1]}" r="12" fill="none" stroke="#2ca02c" stroke-dasharray="2 3" opacity="0.7"/>`+txt(p[0]+15,p[1]+4,label??"UE","#1d7a1d",12);
+const vaMark=(p,label,o)=>`<g opacity="${o??1}"><rect x="${p[0]-5.5}" y="${p[1]-5.5}" width="11" height="11" transform="rotate(45 ${p[0]} ${p[1]})" fill="none" stroke="#7c4dbe" stroke-width="2.4"/></g>`+txt(p[0]+14,p[1]-10,label,"#5d3691",12);
+const ipMark=(p,label,dx,dy)=>`<circle cx="${p[0]}" cy="${p[1]}" r="5" fill="#0e8f7e"/>`+txt(p[0]+(dx??9),p[1]+(dy??-8),label,"#0a6b5e",12);
+function fmt(Lpx){const m=Lpx*M_PER_PX;return `${m.toFixed(1)} m · τ ${(m/C_M_PER_NS).toFixed(0)} ns`;}
+function aoaDeg(u){return ((-Math.atan2(u[1],u[0])*180/Math.PI)+360)%360;}
+/* seeded gaussians (deterministic across loads) */
+function gaussians(seed,n){
+  let s=seed>>>0; const out=[];
+  const rnd=()=>{s|=0;s=(s+0x6D2B79F5)|0;let t=Math.imul(s^(s>>>15),1|s);t=(t+Math.imul(t^(t>>>7),61|t))^t;return((t^(t>>>14))>>>0)/4294967296;};
+  for(let i=0;i<n;i++){const u1=Math.max(rnd(),1e-9),u2=rnd();out.push(Math.sqrt(-2*Math.log(u1))*Math.cos(2*Math.PI*u2));}
+  return out;
+}
+const G1=gaussians(11,34), G2=gaussians(77,34);
+/* dragging */
+function svgPt(svg,ev){
+  const r=svg.getBoundingClientRect(), vb=svg.viewBox.baseVal;
+  return [vb.x+(ev.clientX-r.left)/r.width*vb.width, vb.y+(ev.clientY-r.top)/r.height*vb.height];
+}
+function makeDraggable(svg,getP,setP,box,render){
+  let drag=false;
+  svg.addEventListener("pointerdown",ev=>{
+    const p=svgPt(svg,ev);
+    if(dist(p,getP())<26){drag=true;svg.setPointerCapture(ev.pointerId);ev.preventDefault();}
+  });
+  svg.addEventListener("pointermove",ev=>{
+    if(!drag)return;
+    const p=svgPt(svg,ev);
+    setP([Math.max(box[0],Math.min(box[2],p[0])),Math.max(box[1],Math.min(box[3],p[1]))]);
+    render();
+  });
+  const up=ev=>{drag=false;};
+  svg.addEventListener("pointerup",up); svg.addEventListener("pointercancel",up);
+}
+
+/* =================== DEMO 1: single bounce =================== */
+const svg1=document.getElementById("svg1");
+const D1={BS:[110,280],WX:300,WY0:150,WY1:520,UE:[170,380]};
+D1.VA=[2*D1.WX-D1.BS[0],D1.BS[1]];
+const ck1=id=>document.getElementById(id).checked;
+function render1(){
+  const {BS,UE,VA,WX,WY0,WY1}=D1;
+  const L=dist(UE,VA);
+  const u=unit(sub(VA,UE));
+  const t=(WX-UE[0])/u[0], P=[WX,UE[1]+t*u[1]];
+  const d1=dist(UE,P), d2=dist(P,BS);
+  let s="";
+  /* wall */
+  s+=seg([WX,WY0],[WX,WY1],"#16222e",5);
+  for(let y=WY0;y<WY1;y+=18)s+=seg([WX,y],[WX+9,y+9],"#8a97a3",1.2);
+  s+=txt(WX+14,WY0+16,"wall","#51606e",11);
+  if(ck1("c1_mir")){
+    s+=seg([WX,80],[WX,WY0],"#8a97a3",1,"3 4",0.7)+seg([WX,WY1],[WX,600],"#8a97a3",1,"3 4",0.7);
+    s+=seg(BS,VA,"#8a97a3",1.2,"5 4",0.85)
+      +`<path d="M${WX-8},${BS[1]-8} h8 v8" fill="none" stroke="#8a97a3" stroke-width="1.2"/>`
+      +txt((BS[0]+VA[0])/2-30,BS[1]-10,"mirror in the wall","#8a97a3",10.5);
+  }
+  if(ck1("c1_ell")) s+=ellipse(BS,UE,L,"#e8720c",1.8,null,0.9)
+    +txt(UE[0]-165,UE[1]+120,"‖x−BS‖+‖x−UE‖ = L","#b45607",11);
+  /* physical path */
+  s+=arrow(BS,P,"#51606e",2)+arrow(P,UE,"#51606e",2);
+  if(ck1("c1_ray")){
+    s+=arrow(UE,[UE[0]+u[0]*(L+34),UE[1]+u[1]*(L+34)],"#16222e",1.4,"6 4",0.55);
+    s+=txt(UE[0]+u[0]*40+8,UE[1]+u[1]*40-6,"AoA φ","#16222e",11);
+  }
+  if(ck1("c1_va")){
+    s+=seg(P,VA,"#7c4dbe",1.8,"5 4",0.9);
+    s+=vaMark(VA,"VA = mirror(BS)");
+    s+=txt((P[0]+VA[0])/2-6,(P[1]+VA[1])/2-8,"d₂ (mirrored)","#5d3691",10.5);
+  }
+  if(ck1("c1_ip")){
+    s+=ipMark(P,"P (incidence)",10,-10);
+    s+=txt((UE[0]+P[0])/2-26,(UE[1]+P[1])/2+16,"d₁","#0a6b5e",11)
+      +txt((BS[0]+P[0])/2-10,(BS[1]+P[1])/2-8,"d₂","#51606e",11);
+  }
+  s+=bsMark(BS)+ueMark(UE);
+  svg1.innerHTML=s;
+  document.getElementById("stat1").innerHTML=
+    `<b>L = d₁+d₂</b> = ${fmt(L)}<br>‖UE→VA‖ = ${(dist(UE,VA)*M_PER_PX).toFixed(1)} m = L ✓<br>AoA φ = ${aoaDeg(u).toFixed(1)}°`;
+}
+["c1_ell","c1_ray","c1_va","c1_ip","c1_mir"].forEach(id=>document.getElementById(id).addEventListener("change",render1));
+makeDraggable(svg1,()=>D1.UE,p=>{D1.UE=p;},[120,300,240,440],render1);
+render1();
+
+/* =================== DEMO 2: double bounce + diffuse =================== */
+const svg2=document.getElementById("svg2");
+const D2={BS:[90,300],AY:225,AX0:40,AX1:330,BX:330,BY0:225,BY1:540,UE:[160,420]};
+D2.VA1=[D2.BS[0],2*D2.AY-D2.BS[1]];          // mirror of BS in wall A (1st bounce)
+D2.VA2=[2*D2.BX-D2.VA1[0],D2.VA1[1]];        // mirror of VA1 in wall B (2nd bounce)
+const ck2=id=>document.getElementById(id).checked;
+function render2(){
+  const {BS,UE,VA1,VA2,AY,AX0,AX1,BX,BY0,BY1}=D2;
+  const sig=+document.getElementById("sSig").value;
+  document.getElementById("oSig").textContent=(sig*M_PER_PX).toFixed(1)+" m";
+  const L2=dist(UE,VA2);
+  const u=unit(sub(VA2,UE));
+  let t=(BX-UE[0])/u[0]; const P2=[BX,UE[1]+t*u[1]];
+  const u1=unit(sub(VA1,P2)); t=(AY-P2[1])/u1[1]; const P1=[P2[0]+t*u1[0],AY];
+  let s="";
+  /* walls */
+  s+=seg([AX0,AY],[AX1,AY],"#16222e",5);
+  for(let x=AX0;x<AX1;x+=18)s+=seg([x,AY],[x-9,AY-9],"#8a97a3",1.2);
+  s+=txt(AX0+4,AY-14,"wall A — 1st bounce","#51606e",11);
+  s+=seg([BX,BY0],[BX,BY1],"#16222e",5);
+  for(let y=BY0;y<BY1;y+=18)s+=seg([BX,y],[BX+9,y+9],"#8a97a3",1.2);
+  s+=txt(BX+14,BY0+30,"wall B","#51606e",11)+txt(BX+14,BY0+44,"2nd bounce","#51606e",11);
+  if(ck2("c2_mir")){
+    s+=seg([AX1,AY],[640,AY],"#8a97a3",1,"3 4",0.55)+seg([BX,60],[BX,BY0],"#8a97a3",1,"3 4",0.55);
+    s+=seg(BS,VA1,"#8a97a3",1.2,"5 4",0.85)+seg(VA1,VA2,"#8a97a3",1.2,"5 4",0.85);
+    s+=txt(BS[0]-12,262,"mirror in A","#8a97a3",10.5,"end")
+      +txt((VA1[0]+VA2[0])/2-30,VA1[1]-10,"mirror in B","#8a97a3",10.5);
+  }
+  /* ellipses */
+  if(ck2("c2_bad")){
+    s+=ellipse(BS,UE,L2,"#c22f2f",1.5,"7 5",0.75);
+    const ph=rayEllipse(BS,UE,u,L2);
+    s+=`<g stroke="#c22f2f" stroke-width="2"><line x1="${ph[0]-6}" y1="${ph[1]-6}" x2="${ph[0]+6}" y2="${ph[1]+6}"/><line x1="${ph[0]-6}" y1="${ph[1]+6}" x2="${ph[0]+6}" y2="${ph[1]-6}"/></g>`
+      +txt(ph[0]+12,ph[1]+4,"phantom — on no wall","#c22f2f",10.5);
+  }
+  if(ck2("c2_good")) s+=ellipse(VA1,UE,L2,"#0e8f7e",1.8,null,0.85);
+  /* diffuse clouds */
+  const N=G1.length;
+  if(sig>0){
+    for(let i=0;i<N;i++){
+      const q1=[Math.max(AX0+6,Math.min(AX1-6,P1[0]+sig*G1[i])),AY];
+      const q2=[BX,Math.max(BY0+6,Math.min(BY1-6,P2[1]+sig*G2[i]))];
+      const w=Math.exp(-(G1[i]*G1[i]+G2[i]*G2[i])/2);
+      if(i<7) s+=`<path d="M${BS[0]},${BS[1]} L${q1[0]},${q1[1]} L${q2[0]},${q2[1]} L${UE[0]},${UE[1]}" fill="none" stroke="#0e8f7e" stroke-width="1" opacity="${(0.08+0.22*w).toFixed(2)}"/>`;
+      s+=`<circle cx="${q1[0]}" cy="${q1[1]-3}" r="${(2.2+2.8*w).toFixed(1)}" fill="#0e8f7e" opacity="${(0.16+0.62*w).toFixed(2)}"/>`;
+      s+=`<circle cx="${q2[0]+3}" cy="${q2[1]}" r="${(2.2+2.8*w).toFixed(1)}" fill="#0e8f7e" opacity="${(0.16+0.62*w).toFixed(2)}"/>`;
+      if(ck2("c2_vacld")){
+        const Lq=dist(BS,q1)+dist(q1,q2)+dist(q2,UE);
+        const uq=unit(sub(q2,UE));
+        const vq=[UE[0]+Lq*uq[0],UE[1]+Lq*uq[1]];
+        s+=`<circle cx="${vq[0]}" cy="${vq[1]}" r="${(1.6+2.2*w).toFixed(1)}" fill="#7c4dbe" opacity="${(0.12+0.55*w).toFixed(2)}"/>`;
+      }
+    }
+  }
+  /* physical specular path */
+  s+=arrow(BS,P1,"#51606e",2)+arrow(P1,P2,"#51606e",2)+arrow(P2,UE,"#51606e",2);
+  /* AoA ray */
+  if(ck2("c2_ray")){
+    s+=seg(P2,VA2,"#7c4dbe",1.8,"5 4",0.9);
+    s+=arrow(UE,[UE[0]+u[0]*(L2+30),UE[1]+u[1]*(L2+30)],"#16222e",1.4,"6 4",0.5);
+    s+=txt(UE[0]+u[0]*46+6,UE[1]+u[1]*46+14,"AoA φ","#16222e",11);
+    s+=txt((P2[0]+VA2[0])/2+8,(P2[1]+VA2[1])/2,"…continue to L₂","#5d3691",10.5);
+  }
+  /* markers */
+  s+=vaMark(D2.VA1,"VA¹ (bounce 1)");
+  s+=vaMark(D2.VA2,"VA² (bounce 2)");
+  s+=ipMark(P1,"P₁",-6,-12)+ipMark(P2,"P₂",10,4);
+  s+=bsMark(BS,"BS",-30,4)+ueMark(UE);
+  svg2.innerHTML=s;
+  document.getElementById("stat2").innerHTML=
+    `<b>L₂</b> = ${fmt(L2)}<br>‖UE→VA²‖ = ${(L2*M_PER_PX).toFixed(1)} m = L₂ ✓<br>AoA φ = ${aoaDeg(u).toFixed(1)}°<br>${sig>0?`${N} scattered points / wall`:"specular (σ = 0)"}`;
+}
+["c2_mir","c2_ray","c2_bad","c2_good","c2_vacld"].forEach(id=>document.getElementById(id).addEventListener("change",render2));
+document.getElementById("sSig").addEventListener("input",render2);
+makeDraggable(svg2,()=>D2.UE,p=>{D2.UE=p;},[80,330,300,500],render2);
+render2();
+})();
+</script>
+</body>
+</html>
