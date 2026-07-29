@@ -110,7 +110,7 @@ footer a{color:var(--ink-soft)}
   <p class="lede">For one multipath component the channel estimator (SAGE, ESPRIT, …) returns a triple. Each element has its own geometric meaning:</p>
   <div class="eq">
     <span class="c1"><b>delay</b> τ → a length L = cτ</span> : the locus <i>‖x − BS‖ + ‖x − UE‖ = L</i> is an <b>ellipse with foci BS and UE</b> — every point that could have produced this delay by a single bounce.<br>
-    <span class="c2"><b>angle</b> φ (AoA at the UE)</span> : a <b>ray</b> out of the UE — the direction the energy came from.<br>
+    <span class="c2"><b>angle</b> φ (AoA at the UE)</span> : a <b>ray</b> out of the UE — the direction the energy came from. With arrays at both ends there is a twin, <span class="c2">ψ (AoD at the BS)</span>: a ray out of the BS — the direction the energy left in.<br>
     <span class="c3"><b>pathloss</b> → a weight</span> : how much energy survived; it does not move any geometry, it says how much to <b>trust / how brightly to paint</b> whatever the geometry produces.
   </div>
   <p class="lede">The ray and the ellipse intersect in exactly one point on the UE side — that intersection is the <em>incidence point</em>. Walking the full length L along the same ray lands on the <em>virtual anchor</em>. In both demos below, <b>the drawing is constructed from the data</b>: the two orange sliders <em>are</em> the measurement (τ·c and φ), and every curve and marker follows from them. Drag the UE and the sliders re-sync to what that UE would actually measure; nudge a slider and you inject estimation error. And the ellipses are not just displayed — press the <b>✏ trace</b> buttons to watch each one <em>drawn by its definition</em>: a string of length L pinned at the two foci, kept taut by the moving pencil, the two segment lengths always summing to L.</p>
@@ -149,7 +149,7 @@ footer a{color:var(--ink-soft)}
 <!-- ============ 03 double bounce ============ -->
 <section class="sec" id="double">
   <h2><span class="no">03</span>Double bounce: two virtual anchors, two incidence points</h2>
-  <p class="lede">Now the path bounces twice: BS → P₁ (wall A) → P₂ (wall B) → UE. Mirroring composes: <b>VA¹</b> = BS mirrored in wall A (the first-bounce anchor), <b>VA²</b> = VA¹ mirrored in wall B. The UE still sees a clean LOS-like anchor — ‖UE − VA²‖ = L₂ and the AoA ray points at VA² — which is exactly why BP-SLAM can treat second-order paths as just another static feature. The incidence points need care, because the receiver must first <em>guess the bounce order</em>. <b>Hypothesis 1 — a single bounce:</b> pin the string at BS and UE (red). One bounce must then absorb <em>the entire measured length</em> — the full BS → wall A → wall B → UE trip — so its bounce point lands <em>beyond</em> wall B (the two red distances sum to the full L₂), on an implied wall of its own, tilted through the corner. Perfectly coherent — but that wall matches neither wall A nor wall B, and that is how the hypothesis dies. <b>Hypothesis 2 — double bounce off A then B:</b> pin the string at <b>VA¹ and the UE</b> — the ellipse with the same measured L₂ passes exactly through P₂, and P₁ follows by aiming from P₂ at VA¹. The first bounce then gets an ellipse of its own (green): peel off the direct leg ‖UE→P₂‖ from the string — what remains is the length of the BS → P₁ → P₂ sub-trip, which is just a single-bounce path between BS and P₂, so the leftover string pinned at <b>BS and P₂</b> traces an ellipse through P₁. That recursion is the general recipe: strip the last leg, and an n-bounce problem becomes an (n−1)-bounce problem one wall earlier. The ✏ trace draws the two-bounce construction in propagation order — the bounce-1 segment ellipse through P₁ first, then the bounce-2 ellipse through P₂. Note that the virtual anchor is blind to this choice: walking the full L₂ lands on the same VA under either hypothesis — bounce order is a question only the incidence-point reading must answer, and the map is what answers it. Here too the drawing runs on the data: perturb τ or φ and the estimated P₂ slides <em>off the wall</em> while the diffuse clouds stay on the true surface. Slide the roughness up to let the wall scatter: the specular points diffuse into clouds of reflection points, and the once point-like VA² smears into a cloud too.</p>
+  <p class="lede">Now the path bounces twice: BS → P₁ (wall A) → P₂ (wall B) → UE. Mirroring composes: <b>VA¹</b> = BS mirrored in wall A (the first-bounce anchor), <b>VA²</b> = VA¹ mirrored in wall B. The UE still sees a clean LOS-like anchor — ‖UE − VA²‖ = L₂ and the AoA ray points at VA² — which is exactly why BP-SLAM can treat second-order paths as just another static feature. The incidence points need care, because the receiver must first <em>guess the bounce order</em>. <b>Hypothesis 1 — a single bounce:</b> pin the string at BS and UE (red). One bounce must then absorb <em>the entire measured length</em> — the full BS → wall A → wall B → UE trip — so its bounce point lands <em>beyond</em> wall B (the two red distances sum to the full L₂), on an implied wall of its own, tilted through the corner. Perfectly coherent — but that wall matches neither wall A nor wall B, and that is how the hypothesis dies. <b>Hypothesis 2 — double bounce off A then B:</b> pin the string at <b>VA¹ and the UE</b> — the ellipse with the same measured L₂ passes exactly through P₂. The first bounce then gets an ellipse of its own (green): peel off the direct leg ‖UE→P₂‖ from the string — what remains is the length of the BS → P₁ → P₂ sub-trip, a single-bounce path between BS and P₂, so the leftover string pinned at <b>BS and P₂</b> traces an ellipse through P₁. And the angle that picks P₁ off that ellipse is the path’s <em>other</em> measured angle: the <b>AoD at the BS</b> — a MIMO sounder measures each path at both ends, and bounce 1 is seen from the BS exactly as bounce 2 is seen from the UE. (With a map instead, you could aim from P₂ at VA¹; the two constructions agree exactly when data and map are consistent.) That recursion is the general recipe: strip the last leg, and an n-bounce problem becomes an (n−1)-bounce problem one wall earlier. The ✏ trace draws the two-bounce construction in propagation order — the bounce-1 segment ellipse through P₁ first, then the bounce-2 ellipse through P₂. Note that the virtual anchor is blind to this choice: walking the full L₂ lands on the same VA under either hypothesis — bounce order is a question only the incidence-point reading must answer, and the map is what answers it. Here too the drawing runs on the data: perturb τ or φ and the estimated P₂ slides <em>off the wall</em> while the diffuse clouds stay on the true surface. Slide the roughness up to let the wall scatter: the specular points diffuse into clouds of reflection points, and the once point-like VA² smears into a cloud too.</p>
 
   <div class="fig"><div class="body split">
     <svg id="svg2" viewBox="-150 -20 850 660" role="img" aria-label="double bounce demo with two virtual anchors, incidence points, and diffuse scattering, constructed from delay and angle data"></svg>
@@ -158,8 +158,10 @@ footer a{color:var(--ink-soft)}
       <div class="ctl">
         <label><span>delay L₂ = cτ</span> <output id="o2L"></output></label>
         <input type="range" class="meas" id="s2L" min="-3" max="3" step="0.05" value="0">
-        <label style="margin-top:7px"><span>AoA φ</span> <output id="o2P"></output></label>
+        <label style="margin-top:7px"><span>AoA φ (at the UE)</span> <output id="o2P"></output></label>
         <input type="range" class="meas" id="s2P" min="-6" max="6" step="0.1" value="0">
+        <label style="margin-top:7px"><span>AoD ψ (at the BS)</span> <output id="o2D"></output></label>
+        <input type="range" class="meas" id="s2D" min="-6" max="6" step="0.1" value="0">
         <label style="margin-top:9px"><span>derived L₁ (BS→P₁→P₂)</span> <output id="o2L1"></output></label>
         <div class="hint" style="margin-top:0">not an input — one path yields one delay. L₁ = L₂ − ‖UE→P₂‖ falls out once the AoA fixes P₂.</div>
         <button class="reset" id="b2R" style="margin-top:7px">reset to specular data</button>
@@ -167,7 +169,7 @@ footer a{color:var(--ink-soft)}
       </div>
       <h4>layers</h4>
       <label class="ck"><input type="checkbox" id="c2_mir" checked> <span class="sw" style="background:var(--ink-faint)"></span> mirror construction</label>
-      <label class="ck"><input type="checkbox" id="c2_ray" checked> <span class="sw" style="background:var(--ink)"></span> AoA ray → VA²</label>
+      <label class="ck"><input type="checkbox" id="c2_ray" checked> <span class="sw" style="background:var(--ink)"></span> measured rays: AoA (UE) &amp; AoD (BS)</label>
       <label class="ck"><input type="checkbox" id="c2_bad" checked> <span class="sw" style="background:var(--err)"></span> 1-bounce hypothesis (foci BS, UE)</label>
       <label class="ck"><input type="checkbox" id="c2_e1" checked> <span class="sw" style="background:var(--ue)"></span> bounce-1 segment ellipse (foci BS, P₂)</label>
       <label class="ck"><input type="checkbox" id="c2_good" checked> <span class="sw" style="background:var(--ip)"></span> bounce-2 ellipse (foci VA¹, UE)</label>
@@ -427,9 +429,14 @@ function render2(){
   const ut=unit(sub(VA2,UE));
   let tt=(BX-UE[0])/ut[0]; const P2t=[BX,UE[1]+tt*ut[1]];
   const u1t=unit(sub(VA1,P2t)); tt=(AY-P2t[1])/u1t[1]; const P1t=[P2t[0]+tt*u1t[0],AY];
+  /* the other measured angle: AoD at the BS (specular value + slider deviation) */
+  const psi=aoaOf(unit(sub(P1t,BS))) + (+$("s2D").value);
+  const ud=dirOf(psi);
+  $("o2D").textContent=psi.toFixed(1)+"°";
   /* estimates from the data */
-  const P2=rayEllipse(VA1,UE,u,L2);            // AoA ray ∩ correct ellipse
-  const u1=unit(sub(VA1,P2)); const t1=(AY-P2[1])/u1[1]; const P1=[P2[0]+t1*u1[0],AY];
+  const P2=rayEllipse(VA1,UE,u,L2);            // AoA ray ∩ bounce-2 ellipse
+  const Lseg=L2-dist(UE,P2);                   // leftover string after the direct leg
+  const P1=rayEllipse(P2,BS,ud,Lseg);          // AoD ray ∩ bounce-1 segment ellipse
   const VA2d=[UE[0]+L2*u[0],UE[1]+L2*u[1]];    // VA² from data: walk full L₂
   let s="";
   /* walls */
@@ -486,7 +493,6 @@ function render2(){
   /* bounce-1 segment: peel off the direct leg UE->P2; the leftover string,
      pinned at BS and P2, is the single-bounce ellipse of the BS->P1->P2 trip */
   if(ck2("c2_e1")){
-    const Lseg=L2-dist(UE,P2);
     const st=tState("e1"), ep=ellParams(BS,P2,Lseg);
     if(st==="trace"&&ep){
       s+=ellPartial(ep,T2.th,"#2ca02c",2);
@@ -523,6 +529,9 @@ function render2(){
     s+=arrow(UE,[UE[0]+u[0]*(L2+30),UE[1]+u[1]*(L2+30)],"#16222e",1.4,"6 4",0.5);
     s+=txt(UE[0]+u[0]*46+6,UE[1]+u[1]*46+14,"AoA φ","#16222e",11);
     s+=txt((P2[0]+VA2d[0])/2+8,(P2[1]+VA2d[1])/2,"…continue to L₂","#5d3691",10.5);
+    const dP1=dist(BS,P1);
+    s+=arrow(BS,[BS[0]+ud[0]*(dP1+42),BS[1]+ud[1]*(dP1+42)],"#16222e",1.4,"6 4",0.5);
+    s+=txt(BS[0]+ud[0]*58+6,BS[1]+ud[1]*58-8,"AoD ψ","#16222e",11);
   }
   /* markers: geometric VAs (hollow), data-derived VA² (filled), data-derived incidence points */
   s+=vaMark(VA1,"VA¹ (bounce 1)");
@@ -533,12 +542,12 @@ function render2(){
   s+=bsMark(BS,"BS",-30,4)+ueMark(UE);
   svg2.innerHTML=s;
   const offB=Math.abs(P2[0]-BX)*M_PER_PX, offA=Math.abs(P1[1]-AY)*M_PER_PX;
-  const consistent=offB<0.15&&dist(VA2d,VA2)*M_PER_PX<0.2;
+  const consistent=offB<0.15&&offA<0.15&&dist(VA2d,VA2)*M_PER_PX<0.2;
   $("o2L1").textContent=((L2-dist(UE,P2))*M_PER_PX).toFixed(1)+" m";
   $("stat2").innerHTML=
     `<b>L₂</b> = ${fmt(L2)}<br><b>φ</b> = ${phi.toFixed(1)}°<br>`+
     (consistent?`<span class="ok">✓ data specular-consistent — P₂ on wall B, VA² on the mirror point</span>`
-               :`<span class="off">P₂ estimate off wall B by ${offB.toFixed(2)} m · VA² off by ${(dist(VA2d,VA2)*M_PER_PX).toFixed(2)} m</span>`)+
+               :`<span class="off">P₂ off wall B by ${offB.toFixed(2)} m · P₁ off wall A by ${offA.toFixed(2)} m · VA² off by ${(dist(VA2d,VA2)*M_PER_PX).toFixed(2)} m</span>`)+
     `<br>${sig>0?`${N} scattered points / wall`:"specular (σ = 0)"}`;
 }
 function stop2(){T2.on=false;if(raf2){cancelAnimationFrame(raf2);raf2=null;}}
@@ -561,10 +570,10 @@ function trace2(){
   raf2=requestAnimationFrame(tick);
 }
 ["c2_mir","c2_ray","c2_bad","c2_good","c2_e1","c2_vacld"].forEach(id=>$(id).addEventListener("change",()=>{stop2();render2();}));
-["sSig","s2L","s2P"].forEach(id=>$(id).addEventListener("input",()=>{stop2();render2();}));
-$("b2R").addEventListener("click",()=>{$("s2L").value=0;$("s2P").value=0;stop2();render2();});
+["sSig","s2L","s2P","s2D"].forEach(id=>$(id).addEventListener("input",()=>{stop2();render2();}));
+$("b2R").addEventListener("click",()=>{$("s2L").value=0;$("s2P").value=0;$("s2D").value=0;stop2();render2();});
 $("b2T").addEventListener("click",trace2);
-makeDraggable(svg2,()=>D2.UE,p=>{D2.UE=p;$("s2L").value=0;$("s2P").value=0;stop2();},[80,330,300,500],render2);
+makeDraggable(svg2,()=>D2.UE,p=>{D2.UE=p;$("s2L").value=0;$("s2P").value=0;$("s2D").value=0;stop2();},[80,330,300,500],render2);
 render2();
 })();
 </script>
