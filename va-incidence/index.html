@@ -113,7 +113,7 @@ footer a{color:var(--ink-soft)}
     <span class="c2"><b>angle</b> φ (AoA at the UE)</span> : a <b>ray</b> out of the UE — the direction the energy came from.<br>
     <span class="c3"><b>pathloss</b> → a weight</span> : how much energy survived; it does not move any geometry, it says how much to <b>trust / how brightly to paint</b> whatever the geometry produces.
   </div>
-  <p class="lede">The ray and the ellipse intersect in exactly one point on the UE side — that intersection is the <em>incidence point</em>. Walking the full length L along the same ray lands on the <em>virtual anchor</em>. In both demos below, <b>the drawing is constructed from the data</b>: the two orange sliders <em>are</em> the measurement (τ·c and φ), and every curve and marker follows from them. Drag the UE and the sliders re-sync to what that UE would actually measure; nudge a slider and you inject estimation error.</p>
+  <p class="lede">The ray and the ellipse intersect in exactly one point on the UE side — that intersection is the <em>incidence point</em>. Walking the full length L along the same ray lands on the <em>virtual anchor</em>. In both demos below, <b>the drawing is constructed from the data</b>: the two orange sliders <em>are</em> the measurement (τ·c and φ), and every curve and marker follows from them. Drag the UE and the sliders re-sync to what that UE would actually measure; nudge a slider and you inject estimation error. And the ellipses are not just displayed — press the <b>✏ trace</b> buttons to watch each one <em>drawn by its definition</em>: a string of length L pinned at the two foci, kept taut by the moving pencil, the two segment lengths always summing to L.</p>
 </section>
 
 <!-- ============ 02 single bounce ============ -->
@@ -131,6 +131,7 @@ footer a{color:var(--ink-soft)}
         <label style="margin-top:7px"><span>AoA φ</span> <output id="o1P"></output></label>
         <input type="range" class="meas" id="s1P" min="-6" max="6" step="0.1" value="0">
         <button class="reset" id="b1R" style="margin-top:7px">reset to specular data</button>
+        <button class="reset" id="b1T" style="margin-top:5px">✏ trace ellipse: string of length L pinned at BS &amp; UE</button>
       </div>
       <h4>layers</h4>
       <label class="ck"><input type="checkbox" id="c1_ell" checked> <span class="sw" style="background:var(--meas)"></span> delay ellipse (foci BS, UE)</label>
@@ -160,6 +161,7 @@ footer a{color:var(--ink-soft)}
         <label style="margin-top:7px"><span>AoA φ</span> <output id="o2P"></output></label>
         <input type="range" class="meas" id="s2P" min="-6" max="6" step="0.1" value="0">
         <button class="reset" id="b2R" style="margin-top:7px">reset to specular data</button>
+        <button class="reset" id="b2T" style="margin-top:5px">✏ trace both ellipses with their strings</button>
       </div>
       <h4>layers</h4>
       <label class="ck"><input type="checkbox" id="c2_mir" checked> <span class="sw" style="background:var(--ink-faint)"></span> mirror construction</label>
@@ -227,6 +229,31 @@ function ellipse(F1,F2,L,stroke,w,dash,o){
   const ang=Math.atan2(F2[1]-F1[1],F2[0]-F1[0])*180/Math.PI;
   return `<ellipse cx="${cx}" cy="${cy}" rx="${a}" ry="${b}" transform="rotate(${ang.toFixed(2)} ${cx} ${cy})" fill="none" stroke="${stroke}" stroke-width="${w??1.6}" ${dash?`stroke-dasharray="${dash}"`:""} opacity="${o??1}"/>`;
 }
+/* parametric ellipse from two foci + string length (for the pin-and-string trace) */
+function ellParams(F1,F2,L){
+  const c2=dist(F1,F2)/2; if(L/2<=c2+1) return null;
+  const a=L/2,b=Math.sqrt(a*a-c2*c2);
+  return {cx:(F1[0]+F2[0])/2,cy:(F1[1]+F2[1])/2,a,b,ang:Math.atan2(F2[1]-F1[1],F2[0]-F1[0])};
+}
+function ellPoint(p,th){
+  const x=p.a*Math.cos(th),y=p.b*Math.sin(th),ca=Math.cos(p.ang),sa=Math.sin(p.ang);
+  return [p.cx+x*ca-y*sa,p.cy+x*sa+y*ca];
+}
+function ellPartial(p,th1,stroke,w,dash,o){
+  let d="";const n=Math.max(2,Math.ceil(th1/0.06));
+  for(let i=0;i<=n;i++){const q=ellPoint(p,th1*i/n);d+=(i?"L":"M")+q[0].toFixed(1)+","+q[1].toFixed(1);}
+  return `<path d="${d}" fill="none" stroke="${stroke}" stroke-width="${w}" ${dash?`stroke-dasharray="${dash}"`:""} opacity="${o??1}"/>`;
+}
+/* the string: two taut segments from the pins (foci) to the pencil at E */
+function stringViz(F1,F2,E,color,eq,labelPos){
+  const d2=dist(E,F1)*M_PER_PX,d1=dist(E,F2)*M_PER_PX;
+  return seg(F1,E,color,1.3,"2 3",0.9)+seg(F2,E,color,1.3,"2 3",0.9)
+    +`<circle cx="${E[0]}" cy="${E[1]}" r="4.2" fill="${color}"/>`
+    +txt((F2[0]+E[0])/2+6,(F2[1]+E[1])/2-6,d1.toFixed(1),color,10)
+    +txt((F1[0]+E[0])/2+6,(F1[1]+E[1])/2-6,d2.toFixed(1),color,10)
+    +txt(labelPos[0],labelPos[1],`${eq} = ${d1.toFixed(1)} + ${d2.toFixed(1)} = ${(d1+d2).toFixed(1)} m — constant`,color,11.5);
+}
+const reduced=matchMedia("(prefers-reduced-motion: reduce)").matches;
 /* intersection of ray (origin O = one focus, direction u) with ellipse foci (F,O), sum L */
 function rayEllipse(F,O,u,L){
   const d=sub(F,O), t=(L*L-(d[0]*d[0]+d[1]*d[1]))/(2*(L-(u[0]*d[0]+u[1]*d[1])));
@@ -272,6 +299,7 @@ const $=id=>document.getElementById(id);
 
 /* =================== DEMO 1: single bounce, data-driven =================== */
 const svg1=$("svg1");
+const T1={on:false,th:0}; let raf1=null;
 const D1={BS:[110,280],WX:300,WY0:150,WY1:520,UE:[170,380]};
 D1.VAtrue=[2*D1.WX-D1.BS[0],D1.BS[1]];
 const ck1=id=>$(id).checked;
@@ -292,8 +320,17 @@ function render1(){
   let s="";
   /* ghost true wall (unknown to the receiver) */
   s+=seg([WX,WY0],[WX,WY1],"#8a97a3",3,null,0.35)+txt(WX+10,WY0+16,"true wall","#8a97a3",10.5);
-  if(ck1("c1_ell")) s+=ellipse(BS,UE,L,"#e8720c",1.8,null,0.9)
-    +txt(UE[0]-165,UE[1]+128,"‖x−BS‖+‖x−UE‖ = L","#b45607",11);
+  if(ck1("c1_ell")){
+    const ep=ellParams(BS,UE,L);
+    if(T1.on&&ep){
+      s+=ellPartial(ep,T1.th,"#e8720c",2);
+      s+=`<circle cx="${BS[0]}" cy="${BS[1]}" r="3" fill="#b45607"/><circle cx="${UE[0]}" cy="${UE[1]}" r="3" fill="#b45607"/>`;
+      s+=stringViz(BS,UE,ellPoint(ep,T1.th),"#b45607","‖x−UE‖ + ‖x−BS‖",[-150,86]);
+    } else {
+      s+=ellipse(BS,UE,L,"#e8720c",1.8,null,0.9)
+        +txt(UE[0]-165,UE[1]+128,"‖x−BS‖+‖x−UE‖ = L","#b45607",11);
+    }
+  }
   /* implied physical path from the data */
   s+=arrow(BS,P,"#51606e",2)+arrow(P,UE,"#51606e",2);
   if(ck1("c1_ray")){
@@ -337,14 +374,31 @@ function render1(){
     (consistent?`<span class="ok">✓ data specular-consistent — inferred wall = true wall</span>`
                :`<span class="off">inferred wall: tilt ${tilt.toFixed(1)}°, P off true wall ${offm.toFixed(2)} m</span>`);
 }
-["c1_ell","c1_ray","c1_va","c1_ip","c1_mir"].forEach(id=>$(id).addEventListener("change",render1));
-["s1L","s1P"].forEach(id=>$(id).addEventListener("input",render1));
-$("b1R").addEventListener("click",()=>{$("s1L").value=0;$("s1P").value=0;render1();});
-makeDraggable(svg1,()=>D1.UE,p=>{D1.UE=p;$("s1L").value=0;$("s1P").value=0;},[120,300,240,440],render1);
+function stop1(){T1.on=false;if(raf1){cancelAnimationFrame(raf1);raf1=null;}}
+function trace1(){
+  stop1();
+  if(reduced||!ck1("c1_ell")){render1();return;}
+  T1.on=true;
+  const t0=performance.now(),DUR=3400;
+  const tick=now=>{
+    const f=Math.min(1,(now-t0)/DUR);
+    T1.th=2*Math.PI*f;
+    render1();
+    if(f<1){raf1=requestAnimationFrame(tick);}else{stop1();render1();}
+  };
+  raf1=requestAnimationFrame(tick);
+}
+["c1_ell","c1_ray","c1_va","c1_ip","c1_mir"].forEach(id=>$(id).addEventListener("change",()=>{stop1();render1();}));
+["s1L","s1P"].forEach(id=>$(id).addEventListener("input",()=>{stop1();render1();}));
+$("b1R").addEventListener("click",()=>{$("s1L").value=0;$("s1P").value=0;stop1();render1();});
+$("b1T").addEventListener("click",trace1);
+makeDraggable(svg1,()=>D1.UE,p=>{D1.UE=p;$("s1L").value=0;$("s1P").value=0;stop1();},[120,300,240,440],render1);
 render1();
+trace1();
 
 /* =================== DEMO 2: double bounce + diffuse, data-driven =================== */
 const svg2=$("svg2");
+const T2={on:false,idx:0,th:0,queue:[]}; let raf2=null;
 const D2={BS:[90,300],AY:225,AX0:40,AX1:330,BX:330,BY0:225,BY1:540,UE:[160,420]};
 D2.VA1=[D2.BS[0],2*D2.AY-D2.BS[1]];          // mirror of BS in wall A (1st bounce)
 D2.VA2=[2*D2.BX-D2.VA1[0],D2.VA1[1]];        // mirror of VA1 in wall B (2nd bounce)
@@ -385,14 +439,32 @@ function render2(){
     s+=txt(BS[0]-12,262,"mirror in A","#8a97a3",10.5,"end")
       +txt((VA1[0]+VA2[0])/2-30,VA1[1]-10,"mirror in B","#8a97a3",10.5);
   }
-  /* ellipses from the data */
+  /* ellipses from the data — during a trace they are drawn by the string, in queue order */
+  const tState=k=>{ if(!T2.on) return "full"; const p=T2.queue.indexOf(k);
+    return p<0||p<T2.idx?"full":(p===T2.idx?"trace":"hidden"); };
   if(ck2("c2_bad")){
-    s+=ellipse(BS,UE,L2,"#c22f2f",1.5,"7 5",0.75);
-    const ph=rayEllipse(BS,UE,u,L2);
-    s+=`<g stroke="#c22f2f" stroke-width="2"><line x1="${ph[0]-6}" y1="${ph[1]-6}" x2="${ph[0]+6}" y2="${ph[1]+6}"/><line x1="${ph[0]-6}" y1="${ph[1]+6}" x2="${ph[0]+6}" y2="${ph[1]-6}"/></g>`
-      +txt(ph[0]+12,ph[1]+4,"phantom — on no wall","#c22f2f",10.5);
+    const st=tState("bad"), ep=ellParams(BS,UE,L2);
+    if(st==="trace"&&ep){
+      s+=ellPartial(ep,T2.th,"#c22f2f",1.6,"7 5");
+      s+=`<circle cx="${BS[0]}" cy="${BS[1]}" r="3" fill="#c22f2f"/><circle cx="${UE[0]}" cy="${UE[1]}" r="3" fill="#c22f2f"/>`;
+      s+=stringViz(BS,UE,ellPoint(ep,T2.th),"#c22f2f","string pinned at BS &amp; UE: ‖x−UE‖ + ‖x−BS‖",[-140,4]);
+    } else if(st==="full"){
+      s+=ellipse(BS,UE,L2,"#c22f2f",1.5,"7 5",0.75);
+      const ph=rayEllipse(BS,UE,u,L2);
+      s+=`<g stroke="#c22f2f" stroke-width="2"><line x1="${ph[0]-6}" y1="${ph[1]-6}" x2="${ph[0]+6}" y2="${ph[1]+6}"/><line x1="${ph[0]-6}" y1="${ph[1]+6}" x2="${ph[0]+6}" y2="${ph[1]-6}"/></g>`
+        +txt(ph[0]+12,ph[1]+4,"phantom — on no wall","#c22f2f",10.5);
+    }
   }
-  if(ck2("c2_good")) s+=ellipse(VA1,UE,L2,"#0e8f7e",1.8,null,0.85);
+  if(ck2("c2_good")){
+    const st=tState("good"), ep=ellParams(VA1,UE,L2);
+    if(st==="trace"&&ep){
+      s+=ellPartial(ep,T2.th,"#0e8f7e",2);
+      s+=`<circle cx="${VA1[0]}" cy="${VA1[1]}" r="3" fill="#0a6b5e"/><circle cx="${UE[0]}" cy="${UE[1]}" r="3" fill="#0a6b5e"/>`;
+      s+=stringViz(VA1,UE,ellPoint(ep,T2.th),"#0a6b5e","same L₂, string re-pinned at VA¹ &amp; UE: ‖x−UE‖ + ‖x−VA¹‖",[-140,4]);
+    } else if(st==="full"){
+      s+=ellipse(VA1,UE,L2,"#0e8f7e",1.8,null,0.85);
+    }
+  }
   /* diffuse clouds (physics of the true walls) */
   const N=G1.length;
   if(sig>0){
@@ -436,10 +508,30 @@ function render2(){
                :`<span class="off">P₂ estimate off wall B by ${offB.toFixed(2)} m · VA² off by ${(dist(VA2d,VA2)*M_PER_PX).toFixed(2)} m</span>`)+
     `<br>${sig>0?`${N} scattered points / wall`:"specular (σ = 0)"}`;
 }
-["c2_mir","c2_ray","c2_bad","c2_good","c2_vacld"].forEach(id=>$(id).addEventListener("change",render2));
-["sSig","s2L","s2P"].forEach(id=>$(id).addEventListener("input",render2));
-$("b2R").addEventListener("click",()=>{$("s2L").value=0;$("s2P").value=0;render2();});
-makeDraggable(svg2,()=>D2.UE,p=>{D2.UE=p;$("s2L").value=0;$("s2P").value=0;},[80,330,300,500],render2);
+function stop2(){T2.on=false;if(raf2){cancelAnimationFrame(raf2);raf2=null;}}
+function trace2(){
+  stop2();
+  T2.queue=["bad","good"].filter(k=>ck2("c2_"+k));
+  if(!T2.queue.length||reduced){render2();return;}
+  T2.on=true;T2.idx=0;T2.th=0;
+  const DUR=3200; let t0=performance.now();
+  const tick=now=>{
+    let f=(now-t0)/DUR;
+    if(f>=1){
+      T2.idx++; t0=now; f=0;
+      if(T2.idx>=T2.queue.length){stop2();render2();return;}
+    }
+    T2.th=2*Math.PI*Math.min(1,f);
+    render2();
+    raf2=requestAnimationFrame(tick);
+  };
+  raf2=requestAnimationFrame(tick);
+}
+["c2_mir","c2_ray","c2_bad","c2_good","c2_vacld"].forEach(id=>$(id).addEventListener("change",()=>{stop2();render2();}));
+["sSig","s2L","s2P"].forEach(id=>$(id).addEventListener("input",()=>{stop2();render2();}));
+$("b2R").addEventListener("click",()=>{$("s2L").value=0;$("s2P").value=0;stop2();render2();});
+$("b2T").addEventListener("click",trace2);
+makeDraggable(svg2,()=>D2.UE,p=>{D2.UE=p;$("s2L").value=0;$("s2P").value=0;stop2();},[80,330,300,500],render2);
 render2();
 })();
 </script>
