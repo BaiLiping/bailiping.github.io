@@ -91,6 +91,7 @@ footer a{color:var(--ink-soft)}
     <a href="#single">single bounce</a>
     <a href="#double">double bounce</a>
     <a href="#corridor">corridor</a>
+    <a href="#estimate">estimating the map</a>
     <a href="#diffuse">diffuse &amp; splats</a>
     <a href="/">← bailiping.com</a>
   </nav>
@@ -226,9 +227,33 @@ footer a{color:var(--ink-soft)}
   <div class="figcap"><b>Legend.</b> Same as the demo above — dashed rings mark each ellipse's foci · red = rejected 1-bounce hypothesis with its implied wall · note the AoD arrow at the BS is exactly anti-parallel to the AoA arrow at the UE, and stays so while you drag: that lock is the parallel-wall signature.</div></div>
 </section>
 
-<!-- ============ 05 diffuse & splats ============ -->
+<!-- ============ 05 estimating the map ============ -->
+<section class="sec" id="estimate">
+  <h2><span class="no">05</span>Estimating the map: motion collapses the family</h2>
+  <p class="lede">The double-bounce constructions above <em>spent</em> one anchor of map knowledge, VA¹ — but in SLAM the map is unknown; VA¹ is the thing to estimate. Two mechanisms deliver it. <b>Bootstrap up the ladder:</b> single-bounce paths are map-free — every snapshot of demo&nbsp;02 yields a wall and its VA from data alone, and once wall A is mapped, VA¹ exists and double-bounce paths become interpretable (each of which then maps wall B): order-n paths become usable exactly when the order-(n−1) anchors exist — the image-source ladder is also the estimation ladder. <b>Motion kills the leftover ambiguity:</b> even <em>perfect</em> (τ, φ, ψ) leave the one-parameter family of bounce-point splits at a single pose. But the walls are static. Every family member implies a wall at P₁, hence a VA¹ candidate — so each pose draws a <em>curve</em> of possible maps. Curves from different poses must agree, and they can only agree at the true VA¹. One pose = a curve of maps; two poses = a point. Slide the family parameter and watch the candidate travel along pose&nbsp;a’s curve until it hits pose&nbsp;b’s — that crossing <em>is</em> the map. (In reality the associations and bounce orders are unknown too, so all of this runs inside probabilistic machinery — BP data association over VA features in BP-SLAM, or one joint posterior over trajectory, map and associations, the theme of the <a href="/jvs-slam/">JVS-SLAM note</a>.)</p>
+
+  <div class="fig"><div class="body split">
+    <svg id="svg4" viewBox="-150 -45 850 685" role="img" aria-label="map estimation demo: curves of VA1 candidates from two UE poses intersect at the true VA1"></svg>
+    <div class="rail">
+      <h4>the unknown split</h4>
+      <div class="ctl">
+        <label><span>family member (choice of L₁)</span> <output id="o4t"></output></label>
+        <input type="range" id="s4t" min="0" max="1" step="0.005" value="0.3">
+      </div>
+      <h4>layers</h4>
+      <label class="ck"><input type="checkbox" id="c4_famA" checked> <span class="sw" style="background:var(--va)"></span> VA¹ candidates from pose a</label>
+      <label class="ck"><input type="checkbox" id="c4_famB" checked> <span class="sw" style="background:var(--va)"></span> VA¹ candidates from pose b (fixed)</label>
+      <label class="ck"><input type="checkbox" id="c4_mem" checked> <span class="sw" style="background:var(--ip)"></span> selected member: P₁, P₂ + implied walls</label>
+      <div class="statline" id="stat4"></div>
+      <div class="hint">drag pose a (green) · pose b is a second, fixed snapshot of the same static map · data at both poses is perfectly specular</div>
+    </div>
+  </div>
+  <div class="figcap"><b>Read it.</b> Each purple curve is everything one pose can say about VA¹ from its own (τ, φ, ψ): a one-parameter family of coherent double-bounce explanations. The static-map constraint is that all poses’ curves pass through the <em>same</em> VA¹ — their crossing. The faint walls are ground truth, drawn only for reference; nothing in the construction uses them.</div></div>
+</section>
+
+<!-- ============ 06 diffuse & splats ============ -->
 <section class="sec" id="diffuse">
-  <h2><span class="no">05</span>Why the diffuse case decides the representation</h2>
+  <h2><span class="no">06</span>Why the diffuse case decides the representation</h2>
   <p class="lede">With smooth walls the two readings are equivalent bookkeeping. Rough walls break the tie. A diffuse surface returns energy from a whole patch, not a point: the measurement becomes a family of slightly different (τ, φ, PL) triples. Map those into incidence points and you get a <em>weighted point cloud hugging the physical wall</em> — each point carrying its pathloss as a weight. Exactly the kind of data a splat-style surface representation wants (this is what the point-cloud view in <code>Gaussian_Splatting_Test</code> exports, and what the SAGE bistatic triangulation estimates). Map the same family into virtual anchors and the crisp mirror-image anchor smears into a blob that no longer behaves like a point feature — the VA cloud in the demo above.</p>
   <div class="fig"><div class="body" style="overflow-x:auto">
   <table>
@@ -821,6 +846,108 @@ $("b3R").addEventListener("click",()=>{$("s3L").value=0;$("s3P").value=0;$("s3D"
 $("b3T").addEventListener("click",trace3);
 makeDraggable(svg3,()=>D3.UE,p=>{D3.UE=p;$("s3L").value=0;$("s3P").value=0;$("s3D").value=0;stop3();},[160,200,300,400],render3);
 render3();
+
+/* =================== DEMO 4: map estimation — curves of VA¹ candidates =================== */
+const svg4=$("svg4");
+const D4={UEa:[240,440],UEb:[295,505]};    // two snapshots of the same static map (demo-2 scene)
+const ck4=id=>$(id).checked;
+/* perfect specular data at a pose of the demo-2 scene */
+function specAt(UE){
+  const dV=sub(D2.VA2,UE);
+  const tB=((D2.BC[0]-UE[0])*D2.BN[0]+(D2.BC[1]-UE[1])*D2.BN[1])/(dV[0]*D2.BN[0]+dV[1]*D2.BN[1]);
+  const P2t=[UE[0]+tB*dV[0],UE[1]+tB*dV[1]];
+  const tA=(D2.AY-P2t[1])/(D2.VA1[1]-P2t[1]);
+  const P1t=[P2t[0]+tA*(D2.VA1[0]-P2t[0]),D2.AY];
+  return {UE,L:dist(UE,D2.VA2),u:unit(dV),ud:unit(sub(P1t,D2.BS))};
+}
+/* one family member: choose the last-leg length t2, everything else follows from the data */
+function member(sp,t2){
+  const BS=D2.BS;
+  const P2=[sp.UE[0]+t2*sp.u[0],sp.UE[1]+t2*sp.u[1]];
+  const R=sp.L-t2, d=sub(P2,BS);
+  const den=R-(sp.ud[0]*d[0]+sp.ud[1]*d[1]);
+  if(den<=1e-6) return null;
+  const t1=(R*R-(d[0]*d[0]+d[1]*d[1]))/(2*den);
+  if(t1<=4||t1>=R-4) return null;
+  const P1=[BS[0]+t1*sp.ud[0],BS[1]+t1*sp.ud[1]];
+  /* implied wall at P1 bisects the two legs; mirror BS across it -> VA1 candidate */
+  const a=unit(sub(BS,P1)), b=unit(sub(P2,P1));
+  const n=unit([a[0]+b[0],a[1]+b[1]]);
+  const dd=(BS[0]-P1[0])*n[0]+(BS[1]-P1[1])*n[1];
+  const cand=[BS[0]-2*dd*n[0],BS[1]-2*dd*n[1]];
+  return {P1,P2,t1,t2,cand,n};
+}
+function family(sp){
+  const out=[];
+  for(let k=0;k<=120;k++){
+    const t2=sp.L*(0.06+0.80*k/120);
+    const m=member(sp,t2);
+    if(m) out.push(m);
+  }
+  return out;
+}
+function render4(){
+  const BS=D2.BS, {UEa,UEb}=D4;
+  const spA=specAt(UEa), spB=specAt(UEb);
+  const famA=family(spA), famB=family(spB);
+  const f=+$("s4t").value;
+  const sel=famA.length?famA[Math.round(f*(famA.length-1))]:null;
+  let s="";
+  /* ground-truth walls, faint, reference only */
+  s+=seg([D2.AX0,D2.AY],[D2.AX1,D2.AY],"#8a97a3",3,null,0.3)
+    +seg(D2.BC,D2.BEND,"#8a97a3",3,null,0.3)
+    +txt(D2.AX0+4,D2.AY-10,"true walls (unknown to the estimator)","#8a97a3",10.5);
+  /* candidate curves */
+  if(ck4("c4_famA")&&famA.length){
+    s+=`<path d="${poly4(famA)}" fill="none" stroke="#7c4dbe" stroke-width="2" opacity="0.85"/>`;
+    const e=famA[2]||famA[0];
+    s+=txt(e.cand[0]-8,e.cand[1]-10,"VA¹ candidates — pose a","#5d3691",10.5,"end");
+  }
+  if(ck4("c4_famB")&&famB.length){
+    s+=`<path d="${poly4(famB)}" fill="none" stroke="#7c4dbe" stroke-width="1.8" stroke-dasharray="5 4" opacity="0.75"/>`;
+    const e=famB[famB.length-3]||famB[famB.length-1];
+    s+=txt(e.cand[0]+10,e.cand[1]+4,"pose b","#5d3691",10.5);
+  }
+  /* the agreement point */
+  s+=`<circle cx="${D2.VA1[0]}" cy="${D2.VA1[1]}" r="7" fill="none" stroke="#5d3691" stroke-width="1.6" stroke-dasharray="3 3"/>`
+    +txt(D2.VA1[0]-12,D2.VA1[1]-12,"curves must agree here = VA¹","#5d3691",10.5,"end");
+  /* selected member of pose a's family */
+  if(ck4("c4_mem")&&sel){
+    const {P1,P2,cand,n}=sel;
+    const w=[-n[1],n[0]];
+    s+=seg(BS,P1,"#0e8f7e",1.6,null,0.8)+seg(P1,P2,"#0e8f7e",1.6,null,0.8)+seg(P2,UEa,"#0e8f7e",1.6,null,0.8);
+    s+=seg([P1[0]-30*w[0],P1[1]-30*w[1]],[P1[0]+30*w[0],P1[1]+30*w[1]],"#16222e",2.5,"5 3",0.7);
+    const a2=unit(sub(P1,P2)), b2=unit(sub(UEa,P2));
+    const n2=unit([a2[0]+b2[0],a2[1]+b2[1]]), w2=[-n2[1],n2[0]];
+    s+=seg([P2[0]-30*w2[0],P2[1]-30*w2[1]],[P2[0]+30*w2[0],P2[1]+30*w2[1]],"#16222e",2.5,"5 3",0.7);
+    s+=`<circle cx="${P1[0]}" cy="${P1[1]}" r="4" fill="#0e8f7e"/><circle cx="${P2[0]}" cy="${P2[1]}" r="4" fill="#0e8f7e"/>`
+      +txt(P1[0]+8,P1[1]-8,"P₁?","#0a6b5e",10.5)+txt(P2[0]+8,P2[1]+14,"P₂?","#0a6b5e",10.5);
+    s+=`<circle cx="${cand[0]}" cy="${cand[1]}" r="4.5" fill="#7c4dbe"/>`;
+    s+=seg(P1,cand,"#7c4dbe",1,"2 3",0.5);
+  }
+  s+=bsMark(BS,"BS",-30,4)+ueMark(UEa,"UE, pose a");
+  s+=`<circle cx="${UEb[0]}" cy="${UEb[1]}" r="6" fill="none" stroke="#2ca02c" stroke-width="2" opacity="0.75"/>`
+    +txt(UEb[0]+11,UEb[1]+4,"pose b","#1d7a1d",11);
+  svg4.innerHTML=s;
+  if(sel){
+    const L1=(sel.t1+dist(sel.P1,sel.P2))*M_PER_PX;
+    const miss=Math.min(...famB.map(m=>dist(m.cand,sel.cand)))*M_PER_PX;
+    const hit=dist(sel.cand,D2.VA1)*M_PER_PX<0.5;
+    $("o4t").textContent="L₁ = "+L1.toFixed(1)+" m";
+    const lo=(famA[0].t1+dist(famA[0].P1,famA[0].P2))*M_PER_PX,
+          hi=(famA[famA.length-1].t1+dist(famA[famA.length-1].P1,famA[famA.length-1].P2))*M_PER_PX;
+    $("stat4").innerHTML=
+      `pose a alone: any L₁ ∈ [${Math.min(lo,hi).toFixed(1)}, ${Math.max(lo,hi).toFixed(1)}] m fits the data<br>`+
+      `selected member: L₁ = ${L1.toFixed(1)} m<br>`+
+      (hit?`<span class="ok">✓ pose b accepts this member too — VA¹ found, the map is estimated</span>`
+          :`<span class="off">pose b rejects it — its curve is ${miss.toFixed(1)} m away</span>`);
+  }
+}
+function poly4(fam){return "M"+fam.map(m=>m.cand[0].toFixed(1)+","+m.cand[1].toFixed(1)).join(" L");}
+["c4_famA","c4_famB","c4_mem"].forEach(id=>$(id).addEventListener("change",render4));
+$("s4t").addEventListener("input",render4);
+makeDraggable(svg4,()=>D4.UEa,p=>{D4.UEa=p;},[230,430,300,510],render4);
+render4();
 })();
 </script>
 </body>
