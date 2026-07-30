@@ -2289,7 +2289,7 @@ const CAP=["",
  "② <b>Walk the AoD.</b> Eject the departure ray from the BS and walk the <em>full</em> measured length L along it. Its endpoint E is the mirror image of the UE across the unknown wall — the dual of §2.1's VA walk, and the replacement focus.",
  "③ <b>Hypothesize the bounce.</b> Choose P on the AoD ray (slider below). The walk to P spends ‖BS→P‖ of the string; ‖P→E‖ = L − ‖BS→P‖ is exactly what remains for the last leg.",
  "④ <b>Re-pin the string.</b> The leftover string, pinned at P, sweeps a circle through E — every point of it lies at the correct remaining distance from the bounce.",
- "⑤ <b>Cut with the reverse AoA.</b> The energy reached the UE from direction φ, so from P the last leg leaves along π − φ. That ray cuts the circle at the candidate UE(P), with ‖P→UE‖ = ‖P→E‖ ✓.",
+ "⑤ <b>Cut with the reverse AoA.</b> The energy reached the UE from direction φ, so from P the last leg leaves along π − φ. That ray cuts the circle at the candidate UE(P). Note ‖P→UE(P)‖ = ‖P→E‖ <em>for every P</em> — the equality is built into the construction, so it cannot select the bounce: one more constraint is needed.",
  "⑥ <b>The implied wall — and the family.</b> The wall runs along the middle between P→UE(P) and P→E: the bisector through P. <b>Finding P is finding the wall.</b> Slide P — every position stays coherent, and the candidates sweep the teal line ⊥ the true wall: one path = a one-parameter family."];
 let step=1;
 const T={on:false,th:0}; let raf=null;
@@ -2381,10 +2381,9 @@ function render(){
   const errU=dist(U,UE)*M_PER_PX;
   const n2=unit(sub(U,E));
   const tilt=Math.asin(Math.min(1,Math.abs(n2[0]*D1.WN[1]-n2[1]*D1.WN[0])))*180/Math.PI;
-  $("stat31").innerHTML= step<3 ? "" :
-    `‖BS→P‖ = ${(t*M_PER_PX).toFixed(1)} m · ‖P→E‖ = ${(r*M_PER_PX).toFixed(1)} m`+
-    (step>=5?` = ‖P→UE(P)‖ ✓ (string sums to L)<br>UE(P) ↔ true UE: <b>${errU.toFixed(2)} m</b>`:"")+
-    (step>=6?` · implied wall tilt off truth: ${tilt.toFixed(1)}°`+
+  $("stat31").innerHTML= step<5 ? "" :
+    `‖P→UE(P)‖ = ${(r*M_PER_PX).toFixed(1)} m · ‖P→E‖ = ${(r*M_PER_PX).toFixed(1)} m — <b>equal for every P</b>: the construction builds the equality in, so it cannot choose P. One more constraint is needed.`+
+    (step>=6?`<br>UE(P) ↔ true UE: <b>${errU.toFixed(2)} m</b> · implied wall tilt off truth: ${tilt.toFixed(1)}°`+
       (errU<0.3?`<br><span style="color:#0a6b5e"><b>hypothesis matches truth — wall and UE recovered</b></span>`:``):``);
 }
 ["s31P","s31L","s31A","s31D"].forEach(id=>$(id).addEventListener("input",()=>{stop();render();}));
