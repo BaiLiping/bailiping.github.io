@@ -421,7 +421,7 @@ footer a{color:var(--ink-soft)}
         <input type="range" id="s31P" min="0.06" max="0.94" step="0.002" value="0.35">
       </div>
       <div class="statline" id="stat31"></div>
-      <div class="hint">the wall is the unknown: slide P to move the hypothesis; drag the green true UE to change the data</div>
+      <div class="hint">the wall is the unknown: slide P to move the hypothesis — the green UE(P) is the estimated UE, not the truth</div>
     </div>
   </div>
   <div class="figcap"><b>Read it.</b> E = BS + L·d̂ is the full measured length walked along the AoD — the mirror image of the UE across the unknown wall, the exact dual of §2.1's virtual-anchor walk (there: UE-side walk lands on the mirrored BS; here: BS-side walk lands on the mirrored UE). The foci change with it: the delay string, un-pinnable at the unknown UE, is re-pinned at <b>P and E</b> — a bounce hypothesis P on the AoD ray keeps ‖P→E‖ = L − ‖BS→P‖, so every point of the orange circle is at the correct leftover distance, and the candidate UE(P) is where the reverse-AoA ray out of P crosses it. The implied wall runs <em>along the middle</em> between P→UE(P) and P→E — the bisector at P, equivalently the perpendicular bisector of E↔UE(P) — and stays parallel to the true wall for every P. Slide P: <b>finding P is really finding the wall</b> — each P fixes the wall (the bisector through it) and the wall fixes the UE, so every position is a fully coherent (wall, UE) explanation, and the candidates sweep a straight line perpendicular to the true wall (step ⑥). One path therefore leaves a one-parameter family; what breaks it is a second path off a differently-oriented wall — the next subsections.</div></div>
@@ -2285,7 +2285,7 @@ render6();
 const svg=$("svg31");
 if(!svg)return;
 const CAP=["",
- "① <b>The unknowns.</b> Only the data exists — (τ, φ, ψ) measured by the two arrays. The wall and the UE (ghosts) are what we must find; the old string, pinned at BS &amp; UE, cannot even be drawn: one focus is missing.",
+ "① <b>The unknowns.</b> Only the data exists — (τ, φ, ψ) measured by the two arrays. The wall (faint reference) and the UE are what we must find — the UE is not drawn at all: it is the thing being estimated; the old string, pinned at BS &amp; UE, cannot even be drawn: one focus is missing.",
  "② <b>Walk the AoD.</b> Eject the departure ray from the BS and walk the <em>full</em> measured length L along it. Its endpoint E is the mirror image of the UE across the unknown wall — the dual of §2.1's VA walk, and the replacement focus.",
  "③ <b>Hypothesize the bounce.</b> Choose P on the AoD ray (slider below). The walk to P spends ‖BS→P‖ of the string; ‖P→E‖ = L − ‖BS→P‖ is exactly what remains for the last leg.",
  "④ <b>Re-pin the string.</b> The leftover string, pinned at P, sweeps a circle through E — every point of it lies at the correct remaining distance from the bounce.",
@@ -2313,7 +2313,7 @@ function goStep(n,animate){
   } else render();
 }
 function render(){
-  const {BS,UE,WC,WEND}=D1;
+  const {BS,WC,WEND}=D1;
   const sp=specular1();
   const L=sp.L+(+$("s31L").value)/M_PER_PX;
   const phi=sp.phi+(+$("s31A").value);
@@ -2330,8 +2330,6 @@ function render(){
   $("o31P").textContent=(t*M_PER_PX).toFixed(1)+" m";
   let s="";
   s+=seg(WC,WEND,"#8a97a3",3,null,0.35)+txt(WC[0]+16,WC[1]+14,"true wall (unknown)","#8a97a3",10.5);
-  s+=`<circle cx="${UE[0]}" cy="${UE[1]}" r="8" fill="none" stroke="#2ca02c" stroke-width="2" stroke-dasharray="3 3"/>`
-    +txt(UE[0]-12,UE[1]+24,"true UE (unknown — drag me)","#1d7a1d",10.5,"end");
   if(step>=2){
     s+=arrow(BS,E,"#5d3691",1.5,"6 4",0.75);
     s+=txt(BS[0]+d[0]*70+8,BS[1]+d[1]*70-8,"AoD ψ, walked the full L","#5d3691",10.5);
@@ -2378,19 +2376,16 @@ function render(){
   }
   s+=bsMark(BS,"BS",-30,4);
   svg.innerHTML=s;
-  const errU=dist(U,UE)*M_PER_PX;
   const n2=unit(sub(U,E));
   const tilt=Math.asin(Math.min(1,Math.abs(n2[0]*D1.WN[1]-n2[1]*D1.WN[0])))*180/Math.PI;
   $("stat31").innerHTML= step<5 ? "" :
     `‖P→UE(P)‖ = ‖P→E‖ — <b>equal for every P</b>: the construction builds the equality in, so it cannot choose P. One more constraint is needed.`+
-    (step>=6?`<br>UE(P) ↔ true UE: <b>${errU.toFixed(2)} m</b> · implied wall tilt off truth: ${tilt.toFixed(1)}°`+
-      (errU<0.3?`<br><span style="color:#0a6b5e"><b>hypothesis matches truth — wall and UE recovered</b></span>`:``):``);
+    (step>=6?`<br>implied wall tilt off the reference wall: ${tilt.toFixed(1)}°`:``);
 }
 ["s31P","s31L","s31A","s31D"].forEach(id=>$(id).addEventListener("input",()=>{stop();render();}));
 $("b31R").addEventListener("click",()=>{["s31L","s31A","s31D"].forEach(id=>$(id).value=0);stop();render();});
 $("b31Prev").addEventListener("click",()=>goStep(step-1,false));
 $("b31Next").addEventListener("click",()=>goStep(step+1,true));
-makeDraggable(svg,()=>D1.UE,p=>{D1.UE=p;},[60,300,300,500],render);
 goStep(1,false);
 })();
 
