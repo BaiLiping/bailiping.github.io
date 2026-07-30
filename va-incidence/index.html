@@ -111,7 +111,7 @@ footer a{color:var(--ink-soft)}
 
 <!-- ============ 01 the measurement ============ -->
 <section class="sec" id="measurement">
-  <h2><span class="no">01</span>What a single path actually tells you</h2>
+  <h2><span class="no">01</span>Measurement</h2>
   <p class="lede">For one multipath component the channel estimator (SAGE, ESPRIT, …) returns a tuple (τ, φ, ψ, PL). Each element has its own geometric meaning:</p>
   <div class="eq">
     <span class="c1"><b>delay</b> τ → a length L = cτ</span><br>
@@ -119,7 +119,6 @@ footer a{color:var(--ink-soft)}
     <span class="c2"><b>angle</b> ψ (AoD at the BS)</span><br>
     <span class="c3"><b>pathloss</b> → a weight</span>
   </div>
-  <p class="lede">The ray and the ellipse intersect in exactly one point on the UE side — that intersection is the <em>incidence point</em>. Walking the full length L along the same ray lands on the <em>virtual anchor</em>. In every demo below, <b>the drawing is constructed from the data</b>: the orange sliders <em>are</em> the measurement — delay τ·c, AoA φ at the UE, AoD ψ at the BS — and every curve and marker follows from them. Drag the UE and the sliders re-sync to what that UE would actually measure; nudge a slider and you inject estimation error. And the ellipses are not just displayed — press the <b>✏ trace</b> buttons to watch each one <em>drawn by its definition</em>: a string of length L pinned at the two foci, kept taut by the moving pencil, the two segment lengths always summing to L.</p>
 </section>
 
 <!-- ============ 02 single bounce ============ -->
