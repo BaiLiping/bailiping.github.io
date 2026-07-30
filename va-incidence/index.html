@@ -2289,7 +2289,7 @@ const CAP=["",
  "② <b>Walk the AoD.</b> Eject the departure ray from the BS and walk the <em>full</em> measured length L along it. Its endpoint E is the mirror image of the UE across the unknown wall — the dual of §2.1's VA walk, and the replacement focus.",
  "③ <b>Hypothesize the bounce.</b> Choose P on the AoD ray (slider below). The walk to P spends ‖BS→P‖ of the string; ‖P→E‖ = L − ‖BS→P‖ is exactly what remains for the last leg.",
  "④ <b>Re-pin the string.</b> The leftover string, pinned at P, sweeps a circle through E — every point of it lies at the correct remaining distance from the bounce.",
- "⑤ <b>Cut with the reverse AoA.</b> The energy reached the UE from direction φ, so from P the last leg leaves along π − φ. That ray cuts the circle at the candidate UE(P). Note ‖P→UE(P)‖ = ‖P→E‖ <em>for every P</em> — the equality is built into the construction, so it cannot select the bounce: one more constraint is needed.",
+ "⑤ <b>Cut with the reversed AoA.</b> φ (the AoA, measured at the UE) is the direction the energy <em>arrived from</em>, so the last leg toward the UE runs opposite it: absolute direction φ + 180° — equivalently, the AoD ray rotated about P by π − (ψ − φ) (arc). That ray cuts the circle at the candidate UE(P). Note ‖P→UE(P)‖ = ‖P→E‖ <em>for every P</em> — the equality is built into the construction, so it cannot select the bounce: one more constraint is needed.",
  "⑥ <b>The implied wall — and the family.</b> The wall runs along the middle between P→UE(P) and P→E: the bisector through P. <b>Finding P is finding the wall.</b> Slide P — every position stays coherent, and the candidates sweep the teal line ⊥ the true wall: one path = a one-parameter family."];
 let step=1;
 const T={on:false,th:0}; let raf=null;
@@ -2332,7 +2332,7 @@ function render(){
   s+=seg(WC,WEND,"#8a97a3",3,null,0.35)+txt(WC[0]+16,WC[1]+14,"true wall (unknown)","#8a97a3",10.5);
   if(step>=2){
     s+=arrow(BS,E,"#5d3691",1.5,"6 4",0.75);
-    s+=txt(BS[0]+d[0]*70+8,BS[1]+d[1]*70-8,"AoD ψ, walked the full L","#5d3691",10.5);
+    s+=txt(BS[0]+d[0]*70+8,BS[1]+d[1]*70-8,"AoD ψ (at the BS) — walked the full L","#5d3691",10.5);
     s+=`<rect x="${E[0]-5}" y="${E[1]-5}" width="10" height="10" transform="rotate(45 ${E[0]} ${E[1]})" fill="#7c4dbe"/>`
       +txt(E[0]-9,E[1]-11,"E = BS + L·d̂ — the mirrored UE","#5d3691",10.5,"end");
   }
@@ -2361,7 +2361,20 @@ function render(){
   }
   if(step>=5){
     s+=arrow(P,[P[0]-(r+38)*u[0],P[1]-(r+38)*u[1]],"#16222e",1.2,"6 4",0.5);
-    s+=txt(P[0]-(r+44)*u[0],P[1]-(r+44)*u[1],"reverse AoA (π − φ)","#16222e",10.5);
+    s+=txt(P[0]-(r+44)*u[0],P[1]-(r+44)*u[1],"last leg ∥ −AoA: φ + 180°","#16222e",10.5);
+    /* the rotation from the AoD ray to the last leg: π − (ψ − φ) */
+    {
+      const rel=((phi+180-psi)%360+360)%360;
+      let arc="";
+      const N=28;
+      for(let k=0;k<=N;k++){
+        const a=psi+rel*k/N, q=dirOf(a);
+        arc+=(k?"L":"M")+(P[0]+26*q[0])+" "+(P[1]+26*q[1]);
+      }
+      s+=`<path d="${arc}" fill="none" stroke="#b45607" stroke-width="1.4" opacity="0.85"/>`;
+      const mid=dirOf(psi+rel/2);
+      s+=txt(P[0]+60*mid[0],P[1]+60*mid[1]+4,`π − (ψ − φ) = ${rel.toFixed(0)}°`,"#b45607",10,mid[0]<0?"end":"start");
+    }
     s+=arrow(P,U,"#51606e",2);
     s+=`<circle cx="${U[0]}" cy="${U[1]}" r="6" fill="#2ca02c" stroke="#fff" stroke-width="1.6"/>`
       +txt(U[0]+10,U[1]+4,"UE(P)","#1d7a1d",11);
@@ -2372,7 +2385,6 @@ function render(){
     s+=txt(P[0]+130*w[0]+6,P[1]+130*w[1]+4,"implied wall — the middle between P→UE and P→E","#16222e",10.5);
     const o=[BS[0]-L*u[0],BS[1]-L*u[1]], v=unit([d[0]+u[0],d[1]+u[1]]);
     s+=seg([o[0]-900*v[0],o[1]-900*v[1]],[o[0]+900*v[0],o[1]+900*v[1]],"#0e8f7e",1.6,"7 5",0.6);
-    s+=txt(U[0]+16,U[1]+30,"every UE one bounce allows (slide P)","#0a6b5e",10.5);
   }
   s+=bsMark(BS,"BS",-30,4);
   svg.innerHTML=s;
