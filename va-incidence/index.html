@@ -2381,9 +2381,10 @@ function render(){
   const errU=dist(U,UE)*M_PER_PX;
   const n2=unit(sub(U,E));
   const tilt=Math.asin(Math.min(1,Math.abs(n2[0]*D1.WN[1]-n2[1]*D1.WN[0])))*180/Math.PI;
-  $("stat31").innerHTML= step<6 ? "" :
-    `UE(P) ↔ true UE: <b>${errU.toFixed(2)} m</b> · implied wall tilt off truth: ${tilt.toFixed(1)}°`+
-    (errU<0.3?`<br><span style="color:#0a6b5e"><b>hypothesis matches truth — wall and UE recovered</b></span>`:``);
+  $("stat31").innerHTML= step<5 ? "" :
+    `‖P→UE(P)‖ = ‖P→E‖ — <b>equal for every P</b>: the construction builds the equality in, so it cannot choose P. One more constraint is needed.`+
+    (step>=6?`<br>UE(P) ↔ true UE: <b>${errU.toFixed(2)} m</b> · implied wall tilt off truth: ${tilt.toFixed(1)}°`+
+      (errU<0.3?`<br><span style="color:#0a6b5e"><b>hypothesis matches truth — wall and UE recovered</b></span>`:``):``);
 }
 ["s31P","s31L","s31A","s31D"].forEach(id=>$(id).addEventListener("input",()=>{stop();render();}));
 $("b31R").addEventListener("click",()=>{["s31L","s31A","s31D"].forEach(id=>$(id).value=0);stop();render();});
