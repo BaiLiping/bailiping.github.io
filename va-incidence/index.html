@@ -398,7 +398,7 @@ footer a{color:var(--ink-soft)}
   <h3 class="subh"><span class="no">3.1</span>Single bounce: draw everything from (τ, φ, ψ)</h3>
 
   <div class="fig"><div class="body split">
-    <svg id="svg31" viewBox="-170 40 830 600" role="img" aria-label="unknown-UE single bounce demo: full-length AoD walk to E, a bounce hypothesis P on the ray, the string re-pinned at P and E, the candidate UE on the reverse-AoA ray, and the implied wall bisecting between them"></svg>
+    <svg id="svg31" viewBox="-170 40 830 600" role="img" aria-label="unknown-UE single bounce demo, stepped: full-length AoD walk to E, a bounce hypothesis P on the ray, the string re-pinned at P and E, the candidate UE on the reverse-AoA ray, and the implied wall bisecting between them"></svg>
     <div class="rail">
       <h4>the data (drives the drawing)</h4>
       <div class="ctl">
@@ -410,22 +410,21 @@ footer a{color:var(--ink-soft)}
         <input type="range" class="meas" id="s31D" min="-6" max="6" step="0.1" value="0">
         <button class="reset" id="b31R" style="margin-top:7px">reset to specular data</button>
       </div>
-      <h4>the wall hypothesis</h4>
+      <h4>construction — step <output id="o31Step" style="font-family:var(--mono)"></output></h4>
+      <div style="display:flex;gap:8px">
+        <button class="reset" id="b31Prev">◀ back</button>
+        <button class="reset" id="b31Next" style="flex:1">next step ▶</button>
+      </div>
+      <div class="hint" id="cap31"></div>
       <div class="ctl">
-        <label><span>bounce P along the AoD ray</span> <output id="o31P"></output></label>
+        <label><span>bounce P along the AoD ray (step ③)</span> <output id="o31P"></output></label>
         <input type="range" id="s31P" min="0.06" max="0.94" step="0.002" value="0.35">
       </div>
-      <h4>layers</h4>
-      <label class="ck"><input type="checkbox" id="c31_E" checked> <span class="sw" style="background:var(--va)"></span> full-length AoD walk → E (the changed focus)</label>
-      <label class="ck"><input type="checkbox" id="c31_circ" checked> <span class="sw" style="background:var(--meas)"></span> string re-pinned at P: ‖x−P‖ = ‖P→E‖</label>
-      <label class="ck"><input type="checkbox" id="c31_ue" checked> <span class="sw" style="background:#2ca02c"></span> candidate UE: reverse-AoA ray × the circle</label>
-      <label class="ck"><input type="checkbox" id="c31_wall" checked> <span class="sw" style="background:var(--ink)"></span> implied wall: the middle between P→UE and P→E</label>
-      <label class="ck"><input type="checkbox" id="c31_fam"> <span class="sw" style="background:var(--ip)"></span> the whole family: candidate UEs for every P</label>
       <div class="statline" id="stat31"></div>
       <div class="hint">the wall is the unknown: slide P to move the hypothesis; drag the green true UE to change the data</div>
     </div>
   </div>
-  <div class="figcap"><b>Read it.</b> E = BS + L·d̂ is the full measured length walked along the AoD — the mirror image of the UE across the unknown wall, the exact dual of §2.1's virtual-anchor walk (there: UE-side walk lands on the mirrored BS; here: BS-side walk lands on the mirrored UE). The foci change with it: the delay string, un-pinnable at the unknown UE, is re-pinned at <b>P and E</b> — a bounce hypothesis P on the AoD ray keeps ‖P→E‖ = L − ‖BS→P‖, so every point of the orange circle is at the correct leftover distance, and the candidate UE(P) is where the reverse-AoA ray out of P crosses it. The implied wall runs <em>along the middle</em> between P→UE(P) and P→E — the bisector at P, equivalently the perpendicular bisector of E↔UE(P) — and stays parallel to the true wall for every P. Slide P: <b>finding P is really finding the wall</b> — each P fixes the wall (the bisector through it) and the wall fixes the UE, so every position is a fully coherent (wall, UE) explanation, and the candidates sweep a straight line perpendicular to the true wall (the family layer). One path therefore leaves a one-parameter family; what breaks it is a second path off a differently-oriented wall — the next subsections.</div></div>
+  <div class="figcap"><b>Read it.</b> E = BS + L·d̂ is the full measured length walked along the AoD — the mirror image of the UE across the unknown wall, the exact dual of §2.1's virtual-anchor walk (there: UE-side walk lands on the mirrored BS; here: BS-side walk lands on the mirrored UE). The foci change with it: the delay string, un-pinnable at the unknown UE, is re-pinned at <b>P and E</b> — a bounce hypothesis P on the AoD ray keeps ‖P→E‖ = L − ‖BS→P‖, so every point of the orange circle is at the correct leftover distance, and the candidate UE(P) is where the reverse-AoA ray out of P crosses it. The implied wall runs <em>along the middle</em> between P→UE(P) and P→E — the bisector at P, equivalently the perpendicular bisector of E↔UE(P) — and stays parallel to the true wall for every P. Slide P: <b>finding P is really finding the wall</b> — each P fixes the wall (the bisector through it) and the wall fixes the UE, so every position is a fully coherent (wall, UE) explanation, and the candidates sweep a straight line perpendicular to the true wall (step ⑥). One path therefore leaves a one-parameter family; what breaks it is a second path off a differently-oriented wall — the next subsections.</div></div>
 </section>
 
 <section class="sec" id="doubleu">
@@ -2281,11 +2280,38 @@ $("b8N").addEventListener("click",()=>{
 });
 render6();
 })();
-/* ---- section 3.1: unknown UE, single bounce — changed foci (P, E) ---- */
+/* ---- section 3.1: unknown UE, single bounce — changed foci (P, E), stepped ---- */
 (function(){
 const svg=$("svg31");
 if(!svg)return;
-const ck=id=>$(id).checked;
+const CAP=["",
+ "① <b>The unknowns.</b> Only the data exists — (τ, φ, ψ) measured by the two arrays. The wall and the UE (ghosts) are what we must find; the old string, pinned at BS &amp; UE, cannot even be drawn: one focus is missing.",
+ "② <b>Walk the AoD.</b> Eject the departure ray from the BS and walk the <em>full</em> measured length L along it. Its endpoint E is the mirror image of the UE across the unknown wall — the dual of §2.1's VA walk, and the replacement focus.",
+ "③ <b>Hypothesize the bounce.</b> Choose P on the AoD ray (slider below). The walk to P spends ‖BS→P‖ of the string; ‖P→E‖ = L − ‖BS→P‖ is exactly what remains for the last leg.",
+ "④ <b>Re-pin the string.</b> The leftover string, pinned at P, sweeps a circle through E — every point of it lies at the correct remaining distance from the bounce.",
+ "⑤ <b>Cut with the reverse AoA.</b> The energy reached the UE from direction φ, so from P the last leg leaves along π − φ. That ray cuts the circle at the candidate UE(P), with ‖P→UE‖ = ‖P→E‖ ✓.",
+ "⑥ <b>The implied wall — and the family.</b> The wall runs along the middle between P→UE(P) and P→E: the bisector through P. <b>Finding P is finding the wall.</b> Slide P — every position stays coherent, and the candidates sweep the teal line ⊥ the true wall: one path = a one-parameter family."];
+let step=1;
+const T={on:false,th:0}; let raf=null;
+function stop(){T.on=false;if(raf){cancelAnimationFrame(raf);raf=null;}}
+function goStep(n,animate){
+  stop();
+  step=Math.max(1,Math.min(6,n));
+  $("cap31").innerHTML=CAP[step];
+  $("b31Prev").disabled=step===1; $("b31Next").disabled=step===6;
+  $("o31Step").textContent=step+" / 6";
+  if(animate&&step===4&&!reduced){
+    T.on=true;
+    const t0=performance.now(),DUR=1900;
+    const tick=now=>{
+      const f=Math.min(1,(now-t0)/DUR);
+      T.th=2*Math.PI*f;
+      render();
+      if(f<1){raf=requestAnimationFrame(tick);}else{stop();render();}
+    };
+    raf=requestAnimationFrame(tick);
+  } else render();
+}
 function render(){
   const {BS,UE,WC,WEND}=D1;
   const sp=specular1();
@@ -2306,49 +2332,67 @@ function render(){
   s+=seg(WC,WEND,"#8a97a3",3,null,0.35)+txt(WC[0]+16,WC[1]+14,"true wall (unknown)","#8a97a3",10.5);
   s+=`<circle cx="${UE[0]}" cy="${UE[1]}" r="8" fill="none" stroke="#2ca02c" stroke-width="2" stroke-dasharray="3 3"/>`
     +txt(UE[0]-12,UE[1]+24,"true UE (unknown — drag me)","#1d7a1d",10.5,"end");
-  if(ck("c31_fam")){
-    const o=[BS[0]-L*u[0],BS[1]-L*u[1]], v=unit([d[0]+u[0],d[1]+u[1]]);
-    s+=seg([o[0]-900*v[0],o[1]-900*v[1]],[o[0]+900*v[0],o[1]+900*v[1]],"#0e8f7e",1.6,"7 5",0.6);
-    s+=txt(U[0]+16,U[1]+30,"every UE one bounce allows (slide P)","#0a6b5e",10.5);
-  }
-  if(ck("c31_E")){
+  if(step>=2){
     s+=arrow(BS,E,"#5d3691",1.5,"6 4",0.75);
     s+=txt(BS[0]+d[0]*70+8,BS[1]+d[1]*70-8,"AoD ψ, walked the full L","#5d3691",10.5);
     s+=`<rect x="${E[0]-5}" y="${E[1]-5}" width="10" height="10" transform="rotate(45 ${E[0]} ${E[1]})" fill="#7c4dbe"/>`
       +txt(E[0]-9,E[1]-11,"E = BS + L·d̂ — the mirrored UE","#5d3691",10.5,"end");
   }
-  if(ck("c31_circ")){
-    s+=`<circle cx="${P[0]}" cy="${P[1]}" r="${r}" fill="none" stroke="#e8720c" stroke-width="1.8" opacity="0.85"/>`;
-    s+=`<circle cx="${P[0]}" cy="${P[1]}" r="4" fill="none" stroke="#b45607" stroke-width="1.6" stroke-dasharray="2 2"/>`;
+  if(step>=3){
+    s+=arrow(BS,P,"#51606e",2);
+    s+=`<circle cx="${P[0]}" cy="${P[1]}" r="4.5" fill="#e8720c"/>`
+      +txt(P[0]+9,P[1]-9,"P (hypothesis)","#b45607",10.5);
+    s+=txt((BS[0]+P[0])/2-6,(BS[1]+P[1])/2+18,"‖BS→P‖","#51606e",10);
+  }
+  if(step>=4){
+    if(T.on){
+      const a0=Math.atan2(E[1]-P[1],E[0]-P[0]);
+      let path="M"+(P[0]+r*Math.cos(a0))+" "+(P[1]+r*Math.sin(a0));
+      const N=90;
+      for(let k=1;k<=N*T.th/(2*Math.PI);k++){
+        const a=a0+k/N*2*Math.PI;
+        path+="L"+(P[0]+r*Math.cos(a))+" "+(P[1]+r*Math.sin(a));
+      }
+      s+=`<path d="${path}" fill="none" stroke="#e8720c" stroke-width="1.8" opacity="0.9"/>`;
+      const ae=a0+T.th;
+      s+=seg(P,[P[0]+r*Math.cos(ae),P[1]+r*Math.sin(ae)],"#b45607",1.2,"3 3",0.8);
+    } else {
+      s+=`<circle cx="${P[0]}" cy="${P[1]}" r="${r}" fill="none" stroke="#e8720c" stroke-width="1.8" opacity="0.85"/>`;
+    }
     s+=txt(P[0]+12,P[1]+22,"‖x−P‖ = L − ‖BS→P‖","#b45607",10.5);
   }
-  s+=arrow(BS,P,"#51606e",2)+arrow(P,U,"#51606e",2);
-  if(ck("c31_ue")){
+  if(step>=5){
     s+=arrow(P,[P[0]-(r+38)*u[0],P[1]-(r+38)*u[1]],"#16222e",1.2,"6 4",0.5);
     s+=txt(P[0]-(r+44)*u[0],P[1]-(r+44)*u[1],"reverse AoA (π − φ)","#16222e",10.5);
+    s+=arrow(P,U,"#51606e",2);
     s+=`<circle cx="${U[0]}" cy="${U[1]}" r="6" fill="#2ca02c" stroke="#fff" stroke-width="1.6"/>`
       +txt(U[0]+10,U[1]+4,"UE(P)","#1d7a1d",11);
   }
-  if(ck("c31_wall")){
+  if(step>=6){
     const n=unit(sub(U,E)), w=[-n[1],n[0]];
     s+=seg([P[0]-130*w[0],P[1]-130*w[1]],[P[0]+130*w[0],P[1]+130*w[1]],"#16222e",4.2,null,0.9);
     s+=txt(P[0]+130*w[0]+6,P[1]+130*w[1]+4,"implied wall — the middle between P→UE and P→E","#16222e",10.5);
+    const o=[BS[0]-L*u[0],BS[1]-L*u[1]], v=unit([d[0]+u[0],d[1]+u[1]]);
+    s+=seg([o[0]-900*v[0],o[1]-900*v[1]],[o[0]+900*v[0],o[1]+900*v[1]],"#0e8f7e",1.6,"7 5",0.6);
+    s+=txt(U[0]+16,U[1]+30,"every UE one bounce allows (slide P)","#0a6b5e",10.5);
   }
   s+=bsMark(BS,"BS",-30,4);
   svg.innerHTML=s;
   const errU=dist(U,UE)*M_PER_PX;
-  const n=unit(sub(U,E));
-  const tilt=Math.asin(Math.min(1,Math.abs(n[0]*D1.WN[1]-n[1]*D1.WN[0])))*180/Math.PI;
-  $("stat31").innerHTML=
-    `‖BS→P‖ = ${(t*M_PER_PX).toFixed(1)} m · ‖P→E‖ = ${(r*M_PER_PX).toFixed(1)} m = ‖P→UE(P)‖ ✓ (string sums to L)<br>`+
-    `UE(P) ↔ true UE: <b>${errU.toFixed(2)} m</b> · implied wall tilt off truth: ${tilt.toFixed(1)}°`+
-    (errU<0.3?`<br><span style="color:#0a6b5e"><b>hypothesis matches truth — wall and UE recovered</b></span>`:``);
+  const n2=unit(sub(U,E));
+  const tilt=Math.asin(Math.min(1,Math.abs(n2[0]*D1.WN[1]-n2[1]*D1.WN[0])))*180/Math.PI;
+  $("stat31").innerHTML= step<3 ? "" :
+    `‖BS→P‖ = ${(t*M_PER_PX).toFixed(1)} m · ‖P→E‖ = ${(r*M_PER_PX).toFixed(1)} m`+
+    (step>=5?` = ‖P→UE(P)‖ ✓ (string sums to L)<br>UE(P) ↔ true UE: <b>${errU.toFixed(2)} m</b>`:"")+
+    (step>=6?` · implied wall tilt off truth: ${tilt.toFixed(1)}°`+
+      (errU<0.3?`<br><span style="color:#0a6b5e"><b>hypothesis matches truth — wall and UE recovered</b></span>`:``):``);
 }
-["s31P","s31L","s31A","s31D"].forEach(id=>$(id).addEventListener("input",render));
-["c31_E","c31_circ","c31_ue","c31_wall","c31_fam"].forEach(id=>$(id).addEventListener("change",render));
-$("b31R").addEventListener("click",()=>{["s31L","s31A","s31D"].forEach(id=>$(id).value=0);render();});
+["s31P","s31L","s31A","s31D"].forEach(id=>$(id).addEventListener("input",()=>{stop();render();}));
+$("b31R").addEventListener("click",()=>{["s31L","s31A","s31D"].forEach(id=>$(id).value=0);stop();render();});
+$("b31Prev").addEventListener("click",()=>goStep(step-1,false));
+$("b31Next").addEventListener("click",()=>goStep(step+1,true));
 makeDraggable(svg,()=>D1.UE,p=>{D1.UE=p;},[60,300,300,500],render);
-render();
+goStep(1,false);
 })();
 
 /* ---- clone for section 3 (unknown-UE scaffold): DEMO 2: ---- */
