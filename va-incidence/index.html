@@ -94,6 +94,7 @@ footer a{color:var(--ink-soft)}
     <a href="#corridor">corridor</a>
     <a href="#corridor3">corridor ×3</a>
     <a href="#estimate">estimating the map</a>
+    <a href="#ue">estimating the UE</a>
     <a href="#diffuse">diffuse &amp; splats</a>
     <a href="/">← bailiping.com</a>
   </nav>
@@ -389,9 +390,35 @@ footer a{color:var(--ink-soft)}
   <div class="figcap"><b>Motion, quantified.</b> The UE walks t₁ → t₄. One pose constrains VA¹ to a curve; the second pose’s curve intersects it in a point (teal ring, found numerically — not read off the ground truth); every further pose must pass through the same point. That over-consistency across motion is what makes VA¹ a reliable static feature to hang SLAM on.</div></div>
 </section>
 
-<!-- ============ 08 diffuse & splats ============ -->
+<!-- ============ 08 estimating the UE ============ -->
+<section class="sec" id="ue">
+  <h2><span class="no">08</span>Estimating the UE: change the foci, bootstrap from the BS side</h2>
+  <p class="lede">Every construction so far pinned a string at the UE — the delay ellipse used foci (BS, UE), the bounce-2 ellipse (VA¹, UE). In SLAM the UE is the <em>other</em> unknown: those pins do not exist yet. But the BS-side pin survives, and the string can be re-hung from it. For a single-bounce path, put the bounce on the departure ray — P₁ = BS + t·d(ψ) at an unknown walk t — and make the leftover string reach the UE against the measured arrival direction: <b>p(t) = BS + t·d − (L−t)·u</b>. Every t is a coherent explanation (a UE, a bounce point, and the wall that bisects them), and as t slides the candidate UE traces a <em>straight line</em>. The line even has a name: d + u is parallel to the reflecting wall's <em>normal</em> (the mirror flips the normal component of the direction and keeps the tangential one, so the tangential parts of d and u cancel) — <b>each path confines the unknown UE to a line through the true UE along its last wall's normal</b>; sliding along it just re-prices how far away that wall is. One path = one line, no map needed. Two single-bounce paths off differently-oriented walls = two transversal lines = <b>the UE</b> — and each path's t then falls out, so both bounce points, both walls, and both VAs are earned in the same stroke: §07's map ladder and this UE bootstrap are the same recursion run from opposite ends. Higher orders continue by <em>changing the foci</em>: once wall A is known, strip the double-bounce path from the BS side — P₁ = AoD ray ∩ wall A is now a known point; reflect the ray in wall A (equivalently, re-pin the string at <b>VA¹ instead of BS</b>) and the remainder is a single-bounce problem sourced at P₁, contributing its own candidate line. Note where that line points: along wall B's normal — the <em>same</em> line the order-1 path off wall B already drew. The candidate line depends only on the path's <em>last</em> wall, so a higher-order path adds UE information exactly when its last wall is one no lower-order path reaches. LOS is the degenerate rung — no wall, no leftover freedom: p = BS + L·d outright. (Two caveats: axes here are world-aligned; an unknown UE heading rotates every measured φ by one shared unknown, still solvable with a third path. And this is per-snapshot geometry — a real estimator fuses these lines through motion, noise, and association machinery.)</p>
+
+  <div class="fig"><div class="body split">
+    <svg id="svg8" viewBox="-150 -45 850 685" role="img" aria-label="UE estimation demo: each path's candidate-UE line runs along its last wall's normal; the lines cross at the true UE"></svg>
+    <div class="rail">
+      <h4>one path = a line of UEs</h4>
+      <div class="ctl">
+        <label><span>walk t along path a's AoD ray</span> <output id="o8t"></output></label>
+        <input type="range" id="s8t" min="0.08" max="0.92" step="0.005" value="0.35">
+      </div>
+      <h4>layers</h4>
+      <label class="ck"><input type="checkbox" id="c8_mem" checked> <span class="sw" style="background:var(--ip)"></span> the sliding explanation: UE(t), P₁(t), implied wall</label>
+      <label class="ck"><input type="checkbox" id="c8_a" checked> <span class="sw" style="background:var(--meas)"></span> line a — 1-bounce off wall A (&#8869; wall A)</label>
+      <label class="ck"><input type="checkbox" id="c8_b" checked> <span class="sw" style="background:var(--va)"></span> line b — 1-bounce off wall B (&#8869; wall B)</label>
+      <label class="ck"><input type="checkbox" id="c8_c"> <span class="sw" style="background:var(--ip)"></span> line c — 2-bounce re-anchored at wall A (&#8801; line b)</label>
+      <button class="reset" id="b8N" style="margin-top:7px">jitter the data (σ: 0.3 m, 0.5°)</button>
+      <div class="statline" id="stat8"></div>
+      <div class="hint">hollow green = the true UE, unknown to the estimator · ⊗ = least-squares crossing of the checked lines — with clean data it sits exactly on the truth · jitter to see the fix degrade gracefully</div>
+    </div>
+  </div>
+  <div class="figcap"><b>Read it.</b> The slider walks t out along path a's departure ray: P₁(t) slides on the ray, the leftover string L−t hangs from it against the arrival direction, and the candidate UE(t) glides along the straight orange line — perpendicular to wall A, because every candidate's implied wall (dark segment, the bisector at P₁) stays parallel to the true one. Path b draws the same construction off wall B: a second line, crossed at 70°, and the crossing <em>is</em> the UE — no prior map, no known start. Layer c strips the double-bounce path at the bootstrapped wall A (the string re-pinned at VA¹/P₁ — the changed foci) and lands exactly on line b: a confirmation, not new information, because a candidate-UE line remembers only the path's last wall. With jittered data the three lines miss each other by the noise scale and the least-squares crossing moves ~0.3 m — the graceful, transversal failure mode the tangential VA-family of §07 never had.</div></div>
+</section>
+
+<!-- ============ 09 diffuse & splats ============ -->
 <section class="sec" id="diffuse">
-  <h2><span class="no">08</span>Why the diffuse case decides the representation</h2>
+  <h2><span class="no">09</span>Why the diffuse case decides the representation</h2>
   <p class="lede">With smooth walls the two readings are equivalent bookkeeping. Rough walls break the tie. A diffuse surface returns energy from a whole patch, not a point: the measurement becomes a family of slightly different (τ, φ, PL) triples. Map those into incidence points and you get a <em>weighted point cloud hugging the physical wall</em> — each point carrying its pathloss as a weight. Exactly the kind of data a splat-style surface representation wants (this is what the point-cloud view in <code>Gaussian_Splatting_Test</code> exports, and what the SAGE bistatic triangulation estimates). Map the same family into virtual anchors and the crisp mirror-image anchor smears into a blob that no longer behaves like a point feature — the VA cloud in the demo above.</p>
   <div class="fig"><div class="body" style="overflow-x:auto">
   <table>
@@ -1925,6 +1952,137 @@ function play5(){
 $("s5n").addEventListener("input",()=>{if(tmr5)clearTimeout(tmr5);render5();});
 $("b5P").addEventListener("click",play5);
 render5();
+
+/* =================== DEMO 8: estimating the UE — changed foci, bootstrap from the BS side =================== */
+(function(){
+const svg8=$("svg8");
+if(!svg8)return;
+const U6=D2.UE;
+const rot=(v,a)=>[v[0]*Math.cos(a)-v[1]*Math.sin(a),v[0]*Math.sin(a)+v[1]*Math.cos(a)];
+/* exact (or jittered) data for three paths, synthesized at the true UE */
+function pathData(noisy){
+  const g=()=>((Math.random()+Math.random()+Math.random())*2-3);   // ~N(0,1)
+  const jL=L=>noisy?L+g()*3:L;                                      // sigma 3 px = 0.3 m
+  const jV=v=>noisy?rot(v,g()*0.5*Math.PI/180):v;                   // sigma 0.5 deg
+  const VAa=D2.VA1;
+  const sA=(D2.AY-U6[1])/(VAa[1]-U6[1]);
+  const P1a=[U6[0]+sA*(VAa[0]-U6[0]),D2.AY];
+  const a={L:jL(dist(U6,VAa)),u:jV(unit(sub(VAa,U6))),d:jV(unit(sub(P1a,D2.BS)))};
+  const VB=mirrorB(D2.BS);
+  const tb=((D2.BC[0]-VB[0])*D2.BN[0]+(D2.BC[1]-VB[1])*D2.BN[1])
+          /((U6[0]-VB[0])*D2.BN[0]+(U6[1]-VB[1])*D2.BN[1]);
+  const P1b=[VB[0]+tb*(U6[0]-VB[0]),VB[1]+tb*(U6[1]-VB[1])];
+  const b={L:jL(dist(U6,VB)),u:jV(unit(sub(VB,U6))),d:jV(unit(sub(P1b,D2.BS)))};
+  const sp=specAt(U6);
+  const c={L:jL(sp.L),u:jV(sp.u),d:jV(sp.ud)};
+  return {a,b,c};
+}
+let noisy6=false,data6=pathData(false);
+/* candidate-UE line: p = anchor + t*dir - (L-t)*u  ->  point anchor - L*u, direction dir+u */
+const lineOf=(anchor,L,u,dir)=>({o:[anchor[0]-L*u[0],anchor[1]-L*u[1]],v:unit([dir[0]+u[0],dir[1]+u[1]])});
+function lines6(){
+  const la=lineOf(D2.BS,data6.a.L,data6.a.u,data6.a.d);
+  const lb=lineOf(D2.BS,data6.b.L,data6.b.u,data6.b.d);
+  const t1=(D2.AY-D2.BS[1])/data6.c.d[1];                 // strip at known wall A
+  const P1c=[D2.BS[0]+t1*data6.c.d[0],D2.AY];
+  const e=[data6.c.d[0],-data6.c.d[1]];                   // reflect AoD ray in wall A
+  const lc=lineOf(P1c,data6.c.L-t1,data6.c.u,e);
+  return {la,lb,lc,P1c,e,t1};
+}
+function lsCross(list){
+  let Sxx=0,Sxy=0,Syy=0,bx=0,by=0;
+  for(const l of list){
+    const n=[-l.v[1],l.v[0]], d0=n[0]*l.o[0]+n[1]*l.o[1];
+    Sxx+=n[0]*n[0];Sxy+=n[0]*n[1];Syy+=n[1]*n[1];bx+=n[0]*d0;by+=n[1]*d0;
+  }
+  const det=Sxx*Syy-Sxy*Sxy;
+  if(Math.abs(det)<1e-9)return null;
+  return [(bx*Syy-by*Sxy)/det,(by*Sxx-bx*Sxy)/det];
+}
+const drawLine6=(l,c,w,dash,o)=>seg([l.o[0]-700*l.v[0],l.o[1]-700*l.v[1]],
+                                    [l.o[0]+700*l.v[0],l.o[1]+700*l.v[1]],c,w,dash,o);
+const ck6=id=>$(id).checked;
+function render6(){
+  const L=lines6();
+  let s="";
+  s+=seg([D2.AX0,D2.AY],[D2.AX1,D2.AY],"#8a97a3",3,null,0.35)
+    +seg(D2.BC,D2.BEND,"#8a97a3",3,null,0.35)
+    +txt(D2.AX0+4,D2.AY-8,"wall A (truth, reference)","#8a97a3",10)
+    +txt(D2.BEND[0]-8,D2.BEND[1]-12,"wall B","#8a97a3",10,"end");
+  s+=`<circle cx="${U6[0]}" cy="${U6[1]}" r="8" fill="none" stroke="#2ca02c" stroke-width="2" stroke-dasharray="3 3"/>`
+    +txt(U6[0]+13,U6[1]+18,"true UE (unknown)","#1d7a1d",10.5);
+  const drawn=[];
+  if(ck6("c8_a")){
+    drawn.push(L.la);
+    s+=drawLine6(L.la,"#e8720c",2,null,0.85);
+    const ty=(20-L.la.o[1])/L.la.v[1], px=L.la.o[0]+ty*L.la.v[0];
+    s+=txt(px+7,34,"line a — every UE a 1-bounce off wall A allows","#b45607",10.5);
+  }
+  if(ck6("c8_b")){
+    drawn.push(L.lb);
+    s+=drawLine6(L.lb,"#7c4dbe",2,null,0.85);
+    const tx=(660-L.lb.o[0])/L.lb.v[0], py=L.lb.o[1]+tx*L.lb.v[1];
+    s+=txt(690,py-12,"line b","#5d3691",10.5,"end");
+  }
+  if(ck6("c8_c")){
+    drawn.push(L.lc);
+    s+=drawLine6(L.lc,"#0e8f7e",2,"6 5",0.9);
+    s+=`<circle cx="${L.P1c[0]}" cy="${L.P1c[1]}" r="4" fill="#0e8f7e"/>`
+      +txt(L.P1c[0]+8,L.P1c[1]-8,"P₁ = AoD ray × wall A — the changed focus","#0a6b5e",10)
+      +seg(D2.BS,L.P1c,"#0e8f7e",1.2,"2 3",0.7)
+      +arrow(L.P1c,[L.P1c[0]+55*L.e[0],L.P1c[1]+55*L.e[1]],"#0e8f7e",1.2,null,0.7);
+    const tx=(660-L.lc.o[0])/L.lc.v[0], py=L.lc.o[1]+tx*L.lc.v[1];
+    s+=txt(690,py+20,"line c — re-anchored 2-bounce","#0a6b5e",10,"end");
+  }
+  /* the sliding explanation on path a */
+  if(ck6("c8_mem")){
+    const f=+$("s8t").value, t=f*data6.a.L;
+    const P1=[D2.BS[0]+t*data6.a.d[0],D2.BS[1]+t*data6.a.d[1]];
+    const p=[P1[0]-(data6.a.L-t)*data6.a.u[0],P1[1]-(data6.a.L-t)*data6.a.u[1]];
+    const nb=unit([ (D2.BS[0]-P1[0])/Math.hypot(D2.BS[0]-P1[0],D2.BS[1]-P1[1])+(p[0]-P1[0])/Math.hypot(p[0]-P1[0],p[1]-P1[1]),
+                    (D2.BS[1]-P1[1])/Math.hypot(D2.BS[0]-P1[0],D2.BS[1]-P1[1])+(p[1]-P1[1])/Math.hypot(p[0]-P1[0],p[1]-P1[1]) ]);
+    const w=[-nb[1],nb[0]];
+    s+=seg(D2.BS,P1,"#e8720c",1.4,"2 3",0.8)
+      +seg(P1,p,"#e8720c",1.4,"2 3",0.8)
+      +seg([P1[0]-60*w[0],P1[1]-60*w[1]],[P1[0]+60*w[0],P1[1]+60*w[1]],"#16222e",2.6,null,0.85)
+      +`<circle cx="${P1[0]}" cy="${P1[1]}" r="4.5" fill="#e8720c"/>`
+      +`<circle cx="${p[0]}" cy="${p[1]}" r="5.5" fill="#2ca02c" stroke="#fff" stroke-width="1.6"/>`
+      +txt(p[0]+10,p[1]+4,"UE(t)","#1d7a1d",10.5)
+      +txt(P1[0]+8,P1[1]-8,"P₁(t) + implied wall","#16222e",10);
+    $("o8t").textContent=(t*M_PER_PX).toFixed(1)+" m";
+  } else { $("o8t").textContent="—"; }
+  /* crossing */
+  let statCross="check two or more lines to fix the UE";
+  if(drawn.length>=2){
+    const q=lsCross(drawn);
+    if(q){
+      s+=`<path d="M${q[0]-6} ${q[1]-6}L${q[0]+6} ${q[1]+6}M${q[0]-6} ${q[1]+6}L${q[0]+6} ${q[1]-6}" stroke="#0e8f7e" stroke-width="2.4"/>`
+        +`<circle cx="${q[0]}" cy="${q[1]}" r="10" fill="none" stroke="#0e8f7e" stroke-width="2"/>`;
+      const err=dist(q,U6)*M_PER_PX;
+      statCross=`least-squares crossing: <b>${err.toFixed(2)} m</b> from the true UE`;
+    }
+  }
+  const angAB=Math.asin(Math.abs(L.la.v[0]*L.lb.v[1]-L.la.v[1]*L.lb.v[0]))*180/Math.PI;
+  const bcGap=Math.abs((-L.lb.v[1])*(L.lc.o[0]-L.lb.o[0])+L.lb.v[0]*(L.lc.o[1]-L.lb.o[1]));
+  s+=bsMark(D2.BS,"BS",-32,4);
+  svg8.innerHTML=s;
+  $("stat8").innerHTML=[
+    `line a ⊥ wall A · line b ⊥ wall B · crossing angle <b>${angAB.toFixed(1)}°</b>`,
+    statCross,
+    `line c vs line b offset: <b>${(bcGap*M_PER_PX).toFixed(2)} m</b> ${noisy6?"(noise separates the twins)":"(identical — c confirms b)"}`,
+    noisy6?"data jittered: σ 0.3 m on L, 0.5° on every angle":"clean specular data"
+  ].join("<br>");
+}
+["s8t"].forEach(id=>$(id).addEventListener("input",render6));
+["c8_a","c8_b","c8_c","c8_mem"].forEach(id=>$(id).addEventListener("change",render6));
+$("b8N").addEventListener("click",()=>{
+  noisy6=!noisy6;
+  data6=pathData(noisy6);
+  $("b8N").textContent=noisy6?"reset to clean specular data":"jitter the data (σ: 0.3 m, 0.5°)";
+  render6();
+});
+render6();
+})();
 })();
 </script>
 </body>
