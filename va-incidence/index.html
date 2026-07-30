@@ -114,10 +114,10 @@ footer a{color:var(--ink-soft)}
   <h2><span class="no">01</span>What a single path actually tells you</h2>
   <p class="lede">For one multipath component the channel estimator (SAGE, ESPRIT, …) returns a tuple (τ, φ, ψ, PL). Each element has its own geometric meaning:</p>
   <div class="eq">
-    <span class="c1"><b>delay</b> τ → a length L = cτ</span> : the locus <i>‖x − BS‖ + ‖x − UE‖ = L</i> is an <b>ellipse with foci BS and UE</b> — every point that could have produced this delay by a single bounce.<br>
-    <span class="c2"><b>angle</b> φ (AoA at the UE)</span> : a <b>ray</b> out of the UE — the direction the energy came from, pointing at the <em>last</em> bounce (and, walked the full length L, at the virtual anchor).<br>
-    <span class="c2"><b>angle</b> ψ (AoD at the BS)</span> : the twin ray, measured by the array at the other end — a <b>ray</b> out of the BS, the direction the energy left in, pointing at the <em>first</em> bounce. For a single bounce it must cross the delay ellipse at the <em>same</em> point the AoA ray does — the bistatic consistency test the demos gate on; for higher orders first ≠ last bounce, and the mismatch is exactly what betrays a multi-bounce path.<br>
-    <span class="c3"><b>pathloss</b> → a weight</span> : how much energy survived; it does not move any geometry, it says how much to <b>trust / how brightly to paint</b> whatever the geometry produces.
+    <span class="c1"><b>delay</b> τ → a length L = cτ</span><br>
+    <span class="c2"><b>angle</b> φ (AoA at the UE)</span><br>
+    <span class="c2"><b>angle</b> ψ (AoD at the BS)</span><br>
+    <span class="c3"><b>pathloss</b> → a weight</span>
   </div>
   <p class="lede">The ray and the ellipse intersect in exactly one point on the UE side — that intersection is the <em>incidence point</em>. Walking the full length L along the same ray lands on the <em>virtual anchor</em>. In every demo below, <b>the drawing is constructed from the data</b>: the orange sliders <em>are</em> the measurement — delay τ·c, AoA φ at the UE, AoD ψ at the BS — and every curve and marker follows from them. Drag the UE and the sliders re-sync to what that UE would actually measure; nudge a slider and you inject estimation error. And the ellipses are not just displayed — press the <b>✏ trace</b> buttons to watch each one <em>drawn by its definition</em>: a string of length L pinned at the two foci, kept taut by the moving pencil, the two segment lengths always summing to L.</p>
 </section>
