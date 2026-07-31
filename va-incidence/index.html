@@ -404,7 +404,7 @@ footer a{color:var(--ink-soft)}
 <!-- ============ 08 estimating the UE ============ -->
 <section class="sec" id="ue">
   <h2><span class="no">03</span>Optimization view with unknown UE position</h2>
-  <p class="lede">Two quiet assumptions run through the drawings of §3.1–3.5: both array orientations are known, so ψ <em>and</em> φ can be drawn as global directions, and delays are true ranges (synchronized clocks). For the BS that is fair — infrastructure knows which way it faces. The UE does not: its heading is one more unknown per pose, and with it every arrival ray below rotates. §3.6 drops that assumption. There the arrival angles are never used to build geometry at all — wall directions are recovered from the motion itself, offsets from the one link that crosses the families, and each pose’s heading falls out last, read off the recovered geometry.</p>
+  <p class="lede">One quiet assumption still runs through §3.1–3.5: delays are true ranges (synchronized clocks). The other classic assumption — that array orientations are known, so ψ <em>and</em> φ can be drawn as global directions — is only half fair. The BS earns it: infrastructure knows which way it faces. The UE does not: its heading is one more unknown per pose, so every demo below carries a <b>heading-hypothesis slider δ</b> that rotates all arrival rays by a common guess. Watch what it does. In the corner scenes every construction stays perfectly coherent for every δ — the one-parameter slide becomes a <em>two</em>-parameter family (P⁽¹⁾, δ), and §3.1’s candidate line fattens into the whole delay disk. In the corridor scenes a wrong δ wedges the recovered walls out of parallel, yet the wedge still closes at the sliding UE₁ — heading error is indistinguishable from wall tilt. Angles measured without a compass buy geometry only <em>relative to</em> that compass. §3.6 draws the consequence: it never uses arrival angles to build geometry at all — wall directions come from motion, offsets from the one link that crosses the families, and each pose’s heading is read off last, from the recovered geometry.</p>
 </section>
 
 <section class="sec" id="singleu">
@@ -434,12 +434,14 @@ footer a{color:var(--ink-soft)}
       <div class="ctl">
         <label><span>bounce P along the AoD ray (step ③)</span> <output id="o31P"></output></label>
         <input type="range" id="s31P" min="0.06" max="0.94" step="0.002" value="0.35">
+        <label style="margin-top:7px"><span>UE heading hypothesis δ (rotates every AoA)</span> <output id="o31H"></output></label>
+        <input type="range" id="s31H" min="-14" max="14" step="0.25" value="0">
       </div>
       <div class="statline" id="stat31"></div>
-      <div class="hint">the wall is the unknown: slide P to move the hypothesis — the green UE(P) is the estimated UE, not the truth</div>
+      <div class="hint">the wall and the heading are the unknowns: P and δ are both hypotheses — the green UE(P) is the estimated UE, not the truth</div>
     </div>
   </div>
-  <div class="figcap"><b>Read it.</b> E = BS + L·d̂ is the full measured length walked along the AoD — the mirror image of the UE across the unknown wall, the exact dual of §2.1's virtual-anchor walk (there: UE-side walk lands on the mirrored BS; here: BS-side walk lands on the mirrored UE). The foci change with it: the delay string, un-pinnable at the unknown UE, is re-pinned at <b>P and E</b> — a bounce hypothesis P on the AoD ray keeps ‖P→E‖ = L − ‖BS→P‖, so every point of the orange circle is at the correct leftover distance, and the candidate UE(P) is where the reverse-AoA ray out of P crosses it. The implied wall runs <em>along the middle</em> between P→UE(P) and P→E — the bisector at P, equivalently the perpendicular bisector of E↔UE(P) — and stays parallel to the true wall for every P. Slide P: <b>finding P is really finding the wall</b> — each P fixes the wall (the bisector through it) and the wall fixes the UE, so every position is a fully coherent (wall, UE) explanation, and the candidates sweep a straight line perpendicular to the true wall (step ⑥). One path therefore leaves a one-parameter family; what breaks it is a second path off a differently-oriented wall — the next subsections.</div></div>
+  <div class="figcap"><b>Read it.</b> E = BS + L·d̂ is the full measured length walked along the AoD — the mirror image of the UE across the unknown wall, the exact dual of §2.1's virtual-anchor walk (there: UE-side walk lands on the mirrored BS; here: BS-side walk lands on the mirrored UE). The foci change with it: the delay string, un-pinnable at the unknown UE, is re-pinned at <b>P and E</b> — a bounce hypothesis P on the AoD ray keeps ‖P→E‖ = L − ‖BS→P‖, so every point of the orange circle is at the correct leftover distance, and the candidate UE(P) is where the reverse-AoA ray out of P crosses it. The implied wall runs <em>along the middle</em> between P→UE(P) and P→E — the bisector at P, equivalently the perpendicular bisector of E↔UE(P) — and stays parallel to the true wall for every P. Slide P: <b>finding P is really finding the wall</b> — each P fixes the wall (the bisector through it) and the wall fixes the UE, so every position is a fully coherent (wall, UE) explanation, and the candidates sweep a straight line perpendicular to the true wall (step ⑥). But that line was drawn with a borrowed compass: the AoA is measured in the UE's <em>own</em> frame, and promoting it to a global direction spends a heading the UE does not know. Slide δ — the heading hypothesis — and the whole line pivots, every point still coherent, the implied wall tilting by δ/2 as it goes: heading error and wall tilt are indistinguishable from one path. With both P and δ free the candidates fill the entire delay disk ‖x − BS‖ ≤ L: one path leaves a <b>two</b>-parameter family, and the AoA, on its own, localizes nothing. What breaks it is a second path off a differently-oriented wall — the next subsections.</div></div>
 </section>
 
 <section class="sec" id="doubleu">
@@ -480,12 +482,14 @@ footer a{color:var(--ink-soft)}
         <input type="range" id="s32P1" min="0.06" max="0.94" step="0.002" value="0.35">
         <label style="margin-top:7px"><span>P₂ along the reflected ray (step ⑤)</span> <output id="o32P2"></output></label>
         <input type="range" id="s32P2" min="0.05" max="0.90" step="0.002" value="0.4">
+        <label style="margin-top:7px"><span>UE heading hypothesis δ (rotates every AoA)</span> <output id="o32H"></output></label>
+        <input type="range" id="s32H" min="-14" max="14" step="0.25" value="0">
       </div>
       <div class="statline" id="stat32"></div>
-      <div class="hint">both walls are unknowns: P⁽¹⁾ is the wall-A hypothesis, P₂ the wall-B hypothesis — the green dots are estimated UEs, never the truth</div>
+      <div class="hint">both walls and the heading are unknowns: P⁽¹⁾ is the wall-A hypothesis, P₂ the wall-B hypothesis, δ the heading hypothesis — the green dots are estimated UEs, never the truth</div>
     </div>
   </div>
-  <div class="figcap"><b>Read it.</b> Path 1 runs §3.1 verbatim: E⁽¹⁾ = BS + L⁽¹⁾·d̂⁽¹⁾ is the mirrored UE, P⁽¹⁾ hypothesizes the bounce, UE₁ sits the leftover distance down the reverse-AoA ray, and the candidates sweep line 1 ⊥ wall A — <b>finding P⁽¹⁾ is finding wall A</b>. That hypothesis is what path 2 was waiting for: its AoD ray crosses the hypothesized wall A at P₁, reflects there, and the changed focus climbs the ladder — the string re-pins at P₁, the full leftover walk lands on E₂ (the sub-problem's mirrored UE), P₂ hypothesizes the second bounce, and the UE₂ candidates sweep line 2 ⊥ wall B. The UE must lie on both lines, so the crossing solves P₂ and wall B follows. But slide P⁽¹⁾ and watch: <b>the crossing lands exactly on UE₁ for every hypothesis</b> — the whole explanation (wall A, wall B, UE) slides as one rigid family. Two paths that share wall A still leave a one-parameter ambiguity: the double bounce buys wall B, not the fix. What breaks it is an <em>independent last wall</em> — a single-bounce path off wall B, a LOS path, or a known anchor — the subject of the corridor subsections.</div></div>
+  <div class="figcap"><b>Read it.</b> Path 1 runs §3.1 verbatim: E⁽¹⁾ = BS + L⁽¹⁾·d̂⁽¹⁾ is the mirrored UE, P⁽¹⁾ hypothesizes the bounce, UE₁ sits the leftover distance down the reverse-AoA ray, and the candidates sweep line 1 ⊥ wall A — <b>finding P⁽¹⁾ is finding wall A</b>. That hypothesis is what path 2 was waiting for: its AoD ray crosses the hypothesized wall A at P₁, reflects there, and the changed focus climbs the ladder — the string re-pins at P₁, the full leftover walk lands on E₂ (the sub-problem's mirrored UE), P₂ hypothesizes the second bounce, and the UE₂ candidates sweep line 2 ⊥ wall B. The UE must lie on both lines, so the crossing solves P₂ and wall B follows. But slide P⁽¹⁾ and watch: <b>the crossing lands exactly on UE₁ for every hypothesis</b> — the whole explanation (wall A, wall B, UE) slides as one rigid family. Slide δ and watch again: both arrival rays rotate together (one UE, one heading), and the crossing still tracks UE₁ exactly — the family gains a second parameter instead of losing its first. Two paths that share wall A leave a <b>two</b>-parameter ambiguity (P⁽¹⁾, δ): the double bounce buys wall B, never the fix and never the heading. What breaks it is an <em>independent last wall</em> — a single-bounce path off wall B, a LOS path, or a known anchor — the subject of the corridor subsections.</div></div>
 </section>
 
 <section class="sec" id="tripleu">
@@ -515,12 +519,14 @@ footer a{color:var(--ink-soft)}
       <div class="ctl">
         <label><span>P⁽¹⁾ along path 1's AoD ray (step ②)</span> <output id="o33P"></output></label>
         <input type="range" id="s33P" min="0.06" max="0.94" step="0.002" value="0.35">
+        <label style="margin-top:7px"><span>UE heading hypothesis δ (rotates every AoA)</span> <output id="o33H"></output></label>
+        <input type="range" id="s33H" min="-14" max="14" step="0.25" value="0">
       </div>
       <div class="statline" id="stat33"></div>
-      <div class="hint">paths 1 and 2 enter at their specular values; all three walls are hypotheses driven by the one slider — the green dots are estimated UEs, never the truth</div>
+      <div class="hint">paths 1 and 2 enter at their specular values; all three walls and the heading are hypotheses driven by the two sliders — the green dots are estimated UEs, never the truth</div>
     </div>
   </div>
-  <div class="figcap"><b>Read it.</b> The ladder of §3.1–§3.2, run one rung further. Path 1 hypothesizes wall A (P⁽¹⁾, line 1 ⊥ A); path 2, stripped at wall A, is solved by its crossing with line 1 — wall B follows. Path 3 then strips <em>twice</em>: its AoD ray reflects at the hypothesized wall A, again at the hypothesized wall B, and the leftover walk lands on E₃, the sub-sub-problem's mirrored UE; its candidates sweep line 3 ⊥ wall C, and the crossing solves the last bounce — wall C follows. But the statline tells the honest ending: <b>every crossing lands exactly on UE₁ for every P⁽¹⁾</b>. Order after order, the recursion buys the next wall and never the fix — the one-parameter family survives the full ladder, because every path in this scene <em>starts</em> on wall A. Only an independent last wall (or LOS) breaks it.</div></div>
+  <div class="figcap"><b>Read it.</b> The ladder of §3.1–§3.2, run one rung further. Path 1 hypothesizes wall A (P⁽¹⁾, line 1 ⊥ A); path 2, stripped at wall A, is solved by its crossing with line 1 — wall B follows. Path 3 then strips <em>twice</em>: its AoD ray reflects at the hypothesized wall A, again at the hypothesized wall B, and the leftover walk lands on E₃, the sub-sub-problem's mirrored UE; its candidates sweep line 3 ⊥ wall C, and the crossing solves the last bounce — wall C follows. But the statline tells the honest ending: <b>every crossing lands exactly on UE₁ for every P⁽¹⁾ — and for every heading hypothesis δ</b>. Order after order, the recursion buys the next wall and never the fix — the family survives the full ladder with <em>two</em> free parameters (P⁽¹⁾, δ), because every path in this scene <em>starts</em> on wall A. Only an independent last wall (or LOS) breaks it.</div></div>
 </section>
 
 <section class="sec" id="corridoru">
@@ -550,12 +556,14 @@ footer a{color:var(--ink-soft)}
       <div class="ctl">
         <label><span>P⁽¹⁾ along path 1's AoD ray (step ②)</span> <output id="o34P"></output></label>
         <input type="range" id="s34P" min="0.06" max="0.94" step="0.002" value="0.35">
+        <label style="margin-top:7px"><span>UE heading hypothesis δ (rotates every AoA)</span> <output id="o34H"></output></label>
+        <input type="range" id="s34H" min="-14" max="14" step="0.25" value="0">
       </div>
       <div class="statline" id="stat34"></div>
-      <div class="hint">path 1 enters at its specular values; the corridor's two walls are the unknowns — the green dots are estimated UEs, never the truth</div>
+      <div class="hint">path 1 enters at its specular values; the corridor's two walls and the heading are the unknowns — the green dots are estimated UEs, never the truth</div>
     </div>
   </div>
-  <div class="figcap"><b>Read it.</b> The corner scene at least produced a crossing; the corridor cannot. Path 1 hypothesizes wall R exactly as in §3.1 — candidates sweep line 1 ⊥ wall R, which in a corridor means <em>across</em> the corridor. Path 2, stripped at that hypothesis, produces its own candidate line ⊥ wall L — but wall L is parallel to wall R, so line 2 is parallel to line 1, and with clean data it <b>coincides with it exactly</b>: the statline prints the angle between them and the offset, both zero for every P⁽¹⁾. There is no crossing to solve; wall L is fixed only by <em>declaring</em> UE₂ = UE₁ on the shared line. One slider still slides the whole explanation — both walls and the UE together. In a corridor the double bounce adds <em>no</em> UE information whatsoever: the cross-corridor offset stays free, and no bounce order will change that (next demo).</div></div>
+  <div class="figcap"><b>Read it.</b> The corner scene at least produced a crossing; the corridor cannot. Path 1 hypothesizes wall R exactly as in §3.1 — candidates sweep line 1 ⊥ wall R, which in a corridor means <em>across</em> the corridor. Path 2, stripped at that hypothesis, produces its own candidate line ⊥ wall L — but wall L is parallel to wall R, so line 2 is parallel to line 1, and with clean data it <b>coincides with it exactly</b>: the statline prints the angle between them and the offset, both zero for every P⁽¹⁾. There is no crossing to solve; wall L is fixed only by <em>declaring</em> UE₂ = UE₁ on the shared line. The heading slider adds the corridor's own twist: a wrong δ tilts <em>both</em> wall hypotheses out of parallel, the lines wedge apart by δ/2 and now cross — but exactly at the sliding UE₁, so the "crossing" certifies nothing: heading error just re-dresses the corridor as a slightly wedged one. One slider still slides the whole explanation — both walls and the UE together — and δ slides a second one. In a corridor the double bounce adds <em>no</em> UE information whatsoever: the cross-corridor offset stays free, and no bounce order will change that (next demo).</div></div>
 </section>
 
 <section class="sec" id="corridor3u">
@@ -585,12 +593,14 @@ footer a{color:var(--ink-soft)}
       <div class="ctl">
         <label><span>P⁽¹⁾ along path 1's AoD ray (step ②)</span> <output id="o35P"></output></label>
         <input type="range" id="s35P" min="0.06" max="0.94" step="0.002" value="0.35">
+        <label style="margin-top:7px"><span>UE heading hypothesis δ (rotates every AoA)</span> <output id="o35H"></output></label>
+        <input type="range" id="s35H" min="-14" max="14" step="0.25" value="0">
       </div>
       <div class="statline" id="stat35"></div>
-      <div class="hint">paths 1 and 2 enter at their specular values; every wall is a hypothesis driven by the one slider</div>
+      <div class="hint">paths 1 and 2 enter at their specular values; every wall and the heading are hypotheses driven by the two sliders</div>
     </div>
   </div>
-  <div class="figcap"><b>Read it.</b> The full corridor ladder: wall R from path 1 (§3.1), wall L by the forced declaration UE₂ = UE₁ (§3.4), and now path 3 stripped <em>twice</em> — its AoD ray reflecting at hypothesized wall R, then at hypothesized wall L, the leftover walk landing on E₃. Its candidates sweep line 3 ⊥ wall R again — and the statline shows the parity ending: line 3 <b>coincides with line 1 exactly, for every P⁽¹⁾</b>. Odd or even, every bounce order in a corridor confines the UE to the <em>same</em> cross-corridor line: the along-corridor coordinate is fixed by any one path, the cross-corridor offset by none of them. No amount of bouncing between parallel walls ever breaks the slide — an off-axis wall, a LOS path, or an anchor does. §3.6 runs both verdicts through the joint, all-unknowns problem.</div></div>
+  <div class="figcap"><b>Read it.</b> The full corridor ladder: wall R from path 1 (§3.1), wall L by the forced declaration UE₂ = UE₁ (§3.4), and now path 3 stripped <em>twice</em> — its AoD ray reflecting at hypothesized wall R, then at hypothesized wall L, the leftover walk landing on E₃. Its candidates sweep line 3 ⊥ wall R again — and the statline shows the parity ending: line 3 <b>coincides with line 1 exactly, for every P⁽¹⁾</b>. Odd or even, every bounce order in a corridor confines the UE to the <em>same</em> cross-corridor line: the along-corridor coordinate is fixed by any one path, the cross-corridor offset by none of them. The heading slider repeats §3.4's lesson two rungs up: a wrong δ wedges line 3 off line 1 by δ/2, the wedge closing exactly at the sliding UE₁ — heading error keeps masquerading as wall tilt at every order. No amount of bouncing between parallel walls ever breaks the slide — an off-axis wall, a LOS path, or an anchor does. §3.6 runs both verdicts through the joint, all-unknowns problem.</div></div>
 </section>
 
 <!-- ============ 08b estimating jointly ============ -->
@@ -2323,8 +2333,8 @@ const CAP=["",
  "② <b>Walk the AoD.</b> Eject the departure ray from the BS and walk the <em>full</em> measured length L along it. Its endpoint E is the mirror image of the UE across the unknown wall — the dual of §2.1's VA walk, and the replacement focus.",
  "③ <b>Hypothesize the bounce.</b> Choose P on the AoD ray (slider below). The walk to P spends ‖BS→P‖ of the string; ‖P→E‖ = L − ‖BS→P‖ is exactly what remains for the last leg.",
  "④ <b>Re-pin the string.</b> The leftover string, pinned at P, sweeps a circle through E — every point of it lies at the correct remaining distance from the bounce.",
- "⑤ <b>Cut with the reversed AoA.</b> φ (the AoA, measured at the UE) is the direction the energy <em>arrived from</em>, so the last leg toward the UE runs opposite it: absolute direction φ + 180° — equivalently, the AoD ray rotated about P by π − (ψ − φ) (arc). That ray cuts the circle at the candidate UE(P). Note ‖P→UE(P)‖ = ‖P→E‖ <em>for every P</em> — the equality is built into the construction, so it cannot select the bounce: one more constraint is needed.",
- "⑥ <b>The implied wall — and the family.</b> The wall runs along the middle between P→UE(P) and P→E: the bisector through P. <b>Finding P is finding the wall.</b> Slide P — every position stays coherent, and the candidates sweep the teal line ⊥ the true wall: one path = a one-parameter family."];
+ "⑤ <b>Cut with the reversed AoA.</b> φ (the AoA, measured at the UE) is the direction the energy <em>arrived from</em> — but the UE measures it in its <em>own</em> frame: turning it into a global direction spends a heading. The last leg toward the UE runs opposite it: absolute direction φ + δ + 180°, where δ is the heading hypothesis (slider) — equivalently, the AoD ray rotated about P by π − (ψ − φ − δ) (arc). That ray cuts the circle at the candidate UE(P). Note ‖P→UE(P)‖ = ‖P→E‖ <em>for every P</em> — the equality is built into the construction, so it cannot select the bounce.",
+ "⑥ <b>The implied wall — and the family.</b> The wall runs along the middle between P→UE(P) and P→E: the bisector through P. <b>Finding P is finding the wall.</b> Slide P — every position stays coherent, and the candidates sweep the teal line ⊥ the true wall. Now slide δ — the whole line pivots, every position <em>still</em> coherent: with the heading unknown too, one path = a <b>two</b>-parameter family (P, δ), and the candidates fill the delay disk ‖x − BS‖ ≤ L (faint circle), not a line."];
 let step=1;
 const T={on:false,th:0}; let raf=null;
 function stop(){T.on=false;if(raf){cancelAnimationFrame(raf);raf=null;}}
@@ -2350,11 +2360,14 @@ function render(){
   const {BS,WC,WEND}=D1;
   const sp=specular1();
   const L=sp.L+(+$("s31L").value)/M_PER_PX;
-  const phi=sp.phi+(+$("s31A").value);
+  const phiMeas=sp.phi+(+$("s31A").value);
+  const dH=+$("s31H").value;
+  const phi=phiMeas+dH;   /* global arrival direction = measured local AoA + hypothesized heading */
   const psi=sp.psi+(+$("s31D").value);
   const u=dirOf(phi), d=dirOf(psi);
   $("o31L").textContent=(L*M_PER_PX).toFixed(1)+" m";
-  $("o31A").textContent=degFmt(phi);
+  $("o31A").textContent=degFmt(phiMeas);
+  $("o31H").textContent=(dH>0?"+":"")+dH.toFixed(1)+"°";
   $("o31D").textContent=degFmt(psi);
   const E=[BS[0]+L*d[0],BS[1]+L*d[1]];
   const t=(+$("s31P").value)*L;
@@ -2407,7 +2420,7 @@ function render(){
       }
       s+=`<path d="${arc}" fill="none" stroke="#b45607" stroke-width="1.4" opacity="0.85"/>`;
       const mid=dirOf(psi+rel/2);
-      s+=txt(P[0]+60*mid[0],P[1]+60*mid[1]+4,`π − (ψ − φ) = ${rel.toFixed(0)}°`,"#b45607",10,mid[0]<0?"end":"start");
+      s+=txt(P[0]+60*mid[0],P[1]+60*mid[1]+4,`π − (ψ − φ − δ) = ${rel.toFixed(0)}°`,"#b45607",10,mid[0]<0?"end":"start");
     }
     s+=arrow(P,U,"#51606e",2);
     s+=`<circle cx="${U[0]}" cy="${U[1]}" r="6" fill="#2ca02c" stroke="#fff" stroke-width="1.6"/>`
@@ -2419,6 +2432,9 @@ function render(){
     s+=txt(P[0]+130*w[0]+6,P[1]+130*w[1]+4,"implied wall — the middle between P→UE and P→E","#16222e",10.5);
     const o=[BS[0]-L*u[0],BS[1]-L*u[1]], v=unit([d[0]+u[0],d[1]+u[1]]);
     s+=seg([o[0]-900*v[0],o[1]-900*v[1]],[o[0]+900*v[0],o[1]+900*v[1]],"#0e8f7e",1.6,"7 5",0.6);
+    /* the heading dimension: with δ free the candidate line pivots and sweeps the whole delay disk */
+    s+=`<circle cx="${BS[0]}" cy="${BS[1]}" r="${L}" fill="none" stroke="#0e8f7e" stroke-width="1.1" stroke-dasharray="2 5" opacity="0.4"/>`;
+    s+=txt(BS[0]+L*Math.cos(0.42)-10,BS[1]-L*Math.sin(0.42)-8,"δ free ⇒ candidates fill the delay disk ‖x−BS‖ ≤ L","#0a6b5e",10,"end");
   }
   const sig=+$("sS31").value;
   $("oS31").textContent=(sig*M_PER_PX).toFixed(1)+" m";
@@ -2428,7 +2444,7 @@ function render(){
       const w=Math.exp(-0.5*g*g);
       const Sk=[sp.Pt[0]+g*sig*D1.WD[0],sp.Pt[1]+g*sig*D1.WD[1]];
       const Ls=dist(BS,Sk)+dist(Sk,D1.UE);
-      const us=unit(sub(Sk,D1.UE)), ds=unit(sub(Sk,BS));
+      const us=dirOf(aoaOf(unit(sub(Sk,D1.UE)))+dH), ds=unit(sub(Sk,BS));
       const Es=[BS[0]+Ls*ds[0],BS[1]+Ls*ds[1]];
       const fr=(+$("s31P").value);
       const ts=fr*Ls, Ps=[BS[0]+ts*ds[0],BS[1]+ts*ds[1]];
@@ -2444,10 +2460,10 @@ function render(){
   const n2=unit(sub(U,E));
   const tilt=Math.asin(Math.min(1,Math.abs(n2[0]*D1.WN[1]-n2[1]*D1.WN[0])))*180/Math.PI;
   $("stat31").innerHTML= step<5 ? "" :
-    `‖P→UE(P)‖ = ‖P→E‖ — <b>equal for every P</b>: the construction builds the equality in, so it cannot choose P. One more constraint is needed.`+
-    (step>=6?`<br>implied wall tilt off the reference wall: ${tilt.toFixed(1)}°`:``);
+    `‖P→UE(P)‖ = ‖P→E‖ — <b>equal for every P and every δ</b>: the construction builds the equality in, so it can choose neither the bounce nor the heading. Two more constraints are needed.`+
+    (step>=6?`<br>implied wall tilt off the reference wall: ${tilt.toFixed(1)}° — a heading error δ reads as a wall tilt of δ/2: the two are indistinguishable from one path`:``);
 }
-["s31P","s31L","s31A","s31D","sS31"].forEach(id=>$(id).addEventListener("input",()=>{stop();render();}));
+["s31P","s31H","s31L","s31A","s31D","sS31"].forEach(id=>$(id).addEventListener("input",()=>{stop();render();}));
 $("b31R").addEventListener("click",()=>{["s31L","s31A","s31D"].forEach(id=>$(id).value=0);stop();render();});
 $("b31Prev").addEventListener("click",()=>goStep(step-1,false));
 $("b31Next").addEventListener("click",()=>goStep(step+1,true));
@@ -2465,7 +2481,7 @@ const CAP=["",
  "③ <b>The hypothesis is a wall.</b> P⁽¹⁾ fixes wall A — the middle between P⁽¹⁾→UE₁ and P⁽¹⁾→E⁽¹⁾ — and it stays parallel to the true wall for every P⁽¹⁾. Finding P⁽¹⁾ is finding wall A.",
  "④ <b>Strip path 2 at wall A.</b> Path 2's ψ-ray crosses the hypothesized wall A at P₁ and reflects. The focus climbs the ladder: the string re-pins at P₁, and the full leftover walk L₂ − ‖BS→P₁‖ lands on E₂ — the sub-problem's mirrored UE.",
  "⑤ <b>Hypothesize P₂.</b> On the reflected ray (slider), UE₂ sits the remaining length down path 2's reverse-AoA ray, with ‖P₂→UE₂‖ = ‖P₂→E₂‖ built in as always. The candidates sweep line 2 ⊥ wall B: a second family.",
- "⑥ <b>Cross — and the punchline.</b> The UE must lie on both lines: the crossing solves P₂, and wall B follows (the bisector at P₂). But slide P⁽¹⁾ — the crossing lands <em>exactly on UE₁ for every hypothesis</em>. The whole explanation slides as one: two paths sharing wall A still leave a one-parameter family. The double bounce bought wall B, not the fix — an independent last wall is what breaks it."];
+ "⑥ <b>Cross — and the punchline.</b> The UE must lie on both lines: the crossing solves P₂, and wall B follows (the bisector at P₂). But slide P⁽¹⁾ — the crossing lands <em>exactly on UE₁ for every hypothesis</em>. Then slide δ — both arrival rays rotate together (one UE, one heading), and the crossing <em>still</em> lands on UE₁: the whole explanation (wall A, wall B, UE, heading) moves as one <b>two</b>-parameter family (P⁽¹⁾, δ). The double bounce bought wall B, not the fix — an independent last wall is what breaks it."];
 let step=1;
 function goStep(n){
   step=Math.max(1,Math.min(6,n));
@@ -2501,8 +2517,11 @@ const fullLine=(l,c,dash,o)=>seg([l.o[0]-900*l.v[0],l.o[1]-900*l.v[1]],
 function render(){
   const {BS,AY,AX0,AX1,BC,BEND}=D2;
   const dt=pathData();
-  const u1=dirOf(dt.phi1), d1=dirOf(dt.psi1);
-  const u2=dirOf(dt.phi2), d2=dirOf(dt.psi2);
+  const dH=+$("s32H").value;
+  $("o32H").textContent=(dH>0?"+":"")+dH.toFixed(1)+"°";
+  /* one UE, one heading hypothesis: δ rotates both measured AoAs into global directions */
+  const u1=dirOf(dt.phi1+dH), d1=dirOf(dt.psi1);
+  const u2=dirOf(dt.phi2+dH), d2=dirOf(dt.psi2);
   $("o32L1").textContent=(dt.L1*M_PER_PX).toFixed(1)+" m";
   $("o32A1").textContent=degFmt(dt.phi1);
   $("o32D1").textContent=degFmt(dt.psi1);
@@ -2597,7 +2616,7 @@ function render(){
       const w=Math.exp(-0.5*(g0*g0+g1*g1+g2*g2)/3);
       const S0=[B1t[0]+g0*sig,B1t[1]];
       const L1s=dist(BS,S0)+dist(S0,UEt);
-      const u1s=unit(sub(S0,UEt)), d1s=unit(sub(S0,BS));
+      const u1s=dirOf(aoaOf(unit(sub(S0,UEt)))+dH), d1s=unit(sub(S0,BS));
       const E1k=[BS[0]+L1s*d1s[0],BS[1]+L1s*d1s[1]];
       const t1k=fr*L1s, Pwk=[BS[0]+t1k*d1s[0],BS[1]+t1k*d1s[1]];
       const U1k=[Pwk[0]-(L1s-t1k)*u1s[0],Pwk[1]-(L1s-t1k)*u1s[1]];
@@ -2605,7 +2624,7 @@ function render(){
       const S1k=[Q1t[0]+g1*sig,Q1t[1]];
       const S2k=[Q2t[0]+g2*sig*D2.BD[0],Q2t[1]+g2*sig*D2.BD[1]];
       const L2s=dist(BS,S1k)+dist(S1k,S2k)+dist(S2k,UEt);
-      const u2s=unit(sub(S2k,UEt)), d2s=unit(sub(S1k,BS));
+      const u2s=dirOf(aoaOf(unit(sub(S2k,UEt)))+dH), d2s=unit(sub(S1k,BS));
       const kk=(d2s[0]*nAk[0]+d2s[1]*nAk[1]);
       const tpk=((Pwk[0]-BS[0])*nAk[0]+(Pwk[1]-BS[1])*nAk[1])/(kk||1e-12);
       const P12k=[BS[0]+tpk*d2s[0],BS[1]+tpk*d2s[1]];
@@ -2628,9 +2647,9 @@ function render(){
   const tiltA=Math.asin(Math.min(1,Math.abs(nA[0])))*180/Math.PI;
   $("stat32").innerHTML= step<5 ? "" :
     (step===5?`‖P₂→UE₂‖ = ‖P₂→E₂‖ — equal for every P₂, as in §3.1: the sub-family cannot pick its own bounce either.`:
-    `crossing ↔ UE₁: <b>${gap.toFixed(2)} m — zero for every P⁽¹⁾</b>: the family survives; the double bounce bought wall B, not the fix.<br>wall-A hypothesis tilt off reference: ${tiltA.toFixed(1)}°`);
+    `crossing ↔ UE₁: <b>${gap.toFixed(2)} m — zero for every P⁽¹⁾ and every δ</b>: the family survives, now two-parameter; the double bounce bought wall B, not the fix.<br>wall-A hypothesis tilt off reference: ${tiltA.toFixed(1)}° — δ tilts it by δ/2, indistinguishable from a wall error`);
 }
-["s32P1","s32P2","s32L1","s32A1","s32D1","s32L2","s32A2","s32D2","sS32"].forEach(id=>$(id).addEventListener("input",render));
+["s32P1","s32P2","s32H","s32L1","s32A1","s32D1","s32L2","s32A2","s32D2","sS32"].forEach(id=>$(id).addEventListener("input",render));
 $("b32R").addEventListener("click",()=>{["s32L1","s32A1","s32D1","s32L2","s32A2","s32D2"].forEach(id=>$(id).value=0);render();});
 $("b32Prev").addEventListener("click",()=>goStep(step-1));
 $("b32Next").addEventListener("click",()=>goStep(step+1));
@@ -2646,9 +2665,9 @@ const CAP=["",
  "① <b>The unknowns.</b> Two measured paths in a corridor: path 1 (single, wall R) and path 2 (double, R→L). Both walls and the UE are unknown.",
  "② <b>Path 1 = §3.1.</b> E⁽¹⁾ = the full AoD walk; P⁽¹⁾ (slider) hypothesizes the bounce; UE₁ sits down the reversed AoA; candidates sweep line 1 ⊥ wall R — in a corridor, straight <em>across</em> it. P⁽¹⁾ fixes the wall-R hypothesis.",
  "③ <b>Strip path 2 at wall R.</b> Its AoD ray crosses the hypothesized wall at P₁ and reflects; the leftover walk lands on E₂ — the focus climbs, as in §3.2.",
- "④ <b>Line 2 — and the degeneracy.</b> The candidates sweep a line ⊥ wall L. But wall L ∥ wall R, so line 2 is parallel to line 1 — and with clean data it <em>coincides</em> with it exactly (statline). There is no crossing. The double bounce adds nothing.",
+ "④ <b>Line 2 — and the degeneracy.</b> The candidates sweep a line ⊥ wall L. But wall L ∥ wall R, so with the right heading (δ = 0) line 2 is parallel to line 1 — and with clean data it <em>coincides</em> with it exactly (statline). There is no crossing. The double bounce adds nothing.",
  "⑤ <b>Wall L anyway.</b> On the shared line the only consistent choice is UE₂ = UE₁ — that declaration (not a measurement) solves P₂, and the wall-L hypothesis follows. Bought the wall, not the fix.",
- "⑥ <b>The slide — and dispersion.</b> One slider moves both walls and the UE as one rigid explanation across the corridor. Slide σ: two rough bounces smear E₂ and the candidate cloud — still only along the same shared line."];
+ "⑥ <b>The slide — and dispersion.</b> One slider moves both walls and the UE as one rigid explanation across the corridor. Slide δ: the lines wedge apart by δ/2 — yet still meet at UE₁, because a wrong heading just tilts <em>both</em> wall hypotheses out of parallel; the family is (P⁽¹⁾, δ). Slide σ: two rough bounces smear E₂ and the candidate cloud — still only along the same shared line."];
 let step=1;
 function goStep(n){
   step=Math.max(1,Math.min(6,n));
@@ -2662,11 +2681,13 @@ function render(){
   const sR=(RX-UE[0])/(VA1[0]-UE[0]); const B1=[RX,UE[1]+sR*(VA1[1]-UE[1])];
   const q2=(LX-UE[0])/(VA2[0]-UE[0]); const Q2t=[LX,UE[1]+q2*(VA2[1]-UE[1])];
   const q1=(RX-Q2t[0])/(VA1[0]-Q2t[0]); const Q1t=[RX,Q2t[1]+q1*(VA1[1]-Q2t[1])];
-  const p1={L:dist(UE,VA1),u:unit(sub(VA1,UE)),d:unit(sub(B1,BS))};
+  const dH=+$("s34H").value;
+  $("o34H").textContent=(dH>0?"+":"")+dH.toFixed(1)+"°";
+  const p1={L:dist(UE,VA1),u:dirOf(aoaOf(unit(sub(VA1,UE)))+dH),d:unit(sub(B1,BS))};
   const L2=dist(UE,VA2)+(+$("s34L").value)/M_PER_PX;
   const phi2=aoaOf(unit(sub(VA2,UE)))+(+$("s34A").value);
   const psi2=aoaOf(unit(sub(Q1t,BS)))+(+$("s34D").value);
-  const p2={L:L2,u:dirOf(phi2),d:dirOf(psi2)};
+  const p2={L:L2,u:dirOf(phi2+dH),d:dirOf(psi2)};
   const sig=+$("sS34").value;
   $("oS34").textContent=(sig*M_PER_PX).toFixed(1)+" m";
   $("o34L").textContent=(L2*M_PER_PX).toFixed(1)+" m";
@@ -2718,7 +2739,7 @@ function render(){
   }
   if(step>=4){
     out+=seg([S.line2.o[0]-900*S.line2.v[0],S.line2.o[1]-900*S.line2.v[1]],[S.line2.o[0]+900*S.line2.v[0],S.line2.o[1]+900*S.line2.v[1]],"#b45607",1.6,"2 6",0.7);
-    out+=txt(line1.o[0]+430*line1.v[0],line1.o[1]+430*line1.v[1]+16,"line 2 ≡ line 1","#b45607",10);
+    out+=txt(line1.o[0]+430*line1.v[0],line1.o[1]+430*line1.v[1]+16,Math.abs(dH)<0.05?"line 2 ≡ line 1":"line 2 — wedged δ/2 off line 1, still through UE₁","#b45607",10);
   }
   if(step>=5){
     out+=`<circle cx="${U1[0]}" cy="${U1[1]}" r="9" fill="none" stroke="#2ca02c" stroke-width="2" stroke-dasharray="3 3"/>`+txt(U1[0]+12,U1[1]+18,"UE₂ ≔ UE₁","#1d7a1d",10);
@@ -2733,7 +2754,7 @@ function render(){
       const w=Math.exp(-0.5*(g1*g1+g2*g2)/2);
       const S1=[RX,Q1t[1]+g1*sig],S2=[LX,Q2t[1]+g2*sig];
       const Ls=dist(BS,S1)+dist(S1,S2)+dist(S2,UE);
-      const pp={L:Ls,u:unit(sub(S2,UE)),d:unit(sub(S1,BS))};
+      const pp={L:Ls,u:dirOf(aoaOf(unit(sub(S2,UE)))+dH),d:unit(sub(S1,BS))};
       const st=strip2(pp);
       const nrm2=[-st.line2.v[1],st.line2.v[0]];
       const dd=nrm2[0]*(U1[0]-st.line2.o[0])+nrm2[1]*(U1[1]-st.line2.o[1]);
@@ -2747,9 +2768,11 @@ function render(){
   out+=bsMark(BS,"BS",-30,4);
   svg.innerHTML=out;
   $("stat34").innerHTML= step<4 ? "" :
-    `∠(line 1, line 2) = <b>${(Math.asin(Math.min(1,sinA))*180/Math.PI).toFixed(2)}°</b> · offset = <b>${(off*M_PER_PX).toFixed(2)} m</b> — coincident for every P⁽¹⁾: no crossing exists; the double bounce adds no UE information in a corridor.`;
+    (Math.abs(dH)<0.05?
+    `∠(line 1, line 2) = <b>${(Math.asin(Math.min(1,sinA))*180/Math.PI).toFixed(2)}°</b> · offset = <b>${(off*M_PER_PX).toFixed(2)} m</b> — coincident for every P⁽¹⁾: no crossing exists; the double bounce adds no UE information in a corridor.`:
+    `∠(line 1, line 2) = <b>${(Math.asin(Math.min(1,sinA))*180/Math.PI).toFixed(2)}° = δ/2</b> · UE₁ off line 2 = <b>${(off*M_PER_PX).toFixed(2)} m</b> — a wrong heading wedges the recovered walls out of parallel, so the lines now cross — but always at the sliding UE₁: δ buys no fix, it only masquerades as wall tilt.`);
 }
-["s34P","s34L","s34A","s34D","sS34"].forEach(id=>$(id).addEventListener("input",render));
+["s34P","s34H","s34L","s34A","s34D","sS34"].forEach(id=>$(id).addEventListener("input",render));
 $("b34R").addEventListener("click",()=>{["s34L","s34A","s34D"].forEach(id=>$(id).value=0);render();});
 $("b34Prev").addEventListener("click",()=>goStep(step-1));
 $("b34Next").addEventListener("click",()=>goStep(step+1));
@@ -2773,7 +2796,7 @@ const CAP=["",
  "③ <b>Path 2 = §3.2.</b> Stripped at wall A (P₁, reflect, E₂), its candidates sweep line 2 ⊥ wall B; the crossing with line 1 solves P₂ and the wall-B hypothesis follows.",
  "④ <b>Path 3 — the focus climbs two rungs.</b> Its AoD ray reflects at hypothesized wall A (R₁), again at hypothesized wall B (R₂); the leftover walk lands on E₃, the doubly-stripped mirrored UE.",
  "⑤ <b>Line 3 ⊥ wall C.</b> The candidates sweep the third family; the crossing with line 1 solves the last bounce and the wall-C hypothesis follows — the whole three-wall map from one slider.",
- "⑥ <b>The punchline — and dispersion.</b> Slide P⁽¹⁾: both crossings land <em>exactly on UE₁ for every hypothesis</em> — every order buys its wall, never the fix. Slide σ: three rough bounces convolve, and the E₃ / crossing clouds smear worst of all."];
+ "⑥ <b>The punchline — and dispersion.</b> Slide P⁽¹⁾: both crossings land <em>exactly on UE₁ for every hypothesis</em> — every order buys its wall, never the fix. Slide δ: all three arrival rays rotate together, and the crossings <em>still</em> track UE₁ — the ladder-long ambiguity is a two-parameter family (P⁽¹⁾, δ). Slide σ: three rough bounces convolve, and the E₃ / crossing clouds smear worst of all."];
 let step=1;
 function goStep(n){
   step=Math.max(1,Math.min(6,n));
@@ -2793,12 +2816,14 @@ function render(){
   const P2t=hitL(P3t,VA2,BC,BN);
   const tA3=(AY-P2t[1])/(VA1[1]-P2t[1]);
   const P1t=[P2t[0]+tA3*(VA1[0]-P2t[0]),AY];
-  const p1={L:dist(UE,VA1),u:unit(sub(VA1,UE)),d:unit(sub(B1,BS))};
-  const p2={L:dist(UE,VA2),u:unit(sub(VA2,UE)),d:unit(sub(Q1t,BS))};
+  const dH=+$("s33H").value;
+  $("o33H").textContent=(dH>0?"+":"")+dH.toFixed(1)+"°";
+  const p1={L:dist(UE,VA1),u:dirOf(aoaOf(unit(sub(VA1,UE)))+dH),d:unit(sub(B1,BS))};
+  const p2={L:dist(UE,VA2),u:dirOf(aoaOf(unit(sub(VA2,UE)))+dH),d:unit(sub(Q1t,BS))};
   const L3=dist(UE,VA3)+(+$("s33L").value)/M_PER_PX;
   const phi3=aoaOf(unit(sub(VA3,UE)))+(+$("s33A").value);
   const psi3=aoaOf(unit(sub(P1t,BS)))+(+$("s33D").value);
-  const p3={L:L3,u:dirOf(phi3),d:dirOf(psi3)};
+  const p3={L:L3,u:dirOf(phi3+dH),d:dirOf(psi3)};
   const sig=+$("sS33").value;
   $("oS33").textContent=(sig*M_PER_PX).toFixed(1)+" m";
   $("o33L").textContent=(L3*M_PER_PX).toFixed(1)+" m";
@@ -2888,7 +2913,7 @@ function render(){
       const S2=[P2t[0]+g2*sig*wBd[0],P2t[1]+g2*sig*wBd[1]];
       const S3=[P3t[0]+g3*sig*wCd[0],P3t[1]+g3*sig*wCd[1]];
       const Ls=dist(BS,S1)+dist(S1,S2)+dist(S2,S3)+dist(S3,UE);
-      const pp={L:Ls,u:unit(sub(S3,UE)),d:unit(sub(S1,BS))};
+      const pp={L:Ls,u:dirOf(aoaOf(unit(sub(S3,UE)))+dH),d:unit(sub(S1,BS))};
       const st=strip3(pp);
       if(!st||!st.X3)continue;
       out+=`<circle cx="${S1[0]}" cy="${S1[1]}" r="${1.4+1.4*w}" fill="#0e8f7e" opacity="${0.14+0.4*w}"/>`
@@ -2903,9 +2928,9 @@ function render(){
   const g2v=X2?dist(X2,U1)*M_PER_PX:NaN, g3v=(S&&S.X3)?dist(S.X3,U1)*M_PER_PX:NaN;
   $("stat33").innerHTML= step<3 ? "" :
     (step<6?`crossing₂ ↔ UE₁: ${isNaN(g2v)?"—":g2v.toFixed(2)+" m"}${step>=5?` · crossing₃ ↔ UE₁: ${isNaN(g3v)?"—":g3v.toFixed(2)+" m"}`:""}`:
-    `crossing₂ ↔ UE₁: <b>${g2v.toFixed(2)} m</b> · crossing₃ ↔ UE₁: <b>${g3v.toFixed(2)} m</b> — <b>zero for every P⁽¹⁾</b>: the ladder buys walls, never the fix.`);
+    `crossing₂ ↔ UE₁: <b>${g2v.toFixed(2)} m</b> · crossing₃ ↔ UE₁: <b>${g3v.toFixed(2)} m</b> — <b>zero for every P⁽¹⁾ and every δ</b>: the ladder buys walls, never the fix nor the heading.`);
 }
-["s33P","s33L","s33A","s33D","sS33"].forEach(id=>$(id).addEventListener("input",render));
+["s33P","s33H","s33L","s33A","s33D","sS33"].forEach(id=>$(id).addEventListener("input",render));
 $("b33R").addEventListener("click",()=>{["s33L","s33A","s33D"].forEach(id=>$(id).value=0);render();});
 $("b33Prev").addEventListener("click",()=>goStep(step-1));
 $("b33Next").addEventListener("click",()=>goStep(step+1));
@@ -2921,8 +2946,8 @@ const CAP=["",
  "① <b>The unknowns.</b> Three corridor paths: single (R), double (R→L), triple (R→L→R). Two walls and the UE unknown.",
  "② <b>The ladder so far.</b> Path 1 hypothesizes wall R (P⁽¹⁾, line 1 ⊥ wall R, UE₁); path 2, stripped at it, coincides with line 1 (§3.4) and wall L follows from the declaration UE₂ = UE₁.",
  "③ <b>Path 3 — two rungs up.</b> Its AoD ray reflects at hypothesized wall R (R₁), then at hypothesized wall L (R₂); the leftover walk lands on E₃, the doubly-stripped mirrored UE.",
- "④ <b>Line 3 ≡ line 1.</b> The triple's candidates sweep a line ⊥ wall R — the <em>same</em> line again, exactly, for every P⁽¹⁾ (statline). Parity: odd or even, a corridor path's last wall is always parallel to the first.",
- "⑤ <b>The verdict — and dispersion.</b> No corridor bounce order adds UE information. Slide σ up: three rough bounces convolve, E₃ and the candidate cloud smear worst of all — and still only <em>along</em> the same line."];
+ "④ <b>Line 3 ≡ line 1.</b> The triple's candidates sweep a line ⊥ wall R — with the right heading (δ = 0) the <em>same</em> line again, exactly, for every P⁽¹⁾ (statline). Parity: odd or even, a corridor path's last wall is always parallel to the first.",
+ "⑤ <b>The verdict — and dispersion.</b> No corridor bounce order adds UE information. Slide δ: line 3 wedges δ/2 off line 1 — but the crossing is UE₁ itself, exactly as in §3.4: heading error only tilts the recovered corridor. Slide σ up: three rough bounces convolve, E₃ and the candidate cloud smear worst of all — and still only <em>along</em> the same line."];
 let step=1;
 function goStep(n){
   step=Math.max(1,Math.min(5,n));
@@ -2939,12 +2964,14 @@ function render(){
   const t3=(RX-UE[0])/(VA3[0]-UE[0]); const P3t=[RX,UE[1]+t3*(VA3[1]-UE[1])];
   const t2s=(LX-P3t[0])/(VA2[0]-P3t[0]); const P2t=[LX,P3t[1]+t2s*(VA2[1]-P3t[1])];
   const t1s=(RX-P2t[0])/(VA1[0]-P2t[0]); const P1t=[RX,P2t[1]+t1s*(VA1[1]-P2t[1])];
-  const p1={L:dist(UE,VA1),u:unit(sub(VA1,UE)),d:unit(sub(B1,BS))};
-  const p2={L:dist(UE,VA2),u:unit(sub(VA2,UE)),d:unit(sub(Q1t,BS))};
+  const dH=+$("s35H").value;
+  $("o35H").textContent=(dH>0?"+":"")+dH.toFixed(1)+"°";
+  const p1={L:dist(UE,VA1),u:dirOf(aoaOf(unit(sub(VA1,UE)))+dH),d:unit(sub(B1,BS))};
+  const p2={L:dist(UE,VA2),u:dirOf(aoaOf(unit(sub(VA2,UE)))+dH),d:unit(sub(Q1t,BS))};
   const L3=dist(UE,VA3)+(+$("s35L").value)/M_PER_PX;
   const phi3=aoaOf(unit(sub(VA3,UE)))+(+$("s35A").value);
   const psi3=aoaOf(unit(sub(P1t,BS)))+(+$("s35D").value);
-  const p3={L:L3,u:dirOf(phi3),d:dirOf(psi3)};
+  const p3={L:L3,u:dirOf(phi3+dH),d:dirOf(psi3)};
   const sig=+$("sS35").value;
   $("oS35").textContent=(sig*M_PER_PX).toFixed(1)+" m";
   $("o35L").textContent=(L3*M_PER_PX).toFixed(1)+" m";
@@ -3009,7 +3036,7 @@ function render(){
   }
   if(step>=4){
     out+=seg([S.line3.o[0]-900*S.line3.v[0],S.line3.o[1]-900*S.line3.v[1]],[S.line3.o[0]+900*S.line3.v[0],S.line3.o[1]+900*S.line3.v[1]],"#b45607",1.6,"2 6",0.7);
-    out+=txt(line1.o[0]+430*line1.v[0],line1.o[1]+430*line1.v[1]+16,"line 3 ≡ line 1","#b45607",10);
+    out+=txt(line1.o[0]+430*line1.v[0],line1.o[1]+430*line1.v[1]+16,Math.abs(dH)<0.05?"line 3 ≡ line 1":"line 3 — wedged δ/2 off line 1, still through UE₁","#b45607",10);
   }
   if(sig>0){
     for(let k=0;k<24;k++){
@@ -3017,7 +3044,7 @@ function render(){
       const w=Math.exp(-0.5*(g1*g1+g2*g2+g3*g3)/3);
       const S1=[RX,P1t[1]+g1*sig],S2=[LX,P2t[1]+g2*sig],S3=[RX,P3t[1]+g3*sig];
       const Ls=dist(BS,S1)+dist(S1,S2)+dist(S2,S3)+dist(S3,UE);
-      const pp={L:Ls,u:unit(sub(S3,UE)),d:unit(sub(S1,BS))};
+      const pp={L:Ls,u:dirOf(aoaOf(unit(sub(S3,UE)))+dH),d:unit(sub(S1,BS))};
       const st=strip3(pp);
       const nrm2=[-st.line3.v[1],st.line3.v[0]];
       const dd=nrm2[0]*(U1[0]-st.line3.o[0])+nrm2[1]*(U1[1]-st.line3.o[1]);
@@ -3032,9 +3059,11 @@ function render(){
   out+=bsMark(BS,"BS",-30,4);
   svg.innerHTML=out;
   $("stat35").innerHTML= step<4 ? "" :
-    `∠(line 1, line 3) = <b>${(Math.asin(Math.min(1,sinA))*180/Math.PI).toFixed(2)}°</b> · offset = <b>${(off*M_PER_PX).toFixed(2)} m</b> — coincident for every P⁽¹⁾: parity seals the slide; no corridor order adds UE information.`;
+    (Math.abs(dH)<0.05?
+    `∠(line 1, line 3) = <b>${(Math.asin(Math.min(1,sinA))*180/Math.PI).toFixed(2)}°</b> · offset = <b>${(off*M_PER_PX).toFixed(2)} m</b> — coincident for every P⁽¹⁾: parity seals the slide; no corridor order adds UE information.`:
+    `∠(line 1, line 3) = <b>${(Math.asin(Math.min(1,sinA))*180/Math.PI).toFixed(2)}° = δ/2</b> · UE₁ off line 3 = <b>${(off*M_PER_PX).toFixed(2)} m</b> — the wedge crosses only at the sliding UE₁: two rungs up, δ still buys wall tilt, never the fix.`);
 }
-["s35P","s35L","s35A","s35D","sS35"].forEach(id=>$(id).addEventListener("input",render));
+["s35P","s35H","s35L","s35A","s35D","sS35"].forEach(id=>$(id).addEventListener("input",render));
 $("b35R").addEventListener("click",()=>{["s35L","s35A","s35D"].forEach(id=>$(id).value=0);render();});
 $("b35Prev").addEventListener("click",()=>goStep(step-1));
 $("b35Next").addEventListener("click",()=>goStep(step+1));
