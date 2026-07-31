@@ -121,6 +121,17 @@ footer a{color:var(--ink-soft)}
     <span class="c2"><b>angle</b> ψ (AoD at the BS)</span><br>
     <span class="c3"><b>pathloss</b> → a weight</span>
   </div>
+  <figure class="fig" style="max-width:900px;padding:10px 10px 8px">
+    <img src="pdp-dynamics.gif" alt="Animated power-delay profile: estimated multipath components as stems of path gain versus delay, evolving as the receiver moves" style="display:block;width:100%;height:auto;border:1px solid var(--line);border-radius:4px;background:#fdfefe" loading="lazy">
+    <figcaption style="font:13px/1.55 var(--sans);color:var(--ink-soft);padding:8px 6px 2px">A measured power-delay profile evolving as the UE moves. Each stem is one estimated multipath component (delay τ, path gain); the first-arrival stem is the LOS path, and the later clusters are reflections — the raw material every construction on this page starts from.</figcaption>
+  </figure>
+  <p class="lede">What are the factors, in addition to the distance, that affect the pathloss?</p>
+  <ol style="max-width:76ch;margin:10px 0 0;padding-left:1.4em;color:var(--ink-soft)">
+    <li style="margin-bottom:9px"><strong>Interaction loss at each bounce (dominant).</strong> Paths with the same travel distance span ~20&nbsp;dB of excess loss. What differs is what they hit — which surface, how many times, specular vs. diffuse.</li>
+    <li style="margin-bottom:9px"><strong>Material and incidence angle, evidenced by polarization.</strong> On matched reflected paths, half of all matched pairs differ by more than 3&nbsp;dB between polarizations.</li>
+    <li style="margin-bottom:9px"><strong>Small-scale / rough-surface effects.</strong></li>
+    <li><strong>Blockage / shadowing.</strong> Some clusters vanish for whole stretches of frames in the delay–frame waterfall while the geometry barely changes.</li>
+  </ol>
 </section>
 
 <!-- ============ 02 filter view: known UE ============ -->
