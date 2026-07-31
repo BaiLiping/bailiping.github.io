@@ -96,6 +96,7 @@ footer a{color:var(--ink-soft)}
     <a href="#corridor3">corridor ×3</a>
     <a href="#estimate">estimating the map</a>
     <a href="#ue">estimating the UE</a>
+    <a href="#estimateu">estimating jointly</a>
     <a href="#diffuse">diffuse &amp; splats</a>
     <a href="/">← bailiping.com</a>
   </nav>
@@ -392,6 +393,7 @@ footer a{color:var(--ink-soft)}
 <!-- ============ 08 estimating the UE ============ -->
 <section class="sec" id="ue">
   <h2><span class="no">03</span>Optimization view with unknown UE position</h2>
+  <p class="lede">Two quiet assumptions run through the drawings of §3.1–3.5: both array orientations are known, so ψ <em>and</em> φ can be drawn as global directions, and delays are true ranges (synchronized clocks). For the BS that is fair — infrastructure knows which way it faces. The UE does not: its heading is one more unknown per pose, and with it every arrival ray below rotates. §3.6 drops that assumption. There the arrival angles are never used to build geometry at all — wall directions are recovered from the motion itself, offsets from the one link that crosses the families, and each pose’s heading falls out last, read off the recovered geometry.</p>
 </section>
 
 <section class="sec" id="singleu">
@@ -577,7 +579,60 @@ footer a{color:var(--ink-soft)}
       <div class="hint">paths 1 and 2 enter at their specular values; every wall is a hypothesis driven by the one slider</div>
     </div>
   </div>
-  <div class="figcap"><b>Read it.</b> The full corridor ladder: wall R from path 1 (§3.1), wall L by the forced declaration UE₂ = UE₁ (§3.4), and now path 3 stripped <em>twice</em> — its AoD ray reflecting at hypothesized wall R, then at hypothesized wall L, the leftover walk landing on E₃. Its candidates sweep line 3 ⊥ wall R again — and the statline shows the parity ending: line 3 <b>coincides with line 1 exactly, for every P⁽¹⁾</b>. Odd or even, every bounce order in a corridor confines the UE to the <em>same</em> cross-corridor line: the along-corridor coordinate is fixed by any one path, the cross-corridor offset by none of them. No amount of bouncing between parallel walls ever breaks the slide — an off-axis wall, a LOS path, or an anchor does.</div></div>
+  <div class="figcap"><b>Read it.</b> The full corridor ladder: wall R from path 1 (§3.1), wall L by the forced declaration UE₂ = UE₁ (§3.4), and now path 3 stripped <em>twice</em> — its AoD ray reflecting at hypothesized wall R, then at hypothesized wall L, the leftover walk landing on E₃. Its candidates sweep line 3 ⊥ wall R again — and the statline shows the parity ending: line 3 <b>coincides with line 1 exactly, for every P⁽¹⁾</b>. Odd or even, every bounce order in a corridor confines the UE to the <em>same</em> cross-corridor line: the along-corridor coordinate is fixed by any one path, the cross-corridor offset by none of them. No amount of bouncing between parallel walls ever breaks the slide — an off-axis wall, a LOS path, or an anchor does. §3.6 runs both verdicts through the joint, all-unknowns problem.</div></div>
+</section>
+
+<!-- ============ 08b estimating jointly ============ -->
+<section class="sec" id="estimateu">
+  <h3 class="subh"><span class="no">3.6</span>Estimating jointly: motion collapses the family — the optimization view</h3>
+  <p class="lede">§2.6 collapsed the VA family by motion with <em>known</em> poses. Here nothing is known: not the walls, not the trajectory, not even which way the UE is facing — only each path's delay and BS-side departure angle, the UE's <em>local</em> arrival angles, and the relative motion between poses (odometry). This is the graphSLAM setting: every unknown enters one joint problem. Without a heading, §3.1's bisector is out of reach, and a single snapshot leaves a <em>two</em>-parameter family per wall — direction and offset. Motion pays that bill in two installments: odometry <em>within</em> a family buys the wall's direction (and throws in a parity check for free); the one link <em>across</em> the families buys both offsets — exactly when the walls disagree in orientation.</p>
+
+  <div class="fig"><div class="body split">
+    <svg id="svg36" viewBox="-140 -75 900 700" role="img" aria-label="joint estimation demo with unknown headings: two poses see only wall A, two see only wall B; within-side motion fixes each wall direction, and the odometry link crossing the sides pins both offsets"></svg>
+    <div class="rail">
+      <h4>the unknown split — two families</h4>
+      <div class="ctl">
+        <label><span>family A member (wall-A offset)</span> <output id="o36A"></output></label>
+        <input type="range" id="s36A" min="0.10" max="0.92" step="0.002" value="0.18">
+        <label style="margin-top:7px"><span>family B member (wall-B offset)</span> <output id="o36B"></output></label>
+        <input type="range" id="s36B" min="0.10" max="0.92" step="0.002" value="0.44">
+      </div>
+      <button class="reset" id="b36S">solve the 2×2 system</button>
+      <button class="reset" id="b36N">jitter the data (σ: 0.3 m, 0.5°)</button>
+      <h4>layers</h4>
+      <label class="ck"><input type="checkbox" id="c36_fam" checked> <span class="sw" style="background:var(--meas)"></span> candidate rails — directions bought by motion</label>
+      <label class="ck"><input type="checkbox" id="c36_E" checked> <span class="sw" style="background:var(--va)"></span> E points — mirrored UEs, straight from data</label>
+      <label class="ck"><input type="checkbox" id="c36_geo" checked> <span class="sw" style="background:#51606e"></span> implied walls + bounce geometry</label>
+      <label class="ck"><input type="checkbox" id="c36_odo" checked> <span class="sw" style="background:var(--ue)"></span> odometry chain + the cross-family gap</label>
+      <div class="statline" id="stat36"></div>
+      <div class="hint">poses t₁–t₂ resolve only the wall-A path, t₃–t₄ only wall-B — no pose knows its heading; the gap at the t₂→t₃ link is all that knows the truth</div>
+    </div>
+  </div>
+  <div class="figcap"><b>Read it.</b> Four poses, disjoint visibility: t₁–t₂ hear a single bounce off wall A, t₃–t₄ only off wall B — and no pose knows its own heading, so nothing here ever uses an arrival angle as a global direction. What survives is the BS side: E = BS + L·d̂ needs only the departure angle, and each E is still the exact mirror of its pose across the unseen wall. But one snapshot alone now says nothing about position at all: any candidate p pairs with the wall = perpendicular bisector of p↔E and a heading to match — a two-parameter family. The first installment comes from motion <em>inside</em> a side: both poses mirror across the same wall, so p₂ − p₁ is E₂ − E₁ reflected in the wall — the offset drops out entirely. Matching that to the known o₁ checks ‖o₁‖ = ‖E₂ − E₁‖ (reflections preserve length: a free parity test on the data) and hands the wall normal in closed form, n̂ ∝ (E₂ − E₁) − o₁. Decisive about the angle, still blind to the offset — that is why the rails exist but the sliders remain. The second installment is the one row crossing the families: p₃ − p₂ = o₂ gives two equations in (c_A, c_B) with matrix [−2n̂_A | 2n̂_B], invertible exactly when the normals differ. The red gap is that row's residual; <b>solve</b> zeroes it and recovers trajectory and walls from snapshots that were, individually, hopeless — and only now are the arrival angles spent, one per pose, reading each heading off the recovered geometry. Under jitter the recovered angles hang on the short o₁, o₃ baselines — the price of the missing compass; more poses per wall would buy it back. This is the smallest instance of the batch problem: the full graphSLAM system just stacks rows like these (and the same counting at a single pose — two unknowns per wall, one heading, two equations per extra path — is why three NLOS paths make one snapshot solvable, the classic single-anchor result).</div></div>
+
+  <div class="fig"><div class="body split">
+    <svg id="svg37" viewBox="-110 55 800 620" role="img" aria-label="corridor counterexample: both motion-derived wall normals are parallel, the two-by-two system is rank one, and walls plus trajectory slide together along the surviving null direction"></svg>
+    <div class="rail">
+      <h4>corridor edition — the family that survives the graph</h4>
+      <div class="ctl">
+        <label><span>family R member (wall-R offset)</span> <output id="o37R"></output></label>
+        <input type="range" id="s37R" min="0.10" max="0.92" step="0.002" value="0.30">
+        <label style="margin-top:7px"><span>family L member (wall-L offset)</span> <output id="o37L"></output></label>
+        <input type="range" id="s37L" min="0.10" max="0.92" step="0.002" value="0.55">
+        <label style="margin-top:9px"><span>slide along the null vector</span> <output id="o37N"></output></label>
+        <input type="range" id="s37N" min="-1" max="1" step="0.01" value="0">
+      </div>
+      <button class="reset" id="b37S">solve — and meet the null space</button>
+      <button class="reset" id="b37P">▶ sweep the surviving family</button>
+      <h4>layers</h4>
+      <label class="ck"><input type="checkbox" id="c37_fam" checked> <span class="sw" style="background:var(--meas)"></span> candidate rails (both across the corridor)</label>
+      <label class="ck"><input type="checkbox" id="c37_odo" checked> <span class="sw" style="background:var(--ue)"></span> odometry chain + the cross-family gap</label>
+      <label class="ck"><input type="checkbox" id="c37_ghost" checked> <span class="sw" style="background:var(--ip)"></span> ghost solutions along the null direction</label>
+      <div class="statline" id="stat37"></div>
+      <div class="hint">same construction, parallel walls — the solve returns a line of answers, not a point; the third slider walks it</div>
+    </div>
+  </div>
+  <div class="figcap"><b>Read it.</b> The identical machinery in a corridor: t₁–t₂ hear wall R, t₃–t₄ wall L, headings unknown. Motion buys the directions exactly as before — n̂ ∝ ΔE − o, no compass consulted — and both come out parallel, pointing across the corridor. So the one informative row, [−2n̂_R | 2n̂_L], is rank one: the along-corridor component of the o₂ link is satisfied automatically, and the cross-corridor component fixes only the <em>sum</em> of the offsets, never the pair. <b>Solve</b> therefore returns σ = [·, 0]: §3.2's least-squares crossing has become a least-squares <em>line</em>, its direction the null vector — walls and trajectory translating across the corridor as one rigid ghost. This is §3.4–3.5's slide surviving the full batch treatment, headings and all: optimization does not conjure information, it <em>detects</em> what is missing. That detection is the useful product — σ_min of the stacked system is the honest observability monitor to run online, and the moment any off-axis wall, LOS interval, or second anchor enters the graph, the same monitor shows the null direction snapping shut.</div></div>
 </section>
 
 <!-- ============ 09 diffuse & splats ============ -->
@@ -2973,6 +3028,236 @@ $("b35R").addEventListener("click",()=>{["s35L","s35A","s35D"].forEach(id=>$(id)
 $("b35Prev").addEventListener("click",()=>goStep(step-1));
 $("b35Next").addEventListener("click",()=>goStep(step+1));
 goStep(1);
+})();
+
+/* =================== DEMO 9: §3.6 estimating jointly — disjoint families stitched by odometry =================== */
+(function(){
+const svg36=$("svg36"), svg37=$("svg37");
+if(!svg36||!svg37)return;
+const add=(a,b)=>[a[0]+b[0],a[1]+b[1]];
+const scl=(a,s)=>[a[0]*s,a[1]*s];
+const dot=(a,b)=>a[0]*b[0]+a[1]*b[1];
+const rot9=(v,a)=>[v[0]*Math.cos(a)-v[1]*Math.sin(a),v[0]*Math.sin(a)+v[1]*Math.cos(a)];
+const g9=()=>((Math.random()+Math.random()+Math.random())*2-3);   // ~N(0,1)
+/* wall = { x : n·x = c } with unit normal n */
+const mirror9=(p,n,c)=>sub(p,scl(n,2*(dot(n,p)-c)));
+
+/* ---- scenes: ground truth used ONLY to synthesize data and report errors ---- */
+const T9=20*Math.PI/180;
+const SCN_J={ BS:[110,330],
+  walls:[ {n:[0,1],c:210,seg:[[30,210],[410,210]],lab:"wall A"},
+          {n:[Math.cos(T9),-Math.sin(T9)],c:0,seg:[[430,235],[430+Math.sin(T9)*330,235+Math.cos(T9)*330]],lab:"wall B"} ],
+  poses:[[175,455],[255,410],[330,428],[398,468]], vis:[0,0,1,1],
+  names:["A","B"], railHalf:170 };
+SCN_J.walls[1].c=dot(SCN_J.walls[1].n,[430,235]);
+const SCN_K={ BS:[160,560],
+  walls:[ {n:[1,0],c:330,seg:[[330,95],[330,640]],lab:"wall R"},
+          {n:[1,0],c:105,seg:[[105,95],[105,640]],lab:"wall L"} ],
+  poses:[[215,470],[258,405],[258,338],[222,268]], vis:[0,0,1,1],
+  names:["R","L"], railHalf:150 };
+
+/* clean or jittered single-bounce data at each pose off its visible wall */
+function synth9(S,noisy){
+  const jL=L=>noisy?L+g9()*3:L, jV=v=>noisy?rot9(v,g9()*0.5*Math.PI/180):v;
+  return S.poses.map((p,i)=>{
+    const w=S.walls[S.vis[i]], VA=mirror9(S.BS,w.n,w.c);
+    const t=(w.c-dot(w.n,p))/dot(w.n,sub(VA,p));
+    const P=add(p,scl(sub(VA,p),t));
+    return {L:jL(dist(p,VA)), u:jV(unit(sub(VA,p))), d:jV(unit(sub(P,S.BS)))};
+  });
+}
+/* everything the estimator derives WITHOUT ground truth — and WITHOUT UE headings:
+   the arrival angles are never used for geometry; wall directions come from motion */
+function derive9(S,data){
+  const E=data.map(m=>add(S.BS,scl(m.d,m.L)));                      // mirrored UEs (BS side only)
+  const o=S.poses.slice(1).map((p,i)=>sub(p,S.poses[i]));           // known odometry
+  /* both poses of a side mirror across the same wall, so E_{i+1}-E_i is o reflected
+     in the wall direction: the normal is n̂ ∝ (ΔE − o), offset drops out entirely */
+  const nH=[0,1].map(side=>{
+    const i0=S.vis.indexOf(side);
+    return unit(sub(sub(E[i0+1],E[i0]),o[i0]));
+  });
+  const base=E.map((e,i)=>{const n=nH[S.vis[i]];return sub(e,scl(n,2*dot(n,e)));});
+  const ref=[0,1].map(side=>{const i=S.vis.indexOf(side);return {L:data[i].L,d:data[i].d};});
+  const cOf=(side,t)=>dot(nH[side],add(S.BS,scl(ref[side].d,t*ref[side].L)));
+  const tOf=(side,c)=>(c-dot(nH[side],S.BS))/(ref[side].L*dot(nH[side],ref[side].d));
+  const k=S.vis.findIndex((v,i)=>i>0&&v!==S.vis[i-1]);              // the cross-family link
+  /* [-2 n̂A | 2 n̂B][cA;cB] = o_{k-1} - (base_k - base_{k-1}) */
+  const M=[[-2*nH[0][0],2*nH[1][0]],[-2*nH[0][1],2*nH[1][1]]];
+  const rhs=sub(o[k-1],sub(base[k],base[k-1]));
+  const G00=M[0][0]*M[0][0]+M[1][0]*M[1][0], G11=M[0][1]*M[0][1]+M[1][1]*M[1][1],
+        G01=M[0][0]*M[0][1]+M[1][0]*M[1][1];
+  const tr=G00+G11, disc=Math.sqrt(Math.max(0,tr*tr/4-(G00*G11-G01*G01)));
+  const l1=tr/2+disc, l2=Math.max(0,tr/2-disc);
+  const v1=Math.abs(G01)>1e-9?unit([G01,l1-G00]):(G00>=G11?[1,0]:[0,1]);
+  const v2=[-v1[1],v1[0]];
+  const b=[M[0][0]*rhs[0]+M[1][0]*rhs[1], M[0][1]*rhs[0]+M[1][1]*rhs[1]];  // Mᵀrhs
+  const rankDef=l2<=1e-4;
+  let sol=scl(v1,dot(v1,b)/l1);
+  if(!rankDef) sol=add(sol,scl(v2,dot(v2,b)/l2));                   // exact LS (full rank)
+  /* rank-deficient case: nearest point of the solution LINE {v1·c = v1·b/l1} to a given c */
+  const lineProj=c=>add(c,scl(v1,dot(v1,b)/l1-dot(v1,c)));
+  return {nH,E,base,cOf,tOf,o,k,s1:Math.sqrt(l1),s2:Math.sqrt(l2),v2,sol,lineProj,rankDef};
+}
+const pose9=(D,S,i,c)=>add(D.base[i],scl(D.nH[S.vis[i]],2*c[S.vis[i]]));
+const gap9=(D,S,c)=>{const q=pose9(D,S,D.k,c),g=add(pose9(D,S,D.k-1,c),D.o[D.k-1]);return sub(q,g);};
+function inRes9(D,S,c){                       // within-family residual: blind to the offsets
+  let m=0;
+  for(let i=1;i<S.poses.length;i++){
+    if(S.vis[i]!==S.vis[i-1])continue;
+    const d=sub(sub(pose9(D,S,i,c),pose9(D,S,i-1,c)),D.o[i-1]);
+    m=Math.max(m,Math.hypot(d[0],d[1]));
+  }
+  return m;
+}
+const SIDE_COL=["#e8720c","#7c4dbe"], SIDE_DEEP=["#b45607","#5d3691"];
+
+/* shared painter */
+function paint9(S,D,data,c,ck,solved,ghostShift){
+  let s="";
+  for(const w of S.walls) s+=seg(w.seg[0],w.seg[1],"#8a97a3",3,null,0.32)
+    +txt(w.seg[0][0]+6,w.seg[0][1]-8,w.lab+" (truth, reference)","#8a97a3",10);
+  S.poses.forEach(p=>{s+=`<circle cx="${p[0]}" cy="${p[1]}" r="7" fill="none" stroke="#2ca02c" stroke-width="1.4" stroke-dasharray="3 3" opacity="0.55"/>`;});
+  s+=txt(S.poses[0][0]-12,S.poses[0][1]+24,"true t₁…t₄ (reference)","#1d7a1d",10,"end");
+  const q=S.poses.map((_,i)=>pose9(D,S,i,c));
+  /* candidate rails: each pose's §3.1 family */
+  if(ck.fam) S.poses.forEach((_,i)=>{
+    const side=S.vis[i], n=D.nH[side];
+    const a=add(D.base[i],scl(n,2*D.cOf(side,0.10))), b2=add(D.base[i],scl(n,2*D.cOf(side,0.92)));
+    s+=seg(a,b2,SIDE_COL[side],1.7,i===S.vis.indexOf(side)?null:"5 4",0.5);
+    if(i===S.vis.indexOf(side)) s+=txt(b2[0]+7,b2[1]+4,"family "+S.names[side]+" rail (⊥ wall "+S.names[side]+")",SIDE_DEEP[side],10);
+  });
+  /* mirrored UEs, straight from data */
+  if(ck.E){ D.E.forEach(e=>{s+=vaDot(e);});
+    s+=txt(D.E[0][0]+9,D.E[0][1]-8,"E₁…E₄ = BS + L·d̂ (mirrored UEs)","#5d3691",10); }
+  /* implied walls + per-pose bounce geometry */
+  if(ck.geo) [0,1].forEach(side=>{
+    const n=D.nH[side], wdir=[-n[1],n[0]], cc=c[side];
+    const i0=S.vis.indexOf(side), d0=data[i0].d;
+    const P0=add(S.BS,scl(d0,(cc-dot(n,S.BS))/dot(n,d0)));
+    s+=seg(sub(P0,scl(wdir,S.railHalf)),add(P0,scl(wdir,S.railHalf)),"#16222e",2.6,null,0.85)
+      +txt(P0[0]+10,P0[1]-10,"wall "+S.names[side]+" hypothesis","#16222e",10);
+    S.poses.forEach((_,i)=>{ if(S.vis[i]!==side)return;
+      const di=data[i].d, Pi=add(S.BS,scl(di,(cc-dot(n,S.BS))/dot(n,di)));
+      s+=seg(S.BS,Pi,SIDE_COL[side],1.1,"2 3",0.55)+seg(Pi,q[i],SIDE_COL[side],1.1,"2 3",0.55)
+        +`<circle cx="${Pi[0]}" cy="${Pi[1]}" r="3.4" fill="${SIDE_COL[side]}" opacity="0.8"/>`;
+    });
+  });
+  /* odometry chain + the cross-family gap */
+  const gapv=gap9(D,S,c);
+  if(ck.odo){
+    for(let i=1;i<S.poses.length;i++) if(S.vis[i]===S.vis[i-1]){
+      s+=arrow(q[i-1],q[i],"#2ca02c",1.8,null,0.85)
+        +txt((q[i-1][0]+q[i][0])/2+7,(q[i-1][1]+q[i][1])/2-7,"o"+"₁₂₃"[i-1],"#1d7a1d",10);
+    }
+    const ghost=add(q[D.k-1],D.o[D.k-1]);
+    s+=arrow(q[D.k-1],ghost,"#2ca02c",1.8,"6 4",0.85)
+      +`<circle cx="${ghost[0]}" cy="${ghost[1]}" r="6.5" fill="none" stroke="#2ca02c" stroke-width="1.8" stroke-dasharray="3 3"/>`
+      +txt(ghost[0]+10,ghost[1]-9,"o₂ says t₃ lands here","#1d7a1d",10);
+    if(Math.hypot(gapv[0],gapv[1])>1.2) s+=seg(ghost,q[D.k],"#c22f2f",2.6)
+      +txt((ghost[0]+q[D.k][0])/2+8,(ghost[1]+q[D.k][1])/2+2,"gap","#c22f2f",11);
+  }
+  /* ghost solutions along the null direction */
+  if(ghostShift&&ck.ghost) for(const sgn of [-1,1]){
+    const cg=[c[0]+sgn*ghostShift*D.v2[0], c[1]+sgn*ghostShift*D.v2[1]];
+    const qg=S.poses.map((_,i)=>pose9(D,S,i,cg));
+    for(let i=1;i<qg.length;i++) s+=seg(qg[i-1],qg[i],"#0e8f7e",1.4,null,0.30);
+    qg.forEach(p=>{s+=`<circle cx="${p[0]}" cy="${p[1]}" r="4.5" fill="#0e8f7e" opacity="0.30"/>`;});
+    [0,1].forEach(side=>{
+      const n=D.nH[side], wdir=[-n[1],n[0]];
+      const i0=S.vis.indexOf(side), d0=data[i0].d;
+      const P0=add(S.BS,scl(d0,(cg[side]-dot(n,S.BS))/dot(n,d0)));
+      s+=seg(sub(P0,scl(wdir,S.railHalf)),add(P0,scl(wdir,S.railHalf)),"#0e8f7e",2,null,0.28);
+    });
+  }
+  /* implied poses */
+  q.forEach((p,i)=>{
+    s+=`<circle cx="${p[0]}" cy="${p[1]}" r="5.5" fill="#2ca02c" stroke="#fff" stroke-width="1.6"/>`
+      +txt(p[0]+9,p[1]+15,"t"+"₁₂₃₄"[i],"#1d7a1d",10.5);
+    if(solved) s+=`<circle cx="${p[0]}" cy="${p[1]}" r="11" fill="none" stroke="#0e8f7e" stroke-width="2"/>`;
+  });
+  s+=bsMark(S.BS,"BS",-32,4);
+  return {svg:s,gap:Math.hypot(gapv[0],gapv[1])};
+}
+
+/* ---------- figure 1: the corner (svg36) ---------- */
+let noisy9=false, solved36=false, guard36=false;
+let dataJ=synth9(SCN_J,false), DJ=derive9(SCN_J,dataJ);
+const ck36=()=>({fam:$("c36_fam").checked,E:$("c36_E").checked,geo:$("c36_geo").checked,odo:$("c36_odo").checked,ghost:false});
+function render36(){
+  const c=[DJ.cOf(0,+$("s36A").value), DJ.cOf(1,+$("s36B").value)];
+  $("o36A").textContent=(+$("s36A").value*dataJ[SCN_J.vis.indexOf(0)].L*M_PER_PX).toFixed(1)+" m";
+  $("o36B").textContent=(+$("s36B").value*dataJ[SCN_J.vis.indexOf(1)].L*M_PER_PX).toFixed(1)+" m";
+  const out=paint9(SCN_J,DJ,dataJ,c,ck36(),solved36,0);
+  svg36.innerHTML=out.svg;
+  const ang=Math.acos(Math.min(1,Math.abs(dot(DJ.nH[0],DJ.nH[1]))))*180/Math.PI;
+  const err=solved36?Math.max(...SCN_J.poses.map((p,i)=>dist(p,pose9(DJ,SCN_J,i,c))))*M_PER_PX:null;
+  $("stat36").innerHTML=[
+    `normals from motion (n̂ ∝ ΔE − o) · ∠(n̂A, n̂B) = <b>${ang.toFixed(1)}°</b> · σ(2×2) = [${DJ.s1.toFixed(2)}, ${DJ.s2.toFixed(2)}] — full rank`,
+    `within-family parity ‖ΔE‖ = ‖o‖: ${(inRes9(DJ,SCN_J,c)*M_PER_PX).toFixed(2)} m — the angle is bought, the offset untouched`,
+    `cross-family gap at o₂: <b class="${out.gap*M_PER_PX<0.05?"ok":"off"}">${(out.gap*M_PER_PX).toFixed(2)} m</b>`,
+    solved36?`solved: unique (c_A, c_B) · trajectory error vs truth: <b>${err.toFixed(2)} m</b> <span class="ok">✓</span>`
+            :`press solve — least squares on the one informative row`,
+    noisy9?"data jittered: σ 0.3 m on L, 0.5° on every angle":"clean specular data"
+  ].join("<br>");
+}
+["s36A","s36B"].forEach(id=>$(id).addEventListener("input",()=>{if(!guard36)solved36=false;render36();}));
+["c36_fam","c36_E","c36_geo","c36_odo"].forEach(id=>$(id).addEventListener("change",render36));
+$("b36S").addEventListener("click",()=>{
+  guard36=true;
+  $("s36A").value=Math.max(0.10,Math.min(0.92,DJ.tOf(0,DJ.sol[0])));
+  $("s36B").value=Math.max(0.10,Math.min(0.92,DJ.tOf(1,DJ.sol[1])));
+  guard36=false; solved36=true; render36();
+});
+$("b36N").addEventListener("click",()=>{
+  noisy9=!noisy9; dataJ=synth9(SCN_J,noisy9); DJ=derive9(SCN_J,dataJ); solved36=false;
+  $("b36N").textContent=noisy9?"reset to clean specular data":"jitter the data (σ: 0.3 m, 0.5°)";
+  render36();
+});
+
+/* ---------- figure 2: the corridor (svg37) ---------- */
+let solved37=false, guard37=false, raf9=null;
+let dataK=synth9(SCN_K,false), DK=derive9(SCN_K,dataK);
+const NULL_SC=55;
+const ck37=()=>({fam:$("c37_fam").checked,E:true,geo:true,odo:$("c37_odo").checked,ghost:$("c37_ghost").checked});
+function render37(){
+  const sN=+$("s37N").value*NULL_SC;
+  const c=[DK.cOf(0,+$("s37R").value)+sN*DK.v2[0], DK.cOf(1,+$("s37L").value)+sN*DK.v2[1]];
+  $("o37R").textContent=(+$("s37R").value*dataK[SCN_K.vis.indexOf(0)].L*M_PER_PX).toFixed(1)+" m";
+  $("o37L").textContent=(+$("s37L").value*dataK[SCN_K.vis.indexOf(1)].L*M_PER_PX).toFixed(1)+" m";
+  $("o37N").textContent=(sN*M_PER_PX>=0?"+":"")+(sN*M_PER_PX).toFixed(1)+" m";
+  const out=paint9(SCN_K,DK,dataK,c,ck37(),solved37,46);
+  svg37.innerHTML=out.svg;
+  $("stat37").innerHTML=[
+    `normals from motion — ∠(n̂R, n̂L) = <b>${(Math.acos(Math.min(1,Math.abs(dot(DK.nH[0],DK.nH[1]))))*180/Math.PI).toFixed(1)}°</b>, parallel · σ(2×2) = [${DK.s1.toFixed(2)}, <b class="off">${DK.s2.toFixed(3)}</b>] — rank deficient`,
+    `cross-family gap at o₂: <b class="${out.gap*M_PER_PX<0.05?"ok":"off"}">${(out.gap*M_PER_PX).toFixed(2)} m</b> — invariant as the null slider moves`,
+    solved37?`solve returned a <b>line</b>, not a point — snapped to its nearest member · null vector: walls + trajectory translate across the corridor together <span class="ok">— detected, not fixed</span>`
+            :`press solve — §3.2's least-squares crossing degenerates into a least-squares line`,
+  ].join("<br>");
+}
+["s37R","s37L","s37N"].forEach(id=>$(id).addEventListener("input",()=>{if(!guard37&&id!=="s37N")solved37=false;render37();}));
+["c37_fam","c37_odo","c37_ghost"].forEach(id=>$(id).addEventListener("change",render37));
+$("b37S").addEventListener("click",()=>{
+  const cs=DK.lineProj([DK.cOf(0,+$("s37R").value), DK.cOf(1,+$("s37L").value)]);
+  guard37=true;
+  $("s37R").value=Math.max(0.10,Math.min(0.92,DK.tOf(0,cs[0])));
+  $("s37L").value=Math.max(0.10,Math.min(0.92,DK.tOf(1,cs[1])));
+  $("s37N").value=0;
+  guard37=false; solved37=true; render37();
+});
+$("b37P").addEventListener("click",()=>{
+  if(raf9){cancelAnimationFrame(raf9);raf9=null;}
+  if(reduced){$("s37N").value=0.6;render37();return;}
+  const t0=performance.now(),DUR=3000;
+  const tick=now=>{
+    const f=Math.min(1,(now-t0)/DUR);
+    $("s37N").value=Math.sin(f*2*Math.PI).toFixed(3);
+    render37();
+    if(f<1)raf9=requestAnimationFrame(tick); else raf9=null;
+  };
+  raf9=requestAnimationFrame(tick);
+});
+render36(); render37();
 })();
 
 })();
