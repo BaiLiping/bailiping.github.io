@@ -493,6 +493,29 @@ window.SALE_DATA = {
           "images": [
             "./assets/items/kronoren-open-wardrobe.png"
           ]
+        },
+        {
+          "id": "neiden-bed-frame",
+          "recordId": "manual-neiden-bed-frame",
+          "title": "NEIDEN Bed frame",
+          "price": "200Kr",
+          "status": "later",
+          "quantity": 1,
+          "originalPrice": "599Kr",
+          "availableTime": "",
+          "rooms": [
+            "bedroom"
+          ],
+          "category": "Bedroom",
+          "website": "https://www.ikea.com/se/sv/p/neiden-saengstomme-furu-40395245/",
+          "sellingPrice": "200Kr",
+          "euroPrice": "",
+          "rmbPrice": "",
+          "description": "For later · Quantity 1 · Bedroom",
+          "notes": "Pine · 90×200 cm · Slatted bed base, mattress and bedding sold separately",
+          "images": [
+            "./assets/items/neiden-bed-frame.png"
+          ]
         }
       ]
     }
