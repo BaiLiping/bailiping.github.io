@@ -163,29 +163,6 @@ window.SALE_DATA = {
           ]
         },
         {
-          "id": "smallen-desk-chair",
-          "recordId": "recvmCwakVTE1Y",
-          "title": "SMÄLLEN Desk Chair",
-          "price": "100Kr",
-          "status": "available",
-          "quantity": 1,
-          "originalPrice": "299Kr",
-          "availableTime": "",
-          "rooms": [
-            "furniture"
-          ],
-          "category": "Furniture",
-          "website": "https://www.ikea.com/se/sv/p/smaellen-skrivbordsstol-svart-00503435/",
-          "sellingPrice": "100Kr",
-          "euroPrice": "EUR 10",
-          "rmbPrice": "RMB 100",
-          "description": "Available now · Quantity 1 · Furniture",
-          "notes": "",
-          "images": [
-            "./assets/items/smaellen-desk-chair.png"
-          ]
-        },
-        {
           "id": "alefjall-office-chair",
           "recordId": "recvmCv6KrXFVF",
           "title": "ALEFJÄLL Office Chair",
@@ -214,7 +191,7 @@ window.SALE_DATA = {
           "recordId": "recvmDPeTq6hfJ",
           "title": "Jabra Evolve2 65",
           "price": "1000Kr",
-          "status": "later",
+          "status": "available",
           "quantity": 1,
           "originalPrice": "2727Kr",
           "availableTime": "",
@@ -226,7 +203,7 @@ window.SALE_DATA = {
           "sellingPrice": "1000Kr",
           "euroPrice": "",
           "rmbPrice": "",
-          "description": "For later · Quantity 1 · Electronics",
+          "description": "Available now · Quantity 1 · Electronics",
           "notes": "",
           "images": [
             "./assets/items/jabra-evolve2-65-1.jpeg",
