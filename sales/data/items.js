@@ -498,23 +498,23 @@ window.SALE_DATA = {
           "id": "neiden-bed-frame",
           "recordId": "manual-neiden-bed-frame",
           "title": "NEIDEN Bed frame",
-          "price": "200Kr",
+          "price": "300Kr",
           "status": "later",
           "quantity": 1,
-          "originalPrice": "599Kr",
+          "originalPrice": "799Kr",
           "availableTime": "",
           "rooms": [
             "bedroom"
           ],
           "category": "Bedroom",
-          "website": "https://www.ikea.com/se/sv/p/neiden-saengstomme-furu-40395245/",
-          "sellingPrice": "200Kr",
+          "website": "https://www.ikea.com/se/sv/p/neiden-saengstomme-furu-luroey-s59248612/",
+          "sellingPrice": "300Kr",
           "euroPrice": "",
           "rmbPrice": "",
           "description": "For later · Quantity 1 · Bedroom",
-          "notes": "Pine · 90×200 cm · Slatted bed base, mattress and bedding sold separately",
+          "notes": "Pine/Luröy · 90×200 cm · Mattress and bedding sold separately",
           "images": [
-            "./assets/items/neiden-bed-frame.png"
+            "./assets/items/neiden-bed-frame-luroy.png"
           ]
         }
       ]
