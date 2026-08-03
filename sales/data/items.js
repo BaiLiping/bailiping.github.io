@@ -476,7 +476,6 @@ window.SALE_DATA = {
           "title": "KRONÖREN Open wardrobe",
           "price": "200Kr",
           "status": "later",
-          "showPrice": true,
           "quantity": 1,
           "originalPrice": "599Kr",
           "availableTime": "",

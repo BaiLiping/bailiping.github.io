@@ -113,7 +113,9 @@
   }
 
   function shouldShowPrice(item) {
-    return item && (item.status !== "later" || item.showPrice === true);
+    return Boolean(
+      item && (item.price || item.originalPrice || item.euroPrice || item.rmbPrice)
+    );
   }
 
   function detailRows(item) {
