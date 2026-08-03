@@ -523,8 +523,8 @@ h1 {
 
 .card-title-row {
   display: grid;
-  grid-template-columns: minmax(0, 1fr);
-  gap: 5px;
+  grid-template-columns: 1fr auto;
+  gap: 10px;
   align-items: start;
 }
 
@@ -538,7 +538,7 @@ h1 {
 .price {
   color: var(--accent-dark);
   font-weight: 900;
-  white-space: normal;
+  white-space: nowrap;
 }
 
 .description {

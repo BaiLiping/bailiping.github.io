@@ -484,7 +484,7 @@ window.SALE_DATA = {
             "storage"
           ],
           "category": "Bedroom, Storage",
-          "website": "",
+          "website": "https://www.ikea.com/se/en/p/kronoeren-open-wardrobe-pine-40610805/",
           "sellingPrice": "200Kr",
           "euroPrice": "",
           "rmbPrice": "",
