@@ -469,6 +469,31 @@ window.SALE_DATA = {
           "images": [
             "./assets/items/jonaxel-storage-cabin.png"
           ]
+        },
+        {
+          "id": "kronoren-open-wardrobe",
+          "recordId": "manual-kronoren-open-wardrobe",
+          "title": "KRONÖREN Open wardrobe",
+          "price": "200Kr",
+          "status": "later",
+          "showPrice": true,
+          "quantity": 1,
+          "originalPrice": "599Kr",
+          "availableTime": "",
+          "rooms": [
+            "bedroom",
+            "storage"
+          ],
+          "category": "Bedroom, Storage",
+          "website": "",
+          "sellingPrice": "200Kr",
+          "euroPrice": "",
+          "rmbPrice": "",
+          "description": "For later · Quantity 1 · Bedroom, Storage",
+          "notes": "Pine · 90×49×181 cm",
+          "images": [
+            "./assets/items/kronoren-open-wardrobe.png"
+          ]
         }
       ]
     }

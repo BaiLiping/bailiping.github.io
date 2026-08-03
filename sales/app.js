@@ -113,7 +113,7 @@
   }
 
   function shouldShowPrice(item) {
-    return item && item.status !== "later";
+    return item && (item.status !== "later" || item.showPrice === true);
   }
 
   function detailRows(item) {
