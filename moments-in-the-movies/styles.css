@@ -279,41 +279,6 @@ figure {
   margin-left: 66px;
 }
 
-.bookmark-card {
-  display: grid;
-  grid-template-columns: minmax(170px, 0.82fr) minmax(220px, 1fr);
-  overflow: hidden;
-  border: 1px solid var(--line);
-  border-radius: 12px;
-  background: rgba(255, 253, 248, 0.88);
-  box-shadow: 0 12px 32px rgba(25, 32, 28, 0.08);
-}
-
-.bookmark-card img {
-  width: 100%;
-  height: 100%;
-  min-height: 180px;
-  object-fit: cover;
-}
-
-.bookmark-copy {
-  align-self: center;
-  padding: 24px;
-}
-
-.bookmark-copy h3 {
-  margin: 0 0 9px;
-  font-family: var(--serif);
-  font-size: 1.36rem;
-  font-weight: 600;
-}
-
-.bookmark-copy p {
-  margin: 7px 0 0;
-  color: var(--muted);
-  font-size: 0.9rem;
-}
-
 .plain-section {
   padding: clamp(58px, 9vw, 92px) 0;
   border-top: 1px solid var(--line);
@@ -394,19 +359,6 @@ figure {
 
   .plain-heading {
     margin-left: 0;
-  }
-
-  .bookmark-card {
-    grid-template-columns: 1fr;
-  }
-
-  .bookmark-card img {
-    aspect-ratio: 16 / 9;
-    min-height: 0;
-  }
-
-  .bookmark-copy {
-    padding: 19px;
   }
 
   .media-frame {
