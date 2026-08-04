@@ -57,6 +57,16 @@ h2{font-family:var(--serif);font-weight:600;font-size:clamp(21px,2.8vw,27px);mar
 .t.vid:hover .play::before{background:rgba(47,125,91,.75)}
 @media (max-width:640px){.t{flex-basis:calc(var(--ar)*130px)}.g{gap:4px}}
 
+.building-previews{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin:12px 0}
+.building-preview{display:block;overflow:hidden;border:1px solid var(--line);border-radius:10px;background:var(--panel);text-decoration:none;outline:none}
+.building-preview img{display:block;width:100%;height:auto;aspect-ratio:1.48;object-fit:cover;transition:transform .25s ease,filter .25s ease}
+.building-preview:hover img,.building-preview:focus-visible img{transform:scale(1.025)}
+.building-preview:focus-visible{box-shadow:0 0 0 3px var(--accent)}
+.building-preview-copy{display:flex;align-items:baseline;justify-content:space-between;gap:12px;padding:11px 13px}
+.building-preview-copy strong{font-family:var(--serif);font-size:17px;font-weight:600}
+.building-preview-copy span{color:var(--mut);font-size:12.5px}
+@media (max-width:640px){.building-previews{grid-template-columns:1fr}}
+
 /* lightbox */
 .lb{position:fixed;inset:0;z-index:999;display:none;background:#121613;align-items:center;justify-content:center}
 .lb.open{display:flex}
@@ -93,7 +103,7 @@ h2{font-family:var(--serif);font-weight:600;font-size:clamp(21px,2.8vw,27px);mar
 <a href="#stockholm"><span class="b">Stockholm</span> <span class="n">103</span></a>
 <a href="#vienna"><span class="b">Vienna</span> <span class="n">28</span></a>
 <a href="#beijing"><span class="b">Beijing</span> <span class="n">43</span></a>
-<a href="/picture-collections/buildings/"><span class="b">Buildings</span> <span class="n">18</span></a>
+<a href="#buildings"><span class="b">Buildings</span> <span class="n">18</span></a>
 <a href="#john-thomson-collection"><span class="b">John Thomson Collection</span> <span class="n">46</span></a>
 <a href="#sicheng-liang-collection"><span class="b">Sicheng Liang Collection</span> <span class="n">22</span></a>
 <a href="#guanzhong-wu"><span class="b">Guanzhong Wu</span> <span class="n">21</span></a>
@@ -581,6 +591,24 @@ h2{font-family:var(--serif);font-weight:600;font-size:clamp(21px,2.8vw,27px);mar
 <img src="assets/thumb/beijing-049.jpg" alt="Beijing photo" loading="lazy" width="560" height="420"></a>
 <a class="t" href="assets/full/beijing-050.jpg" data-i="209" style="--ar:0.75">
 <img src="assets/thumb/beijing-050.jpg" alt="Beijing photo" loading="lazy" width="420" height="560"></a><div class="sp"></div></div>
+</section>
+
+<section id="buildings">
+  <div class="shead">
+    <h2>Buildings</h2>
+    <span class="cnt">18 photos</span>
+  </div>
+  <p class="blurb">Soviet architecture photographed by Arseniy Kotov and archival views of Stockholm Gärdet.</p>
+  <div class="building-previews">
+    <a class="building-preview" href="/picture-collections/buildings/#soviet">
+      <img src="buildings/assets/thumb/soviet-01.jpg" alt="Preview of the Soviet buildings collection" loading="lazy" width="1000" height="675">
+      <span class="building-preview-copy"><strong>Soviet</strong><span>9 photos &#8594;</span></span>
+    </a>
+    <a class="building-preview" href="/picture-collections/buildings/#stockholm-gardet">
+      <img src="buildings/assets/thumb/stockholm-gardet-01.jpg" alt="Preview of the Stockholm Gärdet buildings collection" loading="lazy" width="1000" height="676">
+      <span class="building-preview-copy"><strong>Stockholm GÄRDET</strong><span>9 photos &#8594;</span></span>
+    </a>
+  </div>
 </section>
 
 <section id="john-thomson-collection">
