@@ -1,0 +1,617 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="An interactive, source-grounded explanation of the original 3D Gaussian Splatting training and rendering pipeline."
+    />
+    <meta name="theme-color" content="#0b0d0f" />
+    <title>3DGS | Bai Liping</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <a class="skip-link" href="#main">Skip to the explainer</a>
+
+    <header class="site-header" data-header>
+      <a class="brand" href="#top" aria-label="3DGS explainer home">
+        <span class="brand-mark" aria-hidden="true">
+          <i></i><i></i><i></i>
+        </span>
+        <span>GS / 03</span>
+      </a>
+
+      <nav class="desktop-nav" aria-label="Primary navigation">
+        <a href="#loop">Training loop</a>
+        <a href="#loss">Loss</a>
+        <a href="#cameras">Cameras</a>
+        <a href="#renderer">Renderer</a>
+      </nav>
+
+      <a
+        class="header-link"
+        href="https://github.com/graphdeco-inria/gaussian-splatting"
+        target="_blank"
+        rel="noreferrer"
+      >
+        Original code
+        <span aria-hidden="true">↗</span>
+      </a>
+    </header>
+
+    <main id="main">
+      <section class="hero" id="top" aria-labelledby="hero-title">
+        <div class="hero-grid" aria-hidden="true"></div>
+        <canvas id="hero-canvas" class="hero-canvas" aria-hidden="true"></canvas>
+
+        <div class="hero-copy">
+          <p class="eyebrow reveal">SIGGRAPH 2023 · Kerbl et al.</p>
+          <h1 id="hero-title" class="reveal reveal-delay-1">
+            3D Gaussian<br />
+            Splatting,
+            <em>unpacked.</em>
+          </h1>
+          <p class="hero-deck reveal reveal-delay-2">
+            From calibrated photographs to a real-time radiance field—follow one
+            Gaussian through projection, loss, gradient flow, and densification.
+          </p>
+          <div class="hero-actions reveal reveal-delay-3">
+            <a class="button button-primary" href="#loop">
+              Run one iteration
+              <span aria-hidden="true">↓</span>
+            </a>
+            <a
+              class="button button-ghost"
+              href="https://repo-sam.inria.fr/fungraph/3d-gaussian-splatting/3d_gaussian_splatting_low.pdf"
+              target="_blank"
+              rel="noreferrer"
+            >
+              Read the paper
+              <span aria-hidden="true">↗</span>
+            </a>
+          </div>
+        </div>
+
+        <div class="hero-annotation hero-annotation-a" aria-hidden="true">
+          <span>explicit scene</span>
+          <strong>μ · s · q · α · c</strong>
+        </div>
+        <div class="hero-annotation hero-annotation-b" aria-hidden="true">
+          <span>render path</span>
+          <strong>project → sort → blend</strong>
+        </div>
+
+        <div class="scroll-cue" aria-hidden="true">
+          <span>Scroll to inspect</span>
+          <i></i>
+        </div>
+      </section>
+
+      <section class="answer-strip" aria-label="The short answer">
+        <div class="answer-strip-lead">
+          <span class="index">00</span>
+          <p>Your understanding is right.</p>
+        </div>
+        <div class="answer-strip-flow" aria-label="Simplified training flow">
+          <span>SfM</span><i>→</i><span>render</span><i>→</i><span>loss</span><i>→</i
+          ><span>backprop</span><i>→</i><span>update</span><i>↺</i>
+        </div>
+        <p class="answer-strip-note">
+          With one nuance: rendering is <strong>splat rasterization</strong>, not ray marching.
+        </p>
+      </section>
+
+      <section class="section loop-section" id="loop" aria-labelledby="loop-title">
+        <div class="section-heading">
+          <div>
+            <span class="index">01</span>
+            <p class="eyebrow">Interactive training loop</p>
+          </div>
+          <div>
+            <h2 id="loop-title">One iteration,<br /><em>frame by frame.</em></h2>
+            <p>
+              Select a stage or press play. The diagrams are simplified, but the
+              ordering mirrors the paper and the reference training code.
+            </p>
+          </div>
+        </div>
+
+        <div class="pipeline-tabs" role="tablist" aria-label="Training stages">
+          <button class="pipeline-tab is-active" role="tab" aria-selected="true" data-step="0">
+            <span>01</span> SfM input
+          </button>
+          <button class="pipeline-tab" role="tab" aria-selected="false" data-step="1">
+            <span>02</span> Initialize
+          </button>
+          <button class="pipeline-tab" role="tab" aria-selected="false" data-step="2">
+            <span>03</span> Pick camera
+          </button>
+          <button class="pipeline-tab" role="tab" aria-selected="false" data-step="3">
+            <span>04</span> Splat render
+          </button>
+          <button class="pipeline-tab" role="tab" aria-selected="false" data-step="4">
+            <span>05</span> Loss
+          </button>
+          <button class="pipeline-tab" role="tab" aria-selected="false" data-step="5">
+            <span>06</span> Backprop
+          </button>
+          <button class="pipeline-tab" role="tab" aria-selected="false" data-step="6">
+            <span>07</span> Density control
+          </button>
+        </div>
+
+        <div class="lab-shell">
+          <div class="lab-toolbar">
+            <div class="lab-status">
+              <span class="status-dot"></span>
+              <span id="lab-status">COLMAP OUTPUT · FIXED</span>
+            </div>
+            <div class="camera-picker" aria-label="Training camera">
+              <span>training view</span>
+              <div class="camera-buttons">
+                <button aria-label="Use camera 1" data-camera="0">01</button>
+                <button aria-label="Use camera 2" data-camera="1">02</button>
+                <button class="is-active" aria-label="Use camera 3" data-camera="2">03</button>
+                <button aria-label="Use camera 4" data-camera="3">04</button>
+                <button aria-label="Use camera 5" data-camera="4">05</button>
+                <button aria-label="Use camera 6" data-camera="5">06</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="lab-main">
+            <div class="lab-visual">
+              <canvas
+                id="process-canvas"
+                aria-label="Interactive diagram of a Gaussian Splatting training iteration"
+                role="img"
+              ></canvas>
+              <p class="canvas-hint">Tip: click a camera in the scene</p>
+            </div>
+
+            <aside class="lab-explanation" aria-live="polite">
+              <div>
+                <p class="step-count" id="step-count">STEP 01 / 07</p>
+                <h3 id="step-title">Calibrate the capture</h3>
+                <p id="step-copy">
+                  Structure from Motion recovers a sparse 3D point cloud and one calibrated
+                  camera per registered image: intrinsics, rotation, and translation.
+                </p>
+              </div>
+
+              <div class="step-detail">
+                <span id="step-detail-label">SfM gives us</span>
+                <code id="step-equation">{ points, Kᵢ, Rᵢ, tᵢ, imageᵢ }</code>
+              </div>
+
+              <div>
+                <p class="mini-label">What changes here?</p>
+                <div class="change-pills" id="change-pills">
+                  <span>camera poses: fixed</span>
+                  <span>seed points: created</span>
+                </div>
+              </div>
+
+              <div class="lab-controls">
+                <button class="icon-button" id="previous-step" aria-label="Previous stage">
+                  ←
+                </button>
+                <button class="play-button" id="play-loop" aria-pressed="false">
+                  <span class="play-icon" aria-hidden="true">▶</span>
+                  <span class="play-label">Play loop</span>
+                </button>
+                <button class="icon-button" id="next-step" aria-label="Next stage">
+                  →
+                </button>
+              </div>
+            </aside>
+          </div>
+
+          <div class="iteration-footer">
+            <div>
+              <span>model parameters</span>
+              <strong>position · scale · rotation · opacity · SH color</strong>
+            </div>
+            <div>
+              <span>default schedule</span>
+              <strong>30,000 iterations</strong>
+            </div>
+            <div>
+              <span>density phase</span>
+              <strong>iterations 500–15,000</strong>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section loss-section" id="loss" aria-labelledby="loss-title">
+        <div class="section-heading compact">
+          <div>
+            <span class="index">02</span>
+            <p class="eyebrow">The objective</p>
+          </div>
+          <div>
+            <h2 id="loss-title">What is the<br /><em>loss function?</em></h2>
+          </div>
+        </div>
+
+        <div class="loss-grid">
+          <div class="loss-formula-card">
+            <div class="formula-labels" aria-hidden="true">
+              <span>pixel accuracy</span>
+              <span>structural similarity</span>
+            </div>
+            <div class="formula" aria-label="Loss equals one minus lambda times L1 plus lambda times one minus SSIM">
+              <span>ℒ</span>
+              <i>=</i>
+              <span class="formula-l1">(<b id="one-minus-lambda">0.8</b>) ℒ<sub>1</sub></span>
+              <i>+</i>
+              <span class="formula-ssim">(<b id="lambda-value">0.2</b>) (1 − SSIM)</span>
+            </div>
+
+            <label class="lambda-control" for="lambda-slider">
+              <span>
+                <b>λ</b>
+                <output id="lambda-output">0.20</output>
+              </span>
+              <input
+                id="lambda-slider"
+                type="range"
+                min="0"
+                max="1"
+                value="0.2"
+                step="0.01"
+              />
+              <span class="range-labels"><i>only L1</i><i>paper default</i><i>only structure</i></span>
+            </label>
+
+            <button class="text-button" id="reset-lambda">Reset to the paper’s λ = 0.2</button>
+          </div>
+
+          <div class="loss-meter-card">
+            <div class="loss-meter-head">
+              <div>
+                <span>example training view</span>
+                <strong>camera <i id="loss-camera">03</i></strong>
+              </div>
+              <div class="total-loss">
+                <span>combined loss</span>
+                <strong id="total-loss">0.159</strong>
+              </div>
+            </div>
+
+            <div class="meter-row">
+              <div class="meter-label">
+                <span>mean absolute pixel error</span>
+                <strong id="l1-value">0.142</strong>
+              </div>
+              <div class="meter-track"><i id="l1-meter"></i></div>
+            </div>
+            <div class="meter-row">
+              <div class="meter-label">
+                <span>1 − local structural similarity</span>
+                <strong id="ssim-value">0.226</strong>
+              </div>
+              <div class="meter-track"><i id="ssim-meter"></i></div>
+            </div>
+
+            <p class="code-note">
+              In the reference code, the paper’s D-SSIM contribution is evaluated as
+              <code>1 - ssim(render, target)</code>. Then <code>loss.backward()</code>
+              differentiates through the rasterizer.
+            </p>
+          </div>
+        </div>
+
+        <div class="loss-notes">
+          <article>
+            <span class="note-number">A</span>
+            <h3>L1 keeps pixels honest.</h3>
+            <p>
+              It measures the mean absolute RGB difference. It is direct and stable, but
+              does not fully capture perceived local structure.
+            </p>
+          </article>
+          <article>
+            <span class="note-number">B</span>
+            <h3>SSIM keeps structure coherent.</h3>
+            <p>
+              It compares local luminance, contrast, and structure. The paper uses
+              λ = 0.2, so L1 still carries 80% of the objective.
+            </p>
+          </article>
+          <article>
+            <span class="note-number">+</span>
+            <h3>A current-code footnote.</h3>
+            <p>
+              The 2024-updated repository can optionally add a monocular inverse-depth
+              L1 term. That is an extension, not the original paper’s base loss.
+            </p>
+          </article>
+        </div>
+      </section>
+
+      <section class="section camera-section" id="cameras" aria-labelledby="camera-title">
+        <div class="camera-layout">
+          <div class="camera-copy">
+            <span class="index">03</span>
+            <p class="eyebrow">The role of SfM cameras</p>
+            <h2 id="camera-title">Many cameras.<br /><em>One view at a time.</em></h2>
+            <p class="lead">
+              Yes, there are multiple camera positions—normally one calibrated pose for
+              every image registered by COLMAP.
+            </p>
+
+            <ol class="camera-facts">
+              <li>
+                <span>01</span>
+                <div>
+                  <h3>SfM establishes shared 3D coordinates.</h3>
+                  <p>
+                    The sparse points and every camera pose live in the same world frame,
+                    so a Gaussian has one persistent 3D position across all views.
+                  </p>
+                </div>
+              </li>
+              <li>
+                <span>02</span>
+                <div>
+                  <h3>A camera projects the current model.</h3>
+                  <p>
+                    Its extrinsics <code>[Rᵢ | tᵢ]</code> move world Gaussians into camera
+                    space; its intrinsics <code>Kᵢ</code> map them onto that image plane.
+                  </p>
+                </div>
+              </li>
+              <li>
+                <span>03</span>
+                <div>
+                  <h3>The matching photo supplies supervision.</h3>
+                  <p>
+                    The rendered image is compared only with photo <code>Iᵢ</code> from that
+                    same pose. Across iterations, different views constrain the same scene.
+                  </p>
+                </div>
+              </li>
+            </ol>
+          </div>
+
+          <div class="camera-demo-card">
+            <div class="demo-card-head">
+              <div>
+                <span>view selector</span>
+                <strong>Click a camera</strong>
+              </div>
+              <span class="fixed-badge">POSES FIXED</span>
+            </div>
+            <canvas
+              id="camera-canvas"
+              aria-label="Top-down view of multiple calibrated cameras observing one scene"
+              role="img"
+            ></canvas>
+            <div class="camera-readout">
+              <div>
+                <span>selected</span>
+                <strong id="camera-readout-id">CAM 03</strong>
+              </div>
+              <div>
+                <span>world → camera</span>
+                <code id="camera-readout-pose">R₃, t₃</code>
+              </div>
+              <div>
+                <span>supervision</span>
+                <code id="camera-readout-image">image_003.jpg</code>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="camera-answer">
+          <span>Do the camera positions learn?</span>
+          <p>
+            <strong>Not in the original method.</strong> The SfM calibration is treated as
+            known input. The Gaussians move and change; the camera poses stay fixed.
+          </p>
+        </div>
+      </section>
+
+      <section class="section render-section" id="renderer" aria-labelledby="renderer-title">
+        <div class="section-heading renderer-heading">
+          <div>
+            <span class="index">04</span>
+            <p class="eyebrow">The renderer</p>
+          </div>
+          <div>
+            <h2 id="renderer-title">Ray tracing?<br /><em>No—forward splatting.</em></h2>
+            <p>
+              There are no rays sampling an MLP through empty space. Known Gaussian
+              primitives are projected toward the screen, sorted, and composited.
+            </p>
+          </div>
+        </div>
+
+        <div class="renderer-lab">
+          <div class="renderer-stage">
+            <canvas
+              id="raster-canvas"
+              aria-label="Animated explanation of Gaussian projection, tile sorting, and alpha compositing"
+              role="img"
+            ></canvas>
+            <div class="raster-stage-label">
+              <span id="raster-stage-number">01</span>
+              <strong id="raster-stage-name">Project</strong>
+            </div>
+          </div>
+
+          <div class="renderer-controls">
+            <button class="raster-step is-active" data-raster-step="0">
+              <span>01</span>
+              <strong>Project</strong>
+              <small>3D ellipsoid → 2D ellipse</small>
+            </button>
+            <button class="raster-step" data-raster-step="1">
+              <span>02</span>
+              <strong>Bin</strong>
+              <small>duplicate into 16 × 16 tiles</small>
+            </button>
+            <button class="raster-step" data-raster-step="2">
+              <span>03</span>
+              <strong>Sort</strong>
+              <small>tile ID, then view depth</small>
+            </button>
+            <button class="raster-step" data-raster-step="3">
+              <span>04</span>
+              <strong>Composite</strong>
+              <small>front-to-back α blending</small>
+            </button>
+          </div>
+        </div>
+
+        <div class="renderer-equations">
+          <article>
+            <p class="mini-label">Project covariance</p>
+            <div class="equation-large">Σ′ = J W Σ Wᵀ Jᵀ</div>
+            <p>
+              <code>W</code> is the view transform and <code>J</code> is the local Jacobian
+              of perspective projection. The upper-left 2 × 2 portion becomes the ellipse
+              footprint on screen.
+            </p>
+          </article>
+          <article>
+            <p class="mini-label">Composite a pixel</p>
+            <div class="equation-large">C = Σ cᵢ αᵢ ∏<sub>j&lt;i</sub>(1 − αⱼ)</div>
+            <p>
+              Each splat’s opacity is its learned opacity times its 2D Gaussian value at
+              the pixel. Transmittance falls as nearer splats accumulate.
+            </p>
+          </article>
+        </div>
+
+        <div class="ray-contrast">
+          <div class="contrast-title">
+            <span>NeRF-style ray marching</span>
+            <strong>sample space along every ray</strong>
+          </div>
+          <div class="contrast-mark" aria-hidden="true">≠</div>
+          <div class="contrast-title is-splat">
+            <span>3D Gaussian Splatting</span>
+            <strong>send known primitives to tiles</strong>
+          </div>
+        </div>
+      </section>
+
+      <section class="section model-section" aria-labelledby="model-title">
+        <div class="section-heading compact">
+          <div>
+            <span class="index">05</span>
+            <p class="eyebrow">What actually learns?</p>
+          </div>
+          <div>
+            <h2 id="model-title">Each point becomes<br /><em>a small model.</em></h2>
+          </div>
+        </div>
+
+        <div class="parameter-grid">
+          <article style="--accent: #f5f0e8">
+            <span>μ</span>
+            <h3>Position</h3>
+            <p>Where the Gaussian center sits in the shared world frame.</p>
+          </article>
+          <article style="--accent: #d9ff6f">
+            <span>s</span>
+            <h3>Scale</h3>
+            <p>Three positive axis lengths, activated exponentially.</p>
+          </article>
+          <article style="--accent: #ff725e">
+            <span>q</span>
+            <h3>Rotation</h3>
+            <p>A normalized quaternion that orients the ellipsoid.</p>
+          </article>
+          <article style="--accent: #61dce8">
+            <span>α</span>
+            <h3>Opacity</h3>
+            <p>A sigmoid-constrained weight controlling contribution and visibility.</p>
+          </article>
+          <article style="--accent: #c7a6ff">
+            <span>c</span>
+            <h3>SH color</h3>
+            <p>Spherical-harmonic coefficients encode view-dependent appearance.</p>
+          </article>
+        </div>
+
+        <p class="covariance-note">
+          Rather than optimize a covariance matrix directly, the method constructs
+          <strong>Σ = R S Sᵀ Rᵀ</strong>. This keeps the covariance physically valid while
+          allowing anisotropic Gaussians to stretch along surfaces.
+        </p>
+      </section>
+
+      <section class="section recap-section" aria-labelledby="recap-title">
+        <div class="recap-card">
+          <p class="eyebrow">The entire paper in one loop</p>
+          <h2 id="recap-title">
+            Calibrate once.<br />
+            <em>Render and correct, repeatedly.</em>
+          </h2>
+
+          <div class="recap-loop" aria-label="Complete training process">
+            <div><span>01</span><strong>Photos + SfM</strong><small>fixed cameras, sparse points</small></div>
+            <i>→</i>
+            <div><span>02</span><strong>3D Gaussians</strong><small>explicit trainable scene</small></div>
+            <i>→</i>
+            <div><span>03</span><strong>Splat a view</strong><small>project, sort, composite</small></div>
+            <i>→</i>
+            <div><span>04</span><strong>Compare + learn</strong><small>L1, SSIM, gradients</small></div>
+            <i class="loop-back">↺</i>
+          </div>
+
+          <div class="recap-answer">
+            <span>So: rendering first, then loss, then backprop?</span>
+            <strong>Exactly.</strong>
+          </div>
+        </div>
+      </section>
+
+      <section class="sources" aria-labelledby="sources-title">
+        <div>
+          <p class="eyebrow">Primary sources</p>
+          <h2 id="sources-title">Go to the original.</h2>
+        </div>
+        <div class="source-links">
+          <a
+            href="https://repo-sam.inria.fr/fungraph/3d-gaussian-splatting/"
+            target="_blank"
+            rel="noreferrer"
+          >
+            <span>Paper project page</span><i>Inria · GraphDeco</i><b>↗</b>
+          </a>
+          <a
+            href="https://github.com/graphdeco-inria/gaussian-splatting/blob/main/train.py"
+            target="_blank"
+            rel="noreferrer"
+          >
+            <span>Training loop</span><i>train.py · GitHub</i><b>↗</b>
+          </a>
+          <a
+            href="https://github.com/graphdeco-inria/diff-gaussian-rasterization"
+            target="_blank"
+            rel="noreferrer"
+          >
+            <span>CUDA rasterizer</span><i>forward + backward kernels</i><b>↗</b>
+          </a>
+        </div>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <p>
+        An independent visual explainer of
+        <cite>3D Gaussian Splatting for Real-Time Radiance Field Rendering</cite>.
+      </p>
+      <p>Built from the paper and official reference implementation.</p>
+    </footer>
+
+    <script src="script.js"></script>
+  </body>
+</html>
