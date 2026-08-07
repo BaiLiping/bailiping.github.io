@@ -5,9 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta
       name="description"
-      content="An interactive, source-grounded explanation of 3D Gaussian Splatting, from fixed-camera training to Gaussian-splatting SLAM."
+      content="An interactive explanation of 3D Gaussian Splatting, from fixed-camera training to visual SLAM and unknown-UE radio multipath optimization."
     />
-    <meta name="theme-color" content="#0b0d0f" />
+    <meta name="theme-color" content="#f4f6f8" />
     <title>3DGS | Bai Liping</title>
     <link rel="stylesheet" href="styles.css" />
   </head>
@@ -28,6 +28,7 @@
         <a href="#cameras">Cameras</a>
         <a href="#renderer">Renderer</a>
         <a href="#slam">SLAM</a>
+        <a href="#radio">Radio</a>
       </nav>
 
       <a
@@ -100,7 +101,7 @@
           ><span>backprop</span><i>→</i><span>update</span><i>↺</i>
         </div>
         <p class="answer-strip-note">
-          With one nuance: rendering is <strong>splat rasterization</strong>, not ray marching.
+          One nuance: <strong>splat rasterization</strong> replaces ray marching.
         </p>
       </section>
 
@@ -516,27 +517,27 @@
         </div>
 
         <div class="parameter-grid">
-          <article style="--accent: #f5f0e8">
+          <article style="--accent: #16222e">
             <span>μ</span>
             <h3>Position</h3>
             <p>Where the Gaussian center sits in the shared world frame.</p>
           </article>
-          <article style="--accent: #d9ff6f">
+          <article style="--accent: #7c4dbe">
             <span>s</span>
             <h3>Scale</h3>
             <p>Three positive axis lengths, activated exponentially.</p>
           </article>
-          <article style="--accent: #ff725e">
+          <article style="--accent: #e8720c">
             <span>q</span>
             <h3>Rotation</h3>
             <p>A normalized quaternion that orients the ellipsoid.</p>
           </article>
-          <article style="--accent: #61dce8">
+          <article style="--accent: #0e8f7e">
             <span>α</span>
             <h3>Opacity</h3>
             <p>A sigmoid-constrained weight controlling contribution and visibility.</p>
           </article>
-          <article style="--accent: #c7a6ff">
+          <article style="--accent: #1874b8">
             <span>c</span>
             <h3>SH color</h3>
             <p>Spherical-harmonic coefficients encode view-dependent appearance.</p>
@@ -719,6 +720,170 @@
         </div>
       </section>
 
+      <section class="section radio-section" id="radio" aria-labelledby="radio-title">
+        <div class="section-heading radio-heading">
+          <div>
+            <span class="index">07</span>
+            <p class="eyebrow">Next chapter · radio Splat-SLAM</p>
+          </div>
+          <div>
+            <h2 id="radio-title">Optimization with an<br /><em>unknown UE pose.</em></h2>
+            <p>
+              Visual splatting compares rendered pixels with a camera image. A radio
+              extension needs a different forward model: trace a candidate multipath,
+              predict its delay and angles, then optimize the UE pose and reflecting
+              geometry from the residual.
+            </p>
+          </div>
+        </div>
+
+        <div class="radio-handoff" aria-label="The change from visual to radio optimization">
+          <div>
+            <span>Visual factor</span>
+            <strong>pose + Gaussian map</strong>
+            <code>render pixels → image residual</code>
+          </div>
+          <i aria-hidden="true">→</i>
+          <div>
+            <span>Radio factor</span>
+            <strong>pose + reflecting geometry</strong>
+            <code>trace multipath → delay / angle residual</code>
+          </div>
+        </div>
+
+        <div class="radio-assumption">
+          <span>Model boundary</span>
+          <p>
+            <strong>§3.1–§3.5 assume synchronized clocks, but no compass.</strong>
+            The measurements are path length <em>L = cτ</em>, BS-side departure
+            <em>ψ</em>, and UE body-frame arrival <em>φ<sub>body</sub></em>. The global
+            arrival direction is therefore <em>φ<sub>body</sub> + θ</em>, with heading
+            <em>θ</em> kept inside the unknown state. §3.6 deliberately adds a stronger,
+            globally referenced displacement sensor for its rank test.
+          </p>
+        </div>
+
+        <div class="radio-loop" aria-label="Radio optimization loop">
+          <div><span>01</span><strong>Hypothesize</strong><small>u, θ, walls, incidence points</small></div>
+          <i>→</i>
+          <div><span>02</span><strong>Trace</strong><small>ordered specular path</small></div>
+          <i>→</i>
+          <div><span>03</span><strong>Predict</strong><small>τ̂, φ̂<sub>body</sub>, ψ̂</small></div>
+          <i>→</i>
+          <div><span>04</span><strong>Compare</strong><small>radio residual</small></div>
+          <i>↺</i>
+        </div>
+
+        <div class="radio-lab">
+          <div class="radio-lab-bar">
+            <span><i></i> SECTION 3 · INTERACTIVE OPTIMIZATION VIEW</span>
+            <strong id="radio-case-count">§3.1 / §3.6</strong>
+          </div>
+
+          <div class="radio-tabs" role="tablist" aria-label="Unknown UE pose cases">
+            <button class="radio-tab is-active" role="tab" aria-selected="true" data-radio-case="0">
+              <span>3.1</span><strong>Single</strong><small>one bounce</small>
+            </button>
+            <button class="radio-tab" role="tab" aria-selected="false" data-radio-case="1">
+              <span>3.2</span><strong>Corner ×2</strong><small>two paths</small>
+            </button>
+            <button class="radio-tab" role="tab" aria-selected="false" data-radio-case="2">
+              <span>3.3</span><strong>Corner ×3</strong><small>recursive</small>
+            </button>
+            <button class="radio-tab" role="tab" aria-selected="false" data-radio-case="3">
+              <span>3.4</span><strong>Corridor ×2</strong><small>parallel walls</small>
+            </button>
+            <button class="radio-tab" role="tab" aria-selected="false" data-radio-case="4">
+              <span>3.5</span><strong>Corridor ×3</strong><small>path parity</small>
+            </button>
+            <button class="radio-tab" role="tab" aria-selected="false" data-radio-case="5">
+              <span>3.6</span><strong>Rank test</strong><small>global displacement</small>
+            </button>
+          </div>
+
+          <div class="radio-workbench">
+            <figure class="radio-figure">
+              <figcaption>
+                <span>A</span>
+                Candidate geometry from fixed measurements
+                <b id="radio-figure-state">two-parameter family</b>
+              </figcaption>
+              <svg
+                id="radio-opt-svg"
+                viewBox="0 0 760 520"
+                role="img"
+                aria-label="Single-bounce construction with unknown UE pose and reflecting wall"
+              ></svg>
+              <div class="radio-legend" aria-hidden="true">
+                <span><i class="is-measurement"></i> measured</span>
+                <span><i class="is-incidence"></i> incidence</span>
+                <span><i class="is-ue"></i> UE hypothesis</span>
+                <span><i class="is-wall"></i> implied wall</span>
+              </div>
+            </figure>
+
+            <aside class="radio-rail" aria-live="polite">
+              <div class="radio-case-copy">
+                <p class="mini-label" id="radio-kicker">§3.1 · SINGLE BOUNCE</p>
+                <h3 id="radio-case-title">One path leaves a family, not a point.</h3>
+                <p id="radio-case-body">
+                  Walk the measured length along the departure ray to its endpoint E.
+                  Pick a bounce P, rotate the body-frame AoA by a heading hypothesis,
+                  and the candidate UE and wall follow. Every P and θ remains coherent.
+                </p>
+                <code id="radio-case-equation">E = BS + Ldψ · state = (P, θ)</code>
+              </div>
+
+              <div class="radio-control-group">
+                <label for="radio-heading">
+                  <span id="radio-heading-label">Candidate UE heading θ</span>
+                  <output id="radio-heading-out">0°</output>
+                </label>
+                <input id="radio-heading" type="range" min="-180" max="180" step="1" value="0" />
+                <p id="radio-heading-hint">One hypothesis slice—not a heading measurement.</p>
+              </div>
+
+              <div class="radio-control-group">
+                <label for="radio-bounce">
+                  <span id="radio-bounce-label">Bounce P along AoD ray</span>
+                  <output id="radio-bounce-out">50%</output>
+                </label>
+                <input id="radio-bounce" type="range" min="15" max="85" step="1" value="50" />
+                <p id="radio-bounce-hint">Move P: finding the incidence point is finding the wall.</p>
+              </div>
+
+              <div class="radio-readout" aria-label="Current hypothesis readout">
+                <div><span>Slice</span><strong id="radio-slice-state">feasible</strong></div>
+                <div><span>Solution</span><strong id="radio-family-state">2D family</strong></div>
+                <div><span>Constraint</span><strong id="radio-rank-state">rank deficient</strong></div>
+              </div>
+
+              <button class="radio-sweep" id="radio-sweep" type="button" aria-pressed="false">
+                <span aria-hidden="true">▶</span> Sweep the surviving family
+              </button>
+            </aside>
+          </div>
+
+          <div class="radio-caption" id="radio-caption">
+            <strong>Read it.</strong> The endpoint E is the mirror image of the UE for
+            the selected path. Re-pinning the remaining path length at P and rotating
+            φ<sub>body</sub> by a candidate θ constructs a valid UE and an implied wall.
+            One bounce therefore cannot identify position, wall, or heading by itself.
+          </div>
+        </div>
+
+        <div class="radio-next">
+          <span>Why this belongs here</span>
+          <p>
+            The optimization pattern is the same as the visual chapter—state → forward
+            model → residual → update—but radio measurements expose different null
+            directions. The next development step is to turn these path residuals into
+            persistent factors connected to UE poses, radio splats, and data-association
+            variables.
+          </p>
+        </div>
+      </section>
+
       <section class="sources" aria-labelledby="sources-title">
         <div>
           <p class="eyebrow">Primary sources</p>
@@ -761,7 +926,7 @@
       <p>
         An independent visual explainer of
         <cite>3D Gaussian Splatting for Real-Time Radiance Field Rendering</cite>,
-        followed by a clearly marked SLAM extension.
+        followed by clearly marked visual- and radio-SLAM extensions.
       </p>
       <p>Built from the paper and official reference implementation.</p>
     </footer>

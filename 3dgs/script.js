@@ -2,17 +2,17 @@
   "use strict";
 
   const COLORS = {
-    ink: "#0a0c0e",
-    panel: "#121719",
-    panel2: "#192023",
-    paper: "#f2eee5",
-    muted: "#747c79",
-    faint: "rgba(242, 238, 229, 0.12)",
-    line: "rgba(242, 238, 229, 0.18)",
-    coral: "#ff725e",
-    cyan: "#61dce8",
-    acid: "#d9ff6f",
-    violet: "#c7a6ff",
+    ink: "#f4f6f8",
+    panel: "#ffffff",
+    panel2: "#f7f9fa",
+    paper: "#16222e",
+    muted: "#667582",
+    faint: "rgba(22, 34, 46, 0.08)",
+    line: "rgba(22, 34, 46, 0.17)",
+    coral: "#e8720c",
+    cyan: "#0e8f7e",
+    acid: "#7c4dbe",
+    violet: "#1874b8",
   };
 
   const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -95,7 +95,7 @@
 
   function drawGrid(context, box, size = 28, alpha = 0.05) {
     context.save();
-    context.strokeStyle = `rgba(242, 238, 229, ${alpha})`;
+    context.strokeStyle = `rgba(22, 34, 46, ${Math.min(alpha * 1.8, 0.13)})`;
     context.lineWidth = 1;
     context.beginPath();
     for (let x = box.x; x <= box.x + box.w; x += size) {
@@ -118,8 +118,8 @@
     roundedRect(context, box.x, box.y, box.w, box.h, 7);
     context.fill();
     context.stroke();
-    drawLabel(context, title, box.x + 16, box.y + 19, "#9ba19f");
-    if (trailing) drawLabel(context, trailing, box.x + box.w - 16, box.y + 19, "#59615f", "right");
+    drawLabel(context, title, box.x + 16, box.y + 19, "#51606e");
+    if (trailing) drawLabel(context, trailing, box.x + box.w - 16, box.y + 19, "#8a97a3", "right");
     context.strokeStyle = COLORS.faint;
     context.beginPath();
     context.moveTo(box.x, box.y + 38);
@@ -153,7 +153,7 @@
 
   // Shared scene data
   const random = mulberry32(3042023);
-  const pointPalette = [COLORS.coral, COLORS.cyan, COLORS.acid, COLORS.violet, "#f2b45f"];
+  const pointPalette = [COLORS.coral, COLORS.cyan, COLORS.acid, COLORS.violet, "#d39a42"];
   const scenePoints = [];
 
   for (let index = 0; index < 54; index += 1) {
@@ -272,7 +272,7 @@
 
       context.save();
       context.translate(centerX, centerY);
-      context.strokeStyle = "rgba(97, 220, 232, 0.12)";
+      context.strokeStyle = "rgba(14, 143, 126, 0.14)";
       context.lineWidth = 1;
       for (let ring = 1; ring <= 3; ring += 1) {
         context.beginPath();
@@ -322,7 +322,7 @@
       context.save();
       context.translate(centerX, centerY);
       context.rotate(-0.1);
-      context.strokeStyle = "rgba(217, 255, 111, 0.34)";
+      context.strokeStyle = "rgba(124, 77, 190, 0.3)";
       context.setLineDash([4, 8]);
       context.beginPath();
       context.ellipse(0, 0, extent * 0.85, extent * 0.28, 0, 0, Math.PI * 2);
@@ -451,7 +451,7 @@
     drawGrid(context, content, 30, 0.035);
 
     context.save();
-    context.strokeStyle = "rgba(242, 238, 229, 0.08)";
+    context.strokeStyle = "rgba(22, 34, 46, 0.09)";
     context.setLineDash([3, 6]);
     context.beginPath();
     context.ellipse(centerX, centerY, pointExtent * 1.82, pointExtent * 1.15, 0, 0, Math.PI * 2);
@@ -464,8 +464,8 @@
       const direction = Math.atan2(centerY - selectedGeometry.y, centerX - selectedGeometry.x);
       const spread = 0.32;
       const distance = Math.hypot(centerX - selectedGeometry.x, centerY - selectedGeometry.y) * 0.93;
-      context.fillStyle = "rgba(97, 220, 232, 0.055)";
-      context.strokeStyle = "rgba(97, 220, 232, 0.28)";
+      context.fillStyle = "rgba(14, 143, 126, 0.05)";
+      context.strokeStyle = "rgba(14, 143, 126, 0.28)";
       context.lineWidth = 1;
       context.beginPath();
       context.moveTo(selectedGeometry.x, selectedGeometry.y);
@@ -553,7 +553,7 @@
       const geometry = cameraGeometry(index, content, 0.41);
       const active = index === selectedCamera;
       context.save();
-      context.strokeStyle = active ? "rgba(97, 220, 232, 0.45)" : "rgba(242, 238, 229, 0.075)";
+      context.strokeStyle = active ? "rgba(14, 143, 126, 0.45)" : "rgba(22, 34, 46, 0.1)";
       context.setLineDash(active ? [4, 5] : [2, 8]);
       context.beginPath();
       context.moveTo(geometry.x, geometry.y);
@@ -566,7 +566,7 @@
         String(index + 1).padStart(2, "0"),
         geometry.x,
         geometry.y + 18,
-        active ? COLORS.cyan : "#545c59",
+        active ? COLORS.cyan : "#7b8994",
         "center",
       );
       processHitboxes.push({ x: geometry.x, y: geometry.y, radius: 22, index });
@@ -576,7 +576,7 @@
       const chipText = step === 0 ? `${scenePoints.length} SPARSE POINTS` : `${scenePoints.length + (step === 6 ? 8 : 0)} GAUSSIANS`;
       context.save();
       roundedRect(context, box.x + 14, box.y + box.h - 34, 116, 20, 10);
-      context.fillStyle = "rgba(10, 12, 14, 0.7)";
+      context.fillStyle = "rgba(255, 255, 255, 0.9)";
       context.fill();
       drawLabel(context, chipText, box.x + 72, box.y + box.h - 24, step === 0 ? COLORS.acid : COLORS.violet, "center");
       context.restore();
@@ -588,13 +588,13 @@
     context.save();
     roundedRect(context, box.x, box.y, box.w, box.h, 5);
     context.clip();
-    context.fillStyle = mode === "residual" ? "#080b0c" : "#172226";
+    context.fillStyle = mode === "residual" ? "#f8ece8" : "#edf3f2";
     context.fillRect(box.x, box.y, box.w, box.h);
 
     if (mode === "target") {
-      context.fillStyle = "#243337";
+      context.fillStyle = "#dce8e6";
       context.fillRect(box.x, box.y + box.h * 0.67, box.w, box.h * 0.33);
-      context.fillStyle = "rgba(217, 255, 111, 0.15)";
+      context.fillStyle = "rgba(124, 77, 190, 0.13)";
       context.beginPath();
       context.arc(box.x + box.w * 0.76 - shift, box.y + box.h * 0.22, box.w * 0.1, 0, Math.PI * 2);
       context.fill();
@@ -619,7 +619,7 @@
       );
       context.closePath();
       context.fill();
-      context.fillStyle = "#0d1315";
+      context.fillStyle = "#51606e";
       context.fillRect(box.x + box.w * 0.485 + shift, box.y + box.h * 0.25, 2, box.h * 0.25);
       const flowers = [
         [0.48, 0.23, COLORS.coral],
@@ -653,7 +653,7 @@
           context.fill();
         }
       });
-      context.fillStyle = "rgba(242, 238, 229, 0.12)";
+      context.fillStyle = "rgba(22, 34, 46, 0.12)";
       context.fillRect(box.x + box.w * 0.12, box.y + box.h * 0.75, box.w * 0.16, 2);
       context.fillRect(box.x + box.w * 0.69, box.y + box.h * 0.82, box.w * 0.18, 2);
     } else if (mode === "render") {
@@ -679,14 +679,14 @@
         );
       });
       gaussianFill(context, box.x + box.w * 0.73 - shift, box.y + box.h * 0.24, box.w * 0.13, box.h * 0.12, 0, COLORS.acid, 0.14);
-      context.fillStyle = "rgba(242, 238, 229, 0.05)";
+      context.fillStyle = "rgba(22, 34, 46, 0.045)";
       context.fillRect(box.x, box.y + box.h * 0.72, box.w, box.h * 0.28);
     } else {
       const pulse = reducedMotion ? 0.5 : (Math.sin(timestamp * 0.004) + 1) / 2;
       gaussianFill(context, box.x + box.w * 0.38 + shift, box.y + box.h * 0.3, box.w * 0.11, box.h * 0.13, 0.3, COLORS.coral, 0.5 + pulse * 0.16);
-      gaussianFill(context, box.x + box.w * 0.56 + shift, box.y + box.h * 0.58, box.w * 0.15, box.h * 0.24, -0.2, "#f5f0e8", 0.18);
+      gaussianFill(context, box.x + box.w * 0.56 + shift, box.y + box.h * 0.58, box.w * 0.15, box.h * 0.24, -0.2, "#51606e", 0.18);
       gaussianFill(context, box.x + box.w * 0.7 - shift, box.y + box.h * 0.24, box.w * 0.08, box.h * 0.09, 0, COLORS.coral, 0.4);
-      context.strokeStyle = "rgba(255, 114, 94, 0.35)";
+      context.strokeStyle = "rgba(194, 47, 47, 0.3)";
       context.lineWidth = 1;
       for (let y = box.y; y < box.y + box.h; y += 10) {
         context.beginPath();
@@ -716,10 +716,10 @@
       ];
       rows.forEach(([name, detail], index) => {
         const y = inner.y + index * 48;
-        context.fillStyle = index === 2 ? "rgba(217, 255, 111, 0.07)" : "rgba(242, 238, 229, 0.025)";
+        context.fillStyle = index === 2 ? "rgba(124, 77, 190, 0.07)" : "rgba(22, 34, 46, 0.025)";
         context.fillRect(inner.x, y, inner.w, 38);
         drawLabel(context, name, inner.x + 10, y + 14, index === 2 ? COLORS.acid : COLORS.paper);
-        drawLabel(context, detail, inner.x + 10, y + 27, "#626a67");
+        drawLabel(context, detail, inner.x + 10, y + 27, "#7a8893");
       });
       drawLabel(context, "MULTI-VIEW CAPTURE", inner.x, inner.y + 170, COLORS.cyan);
       const thumbGap = 7;
@@ -768,13 +768,13 @@
         const cellWidth = (inner.w - 8) / columns;
         const x = inner.x + column * (cellWidth + 8);
         const y = inner.y + inner.h * 0.68 + row * 38;
-        context.fillStyle = "rgba(242, 238, 229, 0.035)";
+        context.fillStyle = "rgba(22, 34, 46, 0.035)";
         context.fillRect(x, y, cellWidth, 30);
         context.fillStyle = index === 0 ? COLORS.coral : COLORS.cyan;
         context.font = '400 16px "Iowan Old Style", serif';
         context.textBaseline = "middle";
         context.fillText(symbol, x + 9, y + 15);
-        drawLabel(context, value, x + 30, y + 15, "#9ba19f");
+        drawLabel(context, value, x + 30, y + 15, "#667582");
       });
       return;
     }
@@ -782,17 +782,17 @@
     if (step === 2) {
       drawTargetScene(context, inner, "target", selectedCamera, timestamp);
       const cardWidth = Math.min(148, inner.w * 0.52);
-      context.fillStyle = "rgba(10, 12, 14, 0.84)";
+      context.fillStyle = "rgba(255, 255, 255, 0.9)";
       context.fillRect(inner.x + 10, inner.y + inner.h - 52, cardWidth, 40);
       drawLabel(context, `CAMERA ${String(selectedCamera + 1).padStart(2, "0")}`, inner.x + 20, inner.y + inner.h - 38, COLORS.cyan);
-      drawLabel(context, `image_${String(selectedCamera + 1).padStart(3, "0")}.jpg`, inner.x + 20, inner.y + inner.h - 24, "#979e9b");
+      drawLabel(context, `image_${String(selectedCamera + 1).padStart(3, "0")}.jpg`, inner.x + 20, inner.y + inner.h - 24, "#667582");
       return;
     }
 
     if (step === 3) {
       drawTargetScene(context, inner, "render", selectedCamera, timestamp);
       context.save();
-      context.strokeStyle = "rgba(217, 255, 111, 0.2)";
+      context.strokeStyle = "rgba(124, 77, 190, 0.18)";
       context.lineWidth = 0.8;
       const tile = Math.max(20, Math.round(Math.min(inner.w, inner.h) / 7));
       for (let x = inner.x; x <= inner.x + inner.w; x += tile) {
@@ -809,15 +809,15 @@
       }
       const highlightX = inner.x + tile * 3;
       const highlightY = inner.y + tile * 2;
-      context.fillStyle = "rgba(217, 255, 111, 0.09)";
+      context.fillStyle = "rgba(124, 77, 190, 0.08)";
       context.fillRect(highlightX, highlightY, tile, tile);
       context.strokeStyle = COLORS.acid;
       context.strokeRect(highlightX, highlightY, tile, tile);
       context.restore();
-      context.fillStyle = "rgba(10, 12, 14, 0.84)";
+      context.fillStyle = "rgba(255, 255, 255, 0.9)";
       context.fillRect(inner.x + 10, inner.y + 10, 116, 42);
       drawLabel(context, "16 × 16 TILES", inner.x + 20, inner.y + 24, COLORS.acid);
-      drawLabel(context, "SORT: TILE | DEPTH", inner.x + 20, inner.y + 39, "#939a97");
+      drawLabel(context, "SORT: TILE | DEPTH", inner.x + 20, inner.y + 39, "#667582");
       return;
     }
 
@@ -838,7 +838,7 @@
         );
       }
       const lossY = inner.y + inner.h * 0.72;
-      context.fillStyle = "rgba(255, 114, 94, 0.08)";
+      context.fillStyle = "rgba(232, 114, 12, 0.07)";
       context.fillRect(inner.x, lossY, inner.w, inner.h - (lossY - inner.y));
       drawLabel(context, "COMBINED LOSS", inner.x + 12, lossY + 18, COLORS.coral);
       context.fillStyle = COLORS.paper;
@@ -867,7 +867,7 @@
         const chipW = (inner.w - 8 * 4) / 5;
         const x = inner.x + index * (chipW + 8);
         const y = inner.y + inner.h - 34;
-        context.fillStyle = index === 0 ? "rgba(255, 114, 94, 0.16)" : "rgba(242, 238, 229, 0.06)";
+        context.fillStyle = index === 0 ? "rgba(232, 114, 12, 0.13)" : "rgba(22, 34, 46, 0.05)";
         context.fillRect(x, y, chipW, 28);
         drawLabel(context, label, x + chipW / 2, y + 14, index === 0 ? COLORS.coral : "#aab0ad", "center");
       });
@@ -889,7 +889,7 @@
       context.save();
       roundedRect(context, card.x, card.y, card.w, card.h, 5);
       context.clip();
-      context.fillStyle = "#0c1113";
+      context.fillStyle = "#fbfcfd";
       context.fillRect(card.x, card.y, card.w, card.h);
       const count = side === 0 ? 9 : 19;
       for (let index = 0; index < count; index += 1) {
@@ -909,7 +909,7 @@
       const actionW = (inner.w - 8 * 2) / 3;
       const x = inner.x + index * (actionW + 8);
       const y = inner.y + inner.h - 38;
-      context.fillStyle = index === 1 ? "rgba(217, 255, 111, 0.11)" : "rgba(242, 238, 229, 0.04)";
+      context.fillStyle = index === 1 ? "rgba(124, 77, 190, 0.1)" : "rgba(22, 34, 46, 0.04)";
       context.fillRect(x, y, actionW, 30);
       drawLabel(context, action, x + actionW / 2, y + 15, index === 1 ? COLORS.acid : "#929996", "center");
     });
@@ -918,7 +918,7 @@
   function drawProcess(timestamp = 0) {
     const { context, width, height } = prepareCanvas(processCanvas);
     context.clearRect(0, 0, width, height);
-    context.fillStyle = "#0d1113";
+    context.fillStyle = "#fbfcfd";
     context.fillRect(0, 0, width, height);
     const layout = panelLayout(width, height);
     drawPanel(context, layout.world, currentStep === 0 ? "SFM WORLD" : "SHARED 3D MODEL", currentStep < 2 ? "ALL CAMERAS" : `VIEW ${String(selectedCamera + 1).padStart(2, "0")}`);
@@ -1070,7 +1070,7 @@
   function drawCameraDiagram(timestamp = 0) {
     const { context, width, height } = prepareCanvas(cameraCanvas);
     context.clearRect(0, 0, width, height);
-    context.fillStyle = "#0c1113";
+    context.fillStyle = "#fbfcfd";
     context.fillRect(0, 0, width, height);
     const content = { x: 0, y: 0, w: width, h: height };
     drawGrid(context, content, 32, 0.045);
@@ -1080,7 +1080,7 @@
     const pulse = reducedMotion ? 0.4 : (Math.sin(timestamp * 0.003) + 1) / 2;
 
     context.save();
-    context.strokeStyle = "rgba(242, 238, 229, 0.1)";
+    context.strokeStyle = "rgba(22, 34, 46, 0.1)";
     context.setLineDash([3, 7]);
     context.beginPath();
     context.ellipse(centerX, centerY, extent * 2.05, extent * 1.45, 0, 0, Math.PI * 2);
@@ -1109,8 +1109,8 @@
         const direction = Math.atan2(centerY - geometry.y, centerX - geometry.x);
         const distance = Math.hypot(centerX - geometry.x, centerY - geometry.y) * 0.94;
         context.save();
-        context.fillStyle = "rgba(97, 220, 232, 0.05)";
-        context.strokeStyle = `rgba(97, 220, 232, ${0.3 + pulse * 0.2})`;
+        context.fillStyle = "rgba(14, 143, 126, 0.05)";
+        context.strokeStyle = `rgba(14, 143, 126, ${0.3 + pulse * 0.2})`;
         context.beginPath();
         context.moveTo(geometry.x, geometry.y);
         context.lineTo(geometry.x + Math.cos(direction - 0.3) * distance, geometry.y + Math.sin(direction - 0.3) * distance);
@@ -1121,7 +1121,7 @@
         context.restore();
       } else {
         context.save();
-        context.strokeStyle = "rgba(242, 238, 229, 0.07)";
+        context.strokeStyle = "rgba(22, 34, 46, 0.08)";
         context.setLineDash([2, 7]);
         context.beginPath();
         context.moveTo(geometry.x, geometry.y);
@@ -1141,7 +1141,7 @@
       cameraHitboxes.push({ x: geometry.x, y: geometry.y, radius: 28, index });
     });
 
-    context.fillStyle = "rgba(10, 12, 14, 0.74)";
+    context.fillStyle = "rgba(255, 255, 255, 0.9)";
     roundedRect(context, centerX - 64, centerY - 16, 128, 32, 16);
     context.fill();
     drawLabel(context, "ONE SHARED MODEL", centerX, centerY, COLORS.paper, "center");
@@ -1209,7 +1209,7 @@
     drawLabel(context, "3D COVARIANCE Σ", worldX, worldY + 64, "#929997", "center");
 
     context.save();
-    context.strokeStyle = `rgba(217, 255, 111, ${0.2 + pulse * 0.2})`;
+    context.strokeStyle = `rgba(124, 77, 190, ${0.2 + pulse * 0.2})`;
     context.setLineDash([5, 7]);
     context.beginPath();
     context.moveTo(cameraX, cameraY);
@@ -1219,7 +1219,7 @@
     context.stroke();
     context.restore();
 
-    context.fillStyle = "#11191b";
+    context.fillStyle = "#f7f9fa";
     context.strokeStyle = COLORS.line;
     context.fillRect(screen.x, screen.y, screen.w, screen.h);
     context.strokeRect(screen.x, screen.y, screen.w, screen.h);
@@ -1241,13 +1241,13 @@
     const rows = Math.floor(screen.h / tile);
     screen.w = cols * tile;
     screen.h = rows * tile;
-    context.fillStyle = "#121a1d";
+    context.fillStyle = "#f7f9fa";
     context.fillRect(screen.x, screen.y, screen.w, screen.h);
     const activeCol = Math.min(3, cols - 1);
     const activeRow = Math.min(2, rows - 1);
-    context.fillStyle = "rgba(217, 255, 111, 0.08)";
+    context.fillStyle = "rgba(124, 77, 190, 0.08)";
     context.fillRect(screen.x + activeCol * tile, screen.y + activeRow * tile, tile, tile);
-    context.strokeStyle = "rgba(242, 238, 229, 0.12)";
+    context.strokeStyle = "rgba(22, 34, 46, 0.12)";
     for (let col = 0; col <= cols; col += 1) {
       context.beginPath();
       context.moveTo(screen.x + col * tile, screen.y);
@@ -1289,7 +1289,7 @@
     drawLabel(context, "ONE ENTRY / OVERLAPPED TILE", listX, screen.y + 20, "#626a68");
     for (let index = 0; index < 6; index += 1) {
       const y = screen.y + 46 + index * 38;
-      context.fillStyle = index < 3 ? "rgba(217, 255, 111, 0.07)" : "rgba(242, 238, 229, 0.035)";
+      context.fillStyle = index < 3 ? "rgba(124, 77, 190, 0.07)" : "rgba(22, 34, 46, 0.035)";
       context.fillRect(listX, y, available, 28);
       context.fillStyle = pointPalette[index % pointPalette.length];
       context.beginPath();
@@ -1318,7 +1318,7 @@
     ];
     rows.forEach((row, index) => {
       const y = startY + index * (rowH + 5);
-      context.fillStyle = index < 3 ? "rgba(97, 220, 232, 0.055)" : "rgba(242, 238, 229, 0.025)";
+      context.fillStyle = index < 3 ? "rgba(14, 143, 126, 0.055)" : "rgba(22, 34, 46, 0.025)";
       context.fillRect(listX, y, listW, rowH);
       context.fillStyle = row.color;
       context.globalAlpha = 0.72;
@@ -1329,7 +1329,7 @@
       drawLabel(context, row.tile, listX + listW * 0.58, y + rowH / 2, index < 3 ? COLORS.cyan : "#8c9491", "right");
       drawLabel(context, row.depth, listX + listW - 18, y + rowH / 2, COLORS.paper, "right");
       if (index === 0) {
-        context.fillStyle = `rgba(217, 255, 111, ${0.12 + pulse * 0.08})`;
+        context.fillStyle = `rgba(124, 77, 190, ${0.12 + pulse * 0.08})`;
         context.fillRect(listX, y, 2, rowH);
       }
     });
@@ -1349,12 +1349,12 @@
       { color: COLORS.acid, alpha: 0.18, z: 4.0 },
     ];
 
-    context.fillStyle = "#151c1f";
+    context.fillStyle = "#eef2f4";
     context.fillRect(centerX - pixelSize / 2, centerY - pixelSize / 2, pixelSize, pixelSize);
     context.strokeStyle = COLORS.line;
     context.strokeRect(centerX - pixelSize / 2, centerY - pixelSize / 2, pixelSize, pixelSize);
     drawLabel(context, "ONE PIXEL", centerX, centerY - pixelSize / 2 - 15, COLORS.paper, "center");
-    context.fillStyle = "rgba(242, 238, 229, 0.65)";
+    context.fillStyle = "rgba(22, 34, 46, 0.65)";
     context.beginPath();
     context.arc(centerX, centerY, 3, 0, Math.PI * 2);
     context.fill();
@@ -1389,7 +1389,7 @@
     let transmittance = 1;
     layers.forEach((layer, index) => {
       const y = infoY + 28 + index * 40;
-      context.fillStyle = "rgba(242, 238, 229, 0.035)";
+      context.fillStyle = "rgba(22, 34, 46, 0.035)";
       context.fillRect(infoX, y, infoW, 30);
       context.fillStyle = layer.color;
       context.fillRect(infoX, y, 3, 30);
@@ -1403,7 +1403,7 @@
   function drawRaster(timestamp = 0) {
     const { context, width, height } = prepareCanvas(rasterCanvas);
     context.clearRect(0, 0, width, height);
-    context.fillStyle = "#0c1012";
+    context.fillStyle = "#fbfcfd";
     context.fillRect(0, 0, width, height);
     drawGrid(context, { x: 0, y: 0, w: width, h: height }, 34, 0.035);
     const box = rasterBox(width, height);
@@ -1538,7 +1538,7 @@
     context.translate(x, y);
     context.rotate(angle);
     context.globalAlpha = ghost ? 0.38 : 1;
-    context.fillStyle = "#111719";
+    context.fillStyle = "#ffffff";
     context.strokeStyle = color;
     context.lineWidth = ghost ? 1 : 1.8;
     roundedRect(context, -8, -6, 14, 12, 2);
@@ -1577,7 +1577,7 @@
       );
     });
     context.save();
-    context.strokeStyle = mapping ? "rgba(217, 255, 111, 0.24)" : "rgba(199, 166, 255, 0.18)";
+    context.strokeStyle = mapping ? "rgba(124, 77, 190, 0.24)" : "rgba(24, 116, 184, 0.2)";
     context.beginPath();
     context.ellipse(centerX, centerY, spreadX * 0.9, spreadY * 0.82, 0, 0, Math.PI * 2);
     context.stroke();
@@ -1588,7 +1588,7 @@
   function drawSlamWorld(timestamp = 0) {
     const { context, width, height } = prepareCanvas(slamCanvas);
     context.clearRect(0, 0, width, height);
-    context.fillStyle = "#0e1416";
+    context.fillStyle = "#fbfcfd";
     context.fillRect(0, 0, width, height);
     drawGrid(context, { x: 0, y: 0, w: width, h: height }, 30, 0.035);
     drawSlamMap(context, width, height, timestamp, slamStep === 2);
@@ -1599,7 +1599,7 @@
       slamPath.slice(0, 6).forEach((point, index) => {
         const camera = slamPoint(point, width, height);
         context.save();
-        context.strokeStyle = "rgba(97, 220, 232, 0.12)";
+        context.strokeStyle = "rgba(14, 143, 126, 0.14)";
         context.setLineDash([4, 7]);
         context.beginPath();
         context.moveTo(camera.x, camera.y);
@@ -1610,7 +1610,7 @@
       });
       drawLabel(context, "CALIBRATED ONCE BY SfM", 16, 18, COLORS.cyan);
     } else if (slamStep === 1) {
-      drawSlamPath(context, slamPath.slice(0, 5), width, height, "rgba(97, 220, 232, 0.35)");
+      drawSlamPath(context, slamPath.slice(0, 5), width, height, "rgba(14, 143, 126, 0.38)");
       slamPath.slice(0, 4).forEach((point) => {
         const camera = slamPoint(point, width, height);
         drawSlamCamera(context, camera.x, camera.y, centerX, centerY, "#6d7774", "");
@@ -1624,7 +1624,7 @@
       drawArrow(context, drift.x, drift.y, target.x, target.y, COLORS.acid, 1.2, 6);
       drawLabel(context, "RENDER → RESIDUAL → POSE GRADIENT", 16, 18, COLORS.acid);
     } else if (slamStep === 2) {
-      drawSlamPath(context, slamPath.slice(0, 6), width, height, "rgba(97, 220, 232, 0.38)");
+      drawSlamPath(context, slamPath.slice(0, 6), width, height, "rgba(14, 143, 126, 0.4)");
       slamPath.slice(1, 6).forEach((point, index) => {
         const camera = slamPoint(point, width, height);
         drawSlamCamera(context, camera.x, camera.y, centerX, centerY, index === 4 ? COLORS.acid : "#75807d", index === 4 ? "keyframe" : "");
@@ -1636,8 +1636,8 @@
         x: point.x + index * 0.012,
         y: point.y - index * 0.006 + Math.sin(index * 1.4) * 0.018,
       }));
-      drawSlamPath(context, drifted, width, height, "rgba(255, 114, 94, 0.58)", true, 1.4);
-      drawSlamPath(context, corrected, width, height, "rgba(97, 220, 232, 0.72)", false, 2);
+      drawSlamPath(context, drifted, width, height, "rgba(232, 114, 12, 0.62)", true, 1.4);
+      drawSlamPath(context, corrected, width, height, "rgba(14, 143, 126, 0.76)", false, 2);
       const start = slamPoint(slamPath[0], width, height);
       const end = slamPoint(slamPath[slamPath.length - 1], width, height);
       context.save();
@@ -1761,6 +1761,650 @@
   }
   updateSlamStep(0);
   window.requestAnimationFrame(slamAnimation);
+
+  // Radio multipath optimization with an unknown UE pose
+  const radioSvg = $("#radio-opt-svg");
+  const radioHeading = $("#radio-heading");
+  const radioBounce = $("#radio-bounce");
+  const radioSweep = $("#radio-sweep");
+
+  const RADIO = {
+    ink: "#16222e",
+    soft: "#51606e",
+    muted: "#8a97a3",
+    line: "#d7dee5",
+    va: "#7c4dbe",
+    vaDeep: "#5d3691",
+    incidence: "#0e8f7e",
+    incidenceDeep: "#0a6b5e",
+    measurement: "#e8720c",
+    measurementDeep: "#b45607",
+    scatter: "#1874b8",
+    ue: "#2ca02c",
+    ueDeep: "#1d7a1d",
+    error: "#c22f2f",
+  };
+
+  const radioCases = [
+    {
+      kicker: "§3.1 · SINGLE BOUNCE",
+      title: "One path leaves a family, not a point.",
+      body:
+        "Walk the measured length along the departure ray to E. Pick a bounce P, rotate the body-frame AoA by a heading hypothesis, and the candidate UE and wall follow. Every P and θ remains coherent.",
+      equation: "E = BS + Ldψ · state = (P, θ)",
+      caption:
+        "The endpoint E is the mirror image of the UE for this path. Re-pinning the remaining length at P and rotating φbody by a candidate θ constructs a valid UE and an implied wall. One bounce cannot identify position, wall, or heading by itself.",
+      figure: "two-parameter family",
+      family: "2D family",
+      rank: "rank deficient",
+      aria: "Single-bounce construction showing a family of UE and wall hypotheses for unknown heading",
+    },
+    {
+      kicker: "§3.2 · DOUBLE BOUNCE",
+      title: "A second path rejects slices, but does not fix heading.",
+      body:
+        "Path 1 proposes wall A. Path 2 must hit that wall in the forward direction, reflect, and spend a positive remaining delay before its second incidence point. Invalid ray order is rejected in red.",
+      equation: "forward hits + positive segments · family (P¹, θ)",
+      caption:
+        "The second measured path strips its first bounce at wall A, then constructs wall B from the remaining delay and AoA. It prunes nonphysical hypotheses, but the feasible subset still moves with P¹ and θ; another path is a constraint, not automatically a unique pose.",
+      figure: "ordered two-bounce test",
+      family: "2D subset",
+      rank: "still deficient",
+      aria: "Corner scene with single- and double-bounce paths testing forward-order feasibility",
+    },
+    {
+      kicker: "§3.3 · TRIPLE BOUNCE",
+      title: "The same construction climbs one rung further.",
+      body:
+        "The path-1 hypothesis gives wall A; a valid two-bounce prefix gives wall B. Path 3 must hit both walls in order before its delay budget can form the last incidence point and wall C.",
+      equation: "A → B → C · require every segment > 0",
+      caption:
+        "A triple-bounce path adds another forward-order and remaining-range test. It can remove more impossible slices, yet the surviving wall set and UE still change together with the unknown heading. More bounces do not, by themselves, guarantee observability.",
+      figure: "recursive feasibility",
+      family: "2D subset",
+      rank: "still deficient",
+      aria: "Corner scene with a recursively constructed triple-bounce path and three wall hypotheses",
+    },
+    {
+      kicker: "§3.4 · CORRIDOR DOUBLE BOUNCE",
+      title: "Parallel walls collapse two candidate lines into one.",
+      body:
+        "At the reference heading, both radio paths produce the same cross-corridor UE rail. There is no line crossing to solve. A heading hypothesis wedges the wall estimates, but the admissible crossing continues to slide.",
+      equation: "line₂ ≡ line₁ at θ = 0 · continuum survives",
+      caption:
+        "In a corridor the double-bounce construction does not create an independent transverse direction. Clean data makes the two candidate lines coincide; changing θ re-dresses the parallel corridor as a wedge while keeping a continuous family of valid poses.",
+      figure: "coincident candidate rails",
+      family: "continuum",
+      rank: "rank deficient",
+      aria: "Parallel-wall corridor showing coincident UE candidate rails for two-bounce radio paths",
+    },
+    {
+      kicker: "§3.5 · CORRIDOR TRIPLE BOUNCE",
+      title: "Path parity checks the model, not the null direction.",
+      body:
+        "The third path alternates right–left–right. Its ordered bounces can reject bad slices and verify the two-wall explanation, while translation across the corridor remains coupled to the wall offsets.",
+      equation: "R → L → R · parity valid, gauge remains",
+      caption:
+        "A higher-order path is valuable evidence: it checks bounce order, delay budget, and the alternating-wall model. But if every recovered normal is parallel, those measurements still lack the independent direction needed to pin the corridor and trajectory absolutely.",
+      figure: "parity-valid continuum",
+      family: "1D continuum",
+      rank: "one null mode",
+      aria: "Corridor triple-bounce path alternating between parallel wall hypotheses",
+    },
+    {
+      kicker: "§3.6 · SPECIAL OBSERVABILITY TEST",
+      title: "A rank test says whether optimization can return a point.",
+      body:
+        "Now add globally referenced UE displacements. Nonparallel wall normals give a full-rank cross-family system; parallel corridor normals give rank one, so the solver should report a line of answers.",
+      equation: "rank[−2nA | 2nB] = 2 (corner), 1 (corridor)",
+      caption:
+        "This final case changes the sensor assumption. With global displacement, a corner supplies two independent wall normals and closes the offsets. A corridor supplies only one normal direction: walls and trajectory can slide together along the remaining null direction.",
+      figure: "full rank vs rank one",
+      family: "point / line",
+      rank: "rank 2 / rank 1",
+      aria: "Side-by-side observability comparison of a full-rank corner and rank-one corridor",
+    },
+  ];
+
+  let radioCase = 0;
+  let radioSweepFrame = null;
+
+  const rAdd = (a, b) => ({ x: a.x + b.x, y: a.y + b.y });
+  const rSub = (a, b) => ({ x: a.x - b.x, y: a.y - b.y });
+  const rMul = (a, scalar) => ({ x: a.x * scalar, y: a.y * scalar });
+  const rDot = (a, b) => a.x * b.x + a.y * b.y;
+  const rCross = (a, b) => a.x * b.y - a.y * b.x;
+  const rLength = (a) => Math.hypot(a.x, a.y);
+  const rDistance = (a, b) => rLength(rSub(a, b));
+  const rUnit = (a) => {
+    const length = rLength(a);
+    return length > 1e-9 ? rMul(a, 1 / length) : { x: 1, y: 0 };
+  };
+  const rPerp = (a) => ({ x: -a.y, y: a.x });
+  const rReflect = (direction, normal) => rSub(direction, rMul(normal, 2 * rDot(direction, normal)));
+  const rDirection = (angle) => ({ x: Math.cos(angle), y: Math.sin(angle) });
+  const rAngle = (direction) => Math.atan2(direction.y, direction.x);
+  const rPointOn = (a, b, t) => rAdd(a, rMul(rSub(b, a), t));
+  const rNumber = (value) => Number(value.toFixed(2));
+
+  function rIntersectLines(originA, directionA, originB, directionB) {
+    const denominator = rCross(directionA, directionB);
+    if (Math.abs(denominator) < 1e-7) return null;
+    const delta = rSub(originB, originA);
+    const t = rCross(delta, directionB) / denominator;
+    const s = rCross(delta, directionA) / denominator;
+    return { point: rAdd(originA, rMul(directionA, t)), t, s };
+  }
+
+  function rHitRayLine(origin, direction, wallPoint, wallNormal) {
+    const denominator = rDot(wallNormal, direction);
+    if (Math.abs(denominator) < 1e-7) return null;
+    const t = rDot(wallNormal, rSub(wallPoint, origin)) / denominator;
+    return { point: rAdd(origin, rMul(direction, t)), t };
+  }
+
+  function rReflectPoint(point, wall) {
+    const signedDistance = rDot(wall.n, rSub(point, wall.p));
+    return rSub(point, rMul(wall.n, 2 * signedDistance));
+  }
+
+  function rTraceReference(origin, destination, walls) {
+    let image = destination;
+    for (let index = walls.length - 1; index >= 0; index -= 1) image = rReflectPoint(image, walls[index]);
+    let current = origin;
+    let direction = rUnit(rSub(image, origin));
+    const points = [origin];
+    walls.forEach((wall) => {
+      const hit = rHitRayLine(current, direction, wall.p, wall.n);
+      if (!hit || hit.t <= 0) return;
+      points.push(hit.point);
+      current = hit.point;
+      direction = rReflect(direction, wall.n);
+    });
+    points.push(destination);
+    return points;
+  }
+
+  function rMeasurePath(points) {
+    let length = 0;
+    for (let index = 1; index < points.length; index += 1) length += rDistance(points[index - 1], points[index]);
+    return {
+      L: length,
+      psi: rAngle(rSub(points[1], points[0])),
+      phi: rAngle(rSub(points[points.length - 2], points[points.length - 1])),
+      points,
+    };
+  }
+
+  function rWallFromBounce(previous, bounce, next) {
+    const towardPrevious = rUnit(rSub(previous, bounce));
+    const towardNext = rUnit(rSub(next, bounce));
+    const tangent = rUnit(rSub(towardPrevious, towardNext));
+    return { p: bounce, t: tangent, n: rPerp(tangent) };
+  }
+
+  const cornerReference = (() => {
+    const B = { x: 120, y: 390 };
+    const U = { x: 550, y: 390 };
+    const wallA = { p: { x: 335, y: 200 }, n: { x: 0, y: 1 }, t: { x: 1, y: 0 }, label: "A" };
+    const wallB = { p: { x: 620, y: 330 }, n: { x: 1, y: 0 }, t: { x: 0, y: 1 }, label: "B" };
+    const path1 = rTraceReference(B, U, [wallA]);
+    const path2 = rTraceReference(B, U, [wallA, wallB]);
+    const first3 = { x: 400, y: 200 };
+    const d3 = rUnit(rSub(first3, B));
+    const afterA = rReflect(d3, wallA.n);
+    const secondHit = rHitRayLine(first3, afterA, wallB.p, wallB.n).point;
+    const afterB = rReflect(afterA, wallB.n);
+    const thirdHit = rAdd(secondHit, rMul(afterB, 170));
+    const path3 = [B, first3, secondHit, thirdHit, U];
+    const wallC = { ...rWallFromBounce(secondHit, thirdHit, U), label: "C" };
+    return {
+      B,
+      U,
+      walls: [wallA, wallB, wallC],
+      measures: [rMeasurePath(path1), rMeasurePath(path2), rMeasurePath(path3)],
+    };
+  })();
+
+  const corridorReference = (() => {
+    const B = { x: 360, y: 105 };
+    const U = { x: 390, y: 420 };
+    const wallR = { p: { x: 610, y: 260 }, n: { x: 1, y: 0 }, t: { x: 0, y: 1 }, label: "R" };
+    const wallL = { p: { x: 150, y: 260 }, n: { x: 1, y: 0 }, t: { x: 0, y: 1 }, label: "L" };
+    const path1 = rTraceReference(B, U, [wallR]);
+    const path2 = rTraceReference(B, U, [wallR, wallL]);
+    const path3 = rTraceReference(B, U, [wallR, wallL, wallR]);
+    return {
+      B,
+      U,
+      walls: [wallR, wallL],
+      measures: [rMeasurePath(path1), rMeasurePath(path2), rMeasurePath(path3)],
+    };
+  })();
+
+  function rConstructSingle(scene, theta, bounceFraction) {
+    const measurement = scene.measures[0];
+    const departure = rDirection(measurement.psi);
+    const arrival = rDirection(measurement.phi + theta);
+    const E = rAdd(scene.B, rMul(departure, measurement.L));
+    const travelled = bounceFraction * measurement.L;
+    const P = rAdd(scene.B, rMul(departure, travelled));
+    const remaining = measurement.L - travelled;
+    const U = rSub(P, rMul(arrival, remaining));
+    const normal = rUnit(rSub(U, E));
+    return {
+      B: scene.B,
+      E,
+      P,
+      U,
+      n: normal,
+      t: rPerp(normal),
+      line: { o: rSub(scene.B, rMul(arrival, measurement.L)), d: rAdd(departure, arrival) },
+      departure,
+      arrival,
+      remaining,
+      valid: true,
+    };
+  }
+
+  function rConstructDouble(scene, single, theta) {
+    const measurement = scene.measures[1];
+    const departure = rDirection(measurement.psi);
+    const arrival = rDirection(measurement.phi + theta);
+    const firstHit = rHitRayLine(scene.B, departure, single.P, single.n);
+    if (!firstHit || firstHit.t <= 0 || firstHit.t >= measurement.L) return { valid: false, reason: "path 2 misses wall A in forward order" };
+    const reflected = rReflect(departure, single.n);
+    const remaining = measurement.L - firstHit.t;
+    const E = rAdd(firstHit.point, rMul(reflected, remaining));
+    const line = { o: rSub(firstHit.point, rMul(arrival, remaining)), d: rAdd(reflected, arrival) };
+    const crossing = rIntersectLines(single.line.o, single.line.d, line.o, line.d);
+    let U;
+    let distanceToBounce;
+    let coincident = false;
+    if (crossing) {
+      U = crossing.point;
+      distanceToBounce = crossing.s;
+    } else {
+      coincident = true;
+      U = single.U;
+      distanceToBounce = rDot(rSub(U, line.o), line.d) / Math.max(1e-9, rDot(line.d, line.d));
+    }
+    const valid = distanceToBounce > 0 && distanceToBounce < remaining && rDistance(U, single.U) < 8;
+    if (!valid) return { valid: false, reason: "a line crossing exists, but a bounce lies behind its ray or exceeds the delay" };
+    const P = rAdd(firstHit.point, rMul(reflected, distanceToBounce));
+    const recoveredU = rSub(P, rMul(arrival, remaining - distanceToBounce));
+    const normal = rUnit(rSub(recoveredU, E));
+    return {
+      valid: true,
+      first: firstHit.point,
+      P,
+      U: recoveredU,
+      E,
+      n: normal,
+      t: rPerp(normal),
+      line,
+      reflected,
+      coincident,
+    };
+  }
+
+  function rConstructTriple(scene, single, double, theta) {
+    if (!double.valid) return { valid: false, reason: "the two-bounce prefix is already infeasible" };
+    const measurement = scene.measures[2];
+    const departure = rDirection(measurement.psi);
+    const arrival = rDirection(measurement.phi + theta);
+    const firstHit = rHitRayLine(scene.B, departure, single.P, single.n);
+    if (!firstHit || firstHit.t <= 0) return { valid: false, reason: "path 3 cannot reach wall A in forward order" };
+    const reflectedA = rReflect(departure, single.n);
+    const secondHit = rHitRayLine(firstHit.point, reflectedA, double.P, double.n);
+    if (!secondHit || secondHit.t <= 0) return { valid: false, reason: "path 3 reaches wall B only on a backward extension" };
+    const spent = firstHit.t + secondHit.t;
+    const remaining = measurement.L - spent;
+    if (remaining <= 0) return { valid: false, reason: "the prefix exhausts the measured delay" };
+    const reflectedB = rReflect(reflectedA, double.n);
+    const E = rAdd(secondHit.point, rMul(reflectedB, remaining));
+    const line = { o: rSub(secondHit.point, rMul(arrival, remaining)), d: rAdd(reflectedB, arrival) };
+    const crossing = rIntersectLines(single.line.o, single.line.d, line.o, line.d);
+    let U;
+    let distanceToBounce;
+    if (crossing) {
+      U = crossing.point;
+      distanceToBounce = crossing.s;
+    } else {
+      U = single.U;
+      distanceToBounce = rDot(rSub(U, line.o), line.d) / Math.max(1e-9, rDot(line.d, line.d));
+    }
+    const valid =
+      distanceToBounce > 0 &&
+      distanceToBounce < remaining &&
+      rDistance(U, single.U) < 10 &&
+      rDistance(U, double.U) < 10;
+    if (!valid) return { valid: false, reason: "the final intersection violates order or does not close at the same UE" };
+    const P = rAdd(secondHit.point, rMul(reflectedB, distanceToBounce));
+    const recoveredU = rSub(P, rMul(arrival, remaining - distanceToBounce));
+    const normal = rUnit(rSub(recoveredU, E));
+    return {
+      valid: true,
+      first: firstHit.point,
+      second: secondHit.point,
+      P,
+      U: recoveredU,
+      E,
+      n: normal,
+      t: rPerp(normal),
+    };
+  }
+
+  function rSvgDefs() {
+    const markers = [
+      ["measure", RADIO.measurement],
+      ["va", RADIO.va],
+      ["teal", RADIO.incidence],
+      ["green", RADIO.ue],
+      ["red", RADIO.error],
+      ["ink", RADIO.ink],
+    ];
+    return `<defs>${markers
+      .map(
+        ([id, color]) =>
+          `<marker id="radio-arrow-${id}" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0L8 4L0 8Z" fill="${color}"/></marker>`,
+      )
+      .join("")}</defs>`;
+  }
+
+  function rSvgLine(a, b, color, width = 1.5, dash = "", opacity = 1, marker = "") {
+    return `<line x1="${rNumber(a.x)}" y1="${rNumber(a.y)}" x2="${rNumber(b.x)}" y2="${rNumber(b.y)}" stroke="${color}" stroke-width="${width}"${dash ? ` stroke-dasharray="${dash}"` : ""} opacity="${opacity}"${marker ? ` marker-end="url(#radio-arrow-${marker})"` : ""}/>`;
+  }
+
+  function rSvgPath(points, color, width = 2, dash = "", opacity = 1, marker = "") {
+    const path = points.map((point, index) => `${index ? "L" : "M"}${rNumber(point.x)} ${rNumber(point.y)}`).join(" ");
+    return `<path d="${path}" fill="none" stroke="${color}" stroke-width="${width}" stroke-linejoin="round" stroke-linecap="round"${dash ? ` stroke-dasharray="${dash}"` : ""} opacity="${opacity}"${marker ? ` marker-end="url(#radio-arrow-${marker})"` : ""}/>`;
+  }
+
+  function rSvgText(point, label, color = RADIO.soft, size = 10, anchor = "start", weight = 500) {
+    return `<text x="${rNumber(point.x)}" y="${rNumber(point.y)}" fill="${color}" font-size="${size}" font-weight="${weight}" text-anchor="${anchor}">${label}</text>`;
+  }
+
+  function rSvgWall(point, tangent, label, color = RADIO.ink, opacity = 0.9, length = 170) {
+    const a = rSub(point, rMul(tangent, length));
+    const b = rAdd(point, rMul(tangent, length));
+    return `${rSvgLine(a, b, color, 4, "", opacity)}${rSvgText(rAdd(b, { x: 7, y: 4 }), label, color, 10)}`;
+  }
+
+  function rSvgReferenceWall(wall, length = 260) {
+    const a = rSub(wall.p, rMul(wall.t, length));
+    const b = rAdd(wall.p, rMul(wall.t, length));
+    return `${rSvgLine(a, b, RADIO.muted, 2, "7 6", 0.36)}${rSvgText(rAdd(b, { x: -5, y: -8 }), `${wall.label} reference`, RADIO.muted, 8, "end")}`;
+  }
+
+  function rSvgIncidence(point, label) {
+    return `<circle cx="${rNumber(point.x)}" cy="${rNumber(point.y)}" r="5" fill="${RADIO.incidence}" stroke="#fff" stroke-width="1.5"/>${rSvgText(rAdd(point, { x: 9, y: -8 }), label, RADIO.incidenceDeep, 9)}`;
+  }
+
+  function rSvgUE(point, theta, label = "UE") {
+    const heading = rDirection(theta);
+    const arrowEnd = rAdd(point, rMul(heading, 34));
+    return `<circle cx="${rNumber(point.x)}" cy="${rNumber(point.y)}" r="7" fill="${RADIO.ue}" stroke="#fff" stroke-width="2"/>${rSvgLine(point, arrowEnd, RADIO.va, 1.8, "", 1, "va")}${rSvgText(rAdd(point, { x: 11, y: 4 }), label, RADIO.ueDeep, 10, "start", 700)}`;
+  }
+
+  function rSvgBS(point) {
+    return `<rect x="${rNumber(point.x - 7)}" y="${rNumber(point.y - 7)}" width="14" height="14" transform="rotate(45 ${rNumber(point.x)} ${rNumber(point.y)})" fill="${RADIO.scatter}" stroke="#fff" stroke-width="1.5"/>${rSvgText(rAdd(point, { x: -12, y: 22 }), "BS", RADIO.scatter, 10, "middle", 700)}`;
+  }
+
+  function rSvgEndpoint(point) {
+    return `<rect x="${rNumber(point.x - 5)}" y="${rNumber(point.y - 5)}" width="10" height="10" transform="rotate(45 ${rNumber(point.x)} ${rNumber(point.y)})" fill="${RADIO.va}"/>${rSvgText(rAdd(point, { x: 8, y: -9 }), "E = BS + Ldψ", RADIO.vaDeep, 9)}`;
+  }
+
+  function rSvgMeasurementChips(bounces, thetaDegrees) {
+    return `<g transform="translate(18 18)">
+      <rect width="172" height="28" rx="3" fill="#fff" stroke="${RADIO.line}"/>
+      ${rSvgText({ x: 12, y: 18 }, "DATA  L=cτ · ψ · φbody", RADIO.measurementDeep, 8, "start", 700)}
+      <rect x="180" width="128" height="28" rx="3" fill="#fff" stroke="${RADIO.line}"/>
+      ${rSvgText({ x: 192, y: 18 }, `${bounces} BOUNCE${bounces === 1 ? "" : "S"}`, RADIO.soft, 8, "start", 700)}
+      <rect x="316" width="146" height="28" rx="3" fill="#fff" stroke="${RADIO.line}"/>
+      ${rSvgText({ x: 328, y: 18 }, `θ HYPOTHESIS ${thetaDegrees}°`, RADIO.vaDeep, 8, "start", 700)}
+    </g>`;
+  }
+
+  function rRenderRadioGeometry(scene, depth, theta, bounceFraction) {
+    const single = rConstructSingle(scene, theta, bounceFraction);
+    const double = depth >= 2 ? rConstructDouble(scene, single, theta) : null;
+    const triple = depth >= 3 ? rConstructTriple(scene, single, double, theta) : null;
+    const thetaDegrees = Math.round((theta * 180) / Math.PI);
+    let markup = rSvgDefs() + rSvgMeasurementChips(depth, thetaDegrees);
+
+    scene.walls.forEach((wall) => {
+      markup += rSvgReferenceWall(wall, scene === corridorReference ? 245 : 235);
+    });
+
+    const samples = [];
+    for (let fraction = 0.2; fraction <= 0.8; fraction += 0.075) {
+      samples.push(rConstructSingle(scene, theta, fraction).U);
+    }
+    markup += rSvgPath(samples, RADIO.incidence, 1.5, "6 5", 0.55);
+    samples.forEach((point) => {
+      markup += `<circle cx="${rNumber(point.x)}" cy="${rNumber(point.y)}" r="2.2" fill="${RADIO.incidence}" opacity="0.42"/>`;
+    });
+
+    markup += rSvgLine(scene.B, single.E, RADIO.measurement, 1.6, "7 5", 0.78, "measure");
+    markup += rSvgEndpoint(single.E);
+    markup += rSvgPath([scene.B, single.P, single.U], RADIO.scatter, 2.2, "", 0.86);
+    markup += rSvgIncidence(single.P, "P¹");
+    markup += rSvgWall(single.P, single.t, scene === corridorReference ? "wall R hypothesis" : "wall A hypothesis");
+    markup += rSvgUE(single.U, theta);
+    markup += rSvgBS(scene.B);
+
+    let valid = true;
+    let reason = "all ordered segments are positive";
+
+    if (depth >= 2) {
+      if (double.valid) {
+        markup += rSvgPath([scene.B, double.first, double.P, double.U], RADIO.va, 2, "4 4", 0.82);
+        markup += rSvgIncidence(double.first, "P₁");
+        markup += rSvgIncidence(double.P, "P₂");
+        markup += rSvgWall(
+          double.P,
+          double.t,
+          scene === corridorReference ? "wall L hypothesis" : "wall B hypothesis",
+          RADIO.ink,
+          0.82,
+        );
+        markup += rSvgText(
+          rAdd(double.U, { x: 10, y: 19 }),
+          double.coincident ? "candidate lines coincide" : "candidate lines cross here",
+          RADIO.vaDeep,
+          8,
+        );
+      } else {
+        valid = false;
+        reason = double.reason;
+      }
+    }
+
+    if (depth >= 3) {
+      if (triple.valid) {
+        markup += rSvgPath([scene.B, triple.first, triple.second, triple.P, triple.U], RADIO.measurement, 2.2, "2 4", 0.88);
+        markup += rSvgIncidence(triple.first, "Q₁");
+        markup += rSvgIncidence(triple.second, "Q₂");
+        markup += rSvgIncidence(triple.P, "Q₃");
+        markup += rSvgWall(
+          triple.P,
+          triple.t,
+          scene === corridorReference ? "wall R recovered again" : "wall C hypothesis",
+          scene === corridorReference ? RADIO.vaDeep : RADIO.ink,
+          0.78,
+        );
+      } else {
+        valid = false;
+        reason = triple.reason;
+      }
+    }
+
+    if (!valid) {
+      markup += `<rect x="25" y="438" width="710" height="56" rx="4" fill="#fff4f3" stroke="${RADIO.error}"/>`;
+      markup += rSvgText({ x: 45, y: 460 }, "REJECTED HYPOTHESIS", RADIO.error, 10, "start", 700);
+      markup += rSvgText({ x: 45, y: 479 }, reason, RADIO.error, 9);
+      markup += rSvgLine({ x: 700, y: 451 }, { x: 720, y: 481 }, RADIO.error, 3);
+      markup += rSvgLine({ x: 720, y: 451 }, { x: 700, y: 481 }, RADIO.error, 3);
+    } else {
+      markup += `<rect x="25" y="455" width="258" height="34" rx="3" fill="#f2faf7" stroke="#b9ddd5"/>`;
+      markup += rSvgText({ x: 42, y: 476 }, `FEASIBLE SLICE · ${reason}`, RADIO.incidenceDeep, 8, "start", 700);
+    }
+
+    return { markup, valid, reason };
+  }
+
+  function rRenderObservability(nullSlide) {
+    const shift = (nullSlide - 0.5) * 115;
+    let markup = rSvgDefs();
+    markup += `<rect x="18" y="18" width="350" height="484" rx="5" fill="#fff" stroke="${RADIO.line}"/>`;
+    markup += `<rect x="392" y="18" width="350" height="484" rx="5" fill="#fff" stroke="${RADIO.line}"/>`;
+    markup += rSvgText({ x: 38, y: 46 }, "CORNER · INDEPENDENT NORMALS", RADIO.vaDeep, 9, "start", 700);
+    markup += rSvgText({ x: 412, y: 46 }, "CORRIDOR · PARALLEL NORMALS", RADIO.vaDeep, 9, "start", 700);
+
+    const cornerA = [{ x: 62, y: 118 }, { x: 326, y: 118 }];
+    const cornerB = [{ x: 326, y: 118 }, { x: 326, y: 406 }];
+    markup += rSvgLine(cornerA[0], cornerA[1], RADIO.ink, 4);
+    markup += rSvgLine(cornerB[0], cornerB[1], RADIO.ink, 4);
+    const cu0 = { x: 126, y: 330 };
+    const cu1 = { x: 226, y: 254 };
+    markup += rSvgUE(cu0, -0.25, "u₀");
+    markup += rSvgUE(cu1, -0.25, "u₁");
+    markup += rSvgLine(cu0, cu1, RADIO.ue, 2.2, "", 1, "green");
+    markup += rSvgText({ x: 172, y: 306 }, "global Δu", RADIO.ueDeep, 8, "middle", 700);
+    markup += rSvgLine({ x: 82, y: 222 }, { x: 286, y: 222 }, RADIO.measurement, 1.6, "7 5", 0.75);
+    markup += rSvgLine({ x: 222, y: 76 }, { x: 222, y: 424 }, RADIO.incidence, 1.6, "7 5", 0.75);
+    markup += `<rect x="48" y="430" width="290" height="48" rx="3" fill="#f2faf7" stroke="#b9ddd5"/>`;
+    markup += rSvgText({ x: 193, y: 450 }, "rank = 2 · σmin > 0", RADIO.incidenceDeep, 10, "middle", 700);
+    markup += rSvgText({ x: 193, y: 468 }, "two offsets close at one solution", RADIO.soft, 8, "middle");
+
+    const leftX = 438 + shift;
+    const rightX = 690 + shift;
+    markup += rSvgLine({ x: leftX, y: 92 }, { x: leftX, y: 420 }, RADIO.ink, 4);
+    markup += rSvgLine({ x: rightX, y: 92 }, { x: rightX, y: 420 }, RADIO.ink, 4);
+    const u0 = { x: 532 + shift, y: 336 };
+    const u1 = { x: 584 + shift, y: 250 };
+    [-34, 0, 34].forEach((ghostShift) => {
+      markup += `<circle cx="${rNumber(u0.x + ghostShift)}" cy="${rNumber(u0.y)}" r="5" fill="none" stroke="${RADIO.incidence}" stroke-width="1" opacity="0.28"/>`;
+      markup += rSvgLine(
+        { x: leftX + ghostShift, y: 106 },
+        { x: leftX + ghostShift, y: 406 },
+        RADIO.incidence,
+        1,
+        "3 6",
+        0.2,
+      );
+    });
+    markup += rSvgUE(u0, -0.5, "u₀");
+    markup += rSvgUE(u1, -0.5, "u₁");
+    markup += rSvgLine(u0, u1, RADIO.ue, 2.2, "", 1, "green");
+    markup += rSvgText({ x: 558 + shift, y: 296 }, "global Δu", RADIO.ueDeep, 8, "middle", 700);
+    markup += rSvgLine({ x: 420, y: 210 }, { x: 720, y: 210 }, RADIO.measurement, 1.6, "7 5", 0.72);
+    markup += rSvgLine({ x: 420, y: 360 }, { x: 720, y: 360 }, RADIO.incidence, 1.6, "7 5", 0.72);
+    markup += rSvgText({ x: 570, y: 199 }, "both candidate rails point across the corridor", RADIO.measurementDeep, 8, "middle");
+    markup += `<rect x="422" y="430" width="290" height="48" rx="3" fill="#fff4f3" stroke="#e6b4ae"/>`;
+    markup += rSvgText({ x: 567, y: 450 }, "rank = 1 · σmin = 0", RADIO.error, 10, "middle", 700);
+    markup += rSvgText({ x: 567, y: 468 }, "walls + trajectory slide together", RADIO.soft, 8, "middle");
+    return { markup, valid: true, reason: "rank test exposes the null direction" };
+  }
+
+  function stopRadioSweep() {
+    if (radioSweepFrame !== null) window.cancelAnimationFrame(radioSweepFrame);
+    radioSweepFrame = null;
+    radioSweep.setAttribute("aria-pressed", "false");
+    radioSweep.innerHTML = '<span aria-hidden="true">▶</span> Sweep the surviving family';
+  }
+
+  function renderRadio() {
+    const headingDegrees = Number(radioHeading.value);
+    const theta = (headingDegrees * Math.PI) / 180;
+    const bounceFraction = Number(radioBounce.value) / 100;
+    const data = radioCases[radioCase];
+    let result;
+
+    if (radioCase === 5) result = rRenderObservability(bounceFraction);
+    else {
+      const scene = radioCase >= 3 ? corridorReference : cornerReference;
+      const depth = radioCase === 0 ? 1 : radioCase === 1 || radioCase === 3 ? 2 : 3;
+      result = rRenderRadioGeometry(scene, depth, theta, bounceFraction);
+    }
+
+    radioSvg.innerHTML = result.markup;
+    radioSvg.setAttribute("aria-label", data.aria);
+    $("#radio-heading-out").textContent = radioCase === 5 ? "global" : `${headingDegrees > 0 ? "+" : ""}${headingDegrees}°`;
+    $("#radio-bounce-out").textContent = radioCase === 5 ? `${Math.round((bounceFraction - 0.5) * 100)} cm` : `${Math.round(bounceFraction * 100)}%`;
+    $("#radio-slice-state").textContent = result.valid ? "feasible" : "rejected";
+    $("#radio-slice-state").classList.toggle("is-rejected", !result.valid);
+    $("#radio-family-state").textContent = data.family;
+    $("#radio-rank-state").textContent = data.rank;
+  }
+
+  function updateRadioCase(nextCase, resetControls = true) {
+    radioCase = (nextCase + radioCases.length) % radioCases.length;
+    const data = radioCases[radioCase];
+    stopRadioSweep();
+    if (resetControls) {
+      radioHeading.value = "0";
+      radioBounce.value = "50";
+    }
+    $$(".radio-tab").forEach((button) => {
+      const active = Number(button.dataset.radioCase) === radioCase;
+      button.classList.toggle("is-active", active);
+      button.setAttribute("aria-selected", String(active));
+    });
+    $("#radio-case-count").textContent = `§3.${radioCase + 1} / §3.6`;
+    $("#radio-kicker").textContent = data.kicker;
+    $("#radio-case-title").textContent = data.title;
+    $("#radio-case-body").textContent = data.body;
+    $("#radio-case-equation").textContent = data.equation;
+    $("#radio-figure-state").textContent = data.figure;
+    $("#radio-caption").innerHTML = `<strong>Read it.</strong> ${data.caption}`;
+    radioHeading.disabled = radioCase === 5;
+    $("#radio-heading-label").textContent = radioCase === 5 ? "Displacement coordinate frame" : "Candidate UE heading θ";
+    $("#radio-heading-hint").textContent =
+      radioCase === 5
+        ? "This case explicitly assumes globally referenced displacement."
+        : "One hypothesis slice—not a heading measurement.";
+    $("#radio-bounce-label").textContent = radioCase === 5 ? "Corridor null-direction slide" : "Path-1 bounce P along AoD";
+    $("#radio-bounce-hint").textContent =
+      radioCase === 5
+        ? "Move it: corridor walls and trajectory translate without changing the factors."
+        : "Move P: finding the incidence point is finding the first wall.";
+    renderRadio();
+  }
+
+  $$(".radio-tab").forEach((button) => {
+    button.addEventListener("click", () => updateRadioCase(Number(button.dataset.radioCase)));
+  });
+  radioHeading.addEventListener("input", renderRadio);
+  radioBounce.addEventListener("input", renderRadio);
+  radioSweep.addEventListener("click", () => {
+    if (radioSweepFrame !== null) {
+      stopRadioSweep();
+      return;
+    }
+    radioSweep.setAttribute("aria-pressed", "true");
+    radioSweep.innerHTML = '<span aria-hidden="true">Ⅱ</span> Pause family sweep';
+    const started = performance.now();
+    const duration = radioCase === 5 ? 2600 : 5200;
+    const animate = (now) => {
+      const progress = ((now - started) % duration) / duration;
+      if (radioCase === 5) radioBounce.value = String(Math.round(15 + progress * 70));
+      else radioHeading.value = String(Math.round(-180 + progress * 360));
+      renderRadio();
+      radioSweepFrame = window.requestAnimationFrame(animate);
+    };
+    if (reducedMotion) {
+      if (radioCase === 5) radioBounce.value = "72";
+      else radioHeading.value = "90";
+      renderRadio();
+      stopRadioSweep();
+    } else {
+      radioSweepFrame = window.requestAnimationFrame(animate);
+    }
+  });
+
+  updateRadioCase(0, false);
 
   // Keyboard navigation for the main lab when it has focus context.
   document.addEventListener("keydown", (event) => {
