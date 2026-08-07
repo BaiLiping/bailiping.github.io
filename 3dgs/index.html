@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta
       name="description"
-      content="An interactive, source-grounded explanation of the original 3D Gaussian Splatting training and rendering pipeline."
+      content="An interactive, source-grounded explanation of 3D Gaussian Splatting, from fixed-camera training to Gaussian-splatting SLAM."
     />
     <meta name="theme-color" content="#0b0d0f" />
     <title>3DGS | Bai Liping</title>
@@ -23,10 +23,11 @@
       </a>
 
       <nav class="desktop-nav" aria-label="Primary navigation">
-        <a href="#loop">Training loop</a>
+        <a href="#loop">Loop</a>
         <a href="#loss">Loss</a>
         <a href="#cameras">Cameras</a>
         <a href="#renderer">Renderer</a>
+        <a href="#slam">SLAM</a>
       </nav>
 
       <a
@@ -54,7 +55,8 @@
           </h1>
           <p class="hero-deck reveal reveal-delay-2">
             From calibrated photographs to a real-time radiance field—follow one
-            Gaussian through projection, loss, gradient flow, and densification.
+            Gaussian through projection, loss, gradient flow, and densification,
+            then see what changes when the camera pose is no longer known.
           </p>
           <div class="hero-actions reveal reveal-delay-3">
             <a class="button button-primary" href="#loop">
@@ -412,6 +414,7 @@
           <p>
             <strong>Not in the original method.</strong> The SfM calibration is treated as
             known input. The Gaussians move and change; the camera poses stay fixed.
+            <a href="#slam">Removing that assumption is where SLAM begins&nbsp;↓</a>
           </p>
         </div>
       </section>
@@ -573,6 +576,149 @@
         </div>
       </section>
 
+      <section class="section slam-section" id="slam" aria-labelledby="slam-title">
+        <div class="section-heading slam-heading">
+          <div>
+            <span class="index">06</span>
+            <p class="eyebrow">From reconstruction to SLAM</p>
+          </div>
+          <div>
+            <h2 id="slam-title">Now make the camera<br /><em>a variable.</em></h2>
+            <p>
+              The renderer and image loss can stay. What changes is the state being
+              estimated: an online system must recover the incoming camera pose as well
+              as maintain the Gaussian map.
+            </p>
+          </div>
+        </div>
+
+        <div class="slam-boundary">
+          <span>Important boundary</span>
+          <p>
+            <strong>The original SIGGRAPH 2023 method is offline reconstruction—not SLAM.</strong>
+            It receives SfM camera poses as fixed input. The chapter below is a clearly
+            marked extension showing how Gaussian rendering can become a measurement model
+            inside tracking, mapping, and GraphSLAM.
+          </p>
+        </div>
+
+        <div class="state-shift" aria-label="The change from offline 3DGS to Gaussian-splatting SLAM">
+          <article>
+            <span>Original 3DGS</span>
+            <h3>Known poses,<br />unknown map.</h3>
+            <code>𝒢̂ = argmin<sub>𝒢</sub> Σᵢ ℒ(R(𝒢; Tᵢ), Iᵢ)</code>
+            <p>SfM supplies every <code>Tᵢ</code>. Gradient descent changes only the Gaussians.</p>
+          </article>
+          <div class="state-shift-arrow" aria-hidden="true"><i></i><span>release T</span><b>→</b></div>
+          <article class="is-slam">
+            <span>Gaussian SLAM</span>
+            <h3>Unknown pose,<br />evolving map.</h3>
+            <code>alternate: T<sub>t</sub> ↔ 𝒢</code>
+            <p>Track the current camera against the map, then update the map from accepted poses.</p>
+          </article>
+        </div>
+
+        <div class="slam-lab">
+          <div class="slam-lab-topbar">
+            <span><i></i> INTERACTIVE STATE MACHINE</span>
+            <strong id="slam-step-count">01 / 04</strong>
+          </div>
+
+          <div class="slam-tabs" role="tablist" aria-label="From 3DGS reconstruction to SLAM stages">
+            <button class="slam-tab is-active" role="tab" aria-selected="true" data-slam-step="0">
+              <span>01</span><strong>Fix cameras</strong><small>offline 3DGS</small>
+            </button>
+            <button class="slam-tab" role="tab" aria-selected="false" data-slam-step="1">
+              <span>02</span><strong>Track pose</strong><small>map frozen</small>
+            </button>
+            <button class="slam-tab" role="tab" aria-selected="false" data-slam-step="2">
+              <span>03</span><strong>Update map</strong><small>poses frozen</small>
+            </button>
+            <button class="slam-tab" role="tab" aria-selected="false" data-slam-step="3">
+              <span>04</span><strong>Close loop</strong><small>global graph</small>
+            </button>
+          </div>
+
+          <div class="slam-stage">
+            <div class="slam-visual-grid">
+              <figure class="slam-visual-panel">
+                <figcaption><span>A</span> Gaussian map + trajectory <b id="slam-world-state">SfM poses known</b></figcaption>
+                <canvas
+                  id="slam-canvas"
+                  role="img"
+                  aria-label="Top-down Gaussian map with fixed and estimated camera poses"
+                ></canvas>
+              </figure>
+              <figure class="slam-visual-panel">
+                <figcaption><span>B</span> Optimization graph <b id="slam-graph-state">map-only optimization</b></figcaption>
+                <svg
+                  id="slam-graph"
+                  viewBox="0 0 520 360"
+                  role="img"
+                  aria-label="Graph showing fixed cameras supervising a Gaussian map"
+                ></svg>
+              </figure>
+            </div>
+
+            <div class="slam-stage-copy" aria-live="polite">
+              <p class="mini-label" id="slam-kicker">ORIGINAL PAPER · OFFLINE</p>
+              <h3 id="slam-stage-title">SfM has already solved the cameras.</h3>
+              <p id="slam-stage-body">
+                All calibrated views supervise one shared Gaussian scene. A training
+                iteration chooses a camera, but that camera is data—not a variable.
+              </p>
+              <code class="slam-equation" id="slam-equation">freeze {Tᵢ} · optimize 𝒢</code>
+
+              <div class="slam-state-grid" aria-label="Current optimization state">
+                <div><span>Camera poses</span><strong id="slam-pose-state">fixed</strong></div>
+                <div><span>Gaussian map</span><strong id="slam-map-state">learning</strong></div>
+                <div><span>Image evidence</span><strong id="slam-image-state">all views</strong></div>
+                <div><span>Global graph</span><strong id="slam-global-state">not needed</strong></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="slam-controls">
+            <button id="slam-previous" disabled><span aria-hidden="true">←</span> Previous</button>
+            <button id="slam-play" aria-pressed="false"><span aria-hidden="true">▶</span> Play chapter</button>
+            <button id="slam-next">Next: track pose <span aria-hidden="true">→</span></button>
+          </div>
+        </div>
+
+        <div class="factor-bridge">
+          <div class="factor-bridge-copy">
+            <p class="eyebrow">One GraphSLAM architecture</p>
+            <h3>Turn render error into a pose factor.</h3>
+            <p>
+              With the Gaussian map temporarily frozen, a candidate pose produces an
+              image residual and a pose Jacobian. A nonlinear solver can combine that
+              factor with odometry, IMU, priors, and loop closures on the same pose nodes.
+            </p>
+            <p class="factor-caveat">
+              This is one integration pattern—not a claim that every Gaussian SLAM system
+              uses GTSAM, iSAM2, or loop closure.
+            </p>
+          </div>
+          <div class="factor-flow" aria-label="How a rendered image becomes a GraphSLAM factor">
+            <article><span>01</span><strong>Render</strong><code>Î = R(𝒢,T)</code></article>
+            <i>→</i>
+            <article><span>02</span><strong>Compare</strong><code>r = vec(Î − I)</code></article>
+            <i>→</i>
+            <article><span>03</span><strong>Linearize</strong><code>J = ∂r / ∂ξ</code></article>
+            <i>→</i>
+            <article><span>04</span><strong>Insert</strong><code>φ<sub>splat</sub>(xₖ;𝒢)</code></article>
+          </div>
+        </div>
+
+        <div class="slam-deep-dive">
+          <div>
+            <span>Want the solver-level version?</span>
+            <strong>The full Splatting GraphSLAM walkthrough is still available as a deep dive.</strong>
+          </div>
+          <a href="/splatting-graph-slam/">Open the factor-graph lab <span aria-hidden="true">↗</span></a>
+        </div>
+      </section>
+
       <section class="sources" aria-labelledby="sources-title">
         <div>
           <p class="eyebrow">Primary sources</p>
@@ -600,6 +746,13 @@
           >
             <span>CUDA rasterizer</span><i>forward + backward kernels</i><b>↗</b>
           </a>
+          <a
+            href="https://gtsam.org/2026/08/04/gaussian-splatting-slam.html"
+            target="_blank"
+            rel="noreferrer"
+          >
+            <span>Splatting + GraphSLAM</span><i>GTSAM technical post</i><b>↗</b>
+          </a>
         </div>
       </section>
     </main>
@@ -607,7 +760,8 @@
     <footer class="site-footer">
       <p>
         An independent visual explainer of
-        <cite>3D Gaussian Splatting for Real-Time Radiance Field Rendering</cite>.
+        <cite>3D Gaussian Splatting for Real-Time Radiance Field Rendering</cite>,
+        followed by a clearly marked SLAM extension.
       </p>
       <p>Built from the paper and official reference implementation.</p>
     </footer>

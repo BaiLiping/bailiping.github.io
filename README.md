@@ -11,7 +11,8 @@ GitHub Pages site for `bailiping.com`.
 - `/bp-vs-pmbm/` is an interactive side-by-side comparison of belief propagation and PMBM data association for multi-target tracking.
 - `/eo-mtt/` is an interactive note on partition uncertainty in extended-object multi-target tracking.
 - `/gaussian-splatting/` is the original interactive Gaussian Splatting and GS-SLAM note.
-- `/3dgs/` is an interactive explainer of the original 3D Gaussian Splatting paper and training loop.
+- `/3dgs/` is an interactive explainer of the original 3D Gaussian Splatting paper, followed by a clearly separated bridge from fixed-camera reconstruction to Gaussian-splatting SLAM.
+- `/splatting-graph-slam/` remains the deeper factor-graph walkthrough linked from the integrated 3DGS chapter.
 - `/differentiable-ray-tracing/` is an interactive explanation of forward ray simulation, smooth path derivatives, visibility discontinuities, and optimization through a renderer.
 - `/graph-slam/` is a Jupyter-notebook-style walkthrough of graph SLAM, incremental smoothing with iSAM/iSAM2, bundle adjustment, and structure from motion. Its numbered numerical cells were executed; the printed outputs and figures in `graph-slam/assets/` are reproducible results, while external-library cells are marked as reference snippets.
 - `/cir-to-taps/` is an interactive communication-basics lab showing how continuous-delay channel paths become discrete complex channel taps, plus a status-labeled, field-level inventory of the radio-SLAM experiment data and its estimator boundary.

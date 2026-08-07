@@ -1429,6 +1429,339 @@
     });
   });
 
+  // From fixed-camera 3DGS to Gaussian-splatting SLAM
+  const slamCanvas = $("#slam-canvas");
+  const slamGraph = $("#slam-graph");
+  const slamStages = [
+    {
+      kicker: "ORIGINAL PAPER · OFFLINE",
+      title: "SfM has already solved the cameras.",
+      body:
+        "All calibrated views supervise one shared Gaussian scene. A training iteration chooses a camera, but that camera is data—not a variable.",
+      equation: "freeze {Tᵢ} · optimize 𝒢",
+      pose: "fixed input",
+      map: "learning",
+      image: "calibrated set",
+      global: "not needed",
+      world: "SfM poses known",
+      graph: "map-only optimization",
+      next: "Next: track pose",
+      canvasLabel: "Top-down Gaussian map surrounded by fixed structure-from-motion camera poses",
+      graphLabel: "Fixed camera poses supervising one optimized Gaussian map",
+    },
+    {
+      kicker: "SLAM · TRACKING",
+      title: "Freeze the map; solve the new pose.",
+      body:
+        "Render the current Gaussian map from a pose hypothesis and compare it with the incoming frame. Pose gradients move the camera estimate until prediction and observation align.",
+      equation: "T̂ₜ = argmin_T ℒ(R(𝒢; T), Iₜ)",
+      pose: "optimizing",
+      map: "frozen",
+      image: "current frame",
+      global: "local factor",
+      world: "candidate pose moves",
+      graph: "image constrains xₜ",
+      next: "Next: update map",
+      canvasLabel: "Current camera pose hypothesis moving into alignment with a fixed Gaussian map",
+      graphLabel: "Current pose node connected to the Gaussian map through a splat image factor",
+    },
+    {
+      kicker: "SLAM · MAPPING",
+      title: "Accept poses; then improve the map.",
+      body:
+        "Selected keyframes become supervision. With their poses held still, the system inserts, densifies, prunes, and refines Gaussians in regions the current map explains poorly.",
+      equation: "𝒢̂ = argmin_𝒢 Σₖ∈𝒦 ℒ(R(𝒢; T̂ₖ), Iₖ)",
+      pose: "accepted",
+      map: "optimizing",
+      image: "keyframe window",
+      global: "optional",
+      world: "new splats appear",
+      graph: "keyframes update 𝒢",
+      next: "Next: close loop",
+      canvasLabel: "Accepted keyframe poses supervising new and refined Gaussians",
+      graphLabel: "Several accepted keyframe poses connected to the evolving Gaussian map",
+    },
+    {
+      kicker: "GRAPHSLAM · GLOBAL CONSISTENCY",
+      title: "A revisit can correct the whole trajectory.",
+      body:
+        "A loop factor joins poses that see the same place. Graph optimization distributes the correction through the trajectory; the Gaussian map must then be reconciled with the corrected poses.",
+      equation: "argmin_{x₀…xₜ} Σ φprior + φodom + φsplat + φloop",
+      pose: "joint update",
+      map: "reconcile",
+      image: "revisits + sensors",
+      global: "active",
+      world: "drift corrected",
+      graph: "loop closes globally",
+      next: "Restart chapter",
+      canvasLabel: "Drifted camera path corrected globally after a loop closure",
+      graphLabel: "Pose factor graph with odometry, splat factors, and a loop closure",
+    },
+  ];
+
+  const slamPath = [
+    { x: 0.14, y: 0.74 },
+    { x: 0.2, y: 0.47 },
+    { x: 0.37, y: 0.27 },
+    { x: 0.62, y: 0.22 },
+    { x: 0.82, y: 0.4 },
+    { x: 0.8, y: 0.7 },
+    { x: 0.55, y: 0.82 },
+    { x: 0.28, y: 0.82 },
+  ];
+
+  let slamStep = 0;
+  let slamTimer = null;
+
+  function slamPoint(point, width, height) {
+    return { x: point.x * width, y: point.y * height };
+  }
+
+  function drawSlamPath(context, points, width, height, color, dashed = false, lineWidth = 1.5) {
+    context.save();
+    context.strokeStyle = color;
+    context.lineWidth = lineWidth;
+    if (dashed) context.setLineDash([7, 7]);
+    context.beginPath();
+    points.forEach((point, index) => {
+      const projected = slamPoint(point, width, height);
+      if (index === 0) context.moveTo(projected.x, projected.y);
+      else context.lineTo(projected.x, projected.y);
+    });
+    context.stroke();
+    context.restore();
+  }
+
+  function drawSlamCamera(context, x, y, targetX, targetY, color, label, ghost = false) {
+    const angle = Math.atan2(targetY - y, targetX - x);
+    context.save();
+    context.translate(x, y);
+    context.rotate(angle);
+    context.globalAlpha = ghost ? 0.38 : 1;
+    context.fillStyle = "#111719";
+    context.strokeStyle = color;
+    context.lineWidth = ghost ? 1 : 1.8;
+    roundedRect(context, -8, -6, 14, 12, 2);
+    context.fill();
+    context.stroke();
+    context.beginPath();
+    context.moveTo(6, -4);
+    context.lineTo(14, -9);
+    context.lineTo(14, 9);
+    context.lineTo(6, 4);
+    context.closePath();
+    context.stroke();
+    context.restore();
+    if (label) drawLabel(context, label, x, y + 22, color, "center");
+  }
+
+  function drawSlamMap(context, width, height, timestamp, mapping = false) {
+    const centerX = width * 0.5;
+    const centerY = height * 0.52;
+    const spreadX = width * 0.22;
+    const spreadY = height * 0.22;
+    const pulse = reducedMotion ? 0.65 : (Math.sin(timestamp * 0.004) + 1) / 2;
+    scenePoints.slice(0, 34).forEach((point, index) => {
+      const x = centerX + point.x * spreadX;
+      const y = centerY + point.y * spreadY;
+      const scaleBoost = mapping && index > 25 ? 0.65 + pulse * 0.55 : 1;
+      gaussianFill(
+        context,
+        x,
+        y,
+        (6 + point.scale * 5) * scaleBoost,
+        (3 + point.scale * point.stretch * 2.8) * scaleBoost,
+        point.rotation,
+        point.color,
+        mapping && index > 25 ? 0.28 + pulse * 0.38 : 0.48
+      );
+    });
+    context.save();
+    context.strokeStyle = mapping ? "rgba(217, 255, 111, 0.24)" : "rgba(199, 166, 255, 0.18)";
+    context.beginPath();
+    context.ellipse(centerX, centerY, spreadX * 0.9, spreadY * 0.82, 0, 0, Math.PI * 2);
+    context.stroke();
+    context.restore();
+    drawLabel(context, mapping ? "𝒢 · MAP UPDATE" : "𝒢 · FIXED WORLD MAP", centerX, centerY + spreadY + 24, mapping ? COLORS.acid : COLORS.violet, "center");
+  }
+
+  function drawSlamWorld(timestamp = 0) {
+    const { context, width, height } = prepareCanvas(slamCanvas);
+    context.clearRect(0, 0, width, height);
+    context.fillStyle = "#0e1416";
+    context.fillRect(0, 0, width, height);
+    drawGrid(context, { x: 0, y: 0, w: width, h: height }, 30, 0.035);
+    drawSlamMap(context, width, height, timestamp, slamStep === 2);
+    const centerX = width * 0.5;
+    const centerY = height * 0.52;
+
+    if (slamStep === 0) {
+      slamPath.slice(0, 6).forEach((point, index) => {
+        const camera = slamPoint(point, width, height);
+        context.save();
+        context.strokeStyle = "rgba(97, 220, 232, 0.12)";
+        context.setLineDash([4, 7]);
+        context.beginPath();
+        context.moveTo(camera.x, camera.y);
+        context.lineTo(centerX, centerY);
+        context.stroke();
+        context.restore();
+        drawSlamCamera(context, camera.x, camera.y, centerX, centerY, COLORS.cyan, `T${index}`);
+      });
+      drawLabel(context, "CALIBRATED ONCE BY SfM", 16, 18, COLORS.cyan);
+    } else if (slamStep === 1) {
+      drawSlamPath(context, slamPath.slice(0, 5), width, height, "rgba(97, 220, 232, 0.35)");
+      slamPath.slice(0, 4).forEach((point) => {
+        const camera = slamPoint(point, width, height);
+        drawSlamCamera(context, camera.x, camera.y, centerX, centerY, "#6d7774", "");
+      });
+      const target = slamPoint(slamPath[4], width, height);
+      const drift = { x: target.x + width * 0.09, y: target.y - height * 0.12 };
+      const fit = reducedMotion ? 0.62 : (Math.sin(timestamp * 0.0024 - Math.PI / 2) + 1) / 2;
+      const estimate = { x: lerp(drift.x, target.x, fit), y: lerp(drift.y, target.y, fit) };
+      drawSlamCamera(context, target.x, target.y, centerX, centerY, COLORS.cyan, "target", true);
+      drawSlamCamera(context, estimate.x, estimate.y, centerX, centerY, COLORS.coral, "T̂ₜ");
+      drawArrow(context, drift.x, drift.y, target.x, target.y, COLORS.acid, 1.2, 6);
+      drawLabel(context, "RENDER → RESIDUAL → POSE GRADIENT", 16, 18, COLORS.acid);
+    } else if (slamStep === 2) {
+      drawSlamPath(context, slamPath.slice(0, 6), width, height, "rgba(97, 220, 232, 0.38)");
+      slamPath.slice(1, 6).forEach((point, index) => {
+        const camera = slamPoint(point, width, height);
+        drawSlamCamera(context, camera.x, camera.y, centerX, centerY, index === 4 ? COLORS.acid : "#75807d", index === 4 ? "keyframe" : "");
+      });
+      drawLabel(context, "POSES ACCEPTED · DENSIFY WHERE ERROR REMAINS", 16, 18, COLORS.acid);
+    } else {
+      const corrected = [...slamPath, slamPath[0]];
+      const drifted = slamPath.map((point, index) => ({
+        x: point.x + index * 0.012,
+        y: point.y - index * 0.006 + Math.sin(index * 1.4) * 0.018,
+      }));
+      drawSlamPath(context, drifted, width, height, "rgba(255, 114, 94, 0.58)", true, 1.4);
+      drawSlamPath(context, corrected, width, height, "rgba(97, 220, 232, 0.72)", false, 2);
+      const start = slamPoint(slamPath[0], width, height);
+      const end = slamPoint(slamPath[slamPath.length - 1], width, height);
+      context.save();
+      context.strokeStyle = COLORS.acid;
+      context.lineWidth = 2.4;
+      context.setLineDash([5, 5]);
+      context.beginPath();
+      context.moveTo(end.x, end.y);
+      context.lineTo(start.x, start.y);
+      context.stroke();
+      context.restore();
+      drawSlamCamera(context, start.x, start.y, centerX, centerY, COLORS.cyan, "x₀");
+      drawSlamCamera(context, end.x, end.y, centerX, centerY, COLORS.acid, "xₜ");
+      drawLabel(context, "CORAL: DRIFT · CYAN: CORRECTED · ACID: LOOP", 16, 18, COLORS.acid);
+    }
+  }
+
+  function graphPose(x, y, label, className = "") {
+    return `<circle class="slam-graph-node ${className}" cx="${x}" cy="${y}" r="24"></circle><text class="slam-graph-label" x="${x}" y="${y}">${label}</text>`;
+  }
+
+  function graphMap(x, y) {
+    return `<ellipse class="slam-graph-node is-map" cx="${x}" cy="${y}" rx="48" ry="31"></ellipse><text class="slam-graph-label" x="${x}" y="${y}">𝒢</text>`;
+  }
+
+  function graphFactor(x, y) {
+    return `<rect class="slam-factor-diamond" x="${x - 9}" y="${y - 9}" width="18" height="18" transform="rotate(45 ${x} ${y})"></rect>`;
+  }
+
+  function updateSlamGraph() {
+    let markup = "";
+    if (slamStep === 0) {
+      markup = `
+        <path class="slam-graph-edge is-splat" d="M112 92 L238 170 M408 92 L282 170 M112 276 L238 202 M408 276 L282 202"></path>
+        ${graphPose(92, 80, "T₀", "is-fixed")}${graphPose(428, 80, "T₁", "is-fixed")}
+        ${graphPose(92, 286, "T₂", "is-fixed")}${graphPose(428, 286, "T₃", "is-fixed")}
+        ${graphMap(260, 186)}
+        <text class="slam-graph-caption" x="260" y="338">LOCKED POSES · OPTIMIZE MAP</text>`;
+    } else if (slamStep === 1) {
+      markup = `
+        <path class="slam-graph-edge" d="M92 112 L212 112 L352 112"></path>
+        <path class="slam-graph-edge is-splat" d="M372 136 L344 212 M328 232 L282 260"></path>
+        ${graphPose(72, 112, "x₀", "is-fixed")}${graphPose(212, 112, "x₁", "is-fixed")}${graphPose(372, 112, "xₜ", "is-current")}
+        ${graphFactor(336, 224)}${graphMap(260, 286)}
+        <text class="slam-graph-caption" x="336" y="196">SPLAT FACTOR</text>
+        <text class="slam-graph-caption" x="260" y="338">MAP FROZEN · SOLVE xₜ</text>`;
+    } else if (slamStep === 2) {
+      markup = `
+        <path class="slam-graph-edge is-splat" d="M104 108 L218 172 M260 108 L260 154 M416 108 L302 172"></path>
+        ${graphPose(84, 96, "x₀", "is-fixed")}${graphPose(260, 84, "x₁", "is-fixed")}${graphPose(436, 96, "x₂", "is-fixed")}
+        ${graphFactor(218, 172)}${graphFactor(260, 172)}${graphFactor(302, 172)}${graphMap(260, 254)}
+        <text class="slam-graph-caption" x="260" y="322">POSES ACCEPTED · UPDATE 𝒢</text>`;
+    } else {
+      markup = `
+        <path class="slam-graph-edge" d="M96 104 L210 62 L336 82 L422 172 L366 286 L212 294 L104 220"></path>
+        <path class="slam-graph-edge is-loop" d="M96 104 Q34 166 104 220"></path>
+        <path class="slam-graph-edge is-splat" d="M116 112 L234 178 M222 80 L246 166 M324 100 L276 168 M352 270 L276 208 M222 278 L246 214"></path>
+        ${graphPose(78, 96, "x₀", "is-loop")}${graphPose(212, 54, "x₁")}${graphPose(350, 78, "x₂")}${graphPose(438, 174, "x₃")}
+        ${graphPose(366, 296, "x₄")}${graphPose(212, 304, "x₅")}${graphPose(88, 226, "xₜ", "is-loop")}
+        ${graphMap(260, 190)}
+        <text class="slam-graph-caption" x="53" y="169">LOOP</text>
+        <text class="slam-graph-caption" x="260" y="344">JOINT POSE UPDATE · THEN RECONCILE MAP</text>`;
+    }
+    slamGraph.innerHTML = markup;
+  }
+
+  function stopSlamPlayback() {
+    if (slamTimer !== null) window.clearInterval(slamTimer);
+    slamTimer = null;
+    $("#slam-play").setAttribute("aria-pressed", "false");
+    $("#slam-play").innerHTML = '<span aria-hidden="true">▶</span> Play chapter';
+  }
+
+  function updateSlamStep(nextStep, keepPlaying = false) {
+    slamStep = (nextStep + slamStages.length) % slamStages.length;
+    const stage = slamStages[slamStep];
+    $$(".slam-tab").forEach((button) => {
+      const active = Number(button.dataset.slamStep) === slamStep;
+      button.classList.toggle("is-active", active);
+      button.setAttribute("aria-selected", String(active));
+    });
+    $("#slam-step-count").textContent = `${String(slamStep + 1).padStart(2, "0")} / 04`;
+    $("#slam-kicker").textContent = stage.kicker;
+    $("#slam-stage-title").textContent = stage.title;
+    $("#slam-stage-body").textContent = stage.body;
+    $("#slam-equation").textContent = stage.equation;
+    $("#slam-pose-state").textContent = stage.pose;
+    $("#slam-map-state").textContent = stage.map;
+    $("#slam-image-state").textContent = stage.image;
+    $("#slam-global-state").textContent = stage.global;
+    $("#slam-world-state").textContent = stage.world;
+    $("#slam-graph-state").textContent = stage.graph;
+    slamCanvas.setAttribute("aria-label", stage.canvasLabel);
+    slamGraph.setAttribute("aria-label", stage.graphLabel);
+    $("#slam-previous").disabled = slamStep === 0;
+    $("#slam-next").innerHTML = `${stage.next} <span aria-hidden="true">${slamStep === slamStages.length - 1 ? "↺" : "→"}</span>`;
+    updateSlamGraph();
+    drawSlamWorld(performance.now());
+    if (!keepPlaying) stopSlamPlayback();
+  }
+
+  $$(".slam-tab").forEach((button) => {
+    button.addEventListener("click", () => updateSlamStep(Number(button.dataset.slamStep)));
+  });
+
+  $("#slam-previous").addEventListener("click", () => updateSlamStep(slamStep - 1));
+  $("#slam-next").addEventListener("click", () => updateSlamStep(slamStep + 1));
+  $("#slam-play").addEventListener("click", () => {
+    if (slamTimer !== null) {
+      stopSlamPlayback();
+      return;
+    }
+    $("#slam-play").setAttribute("aria-pressed", "true");
+    $("#slam-play").innerHTML = '<span aria-hidden="true">Ⅱ</span> Pause chapter';
+    slamTimer = window.setInterval(() => updateSlamStep(slamStep + 1, true), 2300);
+  });
+
+  function slamAnimation(timestamp) {
+    drawSlamWorld(timestamp);
+    window.requestAnimationFrame(slamAnimation);
+  }
+  updateSlamStep(0);
+  window.requestAnimationFrame(slamAnimation);
+
   // Keyboard navigation for the main lab when it has focus context.
   document.addEventListener("keydown", (event) => {
     if (event.target.matches("input, button, a")) return;
