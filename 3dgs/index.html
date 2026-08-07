@@ -55,9 +55,10 @@
             <em>unpacked.</em>
           </h1>
           <p class="hero-deck reveal reveal-delay-2">
-            From calibrated photographs to a real-time radiance field—follow one
-            Gaussian through projection, loss, gradient flow, and densification,
-            then see what changes when the camera pose is no longer known.
+            Calibrated photographs seed an explicit radiance field. Each iteration
+            projects the Gaussians, evaluates image error, propagates gradients, and
+            adapts the representation; later sections release the fixed camera pose
+            for SLAM.
           </p>
           <div class="hero-actions reveal reveal-delay-3">
             <a class="button button-primary" href="#loop">
@@ -91,17 +92,17 @@
         </div>
       </section>
 
-      <section class="answer-strip" aria-label="The short answer">
+      <section class="answer-strip" aria-label="Core reconstruction pipeline">
         <div class="answer-strip-lead">
           <span class="index">00</span>
-          <p>Your understanding is right.</p>
+          <p>Core reconstruction pipeline</p>
         </div>
         <div class="answer-strip-flow" aria-label="Simplified training flow">
           <span>SfM</span><i>→</i><span>render</span><i>→</i><span>loss</span><i>→</i
           ><span>backprop</span><i>→</i><span>update</span><i>↺</i>
         </div>
         <p class="answer-strip-note">
-          One nuance: <strong>splat rasterization</strong> replaces ray marching.
+          Rendering uses <strong>splat rasterization</strong>, not ray marching.
         </p>
       </section>
 
@@ -114,8 +115,9 @@
           <div>
             <h2 id="loop-title">One iteration,<br /><em>frame by frame.</em></h2>
             <p>
-              Select a stage or press play. The diagrams are simplified, but the
-              ordering mirrors the paper and the reference training code.
+              The sequence follows one iteration in the paper and reference training
+              code, from fixed SfM calibration through rendering, loss evaluation,
+              backpropagation, and adaptive density control.
             </p>
           </div>
         </div>
@@ -128,7 +130,7 @@
             <span>02</span> Initialize
           </button>
           <button class="pipeline-tab" role="tab" aria-selected="false" data-step="2">
-            <span>03</span> Pick camera
+            <span>03</span> Training view
           </button>
           <button class="pipeline-tab" role="tab" aria-selected="false" data-step="3">
             <span>04</span> Splat render
@@ -170,13 +172,13 @@
                 aria-label="Interactive diagram of a Gaussian Splatting training iteration"
                 role="img"
               ></canvas>
-              <p class="canvas-hint">Tip: click a camera in the scene</p>
+              <p class="canvas-hint">Camera icons select the training view</p>
             </div>
 
             <aside class="lab-explanation" aria-live="polite">
               <div>
                 <p class="step-count" id="step-count">STEP 01 / 07</p>
-                <h3 id="step-title">Calibrate the capture</h3>
+                <h3 id="step-title">SfM calibrates the capture</h3>
                 <p id="step-copy">
                   Structure from Motion recovers a sparse 3D point cloud and one calibrated
                   camera per registered image: intrinsics, rotation, and translation.
@@ -184,12 +186,12 @@
               </div>
 
               <div class="step-detail">
-                <span id="step-detail-label">SfM gives us</span>
+                <span id="step-detail-label">SfM output</span>
                 <code id="step-equation">{ points, Kᵢ, Rᵢ, tᵢ, imageᵢ }</code>
               </div>
 
               <div>
-                <p class="mini-label">What changes here?</p>
+                <p class="mini-label">State transition</p>
                 <div class="change-pills" id="change-pills">
                   <span>camera poses: fixed</span>
                   <span>seed points: created</span>
@@ -232,10 +234,10 @@
         <div class="section-heading compact">
           <div>
             <span class="index">02</span>
-            <p class="eyebrow">The objective</p>
+            <p class="eyebrow">Training objective</p>
           </div>
           <div>
-            <h2 id="loss-title">What is the<br /><em>loss function?</em></h2>
+            <h2 id="loss-title">Pixels and structure,<br /><em>in one loss.</em></h2>
           </div>
         </div>
 
@@ -310,7 +312,7 @@
         <div class="loss-notes">
           <article>
             <span class="note-number">A</span>
-            <h3>L1 keeps pixels honest.</h3>
+            <h3>L1 measures pixel error.</h3>
             <p>
               It measures the mean absolute RGB difference. It is direct and stable, but
               does not fully capture perceived local structure.
@@ -318,7 +320,7 @@
           </article>
           <article>
             <span class="note-number">B</span>
-            <h3>SSIM keeps structure coherent.</h3>
+            <h3>SSIM measures local structure.</h3>
             <p>
               It compares local luminance, contrast, and structure. The paper uses
               λ = 0.2, so L1 still carries 80% of the objective.
@@ -326,7 +328,7 @@
           </article>
           <article>
             <span class="note-number">+</span>
-            <h3>A current-code footnote.</h3>
+            <h3>Optional depth regularization.</h3>
             <p>
               The 2024-updated repository can optionally add a monocular inverse-depth
               L1 term. That is an extension, not the original paper’s base loss.
@@ -342,8 +344,8 @@
             <p class="eyebrow">The role of SfM cameras</p>
             <h2 id="camera-title">Many cameras.<br /><em>One view at a time.</em></h2>
             <p class="lead">
-              Yes, there are multiple camera positions—normally one calibrated pose for
-              every image registered by COLMAP.
+              COLMAP provides one calibrated pose for every registered image, placing
+              multiple cameras and the sparse point cloud in a common world frame.
             </p>
 
             <ol class="camera-facts">
@@ -384,7 +386,7 @@
             <div class="demo-card-head">
               <div>
                 <span>view selector</span>
-                <strong>Click a camera</strong>
+                <strong>Selectable cameras</strong>
               </div>
               <span class="fixed-badge">POSES FIXED</span>
             </div>
@@ -411,11 +413,11 @@
         </div>
 
         <div class="camera-answer">
-          <span>Do the camera positions learn?</span>
+          <span>Fixed-pose assumption</span>
           <p>
-            <strong>Not in the original method.</strong> The SfM calibration is treated as
-            known input. The Gaussians move and change; the camera poses stay fixed.
-            <a href="#slam">Removing that assumption is where SLAM begins&nbsp;↓</a>
+            <strong>The original method treats the SfM calibration as known input.</strong>
+            The Gaussians move and change while the camera poses remain fixed.
+            <a href="#slam">Releasing the poses produces the transition to SLAM&nbsp;↓</a>
           </p>
         </div>
       </section>
@@ -427,7 +429,7 @@
             <p class="eyebrow">The renderer</p>
           </div>
           <div>
-            <h2 id="renderer-title">Ray tracing?<br /><em>No—forward splatting.</em></h2>
+            <h2 id="renderer-title">Forward splatting,<br /><em>without ray tracing.</em></h2>
             <p>
               There are no rays sampling an MLP through empty space. Known Gaussian
               primitives are projected toward the screen, sorted, and composited.
@@ -509,7 +511,7 @@
         <div class="section-heading compact">
           <div>
             <span class="index">05</span>
-            <p class="eyebrow">What actually learns?</p>
+            <p class="eyebrow">Trainable scene parameters</p>
           </div>
           <div>
             <h2 id="model-title">Each point becomes<br /><em>a small model.</em></h2>
@@ -553,7 +555,7 @@
 
       <section class="section recap-section" aria-labelledby="recap-title">
         <div class="recap-card">
-          <p class="eyebrow">The entire paper in one loop</p>
+          <p class="eyebrow">Complete reconstruction loop</p>
           <h2 id="recap-title">
             Calibrate once.<br />
             <em>Render and correct, repeatedly.</em>
@@ -571,8 +573,8 @@
           </div>
 
           <div class="recap-answer">
-            <span>So: rendering first, then loss, then backprop?</span>
-            <strong>Exactly.</strong>
+            <span>Forward render → loss evaluation → backward pass</span>
+            <strong>Repeated across views.</strong>
           </div>
         </div>
       </section>
@@ -584,22 +586,21 @@
             <p class="eyebrow">From reconstruction to SLAM</p>
           </div>
           <div>
-            <h2 id="slam-title">Now make the camera<br /><em>a variable.</em></h2>
+            <h2 id="slam-title">Releasing the camera pose<br /><em>extends 3DGS to SLAM.</em></h2>
             <p>
-              The renderer and image loss can stay. What changes is the state being
-              estimated: an online system must recover the incoming camera pose as well
-              as maintain the Gaussian map.
+              The differentiable renderer and image loss remain available, while the
+              estimated state expands: an online system must recover each incoming
+              camera pose and maintain the Gaussian map.
             </p>
           </div>
         </div>
 
         <div class="slam-boundary">
-          <span>Important boundary</span>
+          <span>Method boundary</span>
           <p>
             <strong>The original SIGGRAPH 2023 method is offline reconstruction—not SLAM.</strong>
-            It receives SfM camera poses as fixed input. The chapter below is a clearly
-            marked extension showing how Gaussian rendering can become a measurement model
-            inside tracking, mapping, and GraphSLAM.
+            It receives SfM camera poses as fixed input. Gaussian rendering can nonetheless
+            become a differentiable measurement model for tracking, mapping, and GraphSLAM.
           </p>
         </div>
 
@@ -663,7 +664,7 @@
 
             <div class="slam-stage-copy" aria-live="polite">
               <p class="mini-label" id="slam-kicker">ORIGINAL PAPER · OFFLINE</p>
-              <h3 id="slam-stage-title">SfM has already solved the cameras.</h3>
+              <h3 id="slam-stage-title">SfM supplies fixed camera calibration.</h3>
               <p id="slam-stage-body">
                 All calibrated views supervise one shared Gaussian scene. A training
                 iteration chooses a camera, but that camera is data—not a variable.
@@ -689,7 +690,7 @@
         <div class="factor-bridge">
           <div class="factor-bridge-copy">
             <p class="eyebrow">One GraphSLAM architecture</p>
-            <h3>Turn render error into a pose factor.</h3>
+            <h3>Render error becomes a pose factor.</h3>
             <p>
               With the Gaussian map temporarily frozen, a candidate pose produces an
               image residual and a pose Jacobian. A nonlinear solver can combine that
@@ -713,8 +714,8 @@
 
         <div class="slam-deep-dive">
           <div>
-            <span>Want the solver-level version?</span>
-            <strong>The full Splatting GraphSLAM walkthrough is still available as a deep dive.</strong>
+            <span>Solver-level formulation</span>
+            <strong>A dedicated walkthrough develops the rendered image residual as a GraphSLAM factor.</strong>
           </div>
           <a href="/splatting-graph-slam/">Open the factor-graph lab <span aria-hidden="true">↗</span></a>
         </div>
@@ -827,9 +828,10 @@
                 <p class="mini-label" id="radio-kicker">§3.1 · SINGLE BOUNCE</p>
                 <h3 id="radio-case-title">One path leaves a family, not a point.</h3>
                 <p id="radio-case-body">
-                  Walk the measured length along the departure ray to its endpoint E.
-                  Pick a bounce P, rotate the body-frame AoA by a heading hypothesis,
-                  and the candidate UE and wall follow. Every P and θ remains coherent.
+                  The measured path length defines endpoint E on the departure ray. A
+                  bounce position P and heading hypothesis rotate the body-frame AoA and
+                  jointly determine a candidate UE and wall. Varying P and θ preserves a
+                  coherent family.
                 </p>
                 <code id="radio-case-equation">E = BS + Ldψ · state = (P, θ)</code>
               </div>
@@ -849,7 +851,7 @@
                   <output id="radio-bounce-out">50%</output>
                 </label>
                 <input id="radio-bounce" type="range" min="15" max="85" step="1" value="50" />
-                <p id="radio-bounce-hint">Move P: finding the incidence point is finding the wall.</p>
+                <p id="radio-bounce-hint">Changing P changes the incidence point and inferred wall.</p>
               </div>
 
               <div class="radio-readout" aria-label="Current hypothesis readout">
@@ -865,21 +867,20 @@
           </div>
 
           <div class="radio-caption" id="radio-caption">
-            <strong>Read it.</strong> The endpoint E is the mirror image of the UE for
-            the selected path. Re-pinning the remaining path length at P and rotating
-            φ<sub>body</sub> by a candidate θ constructs a valid UE and an implied wall.
-            One bounce therefore cannot identify position, wall, or heading by itself.
+            The endpoint E is the mirror image of the UE for the selected path. Re-pinning
+            the remaining path length at P and rotating φ<sub>body</sub> by a candidate θ
+            constructs a valid UE and an implied wall. One bounce therefore cannot
+            identify position, wall, or heading by itself.
           </div>
         </div>
 
         <div class="radio-next">
-          <span>Why this belongs here</span>
+          <span>Shared optimization structure</span>
           <p>
-            The optimization pattern is the same as the visual chapter—state → forward
-            model → residual → update—but radio measurements expose different null
-            directions. The next development step is to turn these path residuals into
-            persistent factors connected to UE poses, radio splats, and data-association
-            variables.
+            Visual and radio estimation share the pattern state → forward model → residual
+            → update, while radio measurements introduce different null directions. This
+            structure supports persistent factors connecting UE poses, reflecting splats,
+            and data-association variables.
           </p>
         </div>
       </section>
@@ -887,7 +888,7 @@
       <section class="sources" aria-labelledby="sources-title">
         <div>
           <p class="eyebrow">Primary sources</p>
-          <h2 id="sources-title">Go to the original.</h2>
+          <h2 id="sources-title">Original references.</h2>
         </div>
         <div class="source-links">
           <a
@@ -926,7 +927,7 @@
       <p>
         An independent visual explainer of
         <cite>3D Gaussian Splatting for Real-Time Radiance Field Rendering</cite>,
-        followed by clearly marked visual- and radio-SLAM extensions.
+        with extensions to visual and radio SLAM.
       </p>
       <p>Built from the paper and official reference implementation.</p>
     </footer>

@@ -346,16 +346,16 @@
   const processCanvas = $("#process-canvas");
   const stepData = [
     {
-      title: "Calibrate the capture",
+      title: "SfM calibrates the capture",
       copy:
         "Structure from Motion recovers a sparse 3D point cloud and one calibrated camera per registered image: intrinsics, rotation, and translation.",
-      label: "SfM gives us",
+      label: "SfM output",
       equation: "{ points, Kᵢ, Rᵢ, tᵢ, imageᵢ }",
       status: "COLMAP OUTPUT · FIXED",
       pills: ["camera poses: fixed", "seed points: created"],
     },
     {
-      title: "Turn points into Gaussians",
+      title: "Sparse points initialize Gaussians",
       copy:
         "Every sparse SfM point becomes a 3D Gaussian. Its mean and color come from the point; its initial covariance is isotropic, scaled from nearby-point distances.",
       label: "Initialize each primitive",
@@ -364,7 +364,7 @@
       pills: ["opacity: 0.1", "rotation: identity", "SH: point color"],
     },
     {
-      title: "Choose a training view",
+      title: "One calibrated view is sampled",
       copy:
         "The implementation draws one camera from the training-camera stack. Its calibrated pose and matching photograph define this iteration’s viewpoint and target.",
       label: "Selected supervision pair",
@@ -373,7 +373,7 @@
       pills: ["camera: fixed", "photo: target", "Gaussians: shared"],
     },
     {
-      title: "Differentiably splat",
+      title: "Gaussians render differentiably",
       copy:
         "Project visible 3D Gaussians to 2D ellipses, bin them into 16 × 16 pixel tiles, sort by tile and depth, then alpha-composite front-to-back.",
       label: "Projected covariance",
@@ -382,7 +382,7 @@
       pills: ["frustum cull", "depth sort", "α composite"],
     },
     {
-      title: "Compare render and photo",
+      title: "The loss compares render and photo",
       copy:
         "The rendered pixels are compared with the selected camera’s ground-truth photo using a weighted combination of L1 error and structural dissimilarity.",
       label: "Paper objective",
@@ -391,7 +391,7 @@
       pills: ["L1: 80%", "D-SSIM: 20%", "scalar loss"],
     },
     {
-      title: "Send gradients backward",
+      title: "Gradients flow through the renderer",
       copy:
         "Calling backward differentiates through compositing and projection. Adam updates the visible Gaussians’ position, scale, rotation, opacity, and SH coefficients.",
       label: "Gradient targets",
@@ -400,7 +400,7 @@
       pills: ["render is differentiable", "poses stay fixed", "parameters update"],
     },
     {
-      title: "Adapt the representation",
+      title: "Density control adapts the representation",
       copy:
         "At scheduled intervals, high-gradient small Gaussians are cloned, large ones are split, and low-opacity or oversized Gaussians are pruned.",
       label: "Adaptive density control",
@@ -1435,7 +1435,7 @@
   const slamStages = [
     {
       kicker: "ORIGINAL PAPER · OFFLINE",
-      title: "SfM has already solved the cameras.",
+      title: "SfM supplies fixed camera calibration.",
       body:
         "All calibrated views supervise one shared Gaussian scene. A training iteration chooses a camera, but that camera is data—not a variable.",
       equation: "freeze {Tᵢ} · optimize 𝒢",
@@ -1451,9 +1451,9 @@
     },
     {
       kicker: "SLAM · TRACKING",
-      title: "Freeze the map; solve the new pose.",
+      title: "Pose tracking holds the map fixed.",
       body:
-        "Render the current Gaussian map from a pose hypothesis and compare it with the incoming frame. Pose gradients move the camera estimate until prediction and observation align.",
+        "A current pose hypothesis renders the fixed Gaussian map. Its difference from the incoming frame produces pose gradients that move the camera estimate until prediction and observation align.",
       equation: "T̂ₜ = argmin_T ℒ(R(𝒢; T), Iₜ)",
       pose: "optimizing",
       map: "frozen",
@@ -1467,7 +1467,7 @@
     },
     {
       kicker: "SLAM · MAPPING",
-      title: "Accept poses; then improve the map.",
+      title: "Mapping holds accepted poses fixed.",
       body:
         "Selected keyframes become supervision. With their poses held still, the system inserts, densifies, prunes, and refines Gaussians in regions the current map explains poorly.",
       equation: "𝒢̂ = argmin_𝒢 Σₖ∈𝒦 ℒ(R(𝒢; T̂ₖ), Iₖ)",
@@ -1483,7 +1483,7 @@
     },
     {
       kicker: "GRAPHSLAM · GLOBAL CONSISTENCY",
-      title: "A revisit can correct the whole trajectory.",
+      title: "Loop closure distributes a global correction.",
       body:
         "A loop factor joins poses that see the same place. Graph optimization distributes the correction through the trajectory; the Gaussian map must then be reconciled with the corrected poses.",
       equation: "argmin_{x₀…xₜ} Σ φprior + φodom + φsplat + φloop",
@@ -1790,7 +1790,7 @@
       kicker: "§3.1 · SINGLE BOUNCE",
       title: "One path leaves a family, not a point.",
       body:
-        "Walk the measured length along the departure ray to E. Pick a bounce P, rotate the body-frame AoA by a heading hypothesis, and the candidate UE and wall follow. Every P and θ remains coherent.",
+        "The measured path length defines endpoint E on the departure ray. A bounce position P and heading hypothesis rotate the body-frame AoA and jointly determine a candidate UE and wall. Varying P and θ preserves a coherent family.",
       equation: "E = BS + Ldψ · state = (P, θ)",
       caption:
         "The endpoint E is the mirror image of the UE for this path. Re-pinning the remaining length at P and rotating φbody by a candidate θ constructs a valid UE and an implied wall. One bounce cannot identify position, wall, or heading by itself.",
@@ -1853,9 +1853,9 @@
     },
     {
       kicker: "§3.6 · SPECIAL OBSERVABILITY TEST",
-      title: "A rank test says whether optimization can return a point.",
+      title: "The rank test distinguishes a point from a family.",
       body:
-        "Now add globally referenced UE displacements. Nonparallel wall normals give a full-rank cross-family system; parallel corridor normals give rank one, so the solver should report a line of answers.",
+        "Globally referenced UE displacements add a stronger constraint. Nonparallel wall normals give a full-rank cross-family system; parallel corridor normals give rank one, so the solution remains a line.",
       equation: "rank[−2nA | 2nB] = 2 (corner), 1 (corridor)",
       caption:
         "This final case changes the sensor assumption. With global displacement, a corner supplies two independent wall normals and closes the offsets. A corridor supplies only one normal direction: walls and trajectory can slide together along the remaining null direction.",
@@ -2358,7 +2358,7 @@
     $("#radio-case-body").textContent = data.body;
     $("#radio-case-equation").textContent = data.equation;
     $("#radio-figure-state").textContent = data.figure;
-    $("#radio-caption").innerHTML = `<strong>Read it.</strong> ${data.caption}`;
+    $("#radio-caption").textContent = data.caption;
     radioHeading.disabled = radioCase === 5;
     $("#radio-heading-label").textContent = radioCase === 5 ? "Displacement coordinate frame" : "Candidate UE heading θ";
     $("#radio-heading-hint").textContent =
@@ -2368,8 +2368,8 @@
     $("#radio-bounce-label").textContent = radioCase === 5 ? "Corridor null-direction slide" : "Path-1 bounce P along AoD";
     $("#radio-bounce-hint").textContent =
       radioCase === 5
-        ? "Move it: corridor walls and trajectory translate without changing the factors."
-        : "Move P: finding the incidence point is finding the first wall.";
+        ? "Translation along the corridor null direction leaves the factors unchanged."
+        : "Changing P changes the first incidence point and inferred wall.";
     renderRadio();
   }
 
