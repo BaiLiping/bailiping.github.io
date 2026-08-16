@@ -1,0 +1,549 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>One loop of SLAM — the whole process, step by step | Bai Liping</title>
+<meta name="description" content="An interactive walkthrough of visual SLAM: a robot drives one loop, tracks with motion-only BA, drifts, closes the loop, and repairs the map with pose graph optimization and global bundle adjustment.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#FAF9F5; --panel:#F0EEE6; --canvas:#F5F3EC; --border:#E3E0D5;
+  --ink:#3D3929; --dim:#6E6D66; --accent:#D97757; --accent-press:#C4653F;
+  --good:#417B4B; --bad:#BC4B43; --lm:#3B6ECC;
+  --sans:"Instrument Sans",system-ui,sans-serif;
+  --serif:"Source Serif 4",Georgia,serif;
+}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--bg);color:var(--ink);font-family:var(--sans);line-height:1.55;-webkit-font-smoothing:antialiased}
+.wrap{max-width:940px;margin:0 auto;padding:44px 20px 72px}
+.eyebrow{font-size:13px;font-weight:500;color:var(--dim);display:flex;align-items:center;gap:7px}
+.eyebrow .spark{color:var(--accent);font-size:15px}
+h1{font-family:var(--serif);font-size:clamp(30px,5vw,44px);font-weight:600;letter-spacing:-.01em;margin:8px 0 12px}
+.premise{font-family:var(--serif);color:var(--dim);max-width:660px;margin:0 0 12px;font-size:17px}
+.source-note{font-size:13px;color:var(--dim);margin:0 0 28px}
+.source-note a{color:var(--accent);text-decoration:underline;text-underline-offset:2px}
+.scope-note{max-width:760px;margin:0 0 28px;padding:13px 16px;border-left:3px solid var(--accent);background:var(--panel);border-radius:0 10px 10px 0;color:var(--dim);font-size:13.5px}
+.scope-note strong{color:var(--ink)}
+.card{background:var(--panel);border:1px solid var(--border);border-radius:14px;padding:12px}
+canvas{width:100%;display:block;border-radius:10px;border:1px solid var(--border);background:var(--canvas);touch-action:none;cursor:grab;aspect-ratio:16/9}
+#fgC{aspect-ratio:640/150;cursor:default;touch-action:auto}
+.fgnote{font-size:12.5px;color:var(--dim);padding:9px 6px 2px}
+.caption{background:var(--panel);border:1px solid var(--border);border-radius:14px;padding:18px 22px;margin-top:14px;min-height:132px}
+.caption h2{font-size:15px;font-weight:600;margin:0 0 8px}
+.caption h2 span{color:var(--dim);font-weight:500}
+.caption p{font-family:var(--serif);font-size:16px;color:var(--dim);margin:0}
+.caption p strong{color:var(--ink);font-weight:600}
+.nav{display:flex;align-items:center;gap:14px;margin-top:14px;flex-wrap:wrap}
+.pills{display:flex;gap:8px;flex:1;justify-content:center}
+.pill{width:10px;height:10px;border-radius:50%;background:var(--border);border:none;padding:0;cursor:pointer}
+.pill.on{background:var(--accent)}
+button{font-family:var(--sans);font-size:13.5px;font-weight:500;padding:9px 18px;border-radius:10px;cursor:pointer;border:1px solid var(--border);background:#fff;color:var(--ink)}
+button.primary{background:var(--accent);border-color:var(--accent);color:#fff;min-width:170px}
+button:hover{border-color:var(--dim)}
+button.primary:hover{background:var(--accent-press);border-color:var(--accent-press)}
+button:disabled{opacity:.45;cursor:default}
+button:focus-visible,.pill:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.legend{display:flex;gap:16px;flex-wrap:wrap;font-size:13px;color:var(--dim);margin:14px 4px 0}
+.legend span{display:inline-flex;align-items:center;gap:7px}
+.stats{display:flex;gap:22px;flex-wrap:wrap;font-size:13px;color:var(--dim);margin-top:14px}
+.stats b{color:var(--ink);font-weight:600;font-variant-numeric:tabular-nums}
+.explain{margin-top:48px;border-top:1px solid var(--border);padding-top:28px;max-width:680px}
+.explain h2{font-family:var(--serif);font-size:22px;font-weight:600;margin:0 0 14px}
+.explain p{font-family:var(--serif);font-size:16.5px;color:var(--dim);margin:0 0 16px}
+.explain p strong{color:var(--ink);font-weight:600}
+@media(prefers-reduced-motion:reduce){*{scroll-behavior:auto}}
+</style>
+<style>
+  .bl-site-header{border-bottom:1px solid rgba(29,37,32,.12);background:rgba(255,255,255,.86);backdrop-filter:blur(12px);font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif}
+  .bl-header-inner{width:min(960px,calc(100% - 32px));margin-inline:auto;display:flex;align-items:center;justify-content:space-between;min-height:64px;gap:16px}
+  .bl-brand{display:inline-flex;align-items:center;gap:10px;font-weight:800;color:#1d2520;text-decoration:none}
+  .bl-brand-mark{display:grid;place-items:center;width:32px;height:32px;border-radius:8px;background:#2f7d5b;color:#fff;font-weight:900}
+  .bl-top-nav a{color:#215c43;font-weight:700;text-decoration:none}
+</style>
+</head>
+<body>
+<header class="bl-site-header">
+  <div class="bl-header-inner">
+    <a class="bl-brand" href="/" aria-label="Bai Liping home">
+      <span class="bl-brand-mark" aria-hidden="true">B</span>
+      <span>Bai Liping</span>
+    </a>
+    <nav class="bl-top-nav" aria-label="Primary">
+      <a href="/">Home</a>
+    </nav>
+  </div>
+</header>
+
+<div class="wrap">
+  <div class="eyebrow"><span class="spark">✳</span> Visual SLAM · the whole process</div>
+  <h1>One loop of SLAM</h1>
+  <p class="premise">A robot drives one lap around a room it has never seen, building its map and estimating its own position at the same time — each from the other. Step through the lap to watch frame-to-frame registration, tracking, drift, loop closure, and the two repairs that follow. The small nonlinear optimizations run live in your browser.</p>
+  <p class="source-note">Further reading: <a href="https://arxiv.org/abs/1502.00956" target="_blank" rel="noopener">ORB-SLAM</a> · <a href="https://arxiv.org/abs/2007.11898" target="_blank" rel="noopener">ORB-SLAM3</a> · <a href="https://github.com/UZ-SLAMLab/ORB_SLAM3" target="_blank" rel="noopener">official implementation</a> · visual inspiration: <a href="https://x.com/sincethestudy/status/2074687971618591181?s=20" target="_blank" rel="noopener">@sincethestudy</a></p>
+  <div class="scope-note"><strong>Scope of the demo.</strong> The pinhole reprojection residuals, keyframe window, pose graph, and dense finite-difference Levenberg–Marquardt solves are genuine. The front end is deliberately easier than visual SLAM: the registration inset receives metric planar landmark coordinates with known IDs, and loop detection plus its relative transform are supplied from the simulated truth. It therefore teaches the optimization structure, not a deployable camera front end.</div>
+
+  <div class="card">
+    <canvas id="pW" width="640" height="360"></canvas>
+  </div>
+
+  <div class="card" style="margin-top:10px">
+    <canvas id="fgC" width="640" height="150" aria-label="Factor graph, growing as the robot drives"></canvas>
+    <div class="fgnote" id="fgNote"></div>
+  </div>
+
+  <div class="caption">
+    <h2 id="cTitle"></h2>
+    <p id="cBody"></p>
+  </div>
+
+  <div class="nav">
+    <button id="bBack">Back</button>
+    <div class="pills" id="pills"></div>
+    <button class="primary" id="bNext">Next</button>
+  </div>
+
+  <div class="legend">
+    <span><span style="width:16px;border-top:3px solid #D97757;display:inline-block"></span>estimated path &amp; keyframes</span>
+    <span><span style="width:9px;height:9px;border-radius:50%;background:#3B6ECC;display:inline-block"></span>landmark estimate</span>
+    <span><span style="width:9px;height:9px;background:#3D3929;display:inline-block"></span>anchors, bolted down</span>
+    <span><span style="width:16px;border-top:3px dashed #BC4B43;display:inline-block"></span>loop gap</span>
+    <span><span style="width:16px;border-top:3px solid #3D3929;display:inline-block"></span>ground truth, revealed at the end</span>
+  </div>
+
+  <div class="stats">
+    <span>frames <b id="sF">0</b></span>
+    <span>keyframes <b id="sK">0</b></span>
+    <span>landmarks <b id="sL">0</b></span>
+    <span>reprojection error <b id="sE">–</b></span>
+    <span>true drift <b id="sD">?</b></span>
+  </div>
+
+  <div class="explain">
+    <h2>What this is</h2>
+    <p>This is the third piece of a series. The first taught <strong>PnP</strong> — freeze the map, move one camera until its view matches. The second taught <strong>bundle adjustment</strong> — adjust camera poses and landmarks jointly to reduce reprojection error. This page combines those ideas with keyframes, local refinement, loop constraints, pose-graph correction, and a final joint refinement.</p>
+    <p>Step 2 estimates a planar relative motion by aligning consecutive metric landmark constellations with known correspondences. That is closer to <a href="/frame-registration/" style="color:var(--accent)">range-scan registration</a> than monocular visual odometry, which must infer motion and scene geometry from image features and has scale and observability issues. Reprojection error is one useful internal residual, not the only measurement or quality signal available to a robot. It can stay small while the trajectory drifts because camera poses and map points can deform together; revisiting old visual information adds a long-range constraint that exposes this inconsistency.</p>
+    <p>Systems in the ORB-SLAM family separate tracking, local mapping, and loop closing, and use sparse nonlinear optimization. This page uses dense numerical Jacobians and also adds didactic relative-pose factors, an oracle loop transform, and pose priors in its final solve. Those choices make the sequence easy to see, but the exact factors and scheduling are implementation choices rather than a universal SLAM recipe.</p>
+  </div>
+</div>
+<script>
+(function(){
+const $=id=>document.getElementById(id);
+const IMW=320,IMH=240,CX=IMW/2,CY=IMH/2,FOC=150;
+const NF=48,KSTEP=3,NLM=30,RC=1.6,RW=3.9,LOOPW=8;
+const ACCENT='#D97757',INKC='#3D3929',LMC='#3B6ECC',BADC='#BC4B43',LINEC='#DCD7C9';
+const RM=window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+const GLIDE=RM?1:0.16;
+const sub=(a,b)=>[a[0]-b[0],a[1]-b[1],a[2]-b[2]];
+const add=(a,b)=>[a[0]+b[0],a[1]+b[1],a[2]+b[2]];
+const scl=(a,s)=>[a[0]*s,a[1]*s,a[2]*s];
+const dot=(a,b)=>a[0]*b[0]+a[1]*b[1]+a[2]*b[2];
+const cross=(a,b)=>[a[1]*b[2]-a[2]*b[1],a[2]*b[0]-a[0]*b[2],a[0]*b[1]-a[1]*b[0]];
+const len=a=>Math.hypot(a[0],a[1],a[2]);
+const nrm=a=>scl(a,1/(len(a)||1));
+const mv=(M,v)=>[dot(M[0],v),dot(M[1],v),dot(M[2],v)];
+const mT=M=>[[M[0][0],M[1][0],M[2][0]],[M[0][1],M[1][1],M[2][1]],[M[0][2],M[1][2],M[2][2]]];
+const mm=(A,B)=>{const C=[[0,0,0],[0,0,0],[0,0,0]];for(let i=0;i<3;i++)for(let j=0;j<3;j++)C[i][j]=A[i][0]*B[0][j]+A[i][1]*B[1][j]+A[i][2]*B[2][j];return C;};
+function rod(w){const th=len(w);if(th<1e-12)return[[1,0,0],[0,1,0],[0,0,1]];const k=scl(w,1/th),c=Math.cos(th),s=Math.sin(th),v=1-c,x=k[0],y=k[1],z=k[2];return[[c+x*x*v,x*y*v-z*s,x*z*v+y*s],[y*x*v+z*s,c+y*y*v,y*z*v-x*s],[z*x*v-y*s,z*y*v+x*s,c+z*z*v]];}
+function rotLog(R){let tr=(R[0][0]+R[1][1]+R[2][2]-1)/2;tr=Math.min(1,Math.max(-1,tr));const th=Math.acos(tr);if(th<1e-6)return[0,0,0];const s=2*Math.sin(th);return[(R[2][1]-R[1][2])/s*th,(R[0][2]-R[2][0])/s*th,(R[1][0]-R[0][1])/s*th];}
+const compose=(a,b)=>({R:mm(a.R,b.R),t:add(mv(a.R,b.t),a.t)});
+const invP=p=>({R:mT(p.R),t:scl(mv(mT(p.R),p.t),-1)});
+const camC=p=>scl(mv(mT(p.R),p.t),-1);
+const clone=p=>({R:p.R.map(r=>r.slice()),t:p.t.slice()});
+function lookAtT(C,tgt){let f=nrm(sub(tgt,C)),up=[0,1,0];if(Math.abs(dot(f,up))>0.995)up=[0,0,1];const r=nrm(cross(f,up)),d=cross(f,r);const R=[r,d,f];return{R:R,t:scl(mv(R,C),-1)};}
+function projP(p,pt){const X=add(mv(p.R,pt),p.t);let z=X[2];const behind=z<0.05;if(behind)z=0.05;return[FOC*X[0]/z+CX,FOC*X[1]/z+CY,behind?-1:X[2]];}
+function mulberry32(a){return function(){a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296;};}
+let seed=17;
+let trueF=[],truePts=[],KFI=[],estF=[],estPts=[],firstSeen=[],ownKF=[],obsKF=[],anchorPt=0;
+function visible(pose,pt){const pr=projP(pose,pt);return pr[2]>0.4&&pr[0]>8&&pr[0]<IMW-8&&pr[1]>8&&pr[1]<IMH-8;}
+function tryGen(minObs){for(let attempt=1;attempt<=40;attempt++){
+const r=mulberry32(seed+minObs*100003+attempt*977);
+const g=()=>{let u=0,v=0;while(u===0)u=r();while(v===0)v=r();return Math.sqrt(-2*Math.log(u))*Math.cos(2*Math.PI*v);};
+trueF=[];for(let i=0;i<NF;i++){const th=i/NF*2*Math.PI;const C=[RC*Math.sin(th),0.4,RC*Math.cos(th)];const tgt=[(RW+0.3)*Math.sin(th),0.55,(RW+0.3)*Math.cos(th)];trueF.push(lookAtT(C,tgt));}
+truePts=[];for(let j=0;j<NLM;j++){const ph=j/NLM*2*Math.PI+(r()-0.5)*0.10;const rad=RW+(r()-0.5)*0.4;truePts.push([rad*Math.sin(ph),0.12+r()*1.0,rad*Math.cos(ph)]);}
+KFI=[];for(let i=0;i<NF;i+=KSTEP)KFI.push(i);if(KFI[KFI.length-1]!==NF-1)KFI.push(NF-1);
+firstSeen=new Array(NLM).fill(-1);
+for(let i=0;i<NF;i++)for(let j=0;j<NLM;j++)if(firstSeen[j]<0&&visible(trueF[i],truePts[j]))firstSeen[j]=i;
+obsKF=[];const perKF=new Array(KFI.length).fill(0),perPt=new Array(NLM).fill(0);
+for(let k=0;k<KFI.length;k++)for(let j=0;j<NLM;j++)if(visible(trueF[KFI[k]],truePts[j])){const pr=projP(trueF[KFI[k]],truePts[j]);obsKF.push({k:k,j:j,u:pr[0],v:pr[1]});perKF[k]++;perPt[j]++;}
+const ok=minObs===0||(firstSeen.every(f=>f>=0)&&perKF.every(c=>c>=minObs)&&perPt.every(c=>c>=2));
+if(!ok)continue;
+for(let j=0;j<NLM;j++)if(firstSeen[j]<0)firstSeen[j]=0;
+estF=[clone(trueF[0])];
+for(let i=1;i<NF;i++){const rel=compose(trueF[i],invP(trueF[i-1]));
+const nz={R:rod([g()*0.0004,0.0072+g()*0.0008,g()*0.0004]),t:[g()*0.0015,g()*0.0008,g()*0.0015]};
+estF.push(compose(compose(nz,rel),estF[i-1]));}
+estPts=[];ownKF=[];
+for(let j=0;j<NLM;j++){const b=firstSeen[j];const local=add(mv(trueF[b].R,truePts[j]),trueF[b].t);
+const inv=invP(estF[b]);estPts.push(add(mv(inv.R,add(local,[g()*0.015,g()*0.015,g()*0.015])),inv.t));
+let ko=0;for(let k=0;k<KFI.length;k++)if(KFI[k]<=b)ko=k;ownKF.push(ko);}
+anchorPt=0;let bmin=1e9;for(let j=0;j<NLM;j++)if(firstSeen[j]<bmin){bmin=firstSeen[j];anchorPt=j;}
+return true;}
+return false;}
+function genScene(){if(!tryGen(4))if(!tryGen(3))tryGen(0);}
+let nShown=1,bornShown=new Set(),step=0,animT=null,solveT=null,revealed=false,loopGapEnds=null,windowHalo=null;
+let dispF=[],dispP=[];
+function syncDisp(){dispF=estF.map(f=>({C:camC(f),R:f.R}));dispP=estPts.map(p=>p.slice());}
+function bornUpTo(n){bornShown=new Set();for(let j=0;j<NLM;j++)if(firstSeen[j]<n)bornShown.add(j);}
+function cost(r){let c=0;for(let i=0;i<r.length;i++)c+=r[i]*r[i];return c;}
+function solveN(A,b){const n=b.length;const L=[];
+for(let i=0;i<n;i++)L.push(new Array(n).fill(0));
+for(let i=0;i<n;i++){for(let j=0;j<=i;j++){let s=A[i][j];
+for(let k=0;k<j;k++)s-=L[i][k]*L[j][k];
+if(i===j){if(!(s>1e-13))return null;L[i][i]=Math.sqrt(s);}
+else L[i][j]=s/L[j][j];}}
+const y=new Array(n);
+for(let i=0;i<n;i++){let s=b[i];for(let k=0;k<i;k++)s-=L[i][k]*y[k];y[i]=s/L[i][i];}
+const x=new Array(n);
+for(let i=n-1;i>=0;i--){let s=y[i];for(let k=i+1;k<n;k++)s-=L[k][i]*x[k];x[i]=s/L[i][i];}
+for(const v of x)if(!isFinite(v))return null;
+return x;}
+function makeLM(nP,residFn,perturbFn,applyFn){let lam=1e-3;
+return{step:function(){const base=residFn(),c0=cost(base),m=base.length,EPS=1e-4,J=[];
+for(let k=0;k<nP;k++){perturbFn(k,EPS);const rp=residFn();perturbFn(k,-2*EPS);const rm=residFn();perturbFn(k,EPS);
+const col=new Float64Array(m);for(let q=0;q<m;q++)col[q]=(rp[q]-rm[q])/(2*EPS);J.push(col);}
+const A=[];const g2=new Array(nP).fill(0);
+for(let a=0;a<nP;a++)A.push(new Array(nP).fill(0));
+for(let a=0;a<nP;a++){for(let b=a;b<nP;b++){let s=0;for(let q=0;q<m;q++)s+=J[a][q]*J[b][q];A[a][b]=s;A[b][a]=s;}
+let s=0;for(let q=0;q<m;q++)s+=J[a][q]*base[q];g2[a]=s;}
+const Ad=A.map((row,i)=>row.map((v,j)=>i===j?v*(1+lam)+lam*1e-3+1e-9:v));
+const del=solveN(Ad,g2.map(v=>-v));
+if(!del){lam=Math.min(lam*4,1e5);return{done:false};}
+let mx=0;for(const v of del){const a2=Math.abs(v);if(a2>mx)mx=a2;}
+if(!isFinite(mx)||mx>1e6){lam=Math.min(lam*4,1e5);return{done:false};}
+applyFn(del,1);const c1=cost(residFn());
+let dn=0;for(const v of del)dn+=v*v;dn=Math.sqrt(dn);
+if(c1<c0){lam=Math.max(lam*0.4,1e-8);return{done:dn<1e-6};}
+applyFn(del,-1);lam=Math.min(lam*4,1e5);return{done:false};}};}
+function perturbPose(pose,d,eps){if(d<3){const w=[0,0,0];w[d]=eps;pose.R=mm(rod(w),pose.R);}else pose.t[d-3]+=eps;}
+function applyPoseDelta(pose,del,off,sign){if(sign>0){pose.R=mm(rod([del[off],del[off+1],del[off+2]]),pose.R);pose.t=[pose.t[0]+del[off+3],pose.t[1]+del[off+4],pose.t[2]+del[off+5]];}
+else{pose.t=[pose.t[0]-del[off+3],pose.t[1]-del[off+4],pose.t[2]-del[off+5]];pose.R=mm(rod([-del[off],-del[off+1],-del[off+2]]),pose.R);}}
+function edgeResid(a,b,m,w,tw,r,q){const pred=compose(estF[KFI[b]],invP(estF[KFI[a]]));
+const dw=rotLog(mm(pred.R,mT(m.R)));const dt=sub(pred.t,m.t);
+r[q]=dw[0]*w;r[q+1]=dw[1]*w;r[q+2]=dw[2]*w;r[q+3]=dt[0]*w*tw;r[q+4]=dt[1]*w*tw;r[q+5]=dt[2]*w*tw;}
+function reprojErr(maxK){let se=0,c=0;
+for(const o of obsKF){if(o.k>maxK)continue;if(!bornShown.has(o.j))continue;
+const pr=projP(estF[KFI[o.k]],estPts[o.j]);const dx=pr[0]-o.u,dy=pr[1]-o.v;se+=dx*dx+dy*dy;c++;}
+return c?Math.sqrt(se/c):0;}
+function shownMaxK(){let mk=-1;for(let k=0;k<KFI.length;k++)if(KFI[k]<nShown)mk=k;return mk;}
+function snapshotRels(){const relF=estF.map((f,i)=>{let ko=0;for(let k=0;k<KFI.length;k++)if(KFI[k]<=i)ko=k;return{ko:ko,rel:compose(f,invP(estF[KFI[ko]]))};});
+const locP=estPts.map((p,j)=>add(mv(estF[KFI[ownKF[j]]].R,p),estF[KFI[ownKF[j]]].t));
+return{relF:relF,locP:locP};}
+function reanchor(snap,pts){for(let i=0;i<NF;i++){if(KFI.includes(i))continue;const s=snap.relF[i];estF[i]=compose(s.rel,estF[KFI[s.ko]]);}
+if(pts)for(let j=0;j<NLM;j++){const inv=invP(estF[KFI[ownKF[j]]]);estPts[j]=add(mv(inv.R,snap.locP[j]),inv.t);}}
+let activeSolve=null,activeDrive=null;
+function runSolve(lm,maxIt,onIter,onDone,per){per=per||1;clearInterval(solveT);let k=0;
+const fin=()=>{while(k<maxIt){const r=lm.step();if(onIter)onIter();k++;if(r.done)break;}
+clearInterval(solveT);solveT=null;activeSolve=null;onDone&&onDone();};
+activeSolve={fin:fin};
+solveT=setInterval(()=>{let fdone=false;
+for(let p2=0;p2<per;p2++){const r=lm.step();if(onIter)onIter();if(r.done||++k>=maxIt){fdone=true;break;}}
+if(fdone){clearInterval(solveT);solveT=null;activeSolve=null;onDone&&onDone();}},RM?20:130);}
+function driveTo(target,onDone){clearInterval(animT);activeDrive={t:target,d:onDone};
+animT=setInterval(()=>{if(nShown>=target){clearInterval(animT);animT=null;activeDrive=null;onDone&&onDone();return;}
+nShown++;bornUpTo(nShown);},RM?18:95);}
+function finishBusy(){if(animT!==null){clearInterval(animT);animT=null;const a=activeDrive;activeDrive=null;
+if(a){nShown=a.t;bornUpTo(nShown);a.d&&a.d();}}
+if(solveT!==null&&activeSolve)activeSolve.fin();}
+function runLocalBA(done){const maxK=shownMaxK();const freeK=[];for(let k=Math.max(1,maxK-2);k<=maxK;k++)freeK.push(k);
+const rim=freeK[0]-1;
+const cnt=new Array(NLM).fill(0);
+for(const o of obsKF)if(o.k<=maxK&&bornShown.has(o.j))cnt[o.j]++;
+const fp=new Set();for(const o of obsKF)if(freeK.includes(o.k)&&o.j!==anchorPt&&bornShown.has(o.j)&&cnt[o.j]>=2)fp.add(o.j);
+const freeP=[...fp];const obsL=obsKF.filter(o=>o.k<=maxK&&(freeK.includes(o.k)||fp.has(o.j))&&bornShown.has(o.j));
+const edges=[];for(let k=rim;k<maxK;k++)edges.push({a:k,b:k+1,m:compose(estF[KFI[k+1]],invP(estF[KFI[k]])),w:0.35});
+windowHalo={ks:freeK,ps:freeP};
+const nP=freeK.length*6+freeP.length*3;
+const resid=()=>{const r=new Float64Array(2*obsL.length+6*edges.length);
+obsL.forEach((o,q)=>{const pr=projP(estF[KFI[o.k]],estPts[o.j]);r[2*q]=pr[0]-o.u;r[2*q+1]=pr[1]-o.v;});
+edges.forEach((e,q)=>edgeResid(e.a,e.b,e.m,e.w,3,r,2*obsL.length+6*q));return r;};
+const pert=(k,e)=>{if(k<freeK.length*6)perturbPose(estF[KFI[freeK[(k/6)|0]]],k%6,e);else{const k2=k-freeK.length*6;estPts[freeP[(k2/3)|0]][k2%3]+=e;}};
+const app=(del,s)=>{for(let f=0;f<freeK.length;f++)applyPoseDelta(estF[KFI[freeK[f]]],del,f*6,s);
+const off=freeK.length*6;for(let f=0;f<freeP.length;f++){const p=estPts[freeP[f]];const b=off+f*3;p[0]+=s*del[b];p[1]+=s*del[b+1];p[2]+=s*del[b+2];}};
+runSolve(makeLM(nP,resid,pert,app),30,null,()=>{windowHalo=null;done&&done();},2);}
+function runPoseGraph(done){const edges=[];for(let k=0;k<KFI.length-1;k++)edges.push({a:k,b:k+1,m:compose(estF[KFI[k+1]],invP(estF[KFI[k]])),w:1});
+edges.push({a:0,b:KFI.length-1,m:compose(trueF[NF-1],invP(trueF[0])),w:LOOPW});
+const snap=snapshotRels();const nP=(KFI.length-1)*6;
+const resid=()=>{const r=new Float64Array(edges.length*6);edges.forEach((e,q)=>edgeResid(e.a,e.b,e.m,e.w,1,r,6*q));return r;};
+const pert=(k,e)=>perturbPose(estF[KFI[1+((k/6)|0)]],k%6,e);
+const app=(del,s)=>{for(let f=0;f<KFI.length-1;f++)applyPoseDelta(estF[KFI[1+f]],del,f*6,s);};
+runSolve(makeLM(nP,resid,pert,app),40,()=>{reanchor(snap,true);loopGapEnds=[camC(estF[NF-1]),camC(trueF[NF-1])];},()=>{reanchor(snap,true);loopGapEnds=null;done&&done();});}
+function runGlobalBA(done){const cnt=new Array(NLM).fill(0);
+for(const o of obsKF)cnt[o.j]++;
+const freeP=[];for(let j=0;j<NLM;j++)if(j!==anchorPt&&bornShown.has(j)&&cnt[j]>=2)freeP.push(j);
+const edges=[];for(let k=0;k<KFI.length-1;k++)edges.push({a:k,b:k+1,m:compose(estF[KFI[k+1]],invP(estF[KFI[k]])),w:0.3});
+edges.push({a:0,b:KFI.length-1,m:compose(trueF[NF-1],invP(trueF[0])),w:1.5});
+const priors=[];for(let k=1;k<KFI.length;k++)priors.push(clone(estF[KFI[k]]));
+const WP=1.2;
+const snap=snapshotRels();const nK=KFI.length-1;const nP=nK*6+freeP.length*3;
+const resid=()=>{const r=new Float64Array(2*obsKF.length+6*edges.length+6*priors.length);
+obsKF.forEach((o,q)=>{const pr=projP(estF[KFI[o.k]],estPts[o.j]);r[2*q]=pr[0]-o.u;r[2*q+1]=pr[1]-o.v;});
+edges.forEach((e,q)=>edgeResid(e.a,e.b,e.m,e.w,3,r,2*obsKF.length+6*q));
+const off0=2*obsKF.length+6*edges.length;
+priors.forEach((p,q)=>{const pose=estF[KFI[1+q]];const dw=rotLog(mm(pose.R,mT(p.R)));const dt=sub(pose.t,p.t);
+const b=off0+6*q;r[b]=dw[0]*WP;r[b+1]=dw[1]*WP;r[b+2]=dw[2]*WP;r[b+3]=dt[0]*WP*3;r[b+4]=dt[1]*WP*3;r[b+5]=dt[2]*WP*3;});
+return r;};
+const pert=(k,e)=>{if(k<nK*6)perturbPose(estF[KFI[1+((k/6)|0)]],k%6,e);else{const k2=k-nK*6;estPts[freeP[(k2/3)|0]][k2%3]+=e;}};
+const app=(del,s)=>{for(let f=0;f<nK;f++)applyPoseDelta(estF[KFI[1+f]],del,f*6,s);
+const off=nK*6;for(let f=0;f<freeP.length;f++){const p=estPts[freeP[f]];const b=off+f*3;p[0]+=s*del[b];p[1]+=s*del[b+1];p[2]+=s*del[b+2];}};
+runSolve(makeLM(nP,resid,pert,app),90,()=>reanchor(snap,false),()=>{reanchor(snap,false);revealed=true;done&&done();},3);}
+/* ---- scan matching: consecutive frames' landmark detections, matched by id, rigid least-squares fit ---- */
+let scanUI=null;
+function pose2d(i){const C=camC(trueF[i]);const f=trueF[i].R[2];return{x:C[0],z:C[2],ps:Math.atan2(f[0],f[2])};}
+function frameDets(i){const p=pose2d(i),r=mulberry32(seed+i*7919+13),ids=[],pts=[];
+for(let j=0;j<NLM;j++){if(!visible(trueF[i],truePts[j]))continue;
+const dx=truePts[j][0]-p.x,dz=truePts[j][2]-p.z,c=Math.cos(p.ps),s=Math.sin(p.ps);
+ids.push(j);pts.push([dx*c-dz*s+(r()-0.5)*0.03,dx*s+dz*c+(r()-0.5)*0.03]);}
+return{ids:ids,pts:pts};}
+function trueRel(a,b){const A=pose2d(a),B=pose2d(b);
+const dx=B.x-A.x,dz=B.z-A.z,c=Math.cos(A.ps),s=Math.sin(A.ps);
+return{th:A.ps-B.ps,tx:dx*c-dz*s,ty:dx*s+dz*c};}
+function applyT(T,p){const c=Math.cos(T.th),s=Math.sin(T.th);return[c*p[0]-s*p[1]+T.tx,s*p[0]+c*p[1]+T.ty];}
+function kabsch(cur,prev){const n=cur.length;
+let ax=0,ay=0,bx=0,by=0;
+for(let k=0;k<n;k++){ax+=cur[k][0];ay+=cur[k][1];bx+=prev[k][0];by+=prev[k][1];}
+ax/=n;ay/=n;bx/=n;by/=n;
+let Sc=0,Ss=0;
+for(let k=0;k<n;k++){const x0=cur[k][0]-ax,y0=cur[k][1]-ay,x1=prev[k][0]-bx,y1=prev[k][1]-by;
+Sc+=x0*x1+y0*y1;Ss+=x0*y1-y0*x1;}
+const th=Math.atan2(Ss,Sc),c=Math.cos(th),s=Math.sin(th);
+return{th:th,tx:bx-(c*ax-s*ay),ty:by-(s*ax+c*ay)};}
+function rmsAt(ui,T){let se=0;
+for(let k=0;k<ui.mCur.length;k++){const p=applyT(T,ui.mCur[k]),q=ui.mPrev[k];
+se+=(p[0]-q[0])*(p[0]-q[0])+(p[1]-q[1])*(p[1]-q[1]);}
+return Math.sqrt(se/ui.mCur.length);}
+function newScanPair(){const a=nShown-1;nShown++;bornUpTo(nShown);const b=nShown-1;
+const A=frameDets(a),B=frameDets(b),mPrev=[],mCur=[];
+for(let k=0;k<B.ids.length;k++){const q=A.ids.indexOf(B.ids[k]);if(q<0)continue;mPrev.push(A.pts[q]);mCur.push(B.pts[k]);}
+scanUI={a:a,b:b,prevAll:A.pts,curAll:B.pts,mPrev:mPrev,mCur:mCur,fit:kabsch(mCur,mPrev),T:{th:0,tx:0,ty:0},u:0,done:false,tru:trueRel(a,b)};
+scanUI.rms=rmsAt(scanUI,scanUI.T);}
+function lockScan(ui){ui.T=ui.fit;ui.u=1;ui.done=true;ui.rms=rmsAt(ui,ui.T);}
+function scanInsetFinal(){if(nShown<2)return;const keep=nShown;nShown--;newScanPair();lockScan(scanUI);nShown=keep;}
+function runScanMatch(done){clearInterval(solveT);const NPAIR=3;let started=0,hold=0;
+const fin=()=>{clearInterval(solveT);solveT=null;activeSolve=null;
+if(started===0){newScanPair();started++;}
+lockScan(scanUI);
+while(started<NPAIR){newScanPair();started++;lockScan(scanUI);}
+done&&done();};
+activeSolve={fin:fin};
+newScanPair();started++;hold=2;
+solveT=setInterval(()=>{if(hold>0){hold--;return;}
+if(!scanUI.done){scanUI.u=Math.min(1,scanUI.u+0.12);
+const e=scanUI.u<0.5?2*scanUI.u*scanUI.u:1-2*(1-scanUI.u)*(1-scanUI.u);
+scanUI.T={th:scanUI.fit.th*e,tx:scanUI.fit.tx*e,ty:scanUI.fit.ty*e};
+scanUI.rms=rmsAt(scanUI,scanUI.T);
+if(scanUI.u>=1){lockScan(scanUI);hold=4;}
+return;}
+if(started<NPAIR){newScanPair();started++;hold=2;return;}
+clearInterval(solveT);solveT=null;activeSolve=null;done&&done();},RM?24:150);}
+function drawScanInset(ctx){const ui=scanUI,PX=372,PY=10,PW2=258,PH2=204;
+ctx.fillStyle='rgba(255,255,255,0.95)';ctx.strokeStyle=LINEC;ctx.lineWidth=1;
+ctx.fillRect(PX,PY,PW2,PH2);ctx.strokeRect(PX,PY,PW2,PH2);
+let mnx=1e9,mxx=-1e9,mny=1e9,mxy=-1e9;
+const all=ui.prevAll.concat(ui.curAll,[[0,0],[ui.fit.tx,ui.fit.ty]]);
+for(const p of all){mnx=Math.min(mnx,p[0]);mxx=Math.max(mxx,p[0]);mny=Math.min(mny,p[1]);mxy=Math.max(mxy,p[1]);}
+const X0=PX+16,X1=PX+PW2-16,Y0=PY+40,Y1=PY+PH2-34;
+const cx0=(mnx+mxx)/2,cy0=(mny+mxy)/2,sc=Math.min((X1-X0)/Math.max(0.1,mxx-mnx),(Y1-Y0)/Math.max(0.1,mxy-mny));
+const MX=p=>(X0+X1)/2+(p[0]-cx0)*sc,MY=p=>(Y0+Y1)/2-(p[1]-cy0)*sc;
+const tc=ui.curAll.map(p=>applyT(ui.T,p)),tm=ui.mCur.map(p=>applyT(ui.T,p));
+ctx.strokeStyle=ACCENT;ctx.globalAlpha=0.3;ctx.lineWidth=1;
+for(let k=0;k<tm.length;k++){ctx.beginPath();ctx.moveTo(MX(tm[k]),MY(tm[k]));ctx.lineTo(MX(ui.mPrev[k]),MY(ui.mPrev[k]));ctx.stroke();}
+ctx.globalAlpha=1;
+ctx.fillStyle=LMC;for(const p of ui.prevAll){ctx.beginPath();ctx.arc(MX(p),MY(p),3.2,0,7);ctx.fill();}
+ctx.fillStyle=ACCENT;for(const p of tc){ctx.beginPath();ctx.arc(MX(p),MY(p),2.4,0,7);ctx.fill();}
+const c0=[0,0],c1=[ui.T.tx,ui.T.ty];
+ctx.strokeStyle=ACCENT;ctx.globalAlpha=0.55;ctx.lineWidth=1.5;
+ctx.beginPath();ctx.moveTo(MX(c0),MY(c0));ctx.lineTo(MX(c1),MY(c1));ctx.stroke();ctx.globalAlpha=1;
+ctx.fillStyle=INKC;ctx.beginPath();ctx.arc(MX(c0),MY(c0),2.6,0,7);ctx.fill();
+ctx.fillStyle=ACCENT;ctx.beginPath();ctx.arc(MX(c1),MY(c1),2.6,0,7);ctx.fill();
+ctx.font='10px ui-monospace,SFMono-Regular,Menlo,monospace';
+ctx.fillStyle=INKC;
+ctx.fillText('detections · frame '+ui.a+' (blue) vs '+ui.b+' (orange)',PX+10,PY+16);
+ctx.fillText(ui.mCur.length+' landmarks matched by appearance',PX+10,PY+28);
+if(!ui.done){ctx.fillStyle=ACCENT;ctx.fillText('least-squares fit sliding · residual '+ui.rms.toFixed(3),PX+10,PY+PH2-10);}
+else{const dw=ui.T.th-ui.tru.th,dth=Math.abs(((dw+Math.PI)%(2*Math.PI)+2*Math.PI)%(2*Math.PI)-Math.PI)*180/Math.PI;
+const dt=Math.hypot(ui.T.tx-ui.tru.tx,ui.T.ty-ui.tru.ty);
+ctx.fillStyle='#417B4B';ctx.fillText('locked · residual '+ui.rms.toFixed(3),PX+10,PY+PH2-22);
+ctx.fillText('recovered motion vs truth: '+dth.toFixed(2)+'° · '+dt.toFixed(3)+' u',PX+10,PY+PH2-9);}}
+/* ---- factor-graph strip: poses bottom, landmarks top, factors as edges ---- */
+const FGW=640,FGH=150,FGX0=34,FGX1=FGW-26,FGYP=108,FGYL=26;
+function fit2(cv,LW,LH){const dpr=window.devicePixelRatio||1,w=cv.clientWidth||LW,W=Math.round(w*dpr),H=Math.round(w*LH/LW*dpr);
+if(cv.width!==W||cv.height!==H){cv.width=W;cv.height=H;}const ctx=cv.getContext('2d');ctx.setTransform(W/LW,0,0,W/LW,0,0);return ctx;}
+const xF=i=>FGX0+i/(NF-1)*(FGX1-FGX0);
+/* landmarks laid out in birth order, so observation edges stay local and only the loop factor spans the graph */
+function lmRank(){const idx=[];for(let j=0;j<NLM;j++)idx.push(j);
+idx.sort((a,b)=>firstSeen[a]-firstSeen[b]||a-b);
+const r=new Array(NLM);idx.forEach((j,q)=>r[j]=q);return r;}
+let xLrank=null,xLseed=null;
+function xL(j){if(xLseed!==seed||!xLrank){xLrank=lmRank();xLseed=seed;}
+return FGX0+xLrank[j]/(NLM-1)*(FGX1-FGX0);}
+function fgHalo(ctx,x,y,r){ctx.fillStyle=ACCENT;ctx.globalAlpha=0.14;ctx.beginPath();ctx.arc(x,y,r,0,7);ctx.fill();ctx.globalAlpha=1;}
+function drawFG(){const ctx=fit2($('fgC'),FGW,FGH);ctx.clearRect(0,0,FGW,FGH);
+const maxK=shownMaxK(),cur=nShown-1,hasCur=nShown<NF&&!KFI.includes(cur);
+const poseF=[];for(let k=0;k<KFI.length;k++)if(KFI[k]<nShown)poseF.push(KFI[k]);
+if(hasCur)poseF.push(cur);
+const dimLm=step===6,lps=step>=5&&step<7?loopPts():null;
+/* observation factors: keyframe -> landmark */
+ctx.lineWidth=1;ctx.strokeStyle=LMC;ctx.globalAlpha=dimLm?0.03:0.10;
+for(const o of obsKF){if(o.k>maxK||!bornShown.has(o.j))continue;
+ctx.beginPath();ctx.moveTo(xF(KFI[o.k]),FGYP-4);ctx.lineTo(xL(o.j),FGYL+4);ctx.stroke();}
+ctx.globalAlpha=1;
+/* the newest frame's observations while it is being tracked */
+if(hasCur&&step>=1&&step<5){ctx.strokeStyle=ACCENT;ctx.globalAlpha=0.28;
+for(let j=0;j<NLM;j++)if(bornShown.has(j)&&visible(estF[cur],estPts[j])){
+ctx.beginPath();ctx.moveTo(xF(cur),FGYP-4);ctx.lineTo(xL(j),FGYL+4);ctx.stroke();}
+ctx.globalAlpha=1;}
+/* odometry factors along the pose chain */
+for(let q=1;q<poseF.length;q++){const em=step===1&&q===poseF.length-1&&scanUI&&!scanUI.done;
+ctx.strokeStyle=ACCENT;ctx.lineWidth=em?2.8:1.5;ctx.globalAlpha=0.8;
+ctx.beginPath();ctx.moveTo(xF(poseF[q-1]),FGYP);ctx.lineTo(xF(poseF[q]),FGYP);ctx.stroke();
+ctx.globalAlpha=1;ctx.fillStyle=ACCENT;const mx=(xF(poseF[q-1])+xF(poseF[q]))/2;ctx.fillRect(mx-2,FGYP-2,4,4);}
+ctx.lineWidth=1;
+/* loop-closure factor */
+if(step>=5&&poseF.length>1){const x0=xF(poseF[0]),x1=xF(poseF[poseF.length-1]);
+ctx.strokeStyle=BADC;ctx.lineWidth=1.8;ctx.setLineDash([5,4]);
+ctx.beginPath();ctx.moveTo(x0,FGYP+3);ctx.quadraticCurveTo((x0+x1)/2,FGYP+32,x1,FGYP+3);ctx.stroke();ctx.setLineDash([]);
+ctx.fillStyle=BADC;ctx.fillRect((x0+x1)/2-2.5,FGYP+15,5,5);ctx.lineWidth=1;}
+/* halos: which variables are free right now */
+if(step===2&&poseF.length)fgHalo(ctx,xF(poseF[poseF.length-1]),FGYP,10);
+if(step===3&&windowHalo){for(const k of windowHalo.ks)if(KFI[k]<nShown)fgHalo(ctx,xF(KFI[k]),FGYP,10);
+for(const j of windowHalo.ps)fgHalo(ctx,xL(j),FGYL,8);}
+if(step===6||step===7)for(let q=1;q<poseF.length;q++)fgHalo(ctx,xF(poseF[q]),FGYP,10);
+if(step===7)for(let j=0;j<NLM;j++)if(bornShown.has(j)&&j!==anchorPt)fgHalo(ctx,xL(j),FGYL,8);
+/* landmark nodes */
+for(let j=0;j<NLM;j++){if(!bornShown.has(j))continue;const x=xL(j);
+ctx.globalAlpha=dimLm?0.3:1;
+if(j===anchorPt){ctx.fillStyle=INKC;ctx.fillRect(x-2.6,FGYL-2.6,5.2,5.2);}
+else{ctx.fillStyle=LMC;ctx.beginPath();ctx.arc(x,FGYL,2.6,0,7);ctx.fill();}
+ctx.globalAlpha=1;
+if(lps&&lps.has(j)){ctx.strokeStyle=BADC;ctx.lineWidth=1.4;ctx.beginPath();ctx.arc(x,FGYL,5.6,0,7);ctx.stroke();ctx.lineWidth=1;}}
+/* pose nodes */
+for(let q=0;q<poseF.length;q++){const x=xF(poseF[q]);
+if(q===0){ctx.fillStyle=INKC;ctx.fillRect(x-3,FGYP-3,6,6);}
+else if(poseF[q]===cur&&hasCur){ctx.fillStyle=ACCENT;ctx.globalAlpha=0.75;ctx.beginPath();ctx.arc(x,FGYP,2.6,0,7);ctx.fill();ctx.globalAlpha=1;}
+else{ctx.fillStyle=ACCENT;ctx.beginPath();ctx.arc(x,FGYP,3.4,0,7);ctx.fill();}}
+/* row labels */
+ctx.font='9.5px ui-monospace,SFMono-Regular,Menlo,monospace';ctx.fillStyle='#9C937E';
+ctx.fillText('landmarks',FGX0-28,FGYL-11);
+ctx.fillText('poses',FGX0-28,FGYP+16);}
+const FGN=[
+'The factor graph so far: one pose, bolted down by a prior factor (ink square), and the first landmarks hanging off it by observation factors.',
+'The demo’s metric planar registration forges the odometry factors (orange squares) that chain each new pose to the last — the only glue the trajectory has so far.',
+'Tracking hangs each new frame off the chain by its observation factors, but only the newest pose (haloed) is free — the map and the past stay frozen.',
+'Local BA unfreezes the recent window — haloed poses and their landmarks adjust together — while the rim and everything older stays bolted.',
+'The chain keeps growing around the lap. Notice every factor is local: nothing yet ties the far ends of the graph to each other.',
+'The supplied loop closure adds one long-range factor (red, dashed) tying the newest pose back to the start — the first edge that spans the whole graph.',
+'Pose graph: the landmarks are set aside and only the pose chain (all haloed, free) argues with the odometry and loop factors — cheap, and everywhere at once.',
+'Global BA: every pose and landmark unfreezes except the two ink anchors, and every factor in the graph votes at once.'];
+const STEPS=[
+{t:'An empty map',n:'Start driving',b:'The robot wakes up knowing nothing — no map, no position. Its first pose is <strong>bolted at the origin</strong> (someone has to be) and the first landmarks it sees, born from that pose, become the map\u2019s first entries. The ink square is the anchor landmark. From here on, everything is estimation built on estimation.'},
+{t:'Metric registration \u2014 a motion prior',n:'Track against the map',b:'Before map-based tracking, the demo needs a motion guess. Consecutive frames receive noisy <strong>metric, top-down landmark coordinates with known IDs</strong>; a planar least-squares rigid fit aligns the orange constellation to the blue one. Its transform becomes the relative-motion factor used later. This is a compact scan-registration surrogate, not motion recovered from monocular pixels, and its repeated noise creates the lap\u2019s drift.'},
+{t:'Tracking — where am I?',n:'Run local BA',b:'Every frame runs the smallest possible fix: <strong>freeze the map, move one camera</strong> until its view matches — motion-only BA, the PnP game. Most frames are disposable dots: computed, used, forgotten. Every few frames one is promoted to a keyframe, and new landmarks are triangulated — each born carrying the robot\u2019s current position error, invisibly.'},
+{t:'Local BA — tidy the neighborhood',n:'Keep driving',b:'The recent keyframes and their landmarks (haloed) unfreeze and adjust together; the rim behind them stays bolted. Watch the reprojection error drop. But notice what cannot change: local BA makes the neighborhood agree <strong>with a rim that is already wrong</strong>. It tidies; it cannot see the warp.'},
+{t:'Drift — wrong together',n:'Close the loop',b:'The lap continues and error compounds silently. Nothing looks wrong — the reprojection error stays small, because the map inherited the same errors the robot has. They are <strong>wrong together</strong>, which is fine for not hitting furniture. True drift is unknowable to the robot; the stat below honestly reads ?.'},
+{t:'Loop closure — drift becomes visible',n:'Optimize pose graph',b:'The robot returns to the start. In a production system, place recognition must propose and geometrically verify this loop; here the correct loop and relative transform are supplied by the simulator. The new constraint disagrees with accumulated odometry by <strong id="gapN"></strong>, revealing drift that local residuals did not expose.'},
+{t:'Pose graph — snap the loop shut',n:'Run global BA',b:'A fast optimization over <strong>poses only</strong> — landmarks and ordinary frames just ride along with their keyframes. One trustworthy loop constraint gets spread backward around the entire trajectory in a blink. This is the cheap correction: roughly right, everywhere, immediately.'},
+{t:'Joint refinement — reconcile the map',n:'Start over',b:'All keyframe poses and well-observed landmarks except the gauge anchors are refined using reprojection residuals plus the demo\u2019s relative-pose, loop, and pose-prior factors. Ground truth then appears <strong>only as an evaluation overlay</strong>. Agreement with it is not guaranteed by low reprojection error alone; gauge choice, noise, model error, and ambiguous geometry still matter.'}];
+let endStates=[];
+function deepState(){return{estF:estF.map(clone),estPts:estPts.map(p=>p.slice()),nShown:nShown,revealed:revealed};}
+function restore(s){estF=s.estF.map(clone);estPts=s.estPts.map(p=>p.slice());nShown=s.nShown;revealed=s.revealed;bornUpTo(nShown);loopGapEnds=null;windowHalo=null;scanUI=null;syncDisp();}
+function showGap(){const g=len(sub(camC(estF[NF-1]),camC(trueF[NF-1])));
+loopGapEnds=[camC(estF[NF-1]),camC(trueF[NF-1])];
+const el=document.getElementById('gapN');if(el)el.textContent=g.toFixed(2)+' units';}
+function setCaption(){$('cTitle').innerHTML='Step '+(step+1)+' of '+STEPS.length+' <span>· '+STEPS[step].t+'</span>';$('cBody').innerHTML=STEPS[step].b;
+document.querySelectorAll('.pill').forEach((p,i)=>p.classList.toggle('on',i===step));
+$('bNext').textContent=STEPS[step].n;$('bBack').disabled=step===0;$('fgNote').textContent=FGN[step];}
+function busy(){return animT!==null||solveT!==null;}
+function save(s){endStates[s]=deepState();}
+function enter(s){step=s;setCaption();
+if(s===0){nShown=1;bornUpTo(1);loopGapEnds=null;revealed=false;save(0);}
+if(s!==1)scanUI=null;
+if(s===1)runScanMatch(()=>{save(1);setCaption();});
+if(s===2)driveTo(20,()=>{save(2);setCaption();});
+if(s===3)runLocalBA(()=>{save(3);setCaption();});
+if(s===4)driveTo(NF,()=>{save(4);setCaption();});
+if(s===5){showGap();save(5);}
+if(s===6)runPoseGraph(()=>{save(6);setCaption();});
+if(s===7)runGlobalBA(()=>{save(7);setCaption();});
+if(busy())$('bNext').textContent='Skip';}
+$('bNext').addEventListener('click',()=>{if(busy()){finishBusy();setCaption();return;}
+if(step<STEPS.length-1)enter(step+1);
+else{seed=(Math.random()*1e9)|0;genScene();nShown=1;bornUpTo(1);revealed=false;loopGapEnds=null;syncDisp();endStates=[];enter(0);}});
+$('bBack').addEventListener('click',()=>{if(step===0)return;if(busy())finishBusy();windowHalo=null;
+const target=step-1;if(endStates[target])restore(endStates[target]);
+step=target;setCaption();if(step===5)showGap();if(step===1)scanInsetFinal();});
+const pillsDiv=$('pills');
+for(let i=0;i<STEPS.length;i++){const b=document.createElement('button');b.className='pill';b.setAttribute('aria-label','Step '+(i+1));
+b.addEventListener('click',()=>{if(busy())finishBusy();if(endStates[i]){restore(endStates[i]);step=i;setCaption();if(i===5)showGap();if(i===1)scanInsetFinal();}});
+pillsDiv.appendChild(b);}
+let sAz=-0.45,sEl=0.72,drag=false,lx=0,ly=0;
+const WLW=640,WLH=360,FS=330;
+function specPose(){const C=[11*Math.cos(sEl)*Math.sin(sAz),11*Math.sin(sEl),11*Math.cos(sEl)*Math.cos(sAz)];return lookAtT(C,[0,0,0]);}
+function sproj(sp,p){const X=add(mv(sp.R,p),sp.t);if(X[2]<0.15)return null;return[FS*X[0]/X[2]+WLW/2,FS*X[1]/X[2]+WLH/2];}
+function fit(cv){const dpr=window.devicePixelRatio||1,w=cv.clientWidth||WLW,W=Math.round(w*dpr),H=Math.round(w*WLH/WLW*dpr);
+if(cv.width!==W||cv.height!==H){cv.width=W;cv.height=H;}const ctx=cv.getContext('2d');ctx.setTransform(W/WLW,0,0,W/WLW,0,0);return ctx;}
+function seg(sp,a,b,ctx){const A=sproj(sp,a),B=sproj(sp,b);if(!A||!B)return;ctx.beginPath();ctx.moveTo(A[0],A[1]);ctx.lineTo(B[0],B[1]);ctx.stroke();}
+function frustum(sp,R,C,color,dash,ctx,size){const Rt=mT(R),D=size||0.42,hw=CX/FOC*D,hh=CY/FOC*D;
+const cs=[[-hw,-hh,D],[hw,-hh,D],[hw,hh,D],[-hw,hh,D]].map(v=>add(C,mv(Rt,v)));
+ctx.strokeStyle=color;ctx.lineWidth=1.6;ctx.setLineDash(dash?[4,3]:[]);
+for(let i=0;i<4;i++){seg(sp,C,cs[i],ctx);seg(sp,cs[i],cs[(i+1)%4],ctx);}
+ctx.setLineDash([]);const q=sproj(sp,C);if(q){ctx.fillStyle=color;ctx.beginPath();ctx.arc(q[0],q[1],2.6,0,7);ctx.fill();}}
+const loopPts=()=>{const s=new Set();for(let j=0;j<NLM;j++)if(firstSeen[j]<6&&visible(trueF[NF-1],truePts[j]))s.add(j);return s;};
+function draw(){const ctx=fit($('pW'));ctx.clearRect(0,0,WLW,WLH);const sp=specPose();
+ctx.strokeStyle=LINEC;ctx.lineWidth=1;ctx.globalAlpha=0.7;
+for(let i=-4;i<=4;i+=2){seg(sp,[i,-0.4,-4.6],[i,-0.4,4.6],ctx);seg(sp,[-4.6,-0.4,i],[4.6,-0.4,i],ctx);}
+ctx.globalAlpha=1;
+if(revealed){ctx.strokeStyle=INKC;ctx.lineWidth=1.4;ctx.globalAlpha=0.55;ctx.beginPath();let st=false;
+for(let i=0;i<NF;i++){const q=sproj(sp,camC(trueF[i]));if(!q)continue;if(st)ctx.lineTo(q[0],q[1]);else{ctx.moveTo(q[0],q[1]);st=true;}}
+ctx.closePath();ctx.stroke();ctx.globalAlpha=1;
+for(let j=0;j<NLM;j++){const q=sproj(sp,truePts[j]);if(!q)continue;ctx.fillStyle=INKC;ctx.beginPath();ctx.arc(q[0],q[1],1.8,0,7);ctx.fill();}}
+if(windowHalo){ctx.fillStyle=ACCENT;ctx.globalAlpha=0.13;
+for(const k of windowHalo.ks){const q=sproj(sp,dispF[KFI[k]].C);if(q){ctx.beginPath();ctx.arc(q[0],q[1],16,0,7);ctx.fill();}}
+for(const j of windowHalo.ps){const q=sproj(sp,dispP[j]);if(q){ctx.beginPath();ctx.arc(q[0],q[1],12,0,7);ctx.fill();}}
+ctx.globalAlpha=1;}
+const cur=nShown-1;
+if(cur>0&&nShown<NF&&step<5){ctx.strokeStyle=ACCENT;ctx.globalAlpha=0.16;ctx.lineWidth=1;
+for(let j=0;j<NLM;j++)if(bornShown.has(j)&&visible(estF[cur],estPts[j]))seg(sp,dispF[cur].C,dispP[j],ctx);
+ctx.globalAlpha=1;}
+ctx.strokeStyle=ACCENT;ctx.lineWidth=1.5;ctx.globalAlpha=0.55;ctx.beginPath();let st2=false;
+for(let i=0;i<nShown;i++){const q=sproj(sp,dispF[i].C);if(!q)continue;if(st2)ctx.lineTo(q[0],q[1]);else{ctx.moveTo(q[0],q[1]);st2=true;}}
+ctx.stroke();ctx.globalAlpha=1;
+for(let i=0;i<nShown;i++){if(KFI.includes(i))continue;const q=sproj(sp,dispF[i].C);if(!q)continue;
+ctx.fillStyle=ACCENT;ctx.globalAlpha=0.5;ctx.beginPath();ctx.arc(q[0],q[1],1.6,0,7);ctx.fill();ctx.globalAlpha=1;}
+for(let k=0;k<KFI.length;k++){const i=KFI[k];if(i>=nShown)continue;
+frustum(sp,dispF[i].R,dispF[i].C,k===0?INKC:ACCENT,k!==0,ctx,0.42);}
+if(cur>0&&nShown<NF)frustum(sp,dispF[cur].R,dispF[cur].C,ACCENT,false,ctx,0.5);
+const lps=step>=5&&step<7?loopPts():null;
+for(let j=0;j<NLM;j++){if(!bornShown.has(j))continue;const q=sproj(sp,dispP[j]);if(!q)continue;
+if(j===anchorPt){ctx.fillStyle=INKC;ctx.fillRect(q[0]-3,q[1]-3,6,6);}
+else{ctx.fillStyle=LMC;ctx.beginPath();ctx.arc(q[0],q[1],3.2,0,7);ctx.fill();}
+if(lps&&lps.has(j)){ctx.strokeStyle=BADC;ctx.lineWidth=1.6;ctx.beginPath();ctx.arc(q[0],q[1],7,0,7);ctx.stroke();}}
+if(loopGapEnds){const A=sproj(sp,loopGapEnds[0]),B=sproj(sp,loopGapEnds[1]);
+if(A&&B){ctx.strokeStyle=BADC;ctx.lineWidth=1.8;ctx.setLineDash([5,4]);ctx.beginPath();ctx.moveTo(A[0],A[1]);ctx.lineTo(B[0],B[1]);ctx.stroke();ctx.setLineDash([]);
+ctx.fillStyle=BADC;ctx.beginPath();ctx.arc(B[0],B[1],3,0,7);ctx.fill();}}
+if(scanUI)drawScanInset(ctx);
+}
+function stats(){$('sF').textContent=nShown;let kc=0;for(const i of KFI)if(i<nShown)kc++;$('sK').textContent=kc;
+$('sL').textContent=bornShown.size;
+const e=reprojErr(shownMaxK());$('sE').textContent=e.toFixed(1)+' px';
+$('sE').style.color=e>8?BADC:(e<1.2?'#417B4B':'');
+if(revealed){let s=0;for(const i of KFI)s+=len(sub(camC(estF[i]),camC(trueF[i])));$('sD').textContent=(s/KFI.length).toFixed(2);}
+else $('sD').textContent='?';}
+const cv=$('pW');
+cv.addEventListener('pointerdown',e=>{drag=true;cv.setPointerCapture(e.pointerId);lx=e.clientX;ly=e.clientY;});
+cv.addEventListener('pointermove',e=>{if(!drag)return;sAz-=(e.clientX-lx)*0.007;sEl+=(e.clientY-ly)*0.005;
+sEl=Math.max(0.15,Math.min(1.4,sEl));lx=e.clientX;ly=e.clientY;});
+window.addEventListener('pointerup',()=>{drag=false;});
+genScene();bornUpTo(1);syncDisp();enter(0);
+function frame(){for(let i=0;i<NF;i++){const tc=camC(estF[i]);dispF[i].C=add(dispF[i].C,scl(sub(tc,dispF[i].C),GLIDE));
+const w=rotLog(mm(estF[i].R,mT(dispF[i].R)));const th=len(w);
+if(th<1e-4||th>3.05)dispF[i].R=estF[i].R;else dispF[i].R=mm(rod(scl(w,GLIDE)),dispF[i].R);}
+for(let j=0;j<NLM;j++)dispP[j]=add(dispP[j],scl(sub(estPts[j],dispP[j]),GLIDE));
+draw();drawFG();stats();requestAnimationFrame(frame);}
+frame();
+})();
+</script>
+</body>
+</html>

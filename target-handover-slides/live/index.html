@@ -1,0 +1,260 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="color-scheme" content="light">
+    <meta name="description" content="Interactive, didactic point-target handover simulation for the GLOBECOM 2025 presentation.">
+    <title>Live target handover | GLOBECOM 2025</title>
+    <link rel="stylesheet" href="./styles.css">
+    <script src="./app.js" defer></script>
+  </head>
+  <body data-bento-live-app>
+    <div class="app-shell" id="appShell">
+      <header class="app-header">
+        <div class="title-block">
+          <p class="eyebrow">LIVE EXAMPLE · POINT TARGETS</p>
+          <h1>When should a track cross the network?</h1>
+        </div>
+        <div class="header-actions">
+          <span class="model-chip" title="This demo uses kinematic point targets, not an extended-object model.">Didactic model</span>
+          <a class="back-button" id="backButton" href="../" target="_top" aria-label="Back to presentation">
+            <svg aria-hidden="true" viewBox="0 0 20 20"><path d="m12.5 4-6 6 6 6M7 10h8"/></svg>
+            Back to slides
+          </a>
+        </div>
+      </header>
+
+      <main class="workspace">
+        <section class="scene-card" aria-labelledby="sceneTitle">
+          <div class="scene-heading">
+            <div>
+              <h2 id="sceneTitle">Two base stations, two crossing targets</h2>
+              <p>Each circle is a 120 m FoV; the overlap is where beliefs can be handed over.</p>
+            </div>
+            <div class="legend" aria-label="Target legend">
+              <span><i class="legend-dot target-a"></i>Target A · BS1 → BS2</span>
+              <span><i class="legend-dot target-b"></i>Target B · BS2 → BS1</span>
+            </div>
+          </div>
+
+          <div class="scene-wrap">
+            <svg id="scene" class="scene" viewBox="0 0 820 470" role="img" aria-labelledby="sceneSvgTitle sceneSvgDesc">
+              <title id="sceneSvgTitle">Animated two-base-station target handover</title>
+              <desc id="sceneSvgDesc">Two point targets move in opposite directions through overlapping circular base-station fields of view. Track labels and handover messages update as the timeline advances.</desc>
+              <defs>
+                <pattern id="smallGrid" width="24" height="24" patternUnits="userSpaceOnUse">
+                  <path d="M24 0H0V24" fill="none" stroke="#dbe4dc" stroke-width="1"/>
+                </pattern>
+                <linearGradient id="groundWash" x1="0" x2="1" y1="0" y2="1">
+                  <stop offset="0" stop-color="#fbfaf5"/>
+                  <stop offset="1" stop-color="#eef4ea"/>
+                </linearGradient>
+                <filter id="softShadow" x="-40%" y="-40%" width="180%" height="180%">
+                  <feDropShadow dx="0" dy="3" stdDeviation="4" flood-color="#1d2520" flood-opacity=".18"/>
+                </filter>
+                <filter id="eventGlow" x="-60%" y="-60%" width="220%" height="220%">
+                  <feGaussianBlur stdDeviation="5" result="blur"/>
+                  <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+                </filter>
+                <marker id="arrowGreen" markerWidth="9" markerHeight="9" refX="8" refY="4.5" orient="auto">
+                  <path d="M0 0 9 4.5 0 9Z" fill="#2f7d5b"/>
+                </marker>
+              </defs>
+
+              <rect class="plot-background" x="1" y="1" width="818" height="468" rx="16"/>
+              <rect x="1" y="1" width="818" height="468" rx="16" fill="url(#smallGrid)" opacity=".7"/>
+
+              <g class="fov fov-one">
+                <circle cx="255" cy="236" r="228"/>
+                <text x="110" y="64">BS1 FoV</text>
+              </g>
+              <g class="fov fov-two">
+                <circle cx="540" cy="236" r="228"/>
+                <text x="640" y="64">BS2 FoV</text>
+              </g>
+              <path class="overlap-line" d="M397.5 59v354"/>
+              <g class="overlap-label" transform="translate(397.5 40)">
+                <rect x="-61" y="-15" width="122" height="30" rx="15"/>
+                <text text-anchor="middle" y="5">OVERLAP</text>
+              </g>
+
+              <path class="route route-a" d="M65 270C250 284 548 195 730 209"/>
+              <path class="route route-b" d="M730 214C552 202 270 282 65 266"/>
+
+              <g class="base-station" transform="translate(255 236)" aria-label="Base station 1">
+                <circle r="25"/>
+                <path d="M0-13v25M-11 12h22M-8-2 0-11 8-2M-15 20h30"/>
+                <text y="48">BS1</text>
+              </g>
+              <g class="base-station" transform="translate(540 236)" aria-label="Base station 2">
+                <circle r="25"/>
+                <path d="M0-13v25M-11 12h22M-8-2 0-11 8-2M-15 20h30"/>
+                <text y="48">BS2</text>
+              </g>
+
+              <g id="transferA" class="transfer transfer-a is-hidden" aria-hidden="true">
+                <path d="M275 214C340 145 462 145 520 214" marker-end="url(#arrowGreen)"/>
+                <g class="packet"><rect x="365" y="142" width="66" height="25" rx="12.5"/><text x="398" y="159" text-anchor="middle">PRIOR</text></g>
+              </g>
+              <g id="transferB" class="transfer transfer-b is-hidden" aria-hidden="true">
+                <path d="M520 258C460 330 340 330 275 258" marker-end="url(#arrowGreen)"/>
+                <g class="packet"><rect x="365" y="306" width="66" height="25" rx="12.5"/><text x="398" y="323" text-anchor="middle">PRIOR</text></g>
+              </g>
+
+              <g id="measurementA" class="measurement target-a-stroke is-hidden" aria-hidden="true">
+                <path class="measurement-link" d="M65 270h0"/>
+                <path class="measurement-mark" d="m-6 0h12M0-6v12" transform="translate(65 270)"/>
+              </g>
+              <g id="measurementB" class="measurement target-b-stroke is-hidden" aria-hidden="true">
+                <path class="measurement-link" d="M730 214h0"/>
+                <path class="measurement-mark" d="m-6 0h12M0-6v12" transform="translate(730 214)"/>
+              </g>
+
+              <g id="estimateA" class="estimate target-a-stroke is-hidden" aria-hidden="true">
+                <ellipse class="belief" cx="65" cy="270" rx="22" ry="13"/>
+                <path class="estimate-mark" d="m-7-7 14 14m0-14-14 14" transform="translate(65 270)"/>
+              </g>
+              <g id="estimateB" class="estimate target-b-stroke is-hidden" aria-hidden="true">
+                <ellipse class="belief" cx="730" cy="214" rx="22" ry="13"/>
+                <path class="estimate-mark" d="m-7-7 14 14m0-14-14 14" transform="translate(730 214)"/>
+              </g>
+
+              <g id="targetA" class="target target-a-fill" transform="translate(65 270)" aria-label="Target A">
+                <circle class="target-halo" r="16"/>
+                <circle class="target-core" r="7"/>
+                <g class="target-label" transform="translate(0 -31)"><rect x="-43" y="-14" width="86" height="26" rx="13"/><text text-anchor="middle" y="4">A · BS1</text></g>
+              </g>
+              <g id="targetB" class="target target-b-fill" transform="translate(730 214)" aria-label="Target B">
+                <circle class="target-halo" r="16"/>
+                <circle class="target-core" r="7"/>
+                <g class="target-label" transform="translate(0 -31)"><rect x="-43" y="-14" width="86" height="26" rx="13"/><text text-anchor="middle" y="4">B · BS2</text></g>
+              </g>
+
+              <g class="scale" transform="translate(35 434)">
+                <path d="M0 0h95M0-5v10M95-5v10"/>
+                <text x="47.5" y="-9" text-anchor="middle">50 m</text>
+              </g>
+            </svg>
+            <div class="scene-callout" id="sceneCallout" role="status" aria-live="polite">
+              <span class="status-dot"></span>
+              <span id="eventText">Ready — press Play or jump to the next handover.</span>
+            </div>
+          </div>
+
+          <div class="transport" aria-label="Simulation timeline controls">
+            <div class="transport-buttons">
+              <button class="play-button" id="playButton" type="button" disabled aria-pressed="false">
+                <svg class="play-icon" aria-hidden="true" viewBox="0 0 20 20"><path d="M6 4.5 15 10l-9 5.5Z"/></svg>
+                <svg class="pause-icon" aria-hidden="true" viewBox="0 0 20 20"><path d="M5.5 4h3v12h-3zm6 0h3v12h-3z"/></svg>
+                <span>Play</span>
+              </button>
+              <button id="stepButton" type="button" disabled title="Advance one 1-second frame (Right Arrow)">+1 frame</button>
+              <button id="eventButton" type="button" disabled title="Jump to the next handover event">Next event</button>
+            </div>
+            <label class="timeline-label" for="timeline">
+              <span>Timeline</span>
+              <output id="timeOutput" for="timeline">t = 0 s</output>
+            </label>
+            <input id="timeline" class="timeline" type="range" min="0" max="100" value="0" step="1" disabled aria-label="Simulation time in seconds">
+          </div>
+        </section>
+
+        <aside class="control-card" aria-labelledby="controlsTitle">
+          <div class="control-heading">
+            <div>
+              <p class="eyebrow">PROTOCOL KNOBS</p>
+              <h2 id="controlsTitle">Open both gates</h2>
+            </div>
+            <span class="equation" aria-label="Existence probability strictly above P threshold and expected receiving detection probability strictly above Gamma">P(e) &gt; P<sub>th</sub> &amp; E[p<sub>D</sub><sup>Rx</sup>] &gt; Γ</span>
+          </div>
+
+          <fieldset class="mode-control">
+            <legend>Handover payload</legend>
+            <div class="segmented-control">
+              <input id="priorMode" name="payload" type="radio" value="prior" checked disabled>
+              <label for="priorMode">Prior only</label>
+              <input id="measurementMode" name="payload" type="radio" value="measurement" disabled>
+              <label for="measurementMode">Prior + associated measurement</label>
+            </div>
+            <p id="modeHint">The prior seeds a declared track at the receiver; uncertainty contracts through later local updates.</p>
+          </fieldset>
+
+          <div class="slider-group">
+            <label for="existenceThreshold">
+              <span>Existence declaration P<sub>th</sub></span>
+              <output id="existenceOutput" for="existenceThreshold">0.50</output>
+            </label>
+            <input id="existenceThreshold" type="range" min="0.50" max="0.98" step="0.01" value="0.50" disabled>
+            <div class="range-labels"><span>earlier / permissive</span><span>stronger existence</span></div>
+          </div>
+
+          <div class="slider-group">
+            <label for="visibilityThreshold">
+              <span>Receiver visibility Γ</span>
+              <output id="visibilityOutput" for="visibilityThreshold">0.50</output>
+            </label>
+            <input id="visibilityThreshold" type="range" min="0.20" max="0.90" step="0.01" value="0.50" disabled>
+            <div class="range-labels"><span>earlier / boundary risk</span><span>later / missed-track risk</span></div>
+          </div>
+
+          <section class="gate-panel" aria-labelledby="gateTitle">
+            <div class="section-label-row">
+              <h3 id="gateTitle">Gate state at this frame</h3>
+              <span id="gateSummary">0 of 4 open</span>
+            </div>
+            <div class="gate-row" id="gateA">
+              <span class="gate-target target-a-fill">A</span>
+              <div class="gate-metric">
+                <span>P(e) <b id="existA">0.00</b></span>
+                <i><span id="existBarA"></span></i>
+              </div>
+              <span class="gate-and">AND</span>
+              <div class="gate-metric">
+                <span title="Expected detection probability at receiving BS2">Vis.<sub>BS2</sub> <b id="visibleA">0.00</b></span>
+                <i><span id="visibleBarA"></span></i>
+              </div>
+              <strong class="gate-state" id="gateStateA">WAIT</strong>
+            </div>
+            <div class="gate-row" id="gateB">
+              <span class="gate-target target-b-fill">B</span>
+              <div class="gate-metric">
+                <span>P(e) <b id="existB">0.00</b></span>
+                <i><span id="existBarB"></span></i>
+              </div>
+              <span class="gate-and">AND</span>
+              <div class="gate-metric">
+                <span title="Expected detection probability at receiving BS1">Vis.<sub>BS1</sub> <b id="visibleB">0.00</b></span>
+                <i><span id="visibleBarB"></span></i>
+              </div>
+              <strong class="gate-state" id="gateStateB">WAIT</strong>
+            </div>
+          </section>
+
+          <section class="counter-panel" aria-label="Protocol counters">
+            <div><span>Prior messages</span><strong id="priorCount">0 / 2</strong></div>
+            <div><span>Assoc. measurements</span><strong id="measurementCount">0</strong></div>
+            <div><span>Receiver tracks seeded</span><strong id="trackCount">0 / 2</strong></div>
+          </section>
+
+          <div class="tradeoff-note" id="tradeoffNote">
+            Γ = 0.50 uses the paper’s simulated operating point: require credible receiver visibility without waiting for the target to reach the FoV centre.
+          </div>
+
+          <p class="disclaimer">
+            <strong>Interpretation boundary.</strong> This deterministic animation is a didactic point-target simulation aligned with the deck’s handover rule. Its smooth receiver-visibility curve is illustrative, not the paper’s exact detection model. It is not the BP-MTT implementation, does not model extended objects, and does not reproduce the published Monte Carlo curves.
+          </p>
+        </aside>
+      </main>
+
+      <footer class="app-footer">
+        <span><kbd>Space</kbd> play/pause · <kbd>←</kbd>/<kbd>→</kbd> step · <kbd>Esc</kbd> back</span>
+        <span>BS separation 150 m · FoV radius 120 m · deterministic 1 s frames</span>
+      </footer>
+    </div>
+
+    <noscript>
+      <div class="noscript-note"><strong>Static preview.</strong> Enable JavaScript to play, scrub, and change the handover gates.</div>
+    </noscript>
+  </body>
+</html>

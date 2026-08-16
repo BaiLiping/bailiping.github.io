@@ -1,0 +1,883 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>BP vs PMBM — data association, side by side | Bai Liping</title>
+<style>
+:root{
+  --paper:#f4f6f8; --panel:#ffffff; --ink:#16222e; --ink-soft:#51606e; --ink-faint:#8a97a3;
+  --line:#d7dee5; --grid:#e6ebef;
+  --bp:#1f77b4; --bp-deep:#155d8f; --bp-wash:#e5eff7;
+  --pm:#e8720c; --pm-deep:#b45607; --pm-wash:#fceede;
+  --t1:#2ca02c; --t2:#9467bd; --t3:#d62728; --nul:#8a97a3;
+  --err:#c22f2f;
+  --serif:"Charter","Bitstream Charter","Sitka Text",Cambria,Georgia,serif;
+  --mono:ui-monospace,"SF Mono","Cascadia Mono",Menlo,Consolas,monospace;
+  --sans:system-ui,-apple-system,"Segoe UI",sans-serif;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0; color:var(--ink); font:17px/1.62 var(--serif); background:var(--paper);
+  background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);
+  background-size:26px 26px;
+}
+@media (prefers-reduced-motion: reduce){ html{scroll-behavior:auto} }
+
+/* ---- chrome ---- */
+.topbar{position:sticky;top:0;z-index:50;background:rgba(244,246,248,.92);backdrop-filter:blur(6px);
+  border-bottom:1px solid var(--line);}
+.topbar .in{max-width:1080px;margin:0 auto;padding:9px 20px;display:flex;gap:18px;align-items:baseline;flex-wrap:wrap}
+.brand{font:700 15px var(--serif);letter-spacing:.2px}
+.brand .x{color:var(--ink-faint);padding:0 4px}
+.brand .b{color:var(--bp-deep)} .brand .p{color:var(--pm-deep)}
+.topnav{display:flex;gap:14px;flex-wrap:wrap;margin-left:auto}
+.topnav a{font:11.5px var(--mono);color:var(--ink-soft);text-decoration:none;letter-spacing:.02em}
+.topnav a:hover{color:var(--ink);text-decoration:underline}
+main{max-width:1080px;margin:0 auto;padding:0 20px 90px}
+
+/* ---- hero ---- */
+.hero{padding:58px 0 30px;max-width:820px}
+.eyebrow{font:10.5px var(--mono);letter-spacing:.16em;text-transform:uppercase;color:var(--ink-faint)}
+h1{font:700 clamp(30px,4.6vw,44px)/1.14 var(--serif);margin:.35em 0 .4em;letter-spacing:-.01em}
+h1 .b{color:var(--bp-deep)} h1 .p{color:var(--pm-deep)}
+.thesis{font-size:18.5px;color:var(--ink-soft);max-width:64ch}
+.thesis strong{color:var(--ink)}
+.accuracy{max-width:78ch;margin:0 0 34px;padding:13px 16px;border:1px solid var(--line);border-left:3px solid var(--pm);border-radius:0 6px 6px 0;background:#fff;color:var(--ink-soft);font:13px/1.55 var(--sans)}
+.accuracy strong{color:var(--ink)}
+
+/* ---- sections & figure cards ---- */
+.sec{margin-top:64px;scroll-margin-top:64px}
+h2{font:700 27px/1.25 var(--serif);margin:0 0 10px}
+h2 .no{font:400 15px var(--mono);vertical-align:.14em;margin-right:10px;color:var(--ink-faint)}
+.sec.bp h2 .no{color:var(--bp)} .sec.pm h2 .no{color:var(--pm)}
+.lede{max-width:72ch;color:var(--ink-soft)}
+.lede em, p em{font-style:italic}
+.fig{background:var(--panel);border:1px solid var(--line);border-radius:6px;margin:22px 0;overflow:hidden}
+.fig .body{padding:16px}
+.figcap{border-top:1px solid var(--line);padding:9px 16px;font:11.5px/1.55 var(--mono);color:var(--ink-soft);background:#fbfcfd}
+.figcap b{color:var(--ink);font-weight:600}
+.sec.bp .figcap b{color:var(--bp-deep)} .sec.pm .figcap b{color:var(--pm-deep)}
+.split{display:grid;grid-template-columns:1fr 250px;gap:16px}
+@media (max-width:820px){ .split{grid-template-columns:1fr} }
+
+/* ---- controls ---- */
+.rail{display:flex;flex-direction:column;gap:14px;font-family:var(--sans)}
+.rail h4{margin:0;font:600 11px var(--mono);letter-spacing:.12em;text-transform:uppercase;color:var(--ink-faint)}
+button{font:13px var(--sans);cursor:pointer}
+.preset{padding:7px 10px;text-align:left;border:1px solid var(--line);border-radius:5px;background:#fff;color:var(--ink)}
+.preset:hover{border-color:var(--ink-soft)}
+.ctl label{display:flex;justify-content:space-between;font:12px var(--sans);color:var(--ink-soft);margin-bottom:3px}
+.ctl label output{font-family:var(--mono);color:var(--ink)}
+input[type=range]{width:100%;accent-color:var(--ink)}
+.sec.pm input[type=range]{accent-color:var(--pm)}
+.statline{font:12px/1.7 var(--mono);color:var(--ink-soft);border-top:1px dashed var(--line);padding-top:10px}
+.statline b{color:var(--ink);font-weight:600}
+.hint{font:12.5px var(--sans);color:var(--ink-faint)}
+button:focus-visible,input:focus-visible,a:focus-visible{outline:2px solid var(--bp);outline-offset:2px}
+
+/* ---- scene ---- */
+#scene{width:100%;height:auto;display:block;touch-action:none;user-select:none}
+#scene .draggable{cursor:grab}
+#scene.dragging .draggable{cursor:grabbing}
+
+/* ---- matrices & heatmaps ---- */
+table.mat{border-collapse:collapse;font:12.5px var(--mono)}
+table.mat th{font-weight:400;color:var(--ink-faint);padding:4px 9px;text-align:center}
+table.mat td{border:1px solid var(--line);padding:6px 10px;text-align:center;min-width:56px;background:#fff}
+table.mat td.rowh{border:none;background:transparent;text-align:right;font-weight:600;padding-right:10px}
+table.mat td.dim{color:var(--ink-faint)}
+.matwrap{overflow-x:auto}
+.heatnote{font:11.5px var(--mono);color:var(--ink-faint);margin:4px 0 8px}
+.beliefs{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:12px;margin-top:6px}
+.beliefs svg{width:100%;height:auto;display:block;border:1px solid var(--line);border-radius:4px;background:#fff}
+
+/* ---- equations ---- */
+.eqbox{border:1px solid var(--line);border-left:3px solid var(--bp);border-radius:5px;background:#fff;padding:14px 18px;margin:18px 0}
+.sec.pm .eqbox{border-left-color:var(--pm)}
+.eq{display:flex;align-items:baseline;gap:12px;font:16.5px var(--serif);margin:9px 0;flex-wrap:wrap}
+.eq .m{font-style:italic}
+.eq .num{margin-left:auto;font:11.5px var(--mono);color:var(--ink-faint)}
+.eq sub,.eq sup{font-size:.68em}
+.frac{display:inline-flex;flex-direction:column;text-align:center;vertical-align:middle;margin:0 3px}
+.frac>span{padding:0 5px}
+.frac>span:first-child{border-bottom:1px solid var(--ink)}
+.eqnote{font:13px var(--sans);color:var(--ink-soft);margin-top:8px}
+
+/* ---- BP graph & player ---- */
+.player{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin:2px 0 12px;font-family:var(--sans)}
+.player button{padding:6px 13px;border:1px solid var(--line);border-radius:5px;background:#fff}
+.player button:hover{border-color:var(--bp)}
+.player button.primary{background:var(--bp);border-color:var(--bp);color:#fff}
+.player .ro{font:12px var(--mono);color:var(--ink-soft);margin-left:auto}
+.grid2{display:grid;grid-template-columns:minmax(0,1.35fr) minmax(0,1fr);gap:18px;align-items:start}
+@media (max-width:820px){ .grid2{grid-template-columns:1fr} }
+#fgraph{width:100%;height:auto;display:block}
+#fgraph g.edge{cursor:crosshair}
+#fgraph g.edge .eline{transition:stroke .12s,stroke-opacity .12s}
+#fgraph g.edge:hover .eline{stroke:#26394a;stroke-opacity:1}
+#fgraph g.edge:hover text{font-weight:700;opacity:1}
+#fgraph text.hot{font-weight:700}
+#fgraph text.mval:not(.hot),#fgraph text.nval:not(.hot){opacity:.5}
+.glegend{font:11px var(--mono);color:var(--ink-soft);margin-top:8px;display:flex;align-items:center;gap:7px;flex-wrap:wrap}
+.glegend .sw{width:10px;height:10px;border-radius:50%;display:inline-block}
+.glegend .dash{width:22px;border-top:1.6px dashed #9aa7b1;display:inline-block}
+.edgeRO{font:11.5px/1.5 var(--mono);color:var(--ink);background:#fbfcfd;border:1px dashed var(--line);border-radius:4px;padding:6px 9px;margin-top:8px}
+
+/* ---- hypothesis table ---- */
+table.hyps{border-collapse:collapse;width:100%;font:12.5px var(--mono)}
+table.hyps th{font-weight:400;color:var(--ink-faint);text-align:left;padding:4px 8px;border-bottom:1px solid var(--line)}
+table.hyps td{padding:5px 8px;border-bottom:1px solid #eef2f5;white-space:nowrap}
+table.hyps tr.cut{opacity:.38}
+table.hyps tr.cut td:first-child{text-decoration:line-through}
+.chip{display:inline-block;padding:1px 7px;border-radius:3px;color:#fff;background:var(--c,#555);font:11.5px var(--mono)}
+.chip.nul{background:transparent;color:var(--ink-faint);border:1px dashed var(--ink-faint)}
+.wcell{width:34%;min-width:150px}
+.wbar{position:relative;height:16px;background:var(--pm-wash);border-radius:3px;overflow:hidden}
+.wbar>i{position:absolute;inset:0 auto 0 0;background:var(--pm);border-radius:3px}
+.wbar>span{position:relative;padding-left:6px;font:11px/16px var(--mono);color:var(--ink)}
+.kbar{display:flex;gap:14px;align-items:center;margin-bottom:12px;flex-wrap:wrap;font-family:var(--sans)}
+.kbar .ctl{flex:1;min-width:200px}
+.kbar .ro{font:12px var(--mono);color:var(--ink-soft)}
+
+/* ---- compare ---- */
+.tri{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px}
+.tri h5{margin:0 0 6px;font:600 11px var(--mono);letter-spacing:.1em;text-transform:uppercase}
+.tri .b h5{color:var(--bp-deep)} .tri .p h5{color:var(--pm-deep)} .tri .d h5{color:var(--err)}
+.errline{font:13px var(--mono);margin-top:12px}
+.errline b{font-size:15px}
+.bridge{border:1px solid var(--line);border-radius:6px;background:#fff;margin:22px 0;overflow:hidden}
+.bridge .bar{height:4px;background:linear-gradient(90deg,var(--bp) 0 50%,var(--pm) 50% 100%)}
+.bridge .body{padding:16px 18px}
+.bridge h3{margin:0 0 6px;font:700 18px var(--serif)}
+.bridge p{margin:0;color:var(--ink-soft);max-width:78ch}
+
+/* ---- cheat sheet ---- */
+table.cheat{border-collapse:collapse;width:100%;font:14.5px/1.5 var(--serif)}
+table.cheat th{font:600 13px var(--sans);padding:10px 12px;text-align:left;border-bottom:2px solid var(--ink)}
+table.cheat th.b{color:var(--bp-deep);background:var(--bp-wash)}
+table.cheat th.p{color:var(--pm-deep);background:var(--pm-wash)}
+table.cheat td{padding:10px 12px;border-bottom:1px solid var(--line);vertical-align:top}
+table.cheat td.rl{font:600 12px var(--mono);color:var(--ink-soft);white-space:nowrap;width:1%}
+table.cheat code{font:12.5px var(--mono);background:#eef2f5;padding:1px 5px;border-radius:3px}
+
+.refs{font-size:14.5px;color:var(--ink-soft)}
+.refs p{margin:7px 0;padding-left:1.6em;text-indent:-1.6em}
+.refs a{color:var(--bp-deep);text-underline-offset:2px}
+.foot{margin-top:70px;border-top:1px solid var(--line);padding-top:16px;font:12px var(--mono);color:var(--ink-faint)}
+.footnote{font:13px var(--sans);color:var(--ink-faint);max-width:78ch;margin-top:14px}
+svg text{font-family:var(--mono)}
+</style>
+<style>
+  .bl-site-header{border-bottom:1px solid rgba(29,37,32,.12);background:rgba(255,255,255,.86);backdrop-filter:blur(12px);font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif}
+  .bl-header-inner{width:min(960px,calc(100% - 32px));margin-inline:auto;display:flex;align-items:center;justify-content:space-between;min-height:64px;gap:16px}
+  .bl-brand{display:inline-flex;align-items:center;gap:10px;font-weight:800;color:#1d2520;text-decoration:none}
+  .bl-brand-mark{display:grid;place-items:center;width:32px;height:32px;border-radius:8px;background:#2f7d5b;color:#fff;font-weight:900}
+  .bl-top-nav a{color:#215c43;font-weight:700;text-decoration:none}
+</style>
+</head>
+<body>
+<header class="bl-site-header">
+  <div class="bl-header-inner">
+    <a class="bl-brand" href="/" aria-label="Bai Liping home">
+      <span class="bl-brand-mark" aria-hidden="true">B</span>
+      <span>Bai Liping</span>
+    </a>
+    <nav class="bl-top-nav" aria-label="Primary">
+      <a href="/">Home</a>
+    </nav>
+  </div>
+</header>
+
+
+<div class="topbar"><div class="in">
+  <div class="brand"><span class="b">Belief propagation</span><span class="x">×</span><span class="p">PMBM</span></div>
+  <nav class="topnav">
+    <a href="#s1">§1 The problem</a><a href="#s2">§2 Belief propagation</a><a href="#s3">§3 PMBM</a><a href="#s4">§4 Head-to-head</a><a href="#s5">§5 Cheat sheet</a>
+  </nav>
+</div></div>
+
+<main>
+<header class="hero">
+  <div class="eyebrow">An interactive note · Multi-target tracking · Data association</div>
+  <h1>One association problem, <span class="b">two</span> <span class="p">philosophies</span>.</h1>
+  <p class="thesis">Every scan, a tracker faces the same combinatorial question: <strong>which measurement belongs to which target?</strong>
+  Exact marginalization requires a sum over valid global association events and is generally combinatorial. This page puts two important routes side by side on one live scenario:
+  <strong style="color:var(--bp-deep)">belief propagation</strong>, which never enumerates events and instead passes messages until the <em>marginal</em> association probabilities emerge; and the
+  <strong style="color:var(--pm-deep)">Poisson multi-Bernoulli mixture</strong>, which represents ambiguity as a weighted mixture of global hypotheses and manages that mixture with hypothesis selection and pruning. Drag anything in Fig.&nbsp;1 — every figure below recomputes.</p>
+</header>
+
+<div class="accuracy"><strong>Model boundary.</strong> The live comparison is an exact benchmark for a normalized one-scan assignment model: existing tracks may be missed or claim at most one measurement, and unassigned measurements have baseline weight 1. It is <em>not</em> a complete PMBM update. In a PMBM filter, a new-target Bernoulli is driven by measurement-specific evidence from the undetected-target Poisson intensity; this demo instead applies a separate birth-versus-clutter slider after association so BP and enumeration receive identical weights.</div>
+
+<!-- ============ §1 ============ -->
+<section class="sec" id="s1">
+  <h2><span class="no">§1</span>The shared problem: three tracks in a tangle, four measurements</h2>
+  <p class="lede">Three targets have predicted positions <span style="font-style:italic">ẑ</span><sub>i</sub> with innovation covariances <span style="font-style:italic">S</span><sub>i</sub> (gates drawn at the 99&nbsp;% χ² contour) — and their gates overlap three ways. A sensor returns four measurements with detection probability <span style="font-style:italic">P</span><sub>D</sub> and Poisson clutter density <span style="font-style:italic">λ</span><sub>c</sub>. BP and exhaustive enumeration consume exactly the same existing-track assignment weights ℓ, making their marginal-association comparison exact for the toy model.</p>
+
+  <div class="fig">
+    <div class="body split">
+      <svg id="scene" viewBox="0 0 720 420" aria-label="Interactive tracking scene: drag targets and measurements"></svg>
+      <div class="rail">
+        <h4>Scenario — the three-way tangle</h4>
+        <button class="preset" id="layoutReset"><b>Reset layout</b><br><span style="font-size:11.5px;opacity:.75">restore the tangle after dragging</span></button>
+        <h4>Sensor model</h4>
+        <div class="ctl">
+          <label>Detection probability <output id="pdOut">0.90</output></label>
+          <input type="range" id="pdSlider" min="0.50" max="0.99" step="0.01" value="0.90" aria-label="Detection probability">
+        </div>
+        <div class="ctl">
+          <label>Clutter density λ<sub>c</sub> <output id="ccOut">5.0×10⁻⁵</output></label>
+          <input type="range" id="ccSlider" min="-5" max="-3.3" step="0.05" value="-4.301" aria-label="Clutter density, log scale">
+        </div>
+        <div class="ctl">
+          <label>Toy birth score λ̃<sub>b</sub> <output id="bbOut">1.0×10⁻⁵</output></label>
+          <input type="range" id="bbSlider" min="-6" max="-4" step="0.05" value="-5" aria-label="Toy birth score, log scale">
+        </div>
+        <div class="statline" id="stat1"></div>
+        <div class="hint">Drag the × marks and the track centers. Everything on this page follows.</div>
+      </div>
+    </div>
+    <div class="figcap"><b>Fig. 1 —</b> The scan to be explained: three gates knotted around z₁–z₃, with z₄ off in the clutter. Dashed ellipses are validation gates (99 % χ², 2 dof); thin gray links mark the gated target–measurement pairs, i.e. the only associations either method will consider.</div>
+  </div>
+
+  <div class="fig">
+    <div class="body">
+      <div class="heatnote">ℓ<sub>ij</sub> = P<sub>D</sub>·N(z<sub>j</sub>; ẑ<sub>i</sub>, S<sub>i</sub>)/λ<sub>c</sub> for gated pairs&nbsp;&nbsp;·&nbsp;&nbsp;ℓ<sub>i∅</sub> = 1−P<sub>D</sub> (missed detection)&nbsp;&nbsp;·&nbsp;&nbsp;an unassigned measurement carries normalized baseline weight 1. For display only, its mass is later split by the toy score β̃ = λ̃<sub>b</sub>/(λ̃<sub>b</sub>+λ<sub>c</sub>).</div>
+      <div class="matwrap"><table class="mat" id="lmat"></table></div>
+    </div>
+      <div class="figcap"><b>Fig. 2 —</b> Existing-track association weights for the normalized benchmark. BP runs messages over this table; exhaustive enumeration multiplies its entries into global assignment weights. A dot means the pair fell outside the gate.</div>
+  </div>
+</section>
+
+<!-- ============ §2 ============ -->
+<section class="sec bp" id="s2">
+  <h2><span class="no">§2</span>Route one — belief propagation on the association graph</h2>
+  <p class="lede">Introduce a target-oriented variable <em>a<sub>i</sub></em> (which measurement did target <em>i</em> generate, or ∅) and a measurement-oriented variable <em>b<sub>j</sub></em> (which target generated measurement <em>j</em>, or clutter/new). Redundant on purpose: the pairwise factors Ψ<sub>ij</sub>(a<sub>i</sub>,b<sub>j</sub>) only enforce that the two bookkeepings <em>agree</em>. Loopy sum–product on this bipartite graph is <em>provably convergent</em> (Williams &amp; Lau, 2014), costs O(n·m) per sweep, and its fixed point delivers approximate <strong>marginal</strong> association probabilities — no hypothesis is ever written down.</p>
+
+  <div class="fig">
+    <div class="body">
+      <div class="player">
+        <button id="bpReset">Reset</button>
+        <button id="bpBack">◂ Back</button>
+        <button id="bpStep">Half-step ▸</button>
+        <button id="bpPlay" class="primary">Play sweeps</button>
+        <button id="bpEnd">Converged ⏭</button>
+        <span class="ro" id="bpRO"></span>
+      </div>
+      <div class="grid2">
+        <div>
+          <svg id="fgraph" viewBox="0 0 640 400" aria-label="Complete association factor graph with per-edge message values"></svg>
+          <div class="glegend">
+            <span class="sw" style="background:var(--t1)"></span><span class="sw" style="background:var(--t2)"></span><span class="sw" style="background:var(--t3)"></span>
+            <span>μ<sub>i→j</sub> track→measurement</span>
+            <span>·</span>
+            <span class="sw" style="background:#42505d"></span><span>ν<sub>j→i</sub> measurement→track</span>
+            <span>·</span>
+            <span class="dash"></span><span>gated out: ℓ = 0 ⇒ μ ≡ 0</span>
+          </div>
+          <div class="edgeRO" id="edgeRO">hover any edge for its ℓ, μ, ν and the marginal it feeds</div>
+        </div>
+        <div>
+          <div class="heatnote">p(a<sub>i</sub> = ·) — BP marginals; they move only when a ν half-step lands</div>
+          <div class="matwrap"><table class="mat" id="bpheat"></table></div>
+          <div class="heatnote" style="margin-top:14px">Convergence — max message change per full sweep</div>
+          <svg id="spark" viewBox="0 0 280 80" width="280" height="80" aria-label="Convergence plot"></svg>
+          <div class="heatnote" style="margin-top:14px">p(b<sub>j</sub> = ·) — measurement-oriented marginals; for illustration, unassigned mass splits into <b>⊕ possible birth</b> vs ∅ clutter by the toy score β̃</div>
+          <div class="matwrap"><table class="mat" id="bjheat"></table></div>
+        </div>
+      </div>
+      <div class="heatnote" style="margin-top:16px">State beliefs b(x<sub>i</sub>) — Gaussian mixtures, one Kalman-updated component per gated measurement plus the prior for ∅, weighted by the live marginals above (95 % ellipses; opacity ∝ weight; prior P<sub>i</sub> = S<sub>i</sub> − R with R = 60·I)</div>
+      <div class="beliefs" id="beliefs"></div>
+      <div class="eqbox">
+        <div class="eq"><span class="m">μ<sub>i→j</sub></span> = <span class="frac"><span class="m">ℓ<sub>ij</sub></span><span class="m">ℓ<sub>i∅</sub> + Σ<sub>k≠j</sub> ℓ<sub>ik</sub> ν<sub>k→i</sub></span></span><span class="num">(1) target i tells measurement j how claimed it already is elsewhere</span></div>
+        <div class="eq"><span class="m">ν<sub>j→i</sub></span> = <span class="frac"><span class="m">1</span><span class="m">1 + Σ<sub>l≠i</sub> μ<sub>l→j</sub></span></span><span class="num">(2) measurement j tells target i how contested it is</span></div>
+        <div class="eq"><span class="m">p(a<sub>i</sub>=j) ∝ ℓ<sub>ij</sub> ν<sub>j→i</sub></span>,&nbsp;&nbsp;<span class="m">p(a<sub>i</sub>=∅) ∝ ℓ<sub>i∅</sub></span><span class="num">(3) read the marginals off the fixed point</span></div>
+        <div class="eqnote">t = 0 is the uncoupled start: ν ≡ 1, so each track just normalizes its own row of Fig. 2. One time step is one application of (1) followed by (2) — exactly the two half-steps of the player above. The iterations exist purely to negotiate the one-to-one constraint.</div>
+      </div>
+    </div>
+    <div class="figcap"><b>Fig. 3 —</b> Left: the <i>complete</i> bipartite Williams–Lau factor graph — every (aᵢ, bⱼ) pair carries a consistency factor Ψ (mid-edge diamond); faint dashed edges are gated out (ℓᵢⱼ = 0, so μ ≡ 0 and the pair is inert). Every live edge wears its two current messages: μᵢ→ⱼ in the track’s color, νⱼ→ᵢ in slate — the bold set is the one that just updated. One time step = two presses of <b>Half-step ▸</b>: first all μ fire left→right, then all ν answer right→left, and only then do the marginals, edge thicknesses and Δ move. Hover any edge for its numbers.</div>
+  </div>
+</section>
+
+<!-- ============ §3 ============ -->
+<section class="sec pm" id="s3">
+  <h2><span class="no">§3</span>Route two — PMBM: keep the hypotheses, prune the tail</h2>
+  <p class="lede">The Poisson multi-Bernoulli mixture is a <em>conjugate</em> multi-object posterior under the standard point-target model: a Poisson process represents never-detected targets and a multi-Bernoulli mixture represents detected ones. Each global hypothesis is one compatible association story. The table below visualizes that hypothesis bookkeeping for the page’s normalized assignment model; a full PMBM update additionally computes a measurement-specific Bernoulli existence and state density from the undetected-target Poisson intensity.</p>
+
+  <div class="eqbox">
+    <div class="eq"><span class="m">f(X) = Σ<sub>h</sub> w<sub>h</sub> · f<sup>ppp</sup>(X<sup>u</sup>) Π<sub>i</sub> f<sup>&thinsp;bern</sup><sub>h,i</sub>(X<sub>i</sub>)</span><span class="num">(4) undetected Poisson ⊎ multi-Bernoulli mixture</span></div>
+    <div class="eq"><span class="m">w<sub>A</sub> ∝ Π<sub>(i,j)∈A</sub> ℓ<sub>ij</sub> · Π<sub>i missed</sub> ℓ<sub>i∅</sub> · Π<sub>j unassigned</sub> 1</span><span class="num">(5) exact weight in this normalized assignment benchmark</span></div>
+    <div class="eqnote">Exact inference for this benchmark carries every valid A. Practical PMBM implementations instead generate selected high-weight children using assignment or sampling methods, then prune and recycle. The problem here is small enough to enumerate every gated assignment, providing the exact reference for §4 — but not the full PMBM state update.</div>
+  </div>
+
+  <div class="fig">
+    <div class="body">
+      <div class="kbar">
+        <div class="ctl" style="flex:1">
+          <label>Keep the k best global hypotheses <output id="kOut">5</output></label>
+          <input type="range" id="kSlider" min="1" max="10" step="1" value="5" aria-label="Number of hypotheses to keep">
+        </div>
+        <span class="ro" id="kRO"></span>
+      </div>
+      <div class="matwrap"><table class="hyps" id="hypTable"></table></div>
+    </div>
+    <div class="figcap"><b>Fig. 4 —</b> Every valid assignment hypothesis in the normalized benchmark, ranked by eq. 5. Each row assigns a measurement to at most one existing track or leaves it unassigned. The ⊕ badge uses β̃ only as a visual birth-versus-clutter split; a real PMBM Bernoulli uses measurement-dependent PPP evidence. Slide k to see how truncation discards normalized assignment mass. The first row is the toy model’s highest-weight association event, not by itself a complete PMBM multi-object estimate.</div>
+  </div>
+
+  <div class="fig">
+    <div class="body">
+      <div class="heatnote">p(a<sub>i</sub> = ·) — exact marginals, obtained by summing <span id="hypCount2">all</span> hypotheses above</div>
+      <div class="matwrap"><table class="mat" id="exheat"></table></div>
+    </div>
+    <div class="figcap"><b>Fig. 5 —</b> Summing every row gives the exact existing-track association marginals for this normalized model — the quantity §2 approximates without constructing the list.</div>
+  </div>
+</section>
+
+<!-- ============ §4 ============ -->
+<section class="sec" id="s4">
+  <h2><span class="no">§4</span>Head-to-head on the same scan</h2>
+  <p class="lede">Same ℓ, same normalized assignment question, two answers. BP is exact when the relevant factor graph is acyclic; in loopy graphs it is approximate. Dragging changes both graph structure and weights, so more overlap can increase the discrepancy, but error is not a monotone function of “loopiness.” The live table reports what actually happens for each configuration.</p>
+
+  <div class="fig">
+    <div class="body">
+      <div class="tri">
+        <div class="b"><h5>BP marginals (converged)</h5><div class="matwrap"><table class="mat" id="cmpBP"></table></div></div>
+        <div class="p"><h5>Exact / PMBM marginals</h5><div class="matwrap"><table class="mat" id="cmpEX"></table></div></div>
+        <div class="d"><h5>|difference|, percentage points</h5><div class="matwrap"><table class="mat" id="cmpDF"></table></div></div>
+      </div>
+      <div class="errline" id="errRO"></div>
+    </div>
+    <div class="figcap"><b>Fig. 6 —</b> The numerical price of approximate marginalization in this scan. BP is exact on an acyclic association factor graph; on a loopy graph its Bethe fixed point may differ from exhaustive enumeration, with the size and direction determined by the actual weights.</div>
+  </div>
+
+  <div class="fig">
+    <div class="body"><svg id="timeDiag" viewBox="0 0 900 210" width="100%" aria-label="How each method evolves over scans"></svg></div>
+    <div class="figcap"><b>Fig. 7 —</b> The difference compounds over time. PMBM branches every scan and prunes (dashed = discarded); identity ambiguity can stay unresolved until later evidence settles it. A BP-based tracker instead re-negotiates marginals within each scan and carries a single belief set forward — O(n·m) flat cost, but modes merged at every step (the JPDA-style coalescence risk).</div>
+  </div>
+
+  <div class="bridge">
+    <div class="bar"></div>
+    <div class="body">
+      <h3>The bridge: they meet in the middle</h3>
+      <p>Marginal multi-Bernoulli/Poisson filters such as TOMB/P approximate a PMBM-style mixture by a single multi-Bernoulli using marginal association probabilities; BP is one efficient way to approximate those marginals. That is a specific bridge between the frameworks. It does not mean that every BP/SPA tracker is simply a PMBM filter with its hypotheses removed.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============ §5 ============ -->
+<section class="sec" id="s5">
+  <h2><span class="no">§5</span>Cheat sheet</h2>
+  <div class="fig"><div class="body matwrap">
+    <table class="cheat">
+      <tr><th></th><th class="b">Belief propagation (SPA / BP tracker)</th><th class="p">PMBM</th></tr>
+      <tr><td class="rl">object kept</td><td>Marginal association probabilities p(a<sub>i</sub>=j); one belief per track</td><td>Weighted mixture of global hypotheses; a Bernoulli per potential target per hypothesis, plus a Poisson for the undetected</td></tr>
+      <tr><td class="rl">core computation</td><td>Iterated messages (1)–(2) on the bipartite graph until fixed point</td><td>Hypothesis generation (Murty’s k-best or Gibbs) + weight update (5) + pruning, recycling, merging</td></tr>
+      <tr><td class="rl">cost / scan</td><td><code>O(T·n·m)</code>, T ≈ tens of sweeps; embarrassingly scalable, message-parallel</td><td><code>O(k·N³)</code> per Murty call plus hypothesis bookkeeping; combinatorial pressure managed, not removed</td></tr>
+      <tr><td class="rl">what’s approximate</td><td>The marginals themselves (Bethe fixed point; exact on acyclic factor graphs, potentially biased with loops)</td><td>The PMBM family is conjugate for the assumed model; implementations also approximate single-target integrals and use gating, hypothesis selection/pruning, merging, and numerical state representations</td></tr>
+      <tr><td class="rl">ambiguity over time</td><td>Marginalized each scan in many BP-based filters; efficient, but projection can merge modes and promote coalescence</td><td>Retained global histories preserve competing explanations; trajectory variants can represent identity and history explicitly</td></tr>
+      <tr><td class="rl">track birth</td><td>Depends on the tracker; scalable SPA methods can introduce measurement-oriented potential objects</td><td>Undetected-target PPP; each measurement can create a Bernoulli whose evidence depends on the PPP intensity and likelihood</td></tr>
+      <tr><td class="rl">reach for it when</td><td>n, m are large; hard real-time budgets; dense scenes where enumeration is hopeless anyway</td><td>Ambiguity is the point: crossing / closely spaced targets, identity matters, offline or accuracy-first pipelines</td></tr>
+      <tr><td class="rl">lineage</td><td>JPDA’s soft spirit, made scalable and convergent</td><td>MHT’s hypothesis spirit, made Bayes-exact via RFS conjugacy</td></tr>
+    </table>
+  </div>
+  <div class="figcap"><b>Table 1 —</b> The one-screen version. Neither column dominates: retaining hypotheses is valuable when ambiguity and identity matter; BP is attractive when scale and latency dominate.</div>
+  </div>
+
+  <h2 style="font-size:21px;margin-top:44px"><span class="no">§</span>References</h2>
+  <div class="refs">
+    <p><a href="https://arxiv.org/abs/1209.6299" target="_blank" rel="noopener">J. L. Williams and R. Lau, “Approximate evaluation of marginal association probabilities with belief propagation,”</a> <i>IEEE Trans. Aerosp. Electron. Syst.</i>, 50(4), 2014 — the message schedule and convergence proof behind §2.</p>
+    <p><a href="https://arxiv.org/abs/1203.2995" target="_blank" rel="noopener">J. L. Williams, “Marginal multi-Bernoulli filters: RFS derivation of MHT, JIPDA, and association-based MeMBer,”</a> <i>IEEE Trans. Aerosp. Electron. Syst.</i>, 51(3), 2015 — TOMB/P and MOMB/P, the bridge of §4.</p>
+    <p><a href="https://doi.org/10.1109/JPROC.2018.2789427" target="_blank" rel="noopener">F. Meyer et al., “Message passing algorithms for scalable multitarget tracking,”</a> <i>Proc. IEEE</i>, 106(2), 2018 — a broader BP/SPA tracking framework.</p>
+    <p><a href="https://arxiv.org/abs/1703.04264" target="_blank" rel="noopener">Á. F. García-Fernández et al., “Poisson multi-Bernoulli mixture filter: direct derivation and implementation,”</a> <i>IEEE Trans. Aerosp. Electron. Syst.</i>, 54(4), 2018 — the standard point-target PMBM recursion.</p>
+  </div>
+
+  <p class="footnote">Model notes for the demo: one scan, point targets, linear-Gaussian existing-track likelihoods, and normalized unassigned-measurement weight 1. The post-hoc toy split β̃ = λ̃<sub>b</sub>/(λ̃<sub>b</sub>+λ<sub>c</sub>) is deliberately decoupled from association and must not be read as the general PMBM birth update. Under the standard PMBM point-target model, a measurement z has new-target evidence e(z) = ∫p<sub>D</sub>(x)l(z|x)λ<sup>u</sup>(x)dx and existence e(z)/(c(z)+e(z)); its state density is proportional to the same integrand. The simplified split keeps BP and enumeration byte-identical. Gating uses χ²(2 dof) = 9.21. The state-belief strip assumes R = 60·I and Gaussian priors with P<sub>i</sub> = S<sub>i</sub> − R. “Exact” on the page means exhaustive summation of every gated assignment in this toy model (≤ 73), not an exact real-world tracker.</p>
+
+  <div class="foot">A single self-contained HTML file · no libraries, no network · the solver in your browser is the real Williams–Lau iteration, not an illustration of one.</div>
+</section>
+</main>
+
+<script>
+'use strict';
+/* ================= model ================= */
+const GATE = 9.21, BELIEF_CHI2 = 5.99, VBW = 720, VBH = 420, Rm = 60;
+const TCOL = ['#2ca02c','#9467bd','#d62728'];
+const S1=[[520,140],[140,340]], S2=[[460,-120],[-120,480]], S3=[[620,0],[0,300]];
+const DEFAULT = {
+  T:[{x:285,y:205,S:S1},{x:352,y:232,S:S2},{x:318,y:158,S:S3}],
+  Z:[{x:318,y:198},{x:322,y:215},{x:314,y:186},{x:560,y:120}]
+};
+const clone = o => JSON.parse(JSON.stringify(o));
+const state = { T: clone(DEFAULT.T), Z: clone(DEFAULT.Z),
+                PD: 0.90, c: 5e-5, b: 1e-5, k: 5, iter: 0, playing:false };
+let R = null; // results cache
+
+function gauss2(dx,dy,S){
+  const det=S[0][0]*S[1][1]-S[0][1]*S[1][0];
+  const q=(dx*(S[1][1]*dx-S[0][1]*dy)+dy*(-S[1][0]*dx+S[0][0]*dy))/det;
+  return {pdf:Math.exp(-0.5*q)/(2*Math.PI*Math.sqrt(det)), d2:q};
+}
+/* 2x2 matrix ops for the belief mixtures (prior P = S − R, Kalman update per gated z) */
+const madd=(A,B)=>[[A[0][0]+B[0][0],A[0][1]+B[0][1]],[A[1][0]+B[1][0],A[1][1]+B[1][1]]];
+const msub=(A,B)=>[[A[0][0]-B[0][0],A[0][1]-B[0][1]],[A[1][0]-B[1][0],A[1][1]-B[1][1]]];
+const mmul=(A,B)=>[[A[0][0]*B[0][0]+A[0][1]*B[1][0],A[0][0]*B[0][1]+A[0][1]*B[1][1]],
+                   [A[1][0]*B[0][0]+A[1][1]*B[1][0],A[1][0]*B[0][1]+A[1][1]*B[1][1]]];
+const minv=S=>{const d=S[0][0]*S[1][1]-S[0][1]*S[1][0];return[[S[1][1]/d,-S[0][1]/d],[-S[1][0]/d,S[0][0]/d]]};
+const RI=[[Rm,0],[0,Rm]];
+function kalmanUpd(m,P,z){
+  const K=mmul(P,minv(madd(P,RI)));
+  const ix=z.x-m.x, iy=z.y-m.y;
+  return { m:{x:m.x+K[0][0]*ix+K[0][1]*iy, y:m.y+K[1][0]*ix+K[1][1]*iy},
+           P:msub(P,mmul(K,P)) };
+}
+function buildL(){
+  const n=state.T.length,m=state.Z.length,L=[],gate=[];
+  for(let i=0;i<n;i++){ L.push([1-state.PD]); gate.push([]);
+    for(let j=0;j<m;j++){
+      const g=gauss2(state.Z[j].x-state.T[i].x, state.Z[j].y-state.T[i].y, state.T[i].S);
+      const inG=g.d2<=GATE; gate[i].push(inG);
+      L[i].push(inG? state.PD*g.pdf/state.c : 0);
+    }}
+  return {L,gate,n,m};
+}
+function margFrom(L,nu){ // p(a_i=·) given current nu
+  const n=L.length,m=L[0].length-1,M=[];
+  for(let i=0;i<n;i++){ const r=[L[i][0]];
+    for(let j=0;j<m;j++) r.push(L[i][j+1]*nu[j][i]);
+    const Z=r.reduce((a,b)=>a+b,0); M.push(r.map(v=>v/Z)); }
+  return M;
+}
+/* history of half-steps: 'init' (ν≡1), then per sweep t: 'mu' (all μ fired), 'nu' (all ν answered) */
+function runBP(L,maxIter=5,tol=1e-9){
+  const n=L.length,m=L[0].length-1;
+  const nu=Array.from({length:m},()=>Array(n).fill(1));
+  const mu=Array.from({length:n},()=>Array(m).fill(0));
+  const cp=A=>A.map(r=>r.slice());
+  const hist=[{kind:'init',t:0,mu:null,nu:cp(nu),marg:margFrom(L,nu),delta:null}];
+  for(let t=1;t<=maxIter;t++){
+    for(let i=0;i<n;i++){ let tot=L[i][0];
+      for(let k=0;k<m;k++) tot+=L[i][k+1]*nu[k][i];
+      for(let j=0;j<m;j++) mu[i][j]=L[i][j+1]/(tot-L[i][j+1]*nu[j][i]); }
+    hist.push({kind:'mu',t,mu:cp(mu),nu:cp(nu),marg:hist[hist.length-1].marg,delta:null});
+    let d=0;
+    for(let j=0;j<m;j++){ let tot=1;
+      for(let l=0;l<n;l++) tot+=mu[l][j];
+      for(let i=0;i<n;i++){ const nv=1/(tot-mu[i][j]); d=Math.max(d,Math.abs(nv-nu[j][i])); nu[j][i]=nv; } }
+    hist.push({kind:'nu',t,mu:cp(mu),nu:cp(nu),marg:margFrom(L,nu),delta:d});
+    if(d<tol) break;
+  }
+  return hist;
+}
+function enumHyps(L){
+  const n=L.length,m=L[0].length-1,ev=[],a=Array(n).fill(-1);
+  (function rec(i,used,w){
+    if(i===n){ ev.push({a:a.slice(),w}); return; }
+    a[i]=-1; rec(i+1,used,w*L[i][0]);
+    for(let j=0;j<m;j++){ if(used&(1<<j)||L[i][j+1]<=0) continue;
+      a[i]=j; rec(i+1,used|(1<<j),w*L[i][j+1]); }
+    a[i]=-1;
+  })(0,0,1);
+  const Z=ev.reduce((s,e)=>s+e.w,0); ev.forEach(e=>e.p=e.w/Z);
+  ev.sort((x,y)=>y.p-x.p); return ev;
+}
+function exactMarg(ev,n,m){
+  const M=Array.from({length:n},()=>Array(m+1).fill(0));
+  for(const e of ev) for(let i=0;i<n;i++) M[i][(e.a[i]<0?0:e.a[i]+1)]+=e.p;
+  return M;
+}
+function compute(){
+  const {L,gate,n,m}=buildL();
+  const hist=runBP(L);
+  const ev=enumHyps(L);
+  const ex=exactMarg(ev,n,m);
+  const bpFinal=hist[hist.length-1].marg;
+  const sweeps=hist[hist.length-1].t;
+  const sweepDeltas=[null]; hist.forEach(h=>{ if(h.kind==='nu') sweepDeltas[h.t]=h.delta; });
+  let maxErr=0; for(let i=0;i<n;i++) for(let j=0;j<=m;j++) maxErr=Math.max(maxErr,Math.abs(bpFinal[i][j]-ex[i][j]));
+  const pairs=[]; for(let i=0;i<n;i++) for(let j=0;j<m;j++) if(gate[i][j]) pairs.push([i,j]);
+  /* Kalman-updated components for the belief mixtures (same-scan posteriors) */
+  const beliefComps = state.T.map((t,i)=>{
+    const prior={ m:{x:t.x,y:t.y}, P:msub(t.S,RI) };
+    const comps=[];
+    for(let j=0;j<m;j++) if(gate[i][j]) comps.push({ j, ...kalmanUpd(prior.m,prior.P,state.Z[j]) });
+    return { prior, comps };
+  });
+  return {L,gate,n,m,hist,ev,ex,bpFinal,sweeps,sweepDeltas,maxErr,pairs,beliefComps};
+}
+
+/* ================= formatting helpers ================= */
+const $ = id => document.getElementById(id);
+const pct = p => p<0.0005 ? '·' : (p<0.095 ? (100*p).toFixed(1) : Math.round(100*p)) + '%';
+const beta = () => state.b/(state.b+state.c); // didactic post-hoc split, not a PMBM birth update
+const fmtL = v => v<=0 ? '·' : (v>=100? v.toFixed(0) : v>=10 ? v.toFixed(1) : v.toFixed(2));
+const fmtMsg = v => v==null ? '–' : (v<9.995 ? v.toFixed(2) : v<99.5 ? v.toFixed(1) : String(Math.round(v)));
+function heatCell(p,rgb){
+  const a=Math.min(0.92,Math.pow(p,0.8));
+  const fg = a>0.5 ? '#fff' : 'var(--ink)';
+  const dim = p<0.0005 ? 'dim' : '';
+  return `<td class="${dim}" style="background:rgba(${rgb},${a.toFixed(3)});color:${fg}">${pct(p)}</td>`;
+}
+function heatTable(M,rgb){
+  const m=M[0].length-1;
+  let h='<tr><th></th><th>∅</th>'; for(let j=0;j<m;j++) h+=`<th>z${j+1}</th>`; h+='</tr>';
+  M.forEach((row,i)=>{ h+=`<tr><td class="rowh" style="color:${TCOL[i]}">T${i+1}</td>`;
+    row.forEach(p=>h+=heatCell(p,rgb)); h+='</tr>'; });
+  return h;
+}
+
+/* ================= renderers ================= */
+function ellipseAttrs(S,chi2=GATE){
+  const a=S[0][0],b=S[0][1],c=S[1][1];
+  const th=0.5*Math.atan2(2*b,a-c);
+  const t=(a+c)/2, d=Math.sqrt(((a-c)/2)**2+b*b);
+  return {rx:Math.sqrt(chi2*(t+d)), ry:Math.sqrt(chi2*(t-d)), deg:th*180/Math.PI};
+}
+function renderScene(){
+  const s=[];
+  s.push(`<rect x="0" y="0" width="${VBW}" height="${VBH}" fill="#fff"/>`);
+  for(let x=100;x<VBW;x+=100){ s.push(`<line x1="${x}" y1="0" x2="${x}" y2="${VBH}" stroke="#eef2f5"/>`);
+    s.push(`<text x="${x}" y="${VBH-6}" font-size="9" fill="#aab4bd" text-anchor="middle">${x}</text>`);}
+  for(let y=100;y<VBH;y+=100){ s.push(`<line x1="0" y1="${y}" x2="${VBW}" y2="${y}" stroke="#eef2f5"/>`);
+    s.push(`<text x="6" y="${y+3}" font-size="9" fill="#aab4bd">${VBH-y}</text>`);}
+  s.push(`<rect x="0.5" y="0.5" width="${VBW-1}" height="${VBH-1}" fill="none" stroke="#c4ccd3"/>`);
+  R.pairs.forEach(([i,j])=>{
+    s.push(`<line x1="${state.T[i].x}" y1="${state.T[i].y}" x2="${state.Z[j].x}" y2="${state.Z[j].y}" stroke="#b9c2ca" stroke-width="1" stroke-dasharray="2 3"/>`);
+  });
+  state.T.forEach((t,i)=>{
+    const e=ellipseAttrs(t.S), col=TCOL[i];
+    s.push(`<g transform="rotate(${e.deg.toFixed(2)} ${t.x} ${t.y})">
+      <ellipse cx="${t.x}" cy="${t.y}" rx="${e.rx.toFixed(1)}" ry="${e.ry.toFixed(1)}" fill="${col}" fill-opacity="0.07" stroke="${col}" stroke-width="1.4" stroke-dasharray="5 4"/></g>`);
+    s.push(`<circle class="draggable" cx="${t.x}" cy="${t.y}" r="5.5" fill="${col}"/>`);
+    s.push(`<circle class="draggable" cx="${t.x}" cy="${t.y}" r="15" fill="transparent"/>`);
+    s.push(`<text x="${t.x+10}" y="${t.y-9}" font-size="12" font-weight="600" fill="${col}">T${i+1} ẑ</text>`);
+  });
+  state.Z.forEach((z,j)=>{
+    s.push(`<g class="draggable"><line x1="${z.x-6}" y1="${z.y-6}" x2="${z.x+6}" y2="${z.y+6}" stroke="#1c262f" stroke-width="2.4"/>
+      <line x1="${z.x-6}" y1="${z.y+6}" x2="${z.x+6}" y2="${z.y-6}" stroke="#1c262f" stroke-width="2.4"/>
+      <circle cx="${z.x}" cy="${z.y}" r="15" fill="transparent"/></g>`);
+    s.push(`<text x="${z.x+9}" y="${z.y+15}" font-size="12" fill="#1c262f">z${j+1}</text>`);
+  });
+  $('scene').innerHTML=s.join('');
+}
+function renderStat1(){
+  $('stat1').innerHTML=`n = <b>${R.n}</b> tracks · m = <b>${R.m}</b> measurements<br>`+
+    `gated pairs: <b>${R.pairs.length}</b> of ${R.n*R.m}<br>valid global hypotheses: <b>${R.ev.length}</b><br>`+
+    `BP sweeps to converge: <b>${R.sweeps}</b><br>`+
+    `toy birth share β̃ of unassigned mass: <b>${pct(beta())}</b>`;
+}
+function renderLMat(){
+  let h='<tr><th></th><th>∅ miss</th>'; for(let j=0;j<R.m;j++) h+=`<th>z${j+1}</th>`; h+='</tr>';
+  for(let i=0;i<R.n;i++){ h+=`<tr><td class="rowh" style="color:${TCOL[i]}">T${i+1}</td>`;
+    R.L[i].forEach((v,jj)=>{ h+=`<td class="${v<=0?'dim':''}">${fmtL(v)}</td>`; }); h+='</tr>'; }
+  $('lmat').innerHTML=h;
+}
+/* --- complete factor graph with per-edge message values --- */
+const FG={ax:176, bx:462, px:92, ux:548, ay:i=>72+i*128, by:j=>52+j*98};
+function curState(){ return R.hist[Math.min(state.iter,R.hist.length-1)]; }
+function renderGraph(){
+  const st=curState();
+  const s=[];
+  for(let i=0;i<R.n;i++) for(let j=0;j<R.m;j++){
+    const on=R.gate[i][j];
+    const x1=FG.ax+17,y1=FG.ay(i),x2=FG.bx-14,y2=FG.by(j);
+    const mx=(x1+x2)/2,my=(y1+y2)/2;
+    const dx=x2-x1,dy=y2-y1,len=Math.hypot(dx,dy),ox=-dy/len*9,oy=dx/len*9;
+    const w=on?(1+7*st.marg[i][j+1]).toFixed(2):'1';
+    let g=`<g class="edge ${on?'':'off'}" data-i="${i}" data-j="${j}">`;
+    g+=`<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="transparent" stroke-width="14"/>`;
+    g+=`<line class="eline" x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="${on?'#7f95a6':'#c3ccd4'}" stroke-opacity="${on?'0.8':'0.55'}" stroke-width="${w}"${on?'':' stroke-dasharray="3 4"'}/>`;
+    g+=`<rect x="${mx-3.5}" y="${my-3.5}" width="7" height="7" fill="#fff" stroke="${on?'#7f95a6':'#c3ccd4'}" transform="rotate(45 ${mx} ${my})"/>`;
+    if(on){
+      const muV=st.mu?st.mu[i][j]:null, nuV=st.nu[j][i];
+      const hotMu=st.kind==='mu', hotNu=st.kind!=='mu';
+      const halo='paint-order:stroke';
+      g+=`<text class="mval${hotMu?' hot':''}" x="${(x1+dx*0.30+ox).toFixed(1)}" y="${(y1+dy*0.30+oy+3).toFixed(1)}" font-size="10" text-anchor="middle" fill="${TCOL[i]}" stroke="#fff" stroke-width="3" style="${halo}">${fmtMsg(muV)}</text>`;
+      g+=`<text class="nval${hotNu?' hot':''}" x="${(x1+dx*0.70-ox).toFixed(1)}" y="${(y1+dy*0.70-oy+3).toFixed(1)}" font-size="10" text-anchor="middle" fill="#42505d" stroke="#fff" stroke-width="3" style="${halo}">${fmtMsg(nuV)}</text>`;
+    }
+    g+='</g>'; s.push(g);
+  }
+  for(let i=0;i<R.n;i++){ const y=FG.ay(i),col=TCOL[i];
+    s.push(`<line x1="${FG.px+9}" y1="${y}" x2="${FG.ax-17}" y2="${y}" stroke="#9aa7b1"/>`);
+    s.push(`<rect x="${FG.px-9}" y="${y-9}" width="18" height="18" fill="${col}" fill-opacity="0.18" stroke="${col}"/>`);
+    s.push(`<text x="${FG.px}" y="${y-14}" font-size="10" fill="#6b7885" text-anchor="middle">ℓ${i+1}·</text>`);
+    s.push(`<circle cx="${FG.ax}" cy="${y}" r="17" fill="#fff" stroke="${col}" stroke-width="2"/>`);
+    s.push(`<text x="${FG.ax}" y="${y+4}" font-size="12.5" font-style="italic" text-anchor="middle" fill="${col}">a${i+1}</text>`);
+  }
+  for(let j=0;j<R.m;j++){ const y=FG.by(j);
+    s.push(`<line x1="${FG.bx+14}" y1="${y}" x2="${FG.ux-9}" y2="${y}" stroke="#9aa7b1"/>`);
+    s.push(`<rect x="${FG.ux-9}" y="${y-9}" width="18" height="18" fill="#eef2f5" stroke="#8a97a3"/>`);
+    s.push(`<text x="${FG.ux+16}" y="${y+4}" font-size="10" fill="#6b7885">1</text>`);
+    s.push(`<circle cx="${FG.bx}" cy="${y}" r="14" fill="#fff" stroke="#5b6b79" stroke-width="2"/>`);
+    s.push(`<text x="${FG.bx}" y="${y+4}" font-size="12" font-style="italic" text-anchor="middle" fill="#42505d">b${j+1}</text>`);
+  }
+  s.push(`<text x="${FG.ax}" y="20" font-size="10" fill="#8a97a3" text-anchor="middle">track-oriented aᵢ</text>`);
+  s.push(`<text x="${FG.bx}" y="20" font-size="10" fill="#8a97a3" text-anchor="middle">measurement-oriented bⱼ</text>`);
+  s.push(`<g id="dots"></g>`);
+  $('fgraph').innerHTML=s.join('');
+}
+function renderBMarg(){
+  const st=curState(),bt=beta();
+  let h='<tr><th></th>';
+  for(let i=0;i<R.n;i++) h+=`<th style="color:${TCOL[i]}">T${i+1}</th>`;
+  h+='<th>⊕ new</th><th>∅ clutter</th></tr>';
+  for(let j=0;j<R.m;j++){
+    let den=1;const mu=[];
+    for(let i=0;i<R.n;i++){const v=st.mu?st.mu[i][j]:0;mu.push(v);den+=v;}
+    h+=`<tr><td class="rowh">z${j+1}</td>`;
+    for(let i=0;i<R.n;i++) h+=heatCell(mu[i]/den,'31,119,180');
+    h+=heatCell(bt/den,'193,102,32');
+    h+=heatCell((1-bt)/den,'100,116,139');
+    h+='</tr>';}
+  $('bjheat').innerHTML=h;
+}
+function renderBPHeat(){
+  const st=curState();
+  $('bpheat').innerHTML=heatTable(st.marg,'31,119,180');
+  renderBMarg();
+  let ro;
+  if(st.kind==='init') ro=`t = 0 · initialization: ν ≡ 1 — each track normalizes its own row of Fig. 2`;
+  else if(st.kind==='mu') ro=`sweep ${st.t} / ${R.sweeps} · μ half-step fired — tracks announce their commitments`;
+  else ro=`sweep ${st.t} / ${R.sweeps} · ν half-step landed — max Δ = ${st.delta.toExponential(1)}`;
+  $('bpRO').textContent=ro;
+}
+function renderSpark(){
+  const n=R.sweeps,s=[];
+  s.push(`<rect x="34" y="4" width="238" height="56" fill="#fff" stroke="#e2e8ed"/>`);
+  [0,-4,-8].forEach(e=>{ const y=8+(-e/9)*48;
+    s.push(`<text x="30" y="${y+3}" font-size="8.5" fill="#aab4bd" text-anchor="end">1e${e}</text>`);
+    s.push(`<line x1="34" y1="${y}" x2="272" y2="${y}" stroke="#f0f3f6"/>`); });
+  if(n>=1){
+    const X=t=>36+(t-1)/Math.max(1,n-1)*232;
+    const Y=d=>8+Math.min(9,Math.max(0,-Math.log10(Math.max(d,1e-12))))/9*48;
+    let path=''; for(let t=1;t<=n;t++) path+=(t===1?'M':'L')+X(t).toFixed(1)+' '+Y(R.sweepDeltas[t]).toFixed(1)+' ';
+    s.push(`<path d="${path}" fill="none" stroke="#1f77b4" stroke-width="1.8"/>`);
+    const st=curState();
+    const cur = st.kind==='mu' ? st.t-1 : st.t;
+    if(cur>=1) s.push(`<circle cx="${X(cur)}" cy="${Y(R.sweepDeltas[cur])}" r="3.4" fill="#1f77b4"/>`);
+  }
+  s.push(`<text x="153" y="74" font-size="9" fill="#8a97a3" text-anchor="middle">sweep t →</text>`);
+  $('spark').innerHTML=s.join('');
+}
+/* --- state-belief mixture strip --- */
+function renderBeliefs(){
+  const st=curState();
+  const cells=[];
+  for(let i=0;i<R.n;i++){
+    const {prior,comps}=R.beliefComps[i], col=TCOL[i];
+    const cx=prior.m.x, cy=prior.m.y;
+    const s=[];
+    s.push(`<rect x="${cx-95}" y="${cy-70}" width="190" height="140" fill="#fff"/>`);
+    /* prior (the ∅ component) */
+    const pe=ellipseAttrs(prior.P,BELIEF_CHI2);
+    const missW=st.marg[i][0];
+    s.push(`<g transform="rotate(${pe.deg.toFixed(2)} ${cx} ${cy})">
+      <ellipse cx="${cx}" cy="${cy}" rx="${pe.rx.toFixed(1)}" ry="${pe.ry.toFixed(1)}" fill="none" stroke="${col}" stroke-width="1.3" stroke-dasharray="5 4" stroke-opacity="${(0.25+0.75*missW).toFixed(2)}"/></g>`);
+    /* Kalman-updated components */
+    comps.forEach(c=>{
+      const w=st.marg[i][c.j+1]; if(w<0.002) return;
+      const e=ellipseAttrs(c.P,BELIEF_CHI2);
+      s.push(`<g transform="rotate(${e.deg.toFixed(2)} ${c.m.x.toFixed(1)} ${c.m.y.toFixed(1)})">
+        <ellipse cx="${c.m.x.toFixed(1)}" cy="${c.m.y.toFixed(1)}" rx="${e.rx.toFixed(1)}" ry="${e.ry.toFixed(1)}" fill="${col}" fill-opacity="${(0.42*w).toFixed(3)}" stroke="${col}" stroke-width="1.5" stroke-opacity="${(0.25+0.75*w).toFixed(2)}"/></g>`);
+      s.push(`<text x="${(c.m.x+4).toFixed(1)}" y="${(c.m.y-4).toFixed(1)}" font-size="9" fill="${col}" stroke="#fff" stroke-width="3" style="paint-order:stroke">z${c.j+1} ${pct(w)}</text>`);
+    });
+    /* the gated measurements */
+    comps.forEach(c=>{ const z=state.Z[c.j];
+      s.push(`<line x1="${z.x-4}" y1="${z.y-4}" x2="${z.x+4}" y2="${z.y+4}" stroke="#1c262f" stroke-width="1.8"/>`);
+      s.push(`<line x1="${z.x-4}" y1="${z.y+4}" x2="${z.x+4}" y2="${z.y-4}" stroke="#1c262f" stroke-width="1.8"/>`);
+    });
+    s.push(`<text x="${cx-88}" y="${cy-56}" font-size="11" font-weight="600" fill="${col}">b(x${i+1})</text>`);
+    s.push(`<text x="${cx+88}" y="${cy-56}" font-size="9" fill="#8a97a3" text-anchor="end">∅ ${pct(missW)}</text>`);
+    cells.push(`<svg viewBox="${cx-95} ${cy-70} 190 140" aria-label="Belief mixture for track ${i+1}">${s.join('')}</svg>`);
+  }
+  $('beliefs').innerHTML=cells.join('');
+}
+/* --- PMBM --- */
+function renderHyps(){
+  const ev=R.ev, kMax=ev.length;
+  const kS=$('kSlider'); kS.max=kMax; if(state.k>kMax) state.k=kMax; kS.value=state.k;
+  $('kOut').textContent=state.k;
+  const kept=ev.slice(0,state.k).reduce((s,e)=>s+e.p,0);
+  $('kRO').textContent=`kept mass: ${(100*kept).toFixed(1)}%  ·  discarded: ${ev.length-state.k} hypotheses (${(100*(1-kept)).toFixed(1)}%)`;
+  const SHOW=14;
+  let h='<tr><th>#</th>'; for(let j=0;j<R.m;j++) h+=`<th>z${j+1} →</th>`;
+  h+='<th>missed</th><th class="wcell">weight w<sub>A</sub></th></tr>';
+  ev.slice(0,SHOW).forEach((e,r)=>{
+    const cells=[]; for(let j=0;j<R.m;j++){
+      const owner=e.a.indexOf(j);
+      cells.push(owner>=0?`<td><span class="chip" style="--c:${TCOL[owner]}">T${owner+1}</span></td>`
+                         :`<td><span class="chip nul">⊕ ${pct(beta())}</span></td>`);}
+    const missed=e.a.map((v,i)=>v<0?`T${i+1}`:null).filter(Boolean).join(' ')||'—';
+    const w=(100*e.p);
+    h+=`<tr class="${r<state.k?'kept':'cut'}"><td>${r+1}</td>${cells.join('')}<td style="color:var(--ink-faint)">${missed}</td>`+
+       `<td class="wcell"><div class="wbar"><i style="width:${Math.max(1.2,(e.p/ev[0].p)*100).toFixed(1)}%"></i><span>${w<0.95?w.toFixed(2):w.toFixed(1)}%</span></div></td></tr>`;
+  });
+  if(ev.length>SHOW){
+    const rest=ev.slice(SHOW).reduce((s,e)=>s+e.p,0);
+    h+=`<tr class="cut"><td colspan="${R.m+3}" style="color:var(--ink-faint)">… ${ev.length-SHOW} more hypotheses, ${(100*rest).toFixed(2)}% of the mass in total</td></tr>`;
+  }
+  $('hypTable').innerHTML=h;
+  $('hypCount2').textContent=`all ${ev.length}`;
+}
+function renderExact(){ $('exheat').innerHTML=heatTable(R.ex,'232,114,12'); }
+function renderCompare(){
+  $('cmpBP').innerHTML=heatTable(R.bpFinal,'31,119,180');
+  $('cmpEX').innerHTML=heatTable(R.ex,'232,114,12');
+  let h='<tr><th></th><th>∅</th>'; for(let j=0;j<R.m;j++) h+=`<th>z${j+1}</th>`; h+='</tr>';
+  for(let i=0;i<R.n;i++){ h+=`<tr><td class="rowh" style="color:${TCOL[i]}">T${i+1}</td>`;
+    for(let j=0;j<=R.m;j++){ const v=Math.abs(R.bpFinal[i][j]-R.ex[i][j])*100;
+      const a=Math.min(0.9,v/12);
+      h+=`<td class="${v<0.05?'dim':''}" style="background:rgba(194,47,47,${a.toFixed(3)});color:${a>0.5?'#fff':'var(--ink)'}">${v<0.05?'·':v.toFixed(1)}</td>`; }
+    h+='</tr>'; }
+  $('cmpDF').innerHTML=h;
+  const verdict = R.maxErr<0.005 ? 'the association graph is (near-)tree-structured here — BP is exact.'
+                : R.maxErr<0.03 ? 'mild loopiness — BP is a very good deal.'
+                : 'strong loops: this is the regime where paying for hypotheses buys real accuracy.';
+  $('errRO').innerHTML=`max deviation: <b>${(100*R.maxErr).toFixed(1)} pp</b> across all ${R.n*(R.m+1)} marginals — ${verdict}`;
+}
+/* --- time diagram (static) --- */
+function renderTimeDiag(){
+  const s=[];
+  const node=(x,y,r,fill,stroke,dash)=>`<circle cx="${x}" cy="${y}" r="${r}" fill="${fill}" stroke="${stroke}" stroke-width="1.6"${dash?' stroke-dasharray="4 3"':''}/>`;
+  const edge=(x1,y1,x2,y2,w,col,dash)=>`<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="${col}" stroke-width="${w}"${dash?' stroke-dasharray="4 3"':''} stroke-linecap="round"/>`;
+  s.push(`<text x="12" y="24" font-size="11" font-weight="600" fill="#b45607">PMBM — hypothesis tree</text>`);
+  s.push(`<text x="472" y="24" font-size="11" font-weight="600" fill="#155d8f">BP tracker — marginalize &amp; move on</text>`);
+  [['k−1',80],['k',225],['k+1',370]].forEach(([t,x])=>{ s.push(`<text x="${x}" y="200" font-size="10" fill="#8a97a3" text-anchor="middle">scan ${t}</text>`);
+    s.push(`<text x="${x+460}" y="200" font-size="10" fill="#8a97a3" text-anchor="middle">scan ${t}</text>`); });
+  const P='#e8720c', PW='#fceede';
+  s.push(edge(80,110,225,55,5,P)); s.push(edge(80,110,225,110,3,P)); s.push(edge(80,110,225,162,1.6,P,true));
+  s.push(edge(225,55,370,38,4,P)); s.push(edge(225,55,370,72,2,P)); s.push(edge(225,110,370,110,2.6,P));
+  s.push(edge(225,110,370,140,1.4,P,true));
+  s.push(node(80,110,11,PW,P));
+  s.push(node(225,55,10,PW,P)); s.push(node(225,110,8,PW,P)); s.push(node(225,162,6,'#fff','#c9a184',true));
+  s.push(node(370,38,9,PW,P)); s.push(node(370,72,6.5,PW,P)); s.push(node(370,110,7.5,PW,P)); s.push(node(370,140,5.5,'#fff','#c9a184',true));
+  s.push(`<text x="248" y="166" font-size="9.5" fill="#b08a68">pruned</text>`);
+  s.push(`<text x="392" y="144" font-size="9.5" fill="#b08a68">pruned</text>`);
+  s.push(`<text x="225" y="90" font-size="9.5" fill="#b45607" text-anchor="middle">w₁…w_k</text>`);
+  s.push(`<line x1="445" y1="14" x2="445" y2="196" stroke="#e2e8ed"/>`);
+  const B='#1f77b4', BW='#e5eff7';
+  [540,685,830].forEach((x,idx)=>{
+    s.push(node(x,110,13,BW,B));
+    s.push(`<path d="M ${x-11} 96 A 15 15 0 1 1 ${x+11} 96" fill="none" stroke="${B}" stroke-width="1.6"/>`);
+    s.push(`<path d="M ${x+11} 96 l -6 -4 m 6 4 l -7 3" fill="none" stroke="${B}" stroke-width="1.6"/>`);
+    s.push(`<text x="${x}" y="66" font-size="9.5" fill="#155d8f" text-anchor="middle">μ⇄ν sweeps</text>`);
+    s.push(`<text x="${x}" y="141" font-size="9.5" fill="#6b7885" text-anchor="middle">one belief set</text>`);
+    if(idx<2) s.push(`<line x1="${x+16}" y1="110" x2="${x+126}" y2="110" stroke="${B}" stroke-width="2.4" marker-end="url(#arr)"/>`);
+  });
+  $('timeDiag').innerHTML=`<defs><marker id="arr" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8 z" fill="#1f77b4"/></marker></defs>`+s.join('');
+}
+
+/* ================= BP player, half-step animation, edge hover ================= */
+const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
+let dots=[], animRAF=null, playTimer=null;
+function animateHalf(kind){
+  if(reduceMotion) return;
+  const now=performance.now(), DUR=340;
+  R.pairs.forEach(([i,j])=>{
+    if(kind==='mu') dots.push({x0:FG.ax+17,y0:FG.ay(i),x1:FG.bx-14,y1:FG.by(j),t0:now,dur:DUR,col:TCOL[i]});
+    else            dots.push({x0:FG.bx-14,y0:FG.by(j),x1:FG.ax+17,y1:FG.ay(i),t0:now,dur:DUR,col:'#42505d'});
+  });
+  if(!animRAF) animRAF=requestAnimationFrame(tickDots);
+}
+function tickDots(ts){
+  const layer=$('fgraph').querySelector('#dots');
+  if(layer){
+    let h=''; dots=dots.filter(d=>ts<d.t0+d.dur);
+    dots.forEach(d=>{ if(ts<d.t0) return;
+      const u=(ts-d.t0)/d.dur, x=d.x0+(d.x1-d.x0)*u, y=d.y0+(d.y1-d.y0)*u;
+      h+=`<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="3.6" fill="${d.col}"/>`; });
+    layer.innerHTML=h;
+  }
+  animRAF = dots.length ? requestAnimationFrame(tickDots) : null;
+}
+function setIter(t,animKind){
+  state.iter=Math.max(0,Math.min(t,R.hist.length-1));
+  renderGraph(); renderBPHeat(); renderSpark(); renderBeliefs();
+  if(animKind) animateHalf(animKind);
+}
+function stepForward(){
+  if(state.iter>=R.hist.length-1) return false;
+  const next=R.hist[state.iter+1];
+  setIter(state.iter+1, next.kind==='mu'?'mu':'nu');
+  return true;
+}
+function stopPlay(){ state.playing=false; clearInterval(playTimer); playTimer=null; $('bpPlay').textContent='Play sweeps'; }
+$('bpReset').addEventListener('click',()=>{ stopPlay(); setIter(0); });
+$('bpBack').addEventListener('click',()=>{ stopPlay(); setIter(state.iter-1); });
+$('bpStep').addEventListener('click',()=>{ stopPlay(); stepForward(); });
+$('bpEnd').addEventListener('click',()=>{ stopPlay(); setIter(R.hist.length-1); });
+$('bpPlay').addEventListener('click',()=>{
+  if(state.playing){ stopPlay(); return; }
+  if(state.iter>=R.hist.length-1) state.iter=0;
+  state.playing=true; $('bpPlay').textContent='Pause';
+  setIter(state.iter);
+  playTimer=setInterval(()=>{ if(!stepForward()) stopPlay(); }, reduceMotion?380:780);
+});
+/* edge hover readout (delegated on the svg — survives re-renders) */
+const RO_DEFAULT='hover any edge for its ℓ, μ, ν and the marginal it feeds';
+$('fgraph').addEventListener('pointerover',e=>{
+  const g=e.target.closest && e.target.closest('g.edge'); if(!g) return;
+  const i=+g.dataset.i, j=+g.dataset.j, st=curState();
+  if(!R.gate[i][j]){
+    $('edgeRO').textContent=`a${i+1} — b${j+1}: outside the gate → ℓ = 0, so μ ≡ 0 and the pair is inert`;
+    return;
+  }
+  const muV = st.mu ? fmtMsg(st.mu[i][j]) : '– (not yet fired)';
+  $('edgeRO').textContent=
+    `a${i+1} — b${j+1}:  ℓ = ${fmtL(R.L[i][j+1])}   ·   μ${i+1}→${j+1} = ${muV}   ·   ν${j+1}→${i+1} = ${fmtMsg(st.nu[j][i])}   →   p(a${i+1} = z${j+1}) = ${pct(st.marg[i][j+1])}`;
+});
+$('fgraph').addEventListener('pointerout',e=>{
+  if(e.target.closest && e.target.closest('g.edge')) $('edgeRO').textContent=RO_DEFAULT;
+});
+
+/* ================= wiring ================= */
+$('layoutReset').addEventListener('click',()=>{
+  state.T=clone(DEFAULT.T); state.Z=clone(DEFAULT.Z); refresh(true);
+});
+$('pdSlider').addEventListener('input',e=>{ state.PD=+e.target.value; $('pdOut').textContent=state.PD.toFixed(2); refresh(true); });
+$('ccSlider').addEventListener('input',e=>{ state.c=Math.pow(10,+e.target.value);
+  const ex=Math.floor(Math.log10(state.c)), mant=state.c/Math.pow(10,ex);
+  $('ccOut').textContent=`${mant.toFixed(1)}×10${String(ex).replace('-','⁻').replace(/(\d)/g,m=>'⁰¹²³⁴⁵⁶⁷⁸⁹'[+m])}`;
+  refresh(true); });
+$('bbSlider').addEventListener('input',e=>{ state.b=Math.pow(10,+e.target.value);
+  const ex=Math.floor(Math.log10(state.b)), mant=state.b/Math.pow(10,ex);
+  $('bbOut').textContent=`${mant.toFixed(1)}×10${String(ex).replace('-','⁻').replace(/(\d)/g,m=>'⁰¹²³⁴⁵⁶⁷⁸⁹'[+m])}`;
+  renderBMarg(); renderStat1(); renderHyps(); });
+$('kSlider').addEventListener('input',e=>{ state.k=+e.target.value; renderHyps(); });
+
+/* drag interaction (delegated on the svg; survives innerHTML re-render) */
+const sceneEl=$('scene');
+let drag=null;
+function svgPoint(ev){
+  const r=sceneEl.getBoundingClientRect();
+  return { x:(ev.clientX-r.left)*VBW/r.width, y:(ev.clientY-r.top)*VBH/r.height };
+}
+sceneEl.addEventListener('pointerdown',ev=>{
+  const p=svgPoint(ev); let best=null,bd=20*20;
+  state.T.forEach((t,i)=>{ const d=(t.x-p.x)**2+(t.y-p.y)**2; if(d<bd){bd=d;best={arr:'T',i};} });
+  state.Z.forEach((z,j)=>{ const d=(z.x-p.x)**2+(z.y-p.y)**2; if(d<bd){bd=d;best={arr:'Z',i:j};} });
+  if(best){ drag=best; sceneEl.classList.add('dragging'); sceneEl.setPointerCapture(ev.pointerId); ev.preventDefault(); }
+});
+sceneEl.addEventListener('pointermove',ev=>{
+  if(!drag) return;
+  const p=svgPoint(ev);
+  const o = drag.arr==='T' ? state.T[drag.i] : state.Z[drag.i];
+  o.x=Math.max(14,Math.min(VBW-14,p.x)); o.y=Math.max(14,Math.min(VBH-14,p.y));
+  refresh(false);
+});
+['pointerup','pointercancel'].forEach(t=>sceneEl.addEventListener(t,()=>{ drag=null; sceneEl.classList.remove('dragging'); }));
+
+function refresh(jumpToConverged){
+  stopPlay();
+  R=compute();
+  if(jumpToConverged || state.iter>R.hist.length-1) state.iter=R.hist.length-1;
+  renderScene(); renderStat1(); renderLMat();
+  renderGraph(); renderBPHeat(); renderSpark(); renderBeliefs();
+  renderHyps(); renderExact(); renderCompare();
+}
+/* boot */
+refresh(true);
+renderTimeDiag();
+</script>
+</body>
+</html>

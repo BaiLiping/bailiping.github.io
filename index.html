@@ -1,0 +1,278 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Bai Liping's website.">
+    <title>Bai Liping</title>
+    <style>
+      :root {
+        color-scheme: light;
+        --bg: #f7f5ef;
+        --surface: #ffffff;
+        --text: #1d2520;
+        --muted: #647067;
+        --line: #dbe4dc;
+        --accent: #2f7d5b;
+        --accent-dark: #215c43;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        min-height: 100vh;
+        background:
+          linear-gradient(135deg, rgba(255, 250, 240, 0.98), rgba(235, 244, 235, 0.94) 52%, rgba(232, 239, 244, 0.98)),
+          repeating-linear-gradient(90deg, rgba(47, 125, 91, 0.035) 0 1px, transparent 1px 54px),
+          repeating-linear-gradient(0deg, rgba(184, 111, 60, 0.035) 0 1px, transparent 1px 54px);
+        color: var(--text);
+        font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        line-height: 1.5;
+        -webkit-font-smoothing: antialiased;
+      }
+
+      a {
+        color: inherit;
+        text-decoration: none;
+      }
+
+      .site-header {
+        border-bottom: 1px solid var(--line);
+        background: rgba(255, 255, 255, 0.86);
+        backdrop-filter: blur(12px);
+      }
+
+      .header-inner,
+      main {
+        width: min(960px, calc(100% - 32px));
+        margin-inline: auto;
+      }
+
+      .header-inner {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        min-height: 64px;
+        gap: 16px;
+      }
+
+      .brand {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        font-weight: 800;
+      }
+
+      .brand-mark {
+        display: grid;
+        place-items: center;
+        min-width: 32px;
+        height: 32px;
+        padding: 0 10px;
+        border-radius: 8px;
+        background: var(--accent);
+        color: #fff;
+        font-weight: 900;
+        font-size: 0.9rem;
+        letter-spacing: 0.05em;
+      }
+
+      main {
+        padding: 54px 0 80px;
+      }
+
+      .sr-only {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        margin: -1px;
+        padding: 0;
+        overflow: hidden;
+        clip: rect(0 0 0 0);
+        white-space: nowrap;
+        border: 0;
+      }
+
+      .group {
+        margin-top: 40px;
+      }
+
+      .group:first-of-type {
+        margin-top: 0;
+      }
+
+      .group-title {
+        margin: 0;
+        color: #b86f3c;
+        font-size: 0.95rem;
+        font-weight: 900;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+      }
+
+      .page-list {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+        gap: 14px;
+        margin-top: 14px;
+      }
+
+      .page-link {
+        display: grid;
+        gap: 8px;
+        min-height: 136px;
+        padding: 18px;
+        border: 1px solid rgba(29, 37, 32, 0.1);
+        border-radius: 8px;
+        background:
+          linear-gradient(135deg, rgba(255, 255, 255, 0.94), rgba(255, 250, 240, 0.72)),
+          var(--surface);
+        box-shadow: 0 10px 26px rgba(28, 42, 34, 0.08);
+        transition: transform 160ms ease, box-shadow 160ms ease, border-color 160ms ease;
+      }
+
+      .page-link:hover,
+      .page-link:focus-visible {
+        transform: translateY(-2px);
+        border-color: rgba(47, 125, 91, 0.45);
+        box-shadow: 0 18px 50px rgba(28, 42, 34, 0.12);
+        outline: none;
+      }
+
+      .page-link span {
+        color: var(--accent-dark);
+        font-size: 0.82rem;
+        font-weight: 900;
+        text-transform: uppercase;
+      }
+
+      .page-link strong {
+        font-size: 1.2rem;
+      }
+
+    </style>
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="header-inner">
+        <a class="brand" href="/" aria-label="Bai Liping home">
+          <span class="brand-mark">BLP</span>
+        </a>
+      </div>
+    </header>
+
+    <main>
+      <h1 class="sr-only">Bai Liping</h1>
+
+      <section class="group" aria-labelledby="group-communication-basics">
+        <h2 class="group-title" id="group-communication-basics">Communication Basics</h2>
+        <div class="page-list">
+          <a class="page-link" href="/cir-to-taps/">
+            <span>Interactive lab</span>
+            <strong>CIR → Taps</strong>
+          </a>
+        </div>
+      </section>
+
+      <section class="group" aria-labelledby="group-projects">
+        <h2 class="group-title" id="group-projects">Projects</h2>
+        <div class="page-list">
+          <a class="page-link" href="/vslam/">
+            <span>Interactive note</span>
+            <strong>Visual SLAM</strong>
+          </a>
+          <a class="page-link" href="/gaussian-splatting/">
+            <span>Interactive note</span>
+            <strong>GS-SLAM</strong>
+          </a>
+          <a class="page-link" href="/3dgs/">
+            <span>Visual → Radio</span>
+            <strong>3DGS</strong>
+          </a>
+          <a class="page-link" href="/differentiable-ray-tracing/">
+            <span>Interactive note</span>
+            <strong>Differentiable Ray Tracing</strong>
+          </a>
+          <a class="page-link" href="/graph-slam/">
+            <span>Notebook</span>
+            <strong>Graph SLAM</strong>
+          </a>
+          <a class="page-link" href="/jvs-slam/">
+            <span>Interactive note</span>
+            <strong>JVS-SLAM</strong>
+          </a>
+          <a class="page-link" href="/frame-registration/">
+            <span>Interactive demos</span>
+            <strong>Frame Registration</strong>
+          </a>
+          <a class="page-link" href="/sampling-playground/">
+            <span>Interactive playground</span>
+            <strong>Sampling</strong>
+          </a>
+          <a class="page-link" href="/handover/">
+            <span>Research · GLOBECOM 2025</span>
+            <strong>Target Handover</strong>
+          </a>
+        </div>
+      </section>
+
+      <section class="group" aria-labelledby="group-slides">
+        <h2 class="group-title" id="group-slides">Slides</h2>
+        <div class="page-list">
+          <a class="page-link" href="/frame-registration-slides/">
+            <span>Slide deck · 16 slides</span>
+            <strong>Frame Registration</strong>
+          </a>
+          <a class="page-link" href="/target-handover-slides/">
+            <span>Slide deck · 13 slides</span>
+            <strong>Target Handover</strong>
+          </a>
+          <a class="page-link" href="/bp-vs-pmbm-slides/">
+            <span>Slide deck · 16 slides</span>
+            <strong>BP vs PMBM</strong>
+          </a>
+          <a class="page-link" href="/eo-mtt-slides/">
+            <span>Slide deck · 15 slides</span>
+            <strong>EO-MTT</strong>
+          </a>
+        </div>
+      </section>
+
+      <section class="group" aria-labelledby="group-work">
+        <h2 class="group-title" id="group-work">Work</h2>
+        <div class="page-list">
+          <a class="page-link" href="/bp-vs-pmbm/">
+            <span>Interactive note</span>
+            <strong>BP vs PMBM</strong>
+          </a>
+          <a class="page-link" href="/eo-mtt/">
+            <span>Interactive note</span>
+            <strong>EO-MTT</strong>
+          </a>
+        </div>
+      </section>
+
+      <section class="group" aria-labelledby="group-life">
+        <h2 class="group-title" id="group-life">Life</h2>
+        <div class="page-list">
+          <a class="page-link" href="/picture-collections/">
+            <span>Gallery</span>
+            <strong>Pictures</strong>
+          </a>
+          <a class="page-link" href="/moments-in-the-movies/">
+            <span>Film collection</span>
+            <strong>Movie Moments</strong>
+          </a>
+          <a class="page-link" href="/sales/">
+            <span>Gothenburg</span>
+            <strong>Sales</strong>
+          </a>
+        </div>
+      </section>
+    </main>
+
+  </body>
+</html>
