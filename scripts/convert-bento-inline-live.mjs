@@ -11,21 +11,21 @@ const decks = [
     demos: [
       {
         state: 'state-ransac-live',
-        slide: 's-rung2',
+        slide: 's-rung2-live',
         title: 'RANSAC: consensus over trust',
         source: './live/?demo=ransac',
         src: './live/?demo=ransac&embed=region'
       },
       {
         state: 'state-icp-live',
-        slide: 's-rung3',
+        slide: 's-rung3-live',
         title: 'ICP: initialization chooses the basin',
         source: './live/?demo=icp',
         src: './live/?demo=icp&embed=region'
       },
       {
         state: 'state-ndt-live',
-        slide: 's-rung4',
+        slide: 's-rung4-live',
         title: 'NDT: a smooth score with a finite basin',
         source: './live/?demo=ndt',
         src: './live/?demo=ndt&embed=region'
@@ -89,7 +89,7 @@ function convertDeck(definition) {
     slide.elements = slide.elements
       .filter(element => element.id !== 'live-demo-mount' && !removedStates.has(element.link))
       .concat(mountMarker())
-    const note = `Interactive region: ${demo.title}. The complete static slide remains underneath for print and offline use.`
+    const note = `Interactive region: ${demo.title}. A static fallback remains underneath for print and offline use.`
     if (!slide.notes.includes(note)) slide.notes = `${slide.notes} ${note}`
   }
 
