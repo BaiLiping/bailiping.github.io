@@ -7,33 +7,35 @@
     <meta name="description" content="Compact interactive examples for partition uncertainty in extended-object multi-target tracking.">
     <title>Live EO-MTT examples | Bai Liping</title>
     <link rel="stylesheet" href="./styles.css">
+    <link rel="stylesheet" href="../../assets/interactive-slide-system.css">
+    <script src="../../assets/interactive-slide-system.js"></script>
     <script src="./app.js" defer></script>
   </head>
-  <body data-bento-live-app data-view="partition">
-    <div class="app-shell" id="appShell">
-      <header class="app-header">
-        <div class="title-block">
+  <body data-bento-live-app data-interactive-slides="eo-mtt" data-view="partition">
+    <div class="app-shell interactive-slide-shell" id="appShell">
+      <header class="app-header interactive-slide-header">
+        <div class="title-block interactive-slide-heading">
           <p class="eyebrow" id="viewKicker">LIVE EXAMPLE · CANDIDATE PARTITIONS</p>
           <h1 id="viewTitle">What can a distance sweep see?</h1>
         </div>
-        <div class="header-actions">
-          <span class="scope-chip" title="The examples use two geometric extended objects and ten point detections.">Teaching model</span>
-          <a class="back-button" id="backButton" href="../" target="_top" aria-label="Back to presentation">
+        <div class="header-actions interactive-slide-actions">
+          <span class="scope-chip interactive-slide-chip" title="The examples use two geometric extended objects and ten point detections.">Teaching model</span>
+          <a class="back-button interactive-slide-back" id="backButton" href="../" target="_top" aria-label="Back to presentation">
             <svg aria-hidden="true" viewBox="0 0 20 20"><path d="m12.5 4-6 6 6 6M7 10h8"/></svg>
             Back to slides
           </a>
         </div>
       </header>
 
-      <nav class="view-nav" aria-label="Interactive example">
+      <nav class="view-nav interactive-slide-tabs" aria-label="Interactive example">
         <a href="?view=partition" data-view-link="partition">1 · Candidate set</a>
         <a href="?view=hypotheses" data-view-link="hypotheses">2 · Retain &amp; prune</a>
         <a href="?view=inference" data-view-link="inference">3 · Search vs SPA</a>
       </nav>
 
       <main class="view-stage">
-        <section class="view-panel partition-panel" data-view-panel="partition" aria-labelledby="partitionHeading">
-          <div class="scene-card">
+        <section class="view-panel partition-panel interactive-slide-body" data-view-panel="partition" aria-labelledby="partitionHeading">
+          <div class="scene-card interactive-slide-stage interactive-slide-panel">
             <div class="card-heading">
               <div>
                 <h2 id="partitionHeading">Same ten measurements, threshold-selected cells</h2>
@@ -50,7 +52,7 @@
             </div>
           </div>
 
-          <aside class="control-card">
+          <aside class="control-card interactive-slide-controls interactive-slide-panel">
             <section class="control-section">
               <div class="section-title"><h3>Combinatorial load</h3><output id="bellOutput" for="bellM">B(10) = 115 975</output></div>
               <label class="slider-label" for="bellM">Measurements M <b id="bellMValue">10</b></label>
@@ -77,8 +79,8 @@
           </aside>
         </section>
 
-        <section class="view-panel hypotheses-panel" data-view-panel="hypotheses" aria-labelledby="hypothesesHeading">
-          <div class="hypothesis-workbench">
+        <section class="view-panel hypotheses-panel interactive-slide-body" data-view-panel="hypotheses" aria-labelledby="hypothesesHeading">
+          <div class="hypothesis-workbench interactive-slide-stage interactive-slide-panel">
             <div class="card-heading">
               <div>
                 <h2 id="hypothesesHeading">A PMBM mixture branches; management keeps it finite</h2>
@@ -96,7 +98,7 @@
             <div class="hypothesis-cards" id="hypothesisCards"></div>
           </div>
 
-          <aside class="marginal-card">
+          <aside class="marginal-card interactive-slide-controls interactive-slide-panel">
             <p class="eyebrow">PMB PROJECTION · ILLUSTRATIVE</p>
             <h2>Mixture → selected marginals</h2>
             <div class="ambiguous-mark" id="ambiguousMark" role="img" aria-label="Current marginal association weights for measurement 9"><span>m₉</span></div>
@@ -153,7 +155,7 @@
         </section>
       </main>
 
-      <footer class="app-footer">
+      <footer class="app-footer interactive-slide-footer">
         <span><kbd>Esc</kbd> back to the presentation</span>
         <span>Two extended objects · ten point detections · all stochastic-looking runs use a fixed seed</span>
       </footer>

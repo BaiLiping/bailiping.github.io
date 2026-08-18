@@ -8,28 +8,33 @@
   <title>Association Lab · BP and joint hypotheses</title>
   <meta name="description" content="A compact live lab for normalized data association, belief-propagation marginals, and joint-hypothesis pruning.">
   <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="../../assets/interactive-slide-system.css">
+  <script src="../../assets/interactive-slide-system.js"></script>
   <script src="app.js" defer></script>
 </head>
-<body data-bento-live-app>
-  <main class="lab-shell">
-    <header class="masthead">
-      <div>
+<body data-bento-live-app data-interactive-slides="bp-vs-pmbm">
+  <main class="lab-shell interactive-slide-shell">
+    <header class="masthead interactive-slide-header">
+      <div class="interactive-slide-heading">
         <p class="eyebrow">DATA ASSOCIATION · LIVE LAB</p>
         <h1>One scan, two inference views.</h1>
       </div>
-      <a class="back-link" id="back-link" href="../" aria-label="Back to BP versus PMBM slides">
-        <span aria-hidden="true">←</span> Back to slides <kbd>Esc</kbd>
-      </a>
+      <div class="interactive-slide-actions">
+        <span class="interactive-slide-chip" title="The page is a normalized, deterministic one-scan teaching benchmark.">Normalized toy model</span>
+        <a class="back-link interactive-slide-back" id="back-link" href="../" aria-label="Back to BP versus PMBM slides">
+          <span aria-hidden="true">←</span> Back to slides <kbd>Esc</kbd>
+        </a>
+      </div>
     </header>
 
-    <nav class="mode-tabs" role="tablist" aria-label="Interactive example">
+    <nav class="mode-tabs interactive-slide-tabs" role="tablist" aria-label="Interactive example">
       <button class="mode-tab is-active" id="tab-assignment" type="button" role="tab" aria-selected="true" aria-controls="panel-assignment" data-mode="assignment"><span>01</span> Shared weights</button>
       <button class="mode-tab" id="tab-bp" type="button" role="tab" aria-selected="false" aria-controls="panel-bp" data-mode="bp" tabindex="-1"><span>02</span> BP marginals</button>
       <button class="mode-tab" id="tab-hypotheses" type="button" role="tab" aria-selected="false" aria-controls="panel-hypotheses" data-mode="hypotheses" tabindex="-1"><span>03</span> Joint hypotheses</button>
     </nav>
 
-    <div class="lab-grid">
-      <aside class="control-rail" aria-label="Experiment controls">
+    <div class="lab-grid interactive-slide-body">
+      <aside class="control-rail interactive-slide-controls interactive-slide-panel" aria-label="Experiment controls">
         <div class="method-copy">
           <p class="method-kicker" id="method-kicker">COMMON INPUT</p>
           <h2 id="method-title">Shape the association problem</h2>
@@ -83,7 +88,7 @@
         <div class="scope-note"><strong>Scope:</strong> normalized one-scan assignment benchmark—not a complete PMBM state update.</div>
       </aside>
 
-      <section class="stage-card" aria-labelledby="stage-heading">
+      <section class="stage-card interactive-slide-stage interactive-slide-panel" aria-labelledby="stage-heading">
         <div class="stage-bar">
           <h2 id="stage-heading">GATED LIKELIHOODS ℓ</h2>
           <p class="status" id="status" role="status" aria-live="polite"><i></i> Drag a measurement to recompute</p>
@@ -105,7 +110,7 @@
       </section>
     </div>
 
-    <footer>
+    <footer class="interactive-slide-footer">
       <p>Existing tracks may be missed or claim at most one measurement · unassigned-measurement baseline = 1</p>
       <p><span class="bp-swatch"></span>BP marginals <span class="pm-swatch"></span>joint-event reference</p>
     </footer>

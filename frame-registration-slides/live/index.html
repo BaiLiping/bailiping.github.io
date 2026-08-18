@@ -8,21 +8,26 @@
   <title>Frame Registration Lab · Bai Liping</title>
   <meta name="description" content="A hands-on, dependency-free lab for RANSAC, ICP, and the NDT score landscape.">
   <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="../../assets/interactive-slide-system.css">
+  <script src="../../assets/interactive-slide-system.js"></script>
   <script src="app.js" defer></script>
 </head>
-<body data-bento-live-app>
-  <main class="demo-shell" id="demo">
-    <header class="masthead">
-      <div>
+<body data-bento-live-app data-interactive-slides="frame-registration">
+  <main class="demo-shell interactive-slide-shell" id="demo">
+    <header class="masthead interactive-slide-header">
+      <div class="interactive-slide-heading">
         <p class="eyebrow">FRAME REGISTRATION · LIVE LAB</p>
         <h1>Make the two scans agree.</h1>
       </div>
-      <a class="back-link" id="back-link" href="../" aria-label="Back to frame-registration slides">
-        <span aria-hidden="true">←</span> Back to slides <kbd>Esc</kbd>
-      </a>
+      <div class="interactive-slide-actions">
+        <span class="interactive-slide-chip" title="The live page uses a deterministic two-dimensional teaching model.">2-D teaching model</span>
+        <a class="back-link interactive-slide-back" id="back-link" href="../" aria-label="Back to frame-registration slides">
+          <span aria-hidden="true">←</span> Back to slides <kbd>Esc</kbd>
+        </a>
+      </div>
     </header>
 
-    <nav class="method-tabs" role="tablist" aria-label="Registration method">
+    <nav class="method-tabs interactive-slide-tabs" role="tablist" aria-label="Registration method">
       <button class="method-tab is-active" id="tab-ransac" type="button" role="tab" aria-selected="true" aria-controls="panel-ransac" data-mode="ransac">
         <span>01</span> RANSAC
       </button>
@@ -34,8 +39,8 @@
       </button>
     </nav>
 
-    <div class="lab-grid">
-      <aside class="control-rail" aria-label="Experiment controls">
+    <div class="lab-grid interactive-slide-body">
+      <aside class="control-rail interactive-slide-controls interactive-slide-panel" aria-label="Experiment controls">
         <div class="method-copy">
           <p class="method-kicker" id="method-kicker">GLOBAL SEARCH</p>
           <h2 id="method-title">Find consensus among outliers</h2>
@@ -94,7 +99,7 @@
         </div>
       </aside>
 
-      <section class="stage-card" aria-labelledby="stage-heading">
+      <section class="stage-card interactive-slide-stage interactive-slide-panel" aria-labelledby="stage-heading">
         <div class="stage-bar">
           <h2 id="stage-heading">PAIR-CONGRUENCE SEARCH</h2>
           <p class="status" id="status" role="status" aria-live="polite"><i></i> Ready — test the first batch</p>
@@ -106,7 +111,7 @@
       </section>
     </div>
 
-    <footer>
+    <footer class="interactive-slide-footer">
       <p>2-D teaching model · same rigid-transform mathematics as the 3-D case</p>
       <p><span class="truth-swatch"></span>Dashed outline = hidden ground truth</p>
     </footer>

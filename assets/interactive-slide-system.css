@@ -1,0 +1,265 @@
+/* Shared composition layer for Bento live states and their standalone URLs. */
+
+body[data-interactive-slides] {
+  --interactive-outer: #e9edf3;
+  --interactive-paper: #ffffff;
+  --interactive-panel: rgba(255, 255, 255, .92);
+  --interactive-ink: #172033;
+  --interactive-muted: #68758a;
+  --interactive-rule: #d8dee8;
+  --interactive-accent: #2f6fb2;
+  --interactive-accent-soft: #e8f0fa;
+  --interactive-radius: 11px;
+  --interactive-shadow: 0 10px 34px rgba(20, 38, 70, .09);
+  --interactive-serif: Georgia, "Times New Roman", serif;
+  --interactive-sans: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+
+body[data-interactive-slides="frame-registration"] {
+  --interactive-accent: #8a2d1c;
+  --interactive-accent-soft: #f8e8e2;
+}
+
+body[data-interactive-slides="target-handover"] {
+  --interactive-accent: #2f7d5b;
+  --interactive-accent-soft: #e6f1e9;
+}
+
+body[data-interactive-slides="bp-vs-pmbm"] {
+  --interactive-accent: #155d8f;
+  --interactive-accent-soft: #e5eff7;
+}
+
+body[data-interactive-slides="eo-mtt"] {
+  --interactive-accent: #0f766e;
+  --interactive-accent-soft: #e2f1ee;
+}
+
+body[data-interactive-slides]::selection {
+  background: var(--interactive-accent-soft);
+  color: var(--interactive-ink);
+}
+
+.interactive-slide-shell {
+  width: min(100%, 1280px);
+  margin-inline: auto;
+}
+
+.interactive-slide-header {
+  min-height: 58px;
+}
+
+.interactive-slide-heading {
+  min-width: 0;
+}
+
+.interactive-slide-heading :is(.eyebrow, .method-kicker) {
+  color: var(--interactive-accent);
+  font-family: var(--interactive-sans);
+}
+
+.interactive-slide-heading h1 {
+  color: var(--interactive-ink);
+  font-family: var(--interactive-serif);
+}
+
+.interactive-slide-actions {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  flex: 0 0 auto;
+}
+
+.interactive-slide-chip,
+.interactive-slide-back {
+  min-height: 36px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px;
+  font-family: var(--interactive-sans);
+  font-size: 11px;
+  font-weight: 800;
+}
+
+.interactive-slide-chip {
+  padding: 0 12px;
+  border: 1px solid color-mix(in srgb, var(--interactive-accent) 24%, white);
+  background: var(--interactive-accent-soft);
+  color: var(--interactive-accent);
+}
+
+.interactive-slide-back {
+  padding-inline: 13px;
+}
+
+.interactive-slide-tabs {
+  min-height: 36px;
+}
+
+.interactive-slide-tabs :is(button, a) {
+  min-height: 32px;
+}
+
+.interactive-slide-body {
+  min-height: 0;
+  grid-template-columns: minmax(0, 1fr) minmax(310px, 32%);
+  gap: 12px;
+}
+
+.interactive-slide-stage {
+  min-width: 0;
+  min-height: 0;
+  grid-column: 1;
+  grid-row: 1;
+}
+
+.interactive-slide-controls {
+  min-width: 0;
+  min-height: 0;
+  grid-column: 2;
+  grid-row: 1;
+  overflow: auto;
+  overscroll-behavior: contain;
+  scrollbar-width: thin;
+}
+
+.interactive-slide-panel {
+  border-radius: var(--interactive-radius);
+  box-shadow: var(--interactive-shadow);
+}
+
+.interactive-slide-footer {
+  color: var(--interactive-muted);
+}
+
+body[data-interactive-slides] :where(button, a, input, canvas, [tabindex]):focus-visible {
+  outline: 3px solid color-mix(in srgb, var(--interactive-accent) 44%, transparent);
+  outline-offset: 3px;
+}
+
+body[data-interactive-slides] input[type="range"] {
+  accent-color: var(--interactive-accent);
+}
+
+/* Bento already provides the title, Back control, notes, and slide navigation. */
+html.is-bento-embedded,
+html.is-bento-embedded body[data-interactive-slides] {
+  min-height: 0;
+  height: 100%;
+  overflow: hidden;
+}
+
+html.is-bento-embedded body[data-interactive-slides] {
+  background: var(--interactive-paper);
+}
+
+html.is-bento-embedded .interactive-slide-shell {
+  width: 100%;
+  height: 100dvh;
+  min-height: 0;
+  padding: 8px;
+  gap: 0;
+  grid-template-rows: minmax(0, 1fr);
+  overflow: hidden;
+  background: var(--interactive-paper);
+}
+
+html.is-bento-embedded :is(
+  .interactive-slide-header,
+  .interactive-slide-tabs,
+  .interactive-slide-footer
+) {
+  display: none !important;
+}
+
+html.is-bento-embedded .interactive-slide-body {
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+}
+
+html.is-bento-embedded .interactive-slide-panel {
+  box-shadow: 0 5px 22px rgba(20, 38, 70, .08);
+}
+
+html.is-bento-embedded body[data-interactive-slides="target-handover"] .interactive-slide-body,
+html.is-bento-embedded body[data-interactive-slides="eo-mtt"] .view-stage {
+  padding: 0;
+}
+
+html.is-bento-embedded body[data-interactive-slides="frame-registration"] .metrics {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  margin-bottom: 7px;
+  padding-top: 8px;
+}
+
+html.is-bento-embedded body[data-interactive-slides="frame-registration"] .metrics > div,
+html.is-bento-embedded body[data-interactive-slides="frame-registration"] .metrics > div:last-child {
+  grid-column: auto;
+  padding: 6px 7px;
+  border-radius: 0;
+}
+
+html.is-bento-embedded body[data-interactive-slides="frame-registration"] .metrics > div:first-child {
+  border-radius: 6px 0 0 6px;
+}
+
+html.is-bento-embedded body[data-interactive-slides="frame-registration"] .metrics > div:last-child {
+  border-radius: 0 6px 6px 0;
+}
+
+html.is-bento-embedded body[data-interactive-slides="frame-registration"] .metrics dd {
+  font-size: 14px;
+}
+
+@media (max-width: 800px) {
+  .interactive-slide-header {
+    align-items: stretch;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .interactive-slide-heading {
+    width: 100%;
+  }
+
+  .interactive-slide-actions {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .interactive-slide-body {
+    grid-template-columns: 1fr;
+  }
+
+  .interactive-slide-stage,
+  .interactive-slide-controls {
+    grid-column: auto;
+    grid-row: auto;
+  }
+
+  .interactive-slide-stage { order: 1; }
+  .interactive-slide-controls { order: 2; overflow: visible; }
+}
+
+@media (max-height: 600px) and (min-width: 801px) {
+  html:not(.is-bento-embedded) .interactive-slide-header {
+    min-height: 50px;
+  }
+
+  html:not(.is-bento-embedded) .interactive-slide-header h1 {
+    font-size: 26px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  body[data-interactive-slides] *,
+  body[data-interactive-slides] *::before,
+  body[data-interactive-slides] *::after {
+    scroll-behavior: auto !important;
+    animation-duration: .01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: .01ms !important;
+  }
+}

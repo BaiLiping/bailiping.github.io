@@ -7,26 +7,28 @@
     <meta name="description" content="Interactive, didactic point-target handover simulation for the GLOBECOM 2025 presentation.">
     <title>Live target handover | GLOBECOM 2025</title>
     <link rel="stylesheet" href="./styles.css">
+    <link rel="stylesheet" href="../../assets/interactive-slide-system.css">
+    <script src="../../assets/interactive-slide-system.js"></script>
     <script src="./app.js" defer></script>
   </head>
-  <body data-bento-live-app>
-    <div class="app-shell" id="appShell">
-      <header class="app-header">
-        <div class="title-block">
+  <body data-bento-live-app data-interactive-slides="target-handover">
+    <div class="app-shell interactive-slide-shell" id="appShell">
+      <header class="app-header interactive-slide-header">
+        <div class="title-block interactive-slide-heading">
           <p class="eyebrow">LIVE EXAMPLE · POINT TARGETS</p>
           <h1>When should a track cross the network?</h1>
         </div>
-        <div class="header-actions">
-          <span class="model-chip" title="This demo uses kinematic point targets, not an extended-object model.">Didactic model</span>
-          <a class="back-button" id="backButton" href="../" target="_top" aria-label="Back to presentation">
+        <div class="header-actions interactive-slide-actions">
+          <span class="model-chip interactive-slide-chip" title="This demo uses kinematic point targets, not an extended-object model.">Didactic model</span>
+          <a class="back-button interactive-slide-back" id="backButton" href="../" target="_top" aria-label="Back to presentation">
             <svg aria-hidden="true" viewBox="0 0 20 20"><path d="m12.5 4-6 6 6 6M7 10h8"/></svg>
             Back to slides
           </a>
         </div>
       </header>
 
-      <main class="workspace">
-        <section class="scene-card" aria-labelledby="sceneTitle">
+      <main class="workspace interactive-slide-body">
+        <section class="scene-card interactive-slide-stage interactive-slide-panel" aria-labelledby="sceneTitle">
           <div class="scene-heading">
             <div>
               <h2 id="sceneTitle">Two base stations, two crossing targets</h2>
@@ -160,7 +162,7 @@
           </div>
         </section>
 
-        <aside class="control-card" aria-labelledby="controlsTitle">
+        <aside class="control-card interactive-slide-controls interactive-slide-panel" aria-labelledby="controlsTitle">
           <div class="control-heading">
             <div>
               <p class="eyebrow">PROTOCOL KNOBS</p>
@@ -247,7 +249,7 @@
         </aside>
       </main>
 
-      <footer class="app-footer">
+      <footer class="app-footer interactive-slide-footer">
         <span><kbd>Space</kbd> play/pause · <kbd>←</kbd>/<kbd>→</kbd> step · <kbd>Esc</kbd> back</span>
         <span>BS separation 150 m · FoV radius 120 m · deterministic 1 s frames</span>
       </footer>
