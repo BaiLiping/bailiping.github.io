@@ -10,9 +10,11 @@
     embedded = true;
   }
 
-  if (new URLSearchParams(window.location.search).get('embed') === '1') {
+  var embedMode = new URLSearchParams(window.location.search).get('embed');
+  if (embedMode === '1' || embedMode === 'region') {
     embedded = true;
   }
 
   root.classList.add(embedded ? 'is-bento-embedded' : 'is-slide-standalone');
+  if (embedded) root.classList.add('live-region-mode');
 }());

@@ -145,32 +145,18 @@ function pill(id, x, y, w, label, fill, color = '#FFFFFF') {
   ]
 }
 
-function liveButton(id, state, label, x = 946, y = 18, w = 238) {
-  return [
-    shape(`try-${id}-hit`, x, y, w, 38, C.teal, { stroke: C.teal, strokeWidth: 1, radius: 19, link: state }),
-    text(`try-${id}-label`, x + 12, y + 7, w - 24, 24, `TRY LIVE · ${label}`, 14, { color: '#FFFFFF', fontWeight: 700, align: 'center', valign: 'middle', lineHeight: 1.1, link: state })
-  ]
-}
+const INLINE_BOUNDS = { x: 96, y: 180, width: 1088, height: 480 }
 
-function liveState(id, parent, name, title, fallback, url) {
-  return {
-    id,
-    stateOf: parent,
-    name,
-    background: C.bg,
-    transition: 'morph',
-    notes: `Interactive drill-down: ${fallback} Use Back or Escape to return to the presentation.`,
-    elements: [
-      text('live-kicker', 72, 28, 760, 22, 'INTERACTIVE EXAMPLE · EXTENDED-OBJECT MTT', 14, { color: C.teal, fontWeight: 700, letterSpacing: 2 }),
-      text('live-title', 72, 52, 820, 42, title, 30, { fontWeight: 700, lineHeight: 1.1 }),
-      card('live-fallback-bg', 72, 104, 1136, 548, { stroke: 'none' }),
-      text('live-fallback-copy', 200, 318, 880, 62, `${fallback} The live example loads here when the deck is viewed from the website.`, 21, { color: C.muted, align: 'center', valign: 'middle' }),
-      text('live-fallback-url', 200, 392, 880, 30, url, 16, { color: C.teal, fontWeight: 700, align: 'center', valign: 'middle' }),
-      shape('live-demo-mount', 72, 104, 1136, 548, 'rgba(255,255,255,0.01)', { stroke: C.teal, strokeWidth: 2, radius: 12 }),
-      shape('live-back-hit', 1000, 32, 184, 48, C.tealSoft, { stroke: C.teal, strokeWidth: 1, radius: 24, link: parent }),
-      text('live-back-label', 1014, 42, 156, 28, '← BACK', 16, { color: C.teal, fontWeight: 700, align: 'center', valign: 'middle', lineHeight: 1, link: parent })
-    ]
-  }
+function inlineMount() {
+  return shape(
+    'live-demo-mount',
+    INLINE_BOUNDS.x,
+    INLINE_BOUNDS.y,
+    INLINE_BOUNDS.width,
+    INLINE_BOUNDS.height,
+    'rgba(255,255,255,0)',
+    { opacity: 0, radius: 0 }
+  )
 }
 
 function pointCloud(prefix, x, y, scale = 1) {
@@ -343,11 +329,10 @@ slides.push(slide(
     text('blind-missing-code', 664, 282, 492, 54, '{1,2,3,4,9} {5,6,7,8} {10}', 27, { fontFamily: 'ui-monospace, monospace', fontWeight: 700, align: 'center' }),
     text('blind-missing-copy', 670, 370, 480, 96, 'No threshold can undo the first connection while preserving the two compact four-point cells.', 20, { color: C.muted, align: 'center' }),
     text('blind-count', 96, 548, 1088, 70, '<span style="font-size:42px;color:#6D4FC2"><b>9</b></span> sweep candidates &nbsp;vs&nbsp; <span style="font-size:42px;color:#1B2320"><b>115 975</b></span> valid partitions', 21, { align: 'center', valign: 'middle' }),
-    ...liveButton('eo-partition', 'state-eo-partition-live', 'MOVE d')
+    inlineMount()
   ],
   { cite: 'Specific to the source-page scene' }
 ))
-slides.push(liveState('state-eo-partition-live', 's-candidate-blindspot', 'LIVE CANDIDATE SET', 'Move the threshold; expose the missing candidate', 'Explore Bell numbers and the single-linkage candidate set.', 'bailiping.com/eo-mtt-slides/live/?view=partition'))
 
 slides.push(slide(
   's-pmbm',
@@ -412,11 +397,10 @@ slides.push(slide(
     text('projection-preserve-t', 116, 578, 476, 34, '<b>Preserves:</b> selected marginal association information', 17, { color: C.teal, align: 'center' }),
     card('projection-drop', 636, 558, 548, 70, { fill: C.roseSoft, stroke: '#E8B9C9' }),
     text('projection-drop-t', 656, 578, 508, 34, '<b>Drops:</b> global hypothesis branching and correlations', 17, { color: C.rose, align: 'center' }),
-    ...liveButton('eo-hypotheses', 'state-eo-hypotheses-live', 'BRANCH & PRUNE')
+    inlineMount()
   ],
   { cite: 'PMB approximations [30]' }
 ))
-slides.push(liveState('state-eo-hypotheses-live', 's-pmb-projection', 'LIVE HYPOTHESIS MANAGEMENT', 'Branch, prune, cap, and inspect the projection', 'Manage the source page’s illustrative four-hypothesis mixture.', 'bailiping.com/eo-mtt-slides/live/?view=hypotheses'))
 
 slides.push(slide(
   's-direct-fork',
@@ -509,11 +493,10 @@ slides.push(slide(
     text('bp-not-output-t', 800, 428, 360, 72, '<b>Not returned:</b><br>a sampled list of global partition hypotheses', 19, { color: C.muted, align: 'center', valign: 'middle' }),
     card('bp-caveat', 776, 544, 408, 72, { fill: C.tealSoft, stroke: '#B9DAD4' }),
     text('bp-caveat-t', 798, 554, 364, 56, 'Family C [33,34] shown · trajectory-PMB BP [32] is distinct and is not the graph drawn here.', 14, { color: C.teal, fontWeight: 700, align: 'center', valign: 'middle' }),
-    ...liveButton('eo-inference', 'state-eo-inference-live', 'COMPARE')
+    inlineMount()
   ],
   { cite: 'Scalable SPA EOT [33,34]' }
 ))
-slides.push(liveState('state-eo-inference-live', 's-bp', 'LIVE JOINT SEARCH VS SPA', 'Run joint search beside schematic per-measurement SPA', 'Compare distinct joint-hypothesis and marginal outputs; [32] uses BP in a separate trajectory-PMB model.', 'bailiping.com/eo-mtt-slides/live/?view=inference'))
 
 slides.push(slide(
   's-no-hard-partition',
@@ -627,17 +610,53 @@ const deck = {
   slides
 }
 
-const liveConfig = {
-  accent: C.teal,
-  demos: [
-    { id: 'eo-partition', state: 'state-eo-partition-live', title: 'Candidate partitions and the single-linkage blind spot', src: './live/?view=partition' },
-    { id: 'eo-hypotheses', state: 'state-eo-hypotheses-live', title: 'PMBM hypothesis management and PMB projection', src: './live/?view=hypotheses' },
-    { id: 'eo-inference', state: 'state-eo-inference-live', title: 'Gibbs joint search versus schematic per-measurement SPA', src: './live/?view=inference' }
-  ]
-}
+const inlineLiveMap = [
+  {
+    slide: 's-candidate-blindspot',
+    slideIndex: slides.findIndex(entry => entry.id === 's-candidate-blindspot'),
+    inline: true,
+    layout: 'region',
+    bounds: INLINE_BOUNDS,
+    src: './live/?view=partition&embed=region',
+    source: './live/?view=partition',
+    title: 'Candidate partitions and the single-linkage blind spot',
+    sandbox: 'allow-scripts',
+    hideSource: true,
+    readyMessage: true,
+    unloadWhenHidden: true
+  },
+  {
+    slide: 's-pmb-projection',
+    slideIndex: slides.findIndex(entry => entry.id === 's-pmb-projection'),
+    inline: true,
+    layout: 'region',
+    bounds: INLINE_BOUNDS,
+    src: './live/?view=hypotheses&embed=region',
+    source: './live/?view=hypotheses',
+    title: 'PMBM hypothesis management and PMB projection',
+    sandbox: 'allow-scripts',
+    hideSource: true,
+    readyMessage: true,
+    unloadWhenHidden: true
+  },
+  {
+    slide: 's-bp',
+    slideIndex: slides.findIndex(entry => entry.id === 's-bp'),
+    inline: true,
+    layout: 'region',
+    bounds: INLINE_BOUNDS,
+    src: './live/?view=inference&embed=region',
+    source: './live/?view=inference',
+    title: 'Gibbs joint search versus schematic per-measurement SPA',
+    sandbox: 'allow-scripts',
+    hideSource: true,
+    readyMessage: true,
+    unloadWhenHidden: true
+  }
+]
 
 const escapedDeck = JSON.stringify(deck, null, 1).replaceAll('<', '\\u003c')
-const configText = JSON.stringify(liveConfig, null, 2)
+const configText = JSON.stringify(inlineLiveMap, null, 2)
 let html = readFileSync(templatePath, 'utf8')
 html = html.replace('<title>bento/slides</title>', '<title>Partition uncertainty in extended-object multi-target tracking | Slides</title>')
 html = html.replace(
@@ -645,8 +664,10 @@ html = html.replace(
   `$1${escapedDeck}$2`
 )
 html = html.replace(
-  /(<script type="application\/json" id="bento-live-config">\s*)[\s\S]*?(\s*<\/script>)/,
-  `$1${configText}$2`
+  /<script type="application\/json" id="(?:bento-live-config|bento-inline-live-map)">[\s\S]*?<\/script>/,
+  `<script type="application/json" id="bento-inline-live-map">\n${configText}\n    </script>`
 )
+html = html.replaceAll('../assets/bento-live.css', '../assets/bento-inline-live.css')
+html = html.replaceAll('../assets/bento-live.js', '../assets/bento-inline-live.js')
 writeFileSync(outputPath, html)
-console.log(`Wrote ${outputPath} with ${slides.filter((entry) => !entry.stateOf).length} regular slides and ${slides.filter((entry) => entry.stateOf).length} live states.`)
+console.log(`Wrote ${outputPath} with ${slides.length} regular slides and ${inlineLiveMap.length} inline demos.`)

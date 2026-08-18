@@ -84,51 +84,18 @@ function regular(id, section, titleHtml, subtitle, notes, elements, opts = {}) {
   };
 }
 
-function tryLive(stateId, label, color = BP_DEEP) {
-  return [
-    rect("try-" + stateId + "-hit", 990, 20, 218, 38, color, {
-      stroke: color, strokeWidth: 1, radius: 19, link: stateId
-    }),
-    text("try-" + stateId + "-label", 1000, 27, 198, 23, "TRY LIVE · " + label, 13, WHITE, {
-      fontWeight: 700, align: "center", valign: "middle", lineHeight: 1.05, link: stateId
-    })
-  ];
-}
+const INLINE_BOUNDS = { x: 72, y: 220, width: 1136, height: 440 };
 
-function liveState(id, parent, label, title, demo, accent, notes) {
-  return {
-    id,
-    stateOf: parent,
-    name: "LIVE " + label,
-    background: PAPER,
-    transition: "morph",
-    notes,
-    elements: [
-      text("live-kicker", 72, 28, 760, 22, "INTERACTIVE EXAMPLE · " + label, 14, accent, {
-        fontWeight: 700, letterSpacing: 2
-      }),
-      text("live-title", 72, 52, 840, 42, title, 30, INK, { fontWeight: 700, lineHeight: 1.1 }),
-      rect("live-fallback-bg", 72, 104, 1136, 548, WHITE, { radius: 12 }),
-      text("live-fallback-copy", 200, 310, 880, 62,
-        "The computational example loads here on the website. The surrounding slide remains complete when viewed offline or printed.",
-        21, SOFT, { align: "center", valign: "middle", lineHeight: 1.35 }),
-      text("live-fallback-url", 190, 386, 900, 30,
-        "bailiping.com/bp-vs-pmbm-slides/live/?demo=" + demo,
-        15, accent, { fontWeight: 700, align: "center", valign: "middle" }),
-      rect("live-demo-mount", 72, 104, 1136, 548, "rgba(255,255,255,0.01)", {
-        stroke: accent, strokeWidth: 2, radius: 12
-      }),
-      rect("live-back-hit", 1010, 30, 174, 48, PM_WASH, {
-        stroke: accent, strokeWidth: 1, radius: 24, link: parent
-      }),
-      text("live-back-label", 1022, 41, 150, 26, "← BACK", 15, accent, {
-        fontWeight: 700, align: "center", valign: "middle", link: parent
-      }),
-      text("live-offline-note", 72, 665, 900, 18,
-        "Offline fallback: use the static parent slide and speaker notes; no external library or network is required by the lab itself.",
-        11, FAINT)
-    ]
-  };
+function inlineMount() {
+  return rect(
+    "live-demo-mount",
+    INLINE_BOUNDS.x,
+    INLINE_BOUNDS.y,
+    INLINE_BOUNDS.width,
+    INLINE_BOUNDS.height,
+    "rgba(255,255,255,0)",
+    { opacity: 0 }
+  );
 }
 
 function matrixWeight(track, measurement, covariance, pd = 0.9, clutter = 5e-5) {
@@ -356,14 +323,8 @@ slides.push(regular(
     text("weight-insight-copy", 100, 540, 1080, 52,
       "This equality of inputs makes the marginal comparison meaningful: message passing and enumeration answer the same toy assignment question.",
       19, INK, { align: "center", valign: "middle" }),
-    ...tryLive("state-assignment-live", "SHARED WEIGHTS")
+    inlineMount()
   ]
-));
-slides.push(liveState(
-  "state-assignment-live", "s-weights", "SHARED WEIGHTS",
-  "Move one measurement; watch every weight change",
-  "assignment", BP_DEEP,
-  "Drag a measurement through the gates, change detection probability or clutter density, and observe how the same normalized matrix feeds both later inference views."
 ));
 
 const graphElements = [];
@@ -456,14 +417,8 @@ slides.push(regular(
     text("bp-complexity", 128, 545, 1024, 30,
       "Williams–Lau construction: O(nm) per sweep · O(Tnm) for T sweeps · convergence guarantee for this association model",
       16, SOFT, { align: "center" }),
-    ...tryLive("state-bp-live", "BP SWEEPS")
+    inlineMount()
   ]
-));
-slides.push(liveState(
-  "state-bp-live", "s-bp-messages", "BP SWEEPS",
-  "Watch approximate marginals negotiate the constraint",
-  "bp", BP_DEEP,
-  "Advance one complete Williams–Lau sweep at a time or run to the fixed point. Compare the current BP marginals with the exhaustive normalized-assignment reference."
 ));
 
 const comparisonCategories = ["T1→z1", "T1→z2", "T2→z2", "T3→z3"];
@@ -597,15 +552,9 @@ slides.push(regular(
     text("prune-foot", 112, 605, 1048, 28,
       "Orange = kept by k = 5 · pale = pruned tail · truncation changes the renormalized assignment marginals",
       16, SOFT, { align: "center" }),
-    ...tryLive("state-hypotheses-live", "PRUNING", PM_DEEP)
+    inlineMount()
   ],
   { sectionColor: PM_DEEP }
-));
-slides.push(liveState(
-  "state-hypotheses-live", "s-pruning", "JOINT HYPOTHESES",
-  "Keep k stories; see the mass and marginals move",
-  "hypotheses", PM_DEEP,
-  "Rank every valid normalized assignment, vary k, and compare retained joint probability mass and the resulting renormalized track marginals. This remains assignment bookkeeping, not a full PMBM update."
 ));
 
 slides.push(regular(
@@ -804,35 +753,56 @@ const doc = {
   slides
 };
 
-const liveConfig = {
-  accent: BP_DEEP,
-  demos: [
-    {
-      id: "assignment",
-      state: "state-assignment-live",
-      title: "Shared normalized assignment weights",
-      src: "./live/?demo=assignment"
-    },
-    {
-      id: "bp",
-      state: "state-bp-live",
-      title: "Williams–Lau BP marginal approximation",
-      src: "./live/?demo=bp"
-    },
-    {
-      id: "hypotheses",
-      state: "state-hypotheses-live",
-      title: "Joint assignments and top-k pruning",
-      src: "./live/?demo=hypotheses"
-    }
-  ]
-};
+const inlineLiveMap = [
+  {
+    slide: "s-weights",
+    slideIndex: slides.findIndex(slide => slide.id === "s-weights"),
+    inline: true,
+    layout: "region",
+    bounds: INLINE_BOUNDS,
+    src: "./live/?demo=assignment&embed=region",
+    source: "./live/?demo=assignment",
+    title: "Shared normalized assignment weights",
+    sandbox: "allow-scripts",
+    hideSource: true,
+    readyMessage: true,
+    unloadWhenHidden: true
+  },
+  {
+    slide: "s-bp-messages",
+    slideIndex: slides.findIndex(slide => slide.id === "s-bp-messages"),
+    inline: true,
+    layout: "region",
+    bounds: INLINE_BOUNDS,
+    src: "./live/?demo=bp&embed=region",
+    source: "./live/?demo=bp",
+    title: "Williams–Lau BP marginal approximation",
+    sandbox: "allow-scripts",
+    hideSource: true,
+    readyMessage: true,
+    unloadWhenHidden: true
+  },
+  {
+    slide: "s-pruning",
+    slideIndex: slides.findIndex(slide => slide.id === "s-pruning"),
+    inline: true,
+    layout: "region",
+    bounds: INLINE_BOUNDS,
+    src: "./live/?demo=hypotheses&embed=region",
+    source: "./live/?demo=hypotheses",
+    title: "Joint assignments and top-k pruning",
+    sandbox: "allow-scripts",
+    hideSource: true,
+    readyMessage: true,
+    unloadWhenHidden: true
+  }
+];
 
 const referenceUrl = new URL("../frame-registration-slides/index.html", import.meta.url);
 const outputUrl = new URL("./index.html", import.meta.url);
 let html = fs.readFileSync(referenceUrl, "utf8");
 const serializedDoc = JSON.stringify(doc, null, 1).replace(/</g, "\\u003c");
-const serializedConfig = JSON.stringify(liveConfig, null, 2).replace(/</g, "\\u003c");
+const serializedConfig = JSON.stringify(inlineLiveMap, null, 2).replace(/</g, "\\u003c");
 
 html = html.replace("<title>bento/slides</title>", "<title>BP × PMBM — data association slides | Bai Liping</title>");
 html = html.replace(
@@ -840,15 +810,17 @@ html = html.replace(
   "$1" + serializedDoc + "$2"
 );
 html = html.replace(
-  /(<script type="application\/json" id="bento-live-config">\s*)[\s\S]*?(\s*<\/script>)/,
-  "$1" + serializedConfig + "$2"
+  /<script type="application\/json" id="(?:bento-live-config|bento-inline-live-map)">[\s\S]*?<\/script>/,
+  '<script type="application/json" id="bento-inline-live-map">\n' + serializedConfig + "\n    </script>"
 );
+html = html.replaceAll("../assets/bento-live.css", "../assets/bento-inline-live.css");
+html = html.replaceAll("../assets/bento-live.js", "../assets/bento-inline-live.js");
 
 if (!html.includes('"docId": "bp-vs-pmbm-data-association-deck"')) {
   throw new Error("Bento document replacement failed.");
 }
-if (!html.includes('"state": "state-hypotheses-live"')) {
-  throw new Error("Live-demo config replacement failed.");
+if (!html.includes('id="bento-inline-live-map"') || html.includes('id="bento-live-config"')) {
+  throw new Error("Inline-live map replacement failed.");
 }
 fs.writeFileSync(outputUrl, html);
-console.log("Built", slides.length, "Bento slide records at", outputUrl.pathname);
+console.log("Built", slides.length, "regular Bento slides with", inlineLiveMap.length, "inline demos at", outputUrl.pathname);
