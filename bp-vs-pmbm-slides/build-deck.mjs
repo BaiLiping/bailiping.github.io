@@ -630,7 +630,7 @@ slides.push(regular(
   "s-time", "13 · ACROSS SCANS",
   "The representational choice compounds over time.",
   "Marginalize now, or preserve alternative histories until later evidence resolves them.",
-  "Many BP-based filters carry one belief set forward after each scan, which is efficient but can merge modes and contribute to coalescence. PMBM-style global hypotheses preserve alternative association histories, then prune them under computational pressure.",
+  "Many BP-based filters carry one belief set forward after each scan, avoiding explicit hypothesis-tree growth. That does not make runtime flat: T association sweeps over n tracks and m measurements cost O(Tnm) per scan. Marginalization can merge modes and contribute to coalescence, while PMBM-style global hypotheses preserve alternative association histories and then prune them under computational pressure.",
   [
     text("time-bp-label", 72, 236, 250, 28, "BP-BASED TRACKER", 14, BP_DEEP, { fontWeight: 700, letterSpacing: 1.5 }),
     ...[0,1,2].flatMap((i) => {
@@ -642,7 +642,7 @@ slides.push(regular(
       ];
     }),
     rect("time-bp-result", 862, 280, 346, 94, WHITE, { stroke: BP, strokeWidth: 2, radius: 12 }),
-    text("time-bp-result-copy", 890, 302, 290, 52, "Flat cost; ambiguity projected at every scan.", 20, INK, { fontWeight: 700, align: "center", lineHeight: 1.3 }),
+    text("time-bp-result-copy", 890, 302, 290, 52, "No history tree; O(Tnm) association work per scan.", 18, INK, { fontWeight: 700, align: "center", lineHeight: 1.3 }),
     rule("time-divider", 72, 410, 1136, LINE, 1),
     text("time-pm-label", 72, 434, 300, 38, "JOINT-HYPOTHESIS / PMBM TRACKER", 13, PM_DEEP, { fontWeight: 700, letterSpacing: 1.1, lineHeight: 1.15 }),
     rect("time-root", 100, 500, 142, 54, PM_WASH, { stroke: PM, strokeWidth: 2, radius: 9 }),

@@ -1052,7 +1052,7 @@
    "id": "s-bpmtt",
    "background": "#F9F7F0",
    "transition": "morph",
-   "notes": "The tracker underneath is belief-propagation multi-target tracking. Each potential target carries an augmented state: kinematics plus a binary existence variable. Association between targets and measurements is handled by two coupled sets of discrete variables, kept consistent by a compatibility factor. The whole joint density factorizes over a graph, and loopy BP computes the marginals — the beliefs — in time linear in targets and measurements. That linear scaling is exactly why BP is the right host for a handover mechanism.",
+   "notes": "The tracker underneath is belief-propagation multi-target tracking. Each potential target carries an augmented state: kinematics plus a binary existence variable. Association between targets and measurements is handled by two coupled sets of discrete variables, kept consistent by a compatibility factor. The whole joint density factorizes over a graph, and loopy BP approximates the marginals — the beliefs. One association sweep costs O(nm): linear in the number of target–measurement edges, but bilinear in the separate target and measurement counts. That edge-local scaling is why BP is a practical host for a handover mechanism.",
    "elements": [
     {
      "id": "htag",
@@ -1215,7 +1215,7 @@
      "h": 260,
      "rotation": 0,
      "opacity": 1,
-     "html": "Loopy BP on the factor graph yields each PT’s \u003cb>belief\u003c/b> — posterior kinematics and existence probability — with cost \u003cb>linear\u003c/b> in the number of targets and measurements, where RFS-style multi-sensor methods struggle to scale.\u003cbr>\u003cbr>Existence beliefs drive track management: declare when P(r = 1) exceeds Pₜₕ, prune when it collapses.",
+     "html": "Loopy BP on the factor graph approximates each PT’s \u003cb>belief\u003c/b> — posterior kinematics and existence probability. One association sweep costs \u003cb>O(nm)\u003c/b>: linear in target–measurement edges, not in n and m separately.\u003cbr>\u003cbr>Existence beliefs drive track management: declare when P(r = 1) exceeds Pₜₕ, prune when it collapses.",
      "fontSize": 18,
      "fontFamily": "Georgia, 'Times New Roman', serif",
      "fontWeight": 400,
@@ -1370,7 +1370,7 @@
      "h": 210,
      "rotation": 0,
      "opacity": 1,
-     "html": "Each BS runs its own BP-MTT and never communicates.\u003cbr>\u003cbr>· No traffic, no central unit\u003cbr>· A PT leaving the FoV is \u003cb>lost\u003c/b> to that BS\u003cbr>· The next BS must re-detect and re-initialize the track from scratch — missed detections spike at every crossing",
+     "html": "Each BS runs its own BP-MTT and never communicates.\u003cbr>\u003cbr>· No traffic, no central unit\u003cbr>· A PT leaving the FoV is \u003cb>lost\u003c/b> to that BS\u003cbr>· The next BS must re-detect and re-initialize the track; a new FoV entry can create a missed-target spike (around 35 s in this simulation)",
      "fontSize": 18,
      "fontFamily": "Georgia, 'Times New Roman', serif",
      "fontWeight": 400,
@@ -2467,7 +2467,7 @@
    "id": "s-gospa",
    "background": "#F9F7F0",
    "transition": "morph",
-   "notes": "The headline result. Overall GOSPA for BS1: the handover-with-measurements curve in red sits on top of the centralized curve in blue for essentially the whole run. The green spike around t equals 35 seconds is the fully distributed tracker paying the re-initialization price as the second target enters the field of view — precisely the failure mode handover exists to remove. GOSPA here is dominated by its missed-detection component, which is why the overall curve mirrors it.",
+   "notes": "The headline result. Overall GOSPA for BS1: handover with measurements achieves performance comparable to centralized processing in this simulation. The green spike around t equals 35 seconds is the fully distributed tracker paying the re-initialization price as the second target enters the field of view — precisely the failure mode handover is intended to reduce. GOSPA here is dominated by its missed-target component, which is why the overall curve mirrors it.",
    "elements": [
     {
      "id": "htag",
@@ -2582,7 +2582,7 @@
      "h": 330,
      "rotation": 0,
      "opacity": 1,
-     "html": "· \u003cb>Red\u003c/b> (handover w/ meas) tracks \u003cb>blue\u003c/b> (centralized) throughout\u003cbr>\u003cbr>· \u003cb>Green\u003c/b> (distributed) spikes at t ≈ 35 s: a new FoV entry forces track re-initialization\u003cbr>\u003cbr>· The GOSPA total is dominated by missed detections — the component handover fixes",
+     "html": "· \u003cb>Red\u003c/b> (handover w/ meas) achieves \u003cb>comparable GOSPA\u003c/b> to blue (centralized) in this simulation\u003cbr>\u003cbr>· \u003cb>Green\u003c/b> (distributed) spikes at t ≈ 35 s: a new FoV entry forces track re-initialization\u003cbr>\u003cbr>· The GOSPA total is dominated by missed-target error — the component handover reduces",
      "fontSize": 18,
      "fontFamily": "Georgia, 'Times New Roman', serif",
      "fontWeight": 400,
@@ -2651,7 +2651,7 @@
    "id": "s-missed",
    "background": "#F9F7F0",
    "transition": "morph",
-   "notes": "Where the gain actually comes from: missed detections. In the distributed case there is a pronounced spike when the target first moves into BS1's field of view, because a brand-new track must accumulate existence probability from zero. Both handover variants remove that spike almost entirely — the receiving base station starts from a transferred prior instead of from scratch — and match the centralized curve.",
+   "notes": "Where the gain actually comes from: the missed-target component of GOSPA. In the distributed case there is a pronounced spike when the target first moves into BS1's field of view, because a brand-new track must accumulate existence probability from zero. This does not mean that the sensor produced no detections; it means no declared estimate was associated with the target. Both handover variants largely remove that spike because the receiving base station starts from a transferred prior instead of from scratch.",
    "elements": [
     {
      "id": "htag",
@@ -2766,7 +2766,7 @@
      "h": 330,
      "rotation": 0,
      "opacity": 1,
-     "html": "A track entering a new FoV needs several steps for its existence probability to clear Pₜₕ — during which every detection is missed.\u003cbr>\u003cbr>A handed-over prior arrives \u003cb>already declared\u003c/b>: the receiving BS skips the cold start. Both handover variants match centralized here.",
+     "html": "A track entering a new FoV may need several steps for its existence probability to clear Pₜₕ. Until then, the undeclared target contributes \u003cb>missed-target GOSPA error\u003c/b>, even when measurements are present.\u003cbr>\u003cbr>A handed-over prior arrives \u003cb>already declared\u003c/b>, so the receiving BS skips the cold start and largely removes this spike.",
      "fontSize": 18,
      "fontFamily": "Georgia, 'Times New Roman', serif",
      "fontWeight": 400,

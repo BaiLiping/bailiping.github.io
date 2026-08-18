@@ -5273,7 +5273,7 @@
    "id": "s-time",
    "background": "#F4F6F8",
    "transition": "morph",
-   "notes": "Many BP-based filters carry one belief set forward after each scan, which is efficient but can merge modes and contribute to coalescence. PMBM-style global hypotheses preserve alternative association histories, then prune them under computational pressure.",
+   "notes": "Many BP-based filters carry one belief set forward after each scan, avoiding explicit hypothesis-tree growth. That does not make runtime flat: T association sweeps over n tracks and m measurements cost O(Tnm) per scan. Marginalization can merge modes and contribute to coalescence, while PMBM-style global hypotheses preserve alternative association histories and then prune them under computational pressure.",
    "elements": [
     {
      "id": "deck-kicker",
@@ -5586,8 +5586,8 @@
      "h": 52,
      "rotation": 0,
      "opacity": 1,
-     "html": "Flat cost; ambiguity projected at every scan.",
-     "fontSize": 20,
+     "html": "No history tree; O(Tnm) association work per scan.",
+     "fontSize": 18,
      "fontFamily": "Georgia, 'Times New Roman', serif",
      "fontWeight": 700,
      "color": "#16222E",

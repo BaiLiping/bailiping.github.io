@@ -923,10 +923,10 @@
      "x": 130,
      "y": 222,
      "w": 1020,
-     "h": 58,
+     "h": 74,
      "rotation": 0,
      "opacity": 1,
-     "html": "Z = {m₁,…,mₘ} &nbsp;&nbsp;→&nbsp;&nbsp; P = {C₁,…,Cₖ}\u003cbr>\u003cspan style=\"font-size:17px;color:#5B665F\">Cᵢ ≠ ∅ · Cᵢ ∩ Cⱼ = ∅ · ⋃ Cᵢ = Z\u003c/span>",
+     "html": "Z = {m₁,…,mₘ} &nbsp;&nbsp;→&nbsp;&nbsp; P = {C₁,…,Cₖ}\u003cbr>\u003cspan style=\"font-size:17px;color:#5B665F\">Cᵢ ≠ ∅ · Cᵢ ∩ Cⱼ = ∅ for i ≠ j · ⋃ᵢ₌₁ᵏ Cᵢ = Z\u003c/span>",
      "fontSize": 29,
      "fontFamily": "Georgia, 'Times New Roman', serif",
      "fontWeight": 700,
@@ -6254,7 +6254,7 @@
    "id": "s-cost",
    "background": "#F7F6F1",
    "transition": "morph",
-   "notes": "This table compares where complexity moves, not end-to-end runtimes. The O(nM) statement applies to the association message layer for fixed particle count and fixed message iterations. State prediction, extent inference, particle operations, gating, and implementation choices add cost.",
+   "notes": "This table compares where complexity moves, not end-to-end runtimes. With K_legacy legacy objects and M measurements, the SPA association layer has O(K_legacy M + M²) = O(K_total M) work per fixed message iteration because the M measurements also seed M new potential objects. State prediction, extent inference, particle operations, gating, and implementation choices add cost.",
    "elements": [
     {
      "id": "htag",
@@ -6427,7 +6427,7 @@
          "html": "M proposal nodes + beliefs"
         },
         {
-         "html": "association layer ≈ O(nM) / iter.*"
+         "html": "≈ O((K\u003csub>legacy\u003c/sub>+M)M) / iter.*"
         },
         {
          "html": "full particle / extent cost omitted"
@@ -6452,13 +6452,13 @@
      "id": "cost-note",
      "type": "text",
      "x": 96,
-     "y": 626,
+     "y": 622,
      "w": 1088,
-     "h": 32,
+     "h": 40,
      "rotation": 0,
      "opacity": 1,
-     "html": "*O(nM) is the association layer only, for fixed particles and message iterations—not the complete tracker.",
-     "fontSize": 16,
+     "html": "*K\u003csub>total\u003c/sub> = K\u003csub>legacy\u003c/sub> + M. This is per fixed association iteration; particle and extent work is omitted.",
+     "fontSize": 15,
      "fontFamily": "Georgia, 'Times New Roman', serif",
      "fontWeight": 700,
      "color": "#B7355C",

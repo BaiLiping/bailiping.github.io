@@ -225,7 +225,7 @@ slides.push(slide(
   'A partition covers the measurement set exactly once. Cells can then be assigned to existing objects, new objects, or—in models with Poisson point clutter—individual measurements can be treated as clutter events. The partition count does not yet include those assignment labels.',
   [
     card('partition-formula-bg', 96, 198, 1088, 100, { fill: C.violetSoft, stroke: '#D9CDEF' }),
-    text('partition-formula', 130, 222, 1020, 58, 'Z = {m₁,…,mₘ} &nbsp;&nbsp;→&nbsp;&nbsp; P = {C₁,…,Cₖ}<br><span style="font-size:17px;color:#5B665F">Cᵢ ≠ ∅ · Cᵢ ∩ Cⱼ = ∅ · ⋃ Cᵢ = Z</span>', 29, { align: 'center', fontWeight: 700, lineHeight: 1.25 }),
+    text('partition-formula', 130, 222, 1020, 74, 'Z = {m₁,…,mₘ} &nbsp;&nbsp;→&nbsp;&nbsp; P = {C₁,…,Cₖ}<br><span style="font-size:17px;color:#5B665F">Cᵢ ≠ ∅ · Cᵢ ∩ Cⱼ = ∅ for i ≠ j · ⋃ᵢ₌₁ᵏ Cᵢ = Z</span>', 29, { align: 'center', fontWeight: 700, lineHeight: 1.25 }),
     card('partition-example', 96, 332, 1088, 244),
     text('partition-example-label', 122, 352, 1040, 28, 'ONE VALID PARTITION OF THE TEN-MEASUREMENT SCENE', 14, { color: C.muted, fontWeight: 700, letterSpacing: 1.7 }),
     card('partition-cell-1', 126, 406, 282, 104, { fill: C.blueSoft, stroke: '#B9C9F2' }),
@@ -529,7 +529,7 @@ slides.push(slide(
   's-cost',
   'COMPLEXITY LENS',
   'Name the layer before quoting the scaling',
-  'This table compares where complexity moves, not end-to-end runtimes. The O(nM) statement applies to the association message layer for fixed particle count and fixed message iterations. State prediction, extent inference, particle operations, gating, and implementation choices add cost.',
+  'This table compares where complexity moves, not end-to-end runtimes. With K_legacy legacy objects and M measurements, the SPA association layer has O(K_legacy M + M²) = O(K_total M) work per fixed message iteration because the M measurements also seed M new potential objects. State prediction, extent inference, particle operations, gating, and implementation choices add cost.',
   [
     {
       id: 'cost-table', type: 'table', x: 96, y: 196, w: 1088, h: 414, rotation: 0, opacity: 1, header: true,
@@ -540,11 +540,11 @@ slides.push(slide(
         { cells: [{ html: 'PMBM', bold: true }, { html: 'weighted global mixture' }, { html: 'branching hypothesis count' }, { html: 'pruning discards mass / correlations' }] },
         { cells: [{ html: 'Gibbs search', bold: true }, { html: 'visited joint hypotheses' }, { html: 'moves × mixing time' }, { html: 'finite run misses modes' }] },
         { cells: [{ html: 'BP marginals', bold: true }, { html: 'soft association beliefs' }, { html: 'edges × iterations' }, { html: 'loopy marginal bias' }] },
-        { cells: [{ html: 'SPA potential objects', bold: true }, { html: 'M proposal nodes + beliefs' }, { html: 'association layer ≈ O(nM) / iter.*' }, { html: 'full particle / extent cost omitted' }] }
+        { cells: [{ html: 'SPA potential objects', bold: true }, { html: 'M proposal nodes + beliefs' }, { html: '≈ O((K<sub>legacy</sub>+M)M) / iter.*' }, { html: 'full particle / extent cost omitted' }] }
       ],
       style: { headerBg: C.ink, headerColor: '#FFFFFF', zebra: 'rgba(27,35,32,0.04)', borderColor: 'rgba(27,35,32,0.16)', borderWidth: 1, cellPadX: 13, cellPadY: 9, fontSize: 16, color: C.ink, radius: 10 }
     },
-    text('cost-note', 96, 626, 1088, 32, '*O(nM) is the association layer only, for fixed particles and message iterations—not the complete tracker.', 16, { color: C.rose, fontWeight: 700, align: 'center' })
+    text('cost-note', 96, 622, 1088, 40, '*K<sub>total</sub> = K<sub>legacy</sub> + M. This is per fixed association iteration; particle and extent work is omitted.', 15, { color: C.rose, fontWeight: 700, align: 'center' })
   ]
 ))
 
