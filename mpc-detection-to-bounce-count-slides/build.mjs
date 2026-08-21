@@ -637,8 +637,7 @@ slides.push(regular(
         text(`take-head-${index}`, x + 24, 304, 296, 70, item[1], 30, { fontWeight: 700 }),
         text(`take-copy-${index}`, x + 24, 400, 296, 62, item[2], 17, { color: C.soft, fontFamily: SANS, lineHeight: 1.4 })
       ]
-    }),
-    text('take-final', 96, 554, 1088, 60, 'Never manufacture a unique route when the geometry supports a family.', 27, { color: C.poseDeep, fontWeight: 700, align: 'center' })
+    })
   ], { accent: C.pose }
 ))
 
