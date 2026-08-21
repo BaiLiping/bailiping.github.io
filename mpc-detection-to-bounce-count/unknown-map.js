@@ -1584,7 +1584,7 @@ function render(){
 $("b31R").addEventListener("click",()=>{["s31L","s31A","s31D"].forEach(id=>$(id).value=0);stop();render();});
 $("b31Prev").addEventListener("click",()=>goStep(step-1,false));
 $("b31Next").addEventListener("click",()=>goStep(step+1,true));
-goStep(1,false);
+goStep(6,false);
 })();
 
 /* ---- section 4.2: unknown UE, double bounce — the focus climbs the ladder ---- */
@@ -1775,7 +1775,7 @@ function render(){
 $("b32R").addEventListener("click",()=>{["s32L1","s32A1","s32D1","s32L2","s32A2","s32D2"].forEach(id=>$(id).value=0);render();});
 $("b32Prev").addEventListener("click",()=>goStep(step-1));
 $("b32Next").addEventListener("click",()=>goStep(step+1));
-goStep(1);
+goStep(6);
 })();
 
 /* ---- section 4.4: unknown UE, corridor double — the crossing degenerates ---- */
@@ -1912,7 +1912,7 @@ function render(){
 $("b34R").addEventListener("click",()=>{["s34L","s34A","s34D"].forEach(id=>$(id).value=0);render();});
 $("b34Prev").addEventListener("click",()=>goStep(step-1));
 $("b34Next").addEventListener("click",()=>goStep(step+1));
-goStep(1);
+goStep(6);
 })();
 
 /* ---- section 4.3: unknown UE, triple bounce — two rungs of changed foci ---- */
@@ -2083,7 +2083,7 @@ function render(){
 $("b33R").addEventListener("click",()=>{["s33L","s33A","s33D"].forEach(id=>$(id).value=0);render();});
 $("b33Prev").addEventListener("click",()=>goStep(step-1));
 $("b33Next").addEventListener("click",()=>goStep(step+1));
-goStep(1);
+goStep(6);
 })();
 
 /* ---- section 4.5: unknown UE, corridor triple — parity seals the slide ---- */
@@ -2239,7 +2239,7 @@ function render(){
 $("b35R").addEventListener("click",()=>{["s35L","s35A","s35D"].forEach(id=>$(id).value=0);render();});
 $("b35Prev").addEventListener("click",()=>goStep(step-1));
 $("b35Next").addEventListener("click",()=>goStep(step+1));
-goStep(1);
+goStep(5);
 })();
 
 /* =================== SECTION 4.6 special case — globally referenced translations =================== */

@@ -4,6 +4,17 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <link rel="icon" href="data:,">
+<script>
+(()=>{
+  const params=new URLSearchParams(location.search);
+  if(params.get("embed")!=="region")return;
+  const root=document.documentElement;
+  root.classList.add("mpc-live-region");
+  root.dataset.mpcSection=params.get("section")||"known";
+  root.dataset.mpcFigure=params.get("figure")||"point";
+})();
+</script>
+<script src="../assets/bento-inline-frame.js" defer></script>
 <title>MPC Detection to Bounce Count | Bai Liping</title>
 <meta name="description" content="Interactive note: convert resolved multipath-component measurements into bounce counts with known or unknown UE pose and map, anchored by a known BS pose.">
 <style>
@@ -407,6 +418,60 @@ h1{font-size:clamp(38px,5vw,64px);line-height:1.04;letter-spacing:-.025em}
   .case-panel>h3.subh:first-child{padding:17px 14px 15px;gap:10px}
   .known-demo-card .case-panel>.fig .body{padding:12px}
 }
+
+/* Bento live-region mode: reuse the real page engines without duplicating slide chrome. */
+html.mpc-live-region,html.mpc-live-region body{
+  width:100%;height:100%;min-width:0;min-height:0;overflow:hidden;background:transparent
+}
+html.mpc-live-region .topbar,
+html.mpc-live-region .hero,
+html.mpc-live-region .chapter-map,
+html.mpc-live-region footer,
+html.mpc-live-region main>section{display:none!important}
+html.mpc-live-region[data-mpc-section="known"] #filter,
+html.mpc-live-region[data-mpc-section="unknown-map"] #unknown-map,
+html.mpc-live-region[data-mpc-section="unknown-pose-map"] #unknown-pose-map{display:block!important}
+html.mpc-live-region main{width:100%;height:100%;max-width:none;margin:0;padding:0}
+html.mpc-live-region .sec{
+  width:100%;height:100%;margin:0;padding:0;border:0;background:#f8fafb;box-shadow:none
+}
+html.mpc-live-region .sec>h2,
+html.mpc-live-region .known-copy,
+html.mpc-live-region .case-card-head,
+html.mpc-live-region .case-panel>h3.subh,
+html.mpc-live-region .case-panel>.lede,
+html.mpc-live-region .case-panel>.accuracy,
+html.mpc-live-region .figcap{display:none!important}
+html.mpc-live-region .known-layout{display:block;width:100%;height:100%;margin:0}
+html.mpc-live-region .known-demo-card{width:100%;height:100%;border:0;box-shadow:none}
+html.mpc-live-region .known-demo-card .case-panel>.fig{
+  display:block;height:100vh;margin:0;border:0;background:#f8fafb
+}
+html.mpc-live-region .known-demo-card .case-panel>.fig .body.split{
+  display:grid;grid-template-columns:minmax(0,1fr) 292px;gap:10px;width:100%;height:100%;padding:10px
+}
+html.mpc-live-region .fig svg{
+  width:100%;height:100%;min-width:0;min-height:0;max-height:100%;object-fit:contain;background:#fff
+}
+html.mpc-live-region .rail{
+  min-width:0;min-height:0;max-height:100%;gap:7px;padding:2px 5px 2px 1px;overflow-y:auto;scrollbar-width:thin
+}
+html.mpc-live-region .rail h4{margin:1px 0;font-size:9px}
+html.mpc-live-region .ctl label{font-size:10.5px}
+html.mpc-live-region .statline{font-size:10px;line-height:1.45;padding-top:6px}
+html.mpc-live-region .hint{font-size:10px;line-height:1.35}
+html.mpc-live-region button.reset{min-height:28px;font-size:10px}
+html.mpc-live-region #uestimate-corridor-demo{display:none!important}
+html.mpc-live-region[data-mpc-figure="corridor"] #uestimate-point-demo{display:none!important}
+html.mpc-live-region[data-mpc-figure="corridor"] #uestimate-corridor-demo{display:block!important}
+@media (max-width:760px){
+  html.mpc-live-region,html.mpc-live-region body{height:auto;min-height:100%;overflow:auto}
+  html.mpc-live-region main,html.mpc-live-region .sec,html.mpc-live-region .known-layout,html.mpc-live-region .known-demo-card{height:auto;min-height:100vh}
+  html.mpc-live-region .known-demo-card .case-panel>.fig{height:auto;min-height:100vh}
+  html.mpc-live-region .known-demo-card .case-panel>.fig .body.split{grid-template-columns:1fr;height:auto}
+  html.mpc-live-region .fig svg{height:auto;max-height:none}
+  html.mpc-live-region .rail{max-height:none;overflow:visible}
+}
 </style>
 </head>
 <body>
@@ -418,6 +483,7 @@ h1{font-size:clamp(38px,5vw,64px);line-height:1.04;letter-spacing:-.025em}
     <a href="#filter">Known pose + map</a>
     <a href="#unknown-map">Unknown map</a>
     <a href="#unknown-pose-map">Unknown UE + map</a>
+    <a href="/mpc-detection-to-bounce-count-slides/">Slides ↗</a>
     <a href="https://bailiping.com/">Home ↗</a>
   </nav>
 </div></div>
@@ -992,7 +1058,7 @@ h1{font-size:clamp(38px,5vw,64px);line-height:1.04;letter-spacing:-.025em}
   <h2><span class="no">04</span>Known BS Pose, Unknown UE Pose and Map</h2>
   <div class="known-layout">
     <div class="known-copy">
-      <div class="accuracy"><strong>Scope of §4.</strong> The BS position and array heading are known, so AoD ψ is available in the global frame. The UE position, UE heading θ, and wall map are unknown. Delays are synchronized ranges; UE AoA φ<sub>body</sub> remains body-frame data, so each hypothesis uses φ<sub>global</sub> = φ<sub>body</sub> + θ. Higher-order cases require correctly associated prefix paths. Faint reference walls and UEs explain the synthetic scene only—they are never estimator inputs. The sliders show one candidate slice; the solution is the union of all feasible slices.</div>
+      <div class="accuracy"><strong>Scope of §4.</strong> The BS position and array heading are known, so AoD ψ is available in the global frame. The UE position, UE heading θ, and wall map are unknown. Delays are synchronized ranges; UE AoA φ<sub>body</sub> remains body-frame data, so each hypothesis uses φ<sub>global</sub> = φ<sub>body</sub> + θ. Higher-order cases require correctly associated prefix paths. Faint reference walls and UEs explain the synthetic scene only—they are never estimator inputs. The sliders show one candidate slice; the solution is the union of all feasible slices. Each tile opens on the completed construction; use <strong>Back</strong> to replay it step by step.</div>
       <div class="pipeline" aria-label="Known-BS, unknown-UE-and-map pipeline">
         <div class="step"><b>01 · anchor</b>Start from the fixed BS pose and its global AoD ray.</div><span class="arrow">→</span>
         <div class="step"><b>02 · walk</b>Form E = BS + Ld̂<sub>ψ</sub>, the mirrored-UE endpoint.</div><span class="arrow">→</span>
@@ -1335,6 +1401,7 @@ function makeDraggable(svg,getP,setP,box,render){
   });
 }
 const $=id=>document.getElementById(id);
+const requestedCase=new URLSearchParams(location.search).get("case");
 document.querySelectorAll('input[type="range"]').forEach(input=>{
   if(input.getAttribute("aria-label")||input.getAttribute("aria-labelledby"))return;
   let label=input.previousElementSibling;
@@ -1385,7 +1452,7 @@ const syncKnownHash=()=>{
   if(knownCaseIds.includes(id))selectKnownCase(id);
 };
 knownSection.classList.add("case-tabs-ready");
-selectKnownCase(knownCaseIds.includes(location.hash.slice(1))?location.hash.slice(1):"los");
+selectKnownCase(knownCaseIds.includes(location.hash.slice(1))?location.hash.slice(1):knownCaseIds.includes(requestedCase)?requestedCase:"los");
 window.addEventListener("hashchange",syncKnownHash);
 window.addEventListener("popstate",syncKnownHash);
 
@@ -1430,7 +1497,7 @@ const syncUnknownHash=()=>{
   if(unknownCaseIds.includes(id))selectUnknownCase(id);
 };
 unknownSection.classList.add("unknown-tabs-ready");
-selectUnknownCase(unknownCaseIds.includes(location.hash.slice(1))?location.hash.slice(1):"usingle");
+selectUnknownCase(unknownCaseIds.includes(location.hash.slice(1))?location.hash.slice(1):unknownCaseIds.includes(requestedCase)?requestedCase:"usingle");
 window.addEventListener("hashchange",syncUnknownHash);
 window.addEventListener("popstate",syncUnknownHash);
 
@@ -1475,7 +1542,7 @@ const syncPoseMapHash=()=>{
   if(poseMapCaseIds.includes(id))selectPoseMapCase(id);
 };
 poseMapSection.classList.add("pose-map-tabs-ready");
-selectPoseMapCase(poseMapCaseIds.includes(location.hash.slice(1))?location.hash.slice(1):"usingleu");
+selectPoseMapCase(poseMapCaseIds.includes(location.hash.slice(1))?location.hash.slice(1):poseMapCaseIds.includes(requestedCase)?requestedCase:"usingleu");
 window.addEventListener("hashchange",syncPoseMapHash);
 window.addEventListener("popstate",syncPoseMapHash);
 
