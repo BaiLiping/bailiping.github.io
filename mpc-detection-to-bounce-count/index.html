@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <link rel="icon" href="data:,">
 <title>MPC Detection to Bounce Count | Bai Liping</title>
-<meta name="description" content="Interactive note: convert resolved multipath-component measurements into bounce counts when BS and UE poses are known, with either a known map or an inferred map.">
+<meta name="description" content="Interactive note: convert resolved multipath-component measurements into bounce counts with known or unknown UE pose and map, anchored by a known BS pose.">
 <style>
 :root{
   --paper:#f4f6f8; --panel:#ffffff; --ink:#16222e; --ink-soft:#51606e; --ink-faint:#8a97a3;
@@ -13,7 +13,7 @@
   --va:#7c4dbe; --va-deep:#5d3691; --va-wash:#f0eaf9;
   --ip:#0e8f7e; --ip-deep:#0a6b5e; --ip-wash:#e3f2ef;
   --meas:#e8720c; --meas-deep:#b45607;
-  --scatter:#1874b8; --scatter-deep:#0d568c;
+  --scatter:#1874b8; --scatter-deep:#0d568c; --scatter-wash:#e8f2fa;
   --ue:#2ca02c; --err:#c22f2f;
   --serif:"Charter","Bitstream Charter","Sitka Text",Cambria,Georgia,serif;
   --mono:ui-monospace,"SF Mono","Cascadia Mono",Menlo,Consolas,monospace;
@@ -145,7 +145,7 @@ main{max-width:1200px;padding-left:24px;padding-right:24px}
 h1{font-size:clamp(38px,5vw,64px);line-height:1.04;letter-spacing:-.025em}
 
 .chapter-map{
-  display:grid;grid-template-columns:repeat(3,minmax(0,1fr));margin:0 0 52px;
+  display:grid;grid-template-columns:repeat(4,minmax(0,1fr));margin:0 0 52px;
   border:1px solid var(--line);background:var(--panel)
 }
 .chapter-map a{
@@ -173,7 +173,7 @@ h1{font-size:clamp(38px,5vw,64px);line-height:1.04;letter-spacing:-.025em}
 #measurement{--section-accent:var(--meas)}
 :is(#filter,#los,#single,#double,#triple,#corridor,#corridor3){--section-accent:var(--va)}
 #unknown-map{--section-accent:var(--ip)}
-:is(#ue,#singleu,#doubleu,#tripleu,#corridoru,#corridor3u,#estimateu){--section-accent:var(--ip)}
+#unknown-pose-map{--section-accent:var(--scatter)}
 #slam-architectures{--section-accent:var(--scatter)}
 #radio-splat{--section-accent:var(--meas-deep)}
 .sec>h2:first-child,.sec>h3.subh:first-child{
@@ -334,16 +334,50 @@ h1{font-size:clamp(38px,5vw,64px);line-height:1.04;letter-spacing:-.025em}
 }
 .unknown-tabs-ready .case-panel[hidden]{display:none}
 
+/* Section 4: one joint UE-pose/map hypothesis at a time */
+.pose-map-section .known-copy .pipeline .step b,
+.pose-map-section .case-selector-label span{color:var(--scatter-deep)}
+.pose-map-section .accuracy{border-left-color:var(--scatter)}
+.pose-map-case-tabs{
+  display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1px;
+  border:1px solid var(--line);background:var(--line)
+}
+.pose-map-case-tabs a{
+  position:relative;min-width:0;min-height:102px;padding:14px 13px;color:var(--ink);text-decoration:none;
+  border-top:3px solid var(--scatter);background:#fff;transition:background .18s ease,box-shadow .18s ease
+}
+.pose-map-case-tabs a:hover,.pose-map-case-tabs a:focus-visible{background:#f8fafb}
+.pose-map-case-tabs a.is-active{
+  z-index:1;background:var(--scatter-wash);box-shadow:inset 0 0 0 2px color-mix(in srgb,var(--scatter) 42%,transparent)
+}
+.pose-map-case-tabs a.is-active::after{
+  content:"VIEWING";position:absolute;right:9px;top:9px;color:var(--scatter-deep);font:700 7px var(--mono);letter-spacing:.08em
+}
+.pose-map-case-tabs span{display:block;margin-bottom:9px;color:var(--scatter-deep);font:700 9px var(--mono);letter-spacing:.08em;text-transform:uppercase}
+.pose-map-case-tabs strong{display:block;font:700 15px/1.18 var(--serif)}
+.pose-map-case-tabs small{display:block;margin-top:6px;color:var(--ink-faint);font:9px/1.4 var(--mono)}
+.pose-map-section .case-panel>h3.subh:first-child{
+  background:linear-gradient(90deg,color-mix(in srgb,var(--scatter) 5%,#fff),#fff 52%)
+}
+.pose-map-section .case-panel>h3.subh:first-child .no{
+  border-color:color-mix(in srgb,var(--scatter) 45%,var(--line));color:var(--scatter-deep)
+}
+.pose-map-section .known-fixed-badge{
+  border-color:color-mix(in srgb,var(--scatter) 42%,var(--line));color:var(--scatter-deep)!important
+}
+.pose-map-tabs-ready .case-panel[hidden]{display:none}
+
 @media (max-width:980px){
   .chapter-map{grid-template-columns:repeat(2,minmax(0,1fr))}
-  .chapter-map a:nth-child(3){grid-column:1/-1;border-left:0;border-top:3px solid var(--tile-accent)}
+  .chapter-map a:nth-child(3){grid-column:auto;border-left:0;border-top:3px solid var(--tile-accent)}
+  .chapter-map a:nth-child(4){border-left:1px solid var(--line);border-top:3px solid var(--tile-accent)}
   .subsection-tiles{grid-template-columns:repeat(3,minmax(0,1fr))}
   .subsection-tiles.is-two{grid-template-columns:repeat(2,minmax(0,1fr))}
   .subsection-tiles.is-three{grid-template-columns:repeat(3,minmax(0,1fr))}
   .subsection-tiles.is-four{grid-template-columns:repeat(2,minmax(0,1fr))}
   .known-layout{grid-template-columns:1fr;gap:24px}
   .known-copy{position:static}
-  .known-case-tabs,.unknown-case-tabs{grid-template-columns:repeat(3,minmax(0,1fr))}
+  .known-case-tabs,.unknown-case-tabs,.pose-map-case-tabs{grid-template-columns:repeat(3,minmax(0,1fr))}
 }
 @media (max-width:640px){
   main{padding-left:16px;padding-right:16px}
@@ -353,7 +387,7 @@ h1{font-size:clamp(38px,5vw,64px);line-height:1.04;letter-spacing:-.025em}
   .chapter-map a{min-height:116px}
   .chapter-map a:nth-child(odd){border-left:0}.chapter-map a:nth-child(n+3){border-top:3px solid var(--tile-accent)}
   .chapter-map a:nth-child(even){border-left:1px solid var(--line)}
-  .chapter-map a:last-child{grid-column:1/-1}
+  .chapter-map a:last-child{grid-column:auto}
   .sec{margin-top:24px;padding:0 16px 20px;scroll-margin-top:92px}
   .sec>h2:first-child,.sec>h3.subh:first-child{margin:0 -16px 20px;padding:18px 16px 17px;gap:10px}
   .sec>h2:first-child .no,.sec>h3.subh:first-child .no{min-width:36px;height:23px;padding:0 6px}
@@ -366,9 +400,9 @@ h1{font-size:clamp(38px,5vw,64px);line-height:1.04;letter-spacing:-.025em}
   .subsection-block>h3.subh:first-child .no{min-width:36px;height:23px;padding:0 6px}
   .fact-tiles{grid-template-columns:1fr}
   .known-layout{margin-top:20px}
-  .known-case-tabs,.unknown-case-tabs{grid-template-columns:1fr 1fr}
-  .known-case-tabs a,.unknown-case-tabs a{min-height:94px;padding:13px 11px}
-  .known-case-tabs a.is-active::after,.unknown-case-tabs a.is-active::after{display:none}
+  .known-case-tabs,.unknown-case-tabs,.pose-map-case-tabs{grid-template-columns:1fr 1fr}
+  .known-case-tabs a,.unknown-case-tabs a,.pose-map-case-tabs a{min-height:94px;padding:13px 11px}
+  .known-case-tabs a.is-active::after,.unknown-case-tabs a.is-active::after,.pose-map-case-tabs a.is-active::after{display:none}
   .case-card-head{padding:14px;align-items:flex-start;flex-direction:column}
   .case-panel>h3.subh:first-child{padding:17px 14px 15px;gap:10px}
   .known-demo-card .case-panel>.fig .body{padding:12px}
@@ -383,6 +417,7 @@ h1{font-size:clamp(38px,5vw,64px);line-height:1.04;letter-spacing:-.025em}
     <a href="#measurement">Measurement</a>
     <a href="#filter">Known pose + map</a>
     <a href="#unknown-map">Unknown map</a>
+    <a href="#unknown-pose-map">Unknown UE + map</a>
     <a href="https://bailiping.com/">Home ↗</a>
   </nav>
 </div></div>
@@ -392,7 +427,7 @@ h1{font-size:clamp(38px,5vw,64px);line-height:1.04;letter-spacing:-.025em}
 <header class="hero">
   <div class="eyebrow">Interactive note · map-aware multipath classification</div>
   <h1><span class="v">MPC Detection</span> to <span class="i">Bounce Count</span></h1>
-  <p class="thesis">A resolved multipath component can provide four observables: a <strong>delay</strong> (a path length), an <strong>arrival angle</strong> at the UE, a <strong>departure angle</strong> at the BS, and a <strong>path loss</strong>. With known BS and UE positions and headings, these measurements become global geometric constraints. The goal is to identify the physical route behind each MPC detection and report its <strong>bounce count</strong>. Section 2 tests LoS and reflection sequences against a known map; Section 3 instead bootstraps virtual anchors, incidence points, and walls when the map is unknown.</p>
+  <p class="thesis">A resolved multipath component can provide four observables: a <strong>delay</strong> (a path length), an <strong>arrival angle</strong> at the UE, a <strong>departure angle</strong> at the BS, and a <strong>path loss</strong>. These measurements constrain the physical route behind each MPC detection and its <strong>bounce count</strong>. Section 2 tests LoS and reflection sequences against a known pose and map; Section 3 keeps the poses known while inferring the map; Section 4 fixes only the BS pose and jointly hypothesizes the UE position, UE heading, and walls.</p>
   <div class="accuracy"><strong>Context.</strong> The theory uses the same kind of per-path tuple that a SAGE estimator can produce, but every scene and number on this page is illustrative rather than a replay of measured SAGE output. The current <code>Gaussian_Splatting_Test</code> benchmark consumes synthetic ray-tracer path observables with world-aligned, translation-only pose states. The virtual-anchor reading follows E. Leitinger et&nbsp;al., <a href="https://arxiv.org/abs/1801.04463">“A Belief Propagation Algorithm for Multipath-Based SLAM,”</a> <i>IEEE Trans. Wireless Commun.</i> 18(12), 2019. Scale in the 2D drawings: 1&nbsp;px ≙ 0.1&nbsp;m.</div>
 </header>
 
@@ -400,6 +435,7 @@ h1{font-size:clamp(38px,5vw,64px);line-height:1.04;letter-spacing:-.025em}
   <a class="is-measurement" href="#measurement"><span>01 · input</span><strong>Measurement</strong><small>delay · angles · path loss</small></a>
   <a class="is-known" href="#filter"><span>02 · geometry</span><strong>Known BS/UE pose and Map</strong><small>wall order → VA → reflection points</small></a>
   <a class="is-unknown" href="#unknown-map"><span>03 · inference</span><strong>Known UE/BS Pose, Unknown Map</strong><small>measurements → VA → walls</small></a>
+  <a class="is-graph" href="#unknown-pose-map"><span>04 · optimization</span><strong>Known BS Pose, Unknown UE Pose and Map</strong><small>joint UE · heading · walls</small></a>
 </nav>
 
 <!-- ============ 01 the measurement ============ -->
@@ -951,6 +987,289 @@ h1{font-size:clamp(38px,5vw,64px);line-height:1.04;letter-spacing:-.025em}
   </div>
 </section>
 
+<!-- ============ 04 known BS pose, unknown UE pose and map ============ -->
+<section class="sec pose-map-section" id="unknown-pose-map">
+  <h2><span class="no">04</span>Known BS Pose, Unknown UE Pose and Map</h2>
+  <div class="known-layout">
+    <div class="known-copy">
+      <div class="accuracy"><strong>Scope of §4.</strong> The BS position and array heading are known, so AoD ψ is available in the global frame. The UE position, UE heading θ, and wall map are unknown. Delays are synchronized ranges; UE AoA φ<sub>body</sub> remains body-frame data, so each hypothesis uses φ<sub>global</sub> = φ<sub>body</sub> + θ. Higher-order cases require correctly associated prefix paths. Faint reference walls and UEs explain the synthetic scene only—they are never estimator inputs. The sliders show one candidate slice; the solution is the union of all feasible slices.</div>
+      <div class="pipeline" aria-label="Known-BS, unknown-UE-and-map pipeline">
+        <div class="step"><b>01 · anchor</b>Start from the fixed BS pose and its global AoD ray.</div><span class="arrow">→</span>
+        <div class="step"><b>02 · walk</b>Form E = BS + Ld̂<sub>ψ</sub>, the mirrored-UE endpoint.</div><span class="arrow">→</span>
+        <div class="step"><b>03 · hypothesize</b>Choose a first bounce P and candidate UE heading θ.</div><span class="arrow">→</span>
+        <div class="step"><b>04 · recurse</b>Use prefix paths; enforce forward intersections and positive delay budgets.</div><span class="arrow">→</span>
+        <div class="step"><b>05 · diagnose</b>Keep the feasible family, or expose its rank and null direction.</div>
+      </div>
+      <div class="case-selector-label"><span>view selector</span><strong>Choose one joint pose–map hypothesis</strong></div>
+      <nav class="pose-map-case-tabs" role="tablist" aria-label="Known-BS, unknown-UE-and-map geometry cases">
+        <a class="is-active" id="pose-tab-single" href="#usingleu" role="tab" aria-selected="true" aria-controls="usingleu" data-pose-map-case="usingleu"><span>4.1</span><strong>Single</strong><small>2D family</small></a>
+        <a id="pose-tab-double" href="#udoubleu" role="tab" aria-selected="false" aria-controls="udoubleu" tabindex="-1" data-pose-map-case="udoubleu"><span>4.2</span><strong>Corner ×2</strong><small>feasible subset</small></a>
+        <a id="pose-tab-triple" href="#utripleu" role="tab" aria-selected="false" aria-controls="utripleu" tabindex="-1" data-pose-map-case="utripleu"><span>4.3</span><strong>Corner ×3</strong><small>recursive test</small></a>
+        <a id="pose-tab-corridor" href="#ucorridoru" role="tab" aria-selected="false" aria-controls="ucorridoru" tabindex="-1" data-pose-map-case="ucorridoru"><span>4.4</span><strong>Corridor ×2</strong><small>continuum</small></a>
+        <a id="pose-tab-corridor3" href="#ucorridor3u" role="tab" aria-selected="false" aria-controls="ucorridor3u" tabindex="-1" data-pose-map-case="ucorridor3u"><span>4.5</span><strong>Corridor ×3</strong><small>null direction</small></a>
+        <a id="pose-tab-estimate" href="#uestimateu" role="tab" aria-selected="false" aria-controls="uestimateu" tabindex="-1" data-pose-map-case="uestimateu"><span>4.6</span><strong>Rank test</strong><small>point or line</small></a>
+      </nav>
+    </div>
+    <div class="known-demo-card" id="pose-map-demo-card">
+      <div class="case-card-head">
+        <div><span>joint pose–map construction</span><strong>One UE/map hypothesis at a time</strong></div>
+        <span class="known-fixed-badge">BS FIXED · UE + MAP UNKNOWN</span>
+      </div>
+      <div class="pose-map-case-panels">
+<section class="case-panel" id="usingleu" role="tabpanel" aria-labelledby="pose-tab-single" data-pose-map-case-panel="usingleu">
+  <h3 class="subh"><span class="no">4.1</span>Single bounce: draw from (τ, φ<sub>body</sub>, ψ) with unknown θ</h3>
+
+  <div class="fig" id="usingleu-demo"><div class="body split">
+    <svg id="usvg31" viewBox="-170 40 830 600" role="img" aria-label="unknown-UE single bounce demo, stepped: full-length AoD walk to E, a bounce hypothesis P on the ray, the string re-pinned at P and E, the candidate UE on the reverse-AoA ray, and the implied wall bisecting between them"></svg>
+    <div class="rail">
+      <h4>the data (drives the drawing)</h4>
+      <div class="ctl">
+        <label><span>delay L = cτ</span> <output id="uo31L"></output></label>
+        <input type="range" class="meas" id="us31L" min="-3" max="3" step="0.05" value="0">
+        <label style="margin-top:7px"><span>body-frame AoA φ<sub>body</sub> (at the UE)</span> <output id="uo31A"></output></label>
+        <input type="range" class="meas" id="us31A" min="-6" max="6" step="0.1" value="0">
+        <label style="margin-top:7px"><span>AoD ψ (at the BS)</span> <output id="uo31D"></output></label>
+        <input type="range" class="meas" id="us31D" min="-6" max="6" step="0.1" value="0">
+        <label style="margin-top:9px"><span>illustrative per-bounce incidence-point smear σ (not γ<sup>sc</sup>)</span> <output id="uoS31"></output></label>
+        <input type="range" id="usS31" min="0" max="28" step="1" value="0">
+        <button class="reset" id="ub31R" style="margin-top:7px">reset to specular data</button>
+      </div>
+      <h4>construction — step <output id="uo31Step" style="font-family:var(--mono)"></output></h4>
+      <div style="display:flex;gap:8px">
+        <button class="reset" id="ub31Prev">◀ back</button>
+        <button class="reset" id="ub31Next" style="flex:1">next step ▶</button>
+      </div>
+      <div class="hint" id="ucap31"></div>
+      <div class="ctl">
+        <label><span>bounce P along the AoD ray (step ③)</span> <output id="uo31P"></output></label>
+        <input type="range" id="us31P" min="0.06" max="0.94" step="0.002" value="0.35">
+        <label style="margin-top:7px"><span>candidate UE heading θ (unknown state; one slice)</span> <output id="uo31H"></output></label>
+        <input type="range" id="us31H" min="-180" max="180" step="1" value="0">
+      </div>
+      <div class="statline" id="ustat31"></div>
+      <div class="hint">P and θ are both optimization hypotheses; no heading measurement is supplied — the green UE(P) is an estimate, not the truth</div>
+    </div>
+  </div>
+  <div class="figcap"><b>Read it.</b> E = BS + L·d̂ is the full measured length walked along the AoD — the mirror image of the UE across the unknown wall, the exact dual of §3.1's virtual-anchor walk (there: UE-side walk lands on the mirrored BS; here: BS-side walk lands on the mirrored UE). The foci change with it: the delay string, un-pinnable at the unknown UE, is re-pinned at <b>P and E</b> — a bounce hypothesis P on the AoD ray keeps ‖P→E‖ = L − ‖BS→P‖, so every point of the orange circle is at the correct leftover distance, and the candidate UE(P) is where the reverse-AoA ray out of P crosses it. The implied wall runs <em>along the middle</em> between P→UE(P) and P→E — the bisector at P, equivalently the perpendicular bisector of E↔UE(P) — and stays parallel to the true wall for every P. Slide P: <b>finding P is really finding the wall</b> — each P fixes the wall (the bisector through it) and the wall fixes the UE, so every position is a fully coherent (wall, UE) explanation, and the candidates sweep a straight line perpendicular to the true wall (step ⑥). But that line was drawn with a borrowed compass: the AoA is measured in the UE's <em>own</em> frame, and promoting it to a global direction spends a heading the UE does not know. Slide θ — the heading hypothesis — and the whole line pivots, every point still coherent, the implied wall tilting by |θ|/2 as it goes: heading and wall tilt are indistinguishable from one path. With both P and θ free the candidates fill the entire delay disk ‖x − BS‖ ≤ L: one path leaves a <b>two</b>-parameter family, and the AoA, on its own, localizes nothing. What breaks it is a second path off a differently-oriented wall — the next subsections.</div></div>
+</section>
+
+<section class="case-panel" id="udoubleu" role="tabpanel" aria-labelledby="pose-tab-double" data-pose-map-case-panel="udoubleu">
+  <h3 class="subh"><span class="no">4.2</span>Double bounce: two virtual anchors, two incidence points</h3>
+
+  <div class="fig"><div class="body split">
+    <svg id="usvg32" viewBox="-150 -45 850 685" role="img" aria-label="unknown-UE double bounce demo, stepped: path 1 runs the single-bounce changed-foci construction and hypothesizes wall A; path 2 is stripped at that wall, giving a second candidate family; the crossing tracks the first family exactly, so the ambiguity survives"></svg>
+    <div class="rail">
+      <h4>the data — path 1 (single bounce)</h4>
+      <div class="ctl">
+        <label><span>delay L⁽¹⁾ = cτ⁽¹⁾</span> <output id="uo32L1"></output></label>
+        <input type="range" class="meas" id="us32L1" min="-3" max="3" step="0.05" value="0">
+        <label style="margin-top:7px"><span>body-frame AoA φ<sub>body</sub>⁽¹⁾</span> <output id="uo32A1"></output></label>
+        <input type="range" class="meas" id="us32A1" min="-6" max="6" step="0.1" value="0">
+        <label style="margin-top:7px"><span>AoD ψ⁽¹⁾ (at the BS)</span> <output id="uo32D1"></output></label>
+        <input type="range" class="meas" id="us32D1" min="-6" max="6" step="0.1" value="0">
+      </div>
+      <h4>the data — path 2 (double bounce)</h4>
+      <div class="ctl">
+        <label><span>delay L₂ = cτ</span> <output id="uo32L2"></output></label>
+        <input type="range" class="meas" id="us32L2" min="-3" max="3" step="0.05" value="0">
+        <label style="margin-top:7px"><span>body-frame AoA φ<sub>body</sub></span> <output id="uo32A2"></output></label>
+        <input type="range" class="meas" id="us32A2" min="-6" max="6" step="0.1" value="0">
+        <label style="margin-top:7px"><span>AoD ψ (at the BS)</span> <output id="uo32D2"></output></label>
+        <input type="range" class="meas" id="us32D2" min="-6" max="6" step="0.1" value="0">
+        <label style="margin-top:9px"><span>illustrative per-bounce incidence-point smear σ (not γ<sup>sc</sup>)</span> <output id="uoS32"></output></label>
+        <input type="range" id="usS32" min="0" max="28" step="1" value="0">
+        <button class="reset" id="ub32R" style="margin-top:7px">reset to specular data</button>
+      </div>
+      <h4>construction — step <output id="uo32Step" style="font-family:var(--mono)"></output></h4>
+      <div style="display:flex;gap:8px">
+        <button class="reset" id="ub32Prev">◀ back</button>
+        <button class="reset" id="ub32Next" style="flex:1">next step ▶</button>
+      </div>
+      <div class="hint" id="ucap32"></div>
+      <div class="ctl">
+        <label><span>P⁽¹⁾ along path 1's AoD ray (step ②)</span> <output id="uo32P1"></output></label>
+        <input type="range" id="us32P1" min="0.06" max="0.94" step="0.002" value="0.35">
+        <label style="margin-top:7px"><span>P₂ along the reflected ray (step ⑤)</span> <output id="uo32P2"></output></label>
+        <input type="range" id="us32P2" min="0.05" max="0.90" step="0.002" value="0.4">
+        <label style="margin-top:7px"><span>candidate UE heading θ (unknown state; one slice)</span> <output id="uo32H"></output></label>
+        <input type="range" id="us32H" min="-180" max="180" step="1" value="0">
+      </div>
+      <div class="statline" id="ustat32"></div>
+      <div class="hint">both walls and θ are unknown: the control selects one θ slice of the joint family — the green dots are estimated UEs, never the truth</div>
+    </div>
+  </div>
+  <div class="figcap"><b>Read it.</b> Path 1 runs §4.1 with candidate heading θ: E⁽¹⁾ = BS + L⁽¹⁾·d̂⁽¹⁾ is the mirrored UE, P⁽¹⁾ hypothesizes the bounce, and UE₁ follows from the body-frame AoA rotated by θ. That fixes a wall-A hypothesis. Path 2 then intersects that wall with its <em>forward</em> AoD ray, reflects, and spends only the remaining delay budget. Its second candidate line must meet UE₁ at a point reachable along the forward reflected ray. Green means all ordered segment lengths are positive; red rejects a mathematically intersecting pair of infinite lines that is not a physical two-bounce path. Across the feasible subset, changing θ rotates both AoAs together and changes both wall hypotheses and the UE while leaving a two-parameter ambiguity (P⁽¹⁾, θ). Thus the double bounce prunes impossible hypotheses but does not identify heading by itself.</div></div>
+</section>
+
+<section class="case-panel" id="utripleu" role="tabpanel" aria-labelledby="pose-tab-triple" data-pose-map-case-panel="utripleu">
+  <h3 class="subh"><span class="no">4.3</span>Triple bounce: the recursion run in full</h3>
+
+  <div class="fig"><div class="body split">
+    <svg id="usvg33" viewBox="-210 -160 990 1330" role="img" aria-label="unknown-UE triple bounce demo: the wall-A hypothesis from path 1, wall B solved from path 2, the focus climbing two rungs for path 3, and the family surviving at every order"></svg>
+    <div class="rail">
+      <h4>the data — path 3 (triple bounce)</h4>
+      <div class="ctl">
+        <label><span>delay L₃ = cτ</span> <output id="uo33L"></output></label>
+        <input type="range" class="meas" id="us33L" min="-3" max="3" step="0.05" value="0">
+        <label style="margin-top:7px"><span>body-frame AoA φ<sub>body</sub></span> <output id="uo33A"></output></label>
+        <input type="range" class="meas" id="us33A" min="-6" max="6" step="0.1" value="0">
+        <label style="margin-top:7px"><span>AoD ψ (at the BS)</span> <output id="uo33D"></output></label>
+        <input type="range" class="meas" id="us33D" min="-6" max="6" step="0.1" value="0">
+        <label style="margin-top:9px"><span>illustrative per-bounce incidence-point smear σ (not γ<sup>sc</sup>)</span> <output id="uoS33"></output></label>
+        <input type="range" id="usS33" min="0" max="28" step="1" value="0">
+        <button class="reset" id="ub33R" style="margin-top:7px">reset to specular data</button>
+      </div>
+      <h4>construction — step <output id="uo33Step" style="font-family:var(--mono)"></output></h4>
+      <div style="display:flex;gap:8px">
+        <button class="reset" id="ub33Prev">◀ back</button>
+        <button class="reset" id="ub33Next" style="flex:1">next step ▶</button>
+      </div>
+      <div class="hint" id="ucap33"></div>
+      <div class="ctl">
+        <label><span>P⁽¹⁾ along path 1's AoD ray (step ②)</span> <output id="uo33P"></output></label>
+        <input type="range" id="us33P" min="0.06" max="0.94" step="0.002" value="0.35">
+        <label style="margin-top:7px"><span>candidate UE heading θ (unknown state; one slice)</span> <output id="uo33H"></output></label>
+        <input type="range" id="us33H" min="-180" max="180" step="1" value="0">
+      </div>
+      <div class="statline" id="ustat33"></div>
+      <div class="hint">all three walls and θ remain hypotheses; this control selects one θ slice — the green dots are estimated UEs, never the truth</div>
+    </div>
+  </div>
+  <div class="figcap"><b>Read it.</b> The ladder of §4.1–§4.2 runs one rung further with the same unknown θ applied to every body-frame AoA. Path 1 supplies a candidate UE and wall A; the ordered two-bounce prefix must first be feasible before wall B exists. Path 3 then intersects wall A along its forward AoD ray, reflects to wall B in the forward direction, and spends the remaining positive delay on the final leg. Only a final crossing reached along that forward segment defines P₃ and wall C. The heading slider therefore changes the entire three-wall construction. It preserves a joint ambiguity over the <em>feasible subset</em>, while red states correctly reject line-extension intersections that imply reversed bounces or negative path lengths.</div></div>
+</section>
+
+<section class="case-panel" id="ucorridoru" role="tabpanel" aria-labelledby="pose-tab-corridor" data-pose-map-case-panel="ucorridoru">
+  <h3 class="subh"><span class="no">4.4</span>Double bounce, corridor edition: two parallel walls</h3>
+
+  <div class="fig"><div class="body split">
+    <svg id="usvg34" viewBox="-400 30 1120 650" role="img" aria-label="unknown-UE corridor double bounce demo: the wall-R hypothesis from path 1; path 2's stripped family coincides with line 1 — parallel walls give no crossing at all"></svg>
+    <div class="rail">
+      <h4>the data — path 2 (double bounce)</h4>
+      <div class="ctl">
+        <label><span>delay L₂ = cτ</span> <output id="uo34L"></output></label>
+        <input type="range" class="meas" id="us34L" min="-3" max="3" step="0.05" value="0">
+        <label style="margin-top:7px"><span>body-frame AoA φ<sub>body</sub></span> <output id="uo34A"></output></label>
+        <input type="range" class="meas" id="us34A" min="-6" max="6" step="0.1" value="0">
+        <label style="margin-top:7px"><span>AoD ψ (at the BS)</span> <output id="uo34D"></output></label>
+        <input type="range" class="meas" id="us34D" min="-6" max="6" step="0.1" value="0">
+        <label style="margin-top:9px"><span>illustrative per-bounce incidence-point smear σ (not γ<sup>sc</sup>)</span> <output id="uoS34"></output></label>
+        <input type="range" id="usS34" min="0" max="28" step="1" value="0">
+        <button class="reset" id="ub34R" style="margin-top:7px">reset to specular data</button>
+      </div>
+      <h4>construction — step <output id="uo34Step" style="font-family:var(--mono)"></output></h4>
+      <div style="display:flex;gap:8px">
+        <button class="reset" id="ub34Prev">◀ back</button>
+        <button class="reset" id="ub34Next" style="flex:1">next step ▶</button>
+      </div>
+      <div class="hint" id="ucap34"></div>
+      <div class="ctl">
+        <label><span>P⁽¹⁾ along path 1's AoD ray (step ②)</span> <output id="uo34P"></output></label>
+        <input type="range" id="us34P" min="0.06" max="0.94" step="0.002" value="0.35">
+        <label style="margin-top:7px"><span>candidate UE heading θ (unknown state; one slice)</span> <output id="uo34H"></output></label>
+        <input type="range" id="us34H" min="-180" max="180" step="1" value="0">
+      </div>
+      <div class="statline" id="ustat34"></div>
+      <div class="hint">the corridor walls and θ are unknown; this control selects one θ slice — the green dots are estimated UEs, never the truth</div>
+    </div>
+  </div>
+  <div class="figcap"><b>Read it.</b> The corner scene at least produced a crossing; the corridor cannot. Path 1 hypothesizes wall R exactly as in §4.1 — candidates sweep line 1 ⊥ wall R, which in a corridor means <em>across</em> the corridor. Path 2 must first hit that wall along its forward AoD ray and retain positive delay; only then does its stripped candidate line exist. At the reference heading, line 2 is parallel to line 1 and with clean data it <b>coincides with it exactly</b>. There is no crossing to solve; wall L is fixed only by <em>declaring</em> UE₂ = UE₁ on the shared line and checking that its bounce lies on the remaining forward segment. Within the feasible heading subset, a nonzero θ tilts the wall hypotheses, the lines wedge apart, but their admissible crossing remains the sliding UE₁: heading uncertainty merely re-dresses the corridor as a wedged one. Red states reject backward bounces or exhausted delay rather than drawing walls from infinite line extensions. The corridor slide therefore survives every valid double-bounce hypothesis, although higher-order data can prune invalid slices.</div></div>
+</section>
+
+<section class="case-panel" id="ucorridor3u" role="tabpanel" aria-labelledby="pose-tab-corridor3" data-pose-map-case-panel="ucorridor3u">
+  <h3 class="subh"><span class="no">4.5</span>Triple bounce, corridor edition: parity, and a hypothesis that angles cannot kill</h3>
+
+  <div class="fig" id="ucorridor3u-demo"><div class="body split">
+    <svg id="usvg35" viewBox="-470 -80 1580 950" role="img" aria-label="unknown-UE corridor triple bounce demo: the focus climbs two rungs and the third candidate line still coincides with the first — parity means no corridor order ever adds UE information"></svg>
+    <div class="rail">
+      <h4>the data — path 3 (triple bounce)</h4>
+      <div class="ctl">
+        <label><span>delay L₃ = cτ</span> <output id="uo35L"></output></label>
+        <input type="range" class="meas" id="us35L" min="-3" max="3" step="0.05" value="0">
+        <label style="margin-top:7px"><span>body-frame AoA φ<sub>body</sub></span> <output id="uo35A"></output></label>
+        <input type="range" class="meas" id="us35A" min="-6" max="6" step="0.1" value="0">
+        <label style="margin-top:7px"><span>AoD ψ (at the BS)</span> <output id="uo35D"></output></label>
+        <input type="range" class="meas" id="us35D" min="-6" max="6" step="0.1" value="0">
+        <label style="margin-top:9px"><span>illustrative per-bounce incidence-point smear σ (not γ<sup>sc</sup>)</span> <output id="uoS35"></output></label>
+        <input type="range" id="usS35" min="0" max="28" step="1" value="0">
+        <button class="reset" id="ub35R" style="margin-top:7px">reset to specular data</button>
+      </div>
+      <h4>construction — step <output id="uo35Step" style="font-family:var(--mono)"></output></h4>
+      <div style="display:flex;gap:8px">
+        <button class="reset" id="ub35Prev">◀ back</button>
+        <button class="reset" id="ub35Next" style="flex:1">next step ▶</button>
+      </div>
+      <div class="hint" id="ucap35"></div>
+      <div class="ctl">
+        <label><span>P⁽¹⁾ along path 1's AoD ray (step ②)</span> <output id="uo35P"></output></label>
+        <input type="range" id="us35P" min="0.06" max="0.94" step="0.002" value="0.35">
+        <label style="margin-top:7px"><span>candidate UE heading θ (unknown state; one slice)</span> <output id="uo35H"></output></label>
+        <input type="range" id="us35H" min="-180" max="180" step="1" value="0">
+      </div>
+      <div class="statline" id="ustat35"></div>
+      <div class="hint">every wall and θ remain hypotheses; this control selects one θ slice of the joint family</div>
+    </div>
+  </div>
+  <div class="figcap"><b>Read it.</b> The full corridor ladder begins with wall R from path 1 and a physically valid wall-L declaration from path 2. Path 3 is then stripped <em>twice</em>: its AoD ray must reach wall R, its reflected forward ray must reach wall L, and both legs must leave positive delay for the final segment. At the reference heading, its candidate line 3 <b>coincides with line 1 exactly</b> throughout the feasible P⁽¹⁾ subset. Thus valid corridor paths of any parity confine the UE to the same cross-corridor line without fixing the cross-corridor offset. A feasible nonzero θ wedges line 3 away from line 1 but closes at the same sliding UE₁, so heading still masquerades as wall tilt; an infeasible θ is shown in red and contributes no solution. More bounces enforce more ray-order tests, but they do not remove the surviving corridor slide—an off-axis wall, LOS path, or anchor does. §4.6 runs that verdict through the joint, all-unknowns problem.</div></div>
+</section>
+
+<!-- ============ 4.6 observability rank test ============ -->
+<section class="case-panel" id="uestimateu" role="tabpanel" aria-labelledby="pose-tab-estimate" data-pose-map-case-panel="uestimateu">
+  <h3 class="subh"><span class="no">4.6</span>Special observability case: globally referenced displacement vectors</h3>
+  <p class="lede">This compact derivation grants each translation oᵢ = pᵢ₊₁ − pᵢ directly in the <em>map frame</em>. That is stronger than wheel/IMU odometry expressed in the moving body frame: it effectively supplies an external orientation reference. Under this assumption, same-wall motion can reveal a wall direction from n̂ ∝ ΔE − o, and a link between two nonparallel wall families can determine their offsets. The animation is a useful linear observability special case, not the general nonlinear unknown-heading GraphSLAM backend.</p>
+  <div class="accuracy"><strong>Condition.</strong> The normal formula fails when motion is parallel to the wall because ΔE − o = 0, and is ill-conditioned near that case. With body-frame odometry, heading and displacement must instead remain pose variables in the nonlinear graph.</div>
+
+  <div class="fig" id="uestimate-point-demo"><div class="body split">
+    <svg id="usvg36" viewBox="-140 -75 900 700" role="img" aria-label="special-case joint estimation with globally referenced translations: same-wall motion fixes each wall direction and the cross-family displacement pins both offsets"></svg>
+    <div class="rail">
+      <h4>the unknown split — two families</h4>
+      <div class="ctl">
+        <label><span>family A member (wall-A offset)</span> <output id="uo36A"></output></label>
+        <input type="range" id="us36A" min="0.10" max="0.92" step="0.002" value="0.18">
+        <label style="margin-top:7px"><span>family B member (wall-B offset)</span> <output id="uo36B"></output></label>
+        <input type="range" id="us36B" min="0.10" max="0.92" step="0.002" value="0.44">
+      </div>
+      <button class="reset" id="ub36S">solve the 2×2 system</button>
+      <button class="reset" id="ub36N">jitter the data (σ: 0.3 m, 0.5°)</button>
+      <h4>layers</h4>
+      <label class="ck"><input type="checkbox" id="uc36_fam" checked> <span class="sw" style="background:var(--meas)"></span> candidate rails — directions bought by motion</label>
+      <label class="ck"><input type="checkbox" id="uc36_E" checked> <span class="sw" style="background:var(--va)"></span> E points — mirrored UEs, straight from data</label>
+      <label class="ck"><input type="checkbox" id="uc36_geo" checked> <span class="sw" style="background:#51606e"></span> implied walls + bounce geometry</label>
+      <label class="ck"><input type="checkbox" id="uc36_odo" checked> <span class="sw" style="background:var(--ue)"></span> global displacement vectors + cross-family gap</label>
+      <div class="statline" id="ustat36"></div>
+      <div class="hint">The supplied o₁,o₂,o₃ are map-frame vectors; ordinary body-frame odometry would require heading variables.</div>
+    </div>
+  </div>
+  <div class="figcap"><b>Read it.</b> E = BS + L·d̂ uses the BS-side departure angle and is the mirror of the UE across its wall. For two observations of the same wall, the <em>supplied global</em> displacement o and ΔE have equal length; their difference gives the normal direction when it is nonzero. The offset remains free, which creates each candidate rail. The cross-family equation p₃ − p₂ = o₂ is linear in the two offsets, with matrix [−2n̂_A | 2n̂_B]; it is invertible only when the normals are not parallel. Press <b>solve</b> to zero this residual. This is an exact special case for globally referenced translation, while a practical SE(2)/SE(3) graph must estimate orientation and body-frame motion jointly.</div></div>
+
+  <div class="fig" id="uestimate-corridor-demo"><div class="body split">
+    <svg id="usvg37" viewBox="-110 55 800 620" role="img" aria-label="corridor counterexample: both motion-derived wall normals are parallel, the two-by-two system is rank one, and walls plus trajectory slide together along the surviving null direction"></svg>
+    <div class="rail">
+      <h4>corridor edition — the family that survives the graph</h4>
+      <div class="ctl">
+        <label><span>family R member (wall-R offset)</span> <output id="uo37R"></output></label>
+        <input type="range" id="us37R" min="0.10" max="0.92" step="0.002" value="0.30">
+        <label style="margin-top:7px"><span>family L member (wall-L offset)</span> <output id="uo37L"></output></label>
+        <input type="range" id="us37L" min="0.10" max="0.92" step="0.002" value="0.55">
+        <label style="margin-top:9px"><span>slide along the null vector</span> <output id="uo37N"></output></label>
+        <input type="range" id="us37N" min="-1" max="1" step="0.01" value="0">
+      </div>
+      <button class="reset" id="ub37S">solve — and meet the null space</button>
+      <button class="reset" id="ub37P">▶ sweep the surviving family</button>
+      <h4>layers</h4>
+      <label class="ck"><input type="checkbox" id="uc37_fam" checked> <span class="sw" style="background:var(--meas)"></span> candidate rails (both across the corridor)</label>
+      <label class="ck"><input type="checkbox" id="uc37_odo" checked> <span class="sw" style="background:var(--ue)"></span> global displacements + the cross-family gap</label>
+      <label class="ck"><input type="checkbox" id="uc37_ghost" checked> <span class="sw" style="background:var(--ip)"></span> ghost solutions along the null direction</label>
+      <div class="statline" id="ustat37"></div>
+      <div class="hint">same construction, parallel walls — the solve returns a line of answers, not a point; the third slider walks it</div>
+    </div>
+  </div>
+  <div class="figcap"><b>Read it.</b> With the same globally referenced displacement assumption in a corridor, the recovered normals are parallel. The cross-family matrix [−2n̂_R | 2n̂_L] is rank one: one combination of wall offsets is fixed and the other remains a null direction in which walls and trajectory slide together. <b>Solve</b> therefore returns a line, not a point. The smallest singular value is the useful output here—optimization reports missing information rather than manufacturing it. An off-axis wall, LOS interval, second anchor, or other independent factor can close the null direction.</div></div>
+</section>
+      </div>
+    </div>
+  </div>
+</section>
+
 <footer>
   Interactive note by Bai Liping · scale 1 px ≙ 0.1 m, c ≈ 0.3 m/ns ·
   virtual-anchor background: <a href="https://arxiv.org/abs/1801.04463">Leitinger et&nbsp;al., IEEE TWC 18(12), 2019</a>
@@ -1114,6 +1433,51 @@ unknownSection.classList.add("unknown-tabs-ready");
 selectUnknownCase(unknownCaseIds.includes(location.hash.slice(1))?location.hash.slice(1):"usingle");
 window.addEventListener("hashchange",syncUnknownHash);
 window.addEventListener("popstate",syncUnknownHash);
+
+/* Section 4 case tiles: keep one joint unknown-UE/map hypothesis in view */
+const poseMapSection=$("unknown-pose-map");
+const poseMapTabs=[...poseMapSection.querySelectorAll(".pose-map-case-tabs [data-pose-map-case]")];
+const poseMapPanels=[...poseMapSection.querySelectorAll("[data-pose-map-case-panel]")];
+const poseMapCaseIds=poseMapTabs.map(tab=>tab.dataset.poseMapCase);
+function selectPoseMapCase(id,{writeHash=false,focus=false,scroll=false}={}){
+  if(!poseMapCaseIds.includes(id))id="usingleu";
+  poseMapTabs.forEach(tab=>{
+    const active=tab.dataset.poseMapCase===id;
+    tab.classList.toggle("is-active",active);
+    tab.setAttribute("aria-selected",String(active));
+    tab.tabIndex=active?0:-1;
+    if(active&&focus)tab.focus();
+  });
+  poseMapPanels.forEach(panel=>{panel.hidden=panel.dataset.poseMapCasePanel!==id;});
+  if(writeHash&&location.hash!==`#${id}`)history.pushState(null,"",`#${id}`);
+  if(scroll){
+    $("pose-map-demo-card").scrollIntoView({behavior:matchMedia("(prefers-reduced-motion: reduce)").matches?"auto":"smooth",block:"start"});
+  }
+}
+poseMapTabs.forEach((tab,index)=>{
+  tab.addEventListener("click",event=>{
+    event.preventDefault();
+    selectPoseMapCase(tab.dataset.poseMapCase,{writeHash:true,scroll:true});
+  });
+  tab.addEventListener("keydown",event=>{
+    let next=index;
+    if(event.key==="ArrowRight"||event.key==="ArrowDown")next=(index+1)%poseMapTabs.length;
+    else if(event.key==="ArrowLeft"||event.key==="ArrowUp")next=(index-1+poseMapTabs.length)%poseMapTabs.length;
+    else if(event.key==="Home")next=0;
+    else if(event.key==="End")next=poseMapTabs.length-1;
+    else return;
+    event.preventDefault();
+    selectPoseMapCase(poseMapTabs[next].dataset.poseMapCase,{writeHash:true,focus:true,scroll:true});
+  });
+});
+const syncPoseMapHash=()=>{
+  const id=location.hash.slice(1);
+  if(poseMapCaseIds.includes(id))selectPoseMapCase(id);
+};
+poseMapSection.classList.add("pose-map-tabs-ready");
+selectPoseMapCase(poseMapCaseIds.includes(location.hash.slice(1))?location.hash.slice(1):"usingleu");
+window.addEventListener("hashchange",syncPoseMapHash);
+window.addEventListener("popstate",syncPoseMapHash);
 
 /* =================== DEMO 2.1: direct line of sight =================== */
 const svg0=$("svg0");

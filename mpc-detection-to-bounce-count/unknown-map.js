@@ -115,14 +115,14 @@ function makeDraggable(svg,getP,setP,box,render){
   });
 }
 const $=id=>document.getElementById("u"+id);
-document.querySelectorAll('#unknown-map input[type="range"]').forEach(input=>{
+document.querySelectorAll('#unknown-map input[type="range"],#unknown-pose-map input[type="range"]').forEach(input=>{
   if(input.getAttribute("aria-label")||input.getAttribute("aria-labelledby"))return;
   let label=input.previousElementSibling;
   while(label&&label.tagName!=="LABEL")label=label.previousElementSibling;
   const name=label?.querySelector("span")?.textContent||label?.textContent||input.id;
   input.setAttribute("aria-label",name.trim());
 });
-document.querySelectorAll('#unknown-map .statline,#unknown-map .hint[id^="ucap"]').forEach(el=>el.setAttribute("aria-live","polite"));
+document.querySelectorAll('#unknown-map .statline,#unknown-map .hint[id^="ucap"],#unknown-pose-map .statline,#unknown-pose-map .hint[id^="ucap"]').forEach(el=>el.setAttribute("aria-live","polite"));
 
 /* =================== DEMO 1: single bounce, data-driven =================== */
 const svg1=$("svg1");
@@ -1438,5 +1438,1038 @@ function render4(){
 }
 ["c4_famA","c4_famB","c4_mem","c4_boot"].forEach(id=>$(id).addEventListener("change",render4));
 $("s4t").addEventListener("input",render4);render4();
+
+/* =================== SECTION 4: KNOWN BS, UNKNOWN UE POSE AND MAP =================== */
+/* ---- section 4.1: unknown UE, single bounce — changed foci (P, E), stepped ---- */
+(function(){
+const svg=$("svg31");
+if(!svg)return;
+const GD31=gaussians(101,60);
+const CAP=["",
+ "① <b>The unknowns.</b> Only the data exists — (τ, φ, ψ) measured by the two arrays. The wall (faint reference) and the UE are what we must find — the UE is not drawn at all: it is the thing being estimated; the old string, pinned at BS &amp; UE, cannot even be drawn: one focus is missing.",
+ "② <b>Walk the AoD.</b> Eject the departure ray from the BS and walk the <em>full</em> measured length L along it. Its endpoint E is the mirror image of the UE across the unknown wall — the dual of §3.1's VA walk, and the replacement focus.",
+ "③ <b>Hypothesize the bounce.</b> Choose P on the AoD ray (slider below). The walk to P spends ‖BS→P‖ of the string; ‖P→E‖ = L − ‖BS→P‖ is exactly what remains for the last leg.",
+ "④ <b>Re-pin the string.</b> The leftover string, pinned at P, sweeps a circle through E — every point of it lies at the correct remaining distance from the bounce.",
+ "⑤ <b>Cut with the reversed AoA.</b> φ<sub>body</sub> is the arrival direction measured in the UE's <em>own</em> frame. Turning it into a global direction requires the unknown θ. The last leg toward the UE runs opposite it: absolute direction φ<sub>body</sub> + θ + 180° — equivalently, the AoD ray rotated about P by π − (ψ − φ<sub>body</sub> − θ) (arc). That ray cuts the circle at the candidate UE(P). Note ‖P→UE(P)‖ = ‖P→E‖ <em>for every P</em> — the equality is built into the construction, so it cannot select the bounce.",
+ "⑥ <b>The implied wall — and the family.</b> The wall runs along the middle between P→UE(P) and P→E: the bisector through P. <b>Finding P is finding the wall.</b> Slide P — every position stays coherent, and the candidates sweep the teal line for the selected θ. Now sweep θ through its full circle — that line pivots and every position <em>still</em> remains coherent: one path = a <b>two</b>-parameter family (P, θ), and the union of candidates fills the delay disk ‖x − BS‖ ≤ L (faint circle), not a line."];
+let step=1;
+const T={on:false,th:0}; let raf=null;
+function stop(){T.on=false;if(raf){cancelAnimationFrame(raf);raf=null;}}
+function goStep(n,animate){
+  stop();
+  step=Math.max(1,Math.min(6,n));
+  $("cap31").innerHTML=CAP[step];
+  $("b31Prev").disabled=step===1; $("b31Next").disabled=step===6;
+  $("o31Step").textContent=step+" / 6";
+  if(animate&&step===4&&!reduced){
+    T.on=true;
+    const t0=performance.now(),DUR=1900;
+    const tick=now=>{
+      const f=Math.min(1,(now-t0)/DUR);
+      T.th=2*Math.PI*f;
+      render();
+      if(f<1){raf=requestAnimationFrame(tick);}else{stop();render();}
+    };
+    raf=requestAnimationFrame(tick);
+  } else render();
+}
+function render(){
+  const {BS,WC,WEND}=D1;
+  const sp=specular1();
+  const L=sp.L+(+$("s31L").value)/M_PER_PX;
+  const phiMeas=sp.phi+(+$("s31A").value);
+  const dH=+$("s31H").value;
+  const phi=phiMeas+dH;   /* global arrival direction = measured local AoA + hypothesized heading */
+  const psi=sp.psi+(+$("s31D").value);
+  const u=dirOf(phi), d=dirOf(psi);
+  $("o31L").textContent=(L*M_PER_PX).toFixed(1)+" m";
+  $("o31A").textContent=degFmt(phiMeas);
+  $("o31H").textContent=(dH>0?"+":"")+dH.toFixed(1)+"°";
+  $("o31D").textContent=degFmt(psi);
+  const E=[BS[0]+L*d[0],BS[1]+L*d[1]];
+  const t=(+$("s31P").value)*L;
+  const P=[BS[0]+t*d[0],BS[1]+t*d[1]];
+  const r=dist(P,E);
+  const U=[P[0]-r*u[0],P[1]-r*u[1]];
+  $("o31P").textContent=(t*M_PER_PX).toFixed(1)+" m";
+  let s="";
+  s+=seg(WC,WEND,"#8a97a3",3,null,0.35)+txt(WC[0]+16,WC[1]+14,"true wall (unknown)","#8a97a3",10.5);
+  if(step>=2){
+    s+=arrow(BS,E,"#5d3691",1.5,"6 4",0.75);
+    s+=txt(BS[0]+d[0]*70+8,BS[1]+d[1]*70-8,"AoD ψ (at the BS) — walked the full L","#5d3691",10.5);
+    s+=`<rect x="${E[0]-5}" y="${E[1]-5}" width="10" height="10" transform="rotate(45 ${E[0]} ${E[1]})" fill="#7c4dbe"/>`
+      +txt(E[0]-9,E[1]-11,"E = BS + L·d̂ — the mirrored UE","#5d3691",10.5,"end");
+  }
+  if(step>=3){
+    s+=arrow(BS,P,"#51606e",2);
+    s+=`<circle cx="${P[0]}" cy="${P[1]}" r="4.5" fill="#e8720c"/>`
+      +txt(P[0]+9,P[1]-9,"P (hypothesis)","#b45607",10.5);
+    s+=txt((BS[0]+P[0])/2-6,(BS[1]+P[1])/2+18,"‖BS→P‖","#51606e",10);
+  }
+  if(step>=4){
+    if(T.on){
+      const a0=Math.atan2(E[1]-P[1],E[0]-P[0]);
+      let path="M"+(P[0]+r*Math.cos(a0))+" "+(P[1]+r*Math.sin(a0));
+      const N=90;
+      for(let k=1;k<=N*T.th/(2*Math.PI);k++){
+        const a=a0+k/N*2*Math.PI;
+        path+="L"+(P[0]+r*Math.cos(a))+" "+(P[1]+r*Math.sin(a));
+      }
+      s+=`<path d="${path}" fill="none" stroke="#e8720c" stroke-width="1.8" opacity="0.9"/>`;
+      const ae=a0+T.th;
+      s+=seg(P,[P[0]+r*Math.cos(ae),P[1]+r*Math.sin(ae)],"#b45607",1.2,"3 3",0.8);
+    } else {
+      s+=`<circle cx="${P[0]}" cy="${P[1]}" r="${r}" fill="none" stroke="#e8720c" stroke-width="1.8" opacity="0.85"/>`;
+    }
+    s+=txt(P[0]+12,P[1]+22,"‖x−P‖ = L − ‖BS→P‖","#b45607",10.5);
+  }
+  if(step>=5){
+    s+=arrow(P,[P[0]-(r+38)*u[0],P[1]-(r+38)*u[1]],"#16222e",1.2,"6 4",0.5);
+    s+=txt(P[0]-(r+44)*u[0],P[1]-(r+44)*u[1],"last leg ∥ −AoA: φ + 180°","#16222e",10.5);
+    /* the rotation from the AoD ray to the last leg: π − (ψ − φ) */
+    {
+      const rel=((phi+180-psi)%360+360)%360;
+      let arc="";
+      const N=28;
+      for(let k=0;k<=N;k++){
+        const a=psi+rel*k/N, q=dirOf(a);
+        arc+=(k?"L":"M")+(P[0]+26*q[0])+" "+(P[1]+26*q[1]);
+      }
+      s+=`<path d="${arc}" fill="none" stroke="#b45607" stroke-width="1.4" opacity="0.85"/>`;
+      const mid=dirOf(psi+rel/2);
+      s+=txt(P[0]+60*mid[0],P[1]+60*mid[1]+4,`π − (ψ − φ_body − θ) = ${rel.toFixed(0)}°`,"#b45607",10,mid[0]<0?"end":"start");
+    }
+    s+=arrow(P,U,"#51606e",2);
+    s+=`<circle cx="${U[0]}" cy="${U[1]}" r="6" fill="#2ca02c" stroke="#fff" stroke-width="1.6"/>`
+      +txt(U[0]+10,U[1]+4,"UE(P)","#1d7a1d",11);
+  }
+  if(step>=6){
+    const n=unit(sub(U,E)), w=[-n[1],n[0]];
+    s+=seg([P[0]-130*w[0],P[1]-130*w[1]],[P[0]+130*w[0],P[1]+130*w[1]],"#16222e",4.2,null,0.9);
+    s+=txt(P[0]+130*w[0]+6,P[1]+130*w[1]+4,"implied wall — the middle between P→UE and P→E","#16222e",10.5);
+    const o=[BS[0]-L*u[0],BS[1]-L*u[1]], v=unit([d[0]+u[0],d[1]+u[1]]);
+    s+=seg([o[0]-900*v[0],o[1]-900*v[1]],[o[0]+900*v[0],o[1]+900*v[1]],"#0e8f7e",1.6,"7 5",0.6);
+    /* the heading dimension: with θ free the candidate line pivots and sweeps the whole delay disk */
+    s+=`<circle cx="${BS[0]}" cy="${BS[1]}" r="${L}" fill="none" stroke="#0e8f7e" stroke-width="1.1" stroke-dasharray="2 5" opacity="0.4"/>`;
+    s+=txt(BS[0]+L*Math.cos(0.42)-10,BS[1]-L*Math.sin(0.42)-8,"θ unknown ⇒ union fills the delay disk ‖x−BS‖ ≤ L","#0a6b5e",10,"end");
+  }
+  const sig=+$("sS31").value;
+  $("oS31").textContent=(sig*M_PER_PX).toFixed(1)+" m";
+  if(sig>0){
+    for(let k=0;k<24;k++){
+      const g=GD31[k];
+      const w=Math.exp(-0.5*g*g);
+      const Sk=[sp.Pt[0]+g*sig*D1.WD[0],sp.Pt[1]+g*sig*D1.WD[1]];
+      const Ls=dist(BS,Sk)+dist(Sk,D1.UE);
+      const us=dirOf(aoaOf(unit(sub(Sk,D1.UE)))+dH), ds=unit(sub(Sk,BS));
+      const Es=[BS[0]+Ls*ds[0],BS[1]+Ls*ds[1]];
+      const fr=(+$("s31P").value);
+      const ts=fr*Ls, Ps=[BS[0]+ts*ds[0],BS[1]+ts*ds[1]];
+      const rs=dist(Ps,Es);
+      const Us=[Ps[0]-rs*us[0],Ps[1]-rs*us[1]];
+      s+=`<circle cx="${Sk[0]}" cy="${Sk[1]}" r="${1.4+1.4*w}" fill="#0e8f7e" opacity="${0.14+0.4*w}"/>`;
+      if(step>=2)s+=`<circle cx="${Es[0]}" cy="${Es[1]}" r="${1.6+1.6*w}" fill="#7c4dbe" opacity="${0.12+0.4*w}"/>`;
+      if(step>=5)s+=`<circle cx="${Us[0]}" cy="${Us[1]}" r="${1.6+1.6*w}" fill="#2ca02c" opacity="${0.12+0.4*w}"/>`;
+    }
+  }
+  s+=bsMark(BS,"BS",-30,4);
+  svg.innerHTML=s;
+  const n2=unit(sub(U,E));
+  const tilt=Math.asin(Math.min(1,Math.abs(n2[0]*D1.WN[1]-n2[1]*D1.WN[0])))*180/Math.PI;
+  $("stat31").innerHTML= step<5 ? "" :
+    `‖P→UE(P)‖ = ‖P→E‖ — <b>equal for every P and every θ</b>: the construction builds the equality in, so it can choose neither the bounce nor the heading. Two more constraints are needed.`+
+    (step>=6?`<br>implied wall tilt off the reference wall: ${tilt.toFixed(1)}° — the selected θ reads as a wall tilt of |θ|/2: the two are indistinguishable from one path`:``);
+}
+["s31P","s31H","s31L","s31A","s31D","sS31"].forEach(id=>$(id).addEventListener("input",()=>{stop();render();}));
+$("b31R").addEventListener("click",()=>{["s31L","s31A","s31D"].forEach(id=>$(id).value=0);stop();render();});
+$("b31Prev").addEventListener("click",()=>goStep(step-1,false));
+$("b31Next").addEventListener("click",()=>goStep(step+1,true));
+goStep(1,false);
+})();
+
+/* ---- section 4.2: unknown UE, double bounce — the focus climbs the ladder ---- */
+(function(){
+const svg=$("svg32");
+if(!svg)return;
+const GD32=gaussians(202,120);
+const CAP=["",
+ "① <b>The unknowns.</b> Two measured paths: path 1 (τ⁽¹⁾, φ⁽¹⁾, ψ⁽¹⁾), a single bounce off wall A, and path 2 (τ, φ, ψ), a double bounce off A then B. Both walls and the UE are unknown — no string is pinnable anywhere.",
+ "② <b>Path 1 = §4.1 verbatim.</b> Walk ψ⁽¹⁾ the full L⁽¹⁾ → E⁽¹⁾, the mirrored UE. Hypothesize P⁽¹⁾ on the ray (slider); UE₁ sits the leftover distance down the reverse-AoA ray, and the candidates sweep line 1 ⊥ wall A.",
+ "③ <b>The hypothesis is a wall.</b> P⁽¹⁾ fixes wall A — the middle between P⁽¹⁾→UE₁ and P⁽¹⁾→E⁽¹⁾ — and it stays parallel to the true wall for every P⁽¹⁾. Finding P⁽¹⁾ is finding wall A.",
+ "④ <b>Strip path 2 at wall A.</b> Path 2's ψ-ray crosses the hypothesized wall A at P₁ and reflects. The focus climbs the ladder: the string re-pins at P₁, and the full leftover walk L₂ − ‖BS→P₁‖ lands on E₂ — the sub-problem's mirrored UE.",
+ "⑤ <b>Hypothesize P₂.</b> On the reflected ray (slider), UE₂ sits the remaining length down path 2's reverse-AoA ray, with ‖P₂→UE₂‖ = ‖P₂→E₂‖ built in as always. The candidates sweep line 2 ⊥ wall B: a second family.",
+ "⑥ <b>Cross — and test ray order.</b> The UE must lie on both candidate lines. When their crossing also lies on the <em>forward</em> reflected ray with non-negative segment lengths, it solves P₂ and wall B follows. Sweep P⁽¹⁾ and θ: feasible members retain a two-parameter ambiguity, but combinations that put a bounce behind its ray origin or exhaust L₂ too early are rejected in red. The double bounce changes and prunes the family; it does not supply the heading."];
+let step=1;
+function goStep(n){
+  step=Math.max(1,Math.min(6,n));
+  $("cap32").innerHTML=CAP[step];
+  $("b32Prev").disabled=step===1; $("b32Next").disabled=step===6;
+  $("o32Step").textContent=step+" / 6";
+  $("s32P2").disabled=step>=6;
+  render();
+}
+function pathData(){
+  const UE=D2.UE;
+  const L1s=dist(UE,D2.VA1), u1s=unit(sub(D2.VA1,UE));
+  const sA=(D2.AY-UE[1])/(D2.VA1[1]-UE[1]);
+  const P1a=[UE[0]+sA*(D2.VA1[0]-UE[0]),D2.AY];
+  const sp=specAt(UE);
+  return {
+    L1:L1s+(+$("s32L1").value)/M_PER_PX,
+    phi1:aoaOf(u1s)+(+$("s32A1").value),
+    psi1:aoaOf(unit(sub(P1a,D2.BS)))+(+$("s32D1").value),
+    L2:sp.L+(+$("s32L2").value)/M_PER_PX,
+    phi2:aoaOf(sp.u)+(+$("s32A2").value),
+    psi2:aoaOf(sp.ud)+(+$("s32D2").value)};
+}
+function crossing(l1,l2){
+  const den=l1.v[0]*l2.v[1]-l1.v[1]*l2.v[0];
+  if(Math.abs(den)<1e-12)return null;
+  const w=[l2.o[0]-l1.o[0],l2.o[1]-l1.o[1]];
+  const t=(w[0]*l2.v[1]-w[1]*l2.v[0])/den;
+  return [l1.o[0]+t*l1.v[0],l1.o[1]+t*l1.v[1]];
+}
+const fullLine=(l,c,dash,o)=>seg([l.o[0]-900*l.v[0],l.o[1]-900*l.v[1]],
+                                 [l.o[0]+900*l.v[0],l.o[1]+900*l.v[1]],c,1.6,dash,o);
+function render(){
+  const {BS,AY,AX0,AX1,BC,BEND}=D2;
+  const dt=pathData();
+  const dH=+$("s32H").value;
+  $("o32H").textContent=(dH>0?"+":"")+dH.toFixed(1)+"°";
+  /* one UE, one unknown heading state: θ rotates both measured body-frame AoAs into global directions */
+  const u1=dirOf(dt.phi1+dH), d1=dirOf(dt.psi1);
+  const u2=dirOf(dt.phi2+dH), d2=dirOf(dt.psi2);
+  $("o32L1").textContent=(dt.L1*M_PER_PX).toFixed(1)+" m";
+  $("o32A1").textContent=degFmt(dt.phi1);
+  $("o32D1").textContent=degFmt(dt.psi1);
+  $("o32L2").textContent=(dt.L2*M_PER_PX).toFixed(1)+" m";
+  $("o32A2").textContent=degFmt(dt.phi2);
+  $("o32D2").textContent=degFmt(dt.psi2);
+  /* path-1 construction (3.1) */
+  const E1=[BS[0]+dt.L1*d1[0],BS[1]+dt.L1*d1[1]];
+  const t1=(+$("s32P1").value)*dt.L1;
+  const Pw=[BS[0]+t1*d1[0],BS[1]+t1*d1[1]];
+  const r1=dist(Pw,E1);
+  const U1=[Pw[0]-r1*u1[0],Pw[1]-r1*u1[1]];
+  const line1={o:[BS[0]-dt.L1*u1[0],BS[1]-dt.L1*u1[1]],v:unit([d1[0]+u1[0],d1[1]+u1[1]])};
+  const nA=unit(sub(U1,E1)), wA=[-nA[1],nA[0]];
+  /* strip path 2 at hypothesized wall A; signed lengths enforce ray order */
+  const H1=hitRayLine(BS,d2,Pw,nA);
+  const tp=H1?.t??NaN, P1=H1?.p??BS;
+  const denA=nA[0]*d2[0]+nA[1]*d2[1];
+  const e=[d2[0]-2*denA*nA[0],d2[1]-2*denA*nA[1]];
+  const rem=dt.L2-tp;
+  const entryFeasible=!!H1&&tp>0&&rem>0;
+  const E2=entryFeasible?[P1[0]+rem*e[0],P1[1]+rem*e[1]]:null;
+  const line2=entryFeasible?{o:[P1[0]-rem*u2[0],P1[1]-rem*u2[1]],v:unit([e[0]+u2[0],e[1]+u2[1]])}:null;
+  const Xraw=line2?crossing(line1,line2):null;
+  const sc=Math.hypot(e[0]+u2[0],e[1]+u2[1]);
+  const m2Solved=Xraw&&sc>1e-9?((Xraw[0]-line2.o[0])*line2.v[0]+(Xraw[1]-line2.o[1])*line2.v[1])/sc:NaN;
+  const solutionFeasible=entryFeasible&&!!Xraw&&Number.isFinite(m2Solved)&&m2Solved>0&&m2Solved<rem;
+  const m2=(step>=6&&solutionFeasible)?m2Solved:(entryFeasible?(+$("s32P2").value)*rem:NaN);
+  const P2=entryFeasible?[P1[0]+m2*e[0],P1[1]+m2*e[1]]:null;
+  const r2=P2&&E2?dist(P2,E2):NaN;
+  const U2=P2?[P2[0]-r2*u2[0],P2[1]-r2*u2[1]]:null;
+  $("o32P1").textContent=(t1*M_PER_PX).toFixed(1)+" m";
+  $("o32P2").textContent=step>=6?(solutionFeasible?"solved":"infeasible"):(entryFeasible?(m2*M_PER_PX).toFixed(1)+" m":"—");
+  let s="";
+  /* reference walls */
+  s+=seg([AX0,AY],[AX1,AY],"#8a97a3",3,null,0.32)+seg(BC,BEND,"#8a97a3",3,null,0.32);
+  s+=txt(AX0+4,AY-8,"wall A (reference)","#8a97a3",10)+txt(BEND[0]-8,BEND[1]-12,"wall B","#8a97a3",10,"end");
+  if(step>=2){
+    s+=arrow(BS,E1,"#5d3691",1.4,"6 4",0.7);
+    s+=`<rect x="${E1[0]-5}" y="${E1[1]-5}" width="10" height="10" transform="rotate(45 ${E1[0]} ${E1[1]})" fill="#7c4dbe"/>`
+      +txt(E1[0]+10,E1[1]+4,"E⁽¹⁾","#5d3691",10.5);
+    s+=fullLine(line1,"#0e8f7e","7 5",0.5);
+    s+=arrow(BS,Pw,"#51606e",1.8)+arrow(Pw,U1,"#51606e",1.8);
+    s+=`<circle cx="${Pw[0]}" cy="${Pw[1]}" r="4.5" fill="#e8720c"/>`+txt(Pw[0]+8,Pw[1]-8,"P⁽¹⁾","#b45607",10.5);
+    s+=`<circle cx="${U1[0]}" cy="${U1[1]}" r="6" fill="#2ca02c" stroke="#fff" stroke-width="1.6"/>`
+      +txt(U1[0]+10,U1[1]+4,"UE₁","#1d7a1d",11)+headingMark(U1,dH);
+    s+=txt(line1.o[0]+250*line1.v[0]+8,line1.o[1]+250*line1.v[1]+16,"line 1 ⊥ wall A","#0a6b5e",10);
+  }
+  if(step>=3){
+    s+=seg([Pw[0]-150*wA[0],Pw[1]-150*wA[1]],[Pw[0]+150*wA[0],Pw[1]+150*wA[1]],"#16222e",4,null,0.85);
+    s+=txt(Pw[0]+150*wA[0]+6,Pw[1]+150*wA[1]+4,"wall A hypothesis","#16222e",10.5);
+  }
+  if(step>=4&&entryFeasible){
+    s+=arrow(BS,P1,"#7c4dbe",1.4,"5 4",0.7);
+    s+=`<circle cx="${P1[0]}" cy="${P1[1]}" r="4.5" fill="#7c4dbe"/>`+txt(P1[0]+8,P1[1]-8,"P₁ = ψ-ray × wall A","#5d3691",10);
+    s+=arrow(P1,E2,"#7c4dbe",1.2,"5 4",0.55);
+    s+=`<rect x="${E2[0]-5}" y="${E2[1]-5}" width="10" height="10" transform="rotate(45 ${E2[0]} ${E2[1]})" fill="#7c4dbe" opacity="0.8"/>`
+      +txt(E2[0]-9,E2[1]-11,"E₂ (sub-problem)","#5d3691",10,"end");
+  }else if(step>=4){
+    const q=[BS[0]+150*d2[0],BS[1]+150*d2[1]];
+    s+=arrow(BS,q,"#c22f2f",1.8,"5 4",0.8)+txt(q[0]+8,q[1]-8,"infeasible: no forward path-2 hit within L₂","#c22f2f",10.5);
+  }
+  if(step>=5&&entryFeasible){
+    s+=fullLine(line2,"#0e8f7e","3 5",0.5);
+    s+=arrow(P1,P2,"#51606e",1.8)+arrow(P2,U2,"#51606e",1.8);
+    s+=`<circle cx="${P2[0]}" cy="${P2[1]}" r="4.5" fill="#e8720c"/>`+txt(P2[0]+8,P2[1]-8,"P₂","#b45607",10.5);
+    s+=`<circle cx="${U2[0]}" cy="${U2[1]}" r="7" fill="none" stroke="#2ca02c" stroke-width="2.2"/>`
+      +txt(U2[0]+11,U2[1]+13,"UE₂","#1d7a1d",11);
+    s+=txt(line2.o[0]+320*line2.v[0]+8,line2.o[1]+320*line2.v[1]-8,"line 2 ⊥ wall B","#0a6b5e",10);
+  }
+  if(step>=6&&solutionFeasible){
+    const X=Xraw;
+    s+=`<path d="M${X[0]-6} ${X[1]-6}L${X[0]+6} ${X[1]+6}M${X[0]-6} ${X[1]+6}L${X[0]+6} ${X[1]-6}" stroke="#0e8f7e" stroke-width="2.2"/>`
+      +`<circle cx="${X[0]}" cy="${X[1]}" r="11" fill="none" stroke="#0e8f7e" stroke-width="2"/>`;
+    const oB=unit(sub(X,P2));
+    const nB=unit([oB[0]-e[0],oB[1]-e[1]]);
+    const wB=[-nB[1],nB[0]];
+    s+=seg([P2[0]-120*wB[0],P2[1]-120*wB[1]],[P2[0]+120*wB[0],P2[1]+120*wB[1]],"#16222e",4,null,0.85);
+    s+=txt(P2[0]-120*wB[0]-6,P2[1]-120*wB[1]+14,"wall B hypothesis","#16222e",10.5,"end");
+  }
+  const sig=+$("sS32").value;
+  $("oS32").textContent=(sig*M_PER_PX).toFixed(1)+" m";
+  if(sig>0&&entryFeasible){
+    const UEt=D2.UE;
+    const sAt=(AY-UEt[1])/(D2.VA1[1]-UEt[1]);
+    const B1t=[UEt[0]+sAt*(D2.VA1[0]-UEt[0]),AY];
+    const dq=sub(D2.VA2,UEt);
+    const tb=((BC[0]-UEt[0])*D2.BN[0]+(BC[1]-UEt[1])*D2.BN[1])/((dq[0]*D2.BN[0]+dq[1]*D2.BN[1])||1e-12);
+    const Q2t=[UEt[0]+tb*dq[0],UEt[1]+tb*dq[1]];
+    const tA2=(AY-Q2t[1])/(D2.VA1[1]-Q2t[1]);
+    const Q1t=[Q2t[0]+tA2*(D2.VA1[0]-Q2t[0]),AY];
+    const fr=(+$("s32P1").value);
+    for(let k=0;k<24;k++){
+      const g0=GD32[3*k],g1=GD32[3*k+1],g2=GD32[3*k+2];
+      const w=Math.exp(-0.5*(g0*g0+g1*g1+g2*g2)/3);
+      const S0=[B1t[0]+g0*sig,B1t[1]];
+      const L1s=dist(BS,S0)+dist(S0,UEt);
+      const u1s=dirOf(aoaOf(unit(sub(S0,UEt)))+dH), d1s=unit(sub(S0,BS));
+      const E1k=[BS[0]+L1s*d1s[0],BS[1]+L1s*d1s[1]];
+      const t1k=fr*L1s, Pwk=[BS[0]+t1k*d1s[0],BS[1]+t1k*d1s[1]];
+      const U1k=[Pwk[0]-(L1s-t1k)*u1s[0],Pwk[1]-(L1s-t1k)*u1s[1]];
+      const nAk=unit(sub(U1k,E1k));
+      const S1k=[Q1t[0]+g1*sig,Q1t[1]];
+      const S2k=[Q2t[0]+g2*sig*D2.BD[0],Q2t[1]+g2*sig*D2.BD[1]];
+      const L2s=dist(BS,S1k)+dist(S1k,S2k)+dist(S2k,UEt);
+      const u2s=dirOf(aoaOf(unit(sub(S2k,UEt)))+dH), d2s=unit(sub(S1k,BS));
+      const kk=(d2s[0]*nAk[0]+d2s[1]*nAk[1]);
+      const tpk=((Pwk[0]-BS[0])*nAk[0]+(Pwk[1]-BS[1])*nAk[1])/(kk||1e-12);
+      const P12k=[BS[0]+tpk*d2s[0],BS[1]+tpk*d2s[1]];
+      const e2k=[d2s[0]-2*kk*nAk[0],d2s[1]-2*kk*nAk[1]];
+      const rem2k=L2s-tpk;
+      const l1k={o:[BS[0]-L1s*u1s[0],BS[1]-L1s*u1s[1]],v:unit([d1s[0]+u1s[0],d1s[1]+u1s[1]])};
+      const l2k={o:[P12k[0]-rem2k*u2s[0],P12k[1]-rem2k*u2s[1]],v:unit([e2k[0]+u2s[0],e2k[1]+u2s[1]])};
+      const Xk=crossing(l1k,l2k);
+      s+=`<circle cx="${S0[0]}" cy="${S0[1]}" r="${1.4+1.4*w}" fill="#0e8f7e" opacity="${0.14+0.4*w}"/>`
+        +`<circle cx="${S1k[0]}" cy="${S1k[1]}" r="${1.4+1.4*w}" fill="#0e8f7e" opacity="${0.14+0.4*w}"/>`
+        +`<circle cx="${S2k[0]}" cy="${S2k[1]}" r="${1.4+1.4*w}" fill="#0e8f7e" opacity="${0.14+0.4*w}"/>`;
+      if(step>=2)s+=`<circle cx="${E1k[0]}" cy="${E1k[1]}" r="${1.6+1.6*w}" fill="#7c4dbe" opacity="${0.12+0.4*w}"/>`
+        +`<circle cx="${U1k[0]}" cy="${U1k[1]}" r="${1.6+1.6*w}" fill="#2ca02c" opacity="${0.12+0.4*w}"/>`;
+      if(step>=6&&Xk)s+=`<circle cx="${Xk[0]}" cy="${Xk[1]}" r="${2+1.6*w}" fill="none" stroke="#0e8f7e" stroke-width="1.2" opacity="${0.15+0.4*w}"/>`;
+    }
+  }
+  s+=bsMark(BS,"BS",-30,4);
+  svg.innerHTML=s;
+  const gap=solutionFeasible?dist(U1,Xraw)*M_PER_PX:NaN;
+  const tiltA=Math.asin(Math.min(1,Math.abs(nA[0])))*180/Math.PI;
+  $("stat32").innerHTML= step<5 ? "" :
+    (!entryFeasible?`<span class="off">✗ rejected (P⁽¹⁾, θ): path 2 reaches wall A behind the BS or after exhausting L₂.</span>`:
+     step===5?`‖P₂→UE₂‖ = ‖P₂→E₂‖ for each forward P₂; this sub-family still cannot select its own bounce.`:
+     !solutionFeasible?`<span class="off">✗ rejected (P⁽¹⁾, θ): the infinite candidate lines cross outside the forward reflected segment. A line crossing is not a physical bounce.</span>`:
+    `forward-ray crossing ↔ UE₁: <b>${gap.toFixed(2)} m</b> · all segment lengths positive ✓<br>wall-A hypothesis tilt off reference: ${tiltA.toFixed(1)}° — θ changes the recovered geometry while remaining coupled to wall tilt`);
+}
+["s32P1","s32P2","s32H","s32L1","s32A1","s32D1","s32L2","s32A2","s32D2","sS32"].forEach(id=>$(id).addEventListener("input",render));
+$("b32R").addEventListener("click",()=>{["s32L1","s32A1","s32D1","s32L2","s32A2","s32D2"].forEach(id=>$(id).value=0);render();});
+$("b32Prev").addEventListener("click",()=>goStep(step-1));
+$("b32Next").addEventListener("click",()=>goStep(step+1));
+goStep(1);
+})();
+
+/* ---- section 4.4: unknown UE, corridor double — the crossing degenerates ---- */
+(function(){
+const svg=$("svg34");
+if(!svg)return;
+const GD=gaussians(233,80);
+const CAP=["",
+ "① <b>The unknowns.</b> Two measured paths in a corridor: path 1 (single, wall R) and path 2 (double, R→L). Both walls and the UE are unknown.",
+ "② <b>Path 1 = §4.1.</b> E⁽¹⁾ = the full AoD walk; P⁽¹⁾ (slider) hypothesizes the bounce; UE₁ sits down the reversed AoA; candidates sweep line 1 ⊥ wall R — in a corridor, straight <em>across</em> it. P⁽¹⁾ fixes the wall-R hypothesis.",
+ "③ <b>Strip path 2 at wall R.</b> Its forward AoD ray must cross the hypothesized wall before L₂ is exhausted. A valid hit reflects and the positive leftover walk lands on E₂; a backward or over-budget hit is rejected in red.",
+ "④ <b>Line 2 — and the degeneracy.</b> For a valid prefix the candidates sweep a line ⊥ wall L. At the synthetic reference heading (θ = 0) line 2 is parallel to line 1 and, with clean data, <em>coincides</em> with it exactly. Other heading slices survive only when they pass the same ray-order tests.",
+ "⑤ <b>Wall L, conditionally.</b> On a surviving slice declare UE₂ = UE₁ and verify that the implied P₂ lies strictly inside the remaining forward segment. Only then does the wall-L hypothesis exist. Bought the wall, not the fix.",
+ "⑥ <b>The feasible slide — and illustrative smear.</b> Every surviving (P⁽¹⁾, θ) explanation moves the walls and UE together. A nonzero heading can wedge the lines while they still meet at UE₁; invalid slices are pruned, not extended backward. The illustrative per-bounce incidence-point smear broadens only the feasible candidate family; it is not surface scattering γ<sup>sc</sup>."];
+let step=1;
+function goStep(n){
+  step=Math.max(1,Math.min(6,n));
+  $("cap34").innerHTML=CAP[step];
+  $("b34Prev").disabled=step===1; $("b34Next").disabled=step===6;
+  $("o34Step").textContent=step+" / 6";
+  render();
+}
+function render(){
+  const {BS,UE,LX,RX,WY0,WY1,VA1,VA2}=D3;
+  const sR=(RX-UE[0])/(VA1[0]-UE[0]); const B1=[RX,UE[1]+sR*(VA1[1]-UE[1])];
+  const q2=(LX-UE[0])/(VA2[0]-UE[0]); const Q2t=[LX,UE[1]+q2*(VA2[1]-UE[1])];
+  const q1=(RX-Q2t[0])/(VA1[0]-Q2t[0]); const Q1t=[RX,Q2t[1]+q1*(VA1[1]-Q2t[1])];
+  const dH=+$("s34H").value;
+  $("o34H").textContent=(dH>0?"+":"")+dH.toFixed(1)+"°";
+  const p1={L:dist(UE,VA1),u:dirOf(aoaOf(unit(sub(VA1,UE)))+dH),d:unit(sub(B1,BS))};
+  const L2=dist(UE,VA2)+(+$("s34L").value)/M_PER_PX;
+  const phi2=aoaOf(unit(sub(VA2,UE)))+(+$("s34A").value);
+  const psi2=aoaOf(unit(sub(Q1t,BS)))+(+$("s34D").value);
+  const p2={L:L2,u:dirOf(phi2+dH),d:dirOf(psi2)};
+  const sig=+$("sS34").value;
+  $("oS34").textContent=(sig*M_PER_PX).toFixed(1)+" m";
+  $("o34L").textContent=(L2*M_PER_PX).toFixed(1)+" m";
+  $("o34A").textContent=degFmt(phi2);
+  $("o34D").textContent=degFmt(psi2);
+  const E1=[BS[0]+p1.L*p1.d[0],BS[1]+p1.L*p1.d[1]];
+  const line1={o:[BS[0]-p1.L*p1.u[0],BS[1]-p1.L*p1.u[1]],v:unit([p1.d[0]+p1.u[0],p1.d[1]+p1.u[1]])};
+  const t1=(+$("s34P").value)*p1.L;
+  const Pw=[BS[0]+t1*p1.d[0],BS[1]+t1*p1.d[1]];
+  const U1=[Pw[0]-(p1.L-t1)*p1.u[0],Pw[1]-(p1.L-t1)*p1.u[1]];
+  const nA=unit(sub(U1,E1)), wA=[-nA[1],nA[0]];
+  $("o34P").textContent=(t1*M_PER_PX).toFixed(1)+" m";
+  function strip2(pp){
+    const H=hitRayLine(BS,pp.d,Pw,nA);
+    if(!H||H.t<=0)return {feasible:false,reason:"path 2 hits wall R behind the BS"};
+    const P12=H.p, k=pp.d[0]*nA[0]+pp.d[1]*nA[1];
+    const e2=[pp.d[0]-2*k*nA[0],pp.d[1]-2*k*nA[1]];
+    const rem2=pp.L-H.t;
+    if(!(rem2>0))return {feasible:false,reason:"the first leg exhausts L₂"};
+    const E2=[P12[0]+rem2*e2[0],P12[1]+rem2*e2[1]];
+    const scale=Math.hypot(e2[0]+pp.u[0],e2[1]+pp.u[1]);
+    if(!(scale>1e-9))return {feasible:false,reason:"the final-ray family is degenerate"};
+    const line2={o:[P12[0]-rem2*pp.u[0],P12[1]-rem2*pp.u[1]],v:unit([e2[0]+pp.u[0],e2[1]+pp.u[1]])};
+    return {P12,e2,rem2,E2,line2,scale,feasible:true,reason:""};
+  }
+  const S=strip2(p2);
+  const nrm=S.feasible?[-S.line2.v[1],S.line2.v[0]]:null;
+  const off=S.feasible?Math.abs(nrm[0]*(U1[0]-S.line2.o[0])+nrm[1]*(U1[1]-S.line2.o[1])):NaN;
+  const m2=S.feasible?((U1[0]-S.line2.o[0])*S.line2.v[0]+(U1[1]-S.line2.o[1])*S.line2.v[1])/S.scale:NaN;
+  const solutionFeasible=S.feasible&&Number.isFinite(m2)&&m2>0&&m2<S.rem2&&off<1e-5;
+  const P2s=solutionFeasible?[S.P12[0]+m2*S.e2[0],S.P12[1]+m2*S.e2[1]]:null;
+  const nB=solutionFeasible?unit(sub(U1,S.E2)):null, wB=nB?[-nB[1],nB[0]]:null;
+  const sinA=S.feasible?Math.abs(line1.v[0]*S.line2.v[1]-line1.v[1]*S.line2.v[0]):NaN;
+  let out="";
+  out+=seg([LX,WY0],[LX,WY1],"#8a97a3",3,null,0.32)+seg([RX,WY0],[RX,WY1],"#8a97a3",3,null,0.32);
+  out+=txt(LX-8,WY0+14,"wall L (reference)","#8a97a3",10,"end")+txt(RX+8,WY0+14,"wall R","#8a97a3",10);
+  if(step>=2){
+    out+=arrow(BS,E1,"#5d3691",1.3,"6 4",0.65);
+    out+=`<rect x="${E1[0]-5}" y="${E1[1]-5}" width="10" height="10" transform="rotate(45 ${E1[0]} ${E1[1]})" fill="#7c4dbe"/>`+txt(E1[0]+9,E1[1]+4,"E⁽¹⁾ (mirrored UE)","#5d3691",10);
+    out+=seg([line1.o[0]-900*line1.v[0],line1.o[1]-900*line1.v[1]],[line1.o[0]+900*line1.v[0],line1.o[1]+900*line1.v[1]],"#0e8f7e",1.6,"7 5",0.55);
+    out+=arrow(BS,Pw,"#51606e",1.7)+arrow(Pw,U1,"#51606e",1.7);
+    out+=`<circle cx="${Pw[0]}" cy="${Pw[1]}" r="4.5" fill="#e8720c"/>`+txt(Pw[0]+8,Pw[1]-8,"P⁽¹⁾","#b45607",10.5);
+    out+=`<circle cx="${U1[0]}" cy="${U1[1]}" r="6" fill="#2ca02c" stroke="#fff" stroke-width="1.6"/>`+txt(U1[0]+10,U1[1]+4,"UE₁","#1d7a1d",11)+headingMark(U1,dH);
+    out+=seg([Pw[0]-160*wA[0],Pw[1]-160*wA[1]],[Pw[0]+160*wA[0],Pw[1]+160*wA[1]],"#16222e",3.6,null,0.85);
+    out+=txt(Pw[0]+160*wA[0]+6,Pw[1]+160*wA[1]+4,"wall R hyp.","#16222e",10);
+    out+=txt(line1.o[0]+430*line1.v[0],line1.o[1]+430*line1.v[1]-8,"line 1 ⊥ wall R","#0a6b5e",10);
+  }
+  if(step>=3&&S.feasible){
+    out+=arrow(BS,S.P12,"#7c4dbe",1.3,"5 4",0.6);
+    out+=`<circle cx="${S.P12[0]}" cy="${S.P12[1]}" r="4" fill="#7c4dbe"/>`+txt(S.P12[0]+7,S.P12[1]-7,"P₁","#5d3691",10);
+    out+=arrow(S.P12,S.E2,"#7c4dbe",1.1,"5 4",0.5);
+    out+=`<rect x="${S.E2[0]-4.5}" y="${S.E2[1]-4.5}" width="9" height="9" transform="rotate(45 ${S.E2[0]} ${S.E2[1]})" fill="#7c4dbe" opacity="0.8"/>`+txt(S.E2[0]-9,S.E2[1]-10,"E₂","#5d3691",10,"end");
+  }else if(step>=3){
+    const q=[BS[0]+150*p2.d[0],BS[1]+150*p2.d[1]];
+    out+=arrow(BS,q,"#c22f2f",1.8,"5 4",0.8)+txt(q[0]+8,q[1]-8,`rejected: ${S.reason}`,"#c22f2f",10.5);
+  }
+  if(step>=4&&S.feasible){
+    out+=seg([S.line2.o[0]-900*S.line2.v[0],S.line2.o[1]-900*S.line2.v[1]],[S.line2.o[0]+900*S.line2.v[0],S.line2.o[1]+900*S.line2.v[1]],"#b45607",1.6,"2 6",0.7);
+    out+=txt(line1.o[0]+430*line1.v[0],line1.o[1]+430*line1.v[1]+16,Math.abs(dH)<0.05?"line 2 ≡ line 1":"line 2 — wedged |θ|/2 off line 1, still through UE₁","#b45607",10);
+  }
+  if(step>=5&&solutionFeasible){
+    out+=`<circle cx="${U1[0]}" cy="${U1[1]}" r="9" fill="none" stroke="#2ca02c" stroke-width="2" stroke-dasharray="3 3"/>`+txt(U1[0]+12,U1[1]+18,"UE₂ ≔ UE₁","#1d7a1d",10);
+    out+=arrow(S.P12,P2s,"#51606e",1.6)+arrow(P2s,U1,"#51606e",1.6);
+    out+=`<circle cx="${P2s[0]}" cy="${P2s[1]}" r="4.5" fill="#e8720c"/>`+txt(P2s[0]-8,P2s[1]-8,"P₂","#b45607",10,"end");
+    out+=seg([P2s[0]-160*wB[0],P2s[1]-160*wB[1]],[P2s[0]+160*wB[0],P2s[1]+160*wB[1]],"#16222e",3.6,null,0.85);
+    out+=txt(P2s[0]-160*wB[0]-6,P2s[1]-160*wB[1]+4,"wall L hyp.","#16222e",10,"end");
+  }else if(step>=5&&S.feasible){
+    out+=txt(U1[0]+18,U1[1]+38,"rejected: UE₁ lies outside path 2's forward final segment","#c22f2f",10.5);
+  }
+  if(sig>0&&solutionFeasible){
+    for(let k=0;k<24;k++){
+      const g1=GD[2*k],g2=GD[2*k+1];
+      const w=Math.exp(-0.5*(g1*g1+g2*g2)/2);
+      const S1=[RX,Q1t[1]+g1*sig],S2=[LX,Q2t[1]+g2*sig];
+      const Ls=dist(BS,S1)+dist(S1,S2)+dist(S2,UE);
+      const pp={L:Ls,u:dirOf(aoaOf(unit(sub(S2,UE)))+dH),d:unit(sub(S1,BS))};
+      const st=strip2(pp);
+      if(!st.feasible)continue;
+      const nrm2=[-st.line2.v[1],st.line2.v[0]];
+      const dd=nrm2[0]*(U1[0]-st.line2.o[0])+nrm2[1]*(U1[1]-st.line2.o[1]);
+      const mk=((U1[0]-st.line2.o[0])*st.line2.v[0]+(U1[1]-st.line2.o[1])*st.line2.v[1])/st.scale;
+      if(!(mk>0&&mk<st.rem2&&Math.abs(dd)<1e-5))continue;
+      const Uk=[U1[0]-dd*nrm2[0],U1[1]-dd*nrm2[1]];
+      out+=`<circle cx="${S1[0]}" cy="${S1[1]}" r="${1.4+1.4*w}" fill="#0e8f7e" opacity="${0.14+0.4*w}"/>`
+          +`<circle cx="${S2[0]}" cy="${S2[1]}" r="${1.4+1.4*w}" fill="#0e8f7e" opacity="${0.14+0.4*w}"/>`
+          +`<circle cx="${st.E2[0]}" cy="${st.E2[1]}" r="${1.6+1.6*w}" fill="#7c4dbe" opacity="${0.12+0.4*w}"/>`
+          +`<circle cx="${Uk[0]}" cy="${Uk[1]}" r="${1.6+1.6*w}" fill="#2ca02c" opacity="${0.12+0.4*w}"/>`;
+    }
+  }
+  out+=bsMark(BS,"BS",-30,4);
+  svg.innerHTML=out;
+  $("stat34").innerHTML= step<4 ? "" :
+    (!S.feasible?`<span class="off">✗ rejected (P⁽¹⁾, θ): ${S.reason}.</span>`:
+    !solutionFeasible?`<span class="off">✗ rejected (P⁽¹⁾, θ): the declared UE₂ = UE₁ lies outside path 2's remaining forward segment.</span>`:
+    Math.abs(dH)<0.05?
+    `∠(line 1, line 2) = <b>${(Math.asin(Math.min(1,sinA))*180/Math.PI).toFixed(2)}°</b> · offset = <b>${(off*M_PER_PX).toFixed(2)} m</b> — coincident for every P⁽¹⁾: no crossing exists; the double bounce adds no UE information in a corridor.`:
+    `∠(line 1, line 2) = <b>${(Math.asin(Math.min(1,sinA))*180/Math.PI).toFixed(2)}° = |θ|/2</b> · UE₁ off line 2 = <b>${(off*M_PER_PX).toFixed(2)} m</b> · all segment lengths positive ✓ — θ remains coupled to wall tilt.`);
+}
+["s34P","s34H","s34L","s34A","s34D","sS34"].forEach(id=>$(id).addEventListener("input",render));
+$("b34R").addEventListener("click",()=>{["s34L","s34A","s34D"].forEach(id=>$(id).value=0);render();});
+$("b34Prev").addEventListener("click",()=>goStep(step-1));
+$("b34Next").addEventListener("click",()=>goStep(step+1));
+goStep(1);
+})();
+
+/* ---- section 4.3: unknown UE, triple bounce — two rungs of changed foci ---- */
+(function(){
+const svg=$("svg33");
+if(!svg)return;
+const GD=gaussians(311,120);
+const hitL=(a,b,c,n)=>{const r=sub(b,a);const t=((c[0]-a[0])*n[0]+(c[1]-a[1])*n[1])/((r[0]*n[0]+r[1]*n[1])||1e-12);return [a[0]+t*r[0],a[1]+t*r[1]];};
+const refl=(d,n)=>{const k=d[0]*n[0]+d[1]*n[1];return [d[0]-2*k*n[0],d[1]-2*k*n[1]];};
+const crossL=(l1,l2)=>{const den=l1.v[0]*l2.v[1]-l1.v[1]*l2.v[0];if(Math.abs(den)<1e-9)return null;
+  const w=[l2.o[0]-l1.o[0],l2.o[1]-l1.o[1]];const t=(w[0]*l2.v[1]-w[1]*l2.v[0])/den;
+  return [l1.o[0]+t*l1.v[0],l1.o[1]+t*l1.v[1]];};
+const fullLine=(l,c,dash,o)=>seg([l.o[0]-1200*l.v[0],l.o[1]-1200*l.v[1]],[l.o[0]+1200*l.v[0],l.o[1]+1200*l.v[1]],c,1.6,dash,o);
+const CAP=["",
+ "① <b>The unknowns.</b> Three measured paths: path 1 (single, wall A), path 2 (double, A→B), path 3 (triple, A→B→C). Three walls and the UE, all unknown.",
+ "② <b>Path 1 = §4.1.</b> E⁽¹⁾ = the full AoD walk; P⁽¹⁾ hypothesizes the bounce (slider); UE₁ sits down the reversed AoA; candidates sweep line 1 ⊥ wall A, and P⁽¹⁾ fixes the wall-A hypothesis.",
+ "③ <b>Path 2 = §4.2.</b> Stripped at wall A (P₁, reflect, E₂), its candidates sweep line 2 ⊥ wall B; the crossing with line 1 solves P₂ and the wall-B hypothesis follows.",
+ "④ <b>Path 3 — the focus climbs two rungs.</b> Its AoD ray reflects at hypothesized wall A (R₁), again at hypothesized wall B (R₂); the leftover walk lands on E₃, the doubly-stripped mirrored UE.",
+ "⑤ <b>Line 3 ⊥ wall C.</b> The candidates sweep the third family; the crossing with line 1 solves the last bounce and the wall-C hypothesis follows — the whole three-wall map from one slider.",
+ "⑥ <b>The verdict — after enforcing ray order.</b> Sweep P⁽¹⁾ and θ: all three body-frame AoAs rotate under the same heading candidate, changing every recovered wall and bounce. A member is retained only if P₁, P₂, and P₃ occur in forward order and every leg fits inside L₃. Feasible members preserve the joint ambiguity; red members are algebraic line intersections with negative or reversed path lengths and are not physical triple-bounce solutions. Slide σ only after a feasible member is selected."];
+let step=1;
+function goStep(n){
+  step=Math.max(1,Math.min(6,n));
+  $("cap33").innerHTML=CAP[step];
+  $("b33Prev").disabled=step===1; $("b33Next").disabled=step===6;
+  $("o33Step").textContent=step+" / 6";
+  render();
+}
+function render(){
+  const {BS,UE,AY,AX0,AX1,BC,BEND,CC,CEND,BN,CN,VA1,VA2,VA3}=D6;
+  const sA1=(AY-UE[1])/(VA1[1]-UE[1]);
+  const B1=[UE[0]+sA1*(VA1[0]-UE[0]),AY];
+  const Q2t=hitL(UE,VA2,BC,BN);
+  const tA2=(AY-Q2t[1])/(VA1[1]-Q2t[1]);
+  const Q1t=[Q2t[0]+tA2*(VA1[0]-Q2t[0]),AY];
+  const P3t=hitL(UE,VA3,CC,CN);
+  const P2t=hitL(P3t,VA2,BC,BN);
+  const tA3=(AY-P2t[1])/(VA1[1]-P2t[1]);
+  const P1t=[P2t[0]+tA3*(VA1[0]-P2t[0]),AY];
+  const dH=+$("s33H").value;
+  $("o33H").textContent=(dH>0?"+":"")+dH.toFixed(1)+"°";
+  const p1={L:dist(UE,VA1),u:dirOf(aoaOf(unit(sub(VA1,UE)))+dH),d:unit(sub(B1,BS))};
+  const p2={L:dist(UE,VA2),u:dirOf(aoaOf(unit(sub(VA2,UE)))+dH),d:unit(sub(Q1t,BS))};
+  const L3=dist(UE,VA3)+(+$("s33L").value)/M_PER_PX;
+  const phi3=aoaOf(unit(sub(VA3,UE)))+(+$("s33A").value);
+  const psi3=aoaOf(unit(sub(P1t,BS)))+(+$("s33D").value);
+  const p3={L:L3,u:dirOf(phi3+dH),d:dirOf(psi3)};
+  const sig=+$("sS33").value;
+  $("oS33").textContent=(sig*M_PER_PX).toFixed(1)+" m";
+  $("o33L").textContent=(L3*M_PER_PX).toFixed(1)+" m";
+  $("o33A").textContent=degFmt(phi3);
+  $("o33D").textContent=degFmt(psi3);
+  const E1=[BS[0]+p1.L*p1.d[0],BS[1]+p1.L*p1.d[1]];
+  const line1={o:[BS[0]-p1.L*p1.u[0],BS[1]-p1.L*p1.u[1]],v:unit([p1.d[0]+p1.u[0],p1.d[1]+p1.u[1]])};
+  const t1=(+$("s33P").value)*p1.L;
+  const Pw=[BS[0]+t1*p1.d[0],BS[1]+t1*p1.d[1]];
+  const U1=[Pw[0]-(p1.L-t1)*p1.u[0],Pw[1]-(p1.L-t1)*p1.u[1]];
+  const nA=unit(sub(U1,E1)), wA=[-nA[1],nA[0]];
+  $("o33P").textContent=(t1*M_PER_PX).toFixed(1)+" m";
+  const H12=hitRayLine(BS,p2.d,Pw,nA);
+  const P12=H12?.p??null, e2=refl(p2.d,nA), rem2=p2.L-(H12?.t??NaN);
+  const doubleEntry=!!H12&&H12.t>0&&rem2>0;
+  const E2=doubleEntry?[P12[0]+rem2*e2[0],P12[1]+rem2*e2[1]]:null;
+  const line2=doubleEntry?{o:[P12[0]-rem2*p2.u[0],P12[1]-rem2*p2.u[1]],v:unit([e2[0]+p2.u[0],e2[1]+p2.u[1]])}:null;
+  const X2raw=line2?crossL(line1,line2):null;
+  const sc2=Math.hypot(e2[0]+p2.u[0],e2[1]+p2.u[1]);
+  const m2=X2raw&&sc2>1e-9?((X2raw[0]-line2.o[0])*line2.v[0]+(X2raw[1]-line2.o[1])*line2.v[1])/sc2:NaN;
+  const doubleFeasible=doubleEntry&&!!X2raw&&Number.isFinite(m2)&&m2>0&&m2<rem2;
+  const X2=doubleFeasible?X2raw:null;
+  let P2s=null,nB=null,wB=null;
+  if(doubleFeasible){
+    P2s=[P12[0]+m2*e2[0],P12[1]+m2*e2[1]];
+    nB=unit(sub(X2,E2)); wB=[-nB[1],nB[0]];
+  }
+  function strip3(pp){
+    if(!doubleFeasible)return {feasible:false,reason:"path 2 is infeasible"};
+    const H31=hitRayLine(BS,pp.d,Pw,nA);
+    if(!H31||H31.t<=0)return {feasible:false,reason:"bounce 1 lies behind the BS"};
+    const R1=H31.p;
+    const e31=refl(pp.d,nA);
+    const H32=hitRayLine(R1,e31,P2s,nB);
+    if(!H32||H32.t<=0)return {feasible:false,reason:"bounce 2 lies behind bounce 1"};
+    const R2=H32.p;
+    const e32=refl(e31,nB);
+    const rem3=pp.L-H31.t-H32.t;
+    if(!(rem3>0))return {feasible:false,reason:"the first two legs exhaust L₃"};
+    const E3=[R2[0]+rem3*e32[0],R2[1]+rem3*e32[1]];
+    const line3={o:[R2[0]-rem3*pp.u[0],R2[1]-rem3*pp.u[1]],v:unit([e32[0]+pp.u[0],e32[1]+pp.u[1]])};
+    const X3raw=crossL(line1,line3),scale=Math.hypot(e32[0]+pp.u[0],e32[1]+pp.u[1]);
+    const m3=X3raw&&scale>1e-9?((X3raw[0]-line3.o[0])*line3.v[0]+(X3raw[1]-line3.o[1])*line3.v[1])/scale:NaN;
+    const feasible=!!X3raw&&Number.isFinite(m3)&&m3>0&&m3<rem3;
+    return {R1,R2,E3,e32,scale,line3,X3:feasible?X3raw:null,m3,rem3,feasible,reason:feasible?"":"the line crossing lies outside the forward final segment"};
+  }
+  const S=strip3(p3);
+  let P3s=null,nC=null,wC=null;
+  if(S.feasible){
+    P3s=[S.R2[0]+S.m3*S.e32[0],S.R2[1]+S.m3*S.e32[1]];
+    nC=unit(sub(S.X3,S.E3)); wC=[-nC[1],nC[0]];
+  }
+  let out="";
+  out+=seg([AX0,AY],[AX1,AY],"#8a97a3",3,null,0.3)+seg(BC,BEND,"#8a97a3",3,null,0.3)+seg(CC,CEND,"#8a97a3",3,null,0.3);
+  out+=txt(AX0+4,AY-8,"wall A (reference)","#8a97a3",10)+txt(BEND[0]-8,BEND[1]-12,"wall B","#8a97a3",10,"end")+txt(CEND[0]-8,CEND[1]+16,"wall C","#8a97a3",10,"end");
+  if(step>=2){
+    out+=arrow(BS,E1,"#5d3691",1.3,"6 4",0.6);
+    out+=`<rect x="${E1[0]-5}" y="${E1[1]-5}" width="10" height="10" transform="rotate(45 ${E1[0]} ${E1[1]})" fill="#7c4dbe"/>`+txt(E1[0]+9,E1[1]+4,"E⁽¹⁾","#5d3691",10);
+    out+=fullLine(line1,"#0e8f7e","7 5",0.5);
+    out+=arrow(BS,Pw,"#51606e",1.7)+arrow(Pw,U1,"#51606e",1.7);
+    out+=`<circle cx="${Pw[0]}" cy="${Pw[1]}" r="4.5" fill="#e8720c"/>`+txt(Pw[0]+8,Pw[1]-8,"P⁽¹⁾","#b45607",10.5);
+    out+=`<circle cx="${U1[0]}" cy="${U1[1]}" r="6" fill="#2ca02c" stroke="#fff" stroke-width="1.6"/>`+txt(U1[0]+10,U1[1]+4,"UE₁","#1d7a1d",11)+headingMark(U1,dH);
+    out+=seg([Pw[0]-140*wA[0],Pw[1]-140*wA[1]],[Pw[0]+140*wA[0],Pw[1]+140*wA[1]],"#16222e",3.6,null,0.85);
+    out+=txt(Pw[0]-140*wA[0]-6,Pw[1]-140*wA[1]+4,"wall A hyp.","#16222e",10,"end");
+  }
+  if(step>=3&&doubleFeasible){
+    out+=arrow(BS,P12,"#7c4dbe",1.3,"5 4",0.6);
+    out+=`<circle cx="${P12[0]}" cy="${P12[1]}" r="4" fill="#7c4dbe"/>`;
+    out+=arrow(P12,E2,"#7c4dbe",1.1,"5 4",0.5);
+    out+=`<rect x="${E2[0]-4.5}" y="${E2[1]-4.5}" width="9" height="9" transform="rotate(45 ${E2[0]} ${E2[1]})" fill="#7c4dbe" opacity="0.8"/>`+txt(E2[0]+9,E2[1]+4,"E₂","#5d3691",10);
+    out+=fullLine(line2,"#0e8f7e","3 5",0.45);
+    out+=seg([P2s[0]-110*wB[0],P2s[1]-110*wB[1]],[P2s[0]+110*wB[0],P2s[1]+110*wB[1]],"#16222e",3.6,null,0.85);
+    out+=txt(P2s[0]+110*wB[0]+6,P2s[1]+110*wB[1]+4,"wall B hyp.","#16222e",10);
+  }else if(step>=3){
+    out+=txt(BS[0]+20,BS[1]+42,"path 2 infeasible for selected (P⁽¹⁾, θ)","#c22f2f",11);
+  }
+  if(step>=4&&S.R1){
+    out+=arrow(BS,S.R1,"#b45607",1.2,"4 4",0.6)+arrow(S.R1,S.R2,"#b45607",1.2,"4 4",0.6)+arrow(S.R2,S.E3,"#b45607",1.1,"4 4",0.5);
+    out+=`<circle cx="${S.R1[0]}" cy="${S.R1[1]}" r="3.6" fill="#e8720c"/>`+txt(S.R1[0]+7,S.R1[1]-7,"R₁","#b45607",10);
+    out+=`<circle cx="${S.R2[0]}" cy="${S.R2[1]}" r="3.6" fill="#e8720c"/>`+txt(S.R2[0]+7,S.R2[1]-7,"R₂","#b45607",10);
+    out+=`<rect x="${S.E3[0]-4.5}" y="${S.E3[1]-4.5}" width="9" height="9" transform="rotate(45 ${S.E3[0]} ${S.E3[1]})" fill="#7c4dbe" opacity="0.8"/>`+txt(S.E3[0]+9,S.E3[1]+4,"E₃","#5d3691",10);
+  }else if(step>=4){
+    out+=txt(BS[0]+20,BS[1]+62,`path 3 infeasible: ${S.reason}`,"#c22f2f",11);
+  }
+  if(step>=5&&S.feasible){
+    out+=fullLine(S.line3,"#0e8f7e","1 5",0.5);
+    out+=`<path d="M${S.X3[0]-6} ${S.X3[1]-6}L${S.X3[0]+6} ${S.X3[1]+6}M${S.X3[0]-6} ${S.X3[1]+6}L${S.X3[0]+6} ${S.X3[1]-6}" stroke="#0e8f7e" stroke-width="2.2"/>`;
+    if(P3s){
+      out+=seg([P3s[0]-100*wC[0],P3s[1]-100*wC[1]],[P3s[0]+100*wC[0],P3s[1]+100*wC[1]],"#16222e",3.6,null,0.85);
+      out+=txt(P3s[0]-100*wC[0]-6,P3s[1]-100*wC[1]+14,"wall C hyp.","#16222e",10,"end");
+    }
+  }
+  if(sig>0&&S.feasible){
+    const wAd=[1,0], wBd=D6.BD, wCd=D6.CD;
+    for(let k=0;k<24;k++){
+      const g1=GD[3*k],g2=GD[3*k+1],g3=GD[3*k+2];
+      const w=Math.exp(-0.5*(g1*g1+g2*g2+g3*g3)/3);
+      const S1=[P1t[0]+g1*sig*wAd[0],P1t[1]+g1*sig*wAd[1]];
+      const S2=[P2t[0]+g2*sig*wBd[0],P2t[1]+g2*sig*wBd[1]];
+      const S3=[P3t[0]+g3*sig*wCd[0],P3t[1]+g3*sig*wCd[1]];
+      const Ls=dist(BS,S1)+dist(S1,S2)+dist(S2,S3)+dist(S3,UE);
+      const pp={L:Ls,u:dirOf(aoaOf(unit(sub(S3,UE)))+dH),d:unit(sub(S1,BS))};
+      const st=strip3(pp);
+      if(!st.feasible)continue;
+      out+=`<circle cx="${S1[0]}" cy="${S1[1]}" r="${1.4+1.4*w}" fill="#0e8f7e" opacity="${0.14+0.4*w}"/>`
+          +`<circle cx="${S2[0]}" cy="${S2[1]}" r="${1.4+1.4*w}" fill="#0e8f7e" opacity="${0.14+0.4*w}"/>`
+          +`<circle cx="${S3[0]}" cy="${S3[1]}" r="${1.4+1.4*w}" fill="#0e8f7e" opacity="${0.14+0.4*w}"/>`
+          +`<circle cx="${st.E3[0]}" cy="${st.E3[1]}" r="${1.6+1.6*w}" fill="#7c4dbe" opacity="${0.12+0.4*w}"/>`
+          +`<circle cx="${st.X3[0]}" cy="${st.X3[1]}" r="${1.6+1.6*w}" fill="#2ca02c" opacity="${0.12+0.4*w}"/>`;
+    }
+  }
+  out+=bsMark(BS,"BS",-30,4);
+  svg.innerHTML=out;
+  const g2v=doubleFeasible?dist(X2,U1)*M_PER_PX:NaN, g3v=S.feasible?dist(S.X3,U1)*M_PER_PX:NaN;
+  $("stat33").innerHTML= step<3 ? "" :
+    (!doubleFeasible?`<span class="off">✗ rejected (P⁽¹⁾, θ): the two-bounce prefix violates forward ray order or its delay budget.</span>`:
+     !S.feasible?`path-2 prefix ✓ · <span class="off">path 3 rejected: ${S.reason}.</span>`:
+     `ordered path-2 crossing ↔ UE₁: <b>${g2v.toFixed(2)} m</b> · ordered path-3 crossing ↔ UE₁: <b>${g3v.toFixed(2)} m</b> · all segment lengths positive ✓`);
+}
+["s33P","s33H","s33L","s33A","s33D","sS33"].forEach(id=>$(id).addEventListener("input",render));
+$("b33R").addEventListener("click",()=>{["s33L","s33A","s33D"].forEach(id=>$(id).value=0);render();});
+$("b33Prev").addEventListener("click",()=>goStep(step-1));
+$("b33Next").addEventListener("click",()=>goStep(step+1));
+goStep(1);
+})();
+
+/* ---- section 4.5: unknown UE, corridor triple — parity seals the slide ---- */
+(function(){
+const svg=$("svg35");
+if(!svg)return;
+const GD=gaussians(407,120);
+const CAP=["",
+ "① <b>The unknowns.</b> Three corridor paths: single (R), double (R→L), triple (R→L→R). Two walls and the UE unknown.",
+ "② <b>The ladder so far.</b> Path 1 hypothesizes wall R; path 2 may define wall L only if its forward hit, remaining delay, and declared UE₂ = UE₁ all pass the ordered-segment tests of §4.4.",
+ "③ <b>Path 3 — two rungs up.</b> Its AoD ray must reach wall R (R₁), the reflected forward ray must reach wall L (R₂), and a positive leftover walk then lands on E₃. Any failed rung rejects the slice.",
+ "④ <b>Line 3 ≡ line 1.</b> The triple's candidates sweep a line ⊥ wall R — at the synthetic reference heading (θ = 0), the <em>same</em> line again, exactly, for every P⁽¹⁾ (statline). That value is not supplied to the estimator. Parity: odd or even, a corridor path's last wall is always parallel to the first.",
+ "⑤ <b>The verdict — and illustrative smear.</b> Higher order prunes infeasible (P⁽¹⁾, θ) slices but does not resolve the corridor slide that survives. On each valid slice, line 3 closes at UE₁ and heading stays coupled to recovered-wall tilt; illustrative per-bounce incidence-point smear broadens only those ordered paths and is not surface scattering γ<sup>sc</sup>."];
+let step=1;
+function goStep(n){
+  step=Math.max(1,Math.min(5,n));
+  $("cap35").innerHTML=CAP[step];
+  $("b35Prev").disabled=step===1; $("b35Next").disabled=step===5;
+  $("o35Step").textContent=step+" / 5";
+  render();
+}
+function render(){
+  const {BS,UE,LX,RX,WY0,WY1,VA1,VA2,VA3}=D7;
+  const sR=(RX-UE[0])/(VA1[0]-UE[0]); const B1=[RX,UE[1]+sR*(VA1[1]-UE[1])];
+  const q2=(LX-UE[0])/(VA2[0]-UE[0]); const Q2t=[LX,UE[1]+q2*(VA2[1]-UE[1])];
+  const q1=(RX-Q2t[0])/(VA1[0]-Q2t[0]); const Q1t=[RX,Q2t[1]+q1*(VA1[1]-Q2t[1])];
+  const t3=(RX-UE[0])/(VA3[0]-UE[0]); const P3t=[RX,UE[1]+t3*(VA3[1]-UE[1])];
+  const t2s=(LX-P3t[0])/(VA2[0]-P3t[0]); const P2t=[LX,P3t[1]+t2s*(VA2[1]-P3t[1])];
+  const t1s=(RX-P2t[0])/(VA1[0]-P2t[0]); const P1t=[RX,P2t[1]+t1s*(VA1[1]-P2t[1])];
+  const dH=+$("s35H").value;
+  $("o35H").textContent=(dH>0?"+":"")+dH.toFixed(1)+"°";
+  const p1={L:dist(UE,VA1),u:dirOf(aoaOf(unit(sub(VA1,UE)))+dH),d:unit(sub(B1,BS))};
+  const p2={L:dist(UE,VA2),u:dirOf(aoaOf(unit(sub(VA2,UE)))+dH),d:unit(sub(Q1t,BS))};
+  const L3=dist(UE,VA3)+(+$("s35L").value)/M_PER_PX;
+  const phi3=aoaOf(unit(sub(VA3,UE)))+(+$("s35A").value);
+  const psi3=aoaOf(unit(sub(P1t,BS)))+(+$("s35D").value);
+  const p3={L:L3,u:dirOf(phi3+dH),d:dirOf(psi3)};
+  const sig=+$("sS35").value;
+  $("oS35").textContent=(sig*M_PER_PX).toFixed(1)+" m";
+  $("o35L").textContent=(L3*M_PER_PX).toFixed(1)+" m";
+  $("o35A").textContent=degFmt(phi3);
+  $("o35D").textContent=degFmt(psi3);
+  const E1=[BS[0]+p1.L*p1.d[0],BS[1]+p1.L*p1.d[1]];
+  const line1={o:[BS[0]-p1.L*p1.u[0],BS[1]-p1.L*p1.u[1]],v:unit([p1.d[0]+p1.u[0],p1.d[1]+p1.u[1]])};
+  const f=+$("s35P").value;
+  const t1=f*p1.L;
+  const Pw=[BS[0]+t1*p1.d[0],BS[1]+t1*p1.d[1]];
+  const U1=[Pw[0]-(p1.L-t1)*p1.u[0],Pw[1]-(p1.L-t1)*p1.u[1]];
+  const nA=unit(sub(U1,E1)), wA=[-nA[1],nA[0]];
+  $("o35P").textContent=(t1*M_PER_PX).toFixed(1)+" m";
+  const H2=hitRayLine(BS,p2.d,Pw,nA);
+  const k2=p2.d[0]*nA[0]+p2.d[1]*nA[1];
+  const P12=H2?.p??null;
+  const e2=[p2.d[0]-2*k2*nA[0],p2.d[1]-2*k2*nA[1]];
+  const rem2=p2.L-(H2?.t??NaN);
+  const sc2=Math.hypot(e2[0]+p2.u[0],e2[1]+p2.u[1]);
+  const doubleEntry=!!H2&&H2.t>0&&rem2>0&&sc2>1e-9;
+  const E2=doubleEntry?[P12[0]+rem2*e2[0],P12[1]+rem2*e2[1]]:null;
+  const lv2=doubleEntry?{o:[P12[0]-rem2*p2.u[0],P12[1]-rem2*p2.u[1]],v:unit([e2[0]+p2.u[0],e2[1]+p2.u[1]])}:null;
+  const nrm2=lv2?[-lv2.v[1],lv2.v[0]]:null;
+  const off2=lv2?Math.abs(nrm2[0]*(U1[0]-lv2.o[0])+nrm2[1]*(U1[1]-lv2.o[1])):NaN;
+  const m2=lv2?((U1[0]-lv2.o[0])*lv2.v[0]+(U1[1]-lv2.o[1])*lv2.v[1])/sc2:NaN;
+  const doubleFeasible=doubleEntry&&Number.isFinite(m2)&&m2>0&&m2<rem2&&off2<1e-5;
+  const P2s=doubleFeasible?[P12[0]+m2*e2[0],P12[1]+m2*e2[1]]:null;
+  const nB=doubleFeasible?unit(sub(U1,E2)):null, wB=nB?[-nB[1],nB[0]]:null;
+  function strip3(pp){
+    if(!doubleFeasible)return {feasible:false,reason:"path 2 cannot define a physical wall L"};
+    const H31=hitRayLine(BS,pp.d,Pw,nA);
+    if(!H31||H31.t<=0)return {feasible:false,reason:"bounce 1 lies behind the BS"};
+    const R1=H31.p, k3=pp.d[0]*nA[0]+pp.d[1]*nA[1];
+    const e31=[pp.d[0]-2*k3*nA[0],pp.d[1]-2*k3*nA[1]];
+    const k31=(e31[0]*nB[0]+e31[1]*nB[1]);
+    const H32=hitRayLine(R1,e31,P2s,nB);
+    if(!H32||H32.t<=0)return {feasible:false,reason:"bounce 2 lies behind bounce 1"};
+    const R2=H32.p;
+    const e32=[e31[0]-2*k31*nB[0],e31[1]-2*k31*nB[1]];
+    const rem3=pp.L-H31.t-H32.t;
+    if(!(rem3>0))return {feasible:false,reason:"the first two legs exhaust L₃"};
+    const E3=[R2[0]+rem3*e32[0],R2[1]+rem3*e32[1]];
+    const scale=Math.hypot(e32[0]+pp.u[0],e32[1]+pp.u[1]);
+    if(!(scale>1e-9))return {feasible:false,reason:"the final-ray family is degenerate"};
+    const line3={o:[R2[0]-rem3*pp.u[0],R2[1]-rem3*pp.u[1]],v:unit([e32[0]+pp.u[0],e32[1]+pp.u[1]])};
+    const nrm=[-line3.v[1],line3.v[0]];
+    const off=Math.abs(nrm[0]*(U1[0]-line3.o[0])+nrm[1]*(U1[1]-line3.o[1]));
+    const m3=((U1[0]-line3.o[0])*line3.v[0]+(U1[1]-line3.o[1])*line3.v[1])/scale;
+    const feasible=Number.isFinite(m3)&&m3>0&&m3<rem3&&off<1e-5;
+    return {R1,R2,E3,line3,e32,rem3,m3,off,feasible,reason:feasible?"":"UE₁ lies outside path 3's forward final segment"};
+  }
+  const S=strip3(p3);
+  const sinA=S.feasible?Math.abs(line1.v[0]*S.line3.v[1]-line1.v[1]*S.line3.v[0]):NaN;
+  const off=S.feasible?S.off:NaN;
+  let out="";
+  out+=seg([LX,WY0],[LX,WY1],"#8a97a3",3,null,0.32)+seg([RX,WY0],[RX,WY1],"#8a97a3",3,null,0.32);
+  out+=txt(LX-8,WY0+14,"wall L (reference)","#8a97a3",10,"end")+txt(RX+8,WY0+14,"wall R","#8a97a3",10);
+  if(step>=2){
+    out+=seg([line1.o[0]-900*line1.v[0],line1.o[1]-900*line1.v[1]],[line1.o[0]+900*line1.v[0],line1.o[1]+900*line1.v[1]],"#0e8f7e",1.6,"7 5",0.55);
+    out+=`<rect x="${E1[0]-5}" y="${E1[1]-5}" width="10" height="10" transform="rotate(45 ${E1[0]} ${E1[1]})" fill="#7c4dbe"/>`+txt(E1[0]+9,E1[1]+4,"E⁽¹⁾","#5d3691",10);
+    out+=`<circle cx="${Pw[0]}" cy="${Pw[1]}" r="4.5" fill="#e8720c"/>`+txt(Pw[0]+8,Pw[1]-8,"P⁽¹⁾","#b45607",10.5);
+    out+=`<circle cx="${U1[0]}" cy="${U1[1]}" r="6" fill="#2ca02c" stroke="#fff" stroke-width="1.6"/>`+txt(U1[0]+10,U1[1]+4,"UE₁","#1d7a1d",11)+headingMark(U1,dH);
+    out+=seg([Pw[0]-170*wA[0],Pw[1]-170*wA[1]],[Pw[0]+170*wA[0],Pw[1]+170*wA[1]],"#16222e",3.4,null,0.85);
+    out+=txt(Pw[0]+170*wA[0]+6,Pw[1]+170*wA[1]+4,"wall R hyp.","#16222e",10);
+    if(doubleFeasible){
+      out+=seg([P2s[0]-170*wB[0],P2s[1]-170*wB[1]],[P2s[0]+170*wB[0],P2s[1]+170*wB[1]],"#16222e",3.4,null,0.85);
+      out+=txt(P2s[0]-170*wB[0]-6,P2s[1]-170*wB[1]+4,"wall L hyp.","#16222e",10,"end");
+    }else{
+      out+=txt(U1[0]+18,U1[1]+38,"path 2 rejected: no ordered wall-L solution","#c22f2f",10.5);
+    }
+    out+=txt(line1.o[0]+430*line1.v[0],line1.o[1]+430*line1.v[1]-8,"line 1","#0a6b5e",10);
+  }
+  if(step>=3&&S.R1){
+    out+=arrow(BS,S.R1,"#b45607",1.2,"4 4",0.6)+arrow(S.R1,S.R2,"#b45607",1.2,"4 4",0.6)+arrow(S.R2,S.E3,"#b45607",1.1,"4 4",0.5);
+    out+=`<circle cx="${S.R1[0]}" cy="${S.R1[1]}" r="3.6" fill="#e8720c"/>`+txt(S.R1[0]+7,S.R1[1]-7,"R₁","#b45607",10);
+    out+=`<circle cx="${S.R2[0]}" cy="${S.R2[1]}" r="3.6" fill="#e8720c"/>`+txt(S.R2[0]-7,S.R2[1]-7,"R₂","#b45607",10,"end");
+    out+=`<rect x="${S.E3[0]-4.5}" y="${S.E3[1]-4.5}" width="9" height="9" transform="rotate(45 ${S.E3[0]} ${S.E3[1]})" fill="#7c4dbe" opacity="0.8"/>`+txt(S.E3[0]+9,S.E3[1]+4,"E₃","#5d3691",10);
+  }else if(step>=3){
+    out+=txt(BS[0]+20,BS[1]+50,`path 3 rejected: ${S.reason}`,"#c22f2f",10.5);
+  }
+  if(step>=4&&S.feasible){
+    out+=seg([S.line3.o[0]-900*S.line3.v[0],S.line3.o[1]-900*S.line3.v[1]],[S.line3.o[0]+900*S.line3.v[0],S.line3.o[1]+900*S.line3.v[1]],"#b45607",1.6,"2 6",0.7);
+    out+=txt(line1.o[0]+430*line1.v[0],line1.o[1]+430*line1.v[1]+16,Math.abs(dH)<0.05?"line 3 ≡ line 1":"line 3 — wedged |θ|/2 off line 1, still through UE₁","#b45607",10);
+  }else if(step>=4&&S.R1){
+    out+=txt(U1[0]+18,U1[1]+56,`rejected: ${S.reason}`,"#c22f2f",10.5);
+  }
+  if(sig>0&&S.feasible){
+    for(let k=0;k<24;k++){
+      const g1=GD[3*k],g2=GD[3*k+1],g3=GD[3*k+2];
+      const w=Math.exp(-0.5*(g1*g1+g2*g2+g3*g3)/3);
+      const S1=[RX,P1t[1]+g1*sig],S2=[LX,P2t[1]+g2*sig],S3=[RX,P3t[1]+g3*sig];
+      const Ls=dist(BS,S1)+dist(S1,S2)+dist(S2,S3)+dist(S3,UE);
+      const pp={L:Ls,u:dirOf(aoaOf(unit(sub(S3,UE)))+dH),d:unit(sub(S1,BS))};
+      const st=strip3(pp);
+      if(!st.feasible)continue;
+      const nrm2=[-st.line3.v[1],st.line3.v[0]];
+      const dd=nrm2[0]*(U1[0]-st.line3.o[0])+nrm2[1]*(U1[1]-st.line3.o[1]);
+      const Uk=[U1[0]-dd*nrm2[0],U1[1]-dd*nrm2[1]];
+      out+=`<circle cx="${S1[0]}" cy="${S1[1]}" r="${1.4+1.4*w}" fill="#0e8f7e" opacity="${0.14+0.4*w}"/>`
+          +`<circle cx="${S2[0]}" cy="${S2[1]}" r="${1.4+1.4*w}" fill="#0e8f7e" opacity="${0.14+0.4*w}"/>`
+          +`<circle cx="${S3[0]}" cy="${S3[1]}" r="${1.4+1.4*w}" fill="#0e8f7e" opacity="${0.14+0.4*w}"/>`
+          +`<circle cx="${st.E3[0]}" cy="${st.E3[1]}" r="${1.6+1.6*w}" fill="#7c4dbe" opacity="${0.12+0.4*w}"/>`
+          +`<circle cx="${Uk[0]}" cy="${Uk[1]}" r="${1.6+1.6*w}" fill="#2ca02c" opacity="${0.12+0.4*w}"/>`;
+    }
+  }
+  out+=bsMark(BS,"BS",-30,4);
+  svg.innerHTML=out;
+  $("stat35").innerHTML= step<4 ? "" :
+    (!doubleFeasible?`<span class="off">✗ rejected (P⁽¹⁾, θ): path 2 cannot define an ordered wall-L bounce.</span>`:
+    !S.feasible?`path-2 prefix ✓ · <span class="off">path 3 rejected: ${S.reason}.</span>`:
+    Math.abs(dH)<0.05?
+    `∠(line 1, line 3) = <b>${(Math.asin(Math.min(1,sinA))*180/Math.PI).toFixed(2)}°</b> · offset = <b>${(off*M_PER_PX).toFixed(2)} m</b> — coincident for every P⁽¹⁾: parity seals the slide; no corridor order adds UE information.`:
+    `∠(line 1, line 3) = <b>${(Math.asin(Math.min(1,sinA))*180/Math.PI).toFixed(2)}° = |θ|/2</b> · UE₁ off line 3 = <b>${(off*M_PER_PX).toFixed(2)} m</b> · all segment lengths positive ✓ — θ remains coupled to wall tilt.`);
+}
+["s35P","s35H","s35L","s35A","s35D","sS35"].forEach(id=>$(id).addEventListener("input",render));
+$("b35R").addEventListener("click",()=>{["s35L","s35A","s35D"].forEach(id=>$(id).value=0);render();});
+$("b35Prev").addEventListener("click",()=>goStep(step-1));
+$("b35Next").addEventListener("click",()=>goStep(step+1));
+goStep(1);
+})();
+
+/* =================== SECTION 4.6 special case — globally referenced translations =================== */
+(function(){
+const svg36=$("svg36"), svg37=$("svg37");
+if(!svg36||!svg37)return;
+const add=(a,b)=>[a[0]+b[0],a[1]+b[1]];
+const scl=(a,s)=>[a[0]*s,a[1]*s];
+const dot=(a,b)=>a[0]*b[0]+a[1]*b[1];
+const rot9=(v,a)=>[v[0]*Math.cos(a)-v[1]*Math.sin(a),v[0]*Math.sin(a)+v[1]*Math.cos(a)];
+const g9=()=>((Math.random()+Math.random()+Math.random())*2-3);   // ~N(0,1)
+/* wall = { x : n·x = c } with unit normal n */
+const mirror9=(p,n,c)=>sub(p,scl(n,2*(dot(n,p)-c)));
+
+/* ---- scenes: ground truth used ONLY to synthesize data and report errors ---- */
+const T9=20*Math.PI/180;
+const SCN_J={ BS:[110,330],
+  walls:[ {n:[0,1],c:210,seg:[[30,210],[410,210]],lab:"wall A"},
+          {n:[Math.cos(T9),-Math.sin(T9)],c:0,seg:[[430,235],[430+Math.sin(T9)*330,235+Math.cos(T9)*330]],lab:"wall B"} ],
+  poses:[[175,455],[255,410],[330,428],[398,468]], vis:[0,0,1,1],
+  names:["A","B"], railHalf:170 };
+SCN_J.walls[1].c=dot(SCN_J.walls[1].n,[430,235]);
+const SCN_K={ BS:[160,560],
+  walls:[ {n:[1,0],c:330,seg:[[330,95],[330,640]],lab:"wall R"},
+          {n:[1,0],c:105,seg:[[105,95],[105,640]],lab:"wall L"} ],
+  poses:[[215,470],[258,405],[258,338],[222,268]], vis:[0,0,1,1],
+  names:["R","L"], railHalf:150 };
+
+/* clean or jittered single-bounce data at each pose off its visible wall */
+function synth9(S,noisy){
+  const jL=L=>noisy?L+g9()*3:L, jV=v=>noisy?rot9(v,g9()*0.5*Math.PI/180):v;
+  return S.poses.map((p,i)=>{
+    const w=S.walls[S.vis[i]], VA=mirror9(S.BS,w.n,w.c);
+    const t=(w.c-dot(w.n,p))/dot(w.n,sub(VA,p));
+    const P=add(p,scl(sub(VA,p),t));
+    return {L:jL(dist(p,VA)), u:jV(unit(sub(VA,p))), d:jV(unit(sub(P,S.BS)))};
+  });
+}
+/* everything the estimator derives WITHOUT ground truth — and WITHOUT UE headings:
+   the arrival angles are never used for geometry; wall directions come from motion */
+function derive9(S,data){
+  const E=data.map(m=>add(S.BS,scl(m.d,m.L)));                      // mirrored UEs (BS side only)
+  const o=S.poses.slice(1).map((p,i)=>sub(p,S.poses[i]));           // supplied map-frame displacement vectors
+  /* both poses of a side mirror across the same wall, so E_{i+1}-E_i is o reflected
+     in the wall direction: the normal is n̂ ∝ (ΔE − o), offset drops out entirely */
+  const nH=[0,1].map(side=>{
+    const i0=S.vis.indexOf(side);
+    return unit(sub(sub(E[i0+1],E[i0]),o[i0]));
+  });
+  const base=E.map((e,i)=>{const n=nH[S.vis[i]];return sub(e,scl(n,2*dot(n,e)));});
+  const ref=[0,1].map(side=>{const i=S.vis.indexOf(side);return {L:data[i].L,d:data[i].d};});
+  const cOf=(side,t)=>dot(nH[side],add(S.BS,scl(ref[side].d,t*ref[side].L)));
+  const tOf=(side,c)=>(c-dot(nH[side],S.BS))/(ref[side].L*dot(nH[side],ref[side].d));
+  const k=S.vis.findIndex((v,i)=>i>0&&v!==S.vis[i-1]);              // the cross-family link
+  /* [-2 n̂A | 2 n̂B][cA;cB] = o_{k-1} - (base_k - base_{k-1}) */
+  const M=[[-2*nH[0][0],2*nH[1][0]],[-2*nH[0][1],2*nH[1][1]]];
+  const rhs=sub(o[k-1],sub(base[k],base[k-1]));
+  const G00=M[0][0]*M[0][0]+M[1][0]*M[1][0], G11=M[0][1]*M[0][1]+M[1][1]*M[1][1],
+        G01=M[0][0]*M[0][1]+M[1][0]*M[1][1];
+  const tr=G00+G11, disc=Math.sqrt(Math.max(0,tr*tr/4-(G00*G11-G01*G01)));
+  const l1=tr/2+disc, l2=Math.max(0,tr/2-disc);
+  const v1=Math.abs(G01)>1e-9?unit([G01,l1-G00]):(G00>=G11?[1,0]:[0,1]);
+  const v2=[-v1[1],v1[0]];
+  const b=[M[0][0]*rhs[0]+M[1][0]*rhs[1], M[0][1]*rhs[0]+M[1][1]*rhs[1]];  // Mᵀrhs
+  const rankDef=l2<=1e-4;
+  let sol=scl(v1,dot(v1,b)/l1);
+  if(!rankDef) sol=add(sol,scl(v2,dot(v2,b)/l2));                   // exact LS (full rank)
+  /* rank-deficient case: nearest point of the solution LINE {v1·c = v1·b/l1} to a given c */
+  const lineProj=c=>add(c,scl(v1,dot(v1,b)/l1-dot(v1,c)));
+  return {nH,E,base,cOf,tOf,o,k,s1:Math.sqrt(l1),s2:Math.sqrt(l2),v2,sol,lineProj,rankDef};
+}
+const pose9=(D,S,i,c)=>add(D.base[i],scl(D.nH[S.vis[i]],2*c[S.vis[i]]));
+const gap9=(D,S,c)=>{const q=pose9(D,S,D.k,c),g=add(pose9(D,S,D.k-1,c),D.o[D.k-1]);return sub(q,g);};
+function inRes9(D,S,c){                       // within-family residual: blind to the offsets
+  let m=0;
+  for(let i=1;i<S.poses.length;i++){
+    if(S.vis[i]!==S.vis[i-1])continue;
+    const d=sub(sub(pose9(D,S,i,c),pose9(D,S,i-1,c)),D.o[i-1]);
+    m=Math.max(m,Math.hypot(d[0],d[1]));
+  }
+  return m;
+}
+const SIDE_COL=["#e8720c","#7c4dbe"], SIDE_DEEP=["#b45607","#5d3691"];
+
+/* shared painter */
+function paint9(S,D,data,c,ck,solved,ghostShift){
+  let s="";
+  for(const w of S.walls) s+=seg(w.seg[0],w.seg[1],"#8a97a3",3,null,0.32)
+    +txt(w.seg[0][0]+6,w.seg[0][1]-8,w.lab+" (truth, reference)","#8a97a3",10);
+  S.poses.forEach(p=>{s+=`<circle cx="${p[0]}" cy="${p[1]}" r="7" fill="none" stroke="#2ca02c" stroke-width="1.4" stroke-dasharray="3 3" opacity="0.55"/>`;});
+  s+=txt(S.poses[0][0]-12,S.poses[0][1]+24,"true t₁…t₄ (reference)","#1d7a1d",10,"end");
+  const q=S.poses.map((_,i)=>pose9(D,S,i,c));
+  /* candidate rails: each pose's §4.1 family */
+  if(ck.fam) S.poses.forEach((_,i)=>{
+    const side=S.vis[i], n=D.nH[side];
+    const a=add(D.base[i],scl(n,2*D.cOf(side,0.10))), b2=add(D.base[i],scl(n,2*D.cOf(side,0.92)));
+    s+=seg(a,b2,SIDE_COL[side],1.7,i===S.vis.indexOf(side)?null:"5 4",0.5);
+    if(i===S.vis.indexOf(side)) s+=txt(b2[0]+7,b2[1]+4,"family "+S.names[side]+" rail (⊥ wall "+S.names[side]+")",SIDE_DEEP[side],10);
+  });
+  /* mirrored UEs, straight from data */
+  if(ck.E){ D.E.forEach(e=>{s+=vaDot(e);});
+    s+=txt(D.E[0][0]+9,D.E[0][1]-8,"E₁…E₄ = BS + L·d̂ (mirrored UEs)","#5d3691",10); }
+  /* implied walls + per-pose bounce geometry */
+  if(ck.geo) [0,1].forEach(side=>{
+    const n=D.nH[side], wdir=[-n[1],n[0]], cc=c[side];
+    const i0=S.vis.indexOf(side), d0=data[i0].d;
+    const P0=add(S.BS,scl(d0,(cc-dot(n,S.BS))/dot(n,d0)));
+    s+=seg(sub(P0,scl(wdir,S.railHalf)),add(P0,scl(wdir,S.railHalf)),"#16222e",2.6,null,0.85)
+      +txt(P0[0]+10,P0[1]-10,"wall "+S.names[side]+" hypothesis","#16222e",10);
+    S.poses.forEach((_,i)=>{ if(S.vis[i]!==side)return;
+      const di=data[i].d, Pi=add(S.BS,scl(di,(cc-dot(n,S.BS))/dot(n,di)));
+      s+=seg(S.BS,Pi,SIDE_COL[side],1.1,"2 3",0.55)+seg(Pi,q[i],SIDE_COL[side],1.1,"2 3",0.55)
+        +`<circle cx="${Pi[0]}" cy="${Pi[1]}" r="3.4" fill="${SIDE_COL[side]}" opacity="0.8"/>`;
+    });
+  });
+  /* globally referenced displacement chain + the cross-family gap */
+  const gapv=gap9(D,S,c);
+  if(ck.odo){
+    for(let i=1;i<S.poses.length;i++) if(S.vis[i]===S.vis[i-1]){
+      s+=arrow(q[i-1],q[i],"#2ca02c",1.8,null,0.85)
+        +txt((q[i-1][0]+q[i][0])/2+7,(q[i-1][1]+q[i][1])/2-7,"o"+"₁₂₃"[i-1],"#1d7a1d",10);
+    }
+    const ghost=add(q[D.k-1],D.o[D.k-1]);
+    s+=arrow(q[D.k-1],ghost,"#2ca02c",1.8,"6 4",0.85)
+      +`<circle cx="${ghost[0]}" cy="${ghost[1]}" r="6.5" fill="none" stroke="#2ca02c" stroke-width="1.8" stroke-dasharray="3 3"/>`
+      +txt(ghost[0]+10,ghost[1]-9,"o₂ says t₃ lands here","#1d7a1d",10);
+    if(Math.hypot(gapv[0],gapv[1])>1.2) s+=seg(ghost,q[D.k],"#c22f2f",2.6)
+      +txt((ghost[0]+q[D.k][0])/2+8,(ghost[1]+q[D.k][1])/2+2,"gap","#c22f2f",11);
+  }
+  /* ghost solutions along the null direction */
+  if(ghostShift&&ck.ghost) for(const sgn of [-1,1]){
+    const cg=[c[0]+sgn*ghostShift*D.v2[0], c[1]+sgn*ghostShift*D.v2[1]];
+    const qg=S.poses.map((_,i)=>pose9(D,S,i,cg));
+    for(let i=1;i<qg.length;i++) s+=seg(qg[i-1],qg[i],"#0e8f7e",1.4,null,0.30);
+    qg.forEach(p=>{s+=`<circle cx="${p[0]}" cy="${p[1]}" r="4.5" fill="#0e8f7e" opacity="0.30"/>`;});
+    [0,1].forEach(side=>{
+      const n=D.nH[side], wdir=[-n[1],n[0]];
+      const i0=S.vis.indexOf(side), d0=data[i0].d;
+      const P0=add(S.BS,scl(d0,(cg[side]-dot(n,S.BS))/dot(n,d0)));
+      s+=seg(sub(P0,scl(wdir,S.railHalf)),add(P0,scl(wdir,S.railHalf)),"#0e8f7e",2,null,0.28);
+    });
+  }
+  /* implied poses */
+  q.forEach((p,i)=>{
+    s+=`<circle cx="${p[0]}" cy="${p[1]}" r="5.5" fill="#2ca02c" stroke="#fff" stroke-width="1.6"/>`
+      +txt(p[0]+9,p[1]+15,"t"+"₁₂₃₄"[i],"#1d7a1d",10.5);
+    if(solved) s+=`<circle cx="${p[0]}" cy="${p[1]}" r="11" fill="none" stroke="#0e8f7e" stroke-width="2"/>`;
+  });
+  s+=bsMark(S.BS,"BS",-32,4);
+  return {svg:s,gap:Math.hypot(gapv[0],gapv[1])};
+}
+
+/* ---------- figure 1: the corner (svg36) ---------- */
+let noisy9=false, solved36=false, guard36=false;
+let dataJ=synth9(SCN_J,false), DJ=derive9(SCN_J,dataJ);
+const ck36=()=>({fam:$("c36_fam").checked,E:$("c36_E").checked,geo:$("c36_geo").checked,odo:$("c36_odo").checked,ghost:false});
+function render36(){
+  const c=[DJ.cOf(0,+$("s36A").value), DJ.cOf(1,+$("s36B").value)];
+  $("o36A").textContent=(+$("s36A").value*dataJ[SCN_J.vis.indexOf(0)].L*M_PER_PX).toFixed(1)+" m";
+  $("o36B").textContent=(+$("s36B").value*dataJ[SCN_J.vis.indexOf(1)].L*M_PER_PX).toFixed(1)+" m";
+  const out=paint9(SCN_J,DJ,dataJ,c,ck36(),solved36,0);
+  svg36.innerHTML=out.svg;
+  const ang=Math.acos(Math.min(1,Math.abs(dot(DJ.nH[0],DJ.nH[1]))))*180/Math.PI;
+  const err=solved36?Math.max(...SCN_J.poses.map((p,i)=>dist(p,pose9(DJ,SCN_J,i,c))))*M_PER_PX:null;
+  $("stat36").innerHTML=[
+    `normals from global displacement (n̂ ∝ ΔE − o) · ∠(n̂A, n̂B) = <b>${ang.toFixed(1)}°</b> · σ(2×2) = [${DJ.s1.toFixed(2)}, ${DJ.s2.toFixed(2)}] — full rank`,
+    `within-family parity ‖ΔE‖ = ‖o‖: ${(inRes9(DJ,SCN_J,c)*M_PER_PX).toFixed(2)} m — the angle is bought, the offset untouched`,
+    `cross-family gap at o₂: <b class="${out.gap*M_PER_PX<0.05?"ok":"off"}">${(out.gap*M_PER_PX).toFixed(2)} m</b>`,
+    solved36?`solved: unique (c_A, c_B) · trajectory error vs truth: <b>${err.toFixed(2)} m</b> <span class="ok">✓</span>`
+            :`press solve — least squares on the one informative row`,
+    noisy9?"data jittered: σ 0.3 m on L, 0.5° on every angle":"clean specular data"
+  ].join("<br>");
+}
+["s36A","s36B"].forEach(id=>$(id).addEventListener("input",()=>{if(!guard36)solved36=false;render36();}));
+["c36_fam","c36_E","c36_geo","c36_odo"].forEach(id=>$(id).addEventListener("change",render36));
+$("b36S").addEventListener("click",()=>{
+  guard36=true;
+  $("s36A").value=Math.max(0.10,Math.min(0.92,DJ.tOf(0,DJ.sol[0])));
+  $("s36B").value=Math.max(0.10,Math.min(0.92,DJ.tOf(1,DJ.sol[1])));
+  guard36=false; solved36=true; render36();
+});
+$("b36N").addEventListener("click",()=>{
+  noisy9=!noisy9; dataJ=synth9(SCN_J,noisy9); DJ=derive9(SCN_J,dataJ); solved36=false;
+  $("b36N").textContent=noisy9?"reset to clean specular data":"jitter the data (σ: 0.3 m, 0.5°)";
+  render36();
+});
+
+/* ---------- figure 2: the corridor (svg37) ---------- */
+let solved37=false, guard37=false, raf9=null;
+let dataK=synth9(SCN_K,false), DK=derive9(SCN_K,dataK);
+const NULL_SC=55;
+const ck37=()=>({fam:$("c37_fam").checked,E:true,geo:true,odo:$("c37_odo").checked,ghost:$("c37_ghost").checked});
+function render37(){
+  const sN=+$("s37N").value*NULL_SC;
+  const c=[DK.cOf(0,+$("s37R").value)+sN*DK.v2[0], DK.cOf(1,+$("s37L").value)+sN*DK.v2[1]];
+  $("o37R").textContent=(+$("s37R").value*dataK[SCN_K.vis.indexOf(0)].L*M_PER_PX).toFixed(1)+" m";
+  $("o37L").textContent=(+$("s37L").value*dataK[SCN_K.vis.indexOf(1)].L*M_PER_PX).toFixed(1)+" m";
+  $("o37N").textContent=(sN*M_PER_PX>=0?"+":"")+(sN*M_PER_PX).toFixed(1)+" m";
+  const out=paint9(SCN_K,DK,dataK,c,ck37(),solved37,46);
+  svg37.innerHTML=out.svg;
+  $("stat37").innerHTML=[
+    `normals from global displacement — ∠(n̂R, n̂L) = <b>${(Math.acos(Math.min(1,Math.abs(dot(DK.nH[0],DK.nH[1]))))*180/Math.PI).toFixed(1)}°</b>, parallel · σ(2×2) = [${DK.s1.toFixed(2)}, <b class="off">${DK.s2.toFixed(3)}</b>] — rank deficient`,
+    `cross-family gap at o₂: <b class="${out.gap*M_PER_PX<0.05?"ok":"off"}">${(out.gap*M_PER_PX).toFixed(2)} m</b> — invariant as the null slider moves`,
+    solved37?`solve returned a <b>line</b>, not a point — snapped to its nearest member · null vector: walls + trajectory translate across the corridor together <span class="ok">— detected, not fixed</span>`
+            :`press solve — §4.2's least-squares crossing degenerates into a least-squares line`,
+  ].join("<br>");
+}
+["s37R","s37L","s37N"].forEach(id=>$(id).addEventListener("input",()=>{if(!guard37&&id!=="s37N")solved37=false;render37();}));
+["c37_fam","c37_odo","c37_ghost"].forEach(id=>$(id).addEventListener("change",render37));
+$("b37S").addEventListener("click",()=>{
+  const cs=DK.lineProj([DK.cOf(0,+$("s37R").value), DK.cOf(1,+$("s37L").value)]);
+  guard37=true;
+  $("s37R").value=Math.max(0.10,Math.min(0.92,DK.tOf(0,cs[0])));
+  $("s37L").value=Math.max(0.10,Math.min(0.92,DK.tOf(1,cs[1])));
+  $("s37N").value=0;
+  guard37=false; solved37=true; render37();
+});
+$("b37P").addEventListener("click",()=>{
+  if(raf9){cancelAnimationFrame(raf9);raf9=null;}
+  if(reduced){$("s37N").value=0.6;render37();return;}
+  const t0=performance.now(),DUR=3000;
+  const tick=now=>{
+    const f=Math.min(1,(now-t0)/DUR);
+    $("s37N").value=Math.sin(f*2*Math.PI).toFixed(3);
+    render37();
+    if(f<1)raf9=requestAnimationFrame(tick); else raf9=null;
+  };
+  raf9=requestAnimationFrame(tick);
+});
+render36(); render37();
+})();
 
 })();
