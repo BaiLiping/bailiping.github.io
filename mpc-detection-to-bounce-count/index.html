@@ -233,6 +233,73 @@ h1{font-size:clamp(38px,5vw,64px);line-height:1.04;letter-spacing:-.025em}
 .fact-tiles strong{display:block;margin-bottom:5px;color:var(--ink);font:700 16px/1.25 var(--serif)}
 .fact-tiles p{margin:0}
 
+/* Section 2: one mapped candidate at a time, following the 3DGS camera-section grammar */
+.known-layout{
+  display:grid;grid-template-columns:minmax(300px,.72fr) minmax(0,1.28fr);gap:30px;align-items:start;margin-top:24px
+}
+.known-copy{position:sticky;top:78px;min-width:0}
+.known-copy>.accuracy{max-width:none;margin:0;border-radius:0}
+.known-copy .pipeline{
+  display:grid;grid-template-columns:1fr;gap:0;margin:22px 0 0;padding:0;overflow:visible;
+  border:1px solid var(--line);background:#fff
+}
+.known-copy .pipeline .step{
+  min-width:0;padding:14px 15px;border:0;border-radius:0;background:#fff;font-size:11.5px
+}
+.known-copy .pipeline .step+.arrow+.step{border-top:1px solid var(--line)}
+.known-copy .pipeline .step b{margin-bottom:4px;color:var(--va-deep)}
+.known-copy .pipeline .arrow{display:none}
+.case-selector-label{margin:24px 0 10px}
+.case-selector-label span{display:block;color:var(--va-deep);font:700 9px var(--mono);letter-spacing:.1em;text-transform:uppercase}
+.case-selector-label strong{display:block;margin-top:4px;font:700 17px/1.25 var(--serif)}
+.known-case-tabs{
+  display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1px;
+  border:1px solid var(--line);background:var(--line)
+}
+.known-case-tabs a{
+  position:relative;min-width:0;min-height:102px;padding:14px 13px;color:var(--ink);text-decoration:none;
+  border-top:3px solid var(--va);background:#fff;transition:background .18s ease,box-shadow .18s ease
+}
+.known-case-tabs a:hover,.known-case-tabs a:focus-visible{background:#f8fafb}
+.known-case-tabs a.is-active{
+  z-index:1;background:var(--va-wash);box-shadow:inset 0 0 0 2px color-mix(in srgb,var(--va) 42%,transparent)
+}
+.known-case-tabs a.is-active::after{
+  content:"VIEWING";position:absolute;right:9px;top:9px;color:var(--va-deep);font:700 7px var(--mono);letter-spacing:.08em
+}
+.known-case-tabs span{display:block;margin-bottom:9px;color:var(--va-deep);font:700 9px var(--mono);letter-spacing:.08em;text-transform:uppercase}
+.known-case-tabs strong{display:block;font:700 15px/1.18 var(--serif)}
+.known-case-tabs small{display:block;margin-top:6px;color:var(--ink-faint);font:9px/1.4 var(--mono)}
+.known-demo-card{
+  min-width:0;border:1px solid var(--line);background:#fff;
+  box-shadow:0 24px 64px rgba(22,34,46,.12)
+}
+.case-card-head{
+  min-height:72px;padding:17px 20px;display:flex;align-items:center;justify-content:space-between;gap:16px;
+  border-bottom:1px solid var(--line);background:#fbfcfd
+}
+.case-card-head>div{display:flex;flex-direction:column;gap:4px;min-width:0}
+.case-card-head span{color:var(--ink-faint);font:700 8px var(--mono);letter-spacing:.1em;text-transform:uppercase}
+.case-card-head strong{font:700 18px/1.2 var(--serif)}
+.known-fixed-badge{
+  flex:0 0 auto;padding:6px 8px;border:1px solid color-mix(in srgb,var(--ip) 42%,var(--line));color:var(--ip-deep)!important;
+  white-space:nowrap
+}
+.case-panel{min-width:0;background:#fff;scroll-margin-top:92px}
+.case-panel>h3.subh:first-child{
+  display:flex;align-items:flex-start;gap:13px;margin:0;padding:20px 18px 17px;border-bottom:1px solid var(--line);
+  background:linear-gradient(90deg,color-mix(in srgb,var(--va) 5%,#fff),#fff 52%)
+}
+.case-panel>h3.subh:first-child .no{
+  flex:0 0 auto;display:inline-flex;align-items:center;justify-content:center;min-width:40px;height:24px;margin:1px 0 0;
+  padding:0 7px;border:1px solid color-mix(in srgb,var(--va) 45%,var(--line));border-radius:999px;
+  color:var(--va-deep);font-size:10px;font-weight:700
+}
+.known-demo-card .case-panel>.fig{margin:0;border:0;border-radius:0}
+.known-demo-card .case-panel>.fig .body{padding:18px}
+.known-demo-card .case-panel .split{grid-template-columns:1fr}
+.case-tabs-ready .case-panel[hidden]{display:none}
+
 @media (max-width:980px){
   .chapter-map{grid-template-columns:repeat(2,minmax(0,1fr))}
   .chapter-map a:nth-child(4){border-left:0}.chapter-map a:nth-child(4),.chapter-map a:nth-child(5){border-top:3px solid var(--tile-accent)}
@@ -240,6 +307,9 @@ h1{font-size:clamp(38px,5vw,64px);line-height:1.04;letter-spacing:-.025em}
   .subsection-tiles.is-two{grid-template-columns:repeat(2,minmax(0,1fr))}
   .subsection-tiles.is-three{grid-template-columns:repeat(3,minmax(0,1fr))}
   .subsection-tiles.is-four{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .known-layout{grid-template-columns:1fr;gap:24px}
+  .known-copy{position:static}
+  .known-case-tabs{grid-template-columns:repeat(3,minmax(0,1fr))}
 }
 @media (max-width:640px){
   main{padding-left:16px;padding-right:16px}
@@ -261,6 +331,13 @@ h1{font-size:clamp(38px,5vw,64px);line-height:1.04;letter-spacing:-.025em}
   .subsection-block>h3.subh:first-child{margin:0 -14px 16px;padding:16px 14px 14px;gap:10px}
   .subsection-block>h3.subh:first-child .no{min-width:36px;height:23px;padding:0 6px}
   .fact-tiles{grid-template-columns:1fr}
+  .known-layout{margin-top:20px}
+  .known-case-tabs{grid-template-columns:1fr 1fr}
+  .known-case-tabs a{min-height:94px;padding:13px 11px}
+  .known-case-tabs a.is-active::after{display:none}
+  .case-card-head{padding:14px;align-items:flex-start;flex-direction:column}
+  .case-panel>h3.subh:first-child{padding:17px 14px 15px;gap:10px}
+  .known-demo-card .case-panel>.fig .body{padding:12px}
 }
 </style>
 </head>
@@ -270,7 +347,7 @@ h1{font-size:clamp(38px,5vw,64px);line-height:1.04;letter-spacing:-.025em}
   <span class="brand"><span class="v">MPC detection</span><span class="x">→</span><span class="i">bounce count</span></span>
   <nav class="topnav">
     <a href="#measurement">Measurement</a>
-    <a href="#filter">Known pose</a>
+    <a href="#filter">Known pose + map</a>
     <a href="https://bailiping.com/">Home ↗</a>
   </nav>
 </div></div>
@@ -280,13 +357,13 @@ h1{font-size:clamp(38px,5vw,64px);line-height:1.04;letter-spacing:-.025em}
 <header class="hero">
   <div class="eyebrow">Interactive note · map-aware multipath classification</div>
   <h1><span class="v">MPC Detection</span> to <span class="i">Bounce Count</span></h1>
-  <p class="thesis">A resolved multipath component can provide four observables: a <strong>delay</strong> (a path length), an <strong>arrival angle</strong> at the UE, a <strong>departure angle</strong> at the BS, and a <strong>path loss</strong>. When the map and the positions and headings of both the BS and UE are known, these measurements can be converted into global bearings and checked against map-consistent propagation paths. The goal is to identify the physical route behind each MPC detection and report its <strong>bounce count</strong>. Sections 1 and 2 below preserve the measurement and known-pose geometry scaffold that we will adapt for that test.</p>
+  <p class="thesis">A resolved multipath component can provide four observables: a <strong>delay</strong> (a path length), an <strong>arrival angle</strong> at the UE, a <strong>departure angle</strong> at the BS, and a <strong>path loss</strong>. When the map and the positions and headings of both the BS and UE are known, these measurements can be converted into global bearings and checked against map-consistent propagation paths. The goal is to identify the physical route behind each MPC detection and report its <strong>bounce count</strong>. Section 2 applies that test to LoS and mapped reflection sequences from one to three bounces.</p>
   <div class="accuracy"><strong>Context.</strong> The theory uses the same kind of per-path tuple that a SAGE estimator can produce, but every scene and number on this page is illustrative rather than a replay of measured SAGE output. The current <code>Gaussian_Splatting_Test</code> benchmark consumes synthetic ray-tracer path observables with world-aligned, translation-only pose states. The virtual-anchor reading follows E. Leitinger et&nbsp;al., <a href="https://arxiv.org/abs/1801.04463">“A Belief Propagation Algorithm for Multipath-Based SLAM,”</a> <i>IEEE Trans. Wireless Commun.</i> 18(12), 2019. Scale in the 2D drawings: 1&nbsp;px ≙ 0.1&nbsp;m.</div>
 </header>
 
 <nav class="chapter-map" aria-label="Chapter overview">
   <a class="is-measurement" href="#measurement"><span>01 · input</span><strong>Measurement</strong><small>delay · angles · path loss</small></a>
-  <a class="is-known" href="#filter"><span>02 · geometry</span><strong>Known pose</strong><small>VA ↔ incidence point</small></a>
+  <a class="is-known" href="#filter"><span>02 · geometry</span><strong>Known BS/UE pose and Map</strong><small>wall order → VA → reflection points</small></a>
 </nav>
 
 <!-- ============ 01 the measurement ============ -->
@@ -333,29 +410,38 @@ h1{font-size:clamp(38px,5vw,64px);line-height:1.04;letter-spacing:-.025em}
   </div>
 </section>
 
-<!-- ============ 02 filter view: known UE ============ -->
-<section class="sec" id="filter">
-  <h2><span class="no">02</span>Geometry view with known UE pose and array orientation</h2>
-  <div class="accuracy"><strong>Scope of §2.</strong> The map, finite wall segments, BS pose, UE pose, and both array headings are known. For each MPC, test ordered wall sequences directly with the image-source method; no lower-order prefix path is required. These 2D checks assume synchronized delay and globally oriented AoA/AoD. In 3D, wall lines become planes and bearings live on S².</div>
-  <div class="pipeline" aria-label="Known-map bounce-count pipeline">
-    <div class="step"><b>01 · hypothesize</b>Choose an ordered wall sequence from the known map.</div><span class="arrow">→</span>
-    <div class="step"><b>02 · mirror</b>Reflect the known BS successively to build VA¹…VAᵏ.</div><span class="arrow">→</span>
-    <div class="step"><b>03 · fold</b>Trace UE→VAᵏ back through the walls to locate Pₖ…P₁.</div><span class="arrow">→</span>
-    <div class="step"><b>04 · predict</b>Read the path's delay, global AoA, and global AoD.</div><span class="arrow">→</span>
-    <div class="step"><b>05 · decide</b>Accept the matching sequence; its length is the bounce count.</div>
-  </div>
-  <nav class="subsection-tiles" aria-label="Known-pose geometry cases">
-    <a href="#los"><span>2.1</span><strong>LoS</strong><small>zero bounce</small></a>
-    <a href="#single"><span>2.2</span><strong>Single</strong><small>mirror one wall</small></a>
-    <a href="#double"><span>2.3</span><strong>Corner ×2</strong><small>ordered wall pair</small></a>
-    <a href="#triple"><span>2.4</span><strong>Corner ×3</strong><small>three-wall chain</small></a>
-    <a href="#corridor"><span>2.5</span><strong>Corridor ×2</strong><small>R → L</small></a>
-    <a href="#corridor3"><span>2.6</span><strong>Corridor ×3</strong><small>R → L → R</small></a>
-  </nav>
-</section>
+<!-- ============ 02 known BS/UE poses and map ============ -->
+<section class="sec known-section" id="filter">
+  <h2><span class="no">02</span>Known BS/UE pose and Map</h2>
+  <div class="known-layout">
+    <div class="known-copy">
+      <div class="accuracy"><strong>Scope of §2.</strong> The map, finite wall segments, BS pose, UE pose, and both array headings are known. For each MPC, test ordered wall sequences directly with the image-source method; no lower-order prefix path is required. These 2D checks assume synchronized delay and globally oriented AoA/AoD. In 3D, wall lines become planes and bearings live on S².</div>
+      <div class="pipeline" aria-label="Known-map bounce-count pipeline">
+        <div class="step"><b>01 · hypothesize</b>Choose an ordered wall sequence from the known map.</div><span class="arrow">→</span>
+        <div class="step"><b>02 · mirror</b>Reflect the known BS successively to build VA¹…VAᵏ.</div><span class="arrow">→</span>
+        <div class="step"><b>03 · fold</b>Trace UE→VAᵏ back through the walls to locate Pₖ…P₁.</div><span class="arrow">→</span>
+        <div class="step"><b>04 · predict</b>Read the path's delay, global AoA, and global AoD.</div><span class="arrow">→</span>
+        <div class="step"><b>05 · decide</b>Accept the matching sequence; its length is the bounce count.</div>
+      </div>
+      <div class="case-selector-label"><span>view selector</span><strong>Choose one mapped path candidate</strong></div>
+      <nav class="known-case-tabs" role="tablist" aria-label="Known-pose and map geometry cases">
+        <a class="is-active" id="case-tab-los" href="#los" role="tab" aria-selected="true" aria-controls="los" data-case="los"><span>2.1</span><strong>LoS</strong><small>zero bounce</small></a>
+        <a id="case-tab-single" href="#single" role="tab" aria-selected="false" aria-controls="single" tabindex="-1" data-case="single"><span>2.2</span><strong>Single</strong><small>mirror one wall</small></a>
+        <a id="case-tab-double" href="#double" role="tab" aria-selected="false" aria-controls="double" tabindex="-1" data-case="double"><span>2.3</span><strong>Corner ×2</strong><small>ordered wall pair</small></a>
+        <a id="case-tab-triple" href="#triple" role="tab" aria-selected="false" aria-controls="triple" tabindex="-1" data-case="triple"><span>2.4</span><strong>Corner ×3</strong><small>three-wall chain</small></a>
+        <a id="case-tab-corridor" href="#corridor" role="tab" aria-selected="false" aria-controls="corridor" tabindex="-1" data-case="corridor"><span>2.5</span><strong>Corridor ×2</strong><small>R → L</small></a>
+        <a id="case-tab-corridor3" href="#corridor3" role="tab" aria-selected="false" aria-controls="corridor3" tabindex="-1" data-case="corridor3"><span>2.6</span><strong>Corridor ×3</strong><small>R → L → R</small></a>
+      </nav>
+    </div>
+    <div class="known-demo-card" id="known-demo-card">
+      <div class="case-card-head">
+        <div><span>interactive candidate</span><strong>One map-consistent route at a time</strong></div>
+        <span class="known-fixed-badge">POSES + MAP FIXED</span>
+      </div>
+      <div class="case-panels">
 
 <!-- ============ 2.1 line of sight ============ -->
-<section class="sec" id="los">
+<section class="case-panel" id="los" role="tabpanel" aria-labelledby="case-tab-los" data-case-panel="los">
   <h3 class="subh"><span class="no">2.1</span>LoS: verify the direct zero-bounce path</h3>
 
   <div class="fig" id="los-demo"><div class="body split">
@@ -384,7 +470,7 @@ h1{font-size:clamp(38px,5vw,64px);line-height:1.04;letter-spacing:-.025em}
 </section>
 
 <!-- ============ 2.2 single bounce ============ -->
-<section class="sec" id="single">
+<section class="case-panel" id="single" role="tabpanel" aria-labelledby="case-tab-single" data-case-panel="single">
   <h3 class="subh"><span class="no">2.2</span>Single bounce: mirror the BS in one known wall</h3>
 
   <div class="fig" id="single-demo"><div class="body split">
@@ -416,7 +502,7 @@ h1{font-size:clamp(38px,5vw,64px);line-height:1.04;letter-spacing:-.025em}
 </section>
 
 <!-- ============ 2.3 double bounce ============ -->
-<section class="sec" id="double">
+<section class="case-panel" id="double" role="tabpanel" aria-labelledby="case-tab-double" data-case-panel="double">
   <h3 class="subh"><span class="no">2.3</span>Double bounce: mirror through an ordered wall pair</h3>
 
   <div class="fig" id="double-demo"><div class="body split">
@@ -448,7 +534,7 @@ h1{font-size:clamp(38px,5vw,64px);line-height:1.04;letter-spacing:-.025em}
 </section>
 
 <!-- ============ 2.4 triple bounce (corner + floor) ============ -->
-<section class="sec" id="triple">
+<section class="case-panel" id="triple" role="tabpanel" aria-labelledby="case-tab-triple" data-case-panel="triple">
   <h3 class="subh"><span class="no">2.4</span>Triple bounce: extend the known-map image-source chain</h3>
 
   <div class="fig"><div class="body split">
@@ -480,7 +566,7 @@ h1{font-size:clamp(38px,5vw,64px);line-height:1.04;letter-spacing:-.025em}
 </section>
 
 <!-- ============ 2.5 corridor double bounce ============ -->
-<section class="sec" id="corridor">
+<section class="case-panel" id="corridor" role="tabpanel" aria-labelledby="case-tab-corridor" data-case-panel="corridor">
   <h3 class="subh"><span class="no">2.5</span>Corridor double bounce: test the mapped sequence R → L</h3>
 
   <div class="fig"><div class="body split">
@@ -512,7 +598,7 @@ h1{font-size:clamp(38px,5vw,64px);line-height:1.04;letter-spacing:-.025em}
 </section>
 
 <!-- ============ 2.6 corridor triple bounce ============ -->
-<section class="sec" id="corridor3">
+<section class="case-panel" id="corridor3" role="tabpanel" aria-labelledby="case-tab-corridor3" data-case-panel="corridor3">
   <h3 class="subh"><span class="no">2.6</span>Corridor triple bounce: test the mapped sequence R → L → R</h3>
 
   <div class="fig"><div class="body split">
@@ -541,6 +627,10 @@ h1{font-size:clamp(38px,5vw,64px);line-height:1.04;letter-spacing:-.025em}
     </div>
   </div>
   <div class="figcap"><b>Read it.</b> For R→L→R, the image source moves right, left, then right as the known BS is mirrored through the ordered wall sequence. Folding the UE→VA³ line returns P₃ on R, P₂ on L, and P₁ on R. Odd-bounce angle parity alone could resemble a one-bounce path, so the map resolves the ambiguity: only a feasible ordered sequence whose finite-wall points and complete (L₃, φ, ψ) prediction match is accepted.</div></div>
+</section>
+      </div>
+    </div>
+  </div>
 </section>
 
 <footer>
@@ -616,6 +706,51 @@ document.querySelectorAll('input[type="range"]').forEach(input=>{
   input.setAttribute("aria-label",name.trim());
 });
 document.querySelectorAll('.statline,.hint[id^="cap"]').forEach(el=>el.setAttribute("aria-live","polite"));
+
+/* Section 2 case tiles: keep one focused, map-known construction in view */
+const knownSection=$("filter");
+const knownTabs=[...document.querySelectorAll(".known-case-tabs [data-case]")];
+const knownPanels=[...document.querySelectorAll("[data-case-panel]")];
+const knownCaseIds=knownTabs.map(tab=>tab.dataset.case);
+function selectKnownCase(id,{writeHash=false,focus=false,scroll=false}={}){
+  if(!knownCaseIds.includes(id))id="los";
+  knownTabs.forEach(tab=>{
+    const active=tab.dataset.case===id;
+    tab.classList.toggle("is-active",active);
+    tab.setAttribute("aria-selected",String(active));
+    tab.tabIndex=active?0:-1;
+    if(active&&focus)tab.focus();
+  });
+  knownPanels.forEach(panel=>{panel.hidden=panel.dataset.casePanel!==id;});
+  if(writeHash&&location.hash!==`#${id}`)history.pushState(null,"",`#${id}`);
+  if(scroll){
+    $("known-demo-card").scrollIntoView({behavior:matchMedia("(prefers-reduced-motion: reduce)").matches?"auto":"smooth",block:"start"});
+  }
+}
+knownTabs.forEach((tab,index)=>{
+  tab.addEventListener("click",event=>{
+    event.preventDefault();
+    selectKnownCase(tab.dataset.case,{writeHash:true,scroll:true});
+  });
+  tab.addEventListener("keydown",event=>{
+    let next=index;
+    if(event.key==="ArrowRight"||event.key==="ArrowDown")next=(index+1)%knownTabs.length;
+    else if(event.key==="ArrowLeft"||event.key==="ArrowUp")next=(index-1+knownTabs.length)%knownTabs.length;
+    else if(event.key==="Home")next=0;
+    else if(event.key==="End")next=knownTabs.length-1;
+    else return;
+    event.preventDefault();
+    selectKnownCase(knownTabs[next].dataset.case,{writeHash:true,focus:true,scroll:true});
+  });
+});
+const syncKnownHash=()=>{
+  const id=location.hash.slice(1);
+  if(knownCaseIds.includes(id))selectKnownCase(id);
+};
+knownSection.classList.add("case-tabs-ready");
+selectKnownCase(knownCaseIds.includes(location.hash.slice(1))?location.hash.slice(1):"los");
+window.addEventListener("hashchange",syncKnownHash);
+window.addEventListener("popstate",syncKnownHash);
 
 /* =================== DEMO 2.1: direct line of sight =================== */
 const svg0=$("svg0");
