@@ -171,7 +171,7 @@ h1{font-size:clamp(38px,5vw,64px);line-height:1.04;letter-spacing:-.025em}
   box-shadow:0 14px 34px rgba(22,34,46,.045)
 }
 #measurement{--section-accent:var(--meas)}
-:is(#filter,#single,#double,#triple,#corridor,#corridor3,#estimate){--section-accent:var(--va)}
+:is(#filter,#single,#double,#triple,#corridor,#corridor3){--section-accent:var(--va)}
 :is(#ue,#singleu,#doubleu,#tripleu,#corridoru,#corridor3u,#estimateu){--section-accent:var(--ip)}
 #slam-architectures{--section-accent:var(--scatter)}
 #radio-splat{--section-accent:var(--meas-deep)}
@@ -205,6 +205,7 @@ h1{font-size:clamp(38px,5vw,64px);line-height:1.04;letter-spacing:-.025em}
 .subsection-tiles.is-two{grid-template-columns:repeat(2,minmax(0,1fr))}
 .subsection-tiles.is-three{grid-template-columns:repeat(3,minmax(0,1fr))}
 .subsection-tiles.is-four{grid-template-columns:repeat(4,minmax(0,1fr))}
+.subsection-tiles.is-five{grid-template-columns:repeat(5,minmax(0,1fr))}
 
 .subsection-block{
   margin:28px 0 0;padding:0 22px 24px;scroll-margin-top:78px;
@@ -240,6 +241,9 @@ h1{font-size:clamp(38px,5vw,64px);line-height:1.04;letter-spacing:-.025em}
   .subsection-tiles.is-two{grid-template-columns:repeat(2,minmax(0,1fr))}
   .subsection-tiles.is-three{grid-template-columns:repeat(3,minmax(0,1fr))}
   .subsection-tiles.is-four{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .subsection-tiles.is-five{grid-template-columns:repeat(6,minmax(0,1fr))}
+  .subsection-tiles.is-five a{grid-column:span 2}
+  .subsection-tiles.is-five a:nth-child(n+4){grid-column:span 3}
 }
 @media (max-width:640px){
   main{padding-left:16px;padding-right:16px}
@@ -255,8 +259,11 @@ h1{font-size:clamp(38px,5vw,64px);line-height:1.04;letter-spacing:-.025em}
   .sec>h2:first-child .no,.sec>h3.subh:first-child .no{min-width:36px;height:23px;padding:0 6px}
   .subsection-tiles{grid-template-columns:1fr 1fr}
   .subsection-tiles.is-two,.subsection-tiles.is-three,.subsection-tiles.is-four{grid-template-columns:1fr 1fr}
+  .subsection-tiles.is-five{grid-template-columns:1fr 1fr}
+  .subsection-tiles.is-five a,.subsection-tiles.is-five a:nth-child(n+4){grid-column:auto}
   .subsection-tiles a{min-height:92px}
   .subsection-tiles.is-three a:last-child{grid-column:1/-1}
+  .subsection-tiles.is-five a:last-child{grid-column:1/-1}
   .subsection-block{margin-top:20px;padding:0 14px 16px;scroll-margin-top:92px}
   .subsection-block>h3.subh:first-child{margin:0 -14px 16px;padding:16px 14px 14px;gap:10px}
   .subsection-block>h3.subh:first-child .no{min-width:36px;height:23px;padding:0 6px}
@@ -337,13 +344,12 @@ h1{font-size:clamp(38px,5vw,64px);line-height:1.04;letter-spacing:-.025em}
 <section class="sec" id="filter">
   <h2><span class="no">02</span>Geometry view with known UE pose and array orientation</h2>
   <div class="accuracy"><strong>Scope of §2.</strong> These 2D constructions assume synchronized delay, globally oriented AoA/AoD, and correctly associated nested prefix paths (for example, a one-bounce path followed by the corresponding two-bounce path). In 3D, the delay ellipse becomes a prolate ellipsoid and bearings live on S².</div>
-  <nav class="subsection-tiles" aria-label="Known-pose geometry cases">
+  <nav class="subsection-tiles is-five" aria-label="Known-pose geometry cases">
     <a href="#single"><span>2.1</span><strong>Single</strong><small>one bounce</small></a>
     <a href="#double"><span>2.2</span><strong>Corner ×2</strong><small>anchor ladder</small></a>
     <a href="#triple"><span>2.3</span><strong>Corner ×3</strong><small>full recursion</small></a>
     <a href="#corridor"><span>2.4</span><strong>Corridor ×2</strong><small>parallel walls</small></a>
     <a href="#corridor3"><span>2.5</span><strong>Corridor ×3</strong><small>path parity</small></a>
-    <a href="#estimate"><span>2.6</span><strong>Ambiguity</strong><small>motion + walls</small></a>
   </nav>
 </section>
 
@@ -568,32 +574,6 @@ h1{font-size:clamp(38px,5vw,64px);line-height:1.04;letter-spacing:-.025em}
     </div>
   </div>
   <div class="figcap"><b>Legend.</b> Same conventions as the corner triple — orange = path 1, gold = path 2, teal / green / blue ellipses = bounces 3 / 2 / 1 with dashed rings at their foci, ◆ purple = the anchor ladder VA¹, VA², VA³ · the ghost dashed vertical = the image of wall L in mirror R: the 1-bounce hypothesis point sits exactly on it, at the mirror image of the true P₂, and the red ✗ where the BS ray pierces wall R (the true P₁) is the occlusion that rejects it · note the parity locks in the statline: odd paths mirror (ψ = −φ), even paths anti-parallel (ψ = φ ± 180°).</div></div>
-</section>
-
-<!-- ============ 07 estimating the map ============ -->
-<section class="sec" id="estimate">
-  <h3 class="subh"><span class="no">2.6</span>Two-bounce ambiguity: motion alone need not recover the two walls</h3>
-  <p class="lede">A composite virtual anchor identifies an <em>ordered reflection transform</em>, not necessarily its individual reflecting planes. For two nonparallel walls meeting at c, rotate both walls by the same angle about c. Their relative angle—and therefore both ordered two-reflection transforms—stay fixed. Every known UE pose keeps exactly the same delay, AoA, and AoD, while the two incidence points and individual walls move.</p>
-  <div class="accuracy"><strong>Correction to the earlier demo.</strong> Two pose-specific candidate curves do not generically provide a unique transverse crossing in this construction; they share the same ambiguity orbit. Finite wall support, visibility, a separately observed one-bounce prefix, or a calibrated incidence-dependent path-gain model can add the missing information.</div>
-
-  <div class="fig"><div class="body split">
-    <svg id="svg4" viewBox="0 0 790 535" role="img" aria-label="common-wall-rotation ambiguity: two walls and both poses' incidence points move while the composite virtual anchor and radio geometry remain unchanged"></svg>
-    <div class="rail">
-      <h4>one unobservable mode</h4>
-      <div class="ctl">
-        <label><span>common wall rotation Δα</span> <output id="o4t"></output></label>
-        <input type="range" id="s4t" min="-12" max="18" step="0.2" value="10">
-      </div>
-      <h4>layers</h4>
-      <label class="ck"><input type="checkbox" id="c4_famA" checked> <span class="sw" style="background:var(--va)"></span> invariant composite VA and measured rays</label>
-      <label class="ck"><input type="checkbox" id="c4_famB" checked> <span class="sw" style="background:var(--ink)"></span> rotated candidate walls</label>
-      <label class="ck"><input type="checkbox" id="c4_mem" checked> <span class="sw" style="background:var(--ip)"></span> both poses' paths and incidence points</label>
-      <label class="ck"><input type="checkbox" id="c4_boot" checked> <span class="sw" style="background:var(--meas)"></span> incidence-dependent loss diagnostic</label>
-      <div class="statline" id="stat4"></div>
-      <div class="hint">Move Δα: the physical explanation changes, but geometric observables remain fixed to numerical precision.</div>
-    </div>
-  </div>
-  <div class="figcap"><b>Read it.</b> F<sub>B′</sub>F<sub>A′</sub> = F<sub>B</sub>F<sub>A</sub> and F<sub>A′</sub>F<sub>B′</sub> = F<sub>A</sub>F<sub>B</sub> under a common rotation about the wall intersection. The purple composite VA, the reverse-order image that fixes AoD, and both UE measurements therefore stay put. Teal incidence points slide along the rotated walls. The orange loss bar is deliberately separate: angle- or material-dependent radiometry can vary along this otherwise invisible geometric mode and may help identify it.</div></div>
 </section>
 
 <footer>
@@ -1939,16 +1919,8 @@ $("b7Next").addEventListener("click",()=>goStep7(step7+1,true));
 makeDraggable(svg7,()=>D7.UE,p=>{D7.UE=p;["s7L1","s7P1","s7L2","s7P2","s7L3","s7P3","s7D3"].forEach(id=>$(id).value=0);stop7();},[160,200,300,400],render7);
 goStep7(1,false);
 
-/* Shared 2-bounce algebra used by the stepped construction and §3 demos.
+/* Shared 2-bounce algebra used by the stepped double-bounce constructions.
    A member chooses a last-leg split; the returned VA1 is only a candidate. */
-function specAt(UE){
-  const dV=sub(D2.VA2,UE);
-  const tB=((D2.BC[0]-UE[0])*D2.BN[0]+(D2.BC[1]-UE[1])*D2.BN[1])/(dV[0]*D2.BN[0]+dV[1]*D2.BN[1]);
-  const P2t=[UE[0]+tB*dV[0],UE[1]+tB*dV[1]];
-  const tA=(D2.AY-P2t[1])/(D2.VA1[1]-P2t[1]);
-  const P1t=[P2t[0]+tA*(D2.VA1[0]-P2t[0]),D2.AY];
-  return {BS:D2.BS,UE,L:dist(UE,D2.VA2),u:unit(dV),ud:unit(sub(P1t,D2.BS))};
-}
 function member(sp,t2){
   const BS=sp.BS,P2=[sp.UE[0]+t2*sp.u[0],sp.UE[1]+t2*sp.u[1]],R=sp.L-t2,d=sub(P2,BS);
   const den=R-(sp.ud[0]*d[0]+sp.ud[1]*d[1]);if(den<=1e-6)return null;
@@ -1961,88 +1933,6 @@ function family(sp){
   const out=[];for(let k=0;k<=120;k++){const t2=sp.L*(0.06+0.80*k/120),m=member(sp,t2);if(m)out.push(m);}return out;
 }
 function poly4(fam){return "M"+fam.map(m=>m.cand[0].toFixed(1)+","+m.cand[1].toFixed(1)).join(" L");}
-
-/* =================== DEMO 4: common-rotation ambiguity =================== */
-const svg4=$("svg4"), C4=D2.BC, U4=[[240,440],[295,505]];
-const add4=(a,b)=>[a[0]+b[0],a[1]+b[1]], scl4=(a,k)=>[a[0]*k,a[1]*k], dot4=(a,b)=>a[0]*b[0]+a[1]*b[1];
-const rot4=(v,a)=>[v[0]*Math.cos(a)-v[1]*Math.sin(a),v[0]*Math.sin(a)+v[1]*Math.cos(a)];
-const line4=(c,d,h,color,w,dash,o)=>seg(add4(c,scl4(d,-h)),add4(c,scl4(d,h)),color,w,dash,o);
-const angle4=(a,b)=>Math.acos(Math.max(-1,Math.min(1,dot4(unit(a),unit(b)))))*180/Math.PI;
-function state4(phi,UE){
-  const dA=rot4([1,0],phi),dB=rot4(D2.BD,phi),nA=[-dA[1],dA[0]],nB=[-dB[1],dB[0]];
-  const va1=mirrorLine(D2.BS,C4,nA),va2=mirrorLine(va1,C4,nB);
-  const reverse=mirrorLine(mirrorLine(UE,C4,nB),C4,nA);
-  const q2=hitLine(UE,va2,C4,nB),q1=hitLine(q2,va1,C4,nA);
-  const legs=[sub(q1,D2.BS),sub(q2,q1),sub(UE,q2)];
-  const incidence=[Math.acos(Math.min(1,Math.abs(dot4(unit(legs[0]),nA))))*180/Math.PI,
-                   Math.acos(Math.min(1,Math.abs(dot4(unit(legs[1]),nB))))*180/Math.PI];
-  const L=dist(D2.BS,q1)+dist(q1,q2)+dist(q2,UE);
-  return {dA,dB,nA,nB,va1,va2,reverse,q1,q2,incidence,L,loss:7+0.035*incidence[0]+0.045*incidence[1]};
-}
-function render4(){
-  const deg=+$("s4t").value,phi=deg*Math.PI/180,S=U4.map(u=>state4(phi,u)),S0=U4.map(u=>state4(0,u));
-  $("o4t").textContent=(deg>=0?"+":"")+deg.toFixed(1)+"°";
-  let s=`<rect x="12" y="12" width="510" height="510" rx="5" fill="#fbfcfd" stroke="#d7dee5"/>`
-    +`<rect x="540" y="12" width="238" height="510" rx="5" fill="#fff" stroke="#d7dee5"/>`
-    +txt(28,38,"same two-bounce measurements · different walls","#8a97a3",10)
-    +txt(558,38,"what remains invariant?","#8a97a3",10);
-  s+=`<g transform="translate(20 35) scale(.88)">`;
-  /* zero-rotation reference */
-  s+=line4(C4,[1,0],285,"#8a97a3",2,"4 4",0.25)+line4(C4,D2.BD,285,"#8a97a3",2,"4 4",0.25);
-  if($("c4_famB").checked){
-    s+=line4(C4,S[0].dA,285,"#16222e",4,null,.88)+line4(C4,S[0].dB,285,"#16222e",4,null,.88)
-      +txt(add4(C4,scl4(S[0].dA,-205))[0],add4(C4,scl4(S[0].dA,-205))[1]-10,"wall A′","#16222e",10)
-      +txt(add4(C4,scl4(S[0].dB,205))[0]+7,add4(C4,scl4(S[0].dB,205))[1],"wall B′","#16222e",10)
-      +`<circle cx="${C4[0]}" cy="${C4[1]}" r="5" fill="#16222e"/>`+txt(C4[0]+9,C4[1]-9,"shared pivot c","#16222e",10);
-  }
-  if($("c4_famA").checked){
-    const v=S[0].va2;
-    s+=`<rect x="${v[0]-5.5}" y="${v[1]-5.5}" width="11" height="11" transform="rotate(45 ${v[0]} ${v[1]})" fill="none" stroke="#7c4dbe" stroke-width="2.4"/>`
-      +txt(v[0]-12,v[1]+24,"composite VA² (fixed)","#5d3691",10,"end");
-    U4.forEach((u,i)=>{
-      const aoa=unit(sub(S[i].va2,u)),aod=unit(sub(S[i].reverse,D2.BS));
-      s+=seg(u,add4(u,scl4(aoa,310)),"#7c4dbe",1.2,"6 4",.55)
-        +seg(D2.BS,add4(D2.BS,scl4(aod,390)),"#7c4dbe",1.2,"6 4",.45);
-    });
-  }
-  if($("c4_mem").checked){
-    S.forEach((g,i)=>{
-      const c=i?"#0e8f7e":"#e8720c";
-      s+=`<path d="M${D2.BS.join(',')} L${g.q1.join(',')} L${g.q2.join(',')} L${U4[i].join(',')}" fill="none" stroke="${c}" stroke-width="${i?2.2:2.7}" ${i?'stroke-dasharray="5 3"':''} opacity=".9"/>`
-        +`<circle cx="${g.q1[0]}" cy="${g.q1[1]}" r="4" fill="${c}"/><circle cx="${g.q2[0]}" cy="${g.q2[1]}" r="4" fill="${c}"/>`
-        +txt(g.q1[0]+7,g.q1[1]-8,"q₁"+(i+1),c,9)+txt(g.q2[0]+7,g.q2[1]-8,"q₂"+(i+1),c,9);
-    });
-  }
-  s+=bsMark(D2.BS,"BS",-31,-12)+arrow(U4[0],U4[1],"#2ca02c",1.4,"4 4",.65);
-  U4.forEach((u,i)=>{s+=ueMark(u,"pose "+(i?"b":"a"));});
-  s+=`</g>`;
-  /* compact invariant / diagnostic panel */
-  const vaDrift=Math.max(...S.map((g,i)=>dist(g.va2,S0[i].va2)))*M_PER_PX;
-  const revDrift=Math.max(...S.map((g,i)=>dist(g.reverse,S0[i].reverse)))*M_PER_PX;
-  const rangeDrift=Math.max(...S.map((g,i)=>Math.abs(g.L-S0[i].L)))*M_PER_PX;
-  const bearingDrift=Math.max(...S.map((g,i)=>Math.max(angle4(sub(g.va2,U4[i]),sub(S0[i].va2,U4[i])),angle4(sub(g.reverse,D2.BS),sub(S0[i].reverse,D2.BS)))));
-  const qMove=Math.max(...S.flatMap((g,i)=>[dist(g.q1,S0[i].q1),dist(g.q2,S0[i].q2)]))*M_PER_PX;
-  const lossDelta=S.map((g,i)=>g.loss-S0[i].loss);
-  s+=txt(558,72,"delay L","#16222e",10)+txt(752,72,rangeDrift.toExponential(1)+" m","#1d7a1d",10,"end")
-    +txt(558,102,"AoA / AoD","#16222e",10)+txt(752,102,bearingDrift.toExponential(1)+"°","#1d7a1d",10,"end")
-    +txt(558,132,"composite images","#16222e",10)+txt(752,132,Math.max(vaDrift,revDrift).toExponential(1)+" m","#1d7a1d",10,"end")
-    +txt(558,174,"but incidence points move","#0a6b5e",10)+txt(752,174,qMove.toFixed(2)+" m","#0a6b5e",10,"end")
-    +seg([558,193],[752,193],"#d7dee5",1);
-  if($("c4_boot").checked){
-    s+=txt(558,222,"illustrative bounce-loss change","#b45607",10);
-    lossDelta.forEach((v,i)=>{const y=258+i*64,x0=655,w=Math.max(-78,Math.min(78,v*28));
-      s+=txt(558,y+4,"pose "+(i?"b":"a"),"#51606e",9.5)+seg([x0-80,y],[x0+80,y],"#d7dee5",5)
-        +`<rect x="${Math.min(x0,x0+w)}" y="${y-6}" width="${Math.abs(w)}" height="12" fill="#e8720c" opacity=".78"/>`
-        +txt(752,y+4,(v>=0?"+":"")+v.toFixed(2)+" dB","#b45607",9.5,"end");
-    });
-    s+=txt(558,370,"geometry cannot see Δα;","#51606e",9.5)+txt(558,389,"calibrated radiometry might.","#51606e",9.5);
-  }
-  s+=txt(558,448,"common rotation is a true null mode","#c22f2f",9.5)+txt(558,470,"until another independent factor","#51606e",9.5)+txt(558,488,"breaks it.","#51606e",9.5);
-  svg4.innerHTML=s;
-  $("stat4").innerHTML=`delay drift: <b class="ok">${rangeDrift.toExponential(1)} m</b> · bearing drift: <b class="ok">${bearingDrift.toExponential(1)}°</b><br>max incidence-point motion: <b>${qMove.toFixed(2)} m</b><br>illustrative loss change: <b>${Math.max(...lossDelta.map(Math.abs)).toFixed(2)} dB</b>`;
-}
-["c4_famA","c4_famB","c4_mem","c4_boot"].forEach(id=>$(id).addEventListener("change",render4));
-$("s4t").addEventListener("input",render4);render4();
 
 })();
 </script>
