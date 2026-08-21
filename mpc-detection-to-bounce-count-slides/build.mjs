@@ -494,13 +494,13 @@ slides.push({
       ['01', 'Measurement', 'τ · φ · ψ · path loss', C.measurement, C.measurementSoft],
       ['02', 'Known map', 'test the route directly', C.known, C.knownSoft],
       ['03', 'Unknown map', 'bootstrap VAs and walls', C.map, C.mapSoft],
-      ['04', 'Unknown UE + map', 'retain the joint family', C.pose, C.poseSoft]
+      ['04', 'Unknow UE&Map', 'retain the joint family', C.pose, C.poseSoft]
     ].flatMap((item, index) => {
       const x = 96 + index * 276
       return [
         card(`cover-card-${index}`, x, 408, 252, 150, item[4], { stroke: item[3] }),
         text(`cover-num-${index}`, x + 20, 430, 46, 24, item[0], 14, { color: item[3], fontFamily: MONO, fontWeight: 700 }),
-        text(`cover-head-${index}`, x + 20, 470, 210, 30, item[1], 23, { fontWeight: 700 }),
+        text(`cover-head-${index}`, x + (index === 3 ? 14 : 20), 470, index === 3 ? 224 : 210, 30, item[1], index === 3 ? 19 : 23, { fontWeight: 700 }),
         text(`cover-copy-${index}`, x + 20, 510, 210, 26, item[2], 13, { color: C.soft, fontFamily: SANS })
       ]
     }),
@@ -516,7 +516,7 @@ slides.push(regular(
   [
     card('tuple-card', 96, 214, 690, 300, C.paper, { stroke: C.measurement, strokeWidth: 2 }),
     text('tuple', 132, 252, 618, 72, '(τ, φ, ψ, PL)', 52, { color: C.measurementDeep, fontWeight: 700, align: 'center' }),
-    text('tuple-map', 132, 350, 618, 116, 'delay τ → L = cτ<br>AoA φ → arrival bearing at the UE<br>AoD ψ → departure bearing at the BS<br>PL → calibrated route evidence', 21, { lineHeight: 1.55 }),
+    text('tuple-map', 132, 350, 618, 116, 'delay τ → L = cτ<br>AoA φ → arrival bearing at the UE<br>AoD ψ → departure bearing at the BS<br>PL → path loss', 21, { lineHeight: 1.55 }),
     card('boundary-card', 820, 214, 364, 300, C.measurementSoft, { stroke: C.measurement }),
     text('boundary-k', 848, 242, 308, 20, 'IMPORTANT BOUNDARY', 11, { color: C.measurementDeep, fontFamily: MONO, fontWeight: 700, letterSpacing: 1.2 }),
     text('boundary-v', 848, 282, 308, 178, 'An MPC tuple constrains a route.<br><br>It does <b>not</b> name the walls, their order, or the bounce count by itself.', 24, { fontWeight: 700, lineHeight: 1.35 }),
@@ -594,17 +594,16 @@ slides.push(regular(
   'Use this as the table of contents. Each topic link goes to an introductory slide, and the next slide activates the corresponding live geometry automatically.',
   [
     ...[
-      ['02', 'Known BS/UE pose + map', 'One live workspace compares all six ordered finite-wall candidates.', C.known, C.knownSoft, 's-known'],
-      ['03', 'Known BS/UE pose, unknown map', 'One live workspace compares VA construction, prefix peeling, and degeneracy.', C.map, C.mapSoft, 's-map'],
-      ['04', 'Known BS pose, unknown UE + map', 'One live workspace compares joint families, recursive pruning, and rank.', C.pose, C.poseSoft, 's-pose']
+      ['02', 'Known BS/UE pose + map', C.known, C.knownSoft, 's-known'],
+      ['03', 'Known BS/UE pose, unknown map', C.map, C.mapSoft, 's-map'],
+      ['04', 'Known BS pose, unknown UE + map', C.pose, C.poseSoft, 's-pose']
     ].flatMap((item, index) => {
-      const y = 214 + index * 142
-      const target = sectionUnits.some(entry => `s-${entry.id}` === item[5]) ? item[5] : undefined
+      const y = 226 + index * 130
+      const target = sectionUnits.some(entry => `s-${entry.id}` === item[4]) ? item[4] : undefined
       return [
-        card(`road-card-${index}`, 96, y, 1088, 118, item[4], { stroke: item[3], strokeWidth: 2 }),
-        text(`road-num-${index}`, 122, y + 30, 66, 38, item[0], 28, { color: item[3], fontFamily: MONO, fontWeight: 700 }),
-        text(`road-head-${index}`, 214, y + 24, 420, 34, item[1], 25, { fontWeight: 700, link: target }),
-        text(`road-copy-${index}`, 656, y + 25, 494, 60, item[2], 17, { color: C.soft, fontFamily: SANS, lineHeight: 1.4, link: target })
+        card(`road-card-${index}`, 96, y, 1088, 104, item[3], { stroke: item[2], strokeWidth: 2 }),
+        text(`road-num-${index}`, 124, y + 32, 66, 40, item[0], 28, { color: item[2], fontFamily: MONO, fontWeight: 700, valign: 'middle' }),
+        text(`road-head-${index}`, 216, y + 27, 920, 50, item[1], 28, { fontWeight: 700, valign: 'middle', link: target })
       ]
     })
   ], { accent: C.pose }
