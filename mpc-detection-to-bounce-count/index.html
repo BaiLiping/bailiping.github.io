@@ -171,7 +171,7 @@ h1{font-size:clamp(38px,5vw,64px);line-height:1.04;letter-spacing:-.025em}
   box-shadow:0 14px 34px rgba(22,34,46,.045)
 }
 #measurement{--section-accent:var(--meas)}
-:is(#filter,#single,#double,#triple,#corridor,#corridor3){--section-accent:var(--va)}
+:is(#filter,#los,#single,#double,#triple,#corridor,#corridor3){--section-accent:var(--va)}
 :is(#ue,#singleu,#doubleu,#tripleu,#corridoru,#corridor3u,#estimateu){--section-accent:var(--ip)}
 #slam-architectures{--section-accent:var(--scatter)}
 #radio-splat{--section-accent:var(--meas-deep)}
@@ -205,7 +205,6 @@ h1{font-size:clamp(38px,5vw,64px);line-height:1.04;letter-spacing:-.025em}
 .subsection-tiles.is-two{grid-template-columns:repeat(2,minmax(0,1fr))}
 .subsection-tiles.is-three{grid-template-columns:repeat(3,minmax(0,1fr))}
 .subsection-tiles.is-four{grid-template-columns:repeat(4,minmax(0,1fr))}
-.subsection-tiles.is-five{grid-template-columns:repeat(5,minmax(0,1fr))}
 
 .subsection-block{
   margin:28px 0 0;padding:0 22px 24px;scroll-margin-top:78px;
@@ -241,9 +240,6 @@ h1{font-size:clamp(38px,5vw,64px);line-height:1.04;letter-spacing:-.025em}
   .subsection-tiles.is-two{grid-template-columns:repeat(2,minmax(0,1fr))}
   .subsection-tiles.is-three{grid-template-columns:repeat(3,minmax(0,1fr))}
   .subsection-tiles.is-four{grid-template-columns:repeat(2,minmax(0,1fr))}
-  .subsection-tiles.is-five{grid-template-columns:repeat(6,minmax(0,1fr))}
-  .subsection-tiles.is-five a{grid-column:span 2}
-  .subsection-tiles.is-five a:nth-child(n+4){grid-column:span 3}
 }
 @media (max-width:640px){
   main{padding-left:16px;padding-right:16px}
@@ -259,11 +255,8 @@ h1{font-size:clamp(38px,5vw,64px);line-height:1.04;letter-spacing:-.025em}
   .sec>h2:first-child .no,.sec>h3.subh:first-child .no{min-width:36px;height:23px;padding:0 6px}
   .subsection-tiles{grid-template-columns:1fr 1fr}
   .subsection-tiles.is-two,.subsection-tiles.is-three,.subsection-tiles.is-four{grid-template-columns:1fr 1fr}
-  .subsection-tiles.is-five{grid-template-columns:1fr 1fr}
-  .subsection-tiles.is-five a,.subsection-tiles.is-five a:nth-child(n+4){grid-column:auto}
   .subsection-tiles a{min-height:92px}
   .subsection-tiles.is-three a:last-child{grid-column:1/-1}
-  .subsection-tiles.is-five a:last-child{grid-column:1/-1}
   .subsection-block{margin-top:20px;padding:0 14px 16px;scroll-margin-top:92px}
   .subsection-block>h3.subh:first-child{margin:0 -14px 16px;padding:16px 14px 14px;gap:10px}
   .subsection-block>h3.subh:first-child .no{min-width:36px;height:23px;padding:0 6px}
@@ -343,19 +336,49 @@ h1{font-size:clamp(38px,5vw,64px);line-height:1.04;letter-spacing:-.025em}
 <!-- ============ 02 filter view: known UE ============ -->
 <section class="sec" id="filter">
   <h2><span class="no">02</span>Geometry view with known UE pose and array orientation</h2>
-  <div class="accuracy"><strong>Scope of §2.</strong> These 2D constructions assume synchronized delay, globally oriented AoA/AoD, and correctly associated nested prefix paths (for example, a one-bounce path followed by the corresponding two-bounce path). In 3D, the delay ellipse becomes a prolate ellipsoid and bearings live on S².</div>
-  <nav class="subsection-tiles is-five" aria-label="Known-pose geometry cases">
-    <a href="#single"><span>2.1</span><strong>Single</strong><small>one bounce</small></a>
-    <a href="#double"><span>2.2</span><strong>Corner ×2</strong><small>anchor ladder</small></a>
-    <a href="#triple"><span>2.3</span><strong>Corner ×3</strong><small>full recursion</small></a>
-    <a href="#corridor"><span>2.4</span><strong>Corridor ×2</strong><small>parallel walls</small></a>
-    <a href="#corridor3"><span>2.5</span><strong>Corridor ×3</strong><small>path parity</small></a>
+  <div class="accuracy"><strong>Scope of §2.</strong> These 2D checks assume synchronized delay and globally oriented AoA/AoD. The LoS gate uses the known map and poses directly; the reflected-path recursion additionally needs correctly associated nested prefix paths (for example, a one-bounce path followed by the corresponding two-bounce path). In 3D, the delay ellipse becomes a prolate ellipsoid and bearings live on S².</div>
+  <nav class="subsection-tiles" aria-label="Known-pose geometry cases">
+    <a href="#los"><span>2.1</span><strong>LoS</strong><small>zero bounce</small></a>
+    <a href="#single"><span>2.2</span><strong>Single</strong><small>one bounce</small></a>
+    <a href="#double"><span>2.3</span><strong>Corner ×2</strong><small>anchor ladder</small></a>
+    <a href="#triple"><span>2.4</span><strong>Corner ×3</strong><small>full recursion</small></a>
+    <a href="#corridor"><span>2.5</span><strong>Corridor ×2</strong><small>parallel walls</small></a>
+    <a href="#corridor3"><span>2.6</span><strong>Corridor ×3</strong><small>path parity</small></a>
   </nav>
 </section>
 
-<!-- ============ 2.1 single bounce ============ -->
+<!-- ============ 2.1 line of sight ============ -->
+<section class="sec" id="los">
+  <h3 class="subh"><span class="no">2.1</span>LoS: verify the direct zero-bounce path</h3>
+
+  <div class="fig" id="los-demo"><div class="body split">
+    <svg id="svg0" viewBox="-320 25 980 570" role="img" aria-label="line-of-sight demo showing a direct path between a known base-station pose and user-equipment pose, checked by delay, angle of departure, and angle of arrival"></svg>
+    <div class="rail">
+      <h4>the data (drives the drawing)</h4>
+      <div class="ctl">
+        <label><span>delay L = cτ</span> <output id="o0L"></output></label>
+        <input type="range" class="meas" id="s0L" min="-3" max="3" step="0.05" value="0">
+        <label style="margin-top:7px"><span>AoA φ (at the UE, global)</span> <output id="o0P"></output></label>
+        <input type="range" class="meas" id="s0P" min="-12" max="12" step="0.1" value="0">
+        <label style="margin-top:7px"><span>AoD ψ (at the BS, global)</span> <output id="o0D"></output></label>
+        <input type="range" class="meas" id="s0D" min="-12" max="12" step="0.1" value="0">
+        <button class="reset" id="b0R" style="margin-top:7px">reset to direct-path data</button>
+      </div>
+      <h4>layers</h4>
+      <label class="ck"><input type="checkbox" id="c0_map" checked> <span class="sw" style="background:var(--ink-faint)"></span> known map and clear visibility segment</label>
+      <label class="ck"><input type="checkbox" id="c0_range" checked> <span class="sw" style="background:var(--meas)"></span> delay circle centered at the BS</label>
+      <label class="ck"><input type="checkbox" id="c0_ray" checked> <span class="sw" style="background:var(--ink)"></span> measured AoD and reverse AoA rays</label>
+      <label class="ck"><input type="checkbox" id="c0_head" checked> <span class="sw" style="background:var(--va)"></span> known BS and UE headings</label>
+      <div class="statline" id="stat0"></div>
+      <div class="hint">drag the green UE dot — the direct-path measurements re-sync to the known pose</div>
+    </div>
+  </div>
+  <div class="figcap"><b>Read it.</b> Ray-casting through the known map first verifies that the BS↔UE segment is unobstructed. Known array headings rotate the measured local angles into the global frame. A LoS MPC must then satisfy three gates at once: AoD points from BS to UE, reverse AoA points from UE to BS, and cτ = ‖UE−BS‖. When they agree, there is no incidence point and the bounce count is zero.</div></div>
+</section>
+
+<!-- ============ 2.2 single bounce ============ -->
 <section class="sec" id="single">
-  <h3 class="subh"><span class="no">2.1</span>Single bounce: draw everything from (τ, φ, ψ)</h3>
+  <h3 class="subh"><span class="no">2.2</span>Single bounce: draw everything from (τ, φ, ψ)</h3>
 
   <div class="fig" id="single-demo"><div class="body split">
     <svg id="svg1" viewBox="-170 40 830 600" role="img" aria-label="single bounce virtual anchor and incidence point demo, constructed from delay and angle data"></svg>
@@ -386,9 +409,9 @@ h1{font-size:clamp(38px,5vw,64px);line-height:1.04;letter-spacing:-.025em}
   <div class="figcap"><b>Read it.</b> d₁ + d₂ = L puts P on the orange ellipse; the mirror makes ‖P→VA‖ = d₂, so the same ray, extended to the full measured length L, ends exactly at VA. The dark wall segment is drawn purely from (τ, φ): perpendicular bisector of BS↔VA, through P. The dashed orange rings mark the two foci (the pins) of the ellipse. Delay + angle cannot tell the two readings apart — you choose the representation. This page’s illustrative σ slider perturbs incidence points. Separately, the earlier prototype derives VA-cluster dispersiveness δ from measurement-derived VA covariance, δ=√(order·tr Σ). Neither the illustrative σ nor prototype δ is the physical surface fraction γ<sup>sc</sup> defined in §5.1 and separated from diffuse directionality in §5.4.</div></div>
 </section>
 
-<!-- ============ 03 double bounce ============ -->
+<!-- ============ 2.3 double bounce ============ -->
 <section class="sec" id="double">
-  <h3 class="subh"><span class="no">2.2</span>Double bounce: two virtual anchors, two incidence points</h3>
+  <h3 class="subh"><span class="no">2.3</span>Double bounce: two virtual anchors, two incidence points</h3>
 
   <div class="fig" id="double-demo"><div class="body split">
     <svg id="svg2" viewBox="-150 -45 850 685" role="img" aria-label="double bounce demo with two virtual anchors, incidence points, and illustrative tangential perturbation clouds, constructed from delay and angle data"></svg>
@@ -431,9 +454,9 @@ h1{font-size:clamp(38px,5vw,64px);line-height:1.04;letter-spacing:-.025em}
   <div class="figcap"><b>Legend.</b> ■ BS · ● UE (draggable) · ◆ purple = virtual anchors: VA¹ bootstrapped live from path 1, VA² (hollow = ground-truth reference, filled = from the data) · orange = path 1, the single-bounce path whose full-length walk supplies VA¹ · thin purple curve = the one-parameter family of VA¹ candidates that path 2’s data alone allows — the bootstrapped VA¹ must land on it, and does exactly when both paths’ data are clean · ● teal = incidence points P₁, P₂ estimated from the data, with illustrative perturbation clouds on the true walls · dot size/opacity is a synthetic Gaussian footprint weight, not measured path loss · red ○ + dashed red segments = the single-bounce hypothesis drawn in full: its bounce point must absorb the whole measured length (the two red distances sum to L₂), forcing an implied wall beyond wall B that matches no wall in the map · green ellipse = the bounce-1 segment: leftover string L₂ − ‖UE→P₂‖ pinned at BS &amp; P₂, passing through P₁ · dashed rings = the two foci (pins) of the same-colored ellipse: red at BS &amp; UE, teal at VA¹ &amp; UE, green at BS &amp; P₂.</div></div>
 </section>
 
-<!-- ============ 04 triple bounce (corner + floor) ============ -->
+<!-- ============ 2.4 triple bounce (corner + floor) ============ -->
 <section class="sec" id="triple">
-  <h3 class="subh"><span class="no">2.3</span>Triple bounce: the recursion run in full</h3>
+  <h3 class="subh"><span class="no">2.4</span>Triple bounce: the recursion run in full</h3>
 
   <div class="fig"><div class="body split">
     <svg id="svg6" viewBox="-210 -160 990 1330" role="img" aria-label="triple bounce demo with three virtual anchors and three incidence points, constructed step by step from three measured paths"></svg>
@@ -482,9 +505,9 @@ h1{font-size:clamp(38px,5vw,64px);line-height:1.04;letter-spacing:-.025em}
   <div class="figcap"><b>Legend.</b> ■ BS · ● UE (draggable) · ◆ purple = the anchor ladder: VA¹ bootstrapped from path 1, VA² from path 2, VA³ (hollow = ground-truth reference, filled = the full-L₃ walk of the data) · orange = path 1 · gold = path 2 · red dashed = the two rejected hypotheses: the 1-bounce ellipse (string at BS &amp; UE) with its split points P(φ) ≠ P(ψ), and the VA¹-anchored 2-bounce reading whose implied first-bounce wall fails to mirror BS onto VA¹ · teal ellipse = bounce 3, string L₃ at VA² &amp; UE → P₃ · green ellipse = bounce 2, leftover string at VA¹ &amp; P₃, its point picked not by data but by aiming from P₃ at VA² · blue ellipse = bounce 1, leftover string at BS &amp; P₂, picked by the measured AoD → P₁ · dashed rings mark each ellipse’s foci (its pins) · ● teal dots = incidence points, with illustrative perturbation clouds on all three true walls in the last step · dot size/opacity is a synthetic Gaussian footprint weight, not measured path loss.</div></div>
 </section>
 
-<!-- ============ 05 corridor double bounce ============ -->
+<!-- ============ 2.5 corridor double bounce ============ -->
 <section class="sec" id="corridor">
-  <h3 class="subh"><span class="no">2.4</span>Double bounce, corridor edition: two parallel walls</h3>
+  <h3 class="subh"><span class="no">2.5</span>Double bounce, corridor edition: two parallel walls</h3>
 
   <div class="fig"><div class="body split">
     <svg id="svg3" viewBox="-400 30 1120 650" role="img" aria-label="double bounce between two parallel walls with virtual anchors, incidence points, and illustrative tangential perturbation clouds"></svg>
@@ -526,9 +549,9 @@ h1{font-size:clamp(38px,5vw,64px);line-height:1.04;letter-spacing:-.025em}
   <div class="figcap"><b>Legend.</b> Same as the corner demos above — dashed rings mark each ellipse's foci · red = rejected 1-bounce hypothesis with its implied wall · note the AoD arrow at the BS is exactly anti-parallel to the AoA arrow at the UE, and stays so while you drag: that lock is the parallel-wall signature.</div></div>
 </section>
 
-<!-- ============ 06 corridor triple bounce ============ -->
+<!-- ============ 2.6 corridor triple bounce ============ -->
 <section class="sec" id="corridor3">
-  <h3 class="subh"><span class="no">2.5</span>Triple bounce, corridor edition: parity, and a hypothesis that angles cannot kill</h3>
+  <h3 class="subh"><span class="no">2.6</span>Triple bounce, corridor edition: parity, and a hypothesis that angles cannot kill</h3>
 
   <div class="fig"><div class="body split">
     <svg id="svg7" viewBox="-470 -80 1580 950" role="img" aria-label="triple bounce between two parallel walls: image-source ladder, parity locks, and the occlusion-rejected single-bounce hypothesis"></svg>
@@ -709,7 +732,84 @@ document.querySelectorAll('input[type="range"]').forEach(input=>{
 });
 document.querySelectorAll('.statline,.hint[id^="cap"]').forEach(el=>el.setAttribute("aria-live","polite"));
 
-/* =================== DEMO 1: single bounce, data-driven =================== */
+/* =================== DEMO 2.1: direct line of sight =================== */
+const svg0=$("svg0");
+const D0={
+  BS:[90,345],UE:[470,220],thetaBS:-22,thetaUE:145,
+  walls:[
+    [[25,85],[575,85]],[[575,85],[575,505]],[[575,505],[25,505]],[[25,505],[25,85]],
+    [[300,85],[300,145]],[[435,505],[435,445]]
+  ]
+};
+const ck0=id=>$(id).checked;
+const angleErr0=(a,b)=>Math.abs(((a-b+540)%360)-180);
+const orient0=(a,b,c)=>(b[0]-a[0])*(c[1]-a[1])-(b[1]-a[1])*(c[0]-a[0]);
+const crosses0=(a,b,c,d)=>{
+  const e=1e-7,o1=orient0(a,b,c),o2=orient0(a,b,d),o3=orient0(c,d,a),o4=orient0(c,d,b);
+  return ((o1>e&&o2<-e)||(o1<-e&&o2>e))&&((o3>e&&o4<-e)||(o3<-e&&o4>e));
+};
+const poseHeading0=(p,theta,label)=>{
+  const h=dirOf(theta),q=[p[0]+52*h[0],p[1]+52*h[1]];
+  return arrow(p,q,"#7c4dbe",1.8,null,0.9)+txt(q[0]+7,q[1]-7,label,"#5d3691",10.5);
+};
+function direct0(){
+  const toUE=unit(sub(D0.UE,D0.BS)),toBS=unit(sub(D0.BS,D0.UE));
+  return {L:dist(D0.BS,D0.UE),psi:aoaOf(toUE),phi:aoaOf(toBS)};
+}
+function render0(){
+  const {BS,UE}=D0,truth=direct0();
+  const L=truth.L+(+$("s0L").value)/M_PER_PX;
+  const phi=truth.phi+(+$("s0P").value),psi=truth.psi+(+$("s0D").value);
+  const uA=dirOf(phi),uD=dirOf(psi),rayLen=truth.L+58;
+  const mapClear=!D0.walls.some(w=>crosses0(BS,UE,w[0],w[1]));
+  const delayErr=Math.abs(L-truth.L)*M_PER_PX;
+  const aoaErr=angleErr0(phi,truth.phi),aodErr=angleErr0(psi,truth.psi);
+  const reversalErr=angleErr0(phi,psi+180);
+  const consistent=mapClear&&delayErr<0.15&&aoaErr<0.3&&aodErr<0.3;
+  $("o0L").textContent=(L*M_PER_PX).toFixed(1)+" m";
+  $("o0P").textContent=degFmt(phi);
+  $("o0D").textContent=degFmt(psi);
+  let s="";
+  if(ck0("c0_map")){
+    D0.walls.forEach((w,i)=>{
+      s+=seg(w[0],w[1],i<4?"#8a97a3":"#51606e",i<4?3:5,null,i<4?0.72:0.88);
+    });
+    s+=txt(35,72,"known map · no wall intersects BS↔UE","#51606e",11.5);
+    s+=seg(BS,UE,mapClear?"#2ca02c":"#c43b3b",15,null,0.12);
+  }
+  if(ck0("c0_range")){
+    s+=`<circle cx="${BS[0]}" cy="${BS[1]}" r="${L}" fill="none" stroke="#e8720c" stroke-width="1.8" stroke-dasharray="7 5" opacity="0.82"/>`;
+    s+=pin(BS,"#e8720c",15)+txt(BS[0]-0.76*L,BS[1]-0.44*L,"delay circle · radius cτ","#b45607",11);
+  }
+  s+=arrow(BS,UE,"#51606e",2.6)+txt((BS[0]+UE[0])/2-28,(BS[1]+UE[1])/2-16,"direct path · 0 bounces","#1d7a1d",12);
+  if(ck0("c0_ray")){
+    const dEnd=[BS[0]+uD[0]*rayLen,BS[1]+uD[1]*rayLen];
+    const aEnd=[UE[0]+uA[0]*rayLen,UE[1]+uA[1]*rayLen];
+    s+=arrow(BS,dEnd,"#16222e",1.7,"8 5",0.82)+txt(BS[0]+uD[0]*105+8,BS[1]+uD[1]*105+17,"AoD ψ · BS→UE","#16222e",11);
+    s+=arrow(UE,aEnd,"#e8720c",1.7,"3 4",0.86)+txt(UE[0]+uA[0]*92-8,UE[1]+uA[1]*92-15,"AoA φ · UE→BS","#b45607",11,"end");
+  }
+  if(ck0("c0_head")){
+    s+=poseHeading0(BS,D0.thetaBS,"known BS heading θᴮˢ");
+    s+=poseHeading0(UE,D0.thetaUE,"known UE heading θᵁᴱ");
+  }
+  s+=bsMark(BS)+ueMark(UE);
+  svg0.innerHTML=s;
+  $("stat0").innerHTML=
+    `<b>direct distance</b> = ${fmt(truth.L)} · <b>measured L</b> ${(L*M_PER_PX).toFixed(1)} m<br>`+
+    `<b>AoD ψ</b> ${degFmt(psi)} (expected ${degFmt(truth.psi)}) · error ${aodErr.toFixed(1)}°<br>`+
+    `<b>AoA φ</b> ${degFmt(phi)} (expected ${degFmt(truth.phi)}) · error ${aoaErr.toFixed(1)}°<br>`+
+    `known-heading conversion: ψ<sub>local</sub> ${degFmt(psi-D0.thetaBS)} · φ<sub>local</sub> ${degFmt(phi-D0.thetaUE)} · ray-reversal error ${reversalErr.toFixed(1)}°<br>`+
+    `map visibility ${mapClear?"clear":"blocked"} · delay error ${delayErr.toFixed(2)} m<br>`+
+    (consistent?`<span class="ok">✓ LoS confirmed — bounce count = 0</span>`
+               :`<span class="off">✗ direct-path gate fails under the known pose and map</span>`);
+}
+["c0_map","c0_range","c0_ray","c0_head"].forEach(id=>$(id).addEventListener("change",render0));
+["s0L","s0P","s0D"].forEach(id=>$(id).addEventListener("input",render0));
+$("b0R").addEventListener("click",()=>{$("s0L").value=0;$("s0P").value=0;$("s0D").value=0;render0();});
+makeDraggable(svg0,()=>D0.UE,p=>{D0.UE=p;$("s0L").value=0;$("s0P").value=0;$("s0D").value=0;},[120,175,520,410],render0);
+render0();
+
+/* =================== DEMO 2.2: single bounce, data-driven =================== */
 const svg1=$("svg1");
 const T1={on:false,th:0}; let raf1=null;
 /* the wall is tilted 18° off vertical: an axis-aligned wall would make the global
