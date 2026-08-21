@@ -53,6 +53,14 @@ function card(id, x, y, w, h, fill = C.paper, options = {}) {
   return shape(id, x, y, w, h, fill, { stroke: options.stroke || C.line, strokeWidth: options.strokeWidth ?? 1, radius: options.radius ?? 10 })
 }
 
+function image(id, x, y, w, h, src, options = {}) {
+  return {
+    id, type: 'image', x, y, w, h, src, fit: options.fit || 'contain',
+    radius: options.radius ?? 0, rotation: options.rotation ?? 0, opacity: options.opacity ?? 1,
+    ...(options.alt ? { alt: options.alt } : {}), ...(options.fx ? { fx: options.fx } : {})
+  }
+}
+
 function footer(section) {
   return [
     text('footer-left', 96, 684, 820, 18, `MPC detection → bounce count · ${section} · Bai Liping`, 11, { color: C.faint, fontFamily: SANS }),
@@ -560,6 +568,22 @@ slides.push(regular(
     }),
     text('pdp-foot', 96, 576, 1088, 42, 'Geometry proposes the route. Calibrated radiometry helps rank competing, geometrically valid routes.', 20, { color: C.measurementDeep, fontWeight: 700, align: 'center' })
   ], { accent: C.measurement }
+))
+
+slides.push(regular(
+  's-pdp-motion', '01 · MEASUREMENT', 'Watch the delay profile evolve as the UE moves',
+  'Every path peak traces changing route length, visibility, and gain along the UE trajectory.',
+  'Let the animation run. Point out how the first arrival shifts with geometric range, while reflected paths drift, appear, and disappear as their route lengths and visibility conditions change. The measurements are not a frozen fingerprint of the environment.',
+  [
+    card('pdp-motion-card', 96, 200, 1088, 438, C.paper, { stroke: C.measurement, strokeWidth: 2 }),
+    text('pdp-motion-k', 118, 211, 320, 18, 'ANIMATED POWER–DELAY PROFILE', 10, { color: C.measurementDeep, fontFamily: MONO, fontWeight: 700, letterSpacing: 1.2 }),
+    image(
+      'pdp-motion-gif', 118, 235, 1044, 377,
+      '../mpc-detection-to-bounce-count/pdp-dynamics.gif',
+      { fit: 'contain', radius: 4, alt: 'Power-delay profile evolving as the user equipment moves' }
+    ),
+    text('pdp-motion-caption', 118, 615, 1044, 16, 'UE motion → delays drift · gains change · paths enter and leave visibility', 11, { color: C.measurementDeep, fontFamily: MONO, fontWeight: 700, align: 'center' })
+  ], { accent: C.measurement, transition: 'none' }
 ))
 
 slides.push(regular(
