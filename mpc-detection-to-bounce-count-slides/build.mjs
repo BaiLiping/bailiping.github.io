@@ -287,10 +287,13 @@ const sectionUnits = [
   {
     id: 'known', mode: 'known', section: '02 · KNOWN BS/UE POSE AND MAP', title: 'Known BS/UE pose and map',
     accent: C.known, deep: C.knownDeep, soft: C.knownSoft, defaultCase: 'los', defaultBounces: 0,
-    premise: 'The map and both poses turn bounce count into direct route testing over ordered finite-wall sequences.',
+    introSubtitle: 'Known geometry turns inference into route validation.',
+    premise: 'The bounce count is the length of the mapped wall sequence that reproduces the measured MPC.',
     known: 'finite wall map · BS/UE positions · both array headings',
     method: 'Mirror through the selected walls, fold to incidence points, and compare the complete MPC tuple.',
     verdict: 'The accepted route’s wall-sequence length is its bounce count.',
+    flow: [['KNOWN', 'BS/UE poses + map'], ['DO', 'enumerate → mirror → fold'], ['RETURN', 'accepted sequence length']],
+    watch: 'Next: test LoS through three-bounce routes with the same map-aware feasibility rule.',
     observe: 'Switch among all six mapped candidates and compare how the same map-aware feasibility test scales from LoS to three bounces.',
     note: 'Introduce the known-map regime as enumeration plus validation. The next slide consolidates LoS, single, double, triple, and both corridor cases behind one tile selector.',
     tiles: [
@@ -301,10 +304,13 @@ const sectionUnits = [
   {
     id: 'map', mode: 'map', section: '03 · KNOWN BS/UE POSE, UNKNOWN MAP', title: 'Known BS/UE pose, unknown map',
     accent: C.map, deep: C.mapDeep, soft: C.mapSoft, defaultCase: 'usingle', defaultBounces: 1,
-    premise: 'Known poses place both bearings in the global frame, but virtual anchors and supporting walls must now be constructed from measurements.',
+    introSubtitle: 'Known poses let the measurements bootstrap the missing map.',
+    premise: 'Construct virtual anchors and walls from MPCs, then peel higher bounce orders using associated prefix paths.',
     known: 'BS/UE positions · both array headings · associated prefix paths for higher orders',
     method: 'Construct a VA and wall from one path; use associated prefixes to peel higher orders.',
     verdict: 'Retain the constructed bounce order—and any unresolved wall family—without inventing uniqueness.',
+    flow: [['KNOWN', 'BS/UE poses'], ['DO', 'MPCs → VA → wall'], ['RETURN', 'order or wall family']],
+    watch: 'Next: compare VA construction, recursive peeling, and the corridor ambiguity.',
     observe: 'Use one tile bar to compare identifiable single-bounce geometry, recursive corners, corridor degeneracy, and the two-wall null mode.',
     note: 'Emphasize the estimator boundary: reference walls explain the synthetic answer but are not inputs. The next slide keeps all six unknown-map constructions in one live workspace.',
     tiles: [
@@ -315,10 +321,13 @@ const sectionUnits = [
   {
     id: 'pose', mode: 'pose', section: '04 · KNOWN BS POSE, UNKNOWN UE POSE AND MAP', title: 'Known BS pose, unknown UE pose and map',
     accent: C.pose, deep: C.poseDeep, soft: C.poseSoft, defaultCase: 'usingleu', defaultBounces: 1,
-    premise: 'Without the UE heading, body-frame AoA creates a joint pose–map family that higher-order paths can prune but need not collapse.',
+    introSubtitle: 'The measurements may support a family rather than one solution.',
+    premise: 'Estimate UE pose and walls jointly, then use feasibility and rank to decide whether the answer is a point or a family.',
     known: 'BS position + heading · synchronized delays · associated path ladder',
     method: 'Hypothesize heading and a first bounce; keep ordered positive-length routes and inspect rank.',
     verdict: 'Report the feasible family unless an independent factor makes the system full rank.',
+    flow: [['KNOWN', 'BS pose'], ['DO', 'joint UE + wall hypotheses'], ['RETURN', 'point or family from rank']],
+    watch: 'Next: compare recursive feasibility with the final point-versus-line rank test.',
     observe: 'Move through five recursive cases, then use the Rank tile’s point/line switch to compare full-rank and corridor outcomes.',
     note: 'Do not promote body-frame AoA to the global frame without a heading hypothesis. The next slide consolidates every §4 construction, including both rank-test outcomes.',
     tiles: [
@@ -403,28 +412,21 @@ function liveMount() {
 
 function sectionIntroElements(unit) {
   return [
-    ...labelPill('section-pill', 96, 198, 176, `${unit.section.slice(0, 2)} · 6 CASES`, unit.deep, unit.soft),
-    text('section-premise', 96, 250, 682, 100, unit.premise, 27, { fontWeight: 700, lineHeight: 1.2 }),
-    card('section-known-card', 96, 370, 326, 154, unit.soft, { stroke: unit.accent }),
-    text('section-known-k', 120, 392, 278, 20, 'KNOWN INPUTS', 11, { color: unit.deep, fontFamily: MONO, fontWeight: 700, letterSpacing: 1.3 }),
-    text('section-known-v', 120, 426, 278, 78, unit.known, 18, { lineHeight: 1.4 }),
-    card('section-rule-card', 444, 370, 334, 154, C.paper, { stroke: C.line }),
-    text('section-rule-k', 468, 392, 286, 20, 'ONE DECISION RULE', 11, { color: unit.deep, fontFamily: MONO, fontWeight: 700, letterSpacing: 1.3 }),
-    text('section-rule-v', 468, 424, 286, 100, `${unit.method}<br><b>${unit.verdict}</b>`, 13, { lineHeight: 1.22 }),
-    card('section-catalog', 800, 198, 384, 326, C.paper, { stroke: unit.accent, strokeWidth: 2 }),
-    text('section-catalog-k', 824, 220, 336, 20, 'CONSOLIDATED LIVE WORKSPACE', 10, { color: unit.deep, fontFamily: MONO, fontWeight: 700, letterSpacing: 1.2 }),
-    ...unit.tiles.flatMap((tile, index) => {
-      const x = 824 + (index % 2) * 168, y = 256 + Math.floor(index / 2) * 80
+    card('section-idea-card', 96, 206, 1088, 214, unit.soft, { stroke: unit.accent, strokeWidth: 2 }),
+    text('section-idea-k', 126, 232, 200, 20, 'KEY IDEA', 11, { color: unit.deep, fontFamily: MONO, fontWeight: 700, letterSpacing: 1.5 }),
+    text('section-idea-v', 126, 278, 1028, 108, unit.premise, 32, { fontWeight: 700, lineHeight: 1.22, valign: 'middle' }),
+    ...unit.flow.flatMap((item, index) => {
+      const widths = [300, 330, 322], xs = [96, 464, 862], x = xs[index], width = widths[index]
       return [
-        card(`catalog-tile-${index}`, x, y, 156, 68, index === 0 ? unit.soft : C.bg, { stroke: index === 0 ? unit.accent : C.line, radius: 6 }),
-        text(`catalog-num-${index}`, x + 10, y + 8, 42, 14, tile[0], 9, { color: unit.deep, fontFamily: MONO, fontWeight: 700 }),
-        text(`catalog-name-${index}`, x + 10, y + 26, 136, 20, tile[1], 15, { fontWeight: 700 }),
-        text(`catalog-detail-${index}`, x + 10, y + 49, 136, 12, tile[2], 8, { color: C.faint, fontFamily: MONO })
+        card(`section-flow-card-${index}`, x, 458, width, 108, index === 2 ? unit.deep : C.paper, { stroke: index === 2 ? unit.deep : unit.accent, strokeWidth: 1, radius: 8 }),
+        text(`section-flow-k-${index}`, x + 22, 480, width - 44, 18, item[0], 10, { color: index === 2 ? '#DDEEFF' : unit.deep, fontFamily: MONO, fontWeight: 700, letterSpacing: 1.3 }),
+        text(`section-flow-v-${index}`, x + 22, 510, width - 44, 38, item[1], 18, { color: index === 2 ? C.paper : C.ink, fontWeight: 700, lineHeight: 1.22, valign: 'middle' })
       ]
     }),
-    card('section-observe-card', 96, 550, 1088, 82, unit.deep, { stroke: unit.deep }),
-    text('section-observe-k', 124, 569, 152, 20, 'ON THE NEXT SLIDE', 10, { color: '#DDEEFF', fontFamily: MONO, fontWeight: 700, letterSpacing: 1.2 }),
-    text('section-observe-v', 292, 565, 858, 50, unit.observe, 18, { color: C.paper, fontWeight: 700, valign: 'middle' })
+    text('section-flow-arrow-1', 396, 488, 68, 42, '→', 34, { color: unit.accent, align: 'center', valign: 'middle' }),
+    text('section-flow-arrow-2', 794, 488, 68, 42, '→', 34, { color: unit.accent, align: 'center', valign: 'middle' }),
+    shape('section-watch-rule', 96, 594, 1088, 1, C.line, { radius: 0 }),
+    text('section-watch', 96, 610, 1088, 30, unit.watch, 16, { color: unit.deep, fontFamily: SANS, fontWeight: 700, align: 'center' })
   ]
 }
 
@@ -611,7 +613,7 @@ slides.push(regular(
 for (const unit of sectionUnits) {
   const introId = `s-${unit.id}`
   const liveId = `${introId}-live`
-  slides.push(regular(introId, unit.section, unit.title, unit.premise, unit.note, sectionIntroElements(unit), { accent: unit.accent, titleSize: 35 }))
+  slides.push(regular(introId, unit.section, unit.title, unit.introSubtitle, unit.note, sectionIntroElements(unit), { accent: unit.accent, titleSize: 35, transition: 'none' }))
   slides.push(regular(
     liveId, unit.section, `${unit.title}: all cases`, `Experiment · ${unit.observe}`,
     `Consolidated live experiment for ${unit.title}. Select any case tile, use its controls, then press Escape to return focus to Bento or Page Up to revisit the section concept slide.`,
