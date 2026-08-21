@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <link rel="icon" href="data:,">
 <title>MPC Detection to Bounce Count | Bai Liping</title>
-<meta name="description" content="Interactive note: convert resolved multipath-component measurements into map-consistent propagation hypotheses and bounce counts when the map and the BS and UE poses are known.">
+<meta name="description" content="Interactive note: convert resolved multipath-component measurements into bounce counts when BS and UE poses are known, with either a known map or an inferred map.">
 <style>
 :root{
   --paper:#f4f6f8; --panel:#ffffff; --ink:#16222e; --ink-soft:#51606e; --ink-faint:#8a97a3;
@@ -145,7 +145,7 @@ main{max-width:1200px;padding-left:24px;padding-right:24px}
 h1{font-size:clamp(38px,5vw,64px);line-height:1.04;letter-spacing:-.025em}
 
 .chapter-map{
-  display:grid;grid-template-columns:repeat(2,minmax(0,1fr));margin:0 0 52px;
+  display:grid;grid-template-columns:repeat(3,minmax(0,1fr));margin:0 0 52px;
   border:1px solid var(--line);background:var(--panel)
 }
 .chapter-map a{
@@ -172,6 +172,7 @@ h1{font-size:clamp(38px,5vw,64px);line-height:1.04;letter-spacing:-.025em}
 }
 #measurement{--section-accent:var(--meas)}
 :is(#filter,#los,#single,#double,#triple,#corridor,#corridor3){--section-accent:var(--va)}
+#unknown-map{--section-accent:var(--ip)}
 :is(#ue,#singleu,#doubleu,#tripleu,#corridoru,#corridor3u,#estimateu){--section-accent:var(--ip)}
 #slam-architectures{--section-accent:var(--scatter)}
 #radio-splat{--section-accent:var(--meas-deep)}
@@ -300,16 +301,49 @@ h1{font-size:clamp(38px,5vw,64px);line-height:1.04;letter-spacing:-.025em}
 .known-demo-card .case-panel .split{grid-template-columns:1fr}
 .case-tabs-ready .case-panel[hidden]{display:none}
 
+/* Section 3: the same one-case tile view, now for measurement-derived walls */
+.unknown-map-section .known-copy .pipeline .step b,
+.unknown-map-section .case-selector-label span{color:var(--ip-deep)}
+.unknown-map-section .accuracy{border-left-color:var(--ip)}
+.unknown-case-tabs{
+  display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1px;
+  border:1px solid var(--line);background:var(--line)
+}
+.unknown-case-tabs a{
+  position:relative;min-width:0;min-height:102px;padding:14px 13px;color:var(--ink);text-decoration:none;
+  border-top:3px solid var(--ip);background:#fff;transition:background .18s ease,box-shadow .18s ease
+}
+.unknown-case-tabs a:hover,.unknown-case-tabs a:focus-visible{background:#f8fafb}
+.unknown-case-tabs a.is-active{
+  z-index:1;background:var(--ip-wash);box-shadow:inset 0 0 0 2px color-mix(in srgb,var(--ip) 42%,transparent)
+}
+.unknown-case-tabs a.is-active::after{
+  content:"VIEWING";position:absolute;right:9px;top:9px;color:var(--ip-deep);font:700 7px var(--mono);letter-spacing:.08em
+}
+.unknown-case-tabs span{display:block;margin-bottom:9px;color:var(--ip-deep);font:700 9px var(--mono);letter-spacing:.08em;text-transform:uppercase}
+.unknown-case-tabs strong{display:block;font:700 15px/1.18 var(--serif)}
+.unknown-case-tabs small{display:block;margin-top:6px;color:var(--ink-faint);font:9px/1.4 var(--mono)}
+.unknown-map-section .case-panel>h3.subh:first-child{
+  background:linear-gradient(90deg,color-mix(in srgb,var(--ip) 5%,#fff),#fff 52%)
+}
+.unknown-map-section .case-panel>h3.subh:first-child .no{
+  border-color:color-mix(in srgb,var(--ip) 45%,var(--line));color:var(--ip-deep)
+}
+.unknown-map-section .known-fixed-badge{
+  border-color:color-mix(in srgb,var(--meas) 42%,var(--line));color:var(--meas-deep)!important
+}
+.unknown-tabs-ready .case-panel[hidden]{display:none}
+
 @media (max-width:980px){
   .chapter-map{grid-template-columns:repeat(2,minmax(0,1fr))}
-  .chapter-map a:nth-child(4){border-left:0}.chapter-map a:nth-child(4),.chapter-map a:nth-child(5){border-top:3px solid var(--tile-accent)}
+  .chapter-map a:nth-child(3){grid-column:1/-1;border-left:0;border-top:3px solid var(--tile-accent)}
   .subsection-tiles{grid-template-columns:repeat(3,minmax(0,1fr))}
   .subsection-tiles.is-two{grid-template-columns:repeat(2,minmax(0,1fr))}
   .subsection-tiles.is-three{grid-template-columns:repeat(3,minmax(0,1fr))}
   .subsection-tiles.is-four{grid-template-columns:repeat(2,minmax(0,1fr))}
   .known-layout{grid-template-columns:1fr;gap:24px}
   .known-copy{position:static}
-  .known-case-tabs{grid-template-columns:repeat(3,minmax(0,1fr))}
+  .known-case-tabs,.unknown-case-tabs{grid-template-columns:repeat(3,minmax(0,1fr))}
 }
 @media (max-width:640px){
   main{padding-left:16px;padding-right:16px}
@@ -319,7 +353,7 @@ h1{font-size:clamp(38px,5vw,64px);line-height:1.04;letter-spacing:-.025em}
   .chapter-map a{min-height:116px}
   .chapter-map a:nth-child(odd){border-left:0}.chapter-map a:nth-child(n+3){border-top:3px solid var(--tile-accent)}
   .chapter-map a:nth-child(even){border-left:1px solid var(--line)}
-  .chapter-map a:last-child{grid-column:auto}
+  .chapter-map a:last-child{grid-column:1/-1}
   .sec{margin-top:24px;padding:0 16px 20px;scroll-margin-top:92px}
   .sec>h2:first-child,.sec>h3.subh:first-child{margin:0 -16px 20px;padding:18px 16px 17px;gap:10px}
   .sec>h2:first-child .no,.sec>h3.subh:first-child .no{min-width:36px;height:23px;padding:0 6px}
@@ -332,9 +366,9 @@ h1{font-size:clamp(38px,5vw,64px);line-height:1.04;letter-spacing:-.025em}
   .subsection-block>h3.subh:first-child .no{min-width:36px;height:23px;padding:0 6px}
   .fact-tiles{grid-template-columns:1fr}
   .known-layout{margin-top:20px}
-  .known-case-tabs{grid-template-columns:1fr 1fr}
-  .known-case-tabs a{min-height:94px;padding:13px 11px}
-  .known-case-tabs a.is-active::after{display:none}
+  .known-case-tabs,.unknown-case-tabs{grid-template-columns:1fr 1fr}
+  .known-case-tabs a,.unknown-case-tabs a{min-height:94px;padding:13px 11px}
+  .known-case-tabs a.is-active::after,.unknown-case-tabs a.is-active::after{display:none}
   .case-card-head{padding:14px;align-items:flex-start;flex-direction:column}
   .case-panel>h3.subh:first-child{padding:17px 14px 15px;gap:10px}
   .known-demo-card .case-panel>.fig .body{padding:12px}
@@ -348,6 +382,7 @@ h1{font-size:clamp(38px,5vw,64px);line-height:1.04;letter-spacing:-.025em}
   <nav class="topnav">
     <a href="#measurement">Measurement</a>
     <a href="#filter">Known pose + map</a>
+    <a href="#unknown-map">Unknown map</a>
     <a href="https://bailiping.com/">Home ↗</a>
   </nav>
 </div></div>
@@ -357,13 +392,14 @@ h1{font-size:clamp(38px,5vw,64px);line-height:1.04;letter-spacing:-.025em}
 <header class="hero">
   <div class="eyebrow">Interactive note · map-aware multipath classification</div>
   <h1><span class="v">MPC Detection</span> to <span class="i">Bounce Count</span></h1>
-  <p class="thesis">A resolved multipath component can provide four observables: a <strong>delay</strong> (a path length), an <strong>arrival angle</strong> at the UE, a <strong>departure angle</strong> at the BS, and a <strong>path loss</strong>. When the map and the positions and headings of both the BS and UE are known, these measurements can be converted into global bearings and checked against map-consistent propagation paths. The goal is to identify the physical route behind each MPC detection and report its <strong>bounce count</strong>. Section 2 applies that test to LoS and mapped reflection sequences from one to three bounces.</p>
+  <p class="thesis">A resolved multipath component can provide four observables: a <strong>delay</strong> (a path length), an <strong>arrival angle</strong> at the UE, a <strong>departure angle</strong> at the BS, and a <strong>path loss</strong>. With known BS and UE positions and headings, these measurements become global geometric constraints. The goal is to identify the physical route behind each MPC detection and report its <strong>bounce count</strong>. Section 2 tests LoS and reflection sequences against a known map; Section 3 instead bootstraps virtual anchors, incidence points, and walls when the map is unknown.</p>
   <div class="accuracy"><strong>Context.</strong> The theory uses the same kind of per-path tuple that a SAGE estimator can produce, but every scene and number on this page is illustrative rather than a replay of measured SAGE output. The current <code>Gaussian_Splatting_Test</code> benchmark consumes synthetic ray-tracer path observables with world-aligned, translation-only pose states. The virtual-anchor reading follows E. Leitinger et&nbsp;al., <a href="https://arxiv.org/abs/1801.04463">“A Belief Propagation Algorithm for Multipath-Based SLAM,”</a> <i>IEEE Trans. Wireless Commun.</i> 18(12), 2019. Scale in the 2D drawings: 1&nbsp;px ≙ 0.1&nbsp;m.</div>
 </header>
 
 <nav class="chapter-map" aria-label="Chapter overview">
   <a class="is-measurement" href="#measurement"><span>01 · input</span><strong>Measurement</strong><small>delay · angles · path loss</small></a>
   <a class="is-known" href="#filter"><span>02 · geometry</span><strong>Known BS/UE pose and Map</strong><small>wall order → VA → reflection points</small></a>
+  <a class="is-unknown" href="#unknown-map"><span>03 · inference</span><strong>Known UE/BS Pose, Unknown Map</strong><small>measurements → VA → walls</small></a>
 </nav>
 
 <!-- ============ 01 the measurement ============ -->
@@ -633,6 +669,288 @@ h1{font-size:clamp(38px,5vw,64px);line-height:1.04;letter-spacing:-.025em}
   </div>
 </section>
 
+<!-- ============ 03 known BS/UE poses, unknown map ============ -->
+<section class="sec unknown-map-section" id="unknown-map">
+  <h2><span class="no">03</span>Known UE/BS Pose, Unknown Map</h2>
+  <div class="known-layout">
+    <div class="known-copy">
+      <div class="accuracy"><strong>Scope of §3.</strong> The BS and UE positions and both array headings are known, but the walls are not. Each 2D construction assumes synchronized delay and globally oriented AoA/AoD. Higher-order recovery additionally needs correctly associated nested prefix MPCs—for example, the one-bounce path associated with a two-bounce path. Wall lines and hollow anchors shown as reference geometry explain the synthetic scene; they are not estimator inputs. In 3D, delay ellipses become prolate ellipsoids and inferred wall lines become planes.</div>
+      <div class="pipeline" aria-label="Unknown-map bounce-count pipeline">
+        <div class="step"><b>01 · resolve</b>Take one measured path tuple (L, φ, ψ) in the global frame.</div><span class="arrow">→</span>
+        <div class="step"><b>02 · walk</b>Extend the reverse-AoA ray by the full measured length to obtain a VA candidate.</div><span class="arrow">→</span>
+        <div class="step"><b>03 · intersect</b>Intersect the bearing ray with its delay ellipse to locate an incidence point and infer a wall.</div><span class="arrow">→</span>
+        <div class="step"><b>04 · bootstrap</b>Use associated lower-order prefix VAs to peel successive bounces from higher-order paths.</div><span class="arrow">→</span>
+        <div class="step"><b>05 · assess</b>Check path order and consistency, then retain any remaining wall ambiguity explicitly.</div>
+      </div>
+      <div class="case-selector-label"><span>view selector</span><strong>Choose one unknown-map hypothesis</strong></div>
+      <nav class="unknown-case-tabs" role="tablist" aria-label="Known-pose, unknown-map geometry cases">
+        <a class="is-active" id="unknown-tab-single" href="#usingle" role="tab" aria-selected="true" aria-controls="usingle" data-unknown-case="usingle"><span>3.1</span><strong>Single</strong><small>one bounce</small></a>
+        <a id="unknown-tab-double" href="#udouble" role="tab" aria-selected="false" aria-controls="udouble" tabindex="-1" data-unknown-case="udouble"><span>3.2</span><strong>Corner ×2</strong><small>anchor ladder</small></a>
+        <a id="unknown-tab-triple" href="#utriple" role="tab" aria-selected="false" aria-controls="utriple" tabindex="-1" data-unknown-case="utriple"><span>3.3</span><strong>Corner ×3</strong><small>full recursion</small></a>
+        <a id="unknown-tab-corridor" href="#ucorridor" role="tab" aria-selected="false" aria-controls="ucorridor" tabindex="-1" data-unknown-case="ucorridor"><span>3.4</span><strong>Corridor ×2</strong><small>parallel walls</small></a>
+        <a id="unknown-tab-corridor3" href="#ucorridor3" role="tab" aria-selected="false" aria-controls="ucorridor3" tabindex="-1" data-unknown-case="ucorridor3"><span>3.5</span><strong>Corridor ×3</strong><small>path parity</small></a>
+        <a id="unknown-tab-estimate" href="#uestimate" role="tab" aria-selected="false" aria-controls="uestimate" tabindex="-1" data-unknown-case="uestimate"><span>3.6</span><strong>Ambiguity</strong><small>motion + walls</small></a>
+      </nav>
+    </div>
+    <div class="known-demo-card" id="unknown-demo-card">
+      <div class="case-card-head">
+        <div><span>measurement-derived construction</span><strong>One unknown-map hypothesis at a time</strong></div>
+        <span class="known-fixed-badge">MAP UNKNOWN</span>
+      </div>
+      <div class="unknown-case-panels">
+<!-- ============ 3.1 single bounce, map unknown ============ -->
+<section class="case-panel" id="usingle" role="tabpanel" aria-labelledby="unknown-tab-single" data-unknown-case-panel="usingle">
+  <h3 class="subh"><span class="no">3.1</span>Single bounce: draw everything from (τ, φ, ψ)</h3>
+
+  <div class="fig" id="usingle-demo"><div class="body split">
+    <svg id="usvg1" viewBox="-170 40 830 600" role="img" aria-label="single bounce virtual anchor and incidence point demo, constructed from delay and angle data"></svg>
+    <div class="rail">
+      <h4>the data (drives the drawing)</h4>
+      <div class="ctl">
+        <label><span>delay L = cτ</span> <output id="uo1L"></output></label>
+        <input type="range" class="meas" id="us1L" min="-3" max="3" step="0.05" value="0">
+        <label style="margin-top:7px"><span>AoA φ (at the UE)</span> <output id="uo1P"></output></label>
+        <input type="range" class="meas" id="us1P" min="-6" max="6" step="0.1" value="0">
+        <label style="margin-top:7px"><span>AoD ψ (at the BS)</span> <output id="uo1D"></output></label>
+        <input type="range" class="meas" id="us1D" min="-6" max="6" step="0.1" value="0">
+        <button class="reset" id="ub1R" style="margin-top:7px">reset to specular data</button>
+        <button class="reset" id="ub1T" style="margin-top:5px">✏ trace ellipse: string of length L pinned at BS &amp; UE</button>
+        <label style="margin-top:9px"><span>illustrative per-bounce incidence-point smear σ (not γ<sup>sc</sup>)</span> <output id="uoSig1"></output></label>
+        <input type="range" id="usSig1" min="0" max="28" step="1" value="0">
+      </div>
+      <h4>layers</h4>
+      <label class="ck"><input type="checkbox" id="uc1_ell" checked> <span class="sw" style="background:var(--meas)"></span> delay ellipse (foci BS, UE)</label>
+      <label class="ck"><input type="checkbox" id="uc1_ray" checked> <span class="sw" style="background:var(--ink)"></span> measured rays: AoA (UE) &amp; AoD (BS)</label>
+      <label class="ck"><input type="checkbox" id="uc1_va" checked> <span class="sw" style="background:var(--va)"></span> virtual anchor (walk full L)</label>
+      <label class="ck"><input type="checkbox" id="uc1_ip" checked> <span class="sw" style="background:var(--ip)"></span> incidence point + inferred wall</label>
+      <label class="ck"><input type="checkbox" id="uc1_mir" checked> <span class="sw" style="background:var(--ink-faint)"></span> mirror construction</label>
+      <div class="statline" id="ustat1"></div>
+      <div class="hint">drag the green UE dot — sliders re-sync to its specular measurement</div>
+    </div>
+  </div>
+  <div class="figcap"><b>Read it.</b> d₁ + d₂ = L puts P on the orange ellipse; the mirror makes ‖P→VA‖ = d₂, so the same ray, extended to the full measured length L, ends exactly at VA. The inferred wall is the perpendicular bisector of BS↔VA through P; no wall map is supplied. The dashed orange rings mark the two foci of the ellipse. The σ slider is only an illustrative incidence-point smear, not a physical diffuse-scattering fraction.</div></div>
+</section>
+
+<!-- ============ 3.2 double bounce, map unknown ============ -->
+<section class="case-panel" id="udouble" role="tabpanel" aria-labelledby="unknown-tab-double" data-unknown-case-panel="udouble">
+  <h3 class="subh"><span class="no">3.2</span>Double bounce: two virtual anchors, two incidence points</h3>
+
+  <div class="fig" id="udouble-demo"><div class="body split">
+    <svg id="usvg2" viewBox="-150 -45 850 685" role="img" aria-label="double bounce demo with two virtual anchors, incidence points, and illustrative tangential perturbation clouds, constructed from delay and angle data"></svg>
+    <div class="rail">
+      <h4>the data — path 1 (single bounce)</h4>
+      <div class="ctl">
+        <label><span>delay L⁽¹⁾ = cτ⁽¹⁾</span> <output id="uo2Lb"></output></label>
+        <input type="range" class="meas" id="us2Lb" min="-3" max="3" step="0.05" value="0">
+        <label style="margin-top:7px"><span>AoA φ⁽¹⁾ (at the UE)</span> <output id="uo2Pb"></output></label>
+        <input type="range" class="meas" id="us2Pb" min="-6" max="6" step="0.1" value="0">
+        <label style="margin-top:7px"><span>AoD ψ⁽¹⁾ (at the BS)</span> <output id="uo2Db"></output></label>
+        <input type="range" class="meas" id="us2Db" min="-6" max="6" step="0.1" value="0">
+      </div>
+      <h4>the data — path 2 (double bounce)</h4>
+      <div class="ctl">
+        <label><span>delay L₂ = cτ</span> <output id="uo2L"></output></label>
+        <input type="range" class="meas" id="us2L" min="-3" max="3" step="0.05" value="0">
+        <label style="margin-top:7px"><span>AoA φ (at the UE)</span> <output id="uo2P"></output></label>
+        <input type="range" class="meas" id="us2P" min="-6" max="6" step="0.1" value="0">
+        <label style="margin-top:7px"><span>AoD ψ (at the BS)</span> <output id="uo2D"></output></label>
+        <input type="range" class="meas" id="us2D" min="-6" max="6" step="0.1" value="0">
+        <label style="margin-top:9px"><span>derived L₁ (BS→P₁→P₂)</span> <output id="uo2L1"></output></label>
+        <div class="hint" style="margin-top:0">not an input — and not fixed by path 2’s (τ, φ, ψ) alone: locating P₂ needs VA¹, bootstrapped here from path 1. Given it, the AoA pins P₂ and L₁ = L₂ − ‖UE→P₂‖ follows.</div>
+        <button class="reset" id="ub2R" style="margin-top:7px">reset to specular data</button>
+      </div>
+      <h4>construction — step <output id="uo2Step" style="font-family:var(--mono)"></output></h4>
+      <div style="display:flex;gap:8px">
+        <button class="reset" id="ub2Prev">◀ back</button>
+        <button class="reset" id="ub2Next" style="flex:1">next step ▶</button>
+      </div>
+      <div class="hint" id="ucap2"></div>
+      <div class="ctl">
+        <label><span>illustrative per-bounce incidence-point smear σ (not γ<sup>sc</sup>; step ⑥)</span> <output id="uoSig"></output></label>
+        <input type="range" id="usSig" min="0" max="28" step="1" value="12">
+      </div>
+      <div class="statline" id="ustat2"></div>
+      <div class="hint">drag the green UE dot · σ = 0 removes the illustrative smear</div>
+    </div>
+  </div>
+  <div class="figcap"><b>Legend.</b> ■ BS · ● UE (draggable) · ◆ purple = virtual anchors: VA¹ bootstrapped live from path 1, VA² (hollow = reference, filled = measured full-length walk) · orange = the associated one-bounce prefix that supplies VA¹ · thin purple = the VA¹ family that path 2 alone permits · ● teal = measurement-derived P₁ and P₂ · red = rejected one-bounce test, because the AoA and AoD select different points on the same delay ellipse · green = the peeled bounce-1 ellipse. Reference walls and clouds make the synthetic answer visible; neither is an input to the construction.</div></div>
+</section>
+
+<!-- ============ 3.3 triple bounce, map unknown ============ -->
+<section class="case-panel" id="utriple" role="tabpanel" aria-labelledby="unknown-tab-triple" data-unknown-case-panel="utriple">
+  <h3 class="subh"><span class="no">3.3</span>Triple bounce: the recursion run in full</h3>
+
+  <div class="fig"><div class="body split">
+    <svg id="usvg6" viewBox="-210 -160 990 1330" role="img" aria-label="triple bounce demo with three virtual anchors and three incidence points, constructed step by step from three measured paths"></svg>
+    <div class="rail">
+      <h4>the data — path 1 (single bounce)</h4>
+      <div class="ctl">
+        <label><span>delay L⁽¹⁾ = cτ⁽¹⁾</span> <output id="uo6L1"></output></label>
+        <input type="range" class="meas" id="us6L1" min="-3" max="3" step="0.05" value="0">
+        <label style="margin-top:7px"><span>AoA φ⁽¹⁾ (at the UE)</span> <output id="uo6P1"></output></label>
+        <input type="range" class="meas" id="us6P1" min="-6" max="6" step="0.1" value="0">
+      </div>
+      <h4>the data — path 2 (double bounce)</h4>
+      <div class="ctl">
+        <label><span>delay L⁽²⁾ = cτ⁽²⁾</span> <output id="uo6L2"></output></label>
+        <input type="range" class="meas" id="us6L2" min="-3" max="3" step="0.05" value="0">
+        <label style="margin-top:7px"><span>AoA φ⁽²⁾ (at the UE)</span> <output id="uo6P2"></output></label>
+        <input type="range" class="meas" id="us6P2" min="-6" max="6" step="0.1" value="0">
+      </div>
+      <h4>the data — path 3 (triple bounce)</h4>
+      <div class="ctl">
+        <label><span>delay L₃ = cτ</span> <output id="uo6L3"></output></label>
+        <input type="range" class="meas" id="us6L3" min="-3" max="3" step="0.05" value="0">
+        <label style="margin-top:7px"><span>AoA φ (at the UE)</span> <output id="uo6P3"></output></label>
+        <input type="range" class="meas" id="us6P3" min="-6" max="6" step="0.1" value="0">
+        <label style="margin-top:7px"><span>AoD ψ (at the BS)</span> <output id="uo6D3"></output></label>
+        <input type="range" class="meas" id="us6D3" min="-6" max="6" step="0.1" value="0">
+        <label style="margin-top:9px"><span>derived: BS→P₁→P₂→P₃</span> <output id="uo6R32"></output></label>
+        <label><span>derived: BS→P₁→P₂</span> <output id="uo6R21"></output></label>
+        <div class="hint" style="margin-top:0">not inputs — each peel subtracts one leg; the splits exist only once VA¹ and VA² do.</div>
+        <button class="reset" id="ub6R" style="margin-top:7px">reset to specular data</button>
+      </div>
+      <h4>construction — step <output id="uo6Step" style="font-family:var(--mono)"></output></h4>
+      <div style="display:flex;gap:8px">
+        <button class="reset" id="ub6Prev">◀ back</button>
+        <button class="reset" id="ub6Next" style="flex:1">next step ▶</button>
+      </div>
+      <div class="hint" id="ucap6"></div>
+      <div class="ctl">
+        <label><span>illustrative per-bounce incidence-point smear σ (not γ<sup>sc</sup>; step ⑨)</span> <output id="uoSig6"></output></label>
+        <input type="range" id="usSig6" min="0" max="28" step="1" value="12">
+      </div>
+      <div class="statline" id="ustat6"></div>
+      <div class="hint">drag the green UE dot · σ = 0 removes the illustrative smear</div>
+    </div>
+  </div>
+  <div class="figcap"><b>Legend.</b> ■ BS · ● UE (draggable) · ◆ purple = the data-derived anchor ladder VA¹, VA², VA³ (hollow VA³ is only a reference) · orange and gold = the associated one- and two-bounce prefixes · red = rejected lower-order hypotheses · teal ellipse = bounce 3, pinned at VA² and UE · green ellipse = bounce 2, whose direction comes from the bootstrapped VA² constraint · blue ellipse = bounce 1, selected by the measured AoD. Teal dots are the recovered incidence points; reference walls and perturbation clouds show the synthetic answer but are not map inputs.</div></div>
+</section>
+
+<!-- ============ 3.4 corridor double bounce, map unknown ============ -->
+<section class="case-panel" id="ucorridor" role="tabpanel" aria-labelledby="unknown-tab-corridor" data-unknown-case-panel="ucorridor">
+  <h3 class="subh"><span class="no">3.4</span>Double bounce, corridor edition: two parallel walls</h3>
+
+  <div class="fig"><div class="body split">
+    <svg id="usvg3" viewBox="-400 30 1120 650" role="img" aria-label="double bounce between two parallel walls with virtual anchors, incidence points, and illustrative tangential perturbation clouds"></svg>
+    <div class="rail">
+      <h4>the data — path 1 (single bounce)</h4>
+      <div class="ctl">
+        <label><span>delay L⁽¹⁾ = cτ⁽¹⁾</span> <output id="uo3Lb"></output></label>
+        <input type="range" class="meas" id="us3Lb" min="-3" max="3" step="0.05" value="0">
+        <label style="margin-top:7px"><span>AoA φ⁽¹⁾ (at the UE)</span> <output id="uo3Pb"></output></label>
+        <input type="range" class="meas" id="us3Pb" min="-6" max="6" step="0.1" value="0">
+        <label style="margin-top:7px"><span>AoD ψ⁽¹⁾ (at the BS)</span> <output id="uo3Db"></output></label>
+        <input type="range" class="meas" id="us3Db" min="-6" max="6" step="0.1" value="0">
+      </div>
+      <h4>the data — path 2 (double bounce)</h4>
+      <div class="ctl">
+        <label><span>delay L₂ = cτ</span> <output id="uo3L"></output></label>
+        <input type="range" class="meas" id="us3L" min="-3" max="3" step="0.05" value="0">
+        <label style="margin-top:7px"><span>AoA φ (at the UE)</span> <output id="uo3P"></output></label>
+        <input type="range" class="meas" id="us3P" min="-6" max="6" step="0.1" value="0">
+        <label style="margin-top:7px"><span>AoD ψ (at the BS)</span> <output id="uo3D"></output></label>
+        <input type="range" class="meas" id="us3D" min="-6" max="6" step="0.1" value="0">
+        <label style="margin-top:9px"><span>derived L₁ (BS→P₁→P₂)</span> <output id="uo3L1"></output></label>
+        <button class="reset" id="ub3R" style="margin-top:7px">reset to specular data</button>
+      </div>
+      <h4>construction — step <output id="uo3Step" style="font-family:var(--mono)"></output></h4>
+      <div style="display:flex;gap:8px">
+        <button class="reset" id="ub3Prev">◀ back</button>
+        <button class="reset" id="ub3Next" style="flex:1">next step ▶</button>
+      </div>
+      <div class="hint" id="ucap3"></div>
+      <div class="ctl">
+        <label><span>illustrative per-bounce incidence-point smear σ (not γ<sup>sc</sup>; step ⑥)</span> <output id="uoSig3"></output></label>
+        <input type="range" id="usSig3" min="0" max="28" step="1" value="12">
+      </div>
+      <div class="statline" id="ustat3"></div>
+      <div class="hint">drag the green UE dot · σ = 0 removes the illustrative smear</div>
+    </div>
+  </div>
+  <div class="figcap"><b>Legend.</b> Same as the corner demos above — dashed rings mark each ellipse's foci · red = rejected 1-bounce hypothesis with its implied wall · note the AoD arrow at the BS is exactly anti-parallel to the AoA arrow at the UE, and stays so while you drag: that lock is the parallel-wall signature.</div></div>
+</section>
+
+<!-- ============ 3.5 corridor triple bounce, map unknown ============ -->
+<section class="case-panel" id="ucorridor3" role="tabpanel" aria-labelledby="unknown-tab-corridor3" data-unknown-case-panel="ucorridor3">
+  <h3 class="subh"><span class="no">3.5</span>Triple bounce, corridor edition: parity, and a hypothesis that angles cannot kill</h3>
+
+  <div class="fig"><div class="body split">
+    <svg id="usvg7" viewBox="-470 -80 1580 950" role="img" aria-label="triple bounce between two parallel walls: image-source ladder, parity locks, and the occlusion-rejected single-bounce hypothesis"></svg>
+    <div class="rail">
+      <h4>the data — path 1 (single bounce)</h4>
+      <div class="ctl">
+        <label><span>delay L⁽¹⁾ = cτ⁽¹⁾</span> <output id="uo7L1"></output></label>
+        <input type="range" class="meas" id="us7L1" min="-3" max="3" step="0.05" value="0">
+        <label style="margin-top:7px"><span>AoA φ⁽¹⁾ (at the UE)</span> <output id="uo7P1"></output></label>
+        <input type="range" class="meas" id="us7P1" min="-6" max="6" step="0.1" value="0">
+      </div>
+      <h4>the data — path 2 (double bounce)</h4>
+      <div class="ctl">
+        <label><span>delay L⁽²⁾ = cτ⁽²⁾</span> <output id="uo7L2"></output></label>
+        <input type="range" class="meas" id="us7L2" min="-3" max="3" step="0.05" value="0">
+        <label style="margin-top:7px"><span>AoA φ⁽²⁾ (at the UE)</span> <output id="uo7P2"></output></label>
+        <input type="range" class="meas" id="us7P2" min="-6" max="6" step="0.1" value="0">
+      </div>
+      <h4>the data — path 3 (triple bounce)</h4>
+      <div class="ctl">
+        <label><span>delay L₃ = cτ</span> <output id="uo7L3"></output></label>
+        <input type="range" class="meas" id="us7L3" min="-3" max="3" step="0.05" value="0">
+        <label style="margin-top:7px"><span>AoA φ (at the UE)</span> <output id="uo7P3"></output></label>
+        <input type="range" class="meas" id="us7P3" min="-6" max="6" step="0.1" value="0">
+        <label style="margin-top:7px"><span>AoD ψ (at the BS)</span> <output id="uo7D3"></output></label>
+        <input type="range" class="meas" id="us7D3" min="-6" max="6" step="0.1" value="0">
+        <label style="margin-top:9px"><span>derived: BS→P₁→P₂→P₃</span> <output id="uo7R32"></output></label>
+        <label><span>derived: BS→P₁→P₂</span> <output id="uo7R21"></output></label>
+        <button class="reset" id="ub7R" style="margin-top:7px">reset to specular data</button>
+      </div>
+      <h4>construction — step <output id="uo7Step" style="font-family:var(--mono)"></output></h4>
+      <div style="display:flex;gap:8px">
+        <button class="reset" id="ub7Prev">◀ back</button>
+        <button class="reset" id="ub7Next" style="flex:1">next step ▶</button>
+      </div>
+      <div class="hint" id="ucap7"></div>
+      <div class="ctl">
+        <label><span>illustrative per-bounce incidence-point smear σ (not γ<sup>sc</sup>; step ⑨)</span> <output id="uoSig7"></output></label>
+        <input type="range" id="usSig7" min="0" max="28" step="1" value="12">
+      </div>
+      <div class="statline" id="ustat7"></div>
+      <div class="hint">drag the green UE dot · σ = 0 removes the illustrative smear</div>
+    </div>
+  </div>
+  <div class="figcap"><b>Legend.</b> Orange and gold are the associated prefix paths; teal / green / blue ellipses peel bounces 3 / 2 / 1; ◆ purple is the data-derived ladder VA¹, VA², VA³. Angles alone leave the red one-bounce hypothesis alive. Once the prefixes infer corridor walls R and L, its BS ray crosses R before reaching the apparent bounce on the mirrored image of L, so forward visibility rejects it. The statline also exposes parity: odd paths mirror (ψ = −φ), while even paths are anti-parallel (ψ = φ ± 180°).</div></div>
+</section>
+
+<!-- ============ 3.6 map ambiguity ============ -->
+<section class="case-panel" id="uestimate" role="tabpanel" aria-labelledby="unknown-tab-estimate" data-unknown-case-panel="uestimate">
+  <h3 class="subh"><span class="no">3.6</span>Two-bounce ambiguity: motion alone need not recover the two walls</h3>
+  <p class="lede">A composite virtual anchor identifies an <em>ordered reflection transform</em>, not necessarily its individual reflecting planes. For two nonparallel walls meeting at c, rotate both walls by the same angle about c. Their relative angle—and therefore both ordered two-reflection transforms—stay fixed. Every known UE pose keeps exactly the same delay, AoA, and AoD, while the two incidence points and individual walls move.</p>
+  <div class="accuracy"><strong>What motion does not resolve.</strong> Two pose-specific candidate curves do not generically provide a unique transverse crossing in this construction; they share the same ambiguity orbit. Finite wall support, visibility, a separately observed one-bounce prefix, or a calibrated incidence-dependent path-gain model can add the missing information.</div>
+
+  <div class="fig"><div class="body split">
+    <svg id="usvg4" viewBox="0 0 790 535" role="img" aria-label="common-wall-rotation ambiguity: two walls and both poses' incidence points move while the composite virtual anchor and radio geometry remain unchanged"></svg>
+    <div class="rail">
+      <h4>one unobservable mode</h4>
+      <div class="ctl">
+        <label><span>common wall rotation Δα</span> <output id="uo4t"></output></label>
+        <input type="range" id="us4t" min="-12" max="18" step="0.2" value="10">
+      </div>
+      <h4>layers</h4>
+      <label class="ck"><input type="checkbox" id="uc4_famA" checked> <span class="sw" style="background:var(--va)"></span> invariant composite VA and measured rays</label>
+      <label class="ck"><input type="checkbox" id="uc4_famB" checked> <span class="sw" style="background:var(--ink)"></span> rotated candidate walls</label>
+      <label class="ck"><input type="checkbox" id="uc4_mem" checked> <span class="sw" style="background:var(--ip)"></span> both poses' paths and incidence points</label>
+      <label class="ck"><input type="checkbox" id="uc4_boot" checked> <span class="sw" style="background:var(--meas)"></span> incidence-dependent loss diagnostic</label>
+      <div class="statline" id="ustat4"></div>
+      <div class="hint">Move Δα: the physical explanation changes, but geometric observables remain fixed to numerical precision.</div>
+    </div>
+  </div>
+  <div class="figcap"><b>Read it.</b> F<sub>B′</sub>F<sub>A′</sub> = F<sub>B</sub>F<sub>A</sub> and F<sub>A′</sub>F<sub>B′</sub> = F<sub>A</sub>F<sub>B</sub> under a common rotation about the wall intersection. The purple composite VA, the reverse-order image that fixes AoD, and both UE measurements therefore stay put. Teal incidence points slide along the rotated walls. The orange loss bar is deliberately separate: angle- or material-dependent radiometry can vary along this otherwise invisible geometric mode and may help identify it.</div></div>
+</section>
+      </div>
+    </div>
+  </div>
+</section>
+
 <footer>
   Interactive note by Bai Liping · scale 1 px ≙ 0.1 m, c ≈ 0.3 m/ns ·
   virtual-anchor background: <a href="https://arxiv.org/abs/1801.04463">Leitinger et&nbsp;al., IEEE TWC 18(12), 2019</a>
@@ -751,6 +1069,51 @@ knownSection.classList.add("case-tabs-ready");
 selectKnownCase(knownCaseIds.includes(location.hash.slice(1))?location.hash.slice(1):"los");
 window.addEventListener("hashchange",syncKnownHash);
 window.addEventListener("popstate",syncKnownHash);
+
+/* Section 3 case tiles: keep one measurement-derived unknown-map construction in view */
+const unknownSection=$("unknown-map");
+const unknownTabs=[...unknownSection.querySelectorAll(".unknown-case-tabs [data-unknown-case]")];
+const unknownPanels=[...unknownSection.querySelectorAll("[data-unknown-case-panel]")];
+const unknownCaseIds=unknownTabs.map(tab=>tab.dataset.unknownCase);
+function selectUnknownCase(id,{writeHash=false,focus=false,scroll=false}={}){
+  if(!unknownCaseIds.includes(id))id="usingle";
+  unknownTabs.forEach(tab=>{
+    const active=tab.dataset.unknownCase===id;
+    tab.classList.toggle("is-active",active);
+    tab.setAttribute("aria-selected",String(active));
+    tab.tabIndex=active?0:-1;
+    if(active&&focus)tab.focus();
+  });
+  unknownPanels.forEach(panel=>{panel.hidden=panel.dataset.unknownCasePanel!==id;});
+  if(writeHash&&location.hash!==`#${id}`)history.pushState(null,"",`#${id}`);
+  if(scroll){
+    $("unknown-demo-card").scrollIntoView({behavior:matchMedia("(prefers-reduced-motion: reduce)").matches?"auto":"smooth",block:"start"});
+  }
+}
+unknownTabs.forEach((tab,index)=>{
+  tab.addEventListener("click",event=>{
+    event.preventDefault();
+    selectUnknownCase(tab.dataset.unknownCase,{writeHash:true,scroll:true});
+  });
+  tab.addEventListener("keydown",event=>{
+    let next=index;
+    if(event.key==="ArrowRight"||event.key==="ArrowDown")next=(index+1)%unknownTabs.length;
+    else if(event.key==="ArrowLeft"||event.key==="ArrowUp")next=(index-1+unknownTabs.length)%unknownTabs.length;
+    else if(event.key==="Home")next=0;
+    else if(event.key==="End")next=unknownTabs.length-1;
+    else return;
+    event.preventDefault();
+    selectUnknownCase(unknownTabs[next].dataset.unknownCase,{writeHash:true,focus:true,scroll:true});
+  });
+});
+const syncUnknownHash=()=>{
+  const id=location.hash.slice(1);
+  if(unknownCaseIds.includes(id))selectUnknownCase(id);
+};
+unknownSection.classList.add("unknown-tabs-ready");
+selectUnknownCase(unknownCaseIds.includes(location.hash.slice(1))?location.hash.slice(1):"usingle");
+window.addEventListener("hashchange",syncUnknownHash);
+window.addEventListener("popstate",syncUnknownHash);
 
 /* =================== DEMO 2.1: direct line of sight =================== */
 const svg0=$("svg0");
@@ -967,5 +1330,6 @@ MAP_CASES.forEach(initKnownCase);
 
 })();
 </script>
+<script src="unknown-map.js"></script>
 </body>
 </html>
