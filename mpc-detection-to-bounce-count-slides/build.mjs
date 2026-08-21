@@ -541,9 +541,9 @@ slides.push(regular(
       ]
     }),
     ...[
-      [226, 118, 'LoS', C.measurement],
+      [226, 148, 'LoS', C.measurement],
       [330, 72, 'MPC 1', C.known],
-      [438, 138, 'MPC 2', C.map],
+      [438, 108, 'MPC 2', C.map],
       [548, 52, 'MPC 3', C.pose],
       [664, 28, 'noise', C.faint]
     ].flatMap((peak, index) => [
