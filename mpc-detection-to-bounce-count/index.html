@@ -7,9 +7,11 @@
 <script>
 (()=>{
   const params=new URLSearchParams(location.search);
-  if(params.get("embed")!=="region")return;
+  const embed=params.get("embed");
+  if(embed!=="region"&&embed!=="section")return;
   const root=document.documentElement;
   root.classList.add("mpc-live-region");
+  if(embed==="section")root.classList.add("mpc-live-section");
   root.dataset.mpcSection=params.get("section")||"known";
   root.dataset.mpcFigure=params.get("figure")||"point";
 })();
@@ -464,6 +466,53 @@ html.mpc-live-region button.reset{min-height:28px;font-size:10px}
 html.mpc-live-region #uestimate-corridor-demo{display:none!important}
 html.mpc-live-region[data-mpc-figure="corridor"] #uestimate-point-demo{display:none!important}
 html.mpc-live-region[data-mpc-figure="corridor"] #uestimate-corridor-demo{display:block!important}
+.rank-figure-tabs{display:none}
+html.mpc-live-section .known-layout{
+  display:grid;grid-template-columns:1fr;grid-template-rows:60px minmax(0,1fr);width:100%;height:100%;gap:0;margin:0
+}
+html.mpc-live-section .known-copy{
+  display:block!important;position:static;width:100%;height:60px;min-width:0;overflow:hidden
+}
+html.mpc-live-section .known-copy>.accuracy,
+html.mpc-live-section .known-copy>.pipeline,
+html.mpc-live-section .known-copy>.case-selector-label{display:none!important}
+html.mpc-live-section .known-case-tabs,
+html.mpc-live-section .unknown-case-tabs,
+html.mpc-live-section .pose-map-case-tabs{
+  display:grid;grid-template-columns:repeat(6,minmax(0,1fr));height:60px;border-width:0 0 1px
+}
+html.mpc-live-section .known-case-tabs a,
+html.mpc-live-section .unknown-case-tabs a,
+html.mpc-live-section .pose-map-case-tabs a{
+  min-height:0;height:59px;padding:5px 8px;border-top-width:3px;overflow:hidden
+}
+html.mpc-live-section .known-case-tabs a.is-active::after,
+html.mpc-live-section .unknown-case-tabs a.is-active::after,
+html.mpc-live-section .pose-map-case-tabs a.is-active::after{display:none}
+html.mpc-live-section .known-case-tabs span,
+html.mpc-live-section .unknown-case-tabs span,
+html.mpc-live-section .pose-map-case-tabs span{margin-bottom:2px;font-size:7px}
+html.mpc-live-section .known-case-tabs strong,
+html.mpc-live-section .unknown-case-tabs strong,
+html.mpc-live-section .pose-map-case-tabs strong{font-size:12px;line-height:1.08;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+html.mpc-live-section .known-case-tabs small,
+html.mpc-live-section .unknown-case-tabs small,
+html.mpc-live-section .pose-map-case-tabs small{margin-top:2px;font-size:7px;line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+html.mpc-live-section .known-demo-card{height:100%;min-height:0;overflow:hidden}
+html.mpc-live-section .case-panels,
+html.mpc-live-section .unknown-case-panels,
+html.mpc-live-section .pose-map-case-panels,
+html.mpc-live-section .case-panel{height:100%;min-height:0}
+html.mpc-live-section .known-demo-card .case-panel>.fig{height:100%;min-height:0}
+html.mpc-live-section #uestimateu{grid-template-rows:32px minmax(0,1fr)}
+html.mpc-live-section #uestimateu:not([hidden]){display:grid}
+html.mpc-live-section #uestimateu .rank-figure-tabs{
+  display:flex!important;gap:1px;height:32px;padding:0;background:var(--line);border-bottom:1px solid var(--line)
+}
+html.mpc-live-section .rank-figure-tabs button{
+  flex:1;min-width:0;border:0;background:#fff;color:var(--ink-soft);font:700 9px var(--mono);letter-spacing:.04em;cursor:pointer
+}
+html.mpc-live-section .rank-figure-tabs button[aria-pressed="true"]{background:var(--scatter-wash);color:var(--scatter-deep)}
 @media (max-width:760px){
   html.mpc-live-region,html.mpc-live-region body{height:auto;min-height:100%;overflow:auto}
   html.mpc-live-region main,html.mpc-live-region .sec,html.mpc-live-region .known-layout,html.mpc-live-region .known-demo-card{height:auto;min-height:100vh}
@@ -471,6 +520,20 @@ html.mpc-live-region[data-mpc-figure="corridor"] #uestimate-corridor-demo{displa
   html.mpc-live-region .known-demo-card .case-panel>.fig .body.split{grid-template-columns:1fr;height:auto}
   html.mpc-live-region .fig svg{height:auto;max-height:none}
   html.mpc-live-region .rail{max-height:none;overflow:visible}
+  html.mpc-live-section .known-layout{display:block;height:auto}
+  html.mpc-live-section .known-copy{height:auto;overflow:visible}
+  html.mpc-live-section .known-case-tabs,
+  html.mpc-live-section .unknown-case-tabs,
+  html.mpc-live-section .pose-map-case-tabs{grid-template-columns:repeat(2,minmax(0,1fr));height:auto}
+  html.mpc-live-section .known-case-tabs a,
+  html.mpc-live-section .unknown-case-tabs a,
+  html.mpc-live-section .pose-map-case-tabs a{height:auto;min-height:58px}
+  html.mpc-live-section .known-demo-card,
+  html.mpc-live-section .case-panels,
+  html.mpc-live-section .unknown-case-panels,
+  html.mpc-live-section .pose-map-case-panels,
+  html.mpc-live-section .case-panel{height:auto}
+  html.mpc-live-section #uestimateu:not([hidden]){display:block}
 }
 </style>
 </head>
@@ -1283,6 +1346,10 @@ html.mpc-live-region[data-mpc-figure="corridor"] #uestimate-corridor-demo{displa
   <h3 class="subh"><span class="no">4.6</span>Special observability case: globally referenced displacement vectors</h3>
   <p class="lede">This compact derivation grants each translation oᵢ = pᵢ₊₁ − pᵢ directly in the <em>map frame</em>. That is stronger than wheel/IMU odometry expressed in the moving body frame: it effectively supplies an external orientation reference. Under this assumption, same-wall motion can reveal a wall direction from n̂ ∝ ΔE − o, and a link between two nonparallel wall families can determine their offsets. The animation is a useful linear observability special case, not the general nonlinear unknown-heading GraphSLAM backend.</p>
   <div class="accuracy"><strong>Condition.</strong> The normal formula fails when motion is parallel to the wall because ΔE − o = 0, and is ill-conditioned near that case. With body-frame odometry, heading and displacement must instead remain pose variables in the nonlinear graph.</div>
+  <div class="rank-figure-tabs" role="group" aria-label="Rank-test result">
+    <button type="button" data-rank-figure="point" aria-pressed="true">4.6a · point / full rank</button>
+    <button type="button" data-rank-figure="corridor" aria-pressed="false">4.6b · line / null space</button>
+  </div>
 
   <div class="fig" id="uestimate-point-demo"><div class="body split">
     <svg id="usvg36" viewBox="-140 -75 900 700" role="img" aria-label="special-case joint estimation with globally referenced translations: same-wall motion fixes each wall direction and the cross-family displacement pins both offsets"></svg>
@@ -1402,6 +1469,7 @@ function makeDraggable(svg,getP,setP,box,render){
 }
 const $=id=>document.getElementById(id);
 const requestedCase=new URLSearchParams(location.search).get("case");
+const consolidatedLive=document.documentElement.classList.contains("mpc-live-section");
 document.querySelectorAll('input[type="range"]').forEach(input=>{
   if(input.getAttribute("aria-label")||input.getAttribute("aria-labelledby"))return;
   let label=input.previousElementSibling;
@@ -1427,7 +1495,7 @@ function selectKnownCase(id,{writeHash=false,focus=false,scroll=false}={}){
   });
   knownPanels.forEach(panel=>{panel.hidden=panel.dataset.casePanel!==id;});
   if(writeHash&&location.hash!==`#${id}`)history.pushState(null,"",`#${id}`);
-  if(scroll){
+  if(scroll&&!consolidatedLive){
     $("known-demo-card").scrollIntoView({behavior:matchMedia("(prefers-reduced-motion: reduce)").matches?"auto":"smooth",block:"start"});
   }
 }
@@ -1472,7 +1540,7 @@ function selectUnknownCase(id,{writeHash=false,focus=false,scroll=false}={}){
   });
   unknownPanels.forEach(panel=>{panel.hidden=panel.dataset.unknownCasePanel!==id;});
   if(writeHash&&location.hash!==`#${id}`)history.pushState(null,"",`#${id}`);
-  if(scroll){
+  if(scroll&&!consolidatedLive){
     $("unknown-demo-card").scrollIntoView({behavior:matchMedia("(prefers-reduced-motion: reduce)").matches?"auto":"smooth",block:"start"});
   }
 }
@@ -1517,7 +1585,7 @@ function selectPoseMapCase(id,{writeHash=false,focus=false,scroll=false}={}){
   });
   poseMapPanels.forEach(panel=>{panel.hidden=panel.dataset.poseMapCasePanel!==id;});
   if(writeHash&&location.hash!==`#${id}`)history.pushState(null,"",`#${id}`);
-  if(scroll){
+  if(scroll&&!consolidatedLive){
     $("pose-map-demo-card").scrollIntoView({behavior:matchMedia("(prefers-reduced-motion: reduce)").matches?"auto":"smooth",block:"start"});
   }
 }
@@ -1545,6 +1613,16 @@ poseMapSection.classList.add("pose-map-tabs-ready");
 selectPoseMapCase(poseMapCaseIds.includes(location.hash.slice(1))?location.hash.slice(1):poseMapCaseIds.includes(requestedCase)?requestedCase:"usingleu");
 window.addEventListener("hashchange",syncPoseMapHash);
 window.addEventListener("popstate",syncPoseMapHash);
+
+/* The consolidated §4 slide keeps both rank outcomes inside its final case tile. */
+const rankFigureTabs=[...document.querySelectorAll("[data-rank-figure]")];
+function selectRankFigure(id){
+  if(id!=="corridor")id="point";
+  document.documentElement.dataset.mpcFigure=id;
+  rankFigureTabs.forEach(button=>button.setAttribute("aria-pressed",String(button.dataset.rankFigure===id)));
+}
+rankFigureTabs.forEach(button=>button.addEventListener("click",()=>selectRankFigure(button.dataset.rankFigure)));
+selectRankFigure(document.documentElement.dataset.mpcFigure);
 
 /* =================== DEMO 2.1: direct line of sight =================== */
 const svg0=$("svg0");

@@ -21,7 +21,7 @@ GitHub Pages site for `bailiping.com`.
 - `/graph-slam/` is a Jupyter-notebook-style walkthrough of graph SLAM, incremental smoothing with iSAM/iSAM2, bundle adjustment, and structure from motion. Its numbered numerical cells were executed; the printed outputs and figures in `graph-slam/assets/` are reproducible results, while external-library cells are marked as reference snippets.
 - `/cir-to-taps/` is an interactive communication-basics lab showing how continuous-delay channel paths become discrete complex channel taps, plus a status-labeled, field-level inventory of the radio-SLAM experiment data and its estimator boundary.
 - `/mpc-detection-to-bounce-count/` is the interactive note for converting resolved MPC delay, AoA, AoD, and path-loss evidence into bounce-count hypotheses under three map/pose knowledge regimes.
-- `/mpc-detection-to-bounce-count-slides/` is the 43-slide Bento presentation of that note, with 19 concept/live pairs and printable static fallbacks.
+- `/mpc-detection-to-bounce-count-slides/` is the 11-slide Bento presentation of that note, with one consolidated concept/live pair for each map/pose regime and printable static fallbacks.
 
 ## Edit sale items
 

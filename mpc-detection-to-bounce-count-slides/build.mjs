@@ -275,6 +275,51 @@ const cases = [
   }
 ]
 
+const sectionUnits = [
+  {
+    id: 'known', mode: 'known', section: '02 · KNOWN BS/UE POSE AND MAP', title: 'Known BS/UE pose and map',
+    accent: C.known, deep: C.knownDeep, soft: C.knownSoft, defaultCase: 'los', defaultBounces: 0,
+    premise: 'The map and both poses turn bounce count into direct route testing over ordered finite-wall sequences.',
+    known: 'finite wall map · BS/UE positions · both array headings',
+    method: 'Mirror through the selected walls, fold to incidence points, and compare the complete MPC tuple.',
+    verdict: 'The accepted route’s wall-sequence length is its bounce count.',
+    observe: 'Switch among all six mapped candidates and compare how the same map-aware feasibility test scales from LoS to three bounces.',
+    note: 'Introduce the known-map regime as enumeration plus validation. The next slide consolidates LoS, single, double, triple, and both corridor cases behind one tile selector.',
+    tiles: [
+      ['2.1', 'LoS', '0 bounce'], ['2.2', 'Single', '1 bounce'], ['2.3', 'Corner ×2', '2 bounces'],
+      ['2.4', 'Corner ×3', '3 bounces'], ['2.5', 'Corridor ×2', 'R→L'], ['2.6', 'Corridor ×3', 'R→L→R']
+    ]
+  },
+  {
+    id: 'map', mode: 'map', section: '03 · KNOWN BS/UE POSE, UNKNOWN MAP', title: 'Known BS/UE pose, unknown map',
+    accent: C.map, deep: C.mapDeep, soft: C.mapSoft, defaultCase: 'usingle', defaultBounces: 1,
+    premise: 'Known poses place both bearings in the global frame, but virtual anchors and supporting walls must now be constructed from measurements.',
+    known: 'BS/UE positions · both array headings · associated prefix paths for higher orders',
+    method: 'Construct a VA and wall from one path; use associated prefixes to peel higher orders.',
+    verdict: 'Retain the constructed bounce order—and any unresolved wall family—without inventing uniqueness.',
+    observe: 'Use one tile bar to compare identifiable single-bounce geometry, recursive corners, corridor degeneracy, and the two-wall null mode.',
+    note: 'Emphasize the estimator boundary: reference walls explain the synthetic answer but are not inputs. The next slide keeps all six unknown-map constructions in one live workspace.',
+    tiles: [
+      ['3.1', 'Single', 'one wall'], ['3.2', 'Corner ×2', 'anchor ladder'], ['3.3', 'Corner ×3', 'full recursion'],
+      ['3.4', 'Corridor ×2', 'coincident lines'], ['3.5', 'Corridor ×3', 'parity'], ['3.6', 'Ambiguity', 'wall rotation']
+    ]
+  },
+  {
+    id: 'pose', mode: 'pose', section: '04 · KNOWN BS POSE, UNKNOWN UE POSE AND MAP', title: 'Known BS pose, unknown UE pose and map',
+    accent: C.pose, deep: C.poseDeep, soft: C.poseSoft, defaultCase: 'usingleu', defaultBounces: 1,
+    premise: 'Without the UE heading, body-frame AoA creates a joint pose–map family that higher-order paths can prune but need not collapse.',
+    known: 'BS position + heading · synchronized delays · associated path ladder',
+    method: 'Hypothesize heading and a first bounce; keep ordered positive-length routes and inspect rank.',
+    verdict: 'Report the feasible family unless an independent factor makes the system full rank.',
+    observe: 'Move through five recursive cases, then use the Rank tile’s point/line switch to compare full-rank and corridor outcomes.',
+    note: 'Do not promote body-frame AoA to the global frame without a heading hypothesis. The next slide consolidates every §4 construction, including both rank-test outcomes.',
+    tiles: [
+      ['4.1', 'Single', '2D family'], ['4.2', 'Corner ×2', 'feasible subset'], ['4.3', 'Corner ×3', 'recursive test'],
+      ['4.4', 'Corridor ×2', 'continuum'], ['4.5', 'Corridor ×3', 'null direction'], ['4.6', 'Rank test', 'point or line']
+    ]
+  }
+]
+
 function introElements(item) {
   return [
     ...labelPill('case-pill', 96, 198, 150, `${item.number} · ${item.short}`, item.deep, item.soft),
@@ -346,6 +391,84 @@ function liveFallback(item) {
 
 function liveMount() {
   return shape('live-demo-mount', LIVE_BOUNDS.x, LIVE_BOUNDS.y, LIVE_BOUNDS.width, LIVE_BOUNDS.height, 'rgba(255,255,255,0)', { opacity: 0, radius: 0 })
+}
+
+function sectionIntroElements(unit) {
+  return [
+    ...labelPill('section-pill', 96, 198, 176, `${unit.section.slice(0, 2)} · 6 CASES`, unit.deep, unit.soft),
+    text('section-premise', 96, 250, 682, 100, unit.premise, 27, { fontWeight: 700, lineHeight: 1.2 }),
+    card('section-known-card', 96, 370, 326, 154, unit.soft, { stroke: unit.accent }),
+    text('section-known-k', 120, 392, 278, 20, 'KNOWN INPUTS', 11, { color: unit.deep, fontFamily: MONO, fontWeight: 700, letterSpacing: 1.3 }),
+    text('section-known-v', 120, 426, 278, 78, unit.known, 18, { lineHeight: 1.4 }),
+    card('section-rule-card', 444, 370, 334, 154, C.paper, { stroke: C.line }),
+    text('section-rule-k', 468, 392, 286, 20, 'ONE DECISION RULE', 11, { color: unit.deep, fontFamily: MONO, fontWeight: 700, letterSpacing: 1.3 }),
+    text('section-rule-v', 468, 424, 286, 100, `${unit.method}<br><b>${unit.verdict}</b>`, 13, { lineHeight: 1.22 }),
+    card('section-catalog', 800, 198, 384, 326, C.paper, { stroke: unit.accent, strokeWidth: 2 }),
+    text('section-catalog-k', 824, 220, 336, 20, 'CONSOLIDATED LIVE WORKSPACE', 10, { color: unit.deep, fontFamily: MONO, fontWeight: 700, letterSpacing: 1.2 }),
+    ...unit.tiles.flatMap((tile, index) => {
+      const x = 824 + (index % 2) * 168, y = 256 + Math.floor(index / 2) * 80
+      return [
+        card(`catalog-tile-${index}`, x, y, 156, 68, index === 0 ? unit.soft : C.bg, { stroke: index === 0 ? unit.accent : C.line, radius: 6 }),
+        text(`catalog-num-${index}`, x + 10, y + 8, 42, 14, tile[0], 9, { color: unit.deep, fontFamily: MONO, fontWeight: 700 }),
+        text(`catalog-name-${index}`, x + 10, y + 26, 136, 20, tile[1], 15, { fontWeight: 700 }),
+        text(`catalog-detail-${index}`, x + 10, y + 49, 136, 12, tile[2], 8, { color: C.faint, fontFamily: MONO })
+      ]
+    }),
+    card('section-observe-card', 96, 550, 1088, 82, unit.deep, { stroke: unit.deep }),
+    text('section-observe-k', 124, 569, 152, 20, 'ON THE NEXT SLIDE', 10, { color: '#DDEEFF', fontFamily: MONO, fontWeight: 700, letterSpacing: 1.2 }),
+    text('section-observe-v', 292, 565, 858, 50, unit.observe, 18, { color: C.paper, fontWeight: 700, valign: 'middle' })
+  ]
+}
+
+function sectionLiveFallback(unit) {
+  const x0 = LIVE_BOUNDS.x, y0 = LIVE_BOUNDS.y, w = LIVE_BOUNDS.width, h = LIVE_BOUNDS.height
+  const tabsX = x0 + 14, tabsY = y0 + 8, tabsW = w - 28, tabW = tabsW / unit.tiles.length
+  const stageX = x0 + 14, stageY = y0 + 70, stageW = 752, stageH = h - 84
+  const railX = stageX + stageW + 12, railW = w - stageW - 40
+  const bs = [stageX + 115, stageY + 255], ue = [stageX + 630, stageY + 135]
+  const bounceSets = {
+    0: [],
+    1: [[stageX + 430, stageY + 82]],
+    2: [[stageX + 300, stageY + 80], [stageX + 590, stageY + 94]],
+    3: [[stageX + 245, stageY + 92], [stageX + 440, stageY + 55], [stageX + 620, stageY + 120]]
+  }
+  const points = bounceSets[Math.min(3, unit.defaultBounces)]
+  const nodes = [bs, ...points, ue]
+  const elements = [
+    card('fallback-bg', x0, y0, w, h, '#F8FAFB', { stroke: C.line, radius: 0 })
+  ]
+  unit.tiles.forEach((tile, index) => {
+    const x = tabsX + index * tabW
+    elements.push(card(`fallback-tab-${index}`, x, tabsY, tabW - 1, 52, index === 0 ? unit.soft : C.paper, { stroke: index === 0 ? unit.accent : C.line, radius: 2 }))
+    elements.push(text(`fallback-tab-num-${index}`, x + 7, tabsY + 6, tabW - 14, 12, tile[0], 8, { color: unit.deep, fontFamily: MONO, fontWeight: 700 }))
+    elements.push(text(`fallback-tab-name-${index}`, x + 7, tabsY + 20, tabW - 14, 17, tile[1], 12, { fontWeight: 700 }))
+    elements.push(text(`fallback-tab-detail-${index}`, x + 7, tabsY + 38, tabW - 14, 10, tile[2], 7, { color: C.faint, fontFamily: MONO }))
+  })
+  elements.push(card('fallback-stage', stageX, stageY, stageW, stageH, C.paper, { stroke: C.line, radius: 6 }))
+  elements.push(card('fallback-rail', railX, stageY, railW, stageH, C.paper, { stroke: C.line, radius: 6 }))
+  elements.push(line('wall-top', stageX + 82, stageY + 62, stageX + 676, stageY + 62, C.faint, 4, { opacity: unit.mode === 'known' ? .72 : .25 }))
+  elements.push(line('wall-right', stageX + 676, stageY + 62, stageX + 676, stageY + 330, C.faint, 4, { opacity: unit.mode === 'known' ? .72 : .25 }))
+  nodes.slice(0, -1).forEach((node, index) => elements.push(line(`fallback-path-${index}`, node[0], node[1], nodes[index + 1][0], nodes[index + 1][1], C.soft, 4)))
+  points.forEach((point, index) => {
+    elements.push(shape(`fallback-bounce-${index}`, point[0] - 6, point[1] - 6, 12, 12, C.map, { shape: 'ellipse', stroke: C.paper, strokeWidth: 2 }))
+    elements.push(text(`fallback-bounce-label-${index}`, point[0] + 9, point[1] - 18, 68, 16, `P${index + 1}`, 9, { color: C.mapDeep, fontFamily: MONO, fontWeight: 700 }))
+  })
+  elements.push(shape('fallback-bs', bs[0] - 7, bs[1] - 7, 14, 14, C.ink, { radius: 0 }))
+  elements.push(text('fallback-bs-label', bs[0] - 15, bs[1] + 13, 52, 16, 'BS', 10, { color: C.ink, fontFamily: MONO, fontWeight: 700 }))
+  elements.push(shape('fallback-ue', ue[0] - 8, ue[1] - 8, 16, 16, C.ue, { shape: 'ellipse', stroke: C.paper, strokeWidth: 2 }))
+  elements.push(text('fallback-ue-label', ue[0] + 12, ue[1] - 9, 70, 16, unit.mode === 'pose' ? 'UE?' : 'UE', 10, { color: C.ue, fontFamily: MONO, fontWeight: 700 }))
+  elements.push(text('fallback-stage-label', stageX + 24, stageY + 18, 700, 18, `${unit.tiles[0][0]} · ${unit.tiles[0][1]} · select any tile to replace this construction`, 10, { color: unit.deep, fontFamily: MONO, fontWeight: 700 }))
+  elements.push(text('fallback-rail-k', railX + 18, stageY + 18, railW - 36, 18, 'ACTIVE CASE CONTROLS', 9, { color: unit.deep, fontFamily: MONO, fontWeight: 700, letterSpacing: 1.1 }))
+  ;['delay L = cτ', unit.mode === 'pose' ? 'body-frame AoA φ' : 'arrival angle φ', 'departure angle ψ'].forEach((label, index) => {
+    const y = stageY + 54 + index * 61
+    elements.push(text(`fallback-control-label-${index}`, railX + 18, y, railW - 36, 16, label, 11, { color: C.soft, fontFamily: SANS, fontWeight: 700 }))
+    elements.push(shape(`fallback-control-track-${index}`, railX + 18, y + 24, railW - 36, 5, C.line, { radius: 3 }))
+    elements.push(shape(`fallback-control-thumb-${index}`, railX + 120 + index * 22, y + 18, 17, 17, index === 0 ? C.measurement : unit.accent, { shape: 'ellipse' }))
+  })
+  elements.push(card('fallback-result-card', railX + 18, stageY + 252, railW - 36, 132, unit.soft, { stroke: unit.accent, radius: 6 }))
+  elements.push(text('fallback-result-k', railX + 34, stageY + 270, railW - 68, 16, 'SECTION DECISION', 9, { color: unit.deep, fontFamily: MONO, fontWeight: 700, letterSpacing: 1 }))
+  elements.push(text('fallback-result-v', railX + 34, stageY + 298, railW - 68, 74, unit.verdict, 14, { fontWeight: 700, lineHeight: 1.3 }))
+  return elements
 }
 
 const slides = []
@@ -445,12 +568,12 @@ slides.push(regular(
   'Use this as the table of contents. Each topic link goes to an introductory slide, and the next slide activates the corresponding live geometry automatically.',
   [
     ...[
-      ['02', 'Known BS/UE pose + map', 'Enumerate ordered finite-wall routes and test the complete tuple.', C.known, C.knownSoft, 's-known-los'],
-      ['03', 'Known BS/UE pose, unknown map', 'Walk to virtual anchors, peel prefix paths, and infer walls.', C.map, C.mapSoft, 's-unknown-single'],
-      ['04', 'Known BS pose, unknown UE + map', 'Hypothesize heading and position; retain feasible families and null modes.', C.pose, C.poseSoft, 's-pose-single']
+      ['02', 'Known BS/UE pose + map', 'One live workspace compares all six ordered finite-wall candidates.', C.known, C.knownSoft, 's-known'],
+      ['03', 'Known BS/UE pose, unknown map', 'One live workspace compares VA construction, prefix peeling, and degeneracy.', C.map, C.mapSoft, 's-map'],
+      ['04', 'Known BS pose, unknown UE + map', 'One live workspace compares joint families, recursive pruning, and rank.', C.pose, C.poseSoft, 's-pose']
     ].flatMap((item, index) => {
       const y = 214 + index * 142
-      const target = cases.some(entry => `s-${entry.id}` === item[5]) ? item[5] : undefined
+      const target = sectionUnits.some(entry => `s-${entry.id}` === item[5]) ? item[5] : undefined
       return [
         card(`road-card-${index}`, 96, y, 1088, 118, item[4], { stroke: item[3], strokeWidth: 2 }),
         text(`road-num-${index}`, 122, y + 30, 66, 38, item[0], 28, { color: item[3], fontFamily: MONO, fontWeight: 700 }),
@@ -461,14 +584,14 @@ slides.push(regular(
   ], { accent: C.pose }
 ))
 
-for (const item of cases) {
-  const introId = `s-${item.id}`
+for (const unit of sectionUnits) {
+  const introId = `s-${unit.id}`
   const liveId = `${introId}-live`
-  slides.push(regular(introId, item.section, item.title, item.premise, item.note, introElements(item), { accent: item.accent, titleSize: 35 }))
+  slides.push(regular(introId, unit.section, unit.title, unit.premise, unit.note, sectionIntroElements(unit), { accent: unit.accent, titleSize: 35 }))
   slides.push(regular(
-    liveId, item.section, item.title, `Experiment · ${item.observe}`,
-    `Live experiment for ${item.title}. Use the controls, then press Escape to return focus to Bento or Page Up to revisit the concept slide.`,
-    [...liveFallback(item), liveMount()], { accent: item.accent, titleSize: 31, transition: 'none' }
+    liveId, unit.section, `${unit.title}: all cases`, `Experiment · ${unit.observe}`,
+    `Consolidated live experiment for ${unit.title}. Select any case tile, use its controls, then press Escape to return focus to Bento or Page Up to revisit the section concept slide.`,
+    [...sectionLiveFallback(unit), liveMount()], { accent: unit.accent, titleSize: 31, transition: 'none' }
   ))
 }
 
@@ -494,18 +617,17 @@ slides.push(regular(
   ], { accent: C.pose }
 ))
 
-function liveUrl(item, embed) {
-  const params = new URLSearchParams({ section: item.mode === 'known' ? 'known' : item.mode === 'map' ? 'unknown-map' : 'unknown-pose-map', case: item.caseId })
-  if (item.figure) params.set('figure', item.figure)
-  if (embed) params.set('embed', 'region')
+function liveUrl(unit, embed) {
+  const params = new URLSearchParams({ section: unit.mode === 'known' ? 'known' : unit.mode === 'map' ? 'unknown-map' : 'unknown-pose-map', case: unit.defaultCase })
+  if (embed) params.set('embed', 'section')
   return `../mpc-detection-to-bounce-count/?${params.toString()}`
 }
 
-const inlineLiveMap = cases.map(item => {
-  const introSlide = `s-${item.id}`, slide = `${introSlide}-live`
+const inlineLiveMap = sectionUnits.map(unit => {
+  const introSlide = `s-${unit.id}`, slide = `${introSlide}-live`
   return {
     introSlide, slide, slideIndex: slides.findIndex(entry => entry.id === slide), inline: true, layout: 'region', bounds: LIVE_BOUNDS,
-    src: liveUrl(item, true), source: liveUrl(item, false), title: `${item.number} ${item.title}`,
+    src: liveUrl(unit, true), source: liveUrl(unit, false), title: `${unit.section} · consolidated cases`,
     sandbox: 'allow-scripts', hideSource: true, readyMessage: true, unloadWhenHidden: true
   }
 })
@@ -529,4 +651,4 @@ html = html.replaceAll('../assets/bento-live.js', '../assets/bento-inline-live.j
 if (!html.includes('"docId": "mpc-detection-to-bounce-count-deck"')) throw new Error('Bento document replacement failed')
 if (!html.includes('id="bento-inline-live-map"')) throw new Error('Inline-live map replacement failed')
 writeFileSync(outputPath, html)
-console.log(`Wrote ${outputPath} with ${slides.length} regular slides and ${inlineLiveMap.length} paired inline demo.`)
+console.log(`Wrote ${outputPath} with ${slides.length} regular slides and ${inlineLiveMap.length} consolidated paired inline demo.`)
