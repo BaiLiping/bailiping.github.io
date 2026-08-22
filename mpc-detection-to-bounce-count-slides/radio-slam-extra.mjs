@@ -16,7 +16,7 @@ function sharedSetupSlide(ctx) {
   const activePose = point(scan.pose)
   const elements = [
     card('s1-scene-card', 96, 202, 660, 420, C.paper, { stroke: C.line, radius: 8 }),
-    text('s1-scene-k', 118, 218, 420, 18, 'COMMON PHYSICAL SCENE · HIGHLIGHTED SCAN 4', 10, { color: C.mapDeep, fontFamily: MONO, fontWeight: 700, letterSpacing: 1.15 })
+    text('s1-scene-k', 118, 218, 480, 18, 'SIMULATION-TRUTH OVERLAY · HIGHLIGHTED SCAN 4', 10, { color: C.mapDeep, fontFamily: MONO, fontWeight: 700, letterSpacing: 1.05 })
   ]
 
   for (let x = 0; x <= 16; x += 2) {
@@ -70,10 +70,10 @@ function sharedSetupSlide(ctx) {
     elements.push(shape(`s1-va-${index}`, p.x - 9, p.y - 9, 18, 18, index === 0 ? C.mapSoft : C.poseSoft, { shape: 'ellipse', stroke: index === 0 ? C.map : C.pose, strokeWidth: 2 }))
     elements.push(text(`s1-va-label-${index}`, p.x - 29, p.y - 29, 58, 16, tex`v_${index === 0 ? 'A' : 'B'}`, 9, { color: index === 0 ? C.mapDeep : C.poseDeep, fontWeight: 700, align: 'center' }))
   })
-  elements.push(text('s1-route-legend', 126, 590, 600, 18, `${tex`\mathrm{LoS}`} · ${tex`\mathcal W_A`} reflection · ${tex`\mathcal W_B`} reflection · faint = unfolded VA ray`, 9, { color: C.faint, fontFamily: MONO, fontWeight: 700, align: 'center' }))
+  elements.push(text('s1-route-legend', 126, 590, 600, 18, `TRUTH ONLY · ${tex`\mathrm{LoS}`} · ${tex`\mathcal W_A`} reflection · ${tex`\mathcal W_B`} reflection · faint = unfolded VA ray`, 9, { color: C.faint, fontFamily: MONO, fontWeight: 700, align: 'center' }))
 
   elements.push(card('s1-geometry-card', 782, 202, 402, 142, C.mapSoft, { stroke: C.map, radius: 8 }))
-  elements.push(text('s1-geometry-k', 806, 220, 354, 17, 'FIXED GEOMETRY', 9, { color: C.mapDeep, fontFamily: MONO, fontWeight: 700, letterSpacing: 1.1 }))
+  elements.push(text('s1-geometry-k', 806, 220, 354, 17, 'KNOWN BS · WALL / VA GENERATOR TRUTH', 9, { color: C.mapDeep, fontFamily: MONO, fontWeight: 700, letterSpacing: .75 }))
   elements.push(text('s1-geometry-eq', 806, 248, 354, 82, texBlock`\begin{aligned}
     \mathbf b&=[2,\,2]^{\mathsf T}\ \mathrm m\\
     \mathcal W_A&:y=7\ \mathrm m,\qquad \mathcal W_B:x=8.5\ \mathrm m\\
@@ -89,18 +89,18 @@ function sharedSetupSlide(ctx) {
   \end{aligned}`, 12, { fontWeight: 700, align: 'center', lineHeight: 1.45 }))
 
   elements.push(card('s1-data-card', 782, 512, 402, 110, C.measurementSoft, { stroke: C.measurement, radius: 8 }))
-  elements.push(text('s1-data-k', 806, 530, 354, 17, 'SAME MPC REALIZATION', 9, { color: C.measurementDeep, fontFamily: MONO, fontWeight: 700, letterSpacing: 1.05 }))
-  elements.push(text('s1-data-eq', 806, 554, 354, 24, texBlock`\mathbf z_{t\ell}=(\tau_{t\ell},\varphi_{t\ell},\psi_{t\ell},\alpha_{t\ell}),\quad \alpha_{t\ell}\in\mathbb C`, 13, { fontWeight: 700, align: 'center' }))
-  elements.push(text('s1-data-v', 806, 586, 354, 24, `${tex`\sigma_L=0.08\,\mathrm m`} · ${tex`\sigma_{\angle}=1.4^\circ`} · clutter at ${tex`x_2,x_4`}`, 10, { color: C.soft, fontFamily: SANS, fontWeight: 700, align: 'center' }))
+  elements.push(text('s1-data-k', 806, 530, 354, 17, 'UNLABELED MPC REALIZATION', 9, { color: C.measurementDeep, fontFamily: MONO, fontWeight: 700, letterSpacing: 1.05 }))
+  elements.push(text('s1-data-eq', 806, 554, 354, 24, texBlock`\mathbf z_{t\ell}=(\tau_{t\ell},\varphi_{t\ell}^{\mathrm{AoA}},\varphi_{t\ell}^{\mathrm{AoD}},g_{t\ell}^{\mathrm{dB}})`, 13, { fontWeight: 700, align: 'center' }))
+  elements.push(text('s1-data-v', 806, 586, 354, 24, `row index ${tex`\ell`} is not a path label · ${tex`\sigma_L=0.08\,\mathrm m`} · ${tex`\sigma_{\angle}=1.4^\circ`}`, 10, { color: C.soft, fontFamily: SANS, fontWeight: 700, align: 'center' }))
 
   elements.push(card('s1-state-card', 96, 638, 1088, 36, C.poseDeep, { stroke: C.poseDeep, radius: 6 }))
-  elements.push(text('s1-state-v', 116, 647, 1048, 18, 'BP: joint factor graph → state/map marginals   ·   PMBM: trajectory density × conditional RFS map   ·   GraphSLAM: joint MAP point estimate', 11, { color: C.paper, fontFamily: SANS, fontWeight: 700, align: 'center' }))
+  elements.push(text('s1-state-v', 116, 647, 1048, 18, 'NEXT: BP/PMBM condition truth associations to expose structure   ·   LATER: implemented GraphSLAM consumes unlabeled MPC sets', 11, { color: C.paper, fontFamily: SANS, fontWeight: 700, align: 'center' }))
 
   return regular(
-    's-radio-slam-s1', 'SHARED EXPERIMENT',
-    'Setup S1: one scene, three inference views',
-    'The physical ground truth, BS, walls, MPC ordering, noise, and clutter stay fixed; each method represents the latent trajectory and map differently.',
-    'Use this slide as the controlled experiment definition. The plotted poses are the reference trajectory used to generate S1, not states clamped by BP-SLAM or PMBM-SLAM. All three methods infer the UE trajectory and map from the same known BS, odometry, and deterministic radio realization. BP returns marginal beliefs, PMBM carries a trajectory density and conditional RFS map, and GraphSLAM returns one joint MAP point estimate. The complex MPC gain alpha is radiometric evidence; phi remains AoA.',
+    's-radio-slam-s1', 'CONDITIONED TEACHING SETUP',
+    'Setup S1: a truth overlay for two structural walkthroughs',
+    'Route colors, walls, VAs, and ordering are generator truth—not estimator inputs. BP/PMBM condition the associations only to expose structure; implemented GraphSLAM later consumes unlabeled MPC sets.',
+    'Use this slide only as the controlled teaching setup for the following BP and PMBM reductions. The BS pose is known; the plotted poses, route colors, walls, and virtual anchors are simulation-truth annotations, and the measurement row index is not a semantic path label. The next two walkthroughs deliberately condition association variables so their state–map structures stay readable. Do not carry that conditioning into Section 04: the implemented GraphSLAM uses unlabeled MPC sets, estimates pose nodes only, and constructs registration and gated-LoS factors in its front end. S1 stores gain magnitude / dB rather than complex phase; the current GraphSLAM implementation discards amplitude.',
     elements,
     { accent: C.map, titleSize: 34, transition: 'none' }
   )
@@ -278,143 +278,129 @@ function stateMapFallback(kind, ctx) {
 function graphEquationSlide(ctx) {
   const { regular, text, card, shape, line, C, SANS, MONO, tex, texBlock } = ctx
   const graph = [
-    card('gs-graph-card', 96, 202, 406, 420, C.paper, { stroke: C.line, radius: 8 }),
-    text('gs-graph-k', 120, 222, 358, 18, 'RADIO FACTOR GRAPH', 10, { color: C.poseDeep, fontFamily: MONO, fontWeight: 700, letterSpacing: 1.2 })
+    card('gs-graph-card', 96, 202, 520, 420, C.paper, { stroke: C.line, radius: 8 }),
+    text('gs-graph-k', 120, 222, 472, 18, 'POSE GRAPH · ONE FIXED-MAP SOLVE', 10, { color: C.poseDeep, fontFamily: MONO, fontWeight: 700, letterSpacing: 1.2 }),
+    card('gs-map-input', 184, 252, 344, 48, C.mapSoft, { stroke: C.map, radius: 6 }),
+    text('gs-map-input-k', 200, 262, 312, 14, 'EXTERNAL INPUT · NOT A GRAPH VARIABLE', 8, { color: C.mapDeep, fontFamily: MONO, fontWeight: 700, align: 'center', letterSpacing: .8 }),
+    text('gs-map-input-v', 200, 279, 312, 16, tex`\mathcal M^{(r)}\;\text{fixed during this solve}`, 10, { color: C.mapDeep, fontWeight: 700, align: 'center' })
   ]
-  const poseX = 180
-  const poseYs = [278, 348, 418, 488, 558]
-  const radioFactorX = 286
-  const radioPaths = [
-    { key: 'los', offset: -10, target: [438, 278], color: C.measurement },
-    { key: 'a', offset: 0, target: [438, 418], color: C.map },
-    { key: 'b', offset: 10, target: [438, 558], color: C.pose }
-  ]
+  const poseY = 506
+  const poseXs = [146, 246, 346, 446, 546]
 
-  // Draw all edges first so every factor and variable remains legible above them.
-  poseYs.forEach((y, index) => {
-    if (index < poseYs.length - 1) {
-      const motionY = 0.5 * (y + poseYs[index + 1])
-      graph.push(line(`gs-motion-edge-up-${index}`, poseX, y + 14, poseX, motionY - 6, C.soft, 2, { opacity: .65 }))
-      graph.push(line(`gs-motion-edge-down-${index}`, poseX, motionY + 6, poseX, poseYs[index + 1] - 14, C.soft, 2, { opacity: .65 }))
-    }
-    radioPaths.forEach((path) => {
-      const factorY = y + path.offset
-      graph.push(line(`gs-radio-pose-edge-${path.key}-${index}`, poseX + 14, y, radioFactorX - 5, factorY, path.color, 1.5, { opacity: .34 }))
-      graph.push(line(`gs-radio-map-edge-${path.key}-${index}`, radioFactorX + 5, factorY, path.target[0] - 16, path.target[1], path.color, 1.5, { opacity: .22 }))
-    })
+  // Draw edges before nodes so the graph remains legible.
+  graph.push(line('gs-prior-edge', 122, poseY, poseXs[0] - 15, poseY, C.pose, 2))
+  poseXs.slice(0, -1).forEach((x, index) => {
+    const factorX = 0.5 * (x + poseXs[index + 1])
+    graph.push(line(`gs-odo-edge-a-${index}`, x + 15, poseY, factorX - 6, poseY, C.soft, 2, { opacity: .8 }))
+    graph.push(line(`gs-odo-edge-b-${index}`, factorX + 6, poseY, poseXs[index + 1] - 15, poseY, C.soft, 2, { opacity: .8 }))
   })
+  graph.push(line('gs-loop-edge-a', poseXs[0], poseY - 15, 340, 338, C.danger, 2, { opacity: .7 }))
+  graph.push(line('gs-loop-edge-b', 352, 338, poseXs[4], poseY - 15, C.danger, 2, { opacity: .7 }))
+  ;[poseXs[1], poseXs[2], poseXs[3]].forEach((x, index) => {
+    graph.push(line(`gs-smooth-edge-${index}`, 346, 398, x, poseY - 15, C.known, 1.5, { opacity: .55 }))
+  })
+  ;[poseXs[1], poseXs[3]].forEach((x, index) => {
+    graph.push(line(`gs-reg-edge-${index}`, x, 450, x, poseY - 15, C.map, 2))
+  })
+  graph.push(line('gs-los-edge', poseXs[2], poseY + 15, poseXs[2], 558, C.measurement, 2))
 
-  poseYs.forEach((y, index) => {
-    if (index < poseYs.length - 1) {
-      const motionY = 0.5 * (y + poseYs[index + 1])
-      graph.push(shape(`gs-motion-factor-${index}`, poseX - 6, motionY - 6, 12, 12, C.paper, { stroke: C.soft, strokeWidth: 2, radius: 0 }))
-    }
-    graph.push(shape(`gs-pose-${index}`, poseX - 14, y - 14, 28, 28, index === 0 ? C.poseSoft : C.paper, { shape: 'ellipse', stroke: C.pose, strokeWidth: 2 }))
-    graph.push(text(`gs-pose-label-${index}`, poseX - 14, y - 6, 28, 14, tex`x_${index + 1}`, 8, { color: C.poseDeep, fontWeight: 700, align: 'center' }))
-    radioPaths.forEach((path) => {
-      const factorY = y + path.offset
-      graph.push(shape(`gs-radio-factor-${path.key}-${index}`, radioFactorX - 5, factorY - 5, 10, 10, C.paper, { stroke: path.color, strokeWidth: 2, radius: 0 }))
-    })
+  graph.push(shape('gs-prior-factor', 110, poseY - 6, 12, 12, C.poseSoft, { stroke: C.pose, strokeWidth: 2, radius: 0 }))
+  graph.push(text('gs-prior-label', 96, poseY - 27, 50, 16, 'prior', 9, { color: C.poseDeep, fontFamily: MONO, fontWeight: 700, align: 'center' }))
+  poseXs.slice(0, -1).forEach((x, index) => {
+    const factorX = 0.5 * (x + poseXs[index + 1])
+    graph.push(shape(`gs-odo-factor-${index}`, factorX - 6, poseY - 6, 12, 12, C.paper, { stroke: C.soft, strokeWidth: 2, radius: 0 }))
   })
-
-  graph.push(shape('gs-bs-fixed', 426, 266, 24, 24, C.ink, { radius: 0 }))
-  graph.push(text('gs-bs-label', 426, 272, 24, 12, tex`b`, 8, { color: C.paper, fontWeight: 700, align: 'center' }))
-  ;[[438,418,tex`v_A`,C.map,C.mapSoft,C.mapDeep],[438,558,tex`v_B`,C.pose,C.poseSoft,C.poseDeep]].forEach((item, index) => {
-    graph.push(shape(`gs-map-${index}`, item[0] - 15, item[1] - 15, 30, 30, item[4], { shape: 'ellipse', stroke: item[3], strokeWidth: 2 }))
-    graph.push(text(`gs-map-label-${index}`, item[0] - 15, item[1] - 7, 30, 14, item[2], 8, { color: item[5], fontWeight: 700, align: 'center' }))
+  poseXs.forEach((x, index) => {
+    graph.push(shape(`gs-pose-${index}`, x - 15, poseY - 15, 30, 30, index === 0 ? C.poseSoft : C.paper, { shape: 'ellipse', stroke: C.pose, strokeWidth: 2 }))
+    graph.push(text(`gs-pose-label-${index}`, x - 15, poseY - 8, 30, 16, tex`p_${index}`, 10, { color: C.poseDeep, fontWeight: 700, align: 'center' }))
   })
-  graph.push(shape('gs-prior-factor', 118, poseYs[0] - 6, 12, 12, C.poseSoft, { stroke: C.pose, strokeWidth: 2, radius: 0 }))
-  graph.push(line('gs-prior-edge', 130, poseYs[0], poseX - 14, poseYs[0], C.pose, 2))
-  graph.push(text('gs-prior-label', 110, poseYs[0] - 24, 42, 14, 'prior', 7, { color: C.poseDeep, fontFamily: MONO, fontWeight: 700, align: 'center' }))
-  graph.push(text('gs-graph-legend', 112, 590, 374, 18, 'orange LoS · green wall A · blue wall B', 8, { color: C.faint, fontFamily: MONO, align: 'center' }))
-  graph.push(text('gs-graph-legend-2', 112, 606, 374, 14, '○ unknown · □ factor · ■ fixed BS', 8, { color: C.faint, fontFamily: MONO, align: 'center' }))
+  graph.push(shape('gs-loop-factor', 340, 332, 12, 12, C.paper, { stroke: C.danger, strokeWidth: 2, radius: 0 }))
+  graph.push(text('gs-loop-label', 286, 307, 120, 16, 'verified revisit', 9, { color: C.danger, fontFamily: MONO, fontWeight: 700, align: 'center' }))
+  graph.push(shape('gs-smooth-factor', 340, 392, 12, 12, C.knownSoft, { stroke: C.known, strokeWidth: 2, radius: 0 }))
+  graph.push(text('gs-smooth-label', 286, 407, 120, 16, 'smoothness × K−2', 9, { color: C.knownDeep, fontFamily: MONO, fontWeight: 700, align: 'center' }))
+  ;[poseXs[1], poseXs[3]].forEach((x, index) => {
+    graph.push(shape(`gs-reg-factor-${index}`, x - 6, 438, 12, 12, C.mapSoft, { stroke: C.map, strokeWidth: 2, radius: 0 }))
+  })
+  graph.push(text('gs-reg-label', 276, 452, 140, 18, tex`\mathrm{registration}\times|\mathcal R_r|`, 9, { color: C.mapDeep, fontWeight: 700, align: 'center' }))
+  graph.push(shape('gs-los-factor', poseXs[2] - 6, 558, 12, 12, C.measurementSoft, { stroke: C.measurement, strokeWidth: 2, radius: 0 }))
+  graph.push(text('gs-los-label', 365, 555, 210, 18, 'accepted geometric LoS fix', 9, { color: C.measurementDeep, fontFamily: MONO, fontWeight: 700 }))
+  graph.push(text('gs-graph-legend', 112, 590, 488, 16, '○ position variable · □ factor · representative factors shown', 9, { color: C.faint, fontFamily: MONO, align: 'center' }))
+  graph.push(text('gs-graph-legend-2', 112, 607, 488, 14, 'map and raw MPCs stay outside the linear graph solve', 9, { color: C.faint, fontFamily: MONO, align: 'center' }))
 
   return regular(
     's-radio-graphslam-equations', '04 · KNOWN BS POSE, UNKNOWN UE POSE AND MAP',
-    'Radio GraphSLAM on S1: optimize trajectory and VA map jointly',
-    'The physical experiment stays fixed; only the five UE poses are released and connected by odometry, a first-pose prior, and the same radio tuples.',
-    'Bridge the S1 geometric experiment to nonlinear least squares. The continuous state contains the five UE poses and two virtual anchors. Association A and bounce/order Q are discrete and fixed inside the illustrated solve; BP or PMBM can propose them. Alpha remains calibrated radiometric evidence for ranking hypotheses, while the Gauss-Newton geometry residual uses delay and endpoint bearings.',
+    'Implemented radio GraphSLAM: a pose graph, not a VA-state graph',
+    'A known-start prior and smoothness prior join derived odometry, registration, gated-LoS, and revisit factors; raw MPC labels never enter the batch graph.',
+    'Show the implemented estimator rather than the former oracle-associated landmark toy. The unknowns are 3-D UE positions only. For a fixed NDT map, all graph factors are linear and one normal-equation solve gives the MAP trajectory. The map is rebuilt, scans are re-registered, and LoS is re-detected between solves. No per-return provenance, BS-identity, wall, bounce, or truth-association label is an estimator input.',
     [
       ...graph,
-      card('gs-state-card', 532, 202, 652, 78, C.poseSoft, { stroke: C.pose, radius: 8 }),
-      text('gs-state-k', 558, 218, 170, 16, 'S1 UNKNOWNS', 9, { color: C.poseDeep, fontFamily: MONO, fontWeight: 700, letterSpacing: 1.1 }),
-      text('gs-state-eq', 558, 244, 600, 22, texBlock`\Theta=\{\mathbf x_{1:5},\mathbf v_A,\mathbf v_B\},\qquad A,Q\;\text{fixed}`, 18, { fontWeight: 700, align: 'center' }),
+      card('gs-state-card', 640, 202, 544, 78, C.poseSoft, { stroke: C.pose, radius: 8 }),
+      text('gs-state-k', 666, 218, 190, 16, 'ONLY GRAPH VARIABLES', 9, { color: C.poseDeep, fontFamily: MONO, fontWeight: 700, letterSpacing: 1.1 }),
+      text('gs-state-eq', 666, 244, 492, 22, texBlock`\mathbf p=\{\mathbf p_0,\ldots,\mathbf p_{K-1}\},\qquad \mathbf p_k\in\mathbb R^3`, 17, { fontWeight: 700, align: 'center' }),
 
-      card('gs-cost-card', 532, 296, 652, 132, C.paper, { stroke: C.line, radius: 8 }),
-      text('gs-cost-k', 558, 314, 180, 16, 'MAP / NONLINEAR LEAST SQUARES', 9, { color: C.poseDeep, fontFamily: MONO, fontWeight: 700, letterSpacing: 1.05 }),
-      text('gs-cost-eq', 558, 344, 600, 70,
+      card('gs-cost-card', 640, 296, 544, 218, C.paper, { stroke: C.line, radius: 8 }),
+      text('gs-cost-k', 666, 314, 330, 16, 'EXACT LINEAR POSE ESTIMATE · NDT MAP FIXED', 9, { color: C.poseDeep, fontFamily: MONO, fontWeight: 700, letterSpacing: .9 }),
+      text('gs-cost-eq', 660, 340, 504, 134,
         texBlock`\begin{aligned}
-          \Theta^*(A,Q)=\arg\min_{\Theta}\;&\|\mathbf r_0\|_{\Omega_0}^2+\sum_{t=1}^{4}\|\mathbf r_t^{\mathrm{mot}}\|_{\Omega_t}^2\\[-.1em]
-          &+\sum_{t=1}^{5}\sum_{\ell\in\{\mathrm{LoS},A,B\}}\rho\!\left(\|\mathbf r_{t\ell}^{\mathrm{radio}}\|_{\Omega_{t\ell}}^2\right)
+          \mathbf p^*=\arg\min_{\mathbf p}\;&\|\mathbf r_0\|_{\Omega_0}^2
+          +\sum_k\|\mathbf r_k^{\mathrm{odo}}\|_{\Omega_k}^2
+          +\sum_k\|\mathbf r_k^{\mathrm{sm}}\|_{\Omega_s}^2\\[-.15em]
+          &+\sum_{k\in\mathcal R_r}\|\mathbf p_k-\hat{\mathbf p}_k^{\mathrm{reg},(r)}\|_{\Lambda_k}^2\\[-.15em]
+          &+\sum_{k\in\mathcal L_r}\|\mathbf p_k-\mathbf z_k^{\mathrm{LoS}}\|_{\Gamma_k}^2
+          +\sum_{(i,j)\in\mathcal C}\|(\mathbf p_j-\mathbf p_i)-\mathbf d_{ij}\|_{\Pi_{ij}}^2
         \end{aligned}`,
-        14, { fontWeight: 700, align: 'center', lineHeight: 1.25 }),
+        11, { fontWeight: 700, align: 'center', lineHeight: 1.15 }),
+      text('gs-residual-defs', 666, 480, 492, 22, `${tex`\mathbf r_k^{\mathrm{odo}}=(\mathbf p_k-\mathbf p_{k-1})-\mathbf d_k`} · ${tex`\mathbf r_k^{\mathrm{sm}}=\mathbf p_{k-1}-2\mathbf p_k+\mathbf p_{k+1}`}`, 8, { color: C.soft, fontFamily: SANS, fontWeight: 700, align: 'center' }),
 
-      card('gs-radio-card', 532, 444, 652, 178, C.measurementSoft, { stroke: C.measurement, radius: 8 }),
-      text('gs-radio-k', 558, 462, 290, 16, 'LOS + ONE-BOUNCE RADIO FACTORS', 9, { color: C.measurementDeep, fontFamily: MONO, fontWeight: 700, letterSpacing: 1.05 }),
-      text('gs-radio-residual', 558, 486, 600, 58,
-        texBlock`\begin{aligned}
-          \mathbf z_{t\ell}&=[c\tau,\,\mathrm{wrap}(\varphi),\,\mathrm{wrap}(\psi)]^{\mathsf T}\\[-.2em]
-          \mathbf r_{t\ell}^{\mathrm{radio}}&=\mathbf z_{t\ell}-
-          \begin{cases}
-            \mathbf h_{\mathrm{LoS}}(\mathbf x_t;\mathbf b),&\ell=\mathrm{LoS}\\
-            \mathbf h_{\mathrm{1b}}(\mathbf x_t,\mathbf v_\ell;\mathbf b),&\ell\in\{A,B\}
-          \end{cases}
-        \end{aligned}`,
-        12, { fontWeight: 700, align: 'center', lineHeight: 1.15 }),
-      text('gs-radio-model', 558, 548, 600, 58,
-        texBlock`\begin{aligned}
-          \ell\in\{A,B\}:\quad \widehat L&=\|\mathbf p_t-\mathbf v_\ell\|\\
-          P_{t\ell}&=\mathrm{line}(\mathbf p_t,\mathbf v_\ell)\cap\mathrm{bisector}(\mathbf p_{\mathrm{BS}},\mathbf v_\ell)\\
-          \widehat\varphi&=\mathrm{wrap}(\mathrm{bearing}(P_{t\ell}-\mathbf p_t)-\theta_t),\quad
-          \widehat\psi=\mathrm{wrap}(\mathrm{bearing}(P_{t\ell}-\mathbf p_{\mathrm{BS}})-\theta_{\mathrm{BS}})
-        \end{aligned}`,
-        12, { lineHeight: 1.25, align: 'center' }),
-      text('gs-source', 96, 650, 1088, 17, `S1 geometry uses ${tex`[c\tau,\varphi,\psi]`}; calibrated ${tex`\alpha`} grades hypotheses but is not added as a Gauss–Newton geometry coordinate.`, 9, { color: C.faint, fontFamily: MONO, align: 'center' })
+      card('gs-boundary-card', 640, 530, 544, 92, C.measurementSoft, { stroke: C.measurement, radius: 8 }),
+      text('gs-boundary-k', 666, 548, 242, 16, 'LOS IS GATED, NOT GIVEN', 9, { color: C.measurementDeep, fontFamily: MONO, fontWeight: 700, letterSpacing: 1.05 }),
+      text('gs-boundary-v', 666, 574, 492, 34, 'Every MPC arrives unlabeled. At most one candidate may pass range/AoA, shortest-path, and innovation gates as LoS. Other geometry-valid returns form the registration clouds.', 11, { color: C.measurementDeep, fontFamily: SANS, lineHeight: 1.35 }),
+      text('gs-source', 96, 650, 1088, 17, `Between solves: rebuild ${tex`\mathcal M^{(r)}`} · re-invert scans · re-register · re-detect LoS · solve again.`, 9, { color: C.faint, fontFamily: MONO, align: 'center' })
     ], { accent: C.pose, titleSize: 31, transition: 'none' }
   )
 }
 
-function graphFallback(ctx) {
-  const { text, card, shape, line, C, MONO, SANS, LIVE_BOUNDS, tex } = ctx
-  const x0 = LIVE_BOUNDS.x, y0 = LIVE_BOUNDS.y, w = LIVE_BOUNDS.width, h = LIVE_BOUNDS.height
-  const stageX = x0 + 14, stageY = y0 + 14, stageW = 766, stageH = h - 28
-  const railX = stageX + stageW + 12, railW = w - stageW - 40
-  const poses = [[stageX + 160,stageY + 320],[stageX + 270,stageY + 285],[stageX + 382,stageY + 235],[stageX + 490,stageY + 178],[stageX + 585,stageY + 112]]
-  const va1 = [stageX + 664,stageY + 82], va2 = [stageX + 100,stageY + 72], bs = [stageX + 118,stageY + 350]
-  const elements = [
-    card('graph-fallback-bg', x0, y0, w, h, '#F8FAFB', { stroke: C.line, radius: 0 }),
-    card('graph-fallback-stage', stageX, stageY, stageW, stageH, C.paper, { stroke: C.line, radius: 6 }),
-    card('graph-fallback-rail', railX, stageY, railW, stageH, C.paper, { stroke: C.line, radius: 6 }),
-    text('graph-fallback-k', stageX + 22, stageY + 18, stageW - 44, 18, 'SETUP S1 · TRAJECTORY + VA MAP + MPC ROUTES', 10, { color: C.poseDeep, fontFamily: MONO, fontWeight: 700, letterSpacing: 1.15 })
+function graphIterationSlide(ctx) {
+  const { regular, text, card, C, SANS, MONO, tex, texBlock } = ctx
+  const steps = [
+    ['01', 'INITIALIZE + SOLVE ONCE', `hybrid filter → ${tex`\mathbf p_{\mathrm{FE}},\mathbf d^{\mathrm{odo}}`}<br>verify revisit → ${tex`\mathbf d^{\mathrm{loop}}`}<br>initial graph solve → ${tex`\mathbf p^{(0)}`}`],
+    ['02', 'BUILD AT CURRENT POSE', `re-invert unlabeled 5-D MPCs<br>build NDT + leave-out maps`],
+    ['03', 'REFRESH TWO FACTORS', `NDT-register every usable scan<br>re-detect candidate LoS fixes`],
+    ['04', 'SOLVE + REPEAT', `solve the exact linear pose graph<br>${tex`\mathbf p^{(r+1)}`} · five outer passes`]
   ]
-  poses.slice(0,-1).forEach((point,index) => elements.push(line(`graph-path-${index}`, point[0], point[1], poses[index+1][0], poses[index+1][1], C.pose, 4)))
-  poses.forEach((point,index) => {
-    elements.push(shape(`graph-pose-${index}`, point[0]-8, point[1]-8, 16, 16, C.paper, { shape:'ellipse', stroke:C.pose, strokeWidth:3 }))
-    elements.push(text(`graph-pose-label-${index}`, point[0]+10, point[1]-12, 36, 16, tex`x_${index + 1}`, 8, { color:C.poseDeep, fontWeight:700 }))
+  const elements = []
+  steps.forEach((step, index) => {
+    const x = 96 + index * 276
+    const accent = [C.faint, C.measurement, C.pose, C.map][index]
+    const fill = [C.paper, C.measurementSoft, C.poseSoft, C.mapSoft][index]
+    elements.push(card(`gs-iter-card-${index}`, x, 222, 244, 146, fill, { stroke: accent, strokeWidth: 2, radius: 8 }))
+    elements.push(text(`gs-iter-num-${index}`, x + 20, 242, 36, 20, step[0], 11, { color: accent, fontFamily: MONO, fontWeight: 700 }))
+    elements.push(text(`gs-iter-head-${index}`, x + 58, 241, 166, 20, step[1], 10, { color: accent, fontFamily: MONO, fontWeight: 700, letterSpacing: .8 }))
+    elements.push(text(`gs-iter-copy-${index}`, x + 20, 286, 204, 58, step[2], 12, { color: C.soft, fontFamily: SANS, fontWeight: 700, align: 'center', lineHeight: 1.45 }))
+    if (index < steps.length - 1) elements.push(text(`gs-iter-arrow-${index}`, x + 246, 278, 28, 32, '→', 22, { color: C.faint, fontFamily: SANS, fontWeight: 700, align: 'center' }))
   })
-  elements.push(shape('graph-bs',bs[0]-7,bs[1]-7,14,14,C.ink,{radius:0}))
-  elements.push(text('graph-bs-label',bs[0]-10,bs[1]+14,62,16,'known BS',8,{color:C.ink,fontFamily:MONO,fontWeight:700}))
-  ;[[va1,tex`\mathrm{VA}_1`,C.map,C.mapSoft],[va2,tex`\mathrm{VA}_2`,C.measurement,C.measurementSoft]].forEach((item,index) => {
-    elements.push(shape(`graph-va-${index}`,item[0][0]-12,item[0][1]-12,24,24,item[3],{shape:'ellipse',stroke:item[2],strokeWidth:3}))
-    elements.push(text(`graph-va-label-${index}`,item[0][0]-24,item[0][1]-34,48,16,item[1],9,{color:index===0?C.mapDeep:C.measurementDeep,fontFamily:MONO,fontWeight:700,align:'center'}))
-  })
-  const active = poses[2], p1=[stageX+510,stageY+88], p2=[stageX+190,stageY+86]
-  elements.push(line('graph-route-los',bs[0],bs[1],active[0],active[1],C.measurement,4))
-  elements.push(line('graph-route1-a',bs[0],bs[1],p1[0],p1[1],C.map,4))
-  elements.push(line('graph-route1-b',p1[0],p1[1],active[0],active[1],C.map,4))
-  elements.push(line('graph-route2-a',bs[0],bs[1],p2[0],p2[1],C.measurement,4))
-  elements.push(line('graph-route2-b',p2[0],p2[1],active[0],active[1],C.measurement,4))
-  ;[p1,p2].forEach((p,index)=>elements.push(shape(`graph-reflection-${index}`,p[0]-5,p[1]-5,10,10,C.paper,{shape:'ellipse',stroke:index===0?C.map:C.measurement,strokeWidth:2})))
-  elements.push(text('graph-rail-k',railX+18,stageY+18,railW-36,18,'S1 GAUSS–NEWTON CONTROLS',9,{color:C.poseDeep,fontFamily:MONO,fontWeight:700,letterSpacing:1.05}))
-  ;['delay only ↔ delay + angles','correct ↔ wrong association','quadratic ↔ robust loss','one step ↔ optimize'].forEach((label,index)=>{
-    const y=stageY+60+index*63
-    elements.push(card(`graph-control-${index}`,railX+18,y,railW-36,45,index===3?C.poseSoft:'#FBFCFD',{stroke:index===3?C.pose:C.line,radius:5}))
-    elements.push(text(`graph-control-v-${index}`,railX+27,y+13,railW-54,20,label,10,{color:index===3?C.poseDeep:C.soft,fontFamily:SANS,fontWeight:700,align:'center'}))
-  })
-  elements.push(card('graph-result-card',railX+18,stageY+326,railW-36,82,C.poseSoft,{stroke:C.pose,radius:6}))
-  elements.push(text('graph-result-k',railX+30,stageY+342,railW-60,15,'JOINT RESULT',8,{color:C.poseDeep,fontFamily:MONO,fontWeight:700,letterSpacing:1}))
-  elements.push(text('graph-result-v',railX+30,stageY+370,railW-60,26,'UE trajectory + VA map',13,{fontWeight:700,align:'center'}))
-  return elements
+
+  elements.push(card('gs-iter-eq-card', 96, 394, 1088, 92, C.paper, { stroke: C.line, radius: 8 }))
+  elements.push(text('gs-iter-eq-k', 120, 412, 360, 16, 'FIXED MOTION/REVISIT · REFRESH REGISTRATION/LOS', 9, { color: C.poseDeep, fontFamily: MONO, fontWeight: 700, letterSpacing: .85 }))
+  elements.push(text('gs-iter-eq-v', 120, 438, 1040, 34,
+    texBlock`\{\mathbf d^{\mathrm{odo}},\mathbf d^{\mathrm{loop}}\}\ \mathrm{fixed};\qquad (\mathbf p^{(r)},Z)\longrightarrow\{\mathcal M^{(r)},\hat{\mathbf p}^{\mathrm{reg},(r)},\mathbf z^{\mathrm{LoS},(r)}\}\longrightarrow\mathbf p^{(r+1)}`,
+    15, { fontWeight: 700, align: 'center' }))
+
+  elements.push(card('gs-standard-card', 96, 512, 526, 110, C.poseSoft, { stroke: C.pose, radius: 8 }))
+  elements.push(text('gs-standard-k', 120, 530, 190, 16, 'GRAPH_SLAM', 9, { color: C.poseDeep, fontFamily: MONO, fontWeight: 700, letterSpacing: 1 }))
+  elements.push(text('gs-standard-v', 120, 558, 478, 48, 'Bounce-point clouds drive the rolling/global registration front end and the final voxel map.', 13, { color: C.poseDeep, fontFamily: SANS, lineHeight: 1.4 }))
+  elements.push(card('gs-va-variant-card', 658, 512, 526, 110, C.mapSoft, { stroke: C.map, radius: 8 }))
+  elements.push(text('gs-va-variant-k', 682, 530, 220, 16, 'GRAPH_SLAM_VA VARIANT', 9, { color: C.mapDeep, fontFamily: MONO, fontWeight: 700, letterSpacing: 1 }))
+  elements.push(text('gs-va-variant-v', 682, 558, 478, 48, 'Only rolling-submap ICP/odometry switches to VA clouds. Global/batch registration, revisit verification, and the delivered map stay bounce-point; LoS gating is unchanged.', 12, { color: C.mapDeep, fontFamily: SANS, lineHeight: 1.35 }))
+  elements.push(text('gs-iter-source', 96, 650, 1088, 17, 'Gauss–Newton belongs inside NDT registration; the fixed-map pose graph itself is linear.', 9, { color: C.faint, fontFamily: MONO, align: 'center' }))
+
+  return regular(
+    's-radio-graphslam-iteration', '04 · KNOWN BS POSE, UNKNOWN UE POSE AND MAP',
+    'Implemented GraphSLAM alternates map building and pose-graph solves',
+    'The graph is exact for a fixed map; the nonlinear dependence is handled by re-inverting and re-registering scans between solves.',
+    'Walk left to right. The hybrid front end creates front-end poses and odometry increments once; start-submap revisit verification also runs once. A first prior/smoothness/odometry/revisit graph solve produces p^(0) without registration or LoS factors. Each of five outer passes then re-inverts the unlabeled measurements, rebuilds the NDT and leave-window-out maps, refreshes only registration and LoS factors, and solves the exact linear pose graph. The VA variant changes only the local odometry channel, not the graph state or delivered map.',
+    elements, { accent: C.pose, titleSize: 30, transition: 'none' }
+  )
 }
 
 function methodLiveSlide(kind, ctx) {
@@ -437,17 +423,6 @@ function methodLiveSlide(kind, ctx) {
   )
 }
 
-function graphLiveSlide(ctx) {
-  const { regular, liveMount, C } = ctx
-  return regular(
-    's-radio-graphslam-live', '04 · KNOWN BS POSE, UNKNOWN UE POSE AND MAP',
-    'Radio GraphSLAM live: Gauss–Newton on the same S1 MPCs',
-    'Release the five UE poses, retain the same physical scene and radio realization, then compare delay-only versus delay+AoA+AoD factors.',
-    'Run the S1 optimizer. The continuous variables are the same five UE poses and two virtual anchors defined on the shared setup slide. Motion factors use relative odometry; LoS and one-bounce radio factors use the same deterministic MPC tuples as the BP and PMBM pages. Association and bounce order are fixed inside one solve.',
-    [...graphFallback(ctx), liveMount()], { accent: C.pose, titleSize: 30, transition: 'none' }
-  )
-}
-
 export function appendRadioSlamSlidesAfterSection(unit, ctx) {
   if (unit.id === 'map') {
     ctx.slides.push(sharedSetupSlide(ctx))
@@ -458,7 +433,7 @@ export function appendRadioSlamSlidesAfterSection(unit, ctx) {
   }
   if (unit.id === 'pose') {
     ctx.slides.push(graphEquationSlide(ctx))
-    ctx.slides.push(graphLiveSlide(ctx))
+    ctx.slides.push(graphIterationSlide(ctx))
   }
 }
 
@@ -473,11 +448,6 @@ export function radioSlamLiveEntries({ slides, LIVE_BOUNDS }) {
       introSlide: 's-pmbm-slam-equations', slide: 's-pmbm-slam-live',
       src: '../bp-vs-pmbm-slides/live/?demo=pmbm&embed=region', source: '../bp-vs-pmbm-slides/live/?demo=pmbm',
       title: 'Section 03 · PMBM-SLAM on shared setup S1'
-    },
-    {
-      introSlide: 's-radio-graphslam-equations', slide: 's-radio-graphslam-live',
-      src: './radio-graphslam-live/?embed=region', source: './radio-graphslam-live/',
-      title: 'Section 04 · radio GraphSLAM on shared setup S1'
     }
   ]
   return definitions.map(entry => ({

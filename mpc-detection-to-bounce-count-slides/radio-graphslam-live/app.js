@@ -603,7 +603,7 @@
       label(ctx, j === 0 ? "vA" : "vB", estimatedVA.x + 10, estimatedVA.y - 9, j === 0 ? COLORS.mapDeep : COLORS.poseDeep, 9, "left", 700);
     }
 
-    label(ctx, modelFull.checked ? "S1 geometry residual: [cτ, φ, ψ] · α grades hypotheses" : "S1 geometry residual: [cτ]", 10, 13, COLORS.poseDeep, 9, "left", 700);
+    label(ctx, modelFull.checked ? "S1 geometry residual: [cτ, φ, ψ] · gain shown but unused" : "S1 geometry residual: [cτ] · gain shown but unused", 10, 13, COLORS.poseDeep, 9, "left", 700);
   }
 
   function drawGraph() {
@@ -612,7 +612,7 @@
     ctx.fillStyle = COLORS.paper;
     ctx.fillRect(0, 0, graphCanvas.width, graphCanvas.height);
     label(ctx, "FACTOR GRAPH", 14, 18, COLORS.poseDeep, 9, "left", 700);
-    label(ctx, "continuous solve | fixed A,Q", 14, 34, COLORS.faint, 8, "left", 400);
+    label(ctx, "teaching toy | oracle-fixed A,Q", 14, 34, COLORS.faint, 8, "left", 400);
 
     var poseY = [68, 128, 188, 248, 308];
     var poseX = 72;
@@ -687,7 +687,7 @@
     var wrong = wrongAssociation.checked;
     hintEl.textContent = wrong
       ? "Red edge: the wall-A MPC at x" + (WRONG_T + 1) + " is attached to vB. Robust loss can protect the rest of the S1 graph."
-      : "Setup S1: orange is LoS; green/blue are the two folded specular routes. Clutter at x2 and x4 has no geometry edge.";
+      : "Truth overlay: orange is oracle-labelled LoS; green/blue are oracle-labelled specular routes. They are supplied to this toy, not to the implemented estimator.";
   }
 
   function resetEstimate(message) {
