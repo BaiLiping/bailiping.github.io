@@ -1,6 +1,7 @@
 import { readFileSync, writeFileSync } from 'node:fs'
 import { dirname, join } from 'node:path'
 import { fileURLToPath } from 'node:url'
+import { appendRadioSlamSlidesAfterSection, radioSlamLiveEntries } from './radio-slam-extra.mjs'
 
 const here = dirname(fileURLToPath(import.meta.url))
 const templatePath = join(here, '..', 'frame-registration-slides', 'index.html')
@@ -654,6 +655,9 @@ for (const unit of sectionUnits) {
     `Consolidated live experiment for ${unit.title}. Select any case tile, use its controls, then press Escape to return focus to Bento or Page Up to revisit the section concept slide.`,
     [...sectionLiveFallback(unit), liveMount()], { accent: unit.accent, titleSize: 31, transition: 'none' }
   ))
+  appendRadioSlamSlidesAfterSection(unit, {
+    slides, regular, text, card, shape, line, C, SANS, MONO, LIVE_BOUNDS, liveMount
+  })
 }
 
 slides.push(regular(
@@ -683,14 +687,17 @@ function liveUrl(unit, embed) {
   return `../mpc-detection-to-bounce-count/?${params.toString()}`
 }
 
-const inlineLiveMap = sectionUnits.map(unit => {
+const inlineLiveMap = [
+  ...sectionUnits.map(unit => {
   const introSlide = `s-${unit.id}`, slide = `${introSlide}-live`
   return {
     introSlide, slide, slideIndex: slides.findIndex(entry => entry.id === slide), inline: true, layout: 'region', bounds: LIVE_BOUNDS,
     src: liveUrl(unit, true), source: liveUrl(unit, false), title: `${unit.section} · consolidated cases`,
     sandbox: 'allow-scripts', hideSource: true, readyMessage: true, unloadWhenHidden: true
   }
-})
+  }),
+  ...radioSlamLiveEntries({ slides, LIVE_BOUNDS })
+]
 
 const deck = {
   format: 'bento/slides', version: 1, docId: 'mpc-detection-to-bounce-count-deck',
