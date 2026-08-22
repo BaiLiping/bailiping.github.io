@@ -616,20 +616,20 @@
 
     var poseY = [68, 128, 188, 248, 308];
     var poseX = 72;
-    var factorX = 42;
     var radioX = 130;
     var vaX = 218;
     var targetY = [72, 190, 304];
 
     for (var t = 0; t < T; t += 1) {
       if (t < T - 1) {
-        line(ctx, poseX, poseY[t] + 10, poseX, poseY[t + 1] - 10, COLORS.soft, 1.5, [], 0.65);
+        var motionY = 0.5 * (poseY[t] + poseY[t + 1]);
+        line(ctx, poseX, poseY[t] + 10, poseX, motionY - 5, COLORS.soft, 1.5, [], 0.65);
+        line(ctx, poseX, motionY + 5, poseX, poseY[t + 1] - 10, COLORS.soft, 1.5, [], 0.65);
         ctx.fillStyle = COLORS.paper;
         ctx.strokeStyle = COLORS.soft;
         ctx.lineWidth = 1.5;
-        ctx.fillRect(factorX - 5, 0.5 * (poseY[t] + poseY[t + 1]) - 5, 10, 10);
-        ctx.strokeRect(factorX - 5, 0.5 * (poseY[t] + poseY[t + 1]) - 5, 10, 10);
-        line(ctx, factorX + 5, 0.5 * (poseY[t] + poseY[t + 1]), poseX, 0.5 * (poseY[t] + poseY[t + 1]), COLORS.soft, 1, [], 0.65);
+        ctx.fillRect(poseX - 5, motionY - 5, 10, 10);
+        ctx.strokeRect(poseX - 5, motionY - 5, 10, 10);
       }
     }
 

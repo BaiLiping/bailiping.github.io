@@ -281,27 +281,53 @@ function graphEquationSlide(ctx) {
     card('gs-graph-card', 96, 202, 406, 420, C.paper, { stroke: C.line, radius: 8 }),
     text('gs-graph-k', 120, 222, 358, 18, 'RADIO FACTOR GRAPH', 10, { color: C.poseDeep, fontFamily: MONO, fontWeight: 700, letterSpacing: 1.2 })
   ]
-  const poseYs = [286, 350, 414, 478, 542]
+  const poseX = 180
+  const poseYs = [278, 348, 418, 488, 558]
+  const radioFactorX = 286
+  const radioPaths = [
+    { key: 'los', offset: -10, target: [438, 278], color: C.measurement },
+    { key: 'a', offset: 0, target: [438, 418], color: C.map },
+    { key: 'b', offset: 10, target: [438, 558], color: C.pose }
+  ]
+
+  // Draw all edges first so every factor and variable remains legible above them.
   poseYs.forEach((y, index) => {
     if (index < poseYs.length - 1) {
-      graph.push(line(`gs-motion-edge-${index}`, 206, y + 14, 206, poseYs[index + 1] - 14, C.soft, 2, { opacity: .65 }))
-      graph.push(shape(`gs-motion-factor-${index}`, 200, 0.5 * (y + poseYs[index + 1]) - 6, 12, 12, C.paper, { stroke: C.soft, strokeWidth: 2, radius: 0 }))
+      const motionY = 0.5 * (y + poseYs[index + 1])
+      graph.push(line(`gs-motion-edge-up-${index}`, poseX, y + 14, poseX, motionY - 6, C.soft, 2, { opacity: .65 }))
+      graph.push(line(`gs-motion-edge-down-${index}`, poseX, motionY + 6, poseX, poseYs[index + 1] - 14, C.soft, 2, { opacity: .65 }))
     }
-    graph.push(shape(`gs-pose-${index}`, 192, y - 14, 28, 28, index === 0 ? C.poseSoft : C.paper, { shape: 'ellipse', stroke: C.pose, strokeWidth: 2 }))
-    graph.push(text(`gs-pose-label-${index}`, 192, y - 6, 28, 14, tex`x_${index + 1}`, 8, { color: C.poseDeep, fontWeight: 700, align: 'center' }))
+    radioPaths.forEach((path) => {
+      const factorY = y + path.offset
+      graph.push(line(`gs-radio-pose-edge-${path.key}-${index}`, poseX + 14, y, radioFactorX - 5, factorY, path.color, 1.5, { opacity: .34 }))
+      graph.push(line(`gs-radio-map-edge-${path.key}-${index}`, radioFactorX + 5, factorY, path.target[0] - 16, path.target[1], path.color, 1.5, { opacity: .22 }))
+    })
   })
-  ;[[390,330,tex`v_A`,C.map,C.mapSoft],[390,492,tex`v_B`,C.measurement,C.measurementSoft]].forEach((item, index) => {
-    graph.push(shape(`gs-map-${index}`, item[0] - 15, item[1] - 15, 30, 30, item[4], { shape: 'ellipse', stroke: item[3], strokeWidth: 2 }))
-    graph.push(text(`gs-map-label-${index}`, item[0] - 15, item[1] - 7, 30, 14, item[2], 8, { color: index === 0 ? C.mapDeep : C.measurementDeep, fontFamily: MONO, fontWeight: 700, align: 'center' }))
-  })
+
   poseYs.forEach((y, index) => {
-    const target = index % 2 === 0 ? [390,330] : [390,492]
-    graph.push(line(`gs-radio-edge-${index}`, 220, y, target[0] - 16, target[1], index % 2 === 0 ? C.map : C.measurement, 2, { opacity: .42 }))
-    graph.push(shape(`gs-radio-factor-${index}`, 292, y - 5, 10, 10, C.paper, { stroke: index % 2 === 0 ? C.map : C.measurement, strokeWidth: 2, radius: 0 }))
+    if (index < poseYs.length - 1) {
+      const motionY = 0.5 * (y + poseYs[index + 1])
+      graph.push(shape(`gs-motion-factor-${index}`, poseX - 6, motionY - 6, 12, 12, C.paper, { stroke: C.soft, strokeWidth: 2, radius: 0 }))
+    }
+    graph.push(shape(`gs-pose-${index}`, poseX - 14, y - 14, 28, 28, index === 0 ? C.poseSoft : C.paper, { shape: 'ellipse', stroke: C.pose, strokeWidth: 2 }))
+    graph.push(text(`gs-pose-label-${index}`, poseX - 14, y - 6, 28, 14, tex`x_${index + 1}`, 8, { color: C.poseDeep, fontWeight: 700, align: 'center' }))
+    radioPaths.forEach((path) => {
+      const factorY = y + path.offset
+      graph.push(shape(`gs-radio-factor-${path.key}-${index}`, radioFactorX - 5, factorY - 5, 10, 10, C.paper, { stroke: path.color, strokeWidth: 2, radius: 0 }))
+    })
   })
-  graph.push(shape('gs-prior-factor', 130, poseYs[0] - 6, 12, 12, C.poseSoft, { stroke: C.pose, strokeWidth: 2, radius: 0 }))
-  graph.push(line('gs-prior-edge', 142, poseYs[0], 192, poseYs[0], C.pose, 2))
-  graph.push(text('gs-graph-legend', 120, 590, 358, 18, '○ variables · □ factors · BS is fixed', 9, { color: C.faint, fontFamily: MONO, align: 'center' }))
+
+  graph.push(shape('gs-bs-fixed', 426, 266, 24, 24, C.ink, { radius: 0 }))
+  graph.push(text('gs-bs-label', 426, 272, 24, 12, tex`b`, 8, { color: C.paper, fontWeight: 700, align: 'center' }))
+  ;[[438,418,tex`v_A`,C.map,C.mapSoft,C.mapDeep],[438,558,tex`v_B`,C.pose,C.poseSoft,C.poseDeep]].forEach((item, index) => {
+    graph.push(shape(`gs-map-${index}`, item[0] - 15, item[1] - 15, 30, 30, item[4], { shape: 'ellipse', stroke: item[3], strokeWidth: 2 }))
+    graph.push(text(`gs-map-label-${index}`, item[0] - 15, item[1] - 7, 30, 14, item[2], 8, { color: item[5], fontWeight: 700, align: 'center' }))
+  })
+  graph.push(shape('gs-prior-factor', 118, poseYs[0] - 6, 12, 12, C.poseSoft, { stroke: C.pose, strokeWidth: 2, radius: 0 }))
+  graph.push(line('gs-prior-edge', 130, poseYs[0], poseX - 14, poseYs[0], C.pose, 2))
+  graph.push(text('gs-prior-label', 110, poseYs[0] - 24, 42, 14, 'prior', 7, { color: C.poseDeep, fontFamily: MONO, fontWeight: 700, align: 'center' }))
+  graph.push(text('gs-graph-legend', 112, 590, 374, 18, 'orange LoS · green wall A · blue wall B', 8, { color: C.faint, fontFamily: MONO, align: 'center' }))
+  graph.push(text('gs-graph-legend-2', 112, 606, 374, 14, '○ unknown · □ factor · ■ fixed BS', 8, { color: C.faint, fontFamily: MONO, align: 'center' }))
 
   return regular(
     's-radio-graphslam-equations', '04 · KNOWN BS POSE, UNKNOWN UE POSE AND MAP',
@@ -312,28 +338,37 @@ function graphEquationSlide(ctx) {
       ...graph,
       card('gs-state-card', 532, 202, 652, 78, C.poseSoft, { stroke: C.pose, radius: 8 }),
       text('gs-state-k', 558, 218, 170, 16, 'S1 UNKNOWNS', 9, { color: C.poseDeep, fontFamily: MONO, fontWeight: 700, letterSpacing: 1.1 }),
-      text('gs-state-eq', 558, 244, 600, 22, texBlock`\Theta=\{\mathbf x_{1:5},\mathbf v_A,\mathbf v_B\}\;\cdot\;A=\{a_{t\ell}\}\;\cdot\;Q=\{q_{t\ell}\}`, 18, { fontWeight: 700, align: 'center' }),
+      text('gs-state-eq', 558, 244, 600, 22, texBlock`\Theta=\{\mathbf x_{1:5},\mathbf v_A,\mathbf v_B\},\qquad A,Q\;\text{fixed}`, 18, { fontWeight: 700, align: 'center' }),
 
       card('gs-cost-card', 532, 296, 652, 132, C.paper, { stroke: C.line, radius: 8 }),
       text('gs-cost-k', 558, 314, 180, 16, 'MAP / NONLINEAR LEAST SQUARES', 9, { color: C.poseDeep, fontFamily: MONO, fontWeight: 700, letterSpacing: 1.05 }),
       text('gs-cost-eq', 558, 344, 600, 70,
         texBlock`\begin{aligned}
-          \Theta^*(A,Q)=\arg\min_{\Theta}\;&\|\mathbf r_0\|_{\Omega_0}^2+\sum_t\|\mathbf r_t^{\mathrm{mot}}\|_{\Omega_t}^2\\[-.1em]
-          &+\sum_{t,\ell}\rho\!\left(\|\mathbf r_{t\ell}^{\mathrm{radio}}\|_{\Omega_{t\ell}}^2\right)
+          \Theta^*(A,Q)=\arg\min_{\Theta}\;&\|\mathbf r_0\|_{\Omega_0}^2+\sum_{t=1}^{4}\|\mathbf r_t^{\mathrm{mot}}\|_{\Omega_t}^2\\[-.1em]
+          &+\sum_{t=1}^{5}\sum_{\ell\in\{\mathrm{LoS},A,B\}}\rho\!\left(\|\mathbf r_{t\ell}^{\mathrm{radio}}\|_{\Omega_{t\ell}}^2\right)
         \end{aligned}`,
-        17, { fontWeight: 700, align: 'center', lineHeight: 1.45 }),
+        14, { fontWeight: 700, align: 'center', lineHeight: 1.25 }),
 
       card('gs-radio-card', 532, 444, 652, 178, C.measurementSoft, { stroke: C.measurement, radius: 8 }),
-      text('gs-radio-k', 558, 462, 210, 16, 'ONE-BOUNCE VA RADIO FACTOR', 9, { color: C.measurementDeep, fontFamily: MONO, fontWeight: 700, letterSpacing: 1.05 }),
-      text('gs-radio-residual', 558, 490, 600, 38, texBlock`\mathbf r_{t\ell}^{\mathrm{radio}}=[c\tau,\,\mathrm{wrap}(\varphi),\,\mathrm{wrap}(\psi)]^{\mathsf T}-\mathbf h_{q_{t\ell}}(\mathbf x_t,\mathbf v_{a_{t\ell}},\mathbf b)`, 16, { fontWeight: 700, align: 'center' }),
-      text('gs-radio-model', 558, 536, 600, 70,
+      text('gs-radio-k', 558, 462, 290, 16, 'LOS + ONE-BOUNCE RADIO FACTORS', 9, { color: C.measurementDeep, fontFamily: MONO, fontWeight: 700, letterSpacing: 1.05 }),
+      text('gs-radio-residual', 558, 486, 600, 58,
         texBlock`\begin{aligned}
-          \widehat L&=\|\mathbf p_t-\mathbf v_j\|\\
-          P_{tj}&=\mathrm{line}(\mathbf p_t,\mathbf v_j)\cap\mathrm{bisector}(\mathbf p_{\mathrm{BS}},\mathbf v_j)\\
-          \widehat\varphi&=\mathrm{wrap}(\mathrm{bearing}(P_{tj}-\mathbf p_t)-\theta_t),\quad
-          \widehat\psi=\mathrm{wrap}(\mathrm{bearing}(P_{tj}-\mathbf p_{\mathrm{BS}})-\theta_{\mathrm{BS}})
+          \mathbf z_{t\ell}&=[c\tau,\,\mathrm{wrap}(\varphi),\,\mathrm{wrap}(\psi)]^{\mathsf T}\\[-.2em]
+          \mathbf r_{t\ell}^{\mathrm{radio}}&=\mathbf z_{t\ell}-
+          \begin{cases}
+            \mathbf h_{\mathrm{LoS}}(\mathbf x_t;\mathbf b),&\ell=\mathrm{LoS}\\
+            \mathbf h_{\mathrm{1b}}(\mathbf x_t,\mathbf v_\ell;\mathbf b),&\ell\in\{A,B\}
+          \end{cases}
         \end{aligned}`,
-        14, { lineHeight: 1.45, align: 'center' }),
+        12, { fontWeight: 700, align: 'center', lineHeight: 1.15 }),
+      text('gs-radio-model', 558, 548, 600, 58,
+        texBlock`\begin{aligned}
+          \ell\in\{A,B\}:\quad \widehat L&=\|\mathbf p_t-\mathbf v_\ell\|\\
+          P_{t\ell}&=\mathrm{line}(\mathbf p_t,\mathbf v_\ell)\cap\mathrm{bisector}(\mathbf p_{\mathrm{BS}},\mathbf v_\ell)\\
+          \widehat\varphi&=\mathrm{wrap}(\mathrm{bearing}(P_{t\ell}-\mathbf p_t)-\theta_t),\quad
+          \widehat\psi=\mathrm{wrap}(\mathrm{bearing}(P_{t\ell}-\mathbf p_{\mathrm{BS}})-\theta_{\mathrm{BS}})
+        \end{aligned}`,
+        12, { lineHeight: 1.25, align: 'center' }),
       text('gs-source', 96, 650, 1088, 17, `S1 geometry uses ${tex`[c\tau,\varphi,\psi]`}; calibrated ${tex`\alpha`} grades hypotheses but is not added as a Gauss–Newton geometry coordinate.`, 9, { color: C.faint, fontFamily: MONO, align: 'center' })
     ], { accent: C.pose, titleSize: 31, transition: 'none' }
   )
