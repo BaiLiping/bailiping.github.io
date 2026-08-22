@@ -5,8 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="color-scheme" content="only light">
   <meta name="theme-color" content="#f4f6f8">
-  <title>Shared setup S1 · BP and PMBM association lab</title>
-  <meta name="description" content="A shared radio-SLAM experiment for BP association marginals and PMBM-style global-hypothesis pruning.">
+  <title>Shared setup S1 · BP-SLAM and PMBM-SLAM state–map factorization</title>
+  <meta name="description" content="A shared radio-SLAM experiment showing how BP-SLAM and PMBM-SLAM factor the joint UE-state and map posterior.">
   <link rel="stylesheet" href="styles.css">
   <link rel="stylesheet" href="../../assets/interactive-slide-system.css">
   <style>
@@ -30,8 +30,8 @@
   <main class="lab-shell interactive-slide-shell">
     <header class="masthead interactive-slide-header">
       <div class="interactive-slide-heading">
-        <p class="eyebrow">SHARED SETUP S1 · RADIO DATA ASSOCIATION</p>
-        <h1>One physical scan, two inference views.</h1>
+        <p class="eyebrow">SHARED SETUP S1 · JOINT STATE–MAP INFERENCE</p>
+        <h1>One posterior, two factorizations.</h1>
       </div>
       <div class="interactive-slide-actions">
         <span class="interactive-slide-chip" title="BP and PMBM use the same five-pose scene and deterministic MPC realization as the GraphSLAM lab.">Same scene · same MPCs</span>
@@ -42,26 +42,26 @@
     </header>
 
     <nav class="mode-tabs interactive-slide-tabs" role="tablist" aria-label="Interactive example">
-      <button class="mode-tab is-active" id="tab-assignment" type="button" role="tab" aria-selected="true" aria-controls="panel-assignment" data-mode="assignment"><span>01</span> Shared weights</button>
-      <button class="mode-tab" id="tab-bp" type="button" role="tab" aria-selected="false" aria-controls="panel-bp" data-mode="bp" tabindex="-1"><span>02</span> BP marginals</button>
-      <button class="mode-tab" id="tab-hypotheses" type="button" role="tab" aria-selected="false" aria-controls="panel-hypotheses" data-mode="hypotheses" tabindex="-1"><span>03</span> Joint hypotheses</button>
+      <button class="mode-tab is-active" id="tab-assignment" type="button" role="tab" aria-selected="true" aria-controls="panel-assignment" data-mode="assignment"><span>01</span> Shared S1 data</button>
+      <button class="mode-tab" id="tab-bp" type="button" role="tab" aria-selected="false" aria-controls="panel-bp" data-mode="bp" tabindex="-1"><span>02</span> BP state × map</button>
+      <button class="mode-tab" id="tab-pmbm" type="button" role="tab" aria-selected="false" aria-controls="panel-pmbm" data-mode="pmbm" tabindex="-1"><span>03</span> PMBM state × map</button>
     </nav>
 
     <div class="lab-grid interactive-slide-body">
       <aside class="control-rail interactive-slide-controls interactive-slide-panel" aria-label="Experiment controls">
         <div class="method-copy">
           <p class="method-kicker" id="method-kicker">COMMON INPUT</p>
-          <h2 id="method-title">Inspect one S1 scan</h2>
-          <p id="method-copy">Predicted LoS and wall-reflection signatures compete for the same measured MPCs.</p>
+          <h2 id="method-title">Inspect the common evidence</h2>
+          <p id="method-copy">Both methods receive the same BS, odometry, and five scans of measured MPC tuples.</p>
         </div>
 
         <section class="setup-card" aria-label="Shared radio SLAM setup S1">
           <div class="setup-card-head"><span>S1</span><strong>Common scene · <output id="setup-scan">scan 4 / 5</output></strong></div>
           <p><span class="math-tex math-inline">\(\mathbf b=[2,2]^{\mathsf T}\,\mathrm m\)</span> · <span class="math-tex math-inline">\(\mathcal W_A:y=7\)</span> · <span class="math-tex math-inline">\(\mathcal W_B:x=8.5\)</span></p>
           <dl class="state-set">
-            <div><dt>Known</dt><dd id="setup-known">fixed UE poses, BS, measured MPCs</dd></div>
-            <div><dt>Latent</dt><dd id="setup-latent">route association and map-feature state</dd></div>
-            <div><dt>Return</dt><dd id="setup-output">normalized association evidence</dd></div>
+            <div><dt>Known</dt><dd id="setup-known">BS, odometry, measured MPC tuples</dd></div>
+            <div><dt>Latent</dt><dd id="setup-latent">UE trajectory and map</dd></div>
+            <div><dt>Return</dt><dd id="setup-output">joint state–map posterior</dd></div>
           </dl>
         </section>
 
@@ -81,27 +81,27 @@
         </section>
 
         <section class="control-panel" id="panel-bp" role="tabpanel" aria-labelledby="tab-bp" hidden>
-          <p class="microcopy">One sweep sends all route→MPC messages, then all replies. Marginals update without listing global events.</p>
+          <p class="microcopy">Step through the factor graph that couples the five latent UE states to two latent map features. S1 route labels are conditioned here so the state–map structure stays visible.</p>
           <div class="button-row">
-            <button class="button primary" id="bp-step" type="button">One sweep</button>
-            <button class="button" id="bp-run" type="button" aria-pressed="false">Run</button>
+            <button class="button primary" id="bp-step" type="button">Next factor</button>
+            <button class="button" id="bp-run" type="button" aria-pressed="false">Play</button>
             <button class="icon-button" id="bp-reset" type="button" aria-label="Reset belief propagation" title="Reset">↺</button>
           </div>
-          <button class="text-button" id="bp-end" type="button">Jump to fixed point →</button>
-          <div class="equations" aria-label="Belief propagation update equations">
-            <p><span class="math-tex math-display">\[\mu_{i\to j}=\frac{\ell_{ij}}{\ell_{i\varnothing}+\sum_{k\ne j}\ell_{ik}\nu_{k\to i}}\]</span></p>
-            <p><span class="math-tex math-display">\[\nu_{j\to i}=\frac{1}{1+\sum_{l\ne i}\mu_{l\to j}}\]</span></p>
+          <button class="text-button" id="bp-end" type="button">Show marginal beliefs →</button>
+          <div class="equations" aria-label="BP-SLAM state and map factorization">
+            <p><span class="math-tex math-display">\[p(\mathbf X,\mathcal M\mid Z,U,\mathbf b,A)\propto p(\mathbf x_1)\!\prod_{t=2}^{5}\!f_t^{\mathrm{mot}}\prod_jp(\mathbf m_j)\!\prod_{t=1}^{5}\!f_t^{\mathrm{rad}}\]</span></p>
+            <p><span class="math-tex math-display">\[b(v)\propto\prod_{f\in\mathcal N(v)}\mu_{f\to v}(v)\]</span></p>
           </div>
         </section>
 
-        <section class="control-panel" id="panel-hypotheses" role="tabpanel" aria-labelledby="tab-hypotheses" hidden>
-          <label class="range-label" for="k-range"><span>Keep top <span class="math-tex math-inline">\(k\)</span></span><output id="k-value" for="k-range">5</output></label>
-          <input id="k-range" type="range" min="1" max="20" value="5" step="1">
-          <p class="microcopy">Rows are compatible joint assignments. Pruning drops normalized mass; it does not turn one row into a complete PMBM update.</p>
+        <section class="control-panel" id="panel-pmbm" role="tabpanel" aria-labelledby="tab-pmbm" hidden>
+          <label class="range-label" for="particle-range"><span>Inspect trajectory particle</span><output id="particle-value" for="particle-range"><span class="math-tex math-inline">\(n=1\)</span></output></label>
+          <input id="particle-range" type="range" min="0" max="2" value="0" step="1">
+          <p class="microcopy">The vehicle trajectory is a weighted particle mixture. Conditioned on each particle, the map is a PMBM: a PPP for undetected features plus an MBM for detected Bernoulli features.</p>
           <div class="button-row">
-            <button class="button primary" id="keep-one" type="button">MAP only</button>
-            <button class="button" id="keep-five" type="button">Top 5</button>
-            <button class="button" id="keep-all" type="button">All</button>
+            <button class="button primary" id="particle-one" type="button">Particle 1</button>
+            <button class="button" id="particle-two" type="button">Particle 2</button>
+            <button class="button" id="particle-three" type="button">Particle 3</button>
           </div>
         </section>
 
@@ -111,7 +111,7 @@
           <div><dt id="metric-c-label">BP max error</dt><dd id="metric-c">—</dd></div>
         </dl>
 
-        <div class="scope-note"><strong>Scope:</strong> the association layer of setup S1—not a complete BP-SLAM or PMBM-SLAM state recursion.</div>
+        <div class="scope-note"><strong>Scope:</strong> a structural S1 walkthrough of the joint state–map posterior. The displayed numbers are illustrative, while the factorizations follow the two SLAM formulations.</div>
       </aside>
 
       <section class="stage-card interactive-slide-stage interactive-slide-panel" aria-labelledby="stage-heading">
@@ -121,8 +121,8 @@
         </div>
 
         <div class="visual-view" id="visual-view">
-          <canvas id="association-canvas" width="700" height="420" tabindex="0" aria-label="Radio signature association scene for setup S1. Three predicted paths compete for measured MPCs in a path-length and angle-of-arrival plane.">
-            The plot requires canvas support. Three predicted paths compete for measured MPCs under a one-to-one assignment constraint.
+          <canvas id="association-canvas" width="700" height="420" tabindex="0" aria-label="Shared S1 radio evidence. Predicted paths and measured MPCs are shown in a path-length and angle-of-arrival plane.">
+            The plot requires canvas support. It shows the shared S1 predicted routes and measured MPC tuples.
           </canvas>
           <aside class="data-card" id="data-card" aria-live="polite"></aside>
         </div>
@@ -137,21 +137,21 @@
     </div>
 
     <footer class="interactive-slide-footer">
-      <p>Setup S1 · fixed UE poses · each route hypothesis may be missed or claim at most one MPC</p>
-      <p><span class="bp-swatch"></span>BP marginals <span class="pm-swatch"></span>joint-event reference</p>
+      <p>Setup S1 · known BS, odometry, and radio tuples · latent UE trajectory and map</p>
+      <p><span class="bp-swatch"></span>BP factor graph <span class="pm-swatch"></span>PMBM conditional map</p>
     </footer>
   </main>
 
   <noscript>
     <style>.lab-shell{display:none!important}</style>
     <main class="fallback">
-      <p class="eyebrow">SHARED SETUP S1 · RADIO DATA ASSOCIATION</p>
-      <h1>One physical scan, two inference views</h1>
-      <p>Enable JavaScript for the computational examples. Both views use the same five-pose radio scene: BP approximates association marginals by message passing, while global-hypothesis enumeration provides the small-problem reference.</p>
+      <p class="eyebrow">SHARED SETUP S1 · JOINT STATE–MAP INFERENCE</p>
+      <h1>One posterior, two factorizations</h1>
+      <p>Enable JavaScript for the interactive diagrams. BP-SLAM represents the joint UE-state and map posterior as a factor graph; PMBM-SLAM represents a vehicle-trajectory density multiplied by a conditional PMBM map.</p>
       <div class="fallback-grid">
-        <section><h2>Shared weights</h2><p>Both routes use the same gated likelihood ratios, missed-detection weights, and one-to-one constraints.</p></section>
-        <section><h2>BP</h2><p>Messages negotiate measurement competition and return approximate marginals without enumerating events.</p></section>
-        <section><h2>Joint hypotheses</h2><p>Compatible global assignments are weighted, ranked, and pruned; this is not the full PMBM update.</p></section>
+        <section><h2>Shared S1</h2><p>Both methods use the same known BS, odometry, radio tuples, noise, and clutter realization.</p></section>
+        <section><h2>BP-SLAM</h2><p>Motion and radio factors connect trajectory variables to map-feature variables; sum–product returns marginal beliefs.</p></section>
+        <section><h2>PMBM-SLAM</h2><p>The trajectory posterior is a particle mixture; each particle carries a conditional PPP plus multi-Bernoulli-mixture map.</p></section>
       </div>
       <a class="back-link" href="../">← Back to slides</a>
     </main>

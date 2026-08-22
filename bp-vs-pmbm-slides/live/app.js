@@ -45,10 +45,10 @@
   var setupOutput = document.getElementById("setup-output");
   var pdRange = document.getElementById("pd-range");
   var clutterRange = document.getElementById("clutter-range");
-  var kRange = document.getElementById("k-range");
+  var particleRange = document.getElementById("particle-range");
   var pdValue = document.getElementById("pd-value");
   var clutterValue = document.getElementById("clutter-value");
-  var kValue = document.getElementById("k-value");
+  var particleValue = document.getElementById("particle-value");
   var metricA = document.getElementById("metric-a");
   var metricB = document.getElementById("metric-b");
   var metricC = document.getElementById("metric-c");
@@ -59,28 +59,44 @@
   var copy = {
     assignment: {
       kicker: "COMMON INPUT",
-      title: "Inspect one S1 scan",
-      body: "Drag an MPC in the path-length/AoA plane. BP and PMBM consume the same predicted routes and measured tuples.",
-      heading: "GATED LIKELIHOODS " + mathTex("\\ell"),
-      hint: "Dashed gates include current map uncertainty as well as measurement noise. A dot marks a gated-out route–MPC pair."
+      title: "Inspect the common evidence",
+      body: "Drag an MPC in the path-length/AoA plane. Both state–map factorizations consume the same BS, odometry, and measured tuples.",
+      heading: "SHARED S1 RADIO EVIDENCE",
+      hint: "This optional view exposes the common scan evidence. Pages 12 and 14 use it to explain different factorizations of the same latent trajectory and map."
     },
     bp: {
-      kicker: "MARGINAL VIEW",
-      title: "Negotiate without enumeration",
-      body: "With the five UE poses fixed, loopy sum–product estimates S1 route-association marginals and VA-feature beliefs.",
-      heading: "WILLIAMS–LAU MESSAGE PASSING",
-      hint: "Line width follows the current marginal. Edge labels show " + mathTex("\\mu_{\\mathrm{route}\\to\\mathrm{MPC}}") + " and " + mathTex("\\nu_{\\mathrm{MPC}\\to\\mathrm{route}}") + "."
+      kicker: "BP-SLAM FACTORIZATION",
+      title: "Couple state and map in one graph",
+      body: "Motion factors connect " + mathTex("\\mathbf x_{1:5}") + "; radio factors couple every UE state to the shared map features " + mathTex("\\mathbf m_A,\\mathbf m_B") + ".",
+      heading: "FACTOR GRAPH FOR " + mathTex("p(\\mathbf X,\\mathcal M\\mid Z,U,\\mathbf b,A)"),
+      hint: "Squares are factors; circles are latent variables. The S1 path labels are conditioned in this structural walkthrough so association does not obscure the state–map coupling."
     },
-    hypotheses: {
-      kicker: "JOINT VIEW",
-      title: "Rank compatible stories",
-      body: "The same S1 scan is organized into compatible global route histories; " + mathTex("k") + " controls PMBM-style truncation.",
-      heading: "EXACT JOINT ASSIGNMENTS + PRUNING",
-      hint: "Orange bars are normalized joint-event weights. Dim rows are pruned; retained marginals are renormalized over the kept set."
+    pmbm: {
+      kicker: "PMBM-SLAM FACTORIZATION",
+      title: "Condition the map on the trajectory",
+      body: "A weighted trajectory-particle mixture represents " + mathTex("f(\\mathbf X\\mid Z,U)") + "; each particle carries its own conditional PMBM map.",
+      heading: "RAO–BLACKWELLIZED STATE × CONDITIONAL MAP",
+      hint: "Select a trajectory particle. Its conditional map splits into a PPP for undetected features and an MBM of detected Bernoulli features."
     }
   };
 
+  var BP_STAGES = [
+    { label: "Joint variables", family: "priors", detail: "The UE trajectory and map features are both latent; priors enter as factors." },
+    { label: "Motion chain", family: "motion", detail: "Odometry factors propagate information along the five-state UE trajectory." },
+    { label: "Radio coupling", family: "radio", detail: "Each scan factor depends jointly on its UE state and the shared map features." },
+    { label: "Map update", family: "state→map", detail: "Radio messages combine evidence from all five states into each map belief." },
+    { label: "State feedback", family: "map→state", detail: "Updated map messages return through the radio factors to refine every UE state." },
+    { label: "Marginal beliefs", family: "beliefs", detail: "Products of incoming messages return separate approximate marginals for state and map." }
+  ];
+
+  var PMBM_PARTICLES = [
+    { weight: 0.58, shift: "0.00\\,\\mathrm m", lambda: 0.36, rA: 0.96, rB: 0.91, h1: 0.73, h2: 0.27, mA: "[2.1,12.0]^{\\mathsf T}", mB: "[15.0,2.1]^{\\mathsf T}" },
+    { weight: 0.27, shift: "+0.12\\,\\mathrm m", lambda: 0.52, rA: 0.88, rB: 0.79, h1: 0.61, h2: 0.39, mA: "[2.2,11.8]^{\\mathsf T}", mB: "[14.8,2.2]^{\\mathsf T}" },
+    { weight: 0.15, shift: "-0.18\\,\\mathrm m", lambda: 0.81, rA: 0.71, rB: 0.64, h1: 0.54, h2: 0.46, mA: "[1.9,12.3]^{\\mathsf T}", mB: "[15.3,1.9]^{\\mathsf T}" }
+  ];
+
   var requestedMode = new URLSearchParams(window.location.search).get("demo");
+  if (requestedMode === "hypotheses") requestedMode = "pmbm";
   if (!Object.prototype.hasOwnProperty.call(copy, requestedMode)) requestedMode = "assignment";
   var mode = "assignment";
   var initialScene = sceneForScan(3);
@@ -91,8 +107,8 @@
     measurements: initialScene.measurements,
     PD: 0.90,
     clutter: 5e-5,
-    k: 5,
-    bpIndex: 0,
+    factorStage: 0,
+    particleIndex: 0,
     selectedMeasurement: 0
   };
   var result = null;
@@ -160,17 +176,19 @@
   function updateSetupPanel() {
     var scanNumber = state.scanIndex + 1;
     setupScan.textContent = "scan " + scanNumber + " / 5";
-    scanValue.innerHTML = mathTex("x_{" + scanNumber + "}") + " / 5";
-    setupKnown.innerHTML = mathTex("\\mathbf b,\\mathbf x_{1:5},Z") + " fixed";
+    scanValue.innerHTML = mathTex("\\mathbf z_{" + scanNumber + "}") + " / 5";
     if (mode === "bp") {
-      setupLatent.innerHTML = mathTex("M,E,A") + " · VA state, existence, associations";
-      setupOutput.textContent = "marginal feature and association beliefs";
-    } else if (mode === "hypotheses") {
-      setupLatent.innerHTML = mathTex("M,H") + " · PPP/Bernoulli map and histories";
-      setupOutput.textContent = "weighted global hypotheses and marginals";
+      setupKnown.innerHTML = mathTex("\\mathbf b,U,Z,A") + " · S1 labels conditioned";
+      setupLatent.innerHTML = mathTex("\\mathbf X,\\mathcal M") + " · trajectory and map";
+      setupOutput.innerHTML = mathTex("b(\\mathbf x_t),b(\\mathbf m_j)") + " marginals";
+    } else if (mode === "pmbm") {
+      setupKnown.innerHTML = mathTex("\\mathbf b,U,Z") + " · common S1 evidence";
+      setupLatent.innerHTML = mathTex("\\mathbf X,\\mathcal M") + " · trajectory and RFS map";
+      setupOutput.textContent = "trajectory mixture + conditional PMBM map";
     } else {
-      setupLatent.innerHTML = mathTex("A") + " · route-to-MPC assignments";
-      setupOutput.textContent = "shared gated likelihood ratios";
+      setupKnown.innerHTML = mathTex("\\mathbf b,U,Z") + " · common S1 evidence";
+      setupLatent.innerHTML = mathTex("\\mathbf X,\\mathcal M") + " · trajectory and map";
+      setupOutput.textContent = "same evidence for both factorizations";
     }
   }
 
@@ -334,12 +352,7 @@
       pairs: pairs
     };
     result.finalError = maxDifference(history[history.length - 1].marginals, exact);
-    if (resetBp !== false) state.bpIndex = 0;
-    state.bpIndex = Math.min(state.bpIndex, history.length - 1);
-    state.k = Math.max(1, Math.min(state.k, events.length));
-    kRange.max = String(events.length);
-    kRange.value = String(state.k);
-    kValue.value = String(state.k);
+    if (resetBp !== false) state.factorStage = 0;
     renderAll();
   }
 
@@ -361,10 +374,6 @@
     if (value < 9.995) return value.toFixed(2);
     if (value < 99.5) return value.toFixed(1);
     return String(Math.round(value));
-  }
-
-  function currentBp() {
-    return result.history[state.bpIndex];
   }
 
   function setStatus(text, running) {
@@ -389,23 +398,18 @@
     return html;
   }
 
-  function bpTable() {
-    var current = currentBp();
-    var html = "<h3>BP route marginals</h3><table class=\"mini-matrix\"><tr><th></th><th>" + mathTex("\\varnothing") + "</th>";
-    for (var j = 0; j < result.m; j += 1) html += "<th>" + mathTex("z_{" + (j + 1) + "}") + "</th>";
-    html += "</tr>";
-    for (var i = 0; i < result.n; i += 1) {
-      html += "<tr><td class=\"row-head\" style=\"color:" + TRACK_COLORS[i] + "\">" + mathTex(routeTex(i)) + "</td>";
-      current.marginals[i].forEach(function (value) {
-        html += "<td>" + formatProbability(value) + "</td>";
-      });
-      html += "</tr>";
+  function bpStageCard() {
+    var stage = BP_STAGES[state.factorStage];
+    var html = "<div class=\"stage-callout\"><span>STEP " + (state.factorStage + 1) + " / " + BP_STAGES.length + "</span><strong>" + stage.label + "</strong><p>" + stage.detail + "</p></div>";
+    if (state.factorStage < 5) {
+      html += "<h3>Joint factorization</h3>";
+      html += mathTex("p(\\mathbf X,\\mathcal M\\mid Z,U,\\mathbf b,A)\\propto p(\\mathbf x_1)\\prod_{t=2}^{5} f_t^{\\mathrm{mot}}(\\mathbf x_{t-1},\\mathbf x_t;\\mathbf u_t)\\prod_{j\\in\\{A,B\\}}p(\\mathbf m_j)\\prod_{t=1}^{5}f_t^{\\mathrm{rad}}(\\mathbf x_t,\\mathbf m_A,\\mathbf m_B;Z_t,A_t,\\mathbf b)", true);
+    } else {
+      html += "<h3>Returned marginal beliefs</h3>";
+      html += mathTex("b(\\mathbf x_t)\\propto\\prod_{f\\in\\mathcal N(\\mathbf x_t)}\\mu_{f\\to\\mathbf x_t}(\\mathbf x_t)", true);
+      html += mathTex("b(\\mathbf m_j)\\propto p(\\mathbf m_j)\\prod_{t=1}^{5}\\mu_{f_t^{\\mathrm{rad}}\\to\\mathbf m_j}(\\mathbf m_j)", true);
     }
-    var error = maxDifference(current.marginals, result.exact);
-    var width = Math.min(100, error * 1000);
-    html += "</table><p class=\"card-note\">Exact-reference max difference: <strong>" + (100 * error).toFixed(2) + " pp</strong></p>";
-    html += "<div class=\"delta-track\"><i style=\"width:" + width.toFixed(1) + "%\"></i></div>";
-    html += "<p class=\"card-note\">Sweep " + current.sweep + " of " + (result.history.length - 1) + " · " + mathTex("\\Delta") + " " + (current.delta === null ? "initial" : current.delta.toExponential(1)) + "</p>";
+    html += "<p class=\"card-note\"><strong>Conditioning note.</strong> " + mathTex("A") + " denotes the fixed S1 route labels in this diagram. Full BP-SLAM also represents feature existence and association variables; they are suppressed here to expose the " + mathTex("\\mathbf X") + "–" + mathTex("\\mathcal M") + " coupling.</p>";
     return html;
   }
 
@@ -418,21 +422,20 @@
       metricB.textContent = String(result.events.length);
       metricC.textContent = (100 * result.finalError).toFixed(2) + " pp";
     } else if (mode === "bp") {
-      var current = currentBp();
-      metricALabel.textContent = "Sweep";
-      metricBLabel.textContent = "Message Δ";
-      metricCLabel.textContent = "Marginal error";
-      metricA.textContent = current.sweep + " / " + (result.history.length - 1);
-      metricB.textContent = current.delta === null ? "initial" : current.delta.toExponential(1);
-      metricC.textContent = (100 * maxDifference(current.marginals, result.exact)).toFixed(2) + " pp";
+      metricALabel.textContent = "Stage";
+      metricBLabel.textContent = "Active family";
+      metricCLabel.textContent = "Return";
+      metricA.textContent = (state.factorStage + 1) + " / " + BP_STAGES.length;
+      metricB.textContent = BP_STAGES[state.factorStage].family;
+      metricC.textContent = state.factorStage === 5 ? "b(x), b(m)" : "pending";
     } else {
-      var truncated = eventMarginals(result.events, result.n, result.m, state.k);
-      metricALabel.textContent = "Kept";
-      metricBLabel.textContent = "Retained mass";
-      metricCLabel.textContent = "Discarded mass";
-      metricA.textContent = state.k + " / " + result.events.length;
-      metricB.textContent = (100 * truncated.mass).toFixed(1) + "%";
-      metricC.textContent = (100 * Math.max(0, 1 - truncated.mass)).toFixed(1) + "%";
+      var particle = PMBM_PARTICLES[state.particleIndex];
+      metricALabel.textContent = "Particle";
+      metricBLabel.textContent = "Weight";
+      metricCLabel.textContent = "Map";
+      metricA.textContent = (state.particleIndex + 1) + " / " + PMBM_PARTICLES.length;
+      metricB.textContent = (100 * particle.weight).toFixed(0) + "%";
+      metricC.textContent = "PPP + MBM";
     }
   }
 
@@ -713,17 +716,85 @@
     marginalCard.innerHTML = card;
   }
 
+  function renderBpFactorGraph() {
+    var stage = state.factorStage;
+    var poseX = [120, 310, 500, 690, 880];
+    var motionX = [215, 405, 595, 785];
+    var graph = "<div class=\"factor-graph\" role=\"img\" aria-label=\"BP-SLAM factor graph coupling five UE-state variables to two map-feature variables through motion and radio factors\">";
+    graph += "<div class=\"fg-axis-label fg-map-label\">LATENT MAP " + mathTex("\\mathcal M") + "</div>";
+    graph += "<div class=\"fg-axis-label fg-state-label\">LATENT UE TRAJECTORY " + mathTex("\\mathbf X=\\mathbf x_{1:5}") + "</div>";
+    graph += "<svg class=\"fg-lines\" viewBox=\"0 0 1000 500\" preserveAspectRatio=\"none\" aria-hidden=\"true\"><defs>";
+    graph += "<marker id=\"bp-arrow-blue\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto-start-reverse\"><path d=\"M 0 0 L 10 5 L 0 10 z\"></path></marker>";
+    graph += "<marker id=\"bp-arrow-green\" viewBox=\"0 0 10 10\" refX=\"8\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto-start-reverse\"><path d=\"M 0 0 L 10 5 L 0 10 z\"></path></marker></defs>";
+    graph += "<line class=\"fg-edge prior-edge" + (stage === 0 ? " is-active" : "") + "\" x1=\"270\" y1=\"24\" x2=\"270\" y2=\"80\"></line>";
+    graph += "<line class=\"fg-edge prior-edge" + (stage === 0 ? " is-active" : "") + "\" x1=\"730\" y1=\"24\" x2=\"730\" y2=\"80\"></line>";
+    graph += "<line class=\"fg-edge prior-edge" + (stage === 0 ? " is-active" : "") + "\" x1=\"52\" y1=\"410\" x2=\"120\" y2=\"410\"></line>";
+    motionX.forEach(function (x, index) {
+      var active = stage === 1 ? " is-active" : "";
+      graph += "<line class=\"fg-edge motion-edge" + active + "\" x1=\"" + poseX[index] + "\" y1=\"410\" x2=\"" + x + "\" y2=\"410\"></line>";
+      graph += "<line class=\"fg-edge motion-edge" + active + "\" x1=\"" + x + "\" y1=\"410\" x2=\"" + poseX[index + 1] + "\" y2=\"410\"></line>";
+    });
+    poseX.forEach(function (x) {
+      var radioActive = stage === 2 || stage === 3 || stage === 4 ? " is-active" : "";
+      var mapArrow = stage === 3 ? " marker-end=\"url(#bp-arrow-green)\"" : "";
+      var stateArrow = stage === 4 ? " marker-end=\"url(#bp-arrow-blue)\"" : "";
+      graph += "<line class=\"fg-edge radio-edge map-a-edge" + radioActive + "\" x1=\"" + x + "\" y1=\"250\" x2=\"270\" y2=\"80\"" + mapArrow + "></line>";
+      graph += "<line class=\"fg-edge radio-edge map-b-edge" + radioActive + "\" x1=\"" + x + "\" y1=\"250\" x2=\"730\" y2=\"80\"" + mapArrow + "></line>";
+      graph += "<line class=\"fg-edge radio-edge state-radio-edge" + radioActive + "\" x1=\"" + x + "\" y1=\"250\" x2=\"" + x + "\" y2=\"410\"" + stateArrow + "></line>";
+    });
+    graph += "</svg>";
+    graph += "<div class=\"fg-node fg-prior prior-map-a" + (stage === 0 ? " is-active" : "") + "\">" + mathTex("p(\\mathbf m_A)") + "</div>";
+    graph += "<div class=\"fg-node fg-prior prior-map-b" + (stage === 0 ? " is-active" : "") + "\">" + mathTex("p(\\mathbf m_B)") + "</div>";
+    graph += "<div class=\"fg-node fg-prior prior-state" + (stage === 0 ? " is-active" : "") + "\">" + mathTex("p(\\mathbf x_1)") + "</div>";
+    graph += "<div class=\"fg-node fg-variable map-node map-a" + (stage === 3 || stage === 5 ? " is-active" : "") + "\">" + mathTex("\\mathbf m_A") + "</div>";
+    graph += "<div class=\"fg-node fg-variable map-node map-b" + (stage === 3 || stage === 5 ? " is-active" : "") + "\">" + mathTex("\\mathbf m_B") + "</div>";
+    poseX.forEach(function (_, index) {
+      graph += "<div class=\"fg-node fg-factor radio-factor radio-" + (index + 1) + (stage === 2 || stage === 3 || stage === 4 ? " is-active" : "") + "\">" + mathTex("f_{" + (index + 1) + "}^{\\mathrm{rad}}") + "</div>";
+      graph += "<div class=\"fg-node fg-variable state-node state-" + (index + 1) + (stage === 4 || stage === 5 ? " is-active" : "") + "\">" + mathTex("\\mathbf x_{" + (index + 1) + "}") + "</div>";
+    });
+    motionX.forEach(function (_, index) {
+      graph += "<div class=\"fg-node fg-factor motion-factor motion-" + (index + 2) + (stage === 1 ? " is-active" : "") + "\">" + mathTex("f_{" + (index + 2) + "}^{\\mathrm{mot}}") + "</div>";
+    });
+    graph += "<div class=\"fg-legend\"><span><i class=\"legend-variable\"></i>variable</span><span><i class=\"legend-factor\"></i>factor</span><span>" + mathTex("A") + " conditioned</span></div></div>";
+    hypothesisList.innerHTML = graph;
+    marginalCard.innerHTML = bpStageCard();
+  }
+
+  function renderPmbmFactorization() {
+    var particle = PMBM_PARTICLES[state.particleIndex];
+    var html = "<div class=\"pmbm-tree\">";
+    html += "<div class=\"posterior-node posterior-root\"><span>JOINT POSTERIOR</span>" + mathTex("f(\\mathbf X,\\mathcal M\\mid Z,U)", true) + "</div>";
+    html += "<div class=\"tree-operator\">" + mathTex("=") + "</div>";
+    html += "<div class=\"state-map-row\"><div class=\"posterior-node state-density\"><span>VEHICLE TRAJECTORY</span>" + mathTex("f(\\mathbf X\\mid Z,U)", true) + "</div><div class=\"tree-times\">" + mathTex("\\times") + "</div><div class=\"posterior-node conditional-density\"><span>CONDITIONAL RFS MAP</span>" + mathTex("f(\\mathcal M\\mid\\mathbf X,Z,U)", true) + "</div></div>";
+    html += "<div class=\"particle-strip\">";
+    PMBM_PARTICLES.forEach(function (item, index) {
+      html += "<div class=\"particle-card" + (index === state.particleIndex ? " is-selected" : "") + "\"><span>" + mathTex("\\mathbf X^{(" + (index + 1) + ")}") + "</span><strong>" + mathTex("w^{(" + (index + 1) + ")}=" + item.weight.toFixed(2)) + "</strong></div>";
+    });
+    html += "</div>";
+    html += "<div class=\"conditional-banner\">Selected " + mathTex("\\mathbf X^{(" + (state.particleIndex + 1) + ")}") + " carries " + mathTex("f_{\\mathrm{PMBM}}^{(" + (state.particleIndex + 1) + ")}(\\mathcal M)") + "</div>";
+    html += "<div class=\"pmbm-split\"><div class=\"component-card ppp-card\"><span>UNDETECTED MAP</span><strong>PPP</strong>" + mathTex("f_{\\mathrm P}^{u}(\\mathcal M^u;\\lambda^{u})", true) + "<small>expected count " + mathTex("\\Lambda^u=" + particle.lambda.toFixed(2)) + "</small></div><div class=\"tree-plus\">" + mathTex("\\uplus") + "</div><div class=\"component-card mbm-card\"><span>DETECTED MAP</span><strong>MBM</strong>" + mathTex("\\sum_{h\\in\\mathcal H}w_h\\prod_i f_{\\mathrm B}^{h,i}(\\mathcal M^i)", true) + "<small>global hypotheses mix Bernoulli map components</small></div></div>";
+    html += "<div class=\"bernoulli-row\"><div><span>FEATURE A</span>" + mathTex("r_A=" + particle.rA.toFixed(2)) + "</div><div><span>FEATURE B</span>" + mathTex("r_B=" + particle.rB.toFixed(2)) + "</div><div><span>GLOBAL MIXTURE</span>" + mathTex("(w_{h_1},w_{h_2})=(" + particle.h1.toFixed(2) + "," + particle.h2.toFixed(2) + ")") + "</div></div>";
+    html += "</div>";
+    hypothesisList.innerHTML = html;
+
+    var card = "<div class=\"particle-callout\"><span>SELECTED TRAJECTORY PARTICLE</span><strong>" + mathTex("n=" + (state.particleIndex + 1) + ",\\quad w^{(n)}=" + particle.weight.toFixed(2)) + "</strong><p>illustrative lateral shift " + mathTex(particle.shift) + "</p></div>";
+    card += "<h3>Rao–Blackwellized factorization</h3>";
+    card += mathTex("f(\\mathbf X,\\mathcal M\\mid Z,U)\\approx\\sum_{n=1}^{N}w^{(n)}\\delta(\\mathbf X-\\mathbf X^{(n)})f_{\\mathrm{PMBM}}^{(n)}(\\mathcal M)", true);
+    card += "<h3>Conditional map for particle " + (state.particleIndex + 1) + "</h3>";
+    card += mathTex("f_{\\mathrm{PMBM}}^{(n)}(\\mathcal M)=\\sum_{\\mathcal M^u\\uplus\\mathcal M^d=\\mathcal M}f_{\\mathrm P}^{u,(n)}(\\mathcal M^u)\\sum_{h\\in\\mathcal H^{(n)}}w_h^{(n)}\\sum_{\\biguplus_i\\mathcal M^i=\\mathcal M^d}\\prod_i f_{\\mathrm B}^{(n,h,i)}(\\mathcal M^i)", true);
+    card += "<div class=\"map-readout\"><div><span>" + mathTex("\\mathbf m_A") + "</span><strong>" + mathTex(particle.mA + "\\,\\mathrm m") + "</strong></div><div><span>" + mathTex("\\mathbf m_B") + "</span><strong>" + mathTex(particle.mB + "\\,\\mathrm m") + "</strong></div></div>";
+    card += "<p class=\"card-note\">Particle weights and component parameters are illustrative S1 values. The structural split—trajectory density times a trajectory-conditioned PMBM map—is the method-level result.</p>";
+    marginalCard.innerHTML = card;
+  }
+
   function renderStage() {
-    if (mode === "hypotheses") {
-      renderHypotheses();
-      return;
-    }
     if (mode === "assignment") {
       drawScene();
       dataCard.innerHTML = weightTable();
+    } else if (mode === "bp") {
+      renderBpFactorGraph();
     } else {
-      drawBpGraph();
-      dataCard.innerHTML = bpTable();
+      renderPmbmFactorization();
     }
   }
 
@@ -731,7 +802,14 @@
     scanRange.value = String(state.scanIndex);
     pdValue.value = state.PD.toFixed(2);
     clutterValue.innerHTML = mathTex(formatScientificTex(state.clutter));
-    kValue.value = String(state.k);
+    particleRange.value = String(state.particleIndex);
+    particleValue.innerHTML = mathTex("n=" + (state.particleIndex + 1));
+    ["particle-one", "particle-two", "particle-three"].forEach(function (id, index) {
+      var button = document.getElementById(id);
+      var selected = index === state.particleIndex;
+      button.classList.toggle("primary", selected);
+      button.setAttribute("aria-pressed", String(selected));
+    });
     updateSetupPanel();
     updateMetrics();
     renderStage();
@@ -760,38 +838,37 @@
     var button = document.getElementById("bp-run");
     var active = mode === "bp" && runIntent && Boolean(timerId);
     button.setAttribute("aria-pressed", String(active));
-    button.textContent = active ? "Pause" : "Run";
+    button.textContent = active ? "Pause" : "Play";
   }
 
   function stepBp() {
-    if (state.bpIndex < result.history.length - 1) state.bpIndex += 1;
-    var current = currentBp();
-    if (state.bpIndex >= result.history.length - 1) {
+    if (state.factorStage < BP_STAGES.length - 1) state.factorStage += 1;
+    if (state.factorStage >= BP_STAGES.length - 1) {
       stopAuto(true);
-      setStatus("Fixed point reached — compare with exhaustive marginals", false);
+      setStatus("Marginal state and map beliefs assembled", false);
     } else {
-      setStatus("Sweep " + current.sweep + " landed · Δ " + current.delta.toExponential(1), true);
+      setStatus(BP_STAGES[state.factorStage].label + " active", true);
     }
     renderAll();
-    return state.bpIndex >= result.history.length - 1;
+    return state.factorStage >= BP_STAGES.length - 1;
   }
 
   function resumeTimer() {
     if (!runIntent || timerId || mode !== "bp" || externallyPaused || document.hidden) return;
     timerId = window.setInterval(function () {
       if (stepBp()) stopAuto(true);
-    }, 260);
-    setStatus("Passing messages sweep by sweep", true);
+    }, 720);
+    setStatus("Walking through factor families", true);
     updateRunButton();
   }
 
   function toggleAuto() {
     if (runIntent) {
       stopAuto(true);
-      setStatus("Paused — step manually or resume", false);
+      setStatus("Paused — step manually or continue", false);
     } else {
       runIntent = true;
-      if (state.bpIndex >= result.history.length - 1) state.bpIndex = 0;
+      if (state.factorStage >= BP_STAGES.length - 1) state.factorStage = 0;
       resumeTimer();
       renderAll();
     }
@@ -803,7 +880,8 @@
     drag = null;
     mode = nextMode;
     document.body.classList.toggle("mode-assignment", mode === "assignment");
-    document.body.classList.toggle("mode-hypotheses", mode === "hypotheses");
+    document.body.classList.toggle("mode-hypotheses", mode === "pmbm");
+    document.body.classList.toggle("mode-pmbm", mode === "pmbm");
     document.querySelectorAll(".mode-tab").forEach(function (tab) {
       var selected = tab.dataset.mode === mode;
       tab.classList.toggle("is-active", selected);
@@ -814,8 +892,8 @@
     document.querySelectorAll(".control-panel").forEach(function (panel) {
       panel.hidden = panel.id !== "panel-" + mode;
     });
-    visualView.hidden = mode === "hypotheses";
-    hypothesisView.hidden = mode !== "hypotheses";
+    visualView.hidden = mode !== "assignment";
+    hypothesisView.hidden = mode === "assignment";
     var text = copy[mode];
     methodKicker.textContent = text.kicker;
     methodTitle.textContent = text.title;
@@ -823,8 +901,8 @@
     stageHeading.innerHTML = text.heading;
     hintEl.innerHTML = text.hint;
     if (mode === "assignment") setStatus("Scan " + (state.scanIndex + 1) + " loaded · drag an MPC to perturb it", false);
-    if (mode === "bp") setStatus("Start at uncoupled " + mathTex("\\nu=1"), false);
-    if (mode === "hypotheses") setStatus("Top " + state.k + " of " + result.events.length + " events retained", false);
+    if (mode === "bp") setStatus("Start with joint latent variables and priors", false);
+    if (mode === "pmbm") setStatus("Particle " + (state.particleIndex + 1) + " selected · inspect its conditional PMBM map", false);
     renderAll();
   }
 
@@ -911,11 +989,11 @@
     setStatus("z" + (state.selectedMeasurement + 1) + " nudged · recomputed", false);
   }
 
-  function setK(value) {
-    state.k = Math.max(1, Math.min(Number(value), result.events.length));
-    kRange.value = String(state.k);
-    kValue.value = String(state.k);
-    setStatus("Top " + state.k + " retains " + (100 * eventMarginals(result.events, result.n, result.m, state.k).mass).toFixed(1) + "% of joint mass", false);
+  function setParticle(value) {
+    state.particleIndex = Math.max(0, Math.min(Number(value), PMBM_PARTICLES.length - 1));
+    particleRange.value = String(state.particleIndex);
+    particleValue.innerHTML = mathTex("n=" + (state.particleIndex + 1));
+    setStatus("Particle " + (state.particleIndex + 1) + " selected · weight " + PMBM_PARTICLES[state.particleIndex].weight.toFixed(2), false);
     renderAll();
   }
 
@@ -932,7 +1010,7 @@
     tab.addEventListener("keydown", function (event) {
       if (event.key !== "ArrowLeft" && event.key !== "ArrowRight") return;
       event.preventDefault();
-      var order = ["assignment", "bp", "hypotheses"];
+      var order = ["assignment", "bp", "pmbm"];
       var delta = event.key === "ArrowRight" ? 1 : -1;
       switchMode(order[(order.indexOf(mode) + delta + order.length) % order.length], true);
     });
@@ -948,7 +1026,7 @@
     recompute(true);
     setStatus("Clutter density changed · shared weights recomputed", false);
   });
-  kRange.addEventListener("input", function () { setK(kRange.value); });
+  particleRange.addEventListener("input", function () { setParticle(particleRange.value); });
 
   scanRange.addEventListener("input", function () { setScan(scanRange.value); });
   document.getElementById("previous-scan").addEventListener("click", function () {
@@ -965,19 +1043,19 @@
   document.getElementById("bp-run").addEventListener("click", toggleAuto);
   document.getElementById("bp-reset").addEventListener("click", function () {
     stopAuto(true);
-    state.bpIndex = 0;
-    setStatus("Reset to uncoupled " + mathTex("\\nu=1"), false);
+    state.factorStage = 0;
+    setStatus("Reset to joint latent variables and priors", false);
     renderAll();
   });
   document.getElementById("bp-end").addEventListener("click", function () {
     stopAuto(true);
-    state.bpIndex = result.history.length - 1;
-    setStatus("Fixed point reached — exact benchmark remains separate", false);
+    state.factorStage = BP_STAGES.length - 1;
+    setStatus("Marginal state and map beliefs assembled", false);
     renderAll();
   });
-  document.getElementById("keep-one").addEventListener("click", function () { setK(1); });
-  document.getElementById("keep-five").addEventListener("click", function () { setK(Math.min(5, result.events.length)); });
-  document.getElementById("keep-all").addEventListener("click", function () { setK(result.events.length); });
+  document.getElementById("particle-one").addEventListener("click", function () { setParticle(0); });
+  document.getElementById("particle-two").addEventListener("click", function () { setParticle(1); });
+  document.getElementById("particle-three").addEventListener("click", function () { setParticle(2); });
 
   canvas.addEventListener("pointerdown", beginDrag);
   canvas.addEventListener("pointermove", moveDrag);
@@ -1019,7 +1097,7 @@
 
   if ("ResizeObserver" in window) {
     new ResizeObserver(function () {
-      if (mode !== "hypotheses") renderStage();
+      if (mode === "assignment") renderStage();
     }).observe(canvas);
   } else {
     window.addEventListener("resize", renderStage);

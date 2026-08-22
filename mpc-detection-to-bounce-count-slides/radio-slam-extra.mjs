@@ -81,7 +81,7 @@ function sharedSetupSlide(ctx) {
   \end{aligned}`, 15, { fontWeight: 700, align: 'center', lineHeight: 1.4 }))
 
   elements.push(card('s1-poses-card', 782, 362, 402, 132, C.paper, { stroke: C.line, radius: 8 }))
-  elements.push(text('s1-poses-k', 806, 380, 354, 17, 'FIVE UE POSES', 9, { color: C.poseDeep, fontFamily: MONO, fontWeight: 700, letterSpacing: 1.1 }))
+  elements.push(text('s1-poses-k', 806, 380, 354, 17, 'REFERENCE UE TRAJECTORY', 9, { color: C.poseDeep, fontFamily: MONO, fontWeight: 700, letterSpacing: 1.1 }))
   elements.push(text('s1-poses-eq', 806, 406, 354, 74, texBlock`\begin{aligned}
     \mathbf x_1&=(2.8,6.2,-18^\circ)&\mathbf x_2&=(3.9,5.6,-13^\circ)\\
     \mathbf x_3&=(5.0,5.0,-6^\circ)&\mathbf x_4&=(6.1,4.3,3^\circ)\\
@@ -94,13 +94,13 @@ function sharedSetupSlide(ctx) {
   elements.push(text('s1-data-v', 806, 586, 354, 24, `${tex`\sigma_L=0.08\,\mathrm m`} · ${tex`\sigma_{\angle}=1.4^\circ`} · clutter at ${tex`x_2,x_4`}`, 10, { color: C.soft, fontFamily: SANS, fontWeight: 700, align: 'center' }))
 
   elements.push(card('s1-state-card', 96, 638, 1088, 36, C.poseDeep, { stroke: C.poseDeep, radius: 6 }))
-  elements.push(text('s1-state-v', 116, 647, 1048, 18, 'BP / PMBM: poses fixed → infer map + associations   ·   GraphSLAM: infer trajectory + map from odometry + the same radio tuples', 12, { color: C.paper, fontFamily: SANS, fontWeight: 700, align: 'center' }))
+  elements.push(text('s1-state-v', 116, 647, 1048, 18, 'BP: joint factor graph → state/map marginals   ·   PMBM: trajectory density × conditional RFS map   ·   GraphSLAM: joint MAP point estimate', 11, { color: C.paper, fontFamily: SANS, fontWeight: 700, align: 'center' }))
 
   return regular(
     's-radio-slam-s1', 'SHARED EXPERIMENT',
     'Setup S1: one scene, three inference views',
-    'Only the unknown-state set changes; the BS, walls, trajectory, MPC ordering, noise, and clutter stay fixed.',
-    'Use this slide as the controlled experiment definition. BP-SLAM and PMBM-SLAM clamp all five UE poses, while GraphSLAM releases them and adds odometry plus a first-pose prior. All three methods consume the same deterministic radio realization. The complex MPC gain alpha is radiometric evidence; phi remains AoA.',
+    'The physical ground truth, BS, walls, MPC ordering, noise, and clutter stay fixed; each method represents the latent trajectory and map differently.',
+    'Use this slide as the controlled experiment definition. The plotted poses are the reference trajectory used to generate S1, not states clamped by BP-SLAM or PMBM-SLAM. All three methods infer the UE trajectory and map from the same known BS, odometry, and deterministic radio realization. BP returns marginal beliefs, PMBM carries a trajectory density and conditional RFS map, and GraphSLAM returns one joint MAP point estimate. The complex MPC gain alpha is radiometric evidence; phi remains AoA.',
     elements,
     { accent: C.map, titleSize: 34, transition: 'none' }
   )
@@ -110,82 +110,83 @@ function methodEquationSlide(kind, ctx) {
   const { regular, text, card, shape, line, C, SANS, MONO, tex, texBlock } = ctx
   if (kind === 'bp') {
     return regular(
-      's-bp-slam-equations', '03 · KNOWN BS/UE POSE, UNKNOWN MAP',
-      'BP-SLAM on S1: factorize, pass messages, marginalize',
-      'The five S1 UE poses are clamped; BP estimates local map-feature, existence, and association beliefs without enumerating global events.',
-      'Tie the generic BP machinery to setup S1. The known inputs are the BS, all five UE poses, and the common radio tuples. The latent variables are VA or reflector states, their existence variables, and route-to-MPC labels. The output is a family of marginal map and association beliefs, not one hard route.',
+      's-bp-slam-equations', '03 · UNKNOWN UE STATE AND MAP',
+      'BP-SLAM on S1: one graph, two marginal families',
+      'Motion factors connect the latent trajectory; radio factors couple every UE state to the shared map; sum–product returns state and map beliefs.',
+      'Read the top equation as the state–map factorization used by the following worked example. The known inputs are the BS, odometry, and radio tuples. To keep the structural coupling visible, the S1 route labels A are conditioned in this reduction. Full multipath BP-SLAM also represents feature-existence and association variables. The important result here is that trajectory and map are both variable nodes, and BP returns a marginal belief for each rather than one joint point estimate.',
       [
-        card('bp-post-card', 96, 202, 1088, 112, C.mapSoft, { stroke: C.map, strokeWidth: 2, radius: 8 }),
-        text('bp-post-k', 122, 218, 260, 18, 'S1 CONDITIONAL FACTORIZATION', 10, { color: C.mapDeep, fontFamily: MONO, fontWeight: 700, letterSpacing: 1.2 }),
-        text('bp-post-eq', 122, 248, 1036, 48,
-          texBlock`p(M,E,A\mid Z,\mathbf X,\mathbf b)\propto p(M,E)\prod_{t=1}^{5}\prod_{\ell}f_{t\ell}^{\mathrm{radio}}(\mathbf m_{a_{t\ell}},e_{a_{t\ell}},a_{t\ell};\mathbf z_{t\ell},\mathbf x_t,\mathbf b)`,
-          18, { fontWeight: 700, align: 'center', valign: 'middle', lineHeight: 1.25 }),
-
-        card('bp-msg-card', 96, 336, 526, 232, C.paper, { stroke: C.line, radius: 8 }),
-        text('bp-msg-k', 122, 356, 470, 18, 'SUM–PRODUCT MESSAGES', 10, { color: C.mapDeep, fontFamily: MONO, fontWeight: 700, letterSpacing: 1.2 }),
-        text('bp-msg-eq-1', 122, 382, 470, 42,
-          texBlock`\mu_{v\to f}(v)\propto\prod_{g\in\mathcal N(v)\setminus f}\mu_{g\to v}(v)`,
-          16, { lineHeight: 1.2 }),
-        text('bp-msg-eq-2', 122, 424, 470, 60,
-          texBlock`\mu_{f\to v}(v)\propto\mathop{\sum\!\big/\!\int} f(\mathcal N(f))\!\prod_{u\in\mathcal N(f)\setminus v}\!\mu_{u\to f}(u)\,du`,
-          14, { lineHeight: 1.2 }),
-        text('bp-msg-eq-3', 122, 486, 470, 36,
-          texBlock`b(v)\propto\prod_{f\in\mathcal N(v)}\mu_{f\to v}(v)`,
-          16, { lineHeight: 1.2 }),
-        text('bp-msg-note', 122, 536, 470, 22, 'Loops are iterated; beliefs approximate the desired marginals.', 12, { color: C.soft, fontFamily: SANS, fontWeight: 700 }),
-
-        card('bp-radio-card', 658, 336, 526, 232, C.measurementSoft, { stroke: C.measurement, radius: 8 }),
-        text('bp-radio-k', 684, 356, 470, 18, 'RADIO + ASSOCIATION FACTOR', 10, { color: C.measurementDeep, fontFamily: MONO, fontWeight: 700, letterSpacing: 1.2 }),
-        text('bp-radio-eq', 684, 390, 470, 102,
+        card('bp-post-card', 96, 202, 1088, 132, C.mapSoft, { stroke: C.map, strokeWidth: 2, radius: 8 }),
+        text('bp-post-k', 122, 218, 330, 18, 'JOINT STATE–MAP FACTORIZATION', 10, { color: C.mapDeep, fontFamily: MONO, fontWeight: 700, letterSpacing: 1.2 }),
+        text('bp-post-eq', 118, 248, 1044, 70,
           texBlock`\begin{aligned}
-            \mathbf z_{t\ell}&=(\tau_{t\ell},\varphi_{t\ell},\psi_{t\ell},\alpha_{t\ell}),\quad \alpha_{t\ell}\in\mathbb C\\[.45em]
-            f_{t\ell}^{\mathrm{radio}}&\propto\mathcal N\!\left([c\tau,\varphi,\psi]^{\mathsf T};\mathbf h_{q}(\mathbf x_t,\mathbf m_j,\mathbf b),R_{t\ell}\right)p(\alpha_{t\ell}\mid q,\mathbf m_j)
+            p(\mathbf X,\mathcal M\mid Z,U,\mathbf b,A)\propto\;&p(\mathbf x_1)\prod_{t=2}^{5}f_t^{\mathrm{mot}}(\mathbf x_{t-1},\mathbf x_t;\mathbf u_t)\\[-.1em]
+            &\times\prod_{j\in\{A,B\}}p(\mathbf m_j)\prod_{t=1}^{5}f_t^{\mathrm{rad}}(\mathbf x_t,\mathbf m_A,\mathbf m_B;Z_t,A_t,\mathbf b)
           \end{aligned}`,
-          15, { fontWeight: 700, lineHeight: 1.35 }),
-        text('bp-radio-note', 684, 508, 470, 44, `${tex`a=0`} represents clutter or no landmark assignment; existence variables gate whether a map feature is present.`, 12, { color: C.soft, fontFamily: SANS, lineHeight: 1.35 }),
+          16, { fontWeight: 700, align: 'center', valign: 'middle', lineHeight: 1.35 }),
+
+        card('bp-msg-card', 96, 356, 526, 212, C.paper, { stroke: C.line, radius: 8 }),
+        text('bp-msg-k', 122, 376, 470, 18, 'FACTOR FAMILIES', 10, { color: C.mapDeep, fontFamily: MONO, fontWeight: 700, letterSpacing: 1.2 }),
+        text('bp-msg-eq-1', 122, 410, 470, 42,
+          texBlock`f_t^{\mathrm{mot}}(\mathbf x_{t-1},\mathbf x_t;\mathbf u_t)`,
+          18, { fontWeight: 700, align: 'center' }),
+        text('bp-msg-v-1', 122, 452, 470, 28, 'Odometry couples consecutive UE states.', 12, { color: C.soft, fontFamily: SANS, align: 'center' }),
+        text('bp-msg-eq-2', 122, 486, 470, 42,
+          texBlock`f_t^{\mathrm{rad}}(\mathbf x_t,\mathbf m_A,\mathbf m_B;Z_t,A_t,\mathbf b)`,
+          17, { fontWeight: 700, align: 'center' }),
+        text('bp-msg-v-2', 122, 530, 470, 24, 'Each scan couples one UE state to the shared map.', 12, { color: C.soft, fontFamily: SANS, align: 'center' }),
+
+        card('bp-radio-card', 658, 356, 526, 212, C.measurementSoft, { stroke: C.measurement, radius: 8 }),
+        text('bp-radio-k', 684, 376, 470, 18, 'SUM–PRODUCT RETURNS TWO BELIEF FAMILIES', 10, { color: C.measurementDeep, fontFamily: MONO, fontWeight: 700, letterSpacing: 1.05 }),
+        text('bp-radio-eq', 684, 408, 470, 104,
+          texBlock`\begin{aligned}
+            b(\mathbf x_t)&\propto\prod_{f\in\mathcal N(\mathbf x_t)}\mu_{f\to\mathbf x_t}(\mathbf x_t)\\[.6em]
+            b(\mathbf m_j)&\propto p(\mathbf m_j)\prod_{t=1}^{5}\mu_{f_t^{\mathrm{rad}}\to\mathbf m_j}(\mathbf m_j)
+          \end{aligned}`,
+          17, { fontWeight: 700, align: 'center', lineHeight: 1.5 }),
+        text('bp-radio-note', 684, 520, 470, 34, 'Radio-factor messages make state and map inform each other.', 12, { color: C.soft, fontFamily: SANS, lineHeight: 1.35, align: 'center' }),
 
         card('bp-return-card', 96, 590, 1088, 46, C.mapDeep, { stroke: C.mapDeep, radius: 7 }),
-        text('bp-return', 120, 602, 1040, 22, 'RETURN · marginal VA / reflector states, existence probabilities, and S1 route associations', 14, { color: C.paper, fontFamily: SANS, fontWeight: 700, align: 'center' }),
-        text('bp-source', 96, 650, 1088, 17, 'Equation structure: multipath-based BP-SLAM factorization and generic sum–product rules.', 9, { color: C.faint, fontFamily: MONO, align: 'center' })
-      ], { accent: C.map, titleSize: 34, transition: 'none' }
+        text('bp-return', 120, 602, 1040, 22, texBlock`\mathrm{RETURN}\ \cdot\ \{b(\mathbf x_t)\}_{t=1}^{5}\quad\text{and}\quad\{b(\mathbf m_j)\}_{j\in\{A,B\}}`, 14, { color: C.paper, fontWeight: 700, align: 'center' }),
+        text('bp-source', 96, 650, 1088, 17, 'Structural S1 reduction: A is conditioned; full multipath BP-SLAM augments this graph with existence and association variables.', 9, { color: C.faint, fontFamily: MONO, align: 'center' })
+      ], { accent: C.map, titleSize: 33, transition: 'none' }
     )
   }
 
   return regular(
-    's-pmbm-slam-equations', '03 · KNOWN BS/UE POSE, UNKNOWN MAP',
-    'PMBM-SLAM on S1: Poisson births, Bernoulli landmarks, global hypotheses',
-    'With the same five poses and MPC realization fixed, PMBM separates never-detected map features from detected Bernoulli features and their global histories.',
-    'Explain the PMBM representation using setup S1. The known inputs are the same BS, fixed trajectory, and radio tuples used by BP. The Poisson component represents undetected map objects; each detected object is Bernoulli; the mixture index h carries a compatible global association history.',
+    's-pmbm-slam-equations', '03 · UNKNOWN UE STATE AND MAP',
+    'PMBM-SLAM on S1: trajectory density × conditional RFS map',
+    'First factor the joint posterior into vehicle trajectory and conditional map; then represent each particle-conditioned map as a PPP plus an MBM.',
+    'Start with the exact state–map factorization. A Rao–Blackwellized particle filter represents the vehicle-trajectory density. For every trajectory particle, the conditional map is PMBM: a Poisson point process for never-detected map features plus a multi-Bernoulli mixture for detected features. Global hypotheses remain inside the conditional map representation; they are supporting structure, not the headline.',
     [
       card('pmbm-post-card', 96, 202, 1088, 112, C.measurementSoft, { stroke: C.measurement, strokeWidth: 2, radius: 8 }),
-      text('pmbm-post-k', 122, 218, 290, 18, 'POISSON MULTI-BERNOULLI MIXTURE', 10, { color: C.measurementDeep, fontFamily: MONO, fontWeight: 700, letterSpacing: 1.2 }),
+      text('pmbm-post-k', 122, 218, 290, 18, 'EXACT JOINT FACTORIZATION', 10, { color: C.measurementDeep, fontFamily: MONO, fontWeight: 700, letterSpacing: 1.2 }),
       text('pmbm-post-eq', 122, 246, 1036, 52,
-        texBlock`f(M\mid Z,\mathbf x)=\sum_{h\in\mathcal H}w^h\!\left[f_{\mathrm P}^{u}(M^u;\lambda^u)\prod_{i=1}^{n_h}f_{\mathrm B}(M^i;r_i^h,p_i^h)\right]`,
-        18, { fontWeight: 700, align: 'center', valign: 'middle' }),
+        texBlock`f(\mathbf X,\mathcal M\mid Z,U)=f(\mathbf X\mid Z,U)\,f(\mathcal M\mid\mathbf X,Z,U)`,
+        21, { fontWeight: 700, align: 'center', valign: 'middle' }),
 
       card('pmbm-poisson-card', 96, 338, 344, 224, C.paper, { stroke: C.line, radius: 8 }),
-      text('pmbm-poisson-k', 120, 358, 296, 18, 'UNDETECTED · POISSON', 10, { color: C.mapDeep, fontFamily: MONO, fontWeight: 700, letterSpacing: 1.1 }),
-      text('pmbm-poisson-eq', 120, 400, 296, 62, texBlock`f_{\mathrm P}(X)=e^{-\Lambda}\prod_{m\in X}\lambda^u(m)`, 20, { fontWeight: 700, align: 'center' }),
-      text('pmbm-poisson-v', 120, 480, 296, 58, `Intensity ${tex`\lambda^u`} carries map features that may exist but have not yet produced a confirmed MPC track.`, 13, { color: C.soft, fontFamily: SANS, lineHeight: 1.4 }),
+      text('pmbm-poisson-k', 120, 358, 296, 18, 'VEHICLE TRAJECTORY PARTICLES', 10, { color: C.poseDeep, fontFamily: MONO, fontWeight: 700, letterSpacing: 1.0 }),
+      text('pmbm-poisson-eq', 120, 400, 296, 72, texBlock`f(\mathbf X\mid Z,U)\approx\sum_{n=1}^{N}w^{(n)}\delta(\mathbf X-\mathbf X^{(n)})`, 18, { fontWeight: 700, align: 'center' }),
+      text('pmbm-poisson-v', 120, 488, 296, 50, 'Each weighted particle is one complete UE-trajectory sample.', 13, { color: C.soft, fontFamily: SANS, lineHeight: 1.4, align: 'center' }),
 
-      card('pmbm-bern-card', 468, 338, 344, 224, C.paper, { stroke: C.line, radius: 8 }),
-      text('pmbm-bern-k', 492, 358, 296, 18, 'DETECTED · BERNOULLI', 10, { color: C.poseDeep, fontFamily: MONO, fontWeight: 700, letterSpacing: 1.1 }),
-      text('pmbm-bern-eq', 492, 394, 296, 82, texBlock`\begin{aligned}f_{\mathrm B}(\varnothing)&=1-r\\f_{\mathrm B}(\{m\})&=r\,p(m)\end{aligned}`, 20, { fontWeight: 700, align: 'center', lineHeight: 1.5 }),
-      text('pmbm-bern-v', 492, 490, 296, 48, `${tex`r`} is landmark-existence probability; ${tex`p(m)`} is its conditional spatial density.`, 13, { color: C.soft, fontFamily: SANS, lineHeight: 1.4 }),
+      card('pmbm-bern-card', 468, 338, 344, 224, C.mapSoft, { stroke: C.map, radius: 8 }),
+      text('pmbm-bern-k', 492, 358, 296, 18, 'CONDITIONAL MAP · PPP', 10, { color: C.mapDeep, fontFamily: MONO, fontWeight: 700, letterSpacing: 1.1 }),
+      text('pmbm-bern-eq', 492, 400, 296, 72, texBlock`f_{\mathrm P}^{u,(n)}(\mathcal M^u)=e^{-\Lambda^{u,(n)}}\prod_{\mathbf m\in\mathcal M^u}\lambda^{u,(n)}(\mathbf m)`, 16, { fontWeight: 700, align: 'center', lineHeight: 1.35 }),
+      text('pmbm-bern-v', 492, 488, 296, 50, 'The PPP represents map features not yet detected under that trajectory.', 13, { color: C.soft, fontFamily: SANS, lineHeight: 1.4, align: 'center' }),
 
-      card('pmbm-hyp-card', 840, 338, 344, 224, C.paper, { stroke: C.line, radius: 8 }),
-      text('pmbm-hyp-k', 864, 358, 296, 18, 'GLOBAL HYPOTHESIS UPDATE', 10, { color: C.measurementDeep, fontFamily: MONO, fontWeight: 700, letterSpacing: 1.05 }),
-      text('pmbm-hyp-eq', 864, 396, 296, 76, texBlock`\begin{aligned}w^{h,\vartheta}&\propto w^h\prod_i\eta_i^{h,\vartheta(i)}\\\sum_{h,\vartheta}w^{h,\vartheta}&=1\end{aligned}`, 19, { fontWeight: 700, align: 'center', lineHeight: 1.45 }),
-      text('pmbm-hyp-v', 864, 490, 296, 48, 'Murty, Gibbs, or gating/pruning retains only the most relevant compatible stories.', 13, { color: C.soft, fontFamily: SANS, lineHeight: 1.4 }),
+      card('pmbm-hyp-card', 840, 338, 344, 224, C.measurementSoft, { stroke: C.measurement, radius: 8 }),
+      text('pmbm-hyp-k', 864, 358, 296, 18, 'CONDITIONAL MAP · MBM', 10, { color: C.measurementDeep, fontFamily: MONO, fontWeight: 700, letterSpacing: 1.05 }),
+      text('pmbm-hyp-eq', 864, 396, 296, 80, texBlock`\sum_{h\in\mathcal H^{(n)}}w_h^{(n)}\prod_i f_{\mathrm B}^{(n,h,i)}(\mathcal M^i;r_i^{(n,h)},p_i^{(n,h)})`, 16, { fontWeight: 700, align: 'center', lineHeight: 1.4 }),
+      text('pmbm-hyp-v', 864, 488, 296, 52, 'The MBM represents detected map features; global histories live inside this conditional map.', 13, { color: C.soft, fontFamily: SANS, lineHeight: 1.4, align: 'center' }),
 
       card('pmbm-return-card', 96, 590, 1088, 46, C.measurementDeep, { stroke: C.measurementDeep, radius: 7 }),
-      text('pmbm-return', 120, 602, 1040, 22, 'RETURN · weighted global association histories + Bernoulli map components + undetected PPP intensity', 14, { color: C.paper, fontFamily: SANS, fontWeight: 700, align: 'center' }),
-      text('pmbm-source', 96, 650, 1088, 17, 'The following live slide uses the identical S1 scan as BP and isolates hypothesis ranking/pruning—not a complete PMBM recursion.', 9, { color: C.faint, fontFamily: MONO, align: 'center' })
+      text('pmbm-return', 120, 602, 1040, 22, texBlock`f(\mathbf X,\mathcal M\mid Z,U)\approx\sum_{n=1}^{N}w^{(n)}\delta(\mathbf X-\mathbf X^{(n)})\,f_{\mathrm{PMBM}}^{(n)}(\mathcal M)`, 14, { color: C.paper, fontWeight: 700, align: 'center' }),
+      text('pmbm-source', 96, 650, 1088, 17, 'The following live example selects a trajectory particle and opens its PPP + MBM conditional map.', 9, { color: C.faint, fontFamily: MONO, align: 'center' })
     ], { accent: C.measurement, titleSize: 32, transition: 'none' }
   )
 }
 
-function associationFallback(kind, ctx) {
+function stateMapFallback(kind, ctx) {
   const { text, card, shape, line, C, MONO, SANS, LIVE_BOUNDS, tex } = ctx
   const x0 = LIVE_BOUNDS.x, y0 = LIVE_BOUNDS.y, w = LIVE_BOUNDS.width, h = LIVE_BOUNDS.height
   const stageX = x0 + 14, stageY = y0 + 14, stageW = 744, stageH = h - 28
@@ -193,52 +194,84 @@ function associationFallback(kind, ctx) {
   const accent = kind === 'bp' ? C.map : C.measurement
   const deep = kind === 'bp' ? C.mapDeep : C.measurementDeep
   const soft = kind === 'bp' ? C.mapSoft : C.measurementSoft
-  const tracks = [[stageX + 190, stageY + 120], [stageX + 355, stageY + 220], [stageX + 520, stageY + 120]]
-  const measurements = [[stageX + 255, stageY + 150], [stageX + 360, stageY + 130], [stageX + 450, stageY + 205], [stageX + 625, stageY + 250]]
   const elements = [
-    card(`${kind}-fallback-bg`, x0, y0, w, h, '#F8FAFB', { stroke: C.line, radius: 0 }),
-    card(`${kind}-fallback-stage`, stageX, stageY, stageW, stageH, C.paper, { stroke: C.line, radius: 6 }),
-    card(`${kind}-fallback-rail`, railX, stageY, railW, stageH, C.paper, { stroke: C.line, radius: 6 }),
-    text(`${kind}-fallback-title`, stageX + 22, stageY + 18, stageW - 44, 18, kind === 'bp' ? 'S1 SCAN 4 · LOOPY ROUTE ASSOCIATION' : 'S1 SCAN 4 · COMPATIBLE GLOBAL ASSIGNMENTS', 10, { color: deep, fontFamily: MONO, fontWeight: 700, letterSpacing: 1.2 })
+    card('state-map-' + kind + '-bg', x0, y0, w, h, '#F8FAFB', { stroke: C.line, radius: 0 }),
+    card('state-map-' + kind + '-stage', stageX, stageY, stageW, stageH, C.paper, { stroke: C.line, radius: 6 }),
+    card('state-map-' + kind + '-rail', railX, stageY, railW, stageH, C.paper, { stroke: C.line, radius: 6 })
   ]
-  tracks.forEach((point, index) => {
-    elements.push(shape(`${kind}-track-${index}`, point[0] - 16, point[1] - 16, 32, 32, soft, { shape: 'ellipse', stroke: accent, strokeWidth: 2 }))
-    elements.push(text(`${kind}-track-label-${index}`, point[0] - 23, point[1] - 7, 46, 15, index === 0 ? tex`H_{\mathrm{LoS}}` : tex`H_${index === 1 ? 'A' : 'B'}`, 8, { color: deep, fontWeight: 700, align: 'center' }))
-  })
-  measurements.forEach((point, index) => {
-    elements.push(line(`${kind}-zx-a-${index}`, point[0] - 6, point[1] - 6, point[0] + 6, point[1] + 6, C.ink, 2))
-    elements.push(line(`${kind}-zx-b-${index}`, point[0] - 6, point[1] + 6, point[0] + 6, point[1] - 6, C.ink, 2))
-    elements.push(text(`${kind}-z-label-${index}`, point[0] + 8, point[1] - 10, 34, 14, tex`z_{${index + 1}}`, 8, { color: C.soft, fontWeight: 700 }))
-  })
-  ;[[0,0],[0,1],[1,0],[1,1],[1,2],[2,1],[2,2]].forEach((edge, index) => {
-    const a = tracks[edge[0]], b = measurements[edge[1]]
-    elements.push(line(`${kind}-edge-${index}`, a[0], a[1], b[0], b[1], accent, kind === 'bp' ? 2 + (index % 3) : 2, { opacity: kind === 'bp' ? .48 : .24 }))
-  })
+
   if (kind === 'bp') {
-    elements.push(text('bp-fallback-loop', stageX + 120, stageY + 314, stageW - 240, 44, `${tex`\mu_{\mathrm{route}\to\mathrm{MPC}}\rightleftarrows\nu_{\mathrm{MPC}\to\mathrm{route}}`}<br>iterate until S1 association marginals settle`, 18, { color: C.mapDeep, fontWeight: 700, align: 'center', lineHeight: 1.4 }))
-  } else {
-    ;[
-      [tex`h_1`, `${tex`H_A\leftrightarrow z_2`} · ${tex`H_B\leftrightarrow z_3`}`, '0.46'],
-      [tex`h_2`, `${tex`H_A\leftrightarrow z_4`} · ${tex`H_B\leftrightarrow z_3`}`, '0.31'],
-      [tex`h_3`, `${tex`H_A`} missed · ${tex`H_B\leftrightarrow z_4`}`, '0.14'],
-      ['…', 'lower-weight stories', '0.09']
-    ].forEach((row, index) => {
-      const y = stageY + 292 + index * 31
-      elements.push(card(`pmbm-row-${index}`, stageX + 94, y, stageW - 188, 25, index < 2 ? C.measurementSoft : '#FBFCFD', { stroke: index < 2 ? C.measurement : C.line, radius: 4 }))
-      elements.push(text(`pmbm-row-h-${index}`, stageX + 108, y + 6, 44, 13, row[0], 9, { color: C.measurementDeep, fontFamily: MONO, fontWeight: 700 }))
-      elements.push(text(`pmbm-row-v-${index}`, stageX + 162, y + 5, 350, 14, row[1], 9, { color: C.soft, fontFamily: SANS, fontWeight: 700 }))
-      elements.push(text(`pmbm-row-w-${index}`, stageX + stageW - 150, y + 5, 42, 14, row[2], 9, { color: C.ink, fontFamily: MONO, fontWeight: 700, align: 'right' }))
+    const mapY = stageY + 90, radioY = stageY + 218, stateY = stageY + 352
+    const mapNodes = [[stageX + 245, mapY, tex`\mathbf m_A`, C.map, C.mapSoft], [stageX + 515, mapY, tex`\mathbf m_B`, C.measurement, C.measurementSoft]]
+    const stateXs = [stageX + 82, stageX + 226, stageX + 370, stageX + 514, stageX + 658]
+    elements.push(text('bp-state-map-title', stageX + 22, stageY + 18, stageW - 44, 18, 'BP-SLAM · ONE FACTOR GRAPH COUPLES UE STATE AND MAP', 10, { color: deep, fontFamily: MONO, fontWeight: 700, letterSpacing: 1.1 }))
+    elements.push(text('bp-map-family', stageX + 26, stageY + 68, 190, 16, 'LATENT MAP · ' + tex`\mathcal M`, 8, { color: C.mapDeep, fontFamily: MONO, fontWeight: 700 }))
+    elements.push(text('bp-state-family', stageX + 26, stageY + 326, 220, 16, 'LATENT TRAJECTORY · ' + tex`\mathbf X`, 8, { color: C.poseDeep, fontFamily: MONO, fontWeight: 700 }))
+    mapNodes.forEach((item, index) => {
+      elements.push(shape('bp-map-node-' + index, item[0] - 18, item[1] - 18, 36, 36, item[4], { shape: 'ellipse', stroke: item[3], strokeWidth: 3 }))
+      elements.push(text('bp-map-label-' + index, item[0] - 24, item[1] - 7, 48, 14, item[2], 9, { color: index ? C.measurementDeep : C.mapDeep, fontWeight: 700, align: 'center' }))
     })
+    stateXs.forEach((x, index) => {
+      mapNodes.forEach((mapNode, mapIndex) => elements.push(line('bp-radio-map-edge-' + index + '-' + mapIndex, mapNode[0], mapNode[1] + 19, x, radioY - 8, mapIndex ? C.measurement : C.map, 2, { opacity: .34 })))
+      elements.push(line('bp-radio-state-edge-' + index, x, radioY + 8, x, stateY - 17, C.pose, 2))
+      elements.push(shape('bp-radio-factor-' + index, x - 8, radioY - 8, 16, 16, C.paper, { stroke: C.measurement, strokeWidth: 2, radius: 0 }))
+      elements.push(text('bp-radio-factor-label-' + index, x - 28, radioY + 13, 56, 14, tex`f_{${index + 1}}^{\mathrm{rad}}`, 7, { color: C.measurementDeep, fontWeight: 700, align: 'center' }))
+      elements.push(shape('bp-state-node-' + index, x - 16, stateY - 16, 32, 32, C.paper, { shape: 'ellipse', stroke: C.pose, strokeWidth: 3 }))
+      elements.push(text('bp-state-label-' + index, x - 18, stateY - 7, 36, 14, tex`\mathbf x_{${index + 1}}`, 8, { color: C.poseDeep, fontWeight: 700, align: 'center' }))
+      if (index < stateXs.length - 1) {
+        const fx = 0.5 * (x + stateXs[index + 1])
+        elements.push(line('bp-motion-edge-a-' + index, x + 17, stateY, fx - 7, stateY, C.pose, 2))
+        elements.push(shape('bp-motion-factor-' + index, fx - 7, stateY - 7, 14, 14, C.poseSoft, { stroke: C.pose, strokeWidth: 2, radius: 0 }))
+        elements.push(line('bp-motion-edge-b-' + index, fx + 7, stateY, stateXs[index + 1] - 17, stateY, C.pose, 2))
+      }
+    })
+    elements.push(text('bp-rail-k', railX + 18, stageY + 18, railW - 36, 18, 'WORKED S1 FACTORIZATION', 9, { color: deep, fontFamily: MONO, fontWeight: 700, letterSpacing: 1.05 }))
+    elements.push(card('bp-rail-eq', railX + 18, stageY + 54, railW - 36, 116, C.mapSoft, { stroke: C.map, radius: 6 }))
+    elements.push(text('bp-rail-eq-v', railX + 30, stageY + 72, railW - 60, 82, tex`\begin{aligned}p(\mathbf X,\mathcal M\mid Z,U,\mathbf b,A)&\propto p(\mathbf x_1)\prod_t f_t^{\mathrm{mot}}\\&\quad\times\prod_jp(\mathbf m_j)\prod_t f_t^{\mathrm{rad}}\end{aligned}`, 10, { fontWeight: 700, align: 'center', valign: 'middle', lineHeight: 1.35 }))
+    ;['motion chain', 'radio coupling', 'map ↔ state messages'].forEach((label, index) => {
+      const y = stageY + 188 + index * 49
+      elements.push(card('bp-step-card-' + index, railX + 18, y, railW - 36, 38, index === 1 ? C.measurementSoft : '#FBFCFD', { stroke: index === 1 ? C.measurement : C.line, radius: 5 }))
+      elements.push(text('bp-step-label-' + index, railX + 28, y + 10, railW - 56, 18, label, 10, { color: index === 1 ? C.measurementDeep : C.soft, fontFamily: SANS, fontWeight: 700, align: 'center' }))
+    })
+    elements.push(card('bp-fallback-result', railX + 18, stageY + 344, railW - 36, 64, C.mapDeep, { stroke: C.mapDeep, radius: 6 }))
+    elements.push(text('bp-fallback-result-v', railX + 28, stageY + 360, railW - 56, 30, tex`\{b(\mathbf x_t)\}_{1:5}\quad+\quad\{b(\mathbf m_j)\}_{A,B}`, 12, { color: C.paper, fontWeight: 700, align: 'center' }))
+    return elements
   }
-  elements.push(text(`${kind}-rail-k`, railX + 18, stageY + 18, railW - 36, 18, `SHARED S1 · ${kind === 'bp' ? 'MESSAGE CONTROLS' : 'PRUNING'}`, 9, { color: deep, fontFamily: MONO, fontWeight: 700, letterSpacing: 1.1 }))
-  ;(kind === 'bp' ? ['one sweep', 'run to fixed point', 'move S1 MPC'] : [`keep top ${tex`k`}`, 'MAP only', 'renormalize retained mass']).forEach((label, index) => {
-    const y = stageY + 64 + index * 76
-    elements.push(card(`${kind}-control-${index}`, railX + 18, y, railW - 36, 52, index === 0 ? soft : '#FBFCFD', { stroke: index === 0 ? accent : C.line, radius: 5 }))
-    elements.push(text(`${kind}-control-v-${index}`, railX + 30, y + 16, railW - 60, 20, label, 12, { color: index === 0 ? deep : C.soft, fontFamily: SANS, fontWeight: 700, align: 'center' }))
+
+  elements.push(text('pmbm-state-map-title', stageX + 22, stageY + 18, stageW - 44, 18, 'PMBM-SLAM · TRAJECTORY DENSITY × CONDITIONAL RFS MAP', 10, { color: deep, fontFamily: MONO, fontWeight: 700, letterSpacing: 1.1 }))
+  elements.push(card('pmbm-joint-node', stageX + 165, stageY + 54, 414, 54, C.measurementSoft, { stroke: C.measurement, strokeWidth: 2, radius: 6 }))
+  elements.push(text('pmbm-joint-eq', stageX + 180, stageY + 70, 384, 24, tex`f(\mathbf X,\mathcal M\mid Z,U)`, 16, { color: C.measurementDeep, fontWeight: 700, align: 'center' }))
+  elements.push(text('pmbm-factor-op', stageX + 350, stageY + 112, 44, 20, tex`=`, 16, { color: C.measurementDeep, fontWeight: 700, align: 'center' }))
+  elements.push(card('pmbm-state-density', stageX + 74, stageY + 142, 254, 58, C.poseSoft, { stroke: C.pose, radius: 6 }))
+  elements.push(text('pmbm-state-density-eq', stageX + 88, stageY + 158, 226, 26, tex`f(\mathbf X\mid Z,U)`, 16, { color: C.poseDeep, fontWeight: 700, align: 'center' }))
+  elements.push(text('pmbm-times-op', stageX + 350, stageY + 160, 44, 24, tex`\times`, 16, { color: C.measurementDeep, fontWeight: 700, align: 'center' }))
+  elements.push(card('pmbm-map-density', stageX + 416, stageY + 142, 254, 58, C.measurementSoft, { stroke: C.measurement, radius: 6 }))
+  elements.push(text('pmbm-map-density-eq', stageX + 430, stageY + 158, 226, 26, tex`f(\mathcal M\mid\mathbf X,Z,U)`, 15, { color: C.measurementDeep, fontWeight: 700, align: 'center' }))
+  ;[0.58, 0.27, 0.15].forEach((weight, index) => {
+    const x = stageX + 74 + index * 88
+    elements.push(card('pmbm-particle-' + index, x, stageY + 222, 78, 52, index === 0 ? C.poseSoft : '#FBFCFD', { stroke: index === 0 ? C.pose : C.line, radius: 5 }))
+    elements.push(text('pmbm-particle-v-' + index, x + 6, stageY + 232, 66, 32, tex`\mathbf X^{(${index + 1})}\\w^{(${index + 1})}=${weight.toFixed(2)}`, 9, { color: index === 0 ? C.poseDeep : C.soft, fontWeight: 700, align: 'center', lineHeight: 1.3 }))
   })
-  elements.push(card(`${kind}-result-card`, railX + 18, stageY + 304, railW - 36, 106, soft, { stroke: accent, radius: 6 }))
-  elements.push(text(`${kind}-result-k`, railX + 32, stageY + 322, railW - 64, 16, 'LIVE RESULT', 9, { color: deep, fontFamily: MONO, fontWeight: 700, letterSpacing: 1 }))
-  elements.push(text(`${kind}-result-v`, railX + 32, stageY + 352, railW - 64, 42, kind === 'bp' ? 'Approximate association marginals' : 'Ranked joint-event weights', 14, { fontWeight: 700, align: 'center', valign: 'middle' }))
+  elements.push(card('pmbm-conditional-selected', stageX + 360, stageY + 222, 310, 52, C.measurementSoft, { stroke: C.measurement, radius: 5 }))
+  elements.push(text('pmbm-conditional-selected-v', stageX + 374, stageY + 234, 282, 28, tex`\mathbf X^{(1)}\Longrightarrow f_{\mathrm{PMBM}}^{(1)}(\mathcal M)`, 13, { color: C.measurementDeep, fontWeight: 700, align: 'center' }))
+  elements.push(card('pmbm-ppp-node', stageX + 118, stageY + 310, 230, 74, C.mapSoft, { stroke: C.map, radius: 6 }))
+  elements.push(text('pmbm-ppp-k', stageX + 132, stageY + 322, 202, 14, 'UNDETECTED · PPP', 8, { color: C.mapDeep, fontFamily: MONO, fontWeight: 700, align: 'center' }))
+  elements.push(text('pmbm-ppp-eq', stageX + 132, stageY + 345, 202, 24, tex`f_{\mathrm P}^{u,(1)}(\mathcal M^u;\lambda^{u,(1)})`, 11, { color: C.mapDeep, fontWeight: 700, align: 'center' }))
+  elements.push(text('pmbm-union-op', stageX + 356, stageY + 334, 36, 26, tex`\uplus`, 17, { color: C.measurementDeep, fontWeight: 700, align: 'center' }))
+  elements.push(card('pmbm-mbm-node', stageX + 400, stageY + 310, 270, 74, C.measurementSoft, { stroke: C.measurement, radius: 6 }))
+  elements.push(text('pmbm-mbm-k', stageX + 414, stageY + 322, 242, 14, 'DETECTED · MBM', 8, { color: C.measurementDeep, fontFamily: MONO, fontWeight: 700, align: 'center' }))
+  elements.push(text('pmbm-mbm-eq', stageX + 414, stageY + 344, 242, 28, tex`\sum_h w_h^{(1)}\prod_i f_{\mathrm B}^{(1,h,i)}(\mathcal M^i)`, 11, { color: C.measurementDeep, fontWeight: 700, align: 'center' }))
+
+  elements.push(text('pmbm-rail-k', railX + 18, stageY + 18, railW - 36, 18, 'SELECT TRAJECTORY PARTICLE', 9, { color: deep, fontFamily: MONO, fontWeight: 700, letterSpacing: 1.05 }))
+  ;['particle 1 · 0.58', 'particle 2 · 0.27', 'particle 3 · 0.15'].forEach((label, index) => {
+    const y = stageY + 56 + index * 52
+    elements.push(card('pmbm-particle-control-' + index, railX + 18, y, railW - 36, 40, index === 0 ? C.measurementSoft : '#FBFCFD', { stroke: index === 0 ? C.measurement : C.line, radius: 5 }))
+    elements.push(text('pmbm-particle-control-v-' + index, railX + 28, y + 11, railW - 56, 18, label, 10, { color: index === 0 ? C.measurementDeep : C.soft, fontFamily: SANS, fontWeight: 700, align: 'center' }))
+  })
+  elements.push(card('pmbm-fallback-eq-card', railX + 18, stageY + 230, railW - 36, 104, C.measurementSoft, { stroke: C.measurement, radius: 6 }))
+  elements.push(text('pmbm-fallback-eq-v', railX + 30, stageY + 246, railW - 60, 72, tex`f(\mathbf X,\mathcal M\mid Z,U)\approx\sum_n w^{(n)}\delta(\mathbf X-\mathbf X^{(n)})f_{\mathrm{PMBM}}^{(n)}(\mathcal M)`, 10, { fontWeight: 700, align: 'center', valign: 'middle', lineHeight: 1.3 }))
+  elements.push(card('pmbm-fallback-result', railX + 18, stageY + 350, railW - 36, 58, C.measurementDeep, { stroke: C.measurementDeep, radius: 6 }))
+  elements.push(text('pmbm-fallback-result-v', railX + 28, stageY + 365, railW - 56, 28, 'trajectory mixture + conditional PPP / MBM map', 11, { color: C.paper, fontFamily: SANS, fontWeight: 700, align: 'center' }))
   return elements
 }
 
@@ -353,19 +386,19 @@ function methodLiveSlide(kind, ctx) {
   const { regular, liveMount, C } = ctx
   if (kind === 'bp') {
     return regular(
-      's-bp-slam-live', '03 · KNOWN BS/UE POSE, UNKNOWN MAP',
-      'BP-SLAM live: S1 association marginals by message passing',
-      'Select one of the five shared scans, perturb an MPC, step the messages, and inspect the converged route-association marginals.',
-      'The embedded lab uses setup S1: the BS, walls, virtual anchors, five fixed UE poses, deterministic radio tuples, and clutter realization are shared with PMBM and GraphSLAM. It demonstrates the Williams–Lau association engine, not every continuous BP-SLAM state update.',
-      [...associationFallback('bp', ctx), liveMount()], { accent: C.map, titleSize: 31, transition: 'none' }
+      's-bp-slam-live', '03 · UNKNOWN UE STATE AND MAP',
+      'BP-SLAM live: walk the joint state–map factor graph',
+      'Step from priors to motion and radio factors, then follow messages into marginal beliefs for the five UE states and two map features.',
+      'The embedded S1 walkthrough makes the joint factorization concrete. Both the UE trajectory and map are latent. Motion factors connect consecutive UE states, and scan-level radio factors couple each state to the shared map. The route labels are conditioned only for this structural view; full multipath BP-SLAM also carries feature existence and data-association variables.',
+      [...stateMapFallback('bp', ctx), liveMount()], { accent: C.map, titleSize: 31, transition: 'none' }
     )
   }
   return regular(
-    's-pmbm-slam-live', '03 · KNOWN BS/UE POSE, UNKNOWN MAP',
-    'PMBM-SLAM live: rank and prune S1 global hypotheses',
-    'Use the identical S1 scan as BP, vary top-k pruning, and see how retained hypothesis mass changes the route marginals.',
-    'The embedded lab isolates the global-hypothesis layer that a PMBM update must manage. The geometry and measurements are identical to the BP view; only the inference representation changes. It is not a complete PMBM-SLAM recursion.',
-    [...associationFallback('pmbm', ctx), liveMount()], { accent: C.measurement, titleSize: 30, transition: 'none' }
+    's-pmbm-slam-live', '03 · UNKNOWN UE STATE AND MAP',
+    'PMBM-SLAM live: open the map carried by each trajectory particle',
+    'Select an S1 trajectory particle, then inspect its conditional PMBM map: undetected PPP plus detected multi-Bernoulli mixture.',
+    'The embedded S1 walkthrough starts from the exact state-times-conditional-map factorization. The vehicle trajectory is represented by weighted particles. Every particle carries its own PMBM map, split into a Poisson point process for undetected features and a multi-Bernoulli mixture for detected features. Association histories remain inside the MBM rather than dominating the visual.',
+    [...stateMapFallback('pmbm', ctx), liveMount()], { accent: C.measurement, titleSize: 29, transition: 'none' }
   )
 }
 
@@ -403,7 +436,7 @@ export function radioSlamLiveEntries({ slides, LIVE_BOUNDS }) {
     },
     {
       introSlide: 's-pmbm-slam-equations', slide: 's-pmbm-slam-live',
-      src: '../bp-vs-pmbm-slides/live/?demo=hypotheses&embed=region', source: '../bp-vs-pmbm-slides/live/?demo=hypotheses',
+      src: '../bp-vs-pmbm-slides/live/?demo=pmbm&embed=region', source: '../bp-vs-pmbm-slides/live/?demo=pmbm',
       title: 'Section 03 · PMBM-SLAM on shared setup S1'
     },
     {
