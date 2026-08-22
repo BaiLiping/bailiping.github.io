@@ -1,0 +1,116 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="only light">
+  <title>Radio GraphSLAM · live factor-graph lab</title>
+  <meta name="description" content="Interactive Gauss–Newton radio GraphSLAM example with UE trajectory, virtual-anchor landmarks, MPC delay and angle factors, association errors, and robust loss.">
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="../../assets/interactive-slide-system.css">
+  <script src="../../assets/interactive-slide-system.js"></script>
+  <script src="app.js" defer></script>
+  <script src="../../assets/bento-inline-frame.js" defer></script>
+</head>
+<body data-bento-live-app data-interactive-slides="radio-graphslam">
+  <main class="lab-shell interactive-slide-shell">
+    <header class="masthead interactive-slide-header">
+      <div class="interactive-slide-heading">
+        <p class="eyebrow">RADIO GRAPHSLAM · LIVE LAB</p>
+        <h1>Optimize UE poses and virtual anchors together.</h1>
+      </div>
+      <div class="interactive-slide-actions">
+        <span class="interactive-slide-chip" title="A deterministic 2D teaching model with one-bounce virtual anchors.">2D VA teaching model</span>
+        <a class="back-link interactive-slide-back" href="../" aria-label="Back to slides"><span aria-hidden="true">←</span> Slides <kbd>Esc</kbd></a>
+      </div>
+    </header>
+
+    <div class="lab-grid interactive-slide-body">
+      <aside class="control-rail interactive-slide-controls interactive-slide-panel" aria-label="GraphSLAM controls">
+        <section class="method-copy">
+          <p class="method-kicker">CONTINUOUS MAP SOLVE</p>
+          <h2>MPC factors replace pixel reprojection</h2>
+          <p>Motion links consecutive UE poses. Each radio factor links one pose to one virtual anchor through delay, AoA, and AoD.</p>
+        </section>
+
+        <fieldset class="choice-set">
+          <legend>Radio measurement model</legend>
+          <div class="segmented" role="radiogroup" aria-label="Radio measurement model">
+            <label><input type="radio" name="model" value="range" id="model-range"><span>Delay only</span></label>
+            <label><input type="radio" name="model" value="full" id="model-full" checked><span>Delay + angles</span></label>
+          </div>
+        </fieldset>
+
+        <label class="toggle-row" for="wrong-association">
+          <span><strong>Inject one wrong association</strong><small>Connect one MPC to the other VA.</small></span>
+          <input id="wrong-association" type="checkbox">
+        </label>
+        <label class="toggle-row" for="robust-loss">
+          <span><strong>Huber robust loss</strong><small>Downweight an inconsistent radio factor.</small></span>
+          <input id="robust-loss" type="checkbox" checked>
+        </label>
+
+        <label class="range-label" for="noise-range"><span>Measurement noise</span><output id="noise-value" for="noise-range">1.0×</output></label>
+        <input id="noise-range" type="range" min="0" max="200" value="100" step="5">
+
+        <label class="range-label" for="epoch-range"><span>Highlighted epoch</span><output id="epoch-value" for="epoch-range">x₂</output></label>
+        <input id="epoch-range" type="range" min="0" max="4" value="2" step="1">
+
+        <div class="button-row">
+          <button class="button primary" id="step-button" type="button">One iteration</button>
+          <button class="button" id="solve-button" type="button">Optimize</button>
+          <button class="icon-button" id="reset-button" type="button" aria-label="Reset estimate" title="Reset">↺</button>
+        </div>
+
+        <dl class="metrics" aria-label="Current optimization result">
+          <div><dt>Cost</dt><dd id="cost-value">—</dd></div>
+          <div><dt>Pose RMSE</dt><dd id="rmse-value">—</dd></div>
+          <div><dt>Iteration</dt><dd id="iteration-value">0</dd></div>
+          <div><dt>Condition proxy</dt><dd id="condition-value">—</dd></div>
+        </dl>
+      </aside>
+
+      <section class="stage-card interactive-slide-stage interactive-slide-panel" aria-labelledby="stage-heading">
+        <div class="stage-bar">
+          <h2 id="stage-heading">JOINT TRAJECTORY–MAP ESTIMATE</h2>
+          <p class="status" id="status" role="status" aria-live="polite"><i></i> Ready</p>
+        </div>
+
+        <div class="visual-grid">
+          <div class="canvas-wrap scene-wrap">
+            <canvas id="scene-canvas" width="680" height="430" tabindex="0" aria-label="Radio SLAM geometry with a known base station, UE trajectory, virtual anchors, reflector walls, and highlighted multipath routes.">
+              The plot requires canvas support.
+            </canvas>
+            <div class="legend" aria-hidden="true">
+              <span><i class="legend-est"></i>estimate</span>
+              <span><i class="legend-true"></i>reference</span>
+              <span><i class="legend-radio"></i>MPC route</span>
+            </div>
+          </div>
+          <div class="canvas-wrap graph-wrap">
+            <canvas id="graph-canvas" width="270" height="430" aria-label="Factor graph with UE pose nodes, motion factors, virtual-anchor nodes, and radio factors.">
+              The factor graph requires canvas support.
+            </canvas>
+          </div>
+        </div>
+
+        <p class="canvas-hint" id="canvas-hint">Solid walls are reconstructed as perpendicular bisectors of the known BS and estimated VA. The selected epoch shows the folded BS→wall→UE routes.</p>
+      </section>
+    </div>
+
+    <footer class="interactive-slide-footer">
+      <p><strong>Scope:</strong> synchronized, one-bounce VA toy model; association and bounce order are held fixed inside each Gauss–Newton solve.</p>
+      <p>BP/PMBM can propose hypotheses · GraphSLAM optimizes the continuous trajectory and map.</p>
+    </footer>
+  </main>
+
+  <noscript>
+    <main class="fallback">
+      <p class="eyebrow">RADIO GRAPHSLAM · LIVE LAB</p>
+      <h1>Optimize UE poses and virtual anchors together</h1>
+      <p>Enable JavaScript to run the deterministic Gauss–Newton example. Motion factors connect UE poses; radio delay, AoA, and AoD factors connect each pose to a virtual anchor.</p>
+      <a class="back-link" href="../">← Back to slides</a>
+    </main>
+  </noscript>
+</body>
+</html>
