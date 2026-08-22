@@ -1,0 +1,101 @@
+name: Build enhanced radio SLAM slides
+
+on:
+  push:
+    branches:
+      - enhance-radio-slam-graphslam
+    paths:
+      - mpc-detection-to-bounce-count-slides/radio-slam-extra.mjs
+      - mpc-detection-to-bounce-count-slides/radio-graphslam-live/**
+      - scripts/patch-radio-slam-slides.mjs
+      - .github/workflows/build-radio-slam-slides.yml
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out branch
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.ref_name }}
+          fetch-depth: 0
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Materialize staged source payloads
+        run: |
+          if [ -f scripts/radio-slam-payload/app.js.gz.b64 ]; then
+            base64 -d scripts/radio-slam-payload/app.js.gz.b64 | gzip -dc > mpc-detection-to-bounce-count-slides/radio-graphslam-live/app.js
+            base64 -d scripts/radio-slam-payload/radio-slam-extra.mjs.gz.b64 | gzip -dc > mpc-detection-to-bounce-count-slides/radio-slam-extra.mjs
+            echo "107ce1b648285360e307d797e297f70d26ffd9810e626213616c024fadcbc28f  mpc-detection-to-bounce-count-slides/radio-graphslam-live/app.js" | sha256sum -c -
+            echo "4dfddc81208696cd7b805d263f8d71c75cd31c6e48af2aca33c5f19701720a08  mpc-detection-to-bounce-count-slides/radio-slam-extra.mjs" | sha256sum -c -
+            rm -rf scripts/radio-slam-payload
+          else
+            echo "Source payloads already materialized."
+          fi
+
+      - name: Patch deck generator
+        run: node scripts/patch-radio-slam-slides.mjs
+
+      - name: Validate JavaScript syntax
+        run: |
+          node --check mpc-detection-to-bounce-count-slides/build.mjs
+          node --check mpc-detection-to-bounce-count-slides/radio-slam-extra.mjs
+          node --check mpc-detection-to-bounce-count-slides/radio-graphslam-live/app.js
+
+      - name: Generate Bento deck
+        run: node mpc-detection-to-bounce-count-slides/build.mjs
+
+      - name: Verify new slides and live mounts
+        run: |
+          deck=mpc-detection-to-bounce-count-slides/index.html
+          grep -q '"id": "s-bp-slam-equations"' "$deck"
+          grep -q '"id": "s-bp-slam-live"' "$deck"
+          grep -q '"id": "s-pmbm-slam-equations"' "$deck"
+          grep -q '"id": "s-pmbm-slam-live"' "$deck"
+          grep -q '"id": "s-radio-graphslam-equations"' "$deck"
+          grep -q '"id": "s-radio-graphslam-live"' "$deck"
+          grep -q 'radio-graphslam-live' "$deck"
+          grep -q 'demo=bp' "$deck"
+          grep -q 'demo=hypotheses' "$deck"
+
+      - name: Package deployable update
+        run: |
+          zip -qr radio-slam-slides-update.zip \
+            mpc-detection-to-bounce-count-slides \
+            scripts/patch-radio-slam-slides.mjs
+
+      - name: Upload ZIP artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: radio-slam-slides-update
+          path: radio-slam-slides-update.zip
+          if-no-files-found: error
+
+      - name: Remove local ZIP before committing
+        run: rm -f radio-slam-slides-update.zip
+
+      - name: Commit generated deck
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A \
+            scripts/radio-slam-payload \
+            mpc-detection-to-bounce-count-slides/build.mjs \
+            mpc-detection-to-bounce-count-slides/index.html \
+            mpc-detection-to-bounce-count-slides/radio-slam-extra.mjs \
+            mpc-detection-to-bounce-count-slides/radio-graphslam-live \
+            scripts/patch-radio-slam-slides.mjs
+          if git diff --cached --quiet; then
+            echo "No generated changes to commit."
+          else
+            git commit -m "Build BP, PMBM, and radio GraphSLAM slides"
+            git push origin HEAD:${{ github.ref_name }}
+          fi
