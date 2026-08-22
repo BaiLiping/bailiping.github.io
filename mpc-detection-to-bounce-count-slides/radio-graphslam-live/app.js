@@ -19,6 +19,10 @@
     paper: "#ffffff"
   };
 
+  function mathTex(source) {
+    return '<span class="math-tex math-inline">\\(' + source + '\\)</span>';
+  }
+
   var BS = { x: 0, y: 0, heading: 0 };
   var TRUE_POSES = [
     { x: 1.0, y: 1.0, heading: 0.14 },
@@ -419,12 +423,7 @@
     iterationValue.textContent = String(state.iteration);
     conditionValue.textContent = isFinite(state.condition) ? state.condition.toExponential(1) : "—";
     noiseValue.textContent = (Number(noiseRange.value) / 100).toFixed(1) + "×";
-    epochValue.textContent = "x" + subscript(Number(epochRange.value));
-  }
-
-  function subscript(number) {
-    var digits = "₀₁₂₃₄₅₆₇₈₉";
-    return String(number).split("").map(function (digit) { return digits[Number(digit)]; }).join("");
+    epochValue.innerHTML = mathTex("x_{" + Number(epochRange.value) + "}");
   }
 
   function line(ctx, x1, y1, x2, y2, color, width, dash, alpha) {

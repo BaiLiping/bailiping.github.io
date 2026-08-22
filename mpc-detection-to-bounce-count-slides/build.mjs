@@ -21,6 +21,16 @@ const SANS = "Arial, Helvetica, sans-serif"
 const MONO = "Menlo, Consolas, monospace"
 const LIVE_BOUNDS = { x: 96, y: 180, width: 1088, height: 480 }
 
+function tex(strings, ...values) {
+  const source = String.raw(strings, ...values)
+  return `<span class="math-tex math-inline">\\(${source}\\)</span>`
+}
+
+function texBlock(strings, ...values) {
+  const source = String.raw(strings, ...values)
+  return `<span class="math-tex math-display">\\[${source}\\]</span>`
+}
+
 function text(id, x, y, w, h, html, fontSize = 22, options = {}) {
   return {
     id, type: 'text', x, y, w, h, rotation: 0, opacity: options.opacity ?? 1, html, fontSize,
@@ -96,7 +106,7 @@ const cases = [
     id: 'known-los', section: '02 · KNOWN BS/UE POSE AND MAP', number: '2.1', title: 'Line of sight: confirm the zero-bounce route',
     short: 'LoS', mode: 'known', caseId: 'los', bounces: 0, accent: C.known, deep: C.knownDeep, soft: C.knownSoft,
     premise: 'With the map and both poses fixed, the direct segment is a complete geometric hypothesis—not merely the shortest delay.',
-    known: 'finite map · BS pose · UE pose · both headings', data: 'delay L · global AoA φ · global AoD ψ',
+    known: 'finite map · BS pose · UE pose · both headings', data: `delay ${tex`L`} · global AoA ${tex`\varphi`} · global AoD ${tex`\psi`}`,
     method: 'Check map visibility, direct distance, and the two opposing bearing rays.',
     verdict: 'Accept only when all gates agree; then bounce count = 0.',
     observe: 'Perturb any measured quantity and watch the direct-path gate fail.',
@@ -106,8 +116,8 @@ const cases = [
     id: 'known-single', section: '02 · KNOWN BS/UE POSE AND MAP', number: '2.2', title: 'Single bounce: mirror once, fold once',
     short: 'Single', mode: 'known', caseId: 'single', bounces: 1, accent: C.known, deep: C.knownDeep, soft: C.knownSoft,
     premise: 'A mapped wall turns a one-bounce route into a direct line to one virtual anchor.',
-    known: 'wall A · finite support · BS/UE poses', data: 'delay L₁ · global AoA φ · global AoD ψ',
-    method: 'Mirror the BS in wall A, then fold UE→VA¹ back through that wall.',
+    known: 'wall A · finite support · BS/UE poses', data: `delay ${tex`L_1`} · global AoA ${tex`\varphi`} · global AoD ${tex`\psi`}`,
+    method: `Mirror the BS in wall A, then fold ${tex`\mathrm{UE}\to\mathrm{VA}^{(1)}`} back through that wall.`,
     verdict: 'The folded point must lie on the finite wall and predict the complete tuple.',
     observe: 'Move the UE or perturb the tuple; the mapped route either remains coherent or fails.',
     note: 'Explain the image-source method as a deterministic map operation. No one-bounce prefix is needed because the candidate wall is already known.'
@@ -117,7 +127,7 @@ const cases = [
     short: 'Corner ×2', mode: 'known', caseId: 'double', bounces: 2, accent: C.known, deep: C.knownDeep, soft: C.knownSoft,
     premise: 'Wall order is part of the hypothesis: A→B and B→A are different unfolded routes.',
     known: 'finite walls A and B · BS/UE poses', data: 'one two-bounce MPC tuple',
-    method: 'Mirror BS through A then B; fold UE→VA² through B then A.',
+    method: `Mirror BS through A then B; fold ${tex`\mathrm{UE}\to\mathrm{VA}^{(2)}`} through B then A.`,
     verdict: 'Accept A→B only when both points, every leg, and the tuple are feasible.',
     observe: 'Step through the two mirrors and two folds; watch order determine the points.',
     note: 'Stress that the bounce count is the length of an accepted ordered wall sequence. Finite support and occlusion checks matter as much as angle parity.'
@@ -127,7 +137,7 @@ const cases = [
     short: 'Corner ×3', mode: 'known', caseId: 'triple', bounces: 3, accent: C.known, deep: C.knownDeep, soft: C.knownSoft,
     premise: 'A third mapped reflector adds one mirror and one fold—not a new inference principle.',
     known: 'finite walls A, B, C · BS/UE poses', data: 'one three-bounce MPC tuple',
-    method: 'Build VA¹→VA²→VA³, then fold the final straight line through C→B→A.',
+    method: `Build ${tex`\mathrm{VA}^{(1)}\to\mathrm{VA}^{(2)}\to\mathrm{VA}^{(3)}`}, then fold the final straight line through C→B→A.`,
     verdict: 'All three reflection points must be ordered, on-wall, visible, and measurement-consistent.',
     observe: 'Advance through the ladder and see how one invalid wall point rejects the full route.',
     note: 'Use the recursive visual rhythm: mirror forward in hypothesis order, then fold backward through the same walls.'
@@ -156,7 +166,7 @@ const cases = [
     id: 'unknown-single', section: '03 · KNOWN BS/UE POSE, UNKNOWN MAP', number: '3.1', title: 'Single bounce: infer a VA, point, and wall',
     short: 'Single', mode: 'map', caseId: 'usingle', bounces: 1, accent: C.map, deep: C.mapDeep, soft: C.mapSoft,
     premise: 'Known poses convert both array bearings to the global frame even when no wall map exists.',
-    known: 'BS/UE positions · both headings', data: 'delay L · global AoA φ · global AoD ψ',
+    known: 'BS/UE positions · both headings', data: `delay ${tex`L`} · global AoA ${tex`\varphi`} · global AoD ${tex`\psi`}`,
     method: 'Walk the full reverse-AoA length to VA, intersect the delay ellipse, then bisect BS↔VA.',
     verdict: 'The measurement constructs one incidence point and one supporting wall line.',
     observe: 'Move the UE or perturb a bearing; VA, ellipse intersection, and inferred wall move together.',
@@ -167,7 +177,7 @@ const cases = [
     short: 'Corner ×2', mode: 'map', caseId: 'udouble', bounces: 2, accent: C.map, deep: C.mapDeep, soft: C.mapSoft,
     premise: 'A higher-order MPC alone leaves a VA family; an associated prefix path supplies the first anchor.',
     known: 'BS/UE poses · associated one-bounce prefix', data: 'path-1 and path-2 tuples',
-    method: 'Recover VA¹ from path 1, locate P₂, subtract the last leg, then infer P₁ and wall B.',
+    method: `Recover ${tex`\mathrm{VA}^{(1)}`} from path 1, locate ${tex`P_2`}, subtract the last leg, then infer ${tex`P_1`} and wall B.`,
     verdict: 'Positive residual length and ordered forward geometry certify the two-bounce construction.',
     observe: 'Step through the peel and see exactly where the lower-order prefix enters.',
     note: 'Do not imply that path 2 identifies both walls alone. The associated one-bounce prefix is an explicit extra input.'
@@ -177,7 +187,7 @@ const cases = [
     short: 'Corner ×3', mode: 'map', caseId: 'utriple', bounces: 3, accent: C.map, deep: C.mapDeep, soft: C.mapSoft,
     premise: 'Each recovered prefix VA becomes the focus needed to peel one more bounce.',
     known: 'BS/UE poses · one- and two-bounce prefixes', data: 'three associated MPC tuples',
-    method: 'Build VA¹ and VA² from prefixes, then peel path 3 through three delay ellipses.',
+    method: `Build ${tex`\mathrm{VA}^{(1)}`} and ${tex`\mathrm{VA}^{(2)}`} from prefixes, then peel path 3 through three delay ellipses.`,
     verdict: 'The recursion returns three ordered incidence points and three inferred walls.',
     observe: 'Advance to the final rung and inspect how each derived residual length is spent.',
     note: 'Explain the anchor ladder as data association plus geometry. Without correct prefix association the recursive construction is not licensed.'
@@ -216,10 +226,10 @@ const cases = [
     id: 'pose-single', section: '04 · KNOWN BS POSE, UNKNOWN UE POSE AND MAP', number: '4.1', title: 'Single bounce: one path leaves a two-parameter family',
     short: 'Single', mode: 'pose', caseId: 'usingleu', bounces: 1, accent: C.pose, deep: C.poseDeep, soft: C.poseSoft,
     premise: 'The BS gives a global AoD, but UE AoA is body-frame data until a heading hypothesis is supplied.',
-    known: 'BS position + heading · synchronized delay', data: 'L · global AoD ψ · body AoA φbody',
-    method: 'Walk AoD to mirrored-UE endpoint E; hypothesize bounce P and heading θ; infer UE and wall.',
-    verdict: 'Every feasible (P, θ) is coherent; their union fills the BS-centred delay disk.',
-    observe: 'Move P and θ independently and watch the UE candidate and wall pivot together.',
+    known: 'BS position + heading · synchronized delay', data: `${tex`L`} · global AoD ${tex`\psi`} · body AoA ${tex`\varphi_{\mathrm{body}}`}`,
+    method: `Walk AoD to mirrored-UE endpoint ${tex`E`}; hypothesize bounce ${tex`P`} and heading ${tex`\theta`}; infer UE and wall.`,
+    verdict: `Every feasible ${tex`(P,\theta)`} is coherent; their union fills the BS-centred delay disk.`,
+    observe: `Move ${tex`P`} and ${tex`\theta`} independently and watch the UE candidate and wall pivot together.`,
     note: 'Do not promote the body-frame AoA into the map frame without θ. The slider is a candidate slice, not a compass measurement.'
   },
   {
@@ -227,7 +237,7 @@ const cases = [
     short: 'Corner ×2', mode: 'pose', caseId: 'udoubleu', bounces: 2, accent: C.pose, deep: C.poseDeep, soft: C.poseSoft,
     premise: 'The first path hypothesizes UE and wall A; the second path must survive a forward reflected-ray test.',
     known: 'BS pose · associated path pair', data: 'two delays · global AoDs · body AoAs',
-    method: 'Choose (P¹, θ), infer wall A, then strip path 2 against that wall and its remaining delay.',
+    method: `Choose ${tex`(P^{(1)},\theta)`}, infer wall A, then strip path 2 against that wall and its remaining delay.`,
     verdict: 'Invalid slices turn red; the feasible subset still retains a joint pose–map ambiguity.',
     observe: 'Sweep heading until a forward intersection reverses or the delay budget becomes negative.',
     note: 'The second path adds constraints, but it does not reveal heading by itself. Preserve the feasible family rather than reporting one arbitrary point.'
@@ -239,7 +249,7 @@ const cases = [
     known: 'BS pose · associated three-path ladder', data: 'three delays · global AoDs · body AoAs',
     method: 'Infer wall A, require the path-2 prefix, then trace path 3 through two forward wall hits.',
     verdict: 'Only slices with ordered positive segments at every rung remain feasible.',
-    observe: 'Change θ and see one rejected prefix prevent the third wall from being constructed.',
+    observe: `Change ${tex`\theta`} and see one rejected prefix prevent the third wall from being constructed.`,
     note: 'Use red states as physically meaningful rejection, not numerical failure. Infinite-line crossings behind a ray origin are not bounces.'
   },
   {
@@ -249,7 +259,7 @@ const cases = [
     known: 'BS pose · associated two-path data', data: 'delays · global AoDs · body AoAs',
     method: 'Hypothesize wall R from path 1, strip path 2, and compare its UE line with line 1.',
     verdict: 'Feasible headings re-dress the same corridor slide; infeasible headings are rejected.',
-    observe: 'Sweep θ and see the corridor become a wedge that still closes on the sliding UE.',
+    observe: `Sweep ${tex`\theta`} and see the corridor become a wedge that still closes on the sliding UE.`,
     note: 'Heading uncertainty and map tilt are coupled. A corridor double bounce supplies feasibility but not the missing transverse anchor.'
   },
   {
@@ -259,7 +269,7 @@ const cases = [
     known: 'BS pose · associated three-path data', data: 'three delays · global AoDs · body AoAs',
     method: 'Build wall R and wall L hypotheses, then strip path 3 twice and compare line 3 with line 1.',
     verdict: 'More bounces prune slices but do not remove the corridor slide.',
-    observe: 'Compare the final candidate lines at θ = 0 and at a feasible nonzero heading.',
+    observe: `Compare the final candidate lines at ${tex`\theta=0`} and at a feasible nonzero heading.`,
     note: 'An off-axis wall, LoS interval, second anchor, or other independent factor is required to close this null direction.'
   },
   {
@@ -267,8 +277,8 @@ const cases = [
     short: 'Rank · point', mode: 'pose', caseId: 'uestimateu', figure: 'point', bounces: 1, accent: C.pose, deep: C.poseDeep, soft: C.poseSoft,
     premise: 'A deliberately stronger sensor supplies displacement vectors directly in the global frame.',
     known: 'BS pose · global displacement vectors', data: 'single-bounce E points over multiple poses',
-    method: 'Use n̂ ∝ ΔE − o for wall directions, then solve the two-family offset system.',
-    verdict: 'Nonparallel normals make the 2×2 system full rank and select one intersection.',
+    method: `Use ${tex`\hat{\mathbf n}\propto\Delta\mathbf E-\mathbf o`} for wall directions, then solve the two-family offset system.`,
+    verdict: `Nonparallel normals make the ${tex`2\times2`} system full rank and select one intersection.`,
     observe: 'Move the two family members, then solve and watch the residual collapse to a point.',
     note: 'State the stronger assumption clearly. Ordinary wheel or IMU odometry is body-frame data and would keep heading inside a nonlinear graph.'
   },
@@ -391,11 +401,11 @@ function liveFallback(item) {
   nodes.slice(0, -1).forEach((node, index) => elements.push(line(`path-${index}`, node[0], node[1], nodes[index + 1][0], nodes[index + 1][1], C.soft, 4)))
   points.forEach((point, index) => {
     elements.push(shape(`bounce-${index}`, point[0] - 6, point[1] - 6, 12, 12, C.map, { shape: 'ellipse', stroke: C.paper, strokeWidth: 2 }))
-    elements.push(text(`bounce-label-${index}`, point[0] + 10, point[1] - 19, 70, 18, `P${index + 1}`, 10, { color: C.mapDeep, fontFamily: MONO, fontWeight: 700 }))
+    elements.push(text(`bounce-label-${index}`, point[0] + 10, point[1] - 19, 70, 18, tex`P_{${index + 1}}`, 10, { color: C.mapDeep, fontWeight: 700 }))
   })
   elements.push(text('fallback-path-label', stageX + 30, stageY + 24, 690, 24, `${item.short} · ${item.bounces} bounce${item.bounces === 1 ? '' : 's'} · deterministic initial state`, 12, { color: item.deep, fontFamily: MONO, fontWeight: 700 }))
   elements.push(text('rail-head', railX + 18, stageY + 20, railW - 36, 20, 'INTERACTIVE CONTROLS', 10, { color: item.deep, fontFamily: MONO, fontWeight: 700, letterSpacing: 1.2 }))
-  ;['delay L = cτ', 'arrival angle φ', 'departure angle ψ'].forEach((label, index) => {
+  ;[`delay ${tex`L=c\tau`}`, `arrival angle ${tex`\varphi`}`, `departure angle ${tex`\psi`}`].forEach((label, index) => {
     const y = stageY + 60 + index * 72
     elements.push(text(`control-label-${index}`, railX + 18, y, railW - 36, 18, label, 12, { color: C.soft, fontFamily: SANS, fontWeight: 700 }))
     elements.push(shape(`control-track-${index}`, railX + 18, y + 27, railW - 36, 5, C.line, { radius: 3 }))
@@ -462,7 +472,7 @@ function sectionLiveFallback(unit) {
   nodes.slice(0, -1).forEach((node, index) => elements.push(line(`fallback-path-${index}`, node[0], node[1], nodes[index + 1][0], nodes[index + 1][1], C.soft, 4)))
   points.forEach((point, index) => {
     elements.push(shape(`fallback-bounce-${index}`, point[0] - 6, point[1] - 6, 12, 12, C.map, { shape: 'ellipse', stroke: C.paper, strokeWidth: 2 }))
-    elements.push(text(`fallback-bounce-label-${index}`, point[0] + 9, point[1] - 18, 68, 16, `P${index + 1}`, 9, { color: C.mapDeep, fontFamily: MONO, fontWeight: 700 }))
+    elements.push(text(`fallback-bounce-label-${index}`, point[0] + 9, point[1] - 18, 68, 16, tex`P_{${index + 1}}`, 9, { color: C.mapDeep, fontWeight: 700 }))
   })
   elements.push(shape('fallback-bs', bs[0] - 7, bs[1] - 7, 14, 14, C.ink, { radius: 0 }))
   elements.push(text('fallback-bs-label', bs[0] - 15, bs[1] + 13, 52, 16, 'BS', 10, { color: C.ink, fontFamily: MONO, fontWeight: 700 }))
@@ -470,7 +480,11 @@ function sectionLiveFallback(unit) {
   elements.push(text('fallback-ue-label', ue[0] + 12, ue[1] - 9, 70, 16, unit.mode === 'pose' ? 'UE?' : 'UE', 10, { color: C.ue, fontFamily: MONO, fontWeight: 700 }))
   elements.push(text('fallback-stage-label', stageX + 24, stageY + 18, 700, 18, `${unit.tiles[0][0]} · ${unit.tiles[0][1]} · select any tile to replace this construction`, 10, { color: unit.deep, fontFamily: MONO, fontWeight: 700 }))
   elements.push(text('fallback-rail-k', railX + 18, stageY + 18, railW - 36, 18, 'ACTIVE CASE CONTROLS', 9, { color: unit.deep, fontFamily: MONO, fontWeight: 700, letterSpacing: 1.1 }))
-  ;['delay L = cτ', unit.mode === 'pose' ? 'body-frame AoA φ' : 'arrival angle φ', 'departure angle ψ'].forEach((label, index) => {
+  ;[
+    `delay ${tex`L=c\tau`}`,
+    unit.mode === 'pose' ? `body-frame AoA ${tex`\varphi_{\mathrm{body}}`}` : `arrival angle ${tex`\varphi`}`,
+    `departure angle ${tex`\psi`}`
+  ].forEach((label, index) => {
     const y = stageY + 54 + index * 61
     elements.push(text(`fallback-control-label-${index}`, railX + 18, y, railW - 36, 16, label, 11, { color: C.soft, fontFamily: SANS, fontWeight: 700 }))
     elements.push(shape(`fallback-control-track-${index}`, railX + 18, y + 24, railW - 36, 5, C.line, { radius: 3 }))
@@ -492,7 +506,7 @@ slides.push({
     text('cover-title', 96, 128, 1088, 128, 'MPC detection<br><span style="color:#0A6B5E">→ bounce count</span>', 64, { fontWeight: 700, lineHeight: 1.02, fx: { enter: 'fade-up', order: 1 } }),
     text('cover-sub', 96, 286, 900, 58, 'Turn delay, AoA, AoD, and path loss into a physically valid route—under progressively weaker geometric knowledge.', 23, { color: C.soft, fontFamily: SANS, lineHeight: 1.35 }),
     ...[
-      ['01', 'Measurement', 'τ · φ · ψ · path loss', C.measurement, C.measurementSoft],
+      ['01', 'Measurement', `${tex`\tau`} · ${tex`\varphi`} · ${tex`\psi`} · path loss`, C.measurement, C.measurementSoft],
       ['02', 'Known map', 'test the route directly', C.known, C.knownSoft],
       ['03', 'Unknown map', 'bootstrap VAs and walls', C.map, C.mapSoft],
       ['04', 'Unknow UE&Map', 'retain the joint family', C.pose, C.poseSoft]
@@ -516,8 +530,8 @@ slides.push(regular(
   'Define the resolved path tuple. Use the right-hand scene as three separate route examples—not three explanations of one measured tuple. Each reflected route is constructed with the image-source method, so incidence and reflection angles match at every wall contact. Delay becomes path length, AoA and AoD are local until headings are known, and path loss remains a calibrated radiometric observation rather than a direct bounce counter.',
   [
     card('tuple-card', 96, 214, 690, 300, C.paper, { stroke: C.measurement, strokeWidth: 2 }),
-    text('tuple', 132, 252, 618, 72, '(τ, φ, ψ, PL)', 52, { color: C.measurementDeep, fontWeight: 700, align: 'center' }),
-    text('tuple-map', 132, 350, 618, 116, 'delay τ → L = cτ<br>AoA φ → arrival bearing at the UE<br>AoD ψ → departure bearing at the BS<br>PL → path loss', 21, { lineHeight: 1.55 }),
+    text('tuple', 132, 252, 618, 72, texBlock`(\tau,\,\varphi,\,\psi,\,\mathrm{PL})`, 52, { color: C.measurementDeep, fontWeight: 700, align: 'center' }),
+    text('tuple-map', 132, 350, 618, 116, `delay ${tex`\tau`} → ${tex`L=c\tau`}<br>AoA ${tex`\varphi`} → arrival bearing at the UE<br>AoD ${tex`\psi`} → departure bearing at the BS<br>${tex`\mathrm{PL}`} → path loss`, 21, { lineHeight: 1.55 }),
     image(
       'measurement-route-scene', 800, 206, 384, 256,
       './assets/mpc-route-scene.webp',
@@ -550,7 +564,7 @@ slides.push(regular(
     shape('route-double-point-b', 987.4799, 258.5439, 10, 10, C.paper, { shape: 'ellipse', stroke: C.known, strokeWidth: 3 }),
     text('route-bs-label', 812, 272, 54, 18, 'BS', 10, { color: C.ink, fontFamily: MONO, fontWeight: 700, align: 'right' }),
     text('route-ue-label', 1069, 319, 44, 18, 'UE', 10, { color: C.ue, fontFamily: MONO, fontWeight: 700 }),
-    text('route-family-k', 820, 470, 364, 16, 'SPECULAR ROUTES · θᵢ = θᵣ', 9, { color: C.faint, fontFamily: MONO, fontWeight: 700, align: 'center', letterSpacing: 1.1 }),
+    text('route-family-k', 820, 470, 364, 18, `SPECULAR ROUTES · ${tex`\theta_{\mathrm i}=\theta_{\mathrm r}`}`, 9, { color: C.faint, fontFamily: MONO, fontWeight: 700, align: 'center', letterSpacing: 1.1 }),
     line('route-legend-los', 832, 502, 852, 502, C.measurement, 3),
     text('route-legend-los-v', 859, 494, 48, 18, 'LoS', 10, { color: C.soft, fontFamily: MONO, fontWeight: 700 }),
     line('route-legend-single', 918, 502, 938, 502, C.map, 3),
@@ -589,7 +603,7 @@ slides.push(regular(
       text(`pdp-label-${index}`, peak[0] - 39, 458 - peak[1], 78, 20, peak[2], 10, { color: peak[3], fontFamily: MONO, fontWeight: 700, align: 'center' })
     ]),
     text('pdp-y-label', 146, 260, 220, 16, 'relative power (dB) ↑', 10, { color: C.faint, fontFamily: MONO }),
-    text('pdp-x-label', 560, 502, 184, 18, 'excess delay τ →', 11, { color: C.faint, fontFamily: MONO, align: 'right' }),
+    text('pdp-x-label', 560, 502, 184, 18, `excess delay ${tex`\tau`} →`, 11, { color: C.faint, fontFamily: MONO, align: 'right' }),
     card('power-card', 820, 214, 364, 330, C.measurementSoft, { stroke: C.measurement }),
     text('power-k', 848, 238, 308, 20, 'WHY PATH LOSS HELPS', 11, { color: C.measurementDeep, fontFamily: MONO, fontWeight: 700, letterSpacing: 1.2 }),
     ...[
@@ -656,7 +670,7 @@ for (const unit of sectionUnits) {
     [...sectionLiveFallback(unit), liveMount()], { accent: unit.accent, titleSize: 31, transition: 'none' }
   ))
   appendRadioSlamSlidesAfterSection(unit, {
-    slides, regular, text, card, shape, line, C, SANS, MONO, LIVE_BOUNDS, liveMount
+    slides, regular, text, card, shape, line, C, SANS, MONO, LIVE_BOUNDS, liveMount, tex, texBlock
   })
 }
 
@@ -708,12 +722,45 @@ const deck = {
 
 const serializedDeck = JSON.stringify(deck, null, 1).replaceAll('<', '\\u003c')
 const serializedMap = JSON.stringify(inlineLiveMap, null, 2).replaceAll('<', '\\u003c')
+const mathHead = String.raw`
+    <style id="deck-math-style">
+      .math-tex{white-space:nowrap}
+      .math-inline{display:inline-block;vertical-align:-.14em;line-height:1}
+      .math-display{display:flex;width:100%;height:100%;align-items:center;justify-content:center;line-height:1}
+      .math-tex mjx-container{color:inherit!important;margin:0!important}
+      .math-inline mjx-container{display:inline-block!important}
+      .math-display mjx-container[display="true"]{display:block!important;width:100%;margin:0!important;text-align:center}
+      .math-tex mjx-container[jax="SVG"]>svg{overflow:visible}
+      .math-display mjx-container[jax="SVG"]>svg{max-width:100%;height:auto}
+    </style>
+    <script>
+      window.MathJax = {
+        tex: {
+          inlineMath: [['\\(', '\\)']],
+          displayMath: [['\\[', '\\]']],
+          processEscapes: true
+        },
+        svg: { fontCache: 'global' },
+        options: { skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'] },
+        startup: {
+          typeset: false,
+          ready: () => {
+            MathJax.startup.defaultReady()
+            MathJax.startup.promise.then(() => window.dispatchEvent(new Event('mathjax-ready')))
+          }
+        }
+      }
+    </script>
+    <script defer src="https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/tex-svg-full.js"></script>
+    <script defer src="../assets/mathjax-dynamic.js"></script>
+`
 let html = readFileSync(templatePath, 'utf8')
 html = html.replace('<title>bento/slides</title>', '<title>MPC Detection to Bounce Count | Interactive Slides</title>')
 html = html.replace(/(<script type="application\/bento\+json" id="bento-doc">\s*)[\s\S]*?(\s*<\/script>)/, `$1${serializedDeck}$2`)
 html = html.replace(/<script type="application\/json" id="(?:bento-live-config|bento-inline-live-map)">[\s\S]*?<\/script>/, `<script type="application/json" id="bento-inline-live-map">\n${serializedMap}\n    </script>`)
 html = html.replaceAll('../assets/bento-live.css', '../assets/bento-inline-live.css')
 html = html.replaceAll('../assets/bento-live.js', '../assets/bento-inline-live.js')
+html = html.replace('\n  </head>', `${mathHead}\n  </head>`)
 
 if (!html.includes('"docId": "mpc-detection-to-bounce-count-deck"')) throw new Error('Bento document replacement failed')
 if (!html.includes('id="bento-inline-live-map"')) throw new Error('Inline-live map replacement failed')

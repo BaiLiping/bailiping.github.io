@@ -8,6 +8,16 @@
   <meta name="description" content="Interactive Gauss–Newton radio GraphSLAM example with UE trajectory, virtual-anchor landmarks, MPC delay and angle factors, association errors, and robust loss.">
   <link rel="stylesheet" href="styles.css">
   <link rel="stylesheet" href="../../assets/interactive-slide-system.css">
+  <style>
+    .math-tex{white-space:nowrap}.math-inline{display:inline-block;vertical-align:-.14em;line-height:1}
+    .math-tex mjx-container{color:inherit!important;margin:0!important;display:inline-block!important}
+    .math-tex mjx-container[jax="SVG"]>svg{overflow:visible}
+  </style>
+  <script>
+    window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],processEscapes:true},svg:{fontCache:'global'},options:{skipHtmlTags:['script','noscript','style','textarea','pre','code']},startup:{typeset:false,ready:()=>{MathJax.startup.defaultReady();MathJax.startup.promise.then(()=>window.dispatchEvent(new Event('mathjax-ready')))}}}
+  </script>
+  <script defer src="https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/tex-svg-full.js"></script>
+  <script defer src="../../assets/mathjax-dynamic.js"></script>
   <script src="../../assets/interactive-slide-system.js"></script>
   <script src="app.js" defer></script>
   <script src="../../assets/bento-inline-frame.js" defer></script>
@@ -53,7 +63,7 @@
         <label class="range-label" for="noise-range"><span>Measurement noise</span><output id="noise-value" for="noise-range">1.0×</output></label>
         <input id="noise-range" type="range" min="0" max="200" value="100" step="5">
 
-        <label class="range-label" for="epoch-range"><span>Highlighted epoch</span><output id="epoch-value" for="epoch-range">x₂</output></label>
+        <label class="range-label" for="epoch-range"><span>Highlighted epoch</span><output id="epoch-value" for="epoch-range"><span class="math-tex math-inline">\(x_2\)</span></output></label>
         <input id="epoch-range" type="range" min="0" max="4" value="2" step="1">
 
         <div class="button-row">

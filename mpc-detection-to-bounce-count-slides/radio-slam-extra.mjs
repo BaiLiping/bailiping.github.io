@@ -1,5 +1,5 @@
 function methodEquationSlide(kind, ctx) {
-  const { regular, text, card, shape, line, C, SANS, MONO } = ctx
+  const { regular, text, card, shape, line, C, SANS, MONO, tex, texBlock } = ctx
   if (kind === 'bp') {
     return regular(
       's-bp-slam-equations', '03 · KNOWN BS/UE POSE, UNKNOWN MAP',
@@ -10,25 +10,31 @@ function methodEquationSlide(kind, ctx) {
         card('bp-post-card', 96, 202, 1088, 112, C.mapSoft, { stroke: C.map, strokeWidth: 2, radius: 8 }),
         text('bp-post-k', 122, 218, 220, 18, 'POSTERIOR FACTORIZATION', 10, { color: C.mapDeep, fontFamily: MONO, fontWeight: 700, letterSpacing: 1.2 }),
         text('bp-post-eq', 122, 248, 1036, 48,
-          '<i>p</i>(<b>x</b><sub>0:T</sub>, M, A | Z,U) ∝ <i>p</i>(<b>x</b><sub>0</sub>) ∏<sub>t=1</sub><sup>T</sup> <i>p</i>(<b>x</b><sub>t</sub>|<b>x</b><sub>t−1</sub>,<b>u</b><sub>t</sub>) ∏<sub>t,ℓ</sub> ψ<sub>tℓ</sub>(<b>x</b><sub>t</sub>,<b>m</b><sub>a<sub>tℓ</sub></sub>,a<sub>tℓ</sub>;<b>z</b><sub>tℓ</sub>)',
+          texBlock`p(\mathbf{x}_{0:T},M,A\mid Z,U)\propto p(\mathbf{x}_0)\prod_{t=1}^{T}p(\mathbf{x}_t\mid\mathbf{x}_{t-1},\mathbf{u}_t)\prod_{t,\ell}\psi_{t\ell}(\mathbf{x}_t,\mathbf{m}_{a_{t\ell}},a_{t\ell};\mathbf{z}_{t\ell})`,
           17, { fontWeight: 700, align: 'center', valign: 'middle', lineHeight: 1.25 }),
 
         card('bp-msg-card', 96, 336, 526, 232, C.paper, { stroke: C.line, radius: 8 }),
         text('bp-msg-k', 122, 356, 470, 18, 'SUM–PRODUCT MESSAGES', 10, { color: C.mapDeep, fontFamily: MONO, fontWeight: 700, letterSpacing: 1.2 }),
-        text('bp-msg-eq', 122, 390, 470, 124,
-          'μ<sub>v→f</sub>(v) ∝ ∏<sub>g∈N(v)∖f</sub> μ<sub>g→v</sub>(v)<br><br>' +
-          'μ<sub>f→v</sub>(v) ∝ ∑/∫ f(N(f)) ∏<sub>u∈N(f)∖v</sub> μ<sub>u→f</sub>(u) du<br><br>' +
-          '<b>b</b>(v) ∝ ∏<sub>f∈N(v)</sub> μ<sub>f→v</sub>(v)',
-          16, { lineHeight: 1.24 }),
-        text('bp-msg-note', 122, 526, 470, 26, 'Loops are iterated; beliefs approximate the desired marginals.', 12, { color: C.soft, fontFamily: SANS, fontWeight: 700 }),
+        text('bp-msg-eq-1', 122, 382, 470, 42,
+          texBlock`\mu_{v\to f}(v)\propto\prod_{g\in\mathcal N(v)\setminus f}\mu_{g\to v}(v)`,
+          16, { lineHeight: 1.2 }),
+        text('bp-msg-eq-2', 122, 424, 470, 60,
+          texBlock`\mu_{f\to v}(v)\propto\mathop{\sum\!\big/\!\int} f(\mathcal N(f))\!\prod_{u\in\mathcal N(f)\setminus v}\!\mu_{u\to f}(u)\,du`,
+          14, { lineHeight: 1.2 }),
+        text('bp-msg-eq-3', 122, 486, 470, 36,
+          texBlock`b(v)\propto\prod_{f\in\mathcal N(v)}\mu_{f\to v}(v)`,
+          16, { lineHeight: 1.2 }),
+        text('bp-msg-note', 122, 536, 470, 22, 'Loops are iterated; beliefs approximate the desired marginals.', 12, { color: C.soft, fontFamily: SANS, fontWeight: 700 }),
 
         card('bp-radio-card', 658, 336, 526, 232, C.measurementSoft, { stroke: C.measurement, radius: 8 }),
         text('bp-radio-k', 684, 356, 470, 18, 'RADIO + ASSOCIATION FACTOR', 10, { color: C.measurementDeep, fontFamily: MONO, fontWeight: 700, letterSpacing: 1.2 }),
         text('bp-radio-eq', 684, 390, 470, 102,
-          '<b>z</b><sub>tℓ</sub> = [cτ, φ, ψ]<sup>T</sup>, &nbsp; a<sub>tℓ</sub>∈{0,1,…,J}<br><br>' +
-          'ψ<sub>tℓ</sub> ∝ 𝒩(<b>z</b><sub>tℓ</sub>; <b>h</b><sub>q</sub>(<b>x</b><sub>t</sub>,<b>m</b><sub>j</sub>,<b>x</b><sub>BS</sub>), R<sub>tℓ</sub>)',
+          texBlock`\begin{aligned}
+            \mathbf z_{t\ell}&=[c\tau,\,\varphi,\,\psi]^{\mathsf T},\qquad a_{t\ell}\in\{0,1,\ldots,J\}\\[.55em]
+            \psi_{t\ell}&\propto\mathcal N\!\left(\mathbf z_{t\ell};\mathbf h_{q_{t\ell}}(\mathbf x_t,\mathbf m_j,\mathbf x_{\mathrm{BS}}),R_{t\ell}\right)
+          \end{aligned}`,
           17, { fontWeight: 700, lineHeight: 1.35 }),
-        text('bp-radio-note', 684, 508, 470, 44, 'a = 0 represents clutter or no landmark assignment; existence variables gate whether a map feature is present.', 12, { color: C.soft, fontFamily: SANS, lineHeight: 1.35 }),
+        text('bp-radio-note', 684, 508, 470, 44, `${tex`a=0`} represents clutter or no landmark assignment; existence variables gate whether a map feature is present.`, 12, { color: C.soft, fontFamily: SANS, lineHeight: 1.35 }),
 
         card('bp-return-card', 96, 590, 1088, 46, C.mapDeep, { stroke: C.mapDeep, radius: 7 }),
         text('bp-return', 120, 602, 1040, 22, 'RETURN · marginal UE trajectory, landmark states/existence, and association probabilities', 14, { color: C.paper, fontFamily: SANS, fontWeight: 700, align: 'center' }),
@@ -46,22 +52,22 @@ function methodEquationSlide(kind, ctx) {
       card('pmbm-post-card', 96, 202, 1088, 112, C.measurementSoft, { stroke: C.measurement, strokeWidth: 2, radius: 8 }),
       text('pmbm-post-k', 122, 218, 290, 18, 'POISSON MULTI-BERNOULLI MIXTURE', 10, { color: C.measurementDeep, fontFamily: MONO, fontWeight: 700, letterSpacing: 1.2 }),
       text('pmbm-post-eq', 122, 246, 1036, 52,
-        '<i>f</i>(M|Z,<b>x</b>) = ∑<sub>h∈H</sub> w<sup>h</sup> [ <i>f</i><sup>u</sup><sub>P</sub>(M<sup>u</sup>;λ<sup>u</sup>) ∏<sub>i=1</sub><sup>n<sub>h</sub></sup> <i>f</i><sub>B</sub>(M<sup>i</sup>;r<sup>h</sup><sub>i</sub>,p<sup>h</sup><sub>i</sub>) ]',
+        texBlock`f(M\mid Z,\mathbf x)=\sum_{h\in\mathcal H}w^h\!\left[f_{\mathrm P}^{u}(M^u;\lambda^u)\prod_{i=1}^{n_h}f_{\mathrm B}(M^i;r_i^h,p_i^h)\right]`,
         18, { fontWeight: 700, align: 'center', valign: 'middle' }),
 
       card('pmbm-poisson-card', 96, 338, 344, 224, C.paper, { stroke: C.line, radius: 8 }),
       text('pmbm-poisson-k', 120, 358, 296, 18, 'UNDETECTED · POISSON', 10, { color: C.mapDeep, fontFamily: MONO, fontWeight: 700, letterSpacing: 1.1 }),
-      text('pmbm-poisson-eq', 120, 400, 296, 62, '<i>f</i><sub>P</sub>(X)=e<sup>−Λ</sup> ∏<sub>m∈X</sub> λ<sup>u</sup>(m)', 20, { fontWeight: 700, align: 'center' }),
-      text('pmbm-poisson-v', 120, 480, 296, 58, 'Intensity λᵘ carries map features that may exist but have not yet produced a confirmed MPC track.', 13, { color: C.soft, fontFamily: SANS, lineHeight: 1.4 }),
+      text('pmbm-poisson-eq', 120, 400, 296, 62, texBlock`f_{\mathrm P}(X)=e^{-\Lambda}\prod_{m\in X}\lambda^u(m)`, 20, { fontWeight: 700, align: 'center' }),
+      text('pmbm-poisson-v', 120, 480, 296, 58, `Intensity ${tex`\lambda^u`} carries map features that may exist but have not yet produced a confirmed MPC track.`, 13, { color: C.soft, fontFamily: SANS, lineHeight: 1.4 }),
 
       card('pmbm-bern-card', 468, 338, 344, 224, C.paper, { stroke: C.line, radius: 8 }),
       text('pmbm-bern-k', 492, 358, 296, 18, 'DETECTED · BERNOULLI', 10, { color: C.poseDeep, fontFamily: MONO, fontWeight: 700, letterSpacing: 1.1 }),
-      text('pmbm-bern-eq', 492, 394, 296, 82, '<i>f</i><sub>B</sub>(∅)=1−r<br><i>f</i><sub>B</sub>({m})=r p(m)', 20, { fontWeight: 700, align: 'center', lineHeight: 1.5 }),
-      text('pmbm-bern-v', 492, 490, 296, 48, 'r is landmark-existence probability; p(m) is its conditional spatial density.', 13, { color: C.soft, fontFamily: SANS, lineHeight: 1.4 }),
+      text('pmbm-bern-eq', 492, 394, 296, 82, texBlock`\begin{aligned}f_{\mathrm B}(\varnothing)&=1-r\\f_{\mathrm B}(\{m\})&=r\,p(m)\end{aligned}`, 20, { fontWeight: 700, align: 'center', lineHeight: 1.5 }),
+      text('pmbm-bern-v', 492, 490, 296, 48, `${tex`r`} is landmark-existence probability; ${tex`p(m)`} is its conditional spatial density.`, 13, { color: C.soft, fontFamily: SANS, lineHeight: 1.4 }),
 
       card('pmbm-hyp-card', 840, 338, 344, 224, C.paper, { stroke: C.line, radius: 8 }),
       text('pmbm-hyp-k', 864, 358, 296, 18, 'GLOBAL HYPOTHESIS UPDATE', 10, { color: C.measurementDeep, fontFamily: MONO, fontWeight: 700, letterSpacing: 1.05 }),
-      text('pmbm-hyp-eq', 864, 396, 296, 76, 'w<sup>h,θ</sup> ∝ w<sup>h</sup> ∏<sub>i</sub> η<sup>h,θ(i)</sup><sub>i</sub><br>∑<sub>h,θ</sub> w<sup>h,θ</sup>=1', 19, { fontWeight: 700, align: 'center', lineHeight: 1.45 }),
+      text('pmbm-hyp-eq', 864, 396, 296, 76, texBlock`\begin{aligned}w^{h,\vartheta}&\propto w^h\prod_i\eta_i^{h,\vartheta(i)}\\\sum_{h,\vartheta}w^{h,\vartheta}&=1\end{aligned}`, 19, { fontWeight: 700, align: 'center', lineHeight: 1.45 }),
       text('pmbm-hyp-v', 864, 490, 296, 48, 'Murty, Gibbs, or gating/pruning retains only the most relevant compatible stories.', 13, { color: C.soft, fontFamily: SANS, lineHeight: 1.4 }),
 
       card('pmbm-return-card', 96, 590, 1088, 46, C.measurementDeep, { stroke: C.measurementDeep, radius: 7 }),
@@ -72,7 +78,7 @@ function methodEquationSlide(kind, ctx) {
 }
 
 function associationFallback(kind, ctx) {
-  const { text, card, shape, line, C, MONO, SANS, LIVE_BOUNDS } = ctx
+  const { text, card, shape, line, C, MONO, SANS, LIVE_BOUNDS, tex } = ctx
   const x0 = LIVE_BOUNDS.x, y0 = LIVE_BOUNDS.y, w = LIVE_BOUNDS.width, h = LIVE_BOUNDS.height
   const stageX = x0 + 14, stageY = y0 + 14, stageW = 744, stageH = h - 28
   const railX = stageX + stageW + 12, railW = w - stageW - 40
@@ -89,24 +95,24 @@ function associationFallback(kind, ctx) {
   ]
   tracks.forEach((point, index) => {
     elements.push(shape(`${kind}-track-${index}`, point[0] - 16, point[1] - 16, 32, 32, soft, { shape: 'ellipse', stroke: accent, strokeWidth: 2 }))
-    elements.push(text(`${kind}-track-label-${index}`, point[0] - 18, point[1] - 7, 36, 15, `m${index + 1}`, 9, { color: deep, fontFamily: MONO, fontWeight: 700, align: 'center' }))
+    elements.push(text(`${kind}-track-label-${index}`, point[0] - 18, point[1] - 7, 36, 15, tex`m_{${index + 1}}`, 9, { color: deep, fontWeight: 700, align: 'center' }))
   })
   measurements.forEach((point, index) => {
     elements.push(line(`${kind}-zx-a-${index}`, point[0] - 6, point[1] - 6, point[0] + 6, point[1] + 6, C.ink, 2))
     elements.push(line(`${kind}-zx-b-${index}`, point[0] - 6, point[1] + 6, point[0] + 6, point[1] - 6, C.ink, 2))
-    elements.push(text(`${kind}-z-label-${index}`, point[0] + 8, point[1] - 10, 34, 14, `z${index + 1}`, 8, { color: C.soft, fontFamily: MONO, fontWeight: 700 }))
+    elements.push(text(`${kind}-z-label-${index}`, point[0] + 8, point[1] - 10, 34, 14, tex`z_{${index + 1}}`, 8, { color: C.soft, fontWeight: 700 }))
   })
   ;[[0,0],[0,1],[1,0],[1,1],[1,2],[2,1],[2,2]].forEach((edge, index) => {
     const a = tracks[edge[0]], b = measurements[edge[1]]
     elements.push(line(`${kind}-edge-${index}`, a[0], a[1], b[0], b[1], accent, kind === 'bp' ? 2 + (index % 3) : 2, { opacity: kind === 'bp' ? .48 : .24 }))
   })
   if (kind === 'bp') {
-    elements.push(text('bp-fallback-loop', stageX + 120, stageY + 314, stageW - 240, 44, 'μ track→MPC  ⇄  ν MPC→track<br>iterate until association marginals settle', 19, { color: C.mapDeep, fontWeight: 700, align: 'center', lineHeight: 1.4 }))
+    elements.push(text('bp-fallback-loop', stageX + 120, stageY + 314, stageW - 240, 44, `${tex`\mu_{\mathrm{track}\to\mathrm{MPC}}\rightleftarrows\nu_{\mathrm{MPC}\to\mathrm{track}}`}<br>iterate until association marginals settle`, 19, { color: C.mapDeep, fontWeight: 700, align: 'center', lineHeight: 1.4 }))
   } else {
     ;[
-      ['h₁', 'm₁↔z₁ · m₂↔z₃', '0.46'],
-      ['h₂', 'm₁↔z₂ · m₂↔z₁', '0.31'],
-      ['h₃', 'm₁ missed · m₂↔z₃', '0.14'],
+      [tex`h_1`, `${tex`m_1\leftrightarrow z_1`} · ${tex`m_2\leftrightarrow z_3`}`, '0.46'],
+      [tex`h_2`, `${tex`m_1\leftrightarrow z_2`} · ${tex`m_2\leftrightarrow z_1`}`, '0.31'],
+      [tex`h_3`, `${tex`m_1`} missed · ${tex`m_2\leftrightarrow z_3`}`, '0.14'],
       ['…', 'lower-weight stories', '0.09']
     ].forEach((row, index) => {
       const y = stageY + 292 + index * 31
@@ -117,7 +123,7 @@ function associationFallback(kind, ctx) {
     })
   }
   elements.push(text(`${kind}-rail-k`, railX + 18, stageY + 18, railW - 36, 18, kind === 'bp' ? 'MESSAGE CONTROLS' : 'PRUNING CONTROLS', 9, { color: deep, fontFamily: MONO, fontWeight: 700, letterSpacing: 1.1 }))
-  ;(kind === 'bp' ? ['one sweep', 'run to fixed point', 'move measurement'] : ['keep top k', 'MAP only', 'renormalize retained mass']).forEach((label, index) => {
+  ;(kind === 'bp' ? ['one sweep', 'run to fixed point', 'move measurement'] : [`keep top ${tex`k`}`, 'MAP only', 'renormalize retained mass']).forEach((label, index) => {
     const y = stageY + 64 + index * 76
     elements.push(card(`${kind}-control-${index}`, railX + 18, y, railW - 36, 52, index === 0 ? soft : '#FBFCFD', { stroke: index === 0 ? accent : C.line, radius: 5 }))
     elements.push(text(`${kind}-control-v-${index}`, railX + 30, y + 16, railW - 60, 20, label, 12, { color: index === 0 ? deep : C.soft, fontFamily: SANS, fontWeight: 700, align: 'center' }))
@@ -129,7 +135,7 @@ function associationFallback(kind, ctx) {
 }
 
 function graphEquationSlide(ctx) {
-  const { regular, text, card, shape, line, C, SANS, MONO } = ctx
+  const { regular, text, card, shape, line, C, SANS, MONO, tex, texBlock } = ctx
   const graph = [
     card('gs-graph-card', 96, 202, 406, 420, C.paper, { stroke: C.line, radius: 8 }),
     text('gs-graph-k', 120, 222, 358, 18, 'RADIO FACTOR GRAPH', 10, { color: C.poseDeep, fontFamily: MONO, fontWeight: 700, letterSpacing: 1.2 })
@@ -141,9 +147,9 @@ function graphEquationSlide(ctx) {
       graph.push(shape(`gs-motion-factor-${index}`, 200, 0.5 * (y + poseYs[index + 1]) - 6, 12, 12, C.paper, { stroke: C.soft, strokeWidth: 2, radius: 0 }))
     }
     graph.push(shape(`gs-pose-${index}`, 192, y - 14, 28, 28, index === 0 ? C.poseSoft : C.paper, { shape: 'ellipse', stroke: C.pose, strokeWidth: 2 }))
-    graph.push(text(`gs-pose-label-${index}`, 192, y - 6, 28, 14, `x${index}`, 8, { color: C.poseDeep, fontFamily: MONO, fontWeight: 700, align: 'center' }))
+    graph.push(text(`gs-pose-label-${index}`, 192, y - 6, 28, 14, tex`x_${index}`, 8, { color: C.poseDeep, fontWeight: 700, align: 'center' }))
   })
-  ;[[390,330,'m₁',C.map,C.mapSoft],[390,492,'m₂',C.measurement,C.measurementSoft]].forEach((item, index) => {
+  ;[[390,330,tex`m_1`,C.map,C.mapSoft],[390,492,tex`m_2`,C.measurement,C.measurementSoft]].forEach((item, index) => {
     graph.push(shape(`gs-map-${index}`, item[0] - 15, item[1] - 15, 30, 30, item[4], { shape: 'ellipse', stroke: item[3], strokeWidth: 2 }))
     graph.push(text(`gs-map-label-${index}`, item[0] - 15, item[1] - 7, 30, 14, item[2], 8, { color: index === 0 ? C.mapDeep : C.measurementDeep, fontFamily: MONO, fontWeight: 700, align: 'center' }))
   })
@@ -165,22 +171,27 @@ function graphEquationSlide(ctx) {
       ...graph,
       card('gs-state-card', 532, 202, 652, 78, C.poseSoft, { stroke: C.pose, radius: 8 }),
       text('gs-state-k', 558, 218, 130, 16, 'UNKNOWNS', 9, { color: C.poseDeep, fontFamily: MONO, fontWeight: 700, letterSpacing: 1.1 }),
-      text('gs-state-eq', 558, 244, 600, 22, 'Θ = {<b>x</b><sub>0:T</sub>, <b>m</b><sub>1:J</sub>, b<sub>0:T</sub>}  ·  A={a<sub>tℓ</sub>}  ·  Q={q<sub>tℓ</sub>}', 18, { fontWeight: 700, align: 'center' }),
+      text('gs-state-eq', 558, 244, 600, 22, texBlock`\Theta=\{\mathbf x_{0:T},\mathbf m_{1:J},b_{0:T}\}\;\cdot\;A=\{a_{t\ell}\}\;\cdot\;Q=\{q_{t\ell}\}`, 18, { fontWeight: 700, align: 'center' }),
 
       card('gs-cost-card', 532, 296, 652, 132, C.paper, { stroke: C.line, radius: 8 }),
       text('gs-cost-k', 558, 314, 180, 16, 'MAP / NONLINEAR LEAST SQUARES', 9, { color: C.poseDeep, fontFamily: MONO, fontWeight: 700, letterSpacing: 1.05 }),
       text('gs-cost-eq', 558, 344, 600, 70,
-        'Θ*(A,Q)=arg min<sub>Θ</sub> ‖r<sub>0</sub>‖²<sub>Ω₀</sub> + ∑<sub>t</sub> ‖r<sup>mot</sup><sub>t</sub>‖²<sub>Ω<sub>t</sub></sub><br>' +
-        '+ ∑<sub>t,ℓ</sub> ρ( ‖r<sup>radio</sup><sub>tℓ</sub>‖²<sub>Ω<sub>tℓ</sub></sub> ) + ∑<sub>j</sub> ‖r<sup>map</sup><sub>j</sub>‖²',
+        texBlock`\begin{aligned}
+          \Theta^*(A,Q)=\arg\min_{\Theta}\;&\|\mathbf r_0\|_{\Omega_0}^2+\sum_t\|\mathbf r_t^{\mathrm{mot}}\|_{\Omega_t}^2\\[-.1em]
+          &+\sum_{t,\ell}\rho\!\left(\|\mathbf r_{t\ell}^{\mathrm{radio}}\|_{\Omega_{t\ell}}^2\right)+\sum_j\|\mathbf r_j^{\mathrm{map}}\|^2
+        \end{aligned}`,
         17, { fontWeight: 700, align: 'center', lineHeight: 1.45 }),
 
       card('gs-radio-card', 532, 444, 652, 178, C.measurementSoft, { stroke: C.measurement, radius: 8 }),
       text('gs-radio-k', 558, 462, 210, 16, 'ONE-BOUNCE VA RADIO FACTOR', 9, { color: C.measurementDeep, fontFamily: MONO, fontWeight: 700, letterSpacing: 1.05 }),
-      text('gs-radio-residual', 558, 490, 600, 38, '<b>r</b><sup>radio</sup><sub>tℓ</sub> = [cτ, wrap(φ), wrap(ψ)]<sup>T</sup> − <b>h</b><sub>q</sub>(<b>x</b><sub>t</sub>,<b>m</b><sub>a<sub>tℓ</sub></sub>,<b>x</b><sub>BS</sub>)', 16, { fontWeight: 700, align: 'center' }),
+      text('gs-radio-residual', 558, 490, 600, 38, texBlock`\mathbf r_{t\ell}^{\mathrm{radio}}=[c\tau,\,\mathrm{wrap}(\varphi),\,\mathrm{wrap}(\psi)]^{\mathsf T}-\mathbf h_{q_{t\ell}}(\mathbf x_t,\mathbf m_{a_{t\ell}},\mathbf x_{\mathrm{BS}})`, 16, { fontWeight: 700, align: 'center' }),
       text('gs-radio-model', 558, 536, 600, 70,
-        'L̂ = ‖<b>p</b><sub>t</sub>−<b>v</b><sub>j</sub>‖ + cb<sub>t</sub><br>' +
-        'P<sub>tj</sub> = line(<b>p</b><sub>t</sub>,<b>v</b><sub>j</sub>) ∩ bisector(<b>p</b><sub>BS</sub>,<b>v</b><sub>j</sub>)<br>' +
-        'φ̂ = wrap(bearing(P<sub>tj</sub>−<b>p</b><sub>t</sub>)−θ<sub>t</sub>), &nbsp; ψ̂ = wrap(bearing(P<sub>tj</sub>−<b>p</b><sub>BS</sub>)−θ<sub>BS</sub>)',
+        texBlock`\begin{aligned}
+          \widehat L&=\|\mathbf p_t-\mathbf v_j\|+c b_t\\
+          P_{tj}&=\mathrm{line}(\mathbf p_t,\mathbf v_j)\cap\mathrm{bisector}(\mathbf p_{\mathrm{BS}},\mathbf v_j)\\
+          \widehat\varphi&=\mathrm{wrap}(\mathrm{bearing}(P_{tj}-\mathbf p_t)-\theta_t),\quad
+          \widehat\psi=\mathrm{wrap}(\mathrm{bearing}(P_{tj}-\mathbf p_{\mathrm{BS}})-\theta_{\mathrm{BS}})
+        \end{aligned}`,
         14, { lineHeight: 1.45, align: 'center' }),
       text('gs-source', 96, 650, 1088, 17, 'Synthesis: standard GraphSLAM objective + radio MPC/virtual-anchor measurement geometry; angle signs depend on the array convention.', 9, { color: C.faint, fontFamily: MONO, align: 'center' })
     ], { accent: C.pose, titleSize: 31, transition: 'none' }
@@ -188,7 +199,7 @@ function graphEquationSlide(ctx) {
 }
 
 function graphFallback(ctx) {
-  const { text, card, shape, line, C, MONO, SANS, LIVE_BOUNDS } = ctx
+  const { text, card, shape, line, C, MONO, SANS, LIVE_BOUNDS, tex } = ctx
   const x0 = LIVE_BOUNDS.x, y0 = LIVE_BOUNDS.y, w = LIVE_BOUNDS.width, h = LIVE_BOUNDS.height
   const stageX = x0 + 14, stageY = y0 + 14, stageW = 766, stageH = h - 28
   const railX = stageX + stageW + 12, railW = w - stageW - 40
@@ -203,11 +214,11 @@ function graphFallback(ctx) {
   poses.slice(0,-1).forEach((point,index) => elements.push(line(`graph-path-${index}`, point[0], point[1], poses[index+1][0], poses[index+1][1], C.pose, 4)))
   poses.forEach((point,index) => {
     elements.push(shape(`graph-pose-${index}`, point[0]-8, point[1]-8, 16, 16, C.paper, { shape:'ellipse', stroke:C.pose, strokeWidth:3 }))
-    elements.push(text(`graph-pose-label-${index}`, point[0]+10, point[1]-12, 36, 16, `x${index}`, 8, { color:C.poseDeep, fontFamily:MONO, fontWeight:700 }))
+    elements.push(text(`graph-pose-label-${index}`, point[0]+10, point[1]-12, 36, 16, tex`x_${index}`, 8, { color:C.poseDeep, fontWeight:700 }))
   })
   elements.push(shape('graph-bs',bs[0]-7,bs[1]-7,14,14,C.ink,{radius:0}))
   elements.push(text('graph-bs-label',bs[0]-10,bs[1]+14,62,16,'known BS',8,{color:C.ink,fontFamily:MONO,fontWeight:700}))
-  ;[[va1,'VA₁',C.map,C.mapSoft],[va2,'VA₂',C.measurement,C.measurementSoft]].forEach((item,index) => {
+  ;[[va1,tex`\mathrm{VA}_1`,C.map,C.mapSoft],[va2,tex`\mathrm{VA}_2`,C.measurement,C.measurementSoft]].forEach((item,index) => {
     elements.push(shape(`graph-va-${index}`,item[0][0]-12,item[0][1]-12,24,24,item[3],{shape:'ellipse',stroke:item[2],strokeWidth:3}))
     elements.push(text(`graph-va-label-${index}`,item[0][0]-24,item[0][1]-34,48,16,item[1],9,{color:index===0?C.mapDeep:C.measurementDeep,fontFamily:MONO,fontWeight:700,align:'center'}))
   })

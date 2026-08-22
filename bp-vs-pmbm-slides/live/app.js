@@ -15,6 +15,11 @@
     pmDeep: "#b45607",
     white: "#ffffff"
   };
+
+  function mathTex(source, display) {
+    return '<span class="math-tex ' + (display ? 'math-display' : 'math-inline') + '">' +
+      (display ? '\\[' : '\\(') + source + (display ? '\\]' : '\\)') + '</span>';
+  }
   var DEFAULT_TRACKS = [
     { x: 285, y: 205, S: [[520, 140], [140, 340]] },
     { x: 352, y: 232, S: [[460, -120], [-120, 480]] },
@@ -69,7 +74,7 @@
       kicker: "COMMON INPUT",
       title: "Shape the association problem",
       body: "Drag a measurement through overlapping validation gates. Both inference routes consume the same normalized weights.",
-      heading: "GATED LIKELIHOODS ℓ",
+      heading: "GATED LIKELIHOODS " + mathTex("\\ell"),
       hint: "Dashed ellipses are 99% validation gates. A dot in the matrix means a gated-out pair."
     },
     bp: {
@@ -77,12 +82,12 @@
       title: "Negotiate without enumeration",
       body: "Loopy sum–product passes local competition messages until approximate association marginals settle.",
       heading: "WILLIAMS–LAU MESSAGE PASSING",
-      hint: "Line width follows the current BP marginal. Edge labels show μ track→measurement and ν measurement→track."
+      hint: "Line width follows the current BP marginal. Edge labels show " + mathTex("\\mu_{\\mathrm{track}\\to\\mathrm{measurement}}") + " and " + mathTex("\\nu_{\\mathrm{measurement}\\to\\mathrm{track}}") + "."
     },
     hypotheses: {
       kicker: "JOINT VIEW",
       title: "Rank compatible stories",
-      body: "Exhaustive enumeration exposes every valid global assignment in this small benchmark; k controls truncation.",
+      body: "Exhaustive enumeration exposes every valid global assignment in this small benchmark; " + mathTex("k") + " controls truncation.",
       heading: "EXACT JOINT ASSIGNMENTS + PRUNING",
       hint: "Orange bars are normalized joint-event weights. Dim rows are pruned; retained marginals are renormalized over the kept set."
     }
@@ -305,16 +310,16 @@
   }
 
   function setStatus(text, running) {
-    statusEl.lastChild.nodeValue = " " + text;
+    statusEl.innerHTML = "<i></i> " + text;
     statusEl.classList.toggle("is-running", Boolean(running));
   }
 
   function weightTable() {
-    var html = "<h3>Existing-track weights</h3><table class=\"mini-matrix\"><tr><th></th><th>∅</th>";
-    for (var j = 0; j < result.m; j += 1) html += "<th>z" + (j + 1) + "</th>";
+    var html = "<h3>Existing-track weights</h3><table class=\"mini-matrix\"><tr><th></th><th>" + mathTex("\\varnothing") + "</th>";
+    for (var j = 0; j < result.m; j += 1) html += "<th>" + mathTex("z_{" + (j + 1) + "}") + "</th>";
     html += "</tr>";
     for (var i = 0; i < result.n; i += 1) {
-      html += "<tr><td class=\"row-head\" style=\"color:" + TRACK_COLORS[i] + "\">T" + (i + 1) + "</td>";
+      html += "<tr><td class=\"row-head\" style=\"color:" + TRACK_COLORS[i] + "\">" + mathTex("T_{" + (i + 1) + "}") + "</td>";
       result.L[i].forEach(function (value, column) {
         var cellClass = value <= 0 ? "dim" : (column === state.selectedMeasurement + 1 ? "hot" : "");
         html += "<td class=\"" + cellClass + "\">" + formatWeight(value) + "</td>";
@@ -322,17 +327,17 @@
       html += "</tr>";
     }
     html += "</table>";
-    html += "<p class=\"card-note\">ℓ<sub>ij</sub> = P<sub>D</sub>N(z<sub>j</sub>;ẑ<sub>i</sub>,S<sub>i</sub>)/λ<sub>c</sub><br>ℓ<sub>i∅</sub> = 1 − P<sub>D</sub><br>unassigned measurement baseline = 1</p>";
+    html += "<p class=\"card-note\">" + mathTex("\\ell_{ij}=P_{\\mathrm D}\\,\\mathcal N(z_j;\\widehat z_i,S_i)/\\lambda_c", true) + mathTex("\\ell_{i\\varnothing}=1-P_{\\mathrm D}", true) + "unassigned measurement baseline = 1</p>";
     return html;
   }
 
   function bpTable() {
     var current = currentBp();
-    var html = "<h3>BP track marginals</h3><table class=\"mini-matrix\"><tr><th></th><th>∅</th>";
-    for (var j = 0; j < result.m; j += 1) html += "<th>z" + (j + 1) + "</th>";
+    var html = "<h3>BP track marginals</h3><table class=\"mini-matrix\"><tr><th></th><th>" + mathTex("\\varnothing") + "</th>";
+    for (var j = 0; j < result.m; j += 1) html += "<th>" + mathTex("z_{" + (j + 1) + "}") + "</th>";
     html += "</tr>";
     for (var i = 0; i < result.n; i += 1) {
-      html += "<tr><td class=\"row-head\" style=\"color:" + TRACK_COLORS[i] + "\">T" + (i + 1) + "</td>";
+      html += "<tr><td class=\"row-head\" style=\"color:" + TRACK_COLORS[i] + "\">" + mathTex("T_{" + (i + 1) + "}") + "</td>";
       current.marginals[i].forEach(function (value) {
         html += "<td>" + formatProbability(value) + "</td>";
       });
@@ -342,7 +347,7 @@
     var width = Math.min(100, error * 1000);
     html += "</table><p class=\"card-note\">Exact-reference max difference: <strong>" + (100 * error).toFixed(2) + " pp</strong></p>";
     html += "<div class=\"delta-track\"><i style=\"width:" + width.toFixed(1) + "%\"></i></div>";
-    html += "<p class=\"card-note\">Sweep " + current.sweep + " of " + (result.history.length - 1) + " · Δ " + (current.delta === null ? "initial" : current.delta.toExponential(1)) + "</p>";
+    html += "<p class=\"card-note\">Sweep " + current.sweep + " of " + (result.history.length - 1) + " · " + mathTex("\\Delta") + " " + (current.delta === null ? "initial" : current.delta.toExponential(1)) + "</p>";
     return html;
   }
 
@@ -597,12 +602,12 @@
 
   function assignmentStory(event) {
     var parts = event.assignment.map(function (measurement, track) {
-      if (measurement < 0) return "<span class=\"miss\">T" + (track + 1) + "→∅</span>";
-      return "T" + (track + 1) + "→z" + (measurement + 1);
+      if (measurement < 0) return "<span class=\"miss\">" + mathTex("T_{" + (track + 1) + "}\\to\\varnothing") + "</span>";
+      return mathTex("T_{" + (track + 1) + "}\\to z_{" + (measurement + 1) + "}");
     });
     var assigned = new Set(event.assignment.filter(function (value) { return value >= 0; }));
     var free = [];
-    for (var j = 0; j < result.m; j += 1) if (!assigned.has(j)) free.push("z" + (j + 1));
+    for (var j = 0; j < result.m; j += 1) if (!assigned.has(j)) free.push(mathTex("z_{" + (j + 1) + "}"));
     if (free.length) parts.push("<span class=\"miss\">" + free.join(",") + " unassigned</span>");
     return parts.join(" · ");
   }
@@ -629,9 +634,9 @@
     var card = "<div class=\"mass-callout\"><strong>" + (100 * truncated.mass).toFixed(1) + "%</strong><span>normalized joint mass retained by top " + state.k + "</span></div>";
     card += "<h3>Marginals after truncation</h3>";
     truncated.marginals.forEach(function (row, track) {
-      card += "<div class=\"track-marginal\"><h4 style=\"color:" + TRACK_COLORS[track] + "\">T" + (track + 1) + "</h4>";
+      card += "<div class=\"track-marginal\"><h4 style=\"color:" + TRACK_COLORS[track] + "\">" + mathTex("T_{" + (track + 1) + "}") + "</h4>";
       row.forEach(function (value, column) {
-        card += "<div class=\"bar-row\"><span>" + (column === 0 ? "∅" : "z" + column) + "</span><div class=\"bar-track\"><i style=\"width:" + (100 * value).toFixed(1) + "%\"></i></div><span>" + formatProbability(value) + "</span></div>";
+        card += "<div class=\"bar-row\"><span>" + mathTex(column === 0 ? "\\varnothing" : "z_{" + column + "}") + "</span><div class=\"bar-track\"><i style=\"width:" + (100 * value).toFixed(1) + "%\"></i></div><span>" + formatProbability(value) + "</span></div>";
       });
       card += "</div>";
     });
@@ -655,19 +660,15 @@
 
   function renderAll() {
     pdValue.value = state.PD.toFixed(2);
-    clutterValue.value = formatScientific(state.clutter);
+    clutterValue.innerHTML = mathTex(formatScientificTex(state.clutter));
     kValue.value = String(state.k);
     updateMetrics();
     renderStage();
   }
 
-  function formatScientific(value) {
+  function formatScientificTex(value) {
     var parts = value.toExponential(1).split("e");
-    var exponent = Number(parts[1]);
-    var superscript = String(Math.abs(exponent)).replace(/0/g, "⁰").replace(/1/g, "¹").replace(/2/g, "²")
-      .replace(/3/g, "³").replace(/4/g, "⁴").replace(/5/g, "⁵").replace(/6/g, "⁶")
-      .replace(/7/g, "⁷").replace(/8/g, "⁸").replace(/9/g, "⁹");
-    return parts[0] + "×10" + (exponent < 0 ? "⁻" : "") + superscript;
+    return parts[0] + "\\times10^{" + Number(parts[1]) + "}";
   }
 
   function pauseTimer() {
@@ -747,11 +748,11 @@
     var text = copy[mode];
     methodKicker.textContent = text.kicker;
     methodTitle.textContent = text.title;
-    methodCopy.textContent = text.body;
-    stageHeading.textContent = text.heading;
-    hintEl.textContent = text.hint;
+    methodCopy.innerHTML = text.body;
+    stageHeading.innerHTML = text.heading;
+    hintEl.innerHTML = text.hint;
     if (mode === "assignment") setStatus("Drag a measurement to recompute", false);
-    if (mode === "bp") setStatus("Start at uncoupled ν = 1", false);
+    if (mode === "bp") setStatus("Start at uncoupled " + mathTex("\\nu=1"), false);
     if (mode === "hypotheses") setStatus("Top " + state.k + " of " + result.events.length + " events retained", false);
     renderAll();
   }
@@ -891,7 +892,7 @@
   document.getElementById("bp-reset").addEventListener("click", function () {
     stopAuto(true);
     state.bpIndex = 0;
-    setStatus("Reset to uncoupled ν = 1", false);
+    setStatus("Reset to uncoupled " + mathTex("\\nu=1"), false);
     renderAll();
   });
   document.getElementById("bp-end").addEventListener("click", function () {

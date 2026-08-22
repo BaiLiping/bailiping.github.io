@@ -9,6 +9,18 @@
   <meta name="description" content="A compact live lab for normalized data association, belief-propagation marginals, and joint-hypothesis pruning.">
   <link rel="stylesheet" href="styles.css">
   <link rel="stylesheet" href="../../assets/interactive-slide-system.css">
+  <style>
+    .math-tex{white-space:nowrap}.math-inline{display:inline-block;vertical-align:-.14em;line-height:1}
+    .math-display{display:flex;width:100%;align-items:center;justify-content:center;line-height:1}
+    .math-tex mjx-container{color:inherit!important;margin:0!important}.math-inline mjx-container{display:inline-block!important}
+    .math-display mjx-container[display="true"]{display:block!important;width:100%;margin:0!important;text-align:center}
+    .math-tex mjx-container[jax="SVG"]>svg{overflow:visible}.math-display mjx-container[jax="SVG"]>svg{max-width:100%;height:auto}
+  </style>
+  <script>
+    window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],processEscapes:true},svg:{fontCache:'global'},options:{skipHtmlTags:['script','noscript','style','textarea','pre','code']},startup:{typeset:false,ready:()=>{MathJax.startup.defaultReady();MathJax.startup.promise.then(()=>window.dispatchEvent(new Event('mathjax-ready')))}}}
+  </script>
+  <script defer src="https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/tex-svg-full.js"></script>
+  <script defer src="../../assets/mathjax-dynamic.js"></script>
   <script src="../../assets/interactive-slide-system.js"></script>
   <script src="app.js" defer></script>
   <script src="../../assets/bento-inline-frame.js" defer></script>
@@ -45,9 +57,9 @@
         <section class="control-panel" id="panel-assignment" role="tabpanel" aria-labelledby="tab-assignment">
           <label class="range-label" for="pd-range"><span>Detection probability</span><output id="pd-value" for="pd-range">0.90</output></label>
           <input id="pd-range" type="range" min="50" max="99" value="90" step="1">
-          <label class="range-label" for="clutter-range"><span>Clutter density</span><output id="clutter-value" for="clutter-range">5.0×10⁻⁵</output></label>
+          <label class="range-label" for="clutter-range"><span>Clutter density</span><output id="clutter-value" for="clutter-range"><span class="math-tex math-inline">\(5.0\times10^{-5}\)</span></output></label>
           <input id="clutter-range" type="range" min="-5" max="-3.30" value="-4.301" step="0.05">
-          <p class="microcopy">Drag a black ×, or focus the plot, press 1–4 to select z1–z4, then use arrow keys to move it.</p>
+          <p class="microcopy">Drag a black ×, or focus the plot, press 1–4 to select <span class="math-tex math-inline">\(z_1\text{--}z_4\)</span>, then use arrow keys to move it.</p>
           <div class="button-row">
             <button class="button primary" id="tangle-preset" type="button">Three-way tangle</button>
             <button class="button" id="separate-preset" type="button">Separate</button>
@@ -64,13 +76,13 @@
           </div>
           <button class="text-button" id="bp-end" type="button">Jump to fixed point →</button>
           <div class="equations" aria-label="Belief propagation update equations">
-            <p>μ<sub>i→j</sub> = ℓ<sub>ij</sub> / (ℓ<sub>i∅</sub> + Σ<sub>k≠j</sub>ℓ<sub>ik</sub>ν<sub>k→i</sub>)</p>
-            <p>ν<sub>j→i</sub> = 1 / (1 + Σ<sub>l≠i</sub>μ<sub>l→j</sub>)</p>
+            <p><span class="math-tex math-display">\[\mu_{i\to j}=\frac{\ell_{ij}}{\ell_{i\varnothing}+\sum_{k\ne j}\ell_{ik}\nu_{k\to i}}\]</span></p>
+            <p><span class="math-tex math-display">\[\nu_{j\to i}=\frac{1}{1+\sum_{l\ne i}\mu_{l\to j}}\]</span></p>
           </div>
         </section>
 
         <section class="control-panel" id="panel-hypotheses" role="tabpanel" aria-labelledby="tab-hypotheses" hidden>
-          <label class="range-label" for="k-range"><span>Keep top k</span><output id="k-value" for="k-range">5</output></label>
+          <label class="range-label" for="k-range"><span>Keep top <span class="math-tex math-inline">\(k\)</span></span><output id="k-value" for="k-range">5</output></label>
           <input id="k-range" type="range" min="1" max="20" value="5" step="1">
           <p class="microcopy">Rows are compatible joint assignments. Pruning drops normalized mass; it does not turn one row into a complete PMBM update.</p>
           <div class="button-row">
@@ -91,7 +103,7 @@
 
       <section class="stage-card interactive-slide-stage interactive-slide-panel" aria-labelledby="stage-heading">
         <div class="stage-bar">
-          <h2 id="stage-heading">GATED LIKELIHOODS ℓ</h2>
+          <h2 id="stage-heading">GATED LIKELIHOODS <span class="math-tex math-inline">\(\ell\)</span></h2>
           <p class="status" id="status" role="status" aria-live="polite"><i></i> Drag a measurement to recompute</p>
         </div>
 
