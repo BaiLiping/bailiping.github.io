@@ -5,8 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="color-scheme" content="only light">
   <meta name="theme-color" content="#f4f6f8">
-  <title>Association Lab · BP and joint hypotheses</title>
-  <meta name="description" content="A compact live lab for normalized data association, belief-propagation marginals, and joint-hypothesis pruning.">
+  <title>Shared setup S1 · BP and PMBM association lab</title>
+  <meta name="description" content="A shared radio-SLAM experiment for BP association marginals and PMBM-style global-hypothesis pruning.">
   <link rel="stylesheet" href="styles.css">
   <link rel="stylesheet" href="../../assets/interactive-slide-system.css">
   <style>
@@ -22,6 +22,7 @@
   <script defer src="https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/tex-svg-full.js"></script>
   <script defer src="../../assets/mathjax-dynamic.js"></script>
   <script src="../../assets/interactive-slide-system.js"></script>
+  <script src="../../assets/radio-slam-s1.js"></script>
   <script src="app.js" defer></script>
   <script src="../../assets/bento-inline-frame.js" defer></script>
 </head>
@@ -29,11 +30,11 @@
   <main class="lab-shell interactive-slide-shell">
     <header class="masthead interactive-slide-header">
       <div class="interactive-slide-heading">
-        <p class="eyebrow">DATA ASSOCIATION · LIVE LAB</p>
-        <h1>One scan, two inference views.</h1>
+        <p class="eyebrow">SHARED SETUP S1 · RADIO DATA ASSOCIATION</p>
+        <h1>One physical scan, two inference views.</h1>
       </div>
       <div class="interactive-slide-actions">
-        <span class="interactive-slide-chip" title="The page is a normalized, deterministic one-scan teaching benchmark.">Normalized toy model</span>
+        <span class="interactive-slide-chip" title="BP and PMBM use the same five-pose scene and deterministic MPC realization as the GraphSLAM lab.">Same scene · same MPCs</span>
         <a class="back-link interactive-slide-back" id="back-link" href="../" aria-label="Back to BP versus PMBM slides">
           <span aria-hidden="true">←</span> Back to slides <kbd>Esc</kbd>
         </a>
@@ -50,25 +51,37 @@
       <aside class="control-rail interactive-slide-controls interactive-slide-panel" aria-label="Experiment controls">
         <div class="method-copy">
           <p class="method-kicker" id="method-kicker">COMMON INPUT</p>
-          <h2 id="method-title">Shape the association problem</h2>
-          <p id="method-copy">Drag a measurement through overlapping validation gates. Both inference routes consume the same normalized weights.</p>
+          <h2 id="method-title">Inspect one S1 scan</h2>
+          <p id="method-copy">Predicted LoS and wall-reflection signatures compete for the same measured MPCs.</p>
         </div>
 
+        <section class="setup-card" aria-label="Shared radio SLAM setup S1">
+          <div class="setup-card-head"><span>S1</span><strong>Common scene · <output id="setup-scan">scan 4 / 5</output></strong></div>
+          <p><span class="math-tex math-inline">\(\mathbf b=[2,2]^{\mathsf T}\,\mathrm m\)</span> · <span class="math-tex math-inline">\(\mathcal W_A:y=7\)</span> · <span class="math-tex math-inline">\(\mathcal W_B:x=8.5\)</span></p>
+          <dl class="state-set">
+            <div><dt>Known</dt><dd id="setup-known">fixed UE poses, BS, measured MPCs</dd></div>
+            <div><dt>Latent</dt><dd id="setup-latent">route association and map-feature state</dd></div>
+            <div><dt>Return</dt><dd id="setup-output">normalized association evidence</dd></div>
+          </dl>
+        </section>
+
         <section class="control-panel" id="panel-assignment" role="tabpanel" aria-labelledby="tab-assignment">
+          <label class="range-label" for="scan-range"><span>Shared trajectory scan</span><output id="scan-value" for="scan-range"><span class="math-tex math-inline">\(x_4\)</span> / 5</output></label>
+          <input id="scan-range" type="range" min="0" max="4" value="3" step="1">
           <label class="range-label" for="pd-range"><span>Detection probability</span><output id="pd-value" for="pd-range">0.90</output></label>
           <input id="pd-range" type="range" min="50" max="99" value="90" step="1">
           <label class="range-label" for="clutter-range"><span>Clutter density</span><output id="clutter-value" for="clutter-range"><span class="math-tex math-inline">\(5.0\times10^{-5}\)</span></output></label>
           <input id="clutter-range" type="range" min="-5" max="-3.30" value="-4.301" step="0.05">
-          <p class="microcopy">Drag a black ×, or focus the plot, press 1–4 to select <span class="math-tex math-inline">\(z_1\text{--}z_4\)</span>, then use arrow keys to move it.</p>
+          <p class="microcopy">The plot is path length versus UE-frame AoA. Scans 2 and 4 include the same fixed clutter MPC used by both methods.</p>
           <div class="button-row">
-            <button class="button primary" id="tangle-preset" type="button">Three-way tangle</button>
-            <button class="button" id="separate-preset" type="button">Separate</button>
+            <button class="button primary" id="previous-scan" type="button">← Previous</button>
+            <button class="button" id="next-scan" type="button">Next →</button>
             <button class="icon-button" id="assignment-reset" type="button" aria-label="Reset assignment scene" title="Reset">↺</button>
           </div>
         </section>
 
         <section class="control-panel" id="panel-bp" role="tabpanel" aria-labelledby="tab-bp" hidden>
-          <p class="microcopy">One sweep sends all track→measurement messages, then all replies. Marginals update without listing global events.</p>
+          <p class="microcopy">One sweep sends all route→MPC messages, then all replies. Marginals update without listing global events.</p>
           <div class="button-row">
             <button class="button primary" id="bp-step" type="button">One sweep</button>
             <button class="button" id="bp-run" type="button" aria-pressed="false">Run</button>
@@ -98,7 +111,7 @@
           <div><dt id="metric-c-label">BP max error</dt><dd id="metric-c">—</dd></div>
         </dl>
 
-        <div class="scope-note"><strong>Scope:</strong> normalized one-scan assignment benchmark—not a complete PMBM state update.</div>
+        <div class="scope-note"><strong>Scope:</strong> the association layer of setup S1—not a complete BP-SLAM or PMBM-SLAM state recursion.</div>
       </aside>
 
       <section class="stage-card interactive-slide-stage interactive-slide-panel" aria-labelledby="stage-heading">
@@ -108,8 +121,8 @@
         </div>
 
         <div class="visual-view" id="visual-view">
-          <canvas id="association-canvas" width="700" height="420" tabindex="0" aria-label="Interactive association scene with three tracks and four draggable measurements. Press number keys 1 through 4 to select a measurement, then use arrow keys to move it.">
-            The plot requires canvas support. Three predicted tracks compete for four measurements under a one-to-one assignment constraint.
+          <canvas id="association-canvas" width="700" height="420" tabindex="0" aria-label="Radio signature association scene for setup S1. Three predicted paths compete for measured MPCs in a path-length and angle-of-arrival plane.">
+            The plot requires canvas support. Three predicted paths compete for measured MPCs under a one-to-one assignment constraint.
           </canvas>
           <aside class="data-card" id="data-card" aria-live="polite"></aside>
         </div>
@@ -124,7 +137,7 @@
     </div>
 
     <footer class="interactive-slide-footer">
-      <p>Existing tracks may be missed or claim at most one measurement · unassigned-measurement baseline = 1</p>
+      <p>Setup S1 · fixed UE poses · each route hypothesis may be missed or claim at most one MPC</p>
       <p><span class="bp-swatch"></span>BP marginals <span class="pm-swatch"></span>joint-event reference</p>
     </footer>
   </main>
@@ -132,9 +145,9 @@
   <noscript>
     <style>.lab-shell{display:none!important}</style>
     <main class="fallback">
-      <p class="eyebrow">DATA ASSOCIATION · LIVE LAB</p>
-      <h1>One scan, two inference views</h1>
-      <p>Enable JavaScript for the computational examples. The static lesson remains: BP approximates marginal association probabilities by message passing; exhaustive joint-assignment enumeration gives the exact reference for this normalized toy model.</p>
+      <p class="eyebrow">SHARED SETUP S1 · RADIO DATA ASSOCIATION</p>
+      <h1>One physical scan, two inference views</h1>
+      <p>Enable JavaScript for the computational examples. Both views use the same five-pose radio scene: BP approximates association marginals by message passing, while global-hypothesis enumeration provides the small-problem reference.</p>
       <div class="fallback-grid">
         <section><h2>Shared weights</h2><p>Both routes use the same gated likelihood ratios, missed-detection weights, and one-to-one constraints.</p></section>
         <section><h2>BP</h2><p>Messages negotiate measurement competition and return approximate marginals without enumerating events.</p></section>

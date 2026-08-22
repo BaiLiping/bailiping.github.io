@@ -19,6 +19,7 @@
   <script defer src="https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/tex-svg-full.js"></script>
   <script defer src="../../assets/mathjax-dynamic.js"></script>
   <script src="../../assets/interactive-slide-system.js"></script>
+  <script src="../../assets/radio-slam-s1.js"></script>
   <script src="app.js" defer></script>
   <script src="../../assets/bento-inline-frame.js" defer></script>
 </head>
@@ -26,11 +27,11 @@
   <main class="lab-shell interactive-slide-shell">
     <header class="masthead interactive-slide-header">
       <div class="interactive-slide-heading">
-        <p class="eyebrow">RADIO GRAPHSLAM · LIVE LAB</p>
-        <h1>Optimize UE poses and virtual anchors together.</h1>
+        <p class="eyebrow">SHARED SETUP S1 · RADIO GRAPHSLAM</p>
+        <h1>Optimize the S1 trajectory and virtual anchors together.</h1>
       </div>
       <div class="interactive-slide-actions">
-        <span class="interactive-slide-chip" title="A deterministic 2D teaching model with one-bounce virtual anchors.">2D VA teaching model</span>
+        <span class="interactive-slide-chip" title="This optimizer uses the same BS, walls, UE trajectory, MPC ordering, noise, and clutter realization as the BP and PMBM labs.">Same scene · same MPCs</span>
         <a class="back-link interactive-slide-back" href="../" aria-label="Back to slides"><span aria-hidden="true">←</span> Slides <kbd>Esc</kbd></a>
       </div>
     </header>
@@ -40,7 +41,17 @@
         <section class="method-copy">
           <p class="method-kicker">CONTINUOUS MAP SOLVE</p>
           <h2>MPC factors replace pixel reprojection</h2>
-          <p>Motion links consecutive UE poses. Each radio factor links one pose to one virtual anchor through delay, AoA, and AoD.</p>
+          <p>Motion links consecutive UE poses. LoS and reflected radio factors use the same S1 tuples shown in the association labs.</p>
+        </section>
+
+        <section class="setup-card" aria-label="Shared radio SLAM setup S1">
+          <div class="setup-card-head"><span>S1</span><strong>Common physical experiment</strong></div>
+          <p><span class="math-tex math-inline">\(\mathbf b=[2,2]^{\mathsf T}\,\mathrm m\)</span> · <span class="math-tex math-inline">\(\mathcal W_A:y=7\)</span> · <span class="math-tex math-inline">\(\mathcal W_B:x=8.5\)</span></p>
+          <dl class="state-set">
+            <div><dt>Known</dt><dd><span class="math-tex math-inline">\(\mathbf b,U,Z\)</span> and first-pose prior</dd></div>
+            <div><dt>Latent</dt><dd><span class="math-tex math-inline">\(\mathbf x_{1:5},\mathbf v_A,\mathbf v_B\)</span></dd></div>
+            <div><dt>Return</dt><dd>joint UE trajectory and VA/wall map</dd></div>
+          </dl>
         </section>
 
         <fieldset class="choice-set">
@@ -60,7 +71,7 @@
           <input id="robust-loss" type="checkbox" checked>
         </label>
 
-        <label class="range-label" for="noise-range"><span>Measurement noise</span><output id="noise-value" for="noise-range">1.0×</output></label>
+        <label class="range-label" for="noise-range"><span>Shared S1 noise scale</span><output id="noise-value" for="noise-range">1.0×</output></label>
         <input id="noise-range" type="range" min="0" max="200" value="100" step="5">
 
         <label class="range-label" for="epoch-range"><span>Highlighted epoch</span><output id="epoch-value" for="epoch-range"><span class="math-tex math-inline">\(x_2\)</span></output></label>
@@ -109,16 +120,16 @@
     </div>
 
     <footer class="interactive-slide-footer">
-      <p><strong>Scope:</strong> synchronized, one-bounce VA toy model; association and bounce order are held fixed inside each Gauss–Newton solve.</p>
-      <p>BP/PMBM can propose hypotheses · GraphSLAM optimizes the continuous trajectory and map.</p>
+      <p><strong>Scope:</strong> setup S1 with LoS + two one-bounce paths; clutter remains unassigned and association/order are fixed inside each solve.</p>
+      <p>BP/PMBM propose S1 hypotheses · GraphSLAM optimizes the continuous trajectory and map.</p>
     </footer>
   </main>
 
   <noscript>
     <main class="fallback">
-      <p class="eyebrow">RADIO GRAPHSLAM · LIVE LAB</p>
-      <h1>Optimize UE poses and virtual anchors together</h1>
-      <p>Enable JavaScript to run the deterministic Gauss–Newton example. Motion factors connect UE poses; radio delay, AoA, and AoD factors connect each pose to a virtual anchor.</p>
+      <p class="eyebrow">SHARED SETUP S1 · RADIO GRAPHSLAM</p>
+      <h1>Optimize the S1 trajectory and virtual anchors together</h1>
+      <p>Enable JavaScript to run the deterministic Gauss–Newton example. Motion factors connect five UE poses; the same LoS and reflected MPC tuples used by the association labs constrain the trajectory and two virtual anchors.</p>
       <a class="back-link" href="../">← Back to slides</a>
     </main>
   </noscript>

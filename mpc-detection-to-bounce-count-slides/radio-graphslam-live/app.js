@@ -1,6 +1,8 @@
 (function () {
   "use strict";
 
+  var S1 = window.RadioSlamS1;
+  if (!S1) throw new Error("Shared radio-SLAM setup S1 failed to load");
   var COLORS = {
     ink: "#16222e",
     soft: "#51606e",
@@ -23,24 +25,16 @@
     return '<span class="math-tex math-inline">\\(' + source + '\\)</span>';
   }
 
-  var BS = { x: 0, y: 0, heading: 0 };
-  var TRUE_POSES = [
-    { x: 1.0, y: 1.0, heading: 0.14 },
-    { x: 2.25, y: 1.35, heading: 0.23 },
-    { x: 3.45, y: 1.90, heading: 0.33 },
-    { x: 4.45, y: 2.62, heading: 0.46 },
-    { x: 5.25, y: 3.48, heading: 0.60 }
-  ];
-  var TRUE_VAS = [
-    { x: 12.0, y: 6.0 },
-    { x: -4.0, y: 12.0 }
-  ];
-  var PRIOR = { x: 0.86, y: 1.14, heading: 0.18 };
+  var BS = S1.clone(S1.setup.bs);
+  var TRUE_POSES = S1.clone(S1.setup.poses);
+  var TRUE_VAS = S1.clone(S1.setup.virtualAnchors);
+  var PRIOR = { x: 2.64, y: 6.34, heading: -15 * S1.DEG };
   var T = TRUE_POSES.length;
   var J = TRUE_VAS.length;
+  var PATH_COUNT = S1.setup.paths.length;
   var DIM = T * 3 + J * 2;
   var WRONG_T = 3;
-  var WRONG_MEASUREMENT = 0;
+  var WRONG_PATH = 1;
 
   var sceneCanvas = document.getElementById("scene-canvas");
   var graphCanvas = document.getElementById("graph-canvas");
@@ -75,20 +69,8 @@
     lastStep: 0
   };
 
-  var RANGE_NOISE = [
-    [-0.10, 0.07], [0.05, -0.08], [0.12, 0.03], [-0.07, 0.10], [0.04, -0.05]
-  ];
-  var AOA_NOISE = [
-    [0.012, -0.018], [-0.010, 0.014], [0.018, -0.008], [-0.014, 0.020], [0.006, -0.012]
-  ];
-  var AOD_NOISE = [
-    [-0.009, 0.013], [0.015, -0.010], [-0.012, 0.006], [0.019, -0.015], [-0.006, 0.011]
-  ];
-
   function wrap(angle) {
-    while (angle > Math.PI) angle -= 2 * Math.PI;
-    while (angle <= -Math.PI) angle += 2 * Math.PI;
-    return angle;
+    return S1.wrap(angle);
   }
 
   function hypot2(x, y) {
@@ -159,13 +141,20 @@
     return { range: range, aoa: aoa, aod: aod, point: point, fold: s };
   }
 
+  function predictDirect(pose) {
+    var dx = BS.x - pose.x;
+    var dy = BS.y - pose.y;
+    return {
+      range: hypot2(dx, dy),
+      aoa: wrap(Math.atan2(dy, dx) - pose.heading),
+      aod: wrap(Math.atan2(pose.y - BS.y, pose.x - BS.x) - BS.heading),
+      point: null,
+      fold: null
+    };
+  }
+
   function makeOdometry() {
-    var noise = [
-      { x: 0.03, y: -0.025, heading: 0.008 },
-      { x: -0.02, y: 0.035, heading: -0.006 },
-      { x: 0.04, y: 0.015, heading: 0.010 },
-      { x: -0.025, y: -0.030, heading: -0.007 }
-    ];
+    var noise = S1.odometryNoise;
     var result = [];
     for (var t = 0; t < T - 1; t += 1) {
       var motion = relativeMotion(TRUE_POSES[t], TRUE_POSES[t + 1]);
@@ -180,20 +169,7 @@
 
   function makeMeasurements() {
     var scale = Number(noiseRange.value) / 100;
-    var measurements = [];
-    for (var t = 0; t < T; t += 1) {
-      var row = [];
-      for (var j = 0; j < J; j += 1) {
-        var predicted = predictRadio(TRUE_POSES[t], TRUE_VAS[j]);
-        row.push({
-          range: predicted.range + scale * RANGE_NOISE[t][j],
-          aoa: wrap(predicted.aoa + scale * AOA_NOISE[t][j]),
-          aod: wrap(predicted.aod + scale * AOD_NOISE[t][j])
-        });
-      }
-      measurements.push(row);
-    }
-    return measurements;
+    return S1.allScans(scale).map(function (scan) { return scan.measurements; });
   }
 
   function makeInitialVector() {
@@ -211,14 +187,21 @@
       };
       setPose(vector, t + 1, pose);
     }
-    setVA(vector, 0, { x: 9.8, y: 4.25 });
-    setVA(vector, 1, { x: -1.7, y: 9.65 });
+    setVA(vector, 0, { x: 2.75, y: 11.15 });
+    setVA(vector, 1, { x: 14.15, y: 2.75 });
     return vector;
   }
 
-  function associationFor(t, measurementIndex) {
-    if (wrongAssociation.checked && t === WRONG_T && measurementIndex === WRONG_MEASUREMENT) return 1 - measurementIndex;
-    return measurementIndex;
+  function associationFor(t, pathIndex) {
+    if (pathIndex === 0) return -1;
+    var vaIndex = pathIndex - 1;
+    if (wrongAssociation.checked && t === WRONG_T && pathIndex === WRONG_PATH) return 1 - vaIndex;
+    return vaIndex;
+  }
+
+  function predictForPath(vector, pose, t, pathIndex) {
+    if (pathIndex === 0) return predictDirect(pose);
+    return predictRadio(pose, getVA(vector, associationFor(t, pathIndex)));
   }
 
   function huberScale(group) {
@@ -247,15 +230,13 @@
 
     for (var ti = 0; ti < T; ti += 1) {
       var pose = getPose(vector, ti);
-      for (var measurementIndex = 0; measurementIndex < J; measurementIndex += 1) {
-        var associatedVA = associationFor(ti, measurementIndex);
-        var va = getVA(vector, associatedVA);
-        var prediction = predictRadio(pose, va);
-        var measurement = state.measurements[ti][measurementIndex];
-        var group = [(prediction.range - measurement.range) / 0.16];
+      for (var pathIndex = 0; pathIndex < PATH_COUNT; pathIndex += 1) {
+        var prediction = predictForPath(vector, pose, ti, pathIndex);
+        var measurement = state.measurements[ti][pathIndex];
+        var group = [(prediction.range - measurement.range) / S1.setup.noise.rangeSigma];
         if (modelFull.checked) {
-          group.push(wrap(prediction.aoa - measurement.aoa) / 0.028);
-          group.push(wrap(prediction.aod - measurement.aod) / 0.028);
+          group.push(wrap(prediction.aoa - measurement.aoa) / S1.setup.noise.aoaSigma);
+          group.push(wrap(prediction.aod - measurement.aod) / S1.setup.noise.aodSigma);
         }
         var scale = huberScale(group);
         for (var g = 0; g < group.length; g += 1) residuals.push(scale * group[g]);
@@ -423,7 +404,7 @@
     iterationValue.textContent = String(state.iteration);
     conditionValue.textContent = isFinite(state.condition) ? state.condition.toExponential(1) : "—";
     noiseValue.textContent = (Number(noiseRange.value) / 100).toFixed(1) + "×";
-    epochValue.innerHTML = mathTex("x_{" + Number(epochRange.value) + "}");
+    epochValue.innerHTML = mathTex("x_{" + (Number(epochRange.value) + 1) + "}");
   }
 
   function line(ctx, x1, y1, x2, y2, color, width, dash, alpha) {
@@ -480,7 +461,7 @@
   }
 
   function sceneTransform() {
-    var minX = -6.2, maxX = 14.2, minY = -1.2, maxY = 13.2;
+    var minX = 0, maxX = 16.2, minY = 0, maxY = 13.4;
     var padding = 28;
     var width = sceneCanvas.width - 2 * padding;
     var height = sceneCanvas.height - 2 * padding;
@@ -529,15 +510,15 @@
     ctx.fillStyle = COLORS.paper;
     ctx.fillRect(0, 0, sceneCanvas.width, sceneCanvas.height);
 
-    for (var gx = -6; gx <= 14; gx += 2) {
-      var gxa = transform.point(gx, -1.2);
-      var gxb = transform.point(gx, 13.2);
+    for (var gx = 0; gx <= 16; gx += 2) {
+      var gxa = transform.point(gx, 0);
+      var gxb = transform.point(gx, 13.4);
       line(ctx, gxa.x, gxa.y, gxb.x, gxb.y, COLORS.grid, 1);
       label(ctx, String(gx), gxa.x, sceneCanvas.height - 10, COLORS.faint, 8, "center", 400);
     }
     for (var gy = 0; gy <= 12; gy += 2) {
-      var gya = transform.point(-6.2, gy);
-      var gyb = transform.point(14.2, gy);
+      var gya = transform.point(0, gy);
+      var gyb = transform.point(16.2, gy);
       line(ctx, gya.x, gya.y, gyb.x, gyb.y, COLORS.grid, 1);
       label(ctx, String(gy), 10, gya.y, COLORS.faint, 8, "left", 400);
     }
@@ -572,21 +553,30 @@
 
     var selectedEpoch = Number(epochRange.value);
     var selectedPose = getPose(state.vector, selectedEpoch);
-    for (var measurementIndex = 0; measurementIndex < J; measurementIndex += 1) {
-      var associatedVA = associationFor(selectedEpoch, measurementIndex);
+    var bsPoint = transform.point(BS.x, BS.y);
+    var uePoint = transform.point(selectedPose.x, selectedPose.y);
+    for (var pathIndex = 0; pathIndex < PATH_COUNT; pathIndex += 1) {
+      var prediction = predictForPath(state.vector, selectedPose, selectedEpoch, pathIndex);
+      var expectedVA = pathIndex - 1;
+      var associatedVA = associationFor(selectedEpoch, pathIndex);
+      var wrong = pathIndex > 0 && associatedVA !== expectedVA;
+      var routeColor = wrong ? COLORS.danger : (pathIndex === 0 ? COLORS.radio : (pathIndex === 1 ? COLORS.map : COLORS.pose));
+      if (pathIndex === 0) {
+        line(ctx, bsPoint.x, bsPoint.y, uePoint.x, uePoint.y, routeColor, 4, [], 0.9);
+        label(ctx, "LoS", 0.5 * (bsPoint.x + uePoint.x) + 5, 0.5 * (bsPoint.y + uePoint.y) - 7, routeColor, 8, "left", 700);
+        continue;
+      }
       var va = getVA(state.vector, associatedVA);
-      var prediction = predictRadio(selectedPose, va);
-      var bsPoint = transform.point(BS.x, BS.y);
       var reflectionPoint = transform.point(prediction.point.x, prediction.point.y);
-      var uePoint = transform.point(selectedPose.x, selectedPose.y);
       var vaPoint = transform.point(va.x, va.y);
-      var wrong = associatedVA !== measurementIndex;
-      var routeColor = wrong ? COLORS.danger : (measurementIndex === 0 ? COLORS.radio : COLORS.map);
       line(ctx, bsPoint.x, bsPoint.y, reflectionPoint.x, reflectionPoint.y, routeColor, 4, [], 0.9);
       line(ctx, reflectionPoint.x, reflectionPoint.y, uePoint.x, uePoint.y, routeColor, 4, [], 0.9);
       line(ctx, uePoint.x, uePoint.y, vaPoint.x, vaPoint.y, routeColor, 1.5, [5, 4], 0.45);
       circle(ctx, reflectionPoint.x, reflectionPoint.y, 4.5, COLORS.paper, routeColor, 2);
-      label(ctx, "P" + (measurementIndex + 1), reflectionPoint.x + 7, reflectionPoint.y - 8, routeColor, 8, "left", 700);
+      label(ctx, "P" + (pathIndex === 1 ? "A" : "B"), reflectionPoint.x + 7, reflectionPoint.y - 8, routeColor, 8, "left", 700);
+    }
+    if (state.measurements[selectedEpoch].length > PATH_COUNT) {
+      label(ctx, "× clutter z4 · no geometry factor", sceneCanvas.width - 12, 13, COLORS.danger, 8, "right", 700);
     }
 
     var previousEstimate = null;
@@ -595,7 +585,7 @@
       var estimatePoint = transform.point(estimatePose.x, estimatePose.y);
       if (previousEstimate) line(ctx, previousEstimate.x, previousEstimate.y, estimatePoint.x, estimatePoint.y, COLORS.pose, 3);
       drawPose(ctx, transform, estimatePose, COLORS.pose, estimateIndex === selectedEpoch ? 6.5 : 5, 1);
-      label(ctx, "x" + estimateIndex, estimatePoint.x + 8, estimatePoint.y - 9, COLORS.poseDeep, 8, "left", 700);
+      label(ctx, "x" + (estimateIndex + 1), estimatePoint.x + 8, estimatePoint.y - 9, COLORS.poseDeep, 8, "left", 700);
       previousEstimate = estimatePoint;
     }
 
@@ -610,10 +600,10 @@
       line(ctx, trueVA.x, trueVA.y - 5, trueVA.x, trueVA.y + 5, COLORS.faint, 1.5, [], 0.65);
       var estimatedVA = transform.point(getVA(state.vector, j).x, getVA(state.vector, j).y);
       diamond(ctx, estimatedVA.x, estimatedVA.y, 7, j === 0 ? COLORS.map : COLORS.poseDeep, COLORS.paper);
-      label(ctx, "VA" + (j + 1), estimatedVA.x + 10, estimatedVA.y - 9, j === 0 ? COLORS.mapDeep : COLORS.poseDeep, 9, "left", 700);
+      label(ctx, j === 0 ? "vA" : "vB", estimatedVA.x + 10, estimatedVA.y - 9, j === 0 ? COLORS.mapDeep : COLORS.poseDeep, 9, "left", 700);
     }
 
-    label(ctx, modelFull.checked ? "radio residual: [cτ, AoA, AoD]" : "radio residual: [cτ]", 10, 13, COLORS.poseDeep, 9, "left", 700);
+    label(ctx, modelFull.checked ? "S1 geometry residual: [cτ, φ, ψ] · α grades hypotheses" : "S1 geometry residual: [cτ]", 10, 13, COLORS.poseDeep, 9, "left", 700);
   }
 
   function drawGraph() {
@@ -624,12 +614,12 @@
     label(ctx, "FACTOR GRAPH", 14, 18, COLORS.poseDeep, 9, "left", 700);
     label(ctx, "continuous solve | fixed A,Q", 14, 34, COLORS.faint, 8, "left", 400);
 
-    var poseY = [74, 134, 194, 254, 314];
+    var poseY = [68, 128, 188, 248, 308];
     var poseX = 72;
     var factorX = 42;
     var radioX = 130;
     var vaX = 218;
-    var vaY = [142, 268];
+    var targetY = [72, 190, 304];
 
     for (var t = 0; t < T; t += 1) {
       if (t < T - 1) {
@@ -654,13 +644,14 @@
     var selectedEpoch = Number(epochRange.value);
     for (var ti = 0; ti < T; ti += 1) {
       circle(ctx, poseX, poseY[ti], ti === selectedEpoch ? 10 : 8, ti === selectedEpoch ? COLORS.pose : COLORS.paper, COLORS.poseDeep, 2);
-      label(ctx, "x" + ti, poseX, poseY[ti] + 1, ti === selectedEpoch ? COLORS.paper : COLORS.poseDeep, 8, "center", 700);
-      for (var measurementIndex = 0; measurementIndex < J; measurementIndex += 1) {
-        var associatedVA = associationFor(ti, measurementIndex);
-        var wrong = associatedVA !== measurementIndex;
-        var yTarget = vaY[associatedVA];
-        var yFactor = poseY[ti] + (measurementIndex === 0 ? -7 : 7);
-        var factorColor = wrong ? COLORS.danger : (measurementIndex === 0 ? COLORS.radio : COLORS.map);
+      label(ctx, "x" + (ti + 1), poseX, poseY[ti] + 1, ti === selectedEpoch ? COLORS.paper : COLORS.poseDeep, 8, "center", 700);
+      for (var pathIndex = 0; pathIndex < PATH_COUNT; pathIndex += 1) {
+        var associatedVA = associationFor(ti, pathIndex);
+        var wrong = pathIndex > 0 && associatedVA !== pathIndex - 1;
+        var targetIndex = pathIndex === 0 ? 0 : associatedVA + 1;
+        var yTarget = targetY[targetIndex];
+        var yFactor = poseY[ti] + (pathIndex - 1) * 7;
+        var factorColor = wrong ? COLORS.danger : (pathIndex === 0 ? COLORS.radio : (pathIndex === 1 ? COLORS.map : COLORS.pose));
         var alpha = ti === selectedEpoch ? 0.95 : 0.18;
         line(ctx, poseX + 9, yFactor, radioX - 5, yFactor, factorColor, ti === selectedEpoch ? 2 : 1, [], alpha);
         line(ctx, radioX + 5, yFactor, vaX - 11, yTarget, factorColor, ti === selectedEpoch ? 2 : 1, [], alpha);
@@ -675,14 +666,17 @@
       }
     }
 
+    ctx.fillStyle = COLORS.ink;
+    ctx.fillRect(vaX - 8, targetY[0] - 8, 16, 16);
+    label(ctx, "b", vaX, targetY[0] + 1, COLORS.paper, 8, "center", 700);
     for (var j = 0; j < J; j += 1) {
-      diamond(ctx, vaX, vaY[j], 11, j === 0 ? COLORS.map : COLORS.poseDeep, COLORS.paper);
-      label(ctx, "v" + (j + 1), vaX, vaY[j] + 1, COLORS.paper, 8, "center", 700);
+      diamond(ctx, vaX, targetY[j + 1], 11, j === 0 ? COLORS.map : COLORS.poseDeep, COLORS.paper);
+      label(ctx, j === 0 ? "vA" : "vB", vaX, targetY[j + 1] + 1, COLORS.paper, 8, "center", 700);
     }
 
-    label(ctx, "○ pose variable", 16, 356, COLORS.soft, 8, "left", 400);
-    label(ctx, "◇ VA variable", 16, 372, COLORS.soft, 8, "left", 400);
-    label(ctx, "□ factor", 16, 388, COLORS.soft, 8, "left", 400);
+    label(ctx, "■ known BS · ○ pose", 16, 354, COLORS.soft, 8, "left", 400);
+    label(ctx, "◇ VA variable · □ factor", 16, 372, COLORS.soft, 8, "left", 400);
+    label(ctx, "clutter scans: x2, x4 · no edge", 16, 390, COLORS.danger, 8, "left", 400);
     label(ctx, modelFull.checked ? "radio: τ + φ + ψ" : "radio: τ only", 16, 410, COLORS.poseDeep, 8, "left", 700);
   }
 
@@ -692,8 +686,8 @@
     drawGraph();
     var wrong = wrongAssociation.checked;
     hintEl.textContent = wrong
-      ? "Red edge: z" + (WRONG_MEASUREMENT + 1) + " at x" + WRONG_T + " is attached to the wrong VA. Robust loss can protect the rest of the graph."
-      : "Solid walls are perpendicular bisectors of the known BS and estimated VA. The selected epoch shows the folded BS→wall→UE routes.";
+      ? "Red edge: the wall-A MPC at x" + (WRONG_T + 1) + " is attached to vB. Robust loss can protect the rest of the S1 graph."
+      : "Setup S1: orange is LoS; green/blue are the two folded specular routes. Clutter at x2 and x4 has no geometry edge.";
   }
 
   function resetEstimate(message) {

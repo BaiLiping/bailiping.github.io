@@ -1,8 +1,10 @@
 (function () {
   "use strict";
 
+  var S1 = window.RadioSlamS1;
+  if (!S1) throw new Error("Shared radio-SLAM setup S1 failed to load");
   var GATE = 9.21;
-  var TRACK_COLORS = ["#2ca02c", "#9467bd", "#d62728"];
+  var TRACK_COLORS = ["#e8720c", "#0e8f7e", "#1874b8"];
   var COLORS = {
     ink: "#16222e",
     soft: "#51606e",
@@ -20,28 +22,7 @@
     return '<span class="math-tex ' + (display ? 'math-display' : 'math-inline') + '">' +
       (display ? '\\[' : '\\(') + source + (display ? '\\]' : '\\)') + '</span>';
   }
-  var DEFAULT_TRACKS = [
-    { x: 285, y: 205, S: [[520, 140], [140, 340]] },
-    { x: 352, y: 232, S: [[460, -120], [-120, 480]] },
-    { x: 318, y: 158, S: [[620, 0], [0, 300]] }
-  ];
-  var DEFAULT_MEASUREMENTS = [
-    { x: 318, y: 198 },
-    { x: 322, y: 215 },
-    { x: 314, y: 186 },
-    { x: 560, y: 120 }
-  ];
-  var SEPARATE_TRACKS = [
-    { x: 165, y: 250, S: [[380, 20], [20, 300]] },
-    { x: 360, y: 125, S: [[360, -30], [-30, 320]] },
-    { x: 535, y: 275, S: [[400, 0], [0, 310]] }
-  ];
-  var SEPARATE_MEASUREMENTS = [
-    { x: 174, y: 245 },
-    { x: 351, y: 133 },
-    { x: 527, y: 268 },
-    { x: 650, y: 80 }
-  ];
+  var SIGNATURE_BOUNDS = { left: 52, right: 674, top: 34, bottom: 384, rangeMax: 14 };
 
   var canvas = document.getElementById("association-canvas");
   var ctx = canvas.getContext("2d");
@@ -56,6 +37,12 @@
   var stageHeading = document.getElementById("stage-heading");
   var statusEl = document.getElementById("status");
   var hintEl = document.getElementById("canvas-hint");
+  var scanRange = document.getElementById("scan-range");
+  var scanValue = document.getElementById("scan-value");
+  var setupScan = document.getElementById("setup-scan");
+  var setupKnown = document.getElementById("setup-known");
+  var setupLatent = document.getElementById("setup-latent");
+  var setupOutput = document.getElementById("setup-output");
   var pdRange = document.getElementById("pd-range");
   var clutterRange = document.getElementById("clutter-range");
   var kRange = document.getElementById("k-range");
@@ -72,22 +59,22 @@
   var copy = {
     assignment: {
       kicker: "COMMON INPUT",
-      title: "Shape the association problem",
-      body: "Drag a measurement through overlapping validation gates. Both inference routes consume the same normalized weights.",
+      title: "Inspect one S1 scan",
+      body: "Drag an MPC in the path-length/AoA plane. BP and PMBM consume the same predicted routes and measured tuples.",
       heading: "GATED LIKELIHOODS " + mathTex("\\ell"),
-      hint: "Dashed ellipses are 99% validation gates. A dot in the matrix means a gated-out pair."
+      hint: "Dashed gates include current map uncertainty as well as measurement noise. A dot marks a gated-out route–MPC pair."
     },
     bp: {
       kicker: "MARGINAL VIEW",
       title: "Negotiate without enumeration",
-      body: "Loopy sum–product passes local competition messages until approximate association marginals settle.",
+      body: "With the five UE poses fixed, loopy sum–product estimates S1 route-association marginals and VA-feature beliefs.",
       heading: "WILLIAMS–LAU MESSAGE PASSING",
-      hint: "Line width follows the current BP marginal. Edge labels show " + mathTex("\\mu_{\\mathrm{track}\\to\\mathrm{measurement}}") + " and " + mathTex("\\nu_{\\mathrm{measurement}\\to\\mathrm{track}}") + "."
+      hint: "Line width follows the current marginal. Edge labels show " + mathTex("\\mu_{\\mathrm{route}\\to\\mathrm{MPC}}") + " and " + mathTex("\\nu_{\\mathrm{MPC}\\to\\mathrm{route}}") + "."
     },
     hypotheses: {
       kicker: "JOINT VIEW",
       title: "Rank compatible stories",
-      body: "Exhaustive enumeration exposes every valid global assignment in this small benchmark; " + mathTex("k") + " controls truncation.",
+      body: "The same S1 scan is organized into compatible global route histories; " + mathTex("k") + " controls PMBM-style truncation.",
       heading: "EXACT JOINT ASSIGNMENTS + PRUNING",
       hint: "Orange bars are normalized joint-event weights. Dim rows are pruned; retained marginals are renormalized over the kept set."
     }
@@ -96,9 +83,12 @@
   var requestedMode = new URLSearchParams(window.location.search).get("demo");
   if (!Object.prototype.hasOwnProperty.call(copy, requestedMode)) requestedMode = "assignment";
   var mode = "assignment";
+  var initialScene = sceneForScan(3);
   var state = {
-    tracks: clone(DEFAULT_TRACKS),
-    measurements: clone(DEFAULT_MEASUREMENTS),
+    scanIndex: 3,
+    scanData: initialScene.scan,
+    tracks: initialScene.tracks,
+    measurements: initialScene.measurements,
     PD: 0.90,
     clutter: 5e-5,
     k: 5,
@@ -114,6 +104,74 @@
 
   function clone(value) {
     return JSON.parse(JSON.stringify(value));
+  }
+
+  function degrees(angle) {
+    return angle / S1.DEG;
+  }
+
+  function signaturePoint(value) {
+    var bounds = SIGNATURE_BOUNDS;
+    return {
+      x: bounds.left + Math.max(0, Math.min(bounds.rangeMax, value.range)) / bounds.rangeMax * (bounds.right - bounds.left),
+      y: bounds.top + (180 - degrees(value.aoa)) / 360 * (bounds.bottom - bounds.top)
+    };
+  }
+
+  function routeTex(index) {
+    if (index === 0) return "H_{\\mathrm{LoS}}";
+    return "H_{" + (index === 1 ? "A" : "B") + "}";
+  }
+
+  function sceneForScan(scanIndex) {
+    var scan = S1.scan(scanIndex, 1);
+    var covariances = [
+      [[760, 0], [0, 900]],
+      [[1250, 180], [180, 2200]],
+      [[1250, -180], [-180, 2200]]
+    ];
+    var tracks = scan.predictions.map(function (prediction, index) {
+      var point = signaturePoint(prediction);
+      return {
+        x: point.x,
+        y: point.y,
+        S: clone(covariances[index]),
+        label: prediction.label,
+        tex: prediction.tex,
+        range: prediction.range,
+        aoa: prediction.aoa
+      };
+    });
+    var measurements = scan.measurements.map(function (measurement) {
+      var point = signaturePoint(measurement);
+      return {
+        x: point.x,
+        y: point.y,
+        label: measurement.label,
+        isClutter: measurement.isClutter,
+        range: measurement.range,
+        aoa: measurement.aoa,
+        gainDb: measurement.gainDb
+      };
+    });
+    return { scan: scan, tracks: tracks, measurements: measurements };
+  }
+
+  function updateSetupPanel() {
+    var scanNumber = state.scanIndex + 1;
+    setupScan.textContent = "scan " + scanNumber + " / 5";
+    scanValue.innerHTML = mathTex("x_{" + scanNumber + "}") + " / 5";
+    setupKnown.innerHTML = mathTex("\\mathbf b,\\mathbf x_{1:5},Z") + " fixed";
+    if (mode === "bp") {
+      setupLatent.innerHTML = mathTex("M,E,A") + " · VA state, existence, associations";
+      setupOutput.textContent = "marginal feature and association beliefs";
+    } else if (mode === "hypotheses") {
+      setupLatent.innerHTML = mathTex("M,H") + " · PPP/Bernoulli map and histories";
+      setupOutput.textContent = "weighted global hypotheses and marginals";
+    } else {
+      setupLatent.innerHTML = mathTex("A") + " · route-to-MPC assignments";
+      setupOutput.textContent = "shared gated likelihood ratios";
+    }
   }
 
   function gaussian2(dx, dy, S) {
@@ -315,11 +373,11 @@
   }
 
   function weightTable() {
-    var html = "<h3>Existing-track weights</h3><table class=\"mini-matrix\"><tr><th></th><th>" + mathTex("\\varnothing") + "</th>";
+    var html = "<h3>S1 route-hypothesis weights</h3><table class=\"mini-matrix\"><tr><th></th><th>" + mathTex("\\varnothing") + "</th>";
     for (var j = 0; j < result.m; j += 1) html += "<th>" + mathTex("z_{" + (j + 1) + "}") + "</th>";
     html += "</tr>";
     for (var i = 0; i < result.n; i += 1) {
-      html += "<tr><td class=\"row-head\" style=\"color:" + TRACK_COLORS[i] + "\">" + mathTex("T_{" + (i + 1) + "}") + "</td>";
+      html += "<tr><td class=\"row-head\" style=\"color:" + TRACK_COLORS[i] + "\">" + mathTex(routeTex(i)) + "</td>";
       result.L[i].forEach(function (value, column) {
         var cellClass = value <= 0 ? "dim" : (column === state.selectedMeasurement + 1 ? "hot" : "");
         html += "<td class=\"" + cellClass + "\">" + formatWeight(value) + "</td>";
@@ -327,17 +385,17 @@
       html += "</tr>";
     }
     html += "</table>";
-    html += "<p class=\"card-note\">" + mathTex("\\ell_{ij}=P_{\\mathrm D}\\,\\mathcal N(z_j;\\widehat z_i,S_i)/\\lambda_c", true) + mathTex("\\ell_{i\\varnothing}=1-P_{\\mathrm D}", true) + "unassigned measurement baseline = 1</p>";
+    html += "<p class=\"card-note\">" + mathTex("\\ell_{ij}=P_{\\mathrm D}\\,\\mathcal N(z_j;\\widehat z_i,S_i)/\\lambda_c", true) + mathTex("\\ell_{i\\varnothing}=1-P_{\\mathrm D}", true) + "gates include the current S1 map-prediction uncertainty</p>";
     return html;
   }
 
   function bpTable() {
     var current = currentBp();
-    var html = "<h3>BP track marginals</h3><table class=\"mini-matrix\"><tr><th></th><th>" + mathTex("\\varnothing") + "</th>";
+    var html = "<h3>BP route marginals</h3><table class=\"mini-matrix\"><tr><th></th><th>" + mathTex("\\varnothing") + "</th>";
     for (var j = 0; j < result.m; j += 1) html += "<th>" + mathTex("z_{" + (j + 1) + "}") + "</th>";
     html += "</tr>";
     for (var i = 0; i < result.n; i += 1) {
-      html += "<tr><td class=\"row-head\" style=\"color:" + TRACK_COLORS[i] + "\">" + mathTex("T_{" + (i + 1) + "}") + "</td>";
+      html += "<tr><td class=\"row-head\" style=\"color:" + TRACK_COLORS[i] + "\">" + mathTex(routeTex(i)) + "</td>";
       current.marginals[i].forEach(function (value) {
         html += "<td>" + formatProbability(value) + "</td>";
       });
@@ -486,7 +544,7 @@
       ctx.fill();
       ctx.fillStyle = TRACK_COLORS[index];
       ctx.font = "700 12px ui-monospace, monospace";
-      ctx.fillText("T" + (index + 1), track.x + 10, track.y - 9);
+      ctx.fillText(index === 0 ? "LoS" : (index === 1 ? "wall A" : "wall B"), track.x + 10, track.y - 9);
     });
 
     state.measurements.forEach(function (measurement, index) {
@@ -509,9 +567,20 @@
       ctx.stroke();
       ctx.fillStyle = COLORS.ink;
       ctx.font = "11px ui-monospace, monospace";
-      ctx.fillText("z" + (index + 1), 9, 16);
+      ctx.fillText("z" + (index + 1) + (measurement.isClutter ? " · FA" : ""), 9, 16);
       ctx.restore();
     });
+    ctx.fillStyle = COLORS.faint;
+    ctx.font = "800 9px ui-monospace, monospace";
+    ctx.textAlign = "right";
+    ctx.fillText("path length cτ (m) →", 704, 410);
+    ctx.save();
+    ctx.translate(15, 226);
+    ctx.rotate(-Math.PI / 2);
+    ctx.textAlign = "center";
+    ctx.fillText("UE-frame AoA φ (deg)", 0, 0);
+    ctx.restore();
+    ctx.textAlign = "left";
     ctx.restore();
   }
 
@@ -576,7 +645,7 @@
       ctx.fillStyle = TRACK_COLORS[index];
       ctx.font = "italic 700 12px Georgia, serif";
       ctx.textAlign = "center";
-      ctx.fillText("a" + (index + 1), leftX, y + 4);
+      ctx.fillText(index === 0 ? "L" : (index === 1 ? "A" : "B"), leftX, y + 4);
     });
     measurementY.forEach(function (y, index) {
       ctx.beginPath();
@@ -589,21 +658,21 @@
       ctx.fillStyle = COLORS.soft;
       ctx.font = "italic 700 11px Georgia, serif";
       ctx.textAlign = "center";
-      ctx.fillText("b" + (index + 1), rightX, y + 4);
+      ctx.fillText("z" + (index + 1), rightX, y + 4);
     });
     ctx.textAlign = "left";
     ctx.fillStyle = COLORS.faint;
     ctx.font = "800 9px ui-monospace, monospace";
-    ctx.fillText("TRACK VARIABLES", leftX - 46, 17);
-    ctx.fillText("MEASUREMENT VARIABLES", rightX - 63, 17);
+    ctx.fillText("ROUTE HYPOTHESES", leftX - 46, 17);
+    ctx.fillText("MPC VARIABLES", rightX - 48, 17);
     ctx.fillStyle = COLORS.bpDeep;
     ctx.fillText("sweep " + current.sweep + " / " + (result.history.length - 1), 12, size.height - 12);
   }
 
   function assignmentStory(event) {
     var parts = event.assignment.map(function (measurement, track) {
-      if (measurement < 0) return "<span class=\"miss\">" + mathTex("T_{" + (track + 1) + "}\\to\\varnothing") + "</span>";
-      return mathTex("T_{" + (track + 1) + "}\\to z_{" + (measurement + 1) + "}");
+      if (measurement < 0) return "<span class=\"miss\">" + mathTex(routeTex(track) + "\\to\\varnothing") + "</span>";
+      return mathTex(routeTex(track) + "\\to z_{" + (measurement + 1) + "}");
     });
     var assigned = new Set(event.assignment.filter(function (value) { return value >= 0; }));
     var free = [];
@@ -634,7 +703,7 @@
     var card = "<div class=\"mass-callout\"><strong>" + (100 * truncated.mass).toFixed(1) + "%</strong><span>normalized joint mass retained by top " + state.k + "</span></div>";
     card += "<h3>Marginals after truncation</h3>";
     truncated.marginals.forEach(function (row, track) {
-      card += "<div class=\"track-marginal\"><h4 style=\"color:" + TRACK_COLORS[track] + "\">" + mathTex("T_{" + (track + 1) + "}") + "</h4>";
+      card += "<div class=\"track-marginal\"><h4 style=\"color:" + TRACK_COLORS[track] + "\">" + mathTex(routeTex(track)) + "</h4>";
       row.forEach(function (value, column) {
         card += "<div class=\"bar-row\"><span>" + mathTex(column === 0 ? "\\varnothing" : "z_{" + column + "}") + "</span><div class=\"bar-track\"><i style=\"width:" + (100 * value).toFixed(1) + "%\"></i></div><span>" + formatProbability(value) + "</span></div>";
       });
@@ -659,9 +728,11 @@
   }
 
   function renderAll() {
+    scanRange.value = String(state.scanIndex);
     pdValue.value = state.PD.toFixed(2);
     clutterValue.innerHTML = mathTex(formatScientificTex(state.clutter));
     kValue.value = String(state.k);
+    updateSetupPanel();
     updateMetrics();
     renderStage();
   }
@@ -751,25 +822,23 @@
     methodCopy.innerHTML = text.body;
     stageHeading.innerHTML = text.heading;
     hintEl.innerHTML = text.hint;
-    if (mode === "assignment") setStatus("Drag a measurement to recompute", false);
+    if (mode === "assignment") setStatus("Scan " + (state.scanIndex + 1) + " loaded · drag an MPC to perturb it", false);
     if (mode === "bp") setStatus("Start at uncoupled " + mathTex("\\nu=1"), false);
     if (mode === "hypotheses") setStatus("Top " + state.k + " of " + result.events.length + " events retained", false);
     renderAll();
   }
 
-  function applyPreset(kind) {
+  function setScan(scanIndex, message) {
     stopAuto(true);
-    if (kind === "separate") {
-      state.tracks = clone(SEPARATE_TRACKS);
-      state.measurements = clone(SEPARATE_MEASUREMENTS);
-      setStatus("Separated scene — the graph nearly decomposes", false);
-    } else {
-      state.tracks = clone(DEFAULT_TRACKS);
-      state.measurements = clone(DEFAULT_MEASUREMENTS);
-      setStatus("Three-way tangle restored", false);
-    }
+    var next = Math.max(0, Math.min(S1.setup.poses.length - 1, Number(scanIndex)));
+    var scene = sceneForScan(next);
+    state.scanIndex = next;
+    state.scanData = scene.scan;
+    state.tracks = scene.tracks;
+    state.measurements = scene.measurements;
     state.selectedMeasurement = 0;
     recompute(true);
+    setStatus(message || ("S1 scan " + (next + 1) + " loaded" + (scene.scan.clutter ? " · fixed clutter MPC present" : "")), false);
   }
 
   function canvasPoint(event) {
@@ -819,7 +888,7 @@
 
   function nudgeMeasurement(event) {
     if (mode !== "assignment") return;
-    if (/^[1-4]$/.test(event.key)) {
+    if (/^[1-9]$/.test(event.key) && Number(event.key) <= state.measurements.length) {
       event.preventDefault();
       state.selectedMeasurement = Number(event.key) - 1;
       setStatus("Selected z" + event.key + " · use arrow keys to move it", false);
@@ -881,9 +950,14 @@
   });
   kRange.addEventListener("input", function () { setK(kRange.value); });
 
-  document.getElementById("tangle-preset").addEventListener("click", function () { applyPreset("tangle"); });
-  document.getElementById("separate-preset").addEventListener("click", function () { applyPreset("separate"); });
-  document.getElementById("assignment-reset").addEventListener("click", function () { applyPreset("tangle"); });
+  scanRange.addEventListener("input", function () { setScan(scanRange.value); });
+  document.getElementById("previous-scan").addEventListener("click", function () {
+    setScan((state.scanIndex + S1.setup.poses.length - 1) % S1.setup.poses.length);
+  });
+  document.getElementById("next-scan").addEventListener("click", function () {
+    setScan((state.scanIndex + 1) % S1.setup.poses.length);
+  });
+  document.getElementById("assignment-reset").addEventListener("click", function () { setScan(state.scanIndex, "Shared S1 measurement restored"); });
   document.getElementById("bp-step").addEventListener("click", function () {
     stopAuto(true);
     stepBp();
