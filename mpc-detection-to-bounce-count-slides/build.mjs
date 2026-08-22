@@ -512,14 +512,44 @@ slides.push({
 slides.push(regular(
   's-measurement', '01 · MEASUREMENT', 'One resolved path gives four observables',
   'Geometry starts with delay and bearings; power helps distinguish otherwise similar routes.',
-  'Define the resolved path tuple. Delay becomes path length, AoA and AoD are local until headings are known, and path loss remains a calibrated radiometric observation rather than a direct bounce counter.',
+  'Define the resolved path tuple. Use the right-hand scene as three separate route examples—not three explanations of one measured tuple. Delay becomes path length, AoA and AoD are local until headings are known, and path loss remains a calibrated radiometric observation rather than a direct bounce counter.',
   [
     card('tuple-card', 96, 214, 690, 300, C.paper, { stroke: C.measurement, strokeWidth: 2 }),
     text('tuple', 132, 252, 618, 72, '(τ, φ, ψ, PL)', 52, { color: C.measurementDeep, fontWeight: 700, align: 'center' }),
     text('tuple-map', 132, 350, 618, 116, 'delay τ → L = cτ<br>AoA φ → arrival bearing at the UE<br>AoD ψ → departure bearing at the BS<br>PL → path loss', 21, { lineHeight: 1.55 }),
-    card('boundary-card', 820, 214, 364, 300, C.measurementSoft, { stroke: C.measurement }),
-    text('boundary-k', 848, 242, 308, 20, 'IMPORTANT BOUNDARY', 11, { color: C.measurementDeep, fontFamily: MONO, fontWeight: 700, letterSpacing: 1.2 }),
-    text('boundary-v', 848, 282, 308, 178, 'An MPC tuple constrains a route.<br><br>It does <b>not</b> name the walls, their order, or the bounce count by itself.', 24, { fontWeight: 700, lineHeight: 1.35 }),
+    image(
+      'measurement-route-scene', 800, 206, 384, 256,
+      './assets/mpc-route-scene.webp',
+      {
+        fit: 'contain',
+        alt: 'Frameless oblique 3D scene with a base-station antenna, green user equipment, and direct, one-bounce, and two-bounce radio routes reflecting from wall planes.',
+        fx: { enter: 'fade-up', order: 2 }
+      }
+    ),
+    line('route-los-glow', 882, 296, 1088, 328, C.measurement, 9, { opacity: .18 }),
+    line('route-single-a-glow', 881, 292, 980, 278, C.map, 9, { opacity: .18 }),
+    line('route-single-b-glow', 980, 278, 1088, 326, C.map, 9, { opacity: .18 }),
+    line('route-double-a-glow', 880, 299, 1000, 370, C.known, 9, { opacity: .18 }),
+    line('route-double-b-glow', 1000, 370, 1115, 316, C.known, 9, { opacity: .18 }),
+    line('route-double-c-glow', 1115, 316, 1090, 331, C.known, 9, { opacity: .18 }),
+    line('route-los', 882, 296, 1088, 328, C.measurement, 3),
+    line('route-single-a', 881, 292, 980, 278, C.map, 3),
+    line('route-single-b', 980, 278, 1088, 326, C.map, 3),
+    line('route-double-a', 880, 299, 1000, 370, C.known, 3),
+    line('route-double-b', 1000, 370, 1115, 316, C.known, 3),
+    line('route-double-c', 1115, 316, 1090, 331, C.known, 3),
+    shape('route-single-point', 975, 273, 10, 10, C.paper, { shape: 'ellipse', stroke: C.map, strokeWidth: 3 }),
+    shape('route-double-point-a', 995, 365, 10, 10, C.paper, { shape: 'ellipse', stroke: C.known, strokeWidth: 3 }),
+    shape('route-double-point-b', 1110, 311, 10, 10, C.paper, { shape: 'ellipse', stroke: C.known, strokeWidth: 3 }),
+    text('route-bs-label', 812, 272, 54, 18, 'BS', 10, { color: C.ink, fontFamily: MONO, fontWeight: 700, align: 'right' }),
+    text('route-ue-label', 1098, 334, 44, 18, 'UE', 10, { color: C.ue, fontFamily: MONO, fontWeight: 700 }),
+    text('route-family-k', 820, 470, 364, 16, 'EXAMPLE ROUTE FAMILY', 9, { color: C.faint, fontFamily: MONO, fontWeight: 700, align: 'center', letterSpacing: 1.1 }),
+    line('route-legend-los', 832, 502, 852, 502, C.measurement, 3),
+    text('route-legend-los-v', 859, 494, 48, 18, 'LoS', 10, { color: C.soft, fontFamily: MONO, fontWeight: 700 }),
+    line('route-legend-single', 918, 502, 938, 502, C.map, 3),
+    text('route-legend-single-v', 945, 494, 70, 18, '1 bounce', 10, { color: C.soft, fontFamily: MONO, fontWeight: 700 }),
+    line('route-legend-double', 1032, 502, 1052, 502, C.known, 3),
+    text('route-legend-double-v', 1059, 494, 82, 18, '2 bounces', 10, { color: C.soft, fontFamily: MONO, fontWeight: 700 }),
     text('measurement-foot', 96, 560, 1088, 60, 'The rest of the deck asks what becomes identifiable as map and pose knowledge are removed.', 20, { color: C.soft, fontFamily: SANS, align: 'center' })
   ], { accent: C.measurement }
 ))
