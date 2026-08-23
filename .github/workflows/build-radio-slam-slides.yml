@@ -3,7 +3,17 @@ name: Build enhanced radio SLAM slides
 on:
   push:
     branches:
+      - main
       - enhance-radio-slam-graphslam
+    paths:
+      - mpc-detection-to-bounce-count-slides/radio-slam-extra.mjs
+      - mpc-detection-to-bounce-count-slides/radio-graphslam-live/**
+      - scripts/patch-radio-slam-slides.mjs
+      - scripts/fix-radio-graphslam-slide.mjs
+      - .github/workflows/build-radio-slam-slides.yml
+  pull_request:
+    branches:
+      - main
     paths:
       - mpc-detection-to-bounce-count-slides/radio-slam-extra.mjs
       - mpc-detection-to-bounce-count-slides/radio-graphslam-live/**
@@ -19,10 +29,9 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - name: Check out branch
+      - name: Check out revision
         uses: actions/checkout@v4
         with:
-          ref: ${{ github.ref_name }}
           fetch-depth: 0
 
       - name: Set up Node.js
@@ -91,6 +100,7 @@ jobs:
         run: rm -f radio-slam-slides-update.zip
 
       - name: Commit generated deck
+        if: github.event_name == 'push'
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
