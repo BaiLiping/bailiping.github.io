@@ -29,9 +29,10 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - name: Check out revision
+      - name: Check out source branch
         uses: actions/checkout@v4
         with:
+          ref: ${{ github.event_name == 'pull_request' && github.head_ref || github.ref_name }}
           fetch-depth: 0
 
       - name: Set up Node.js
@@ -99,8 +100,10 @@ jobs:
       - name: Remove local ZIP before committing
         run: rm -f radio-slam-slides-update.zip
 
-      - name: Commit generated deck
-        if: github.event_name == 'push'
+      - name: Commit generated deck to source branch
+        if: github.event_name == 'push' || (github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository)
+        env:
+          TARGET_BRANCH: ${{ github.event_name == 'pull_request' && github.head_ref || github.ref_name }}
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
@@ -115,6 +118,6 @@ jobs:
           if git diff --cached --quiet; then
             echo "No generated changes to commit."
           else
-            git commit -m "Fix slide 17 joint radio GraphSLAM formulation"
-            git push origin HEAD:${{ github.ref_name }}
+            git commit -m "Generate corrected slide 17 deck"
+            git push origin HEAD:"$TARGET_BRANCH"
           fi
