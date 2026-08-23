@@ -87,7 +87,9 @@
     function inlineLiveDocument(files) {
       let html = textFile(files, 'kalman-filter-derivations/live/index.html')
       const css = textFile(files, 'kalman-filter-derivations/live/styles.css')
-      const app = textFile(files, 'kalman-filter-derivations/live/app.js').replaceAll('</script', '<\\/script')
+      const app = textFile(files, 'kalman-filter-derivations/live/app.js')
+        .replace('window.location.search', 'window.location.hash.slice(1)')
+        .replaceAll('</script', '<\\/script')
       html = html.replace('<link rel="stylesheet" href="styles.css">', `<style>${css}</style>`)
       html = html.replace('<script src="app.js" defer><\/script>', '')
       html = html.replace('../../assets/bento-inline-frame.js', '/assets/bento-inline-frame.js')
@@ -107,8 +109,8 @@
       const liveUrl = URL.createObjectURL(new Blob([inlineLiveDocument(files)], { type: 'text/html' }))
       let deck = textFile(files, 'kalman-filter-derivations/index.html')
       for (const demo of ['scalar', 'geometry', 'equivalence']) {
-        deck = deck.replaceAll(`./live/?demo=${demo}&embed=1`, `${liveUrl}?demo=${demo}&embed=1`)
-        deck = deck.replaceAll(`./live/?demo=${demo}`, `${liveUrl}?demo=${demo}`)
+        deck = deck.replaceAll(`./live/?demo=${demo}&embed=1`, `${liveUrl}#demo=${demo}&embed=1`)
+        deck = deck.replaceAll(`./live/?demo=${demo}`, `${liveUrl}#demo=${demo}`)
       }
       document.open()
       document.write(deck)
