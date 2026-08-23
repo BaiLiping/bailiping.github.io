@@ -17,7 +17,7 @@
 })();
 </script>
 <script src="../assets/bento-inline-frame.js" defer></script>
-<title>MPC Detection to Bounce Count | Bai Liping</title>
+<title>Radio Measurements → Radio Map | Bai Liping</title>
 <meta name="description" content="Interactive note: convert resolved multipath-component measurements into bounce counts with known or unknown UE pose and map, anchored by a known BS pose.">
 <style>
 :root{
@@ -540,7 +540,7 @@ html.mpc-live-section .rank-figure-tabs button[aria-pressed="true"]{background:v
 <body>
 
 <div class="topbar"><div class="in">
-  <span class="brand"><span class="v">MPC detection</span><span class="x">→</span><span class="i">bounce count</span></span>
+  <span class="brand"><span class="v">Radio measurements</span><span class="x">→</span><span class="i">radio map</span></span>
   <nav class="topnav">
     <a href="#measurement">Measurement</a>
     <a href="#filter">Known pose + map</a>
@@ -555,7 +555,7 @@ html.mpc-live-section .rank-figure-tabs button[aria-pressed="true"]{background:v
 
 <header class="hero">
   <div class="eyebrow">Interactive note · map-aware multipath classification</div>
-  <h1><span class="v">MPC Detection</span> to <span class="i">Bounce Count</span></h1>
+  <h1><span class="v">Radio Measurements</span> <span class="x">→</span> <span class="i">Radio Map</span></h1>
   <p class="thesis">A resolved multipath component can provide four observables: a <strong>delay</strong> (a path length), an <strong>arrival angle</strong> at the UE, a <strong>departure angle</strong> at the BS, and a <strong>path loss</strong>. These measurements constrain the physical route behind each MPC detection and its <strong>bounce count</strong>. Section 2 tests LoS and reflection sequences against a known pose and map; Section 3 keeps the poses known while inferring the map; Section 4 fixes only the BS pose and jointly hypothesizes the UE position, UE heading, and walls.</p>
   <div class="accuracy"><strong>Context.</strong> The theory uses the same kind of per-path tuple that a SAGE estimator can produce, but every scene and number on this page is illustrative rather than a replay of measured SAGE output. The current <code>Gaussian_Splatting_Test</code> benchmark consumes synthetic ray-tracer path observables with world-aligned, translation-only pose states. The virtual-anchor reading follows E. Leitinger et&nbsp;al., <a href="https://arxiv.org/abs/1801.04463">“A Belief Propagation Algorithm for Multipath-Based SLAM,”</a> <i>IEEE Trans. Wireless Commun.</i> 18(12), 2019. Scale in the 2D drawings: 1&nbsp;px ≙ 0.1&nbsp;m.</div>
 </header>

@@ -74,7 +74,7 @@ function image(id, x, y, w, h, src, options = {}) {
 
 function footer(section) {
   return [
-    text('footer-left', 96, 684, 820, 18, `MPC detection → bounce count · ${section} · Bai Liping`, 11, { color: C.faint, fontFamily: SANS }),
+    text('footer-left', 96, 684, 820, 18, `Radio measurements → radio map · ${section} · Bai Liping`, 11, { color: C.faint, fontFamily: SANS }),
     text('footer-right', 1080, 684, 104, 18, '{{page}} / {{pages}}', 11, { color: C.faint, fontFamily: SANS, align: 'right' })
   ]
 }
@@ -503,7 +503,7 @@ slides.push({
   notes: 'Open with the conversion problem: an MPC tuple is not yet a bounce count. The presentation moves through three knowledge regimes and makes each geometric construction operable on the following live slide.',
   elements: [
     text('cover-kicker', 96, 70, 980, 28, 'INTERACTIVE BRIEFING · RADIO MULTIPATH GEOMETRY', 14, { color: C.poseDeep, fontFamily: MONO, fontWeight: 700, letterSpacing: 2.2, fx: { enter: 'fade-up', order: 0 } }),
-    text('cover-title', 96, 128, 1088, 128, 'MPC detection<br><span style="color:#0A6B5E">→ bounce count</span>', 64, { fontWeight: 700, lineHeight: 1.02, fx: { enter: 'fade-up', order: 1 } }),
+    text('cover-title', 96, 128, 1088, 128, 'Radio measurements<br><span style="color:#0A6B5E">→ radio map</span>', 64, { fontWeight: 700, lineHeight: 1.02, fx: { enter: 'fade-up', order: 1 } }),
     text('cover-sub', 96, 286, 900, 58, 'Turn delay, AoA, AoD, and complex MPC gain into a physically valid route—under progressively weaker geometric knowledge.', 23, { color: C.soft, fontFamily: SANS, lineHeight: 1.35 }),
     ...[
       ['01', 'Measurement', `${tex`\tau`} · ${tex`\varphi`} · ${tex`\psi`} · ${tex`\alpha`}`, C.measurement, C.measurementSoft],
@@ -716,7 +716,7 @@ const inlineLiveMap = [
 
 const deck = {
   format: 'bento/slides', version: 1, docId: 'mpc-detection-to-bounce-count-deck',
-  title: 'MPC Detection to Bounce Count', readonly: true,
+  title: 'Radio Measurements → Radio Map', readonly: true,
   meta: { author: 'Bai Liping', subject: 'Multipath geometry, virtual anchors, incidence points, and bounce-count inference', company: 'bailiping.com', source: 'bailiping.com/mpc-detection-to-bounce-count' },
   size: { width: 1280, height: 720 }, theme: { background: C.bg, color: C.ink, accent: C.pose, fontFamily: SERIF }, slides
 }
@@ -756,7 +756,7 @@ const mathHead = String.raw`
     <script defer src="../assets/mathjax-dynamic.js"></script>
 `
 let html = readFileSync(templatePath, 'utf8')
-html = html.replace('<title>bento/slides</title>', '<title>MPC Detection to Bounce Count | Interactive Slides</title>')
+html = html.replace('<title>bento/slides</title>', '<title>Radio Measurements → Radio Map | Interactive Slides</title>')
 html = html.replace(/(<script type="application\/bento\+json" id="bento-doc">\s*)[\s\S]*?(\s*<\/script>)/, `$1${serializedDeck}$2`)
 html = html.replace(/<script type="application\/json" id="(?:bento-live-config|bento-inline-live-map)">[\s\S]*?<\/script>/, `<script type="application/json" id="bento-inline-live-map">\n${serializedMap}\n    </script>`)
 html = html.replaceAll('../assets/bento-live.css', '../assets/bento-inline-live.css')
