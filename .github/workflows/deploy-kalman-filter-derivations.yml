@@ -1,0 +1,59 @@
+name: Deploy Kalman filter derivation slides
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - scripts/kalman-filter-derivations-payload/**
+      - .github/workflows/deploy-kalman-filter-derivations.yml
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  materialize:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out main
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+
+      - name: Materialize the slide deck
+        shell: bash
+        run: |
+          set -euo pipefail
+          payload_dir=scripts/kalman-filter-derivations-payload
+          if [ ! -d "$payload_dir" ]; then
+            echo "The deck is already materialized."
+            exit 0
+          fi
+          cat "$payload_dir"/part-*.b64 | base64 -d > /tmp/kalman-filter-derivations.tar.gz
+          echo "6927d615f0baec7c4e294072080a479475304b8ed85d069911473f5526447a8e  /tmp/kalman-filter-derivations.tar.gz" | sha256sum -c -
+          rm -rf kalman-filter-derivations
+          tar -xzf /tmp/kalman-filter-derivations.tar.gz
+          test -f kalman-filter-derivations/index.html
+          test -f kalman-filter-derivations/live/index.html
+          node --check kalman-filter-derivations/live/app.js
+          grep -q '"docId": "kalman-filter-many-derivations"' kalman-filter-derivations/index.html
+          grep -q '"id": "s-scalar-live"' kalman-filter-derivations/index.html
+          grep -q '"id": "s-geometry-live"' kalman-filter-derivations/index.html
+          grep -q '"id": "s-equivalence-live"' kalman-filter-derivations/index.html
+          rm -rf "$payload_dir"
+
+      - name: Commit the deployable files
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A kalman-filter-derivations scripts/kalman-filter-derivations-payload
+          if git diff --cached --quiet; then
+            echo "No materialized changes to commit."
+          else
+            git commit -m "Deploy interactive Kalman derivation slides"
+            git push origin HEAD:main
+          fi
