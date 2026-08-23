@@ -1,0 +1,121 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="dark">
+  <title>Loading One Filter, Many Derivations…</title>
+  <style>
+    :root{color-scheme:dark;font-family:Arial,Helvetica,sans-serif;background:#0b1220;color:#f8fafc}
+    *{box-sizing:border-box}html,body{width:100%;height:100%;margin:0}body{display:grid;place-items:center;padding:24px;background:radial-gradient(circle at 30% 20%,#162b4d 0,#0b1220 48%,#070b13 100%)}
+    main{width:min(640px,100%);padding:28px;border:1px solid #26354d;border-radius:14px;background:rgba(17,26,43,.94);box-shadow:0 24px 80px rgba(0,0,0,.35)}
+    p{margin:0;color:#b9c4d6;line-height:1.55}.eyebrow{margin-bottom:10px;color:#22d3ee;font:700 11px/1.2 Menlo,Consolas,monospace;letter-spacing:.14em;text-transform:uppercase}h1{margin:0 0 12px;font-size:clamp(28px,5vw,48px);line-height:1.04}.bar{height:5px;margin-top:22px;overflow:hidden;border-radius:999px;background:#26354d}.bar::after{content:"";display:block;width:38%;height:100%;border-radius:inherit;background:#22d3ee;animation:move 1.1s ease-in-out infinite alternate}.error{color:#fca5a5}button{margin-top:18px;padding:9px 14px;border:1px solid #22d3ee;border-radius:8px;background:#162238;color:#e6fbff;font-weight:700;cursor:pointer}@keyframes move{to{transform:translateX(164%)}}
+  </style>
+</head>
+<body>
+  <main>
+    <p class="eyebrow">Interactive Kalman-filter derivation atlas</p>
+    <h1>One Filter, Many Derivations</h1>
+    <p id="status">Loading the 30-slide deck and its three interactive laboratories…</p>
+    <div class="bar" id="bar" aria-hidden="true"></div>
+  </main>
+  <script>
+  (() => {
+    'use strict'
+
+    const payloadRoot = '/scripts/kalman-filter-derivations-payload/'
+    const payloadParts = Array.from({ length: 6 }, (_, index) => `${payloadRoot}part-${String(index).padStart(2, '0')}.b64`)
+    const status = document.getElementById('status')
+    const bar = document.getElementById('bar')
+
+    function fail(error) {
+      console.error(error)
+      document.title = 'Kalman derivation slides — loading error'
+      status.className = 'error'
+      status.textContent = `The slide package could not be opened: ${error?.message || error}`
+      bar.remove()
+      const button = document.createElement('button')
+      button.type = 'button'
+      button.textContent = 'Try again'
+      button.addEventListener('click', () => location.reload())
+      status.after(button)
+    }
+
+    function decodeBase64(text) {
+      const compact = text.replace(/\s+/g, '')
+      const binary = atob(compact)
+      const bytes = new Uint8Array(binary.length)
+      for (let index = 0; index < binary.length; index += 1) bytes[index] = binary.charCodeAt(index)
+      return bytes
+    }
+
+    async function gunzip(bytes) {
+      if (!('DecompressionStream' in window)) throw new Error('This browser does not support gzip decompression. Please use a current Chrome, Edge, Firefox, or Safari release.')
+      const stream = new Blob([bytes]).stream().pipeThrough(new DecompressionStream('gzip'))
+      return new Uint8Array(await new Response(stream).arrayBuffer())
+    }
+
+    function readTar(bytes) {
+      const decoder = new TextDecoder()
+      const files = new Map()
+      let offset = 0
+      const field = (start, length) => decoder.decode(bytes.subarray(start, start + length)).replace(/\0.*$/s, '').trim()
+
+      while (offset + 512 <= bytes.length) {
+        const name = field(offset, 100)
+        if (!name) break
+        const prefix = field(offset + 345, 155)
+        const path = prefix ? `${prefix}/${name}` : name
+        const rawSize = field(offset + 124, 12)
+        const size = Number.parseInt(rawSize || '0', 8)
+        if (!Number.isFinite(size) || size < 0) throw new Error(`Invalid TAR entry size for ${path}`)
+        const start = offset + 512
+        const end = start + size
+        if (end > bytes.length) throw new Error(`Truncated TAR entry: ${path}`)
+        files.set(path.replace(/^\.\//, ''), bytes.slice(start, end))
+        offset = start + Math.ceil(size / 512) * 512
+      }
+      return files
+    }
+
+    function textFile(files, path) {
+      const bytes = files.get(path)
+      if (!bytes) throw new Error(`Missing ${path} in the slide package`)
+      return new TextDecoder().decode(bytes)
+    }
+
+    function inlineLiveDocument(files) {
+      let html = textFile(files, 'kalman-filter-derivations/live/index.html')
+      const css = textFile(files, 'kalman-filter-derivations/live/styles.css')
+      const app = textFile(files, 'kalman-filter-derivations/live/app.js').replaceAll('</script', '<\\/script')
+      html = html.replace('<link rel="stylesheet" href="styles.css">', `<style>${css}</style>`)
+      html = html.replace('<script src="app.js" defer><\/script>', `<script>${app}<\/script>`)
+      html = html.replace('../../assets/bento-inline-frame.js', '/assets/bento-inline-frame.js')
+      return html
+    }
+
+    async function start() {
+      const responses = await Promise.all(payloadParts.map(async url => {
+        const response = await fetch(url, { cache: 'no-store' })
+        if (!response.ok) throw new Error(`${url} returned HTTP ${response.status}`)
+        return response.text()
+      }))
+      status.textContent = 'Unpacking the presentation…'
+      const archive = await gunzip(decodeBase64(responses.join('')))
+      const files = readTar(archive)
+      const liveUrl = URL.createObjectURL(new Blob([inlineLiveDocument(files)], { type: 'text/html' }))
+      let deck = textFile(files, 'kalman-filter-derivations/index.html')
+      for (const demo of ['scalar', 'geometry', 'equivalence']) {
+        deck = deck.replaceAll(`./live/?demo=${demo}&embed=1`, `${liveUrl}?demo=${demo}&embed=1`)
+        deck = deck.replaceAll(`./live/?demo=${demo}`, `${liveUrl}?demo=${demo}`)
+      }
+      document.open()
+      document.write(deck)
+      document.close()
+    }
+
+    start().catch(fail)
+  })()
+  </script>
+</body>
+</html>
