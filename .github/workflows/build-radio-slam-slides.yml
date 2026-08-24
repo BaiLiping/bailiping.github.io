@@ -10,6 +10,7 @@ on:
       - mpc-detection-to-bounce-count-slides/radio-graphslam-live/**
       - scripts/patch-radio-slam-slides.mjs
       - scripts/fix-radio-graphslam-slide.mjs
+      - scripts/fix-radio-graphslam-clutter-notation.mjs
       - .github/workflows/build-radio-slam-slides.yml
   pull_request:
     branches:
@@ -19,6 +20,7 @@ on:
       - mpc-detection-to-bounce-count-slides/radio-graphslam-live/**
       - scripts/patch-radio-slam-slides.mjs
       - scripts/fix-radio-graphslam-slide.mjs
+      - scripts/fix-radio-graphslam-clutter-notation.mjs
       - .github/workflows/build-radio-slam-slides.yml
   workflow_dispatch:
 
@@ -55,12 +57,16 @@ jobs:
       - name: Patch deck generator
         run: node scripts/patch-radio-slam-slides.mjs
 
-      - name: Correct slide 17 joint GraphSLAM formulation
+      - name: Correct joint radio GraphSLAM formulation
         run: node scripts/fix-radio-graphslam-slide.mjs
+
+      - name: Correct GraphSLAM clutter-association notation
+        run: node scripts/fix-radio-graphslam-clutter-notation.mjs
 
       - name: Validate JavaScript syntax
         run: |
           node --check scripts/fix-radio-graphslam-slide.mjs
+          node --check scripts/fix-radio-graphslam-clutter-notation.mjs
           node --check mpc-detection-to-bounce-count-slides/build.mjs
           node --check mpc-detection-to-bounce-count-slides/radio-slam-extra.mjs
           node --check mpc-detection-to-bounce-count-slides/radio-graphslam-live/app.js
@@ -77,9 +83,11 @@ jobs:
           grep -q '"id": "s-pmbm-slam-equations"' "$deck"
           grep -q '"id": "s-pmbm-slam-live"' "$deck"
           grep -q '"id": "s-radio-graphslam-equations"' "$deck"
+          grep -q '"id": "s-radio-graphslam-live"' "$deck"
           grep -q '"id": "s-radio-graphslam-iteration"' "$deck"
           grep -q 'Radio GraphSLAM: optimize the UE trajectory and radio map jointly' "$deck"
           grep -q 'full radio GraphSLAM optimizes both trajectory X and map M' "$deck"
+          grep -q 'a=0 uses the clutter likelihood' "$deck"
           grep -q 'demo=bp' "$deck"
           grep -q 'demo=pmbm' "$deck"
 
@@ -88,7 +96,8 @@ jobs:
           zip -qr radio-slam-slides-update.zip \
             mpc-detection-to-bounce-count-slides \
             scripts/patch-radio-slam-slides.mjs \
-            scripts/fix-radio-graphslam-slide.mjs
+            scripts/fix-radio-graphslam-slide.mjs \
+            scripts/fix-radio-graphslam-clutter-notation.mjs
 
       - name: Upload ZIP artifact
         uses: actions/upload-artifact@v4
@@ -109,6 +118,7 @@ jobs:
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add -A \
             scripts/fix-radio-graphslam-slide.mjs \
+            scripts/fix-radio-graphslam-clutter-notation.mjs \
             mpc-detection-to-bounce-count-slides/build.mjs \
             mpc-detection-to-bounce-count-slides/index.html \
             mpc-detection-to-bounce-count-slides/radio-slam-extra.mjs \
@@ -117,6 +127,6 @@ jobs:
           if git diff --cached --quiet; then
             echo "No generated changes to commit."
           else
-            git commit -m "Generate corrected slide 17 deck"
+            git commit -m "Generate corrected radio GraphSLAM deck"
             git push origin HEAD:"$TARGET_BRANCH"
           fi
