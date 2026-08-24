@@ -4,8 +4,8 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="color-scheme" content="only light">
-  <title>Archived oracle-associated S1 teaching toy</title>
-  <meta name="description" content="Archived teaching toy with truth-conditioned path associations; this is not the implemented pose-only radio GraphSLAM estimator.">
+  <title>Fixed-association radio GraphSLAM teaching lab</title>
+  <meta name="description" content="Canonical fixed-association radio GraphSLAM teaching lab with relative-pose and MPC factors; explicitly separated from the current production position-graph implementation.">
   <meta name="robots" content="noindex">
   <link rel="stylesheet" href="styles.css">
   <link rel="stylesheet" href="../../assets/interactive-slide-system.css">
@@ -28,11 +28,11 @@
   <main class="lab-shell interactive-slide-shell">
     <header class="masthead interactive-slide-header">
       <div class="interactive-slide-heading">
-        <p class="eyebrow">ARCHIVED S1 TOY · ORACLE PATH ASSOCIATIONS</p>
-        <h1>Truth-conditioned trajectory/VA optimization toy.</h1>
+        <p class="eyebrow">CANONICAL TEACHING LAB · FIXED ASSOCIATIONS</p>
+        <h1>Joint trajectory–VA GraphSLAM with relative-pose factors.</h1>
       </div>
       <div class="interactive-slide-actions">
-        <span class="interactive-slide-chip" title="Truth path identities are supplied to this archived teaching toy; they are not available to the implemented GraphSLAM estimator.">Not the implemented estimator</span>
+        <span class="interactive-slide-chip" title="Association and path order are supplied only for this teaching solve; the next slide describes the current production implementation.">Fixed-association demo</span>
         <a class="back-link interactive-slide-back" href="../" aria-label="Back to slides"><span aria-hidden="true">←</span> Slides <kbd>Esc</kbd></a>
       </div>
     </header>
@@ -40,9 +40,9 @@
     <div class="lab-grid interactive-slide-body">
       <aside class="control-rail interactive-slide-controls interactive-slide-panel" aria-label="GraphSLAM controls">
         <section class="method-copy">
-          <p class="method-kicker">ORACLE-ASSOCIATED TEACHING TOY</p>
-          <h2>Path identities are supplied here</h2>
-          <p>This archived optimizer is given which return is LoS and which VA generated each reflection. The implemented estimator does not receive those labels.</p>
+          <p class="method-kicker">CANONICAL FACTOR-GRAPH TEACHING MODEL</p>
+          <h2>Relative-pose factors + radio factors</h2>
+          <p>Inter-pose edges are noisy odometry measurements, not a governing dynamics law. MPC association and bounce order are supplied only to expose the joint optimization.</p>
         </section>
 
         <section class="setup-card" aria-label="Shared radio SLAM setup S1">
@@ -94,13 +94,13 @@
 
       <section class="stage-card interactive-slide-stage interactive-slide-panel" aria-labelledby="stage-heading">
         <div class="stage-bar">
-          <h2 id="stage-heading">CONDITIONED TRAJECTORY–VA TOY</h2>
+          <h2 id="stage-heading">JOINT TRAJECTORY–VA MAP ESTIMATE</h2>
           <p class="status" id="status" role="status" aria-live="polite"><i></i> Ready</p>
         </div>
 
         <div class="visual-grid">
           <div class="canvas-wrap scene-wrap">
-            <canvas id="scene-canvas" width="680" height="430" tabindex="0" aria-label="Oracle-associated teaching geometry with a known base station, UE trajectory, virtual anchors, reflector walls, and truth-labelled multipath routes.">
+            <canvas id="scene-canvas" width="680" height="430" tabindex="0" aria-label="Fixed-association teaching geometry with a known base station, UE trajectory, virtual anchors, reflector walls, and simulated multipath routes.">
               The plot requires canvas support.
             </canvas>
             <div class="legend" aria-hidden="true">
@@ -121,16 +121,16 @@
     </div>
 
     <footer class="interactive-slide-footer">
-      <p><strong>Scope:</strong> oracle-associated S1 toy: LoS/reflection identity and ordering are fixed inside each solve.</p>
-      <p><strong>Not the implementation:</strong> the delivered GraphSLAM uses unlabeled MPCs, pose-only variables, and front-end-derived factors.</p>
+      <p><strong>Scope:</strong> canonical teaching solve with fixed association and path order; it demonstrates relative-pose, radio, covariance, and robust factors.</p>
+      <p><strong>Current code differs:</strong> it estimates world-aligned 3D positions in a linear graph and rebuilds the radio map outside the graph.</p>
     </footer>
   </main>
 
   <noscript>
     <main class="fallback">
-      <p class="eyebrow">ARCHIVED S1 TOY · ORACLE PATH ASSOCIATIONS</p>
-      <h1>Truth-conditioned trajectory/VA optimization toy</h1>
-      <p>This archived deterministic example is supplied the LoS/reflection identities. It is not the implemented pose-only GraphSLAM estimator, which receives unlabeled MPC sets.</p>
+      <p class="eyebrow">CANONICAL TEACHING LAB · FIXED ASSOCIATIONS</p>
+      <h1>Joint trajectory–VA GraphSLAM with relative-pose factors</h1>
+      <p>This deterministic teaching example supplies MPC association and path order. Consecutive factors represent noisy relative-pose measurements. The production position-graph implementation is described separately in the deck.</p>
       <a class="back-link" href="../">← Back to slides</a>
     </main>
   </noscript>

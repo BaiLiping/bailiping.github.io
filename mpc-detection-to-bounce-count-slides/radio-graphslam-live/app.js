@@ -612,7 +612,7 @@
     ctx.fillStyle = COLORS.paper;
     ctx.fillRect(0, 0, graphCanvas.width, graphCanvas.height);
     label(ctx, "FACTOR GRAPH", 14, 18, COLORS.poseDeep, 9, "left", 700);
-    label(ctx, "teaching toy | oracle-fixed A,Q", 14, 34, COLORS.faint, 8, "left", 400);
+    label(ctx, "fixed-association demo | A,Q supplied", 14, 34, COLORS.faint, 8, "left", 400);
 
     var poseY = [68, 128, 188, 248, 308];
     var poseX = 72;
@@ -687,7 +687,7 @@
     var wrong = wrongAssociation.checked;
     hintEl.textContent = wrong
       ? "Red edge: the wall-A MPC at x" + (WRONG_T + 1) + " is attached to vB. Robust loss can protect the rest of the S1 graph."
-      : "Truth overlay: orange is oracle-labelled LoS; green/blue are oracle-labelled specular routes. They are supplied to this toy, not to the implemented estimator.";
+      : "Simulated routes generated the measurements; their association labels are supplied only to this teaching solve, not to the current production estimator.";
   }
 
   function resetEstimate(message) {
