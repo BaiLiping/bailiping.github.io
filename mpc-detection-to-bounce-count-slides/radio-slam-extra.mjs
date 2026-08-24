@@ -353,7 +353,7 @@ function graphEquationSlide(ctx) {
       text('gs-joint-state-k', 664, 218, 310, 16, 'UNKNOWN VARIABLES + ASSOCIATION LABELS', 9, { color: C.poseDeep, fontFamily: MONO, fontWeight: 700, letterSpacing: .75 }),
       text('gs-joint-state-eq', 650, 240, 524, 50, texBlock`\begin{aligned}
         \mathbf X&=\{\mathbf T_t\}_{t=1}^{T},&\mathbf T_t&=(\mathbf p_t,\theta_t)\in SE(2),&\mathcal M&=\{\mathbf m_j\}_{j=1}^{J}\\
-        a_{t\ell}&\in\{0,1,\ldots,J\},&&q_{t\ell}\in\{\mathrm{LoS},1,2,\ldots\}
+        a_{t\ell}&\in\{0,1,\ldots,J\},&&q_{t\ell}\in\{\mathrm{LoS},1,2,\ldots\}\quad(a_{t\ell}>0)
       \end{aligned}`, 10.5, { fontWeight: 700, align: 'center', lineHeight: 1.3 }),
       text('gs-joint-state-v', 664, 292, 496, 12, tex`a_{t\ell}=0\;\text{means clutter / no map assignment}`, 7.5, { color: C.poseDeep, fontWeight: 700, align: 'center' }),
 
@@ -361,7 +361,7 @@ function graphEquationSlide(ctx) {
       text('gs-joint-factor-k', 664, 338, 330, 16, 'ODOMETRY LIKELIHOOD, NOT A REQUIRED DYNAMICS LAW', 8.5, { color: C.poseDeep, fontFamily: MONO, fontWeight: 700, letterSpacing: .55 }),
       text('gs-joint-factor-eq', 650, 358, 524, 74, texBlock`\begin{aligned}
         p(\mathbf X,\mathcal M,A,Q\mid Z,\widetilde U,\mathbf b)\propto{}&p(\mathbf T_1)\prod_{t=2}^{T}p(\widetilde{\mathbf T}_{t-1,t}\mid\mathbf T_{t-1},\mathbf T_t)\prod_jp(\mathbf m_j)\\[-.2em]
-        &\times\prod_{t,\ell}p(a_{t\ell},q_{t\ell})\,p(\mathbf z_{t\ell}\mid\mathbf T_t,\mathbf m_{a_{t\ell}},q_{t\ell},\mathbf b)
+        &\times\prod_{t,\ell}p(a_{t\ell},q_{t\ell})\,p(\mathbf z_{t\ell}\mid\mathbf T_t,\mathcal M,a_{t\ell},q_{t\ell},\mathbf b)
       \end{aligned}`, 9.2, { fontWeight: 700, align: 'center', lineHeight: 1.25 }),
       text('gs-joint-factor-v', 664, 438, 496, 18, tex`\mathbf r_t^{\mathrm{rel}}=\operatorname{Log}(\widetilde{\mathbf T}_{t-1,t}^{-1}\mathbf T_{t-1}^{-1}\mathbf T_t)\quad\text{with covariance }\Sigma_t^{\mathrm{rel}}`, 8, { color: C.soft, fontWeight: 700, align: 'center' }),
 
@@ -369,10 +369,10 @@ function graphEquationSlide(ctx) {
       text('gs-joint-cost-k', 664, 498, 310, 16, 'COVARIANCE-WEIGHTED MAP OBJECTIVE', 8.5, { color: C.measurementDeep, fontFamily: MONO, fontWeight: 700, letterSpacing: .75 }),
       text('gs-joint-cost-eq', 650, 518, 524, 62, texBlock`\begin{aligned}
         (\mathbf X^*,\mathcal M^*)&=\arg\min_{\mathbf X,\mathcal M}\;\|\mathbf r_1^{\mathrm{prior}}\|_{\Omega_1}^{2}+\sum_{t=2}^{T}\|\mathbf r_t^{\mathrm{rel}}\|_{\Omega_t^{\mathrm{rel}}}^{2}\\[-.1em]
-        &\quad+\sum_{t,\ell}\rho\!\left(\|\mathbf r_{t\ell}^{\mathrm{rad}}(a_{t\ell},q_{t\ell})\|_{\Omega_{t\ell}^{\mathrm{rad}}}^{2}\right),\qquad \Omega=\Sigma^{-1}\\[-.1em]
+        &\quad+\sum_{(t,\ell):a_{t\ell}>0}\rho\!\left(\|\mathbf r_{t\ell}^{\mathrm{rad}}(a_{t\ell},q_{t\ell})\|_{\Omega_{t\ell}^{\mathrm{rad}}}^{2}\right),\qquad \Omega=\Sigma^{-1}\\[-.1em]
         \mathbf r_{t\ell}^{\mathrm{rad}}(j,q)&=[c\tau,\varphi^{\mathrm{AoA}},\varphi^{\mathrm{AoD}}]^{\mathsf T}\boxminus\mathbf h_q(\mathbf T_t,\mathbf m_j,\mathbf b)
       \end{aligned}`, 8.8, { fontWeight: 700, align: 'center', lineHeight: 1.2 }),
-      text('gs-joint-cost-v', 664, 584, 496, 24, 'Fixed A,Q → ordinary nonlinear least squares. Unknown A,Q → marginalize, maximize, or alternate association and continuous-state updates.', 7.5, { color: C.measurementDeep, fontFamily: SANS, fontWeight: 700, align: 'center', lineHeight: 1.25 }),
+      text('gs-joint-cost-v', 664, 584, 496, 24, 'Fixed A,Q → nonlinear least squares over associated MPCs; a=0 uses the clutter likelihood. Unknown A,Q → marginalize, maximize, or alternate association and state updates.', 7.5, { color: C.measurementDeep, fontFamily: SANS, fontWeight: 700, align: 'center', lineHeight: 1.25 }),
 
       card('gs-joint-key-card', 96, 632, 1088, 42, C.poseDeep, { stroke: C.poseDeep, radius: 6 }),
       text('gs-joint-key-v', 116, 638, 1048, 16, 'KEY DISTINCTION · full radio GraphSLAM optimizes both trajectory X and map M; relative-pose edges encode measured changes, not mandatory dynamics.', 9, { color: C.paper, fontFamily: SANS, fontWeight: 700, align: 'center' }),
