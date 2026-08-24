@@ -172,13 +172,13 @@ export const routes = [
   },
   {
     "n": 14,
-    "title": "Kalman–LQR duality",
+    "title": "Riccati covariance recursion",
     "family": "Control duality",
-    "idea": "The estimator Riccati equation is the transpose-dual of the regulator Riccati equation. The observer gain is the dual feedback gain.",
+    "idea": "Propagate uncertainty directly. Once the optimal gain is eliminated, prediction and correction close into a discrete Riccati recursion; LQR exposes the same algebra by duality.",
     "steps": [
-      "Exchange A↔Aᵀ, H↔Bᵀ, process covariance↔state cost, and R↔control cost.",
-      "The LQR completion-of-squares/Riccati argument maps to minimum-variance estimation.",
-      "Under the dual map, the feedback gain becomes the Kalman gain."
+      "Predict the covariance: Πₖ = APₖ₋₁Aᵀ + Q.",
+      "Eliminate Kₖ in the correction: Pₖ = Πₖ − ΠₖHᵀ(HΠₖHᵀ + R)⁻¹HΠₖ.",
+      "This nonlinear matrix map is the discrete Riccati recursion; at steady state, P is its algebraic fixed point."
     ],
     "ref": "R. E. Kalman, ‘Contributions to the Theory of Optimal Control,’ Bol. Soc. Mat. Mexicana, 1960.",
     "url": "https://www.cs.unc.edu/~welch/kalman/media/pdf/Kalman1960.pdf"

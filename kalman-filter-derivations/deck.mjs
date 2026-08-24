@@ -51,7 +51,7 @@ const outcomes = {
   11: 'The minimizing gain is fixed by one matrix normal equation.',
   12: 'Unbiasedness fixes the form; minimum covariance fixes the gain.',
   13: 'The innovation contributes exactly the new orthogonal component.',
-  14: 'Observer and regulator Riccati recursions are transpose-dual.',
+  14: 'Covariance propagation closes as a Riccati map; LQR supplies its transpose-dual.',
   15: 'Gaussian closure compresses the general Bayes recursion to moments.',
   16: 'KL projection changes the prior only as much as the evidence requires.'
 };
