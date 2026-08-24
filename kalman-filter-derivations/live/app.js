@@ -9,6 +9,7 @@
   const params = new URLSearchParams(window.location.search)
   const demo = params.get('demo') || 'scalar'
   const app = document.getElementById('app')
+  const model = window.KalmanModel
 
   function fmt(value, digits = 3) {
     if (!Number.isFinite(value)) return '—'
@@ -88,9 +89,9 @@
   function mountScalar() {
     const shell = createShell({
       accent: COLORS.cyan,
-      eyebrow: 'SCALAR FUSION · FOUR DERIVATIONS',
+      eyebrow: 'SCALAR FUSION · SHARED POSTERIOR',
       title: 'Prior × likelihood',
-      intro: 'Change the two Gaussian sources. Bayes, weighted least squares, information fusion, and joint conditioning must return one posterior.',
+      intro: 'Change the two Gaussian sources. The common posterior is shown once; an agreement check confirms that four derivations reach it.',
       controls: [
         rangeControl('prior-mean', 'Prior mean m⁻', -4, 4, .1, -1.2, '−1.2'),
         rangeControl('prior-sigma', 'Prior standard deviation σₚ', .2, 3, .05, 1.35, '1.35'),
@@ -112,7 +113,7 @@
           <aside class="metric-rail">
             <div class="metric-card accent"><span class="metric-k">Kalman gain</span><div class="metric-v" id="scalar-gain">—</div><p class="metric-copy">K = P⁻/(P⁻ + R)</p></div>
             <div class="metric-card"><span class="metric-k">Posterior</span><div class="metric-v" id="scalar-post">—</div></div>
-            <div class="metric-card"><span class="metric-k">Four roads</span><div class="method-list" id="scalar-methods"></div></div>
+            <div class="metric-card"><span class="metric-k">Derivation check</span><div class="metric-v good">Bayes = WLS<br>information = conditioning</div><p class="metric-copy">One posterior, four routes.</p></div>
             <div class="metric-card"><span class="metric-k">Maximum disagreement</span><div class="metric-v good" id="scalar-delta">0</div></div>
           </aside>
         </div>`
@@ -133,28 +134,16 @@
       const sp = Number(controls.priorSigma.value)
       const z = Number(controls.measurement.value)
       const sr = Number(controls.measurementSigma.value)
-      const P = sp * sp
-      const R = sr * sr
-      const K = P / (P + R)
-      const postMean = m + K * (z - m)
-      const postVar = (1 / P + 1 / R) ** -1
-      const results = {
-        Bayes: postMean,
-        WLS: (m / P + z / R) / (1 / P + 1 / R),
-        Information: postVar * (m / P + z / R),
-        Conditioning: m + (P / (P + R)) * (z - m)
-      }
-      const delta = Math.max(...Object.values(results).map(value => Math.abs(value - postMean)))
-      state = { m, sp, z, sr, P, R, K, postMean, postVar, results }
+      state = model.scalarPosterior({ priorMean: m, priorSigma: sp, measurement: z, measurementSigma: sr })
+      const { K, postMean, postVar, delta } = state
       outputs.priorMean.textContent = fmt(m, 2)
       outputs.priorSigma.textContent = fmt(sp, 2)
       outputs.measurement.textContent = fmt(z, 2)
       outputs.measurementSigma.textContent = fmt(sr, 2)
       document.getElementById('scalar-gain').textContent = fmt(K, 5)
       document.getElementById('scalar-post').textContent = `m⁺ = ${fmt(postMean, 4)}\nσ⁺ = ${fmt(Math.sqrt(postVar), 4)}`
-      document.getElementById('scalar-methods').innerHTML = Object.entries(results).map(([name, value]) => `<div class="method-row"><strong>${name}</strong><code>${fmt(value, 7)}</code></div>`).join('')
       document.getElementById('scalar-delta').textContent = delta === 0 ? '0 (same arithmetic)' : delta.toExponential(2)
-      setStatus(shell.status, 'four derivations agree', 'good')
+      setStatus(shell.status, 'derivations agree', 'good')
       draw()
     }
 
@@ -278,30 +267,15 @@
     const controls = Object.fromEntries(ids.map(id => [id, document.getElementById(id)]))
     let state = null
 
-    function det2(P) { return P[0][0] * P[1][1] - P[0][1] * P[1][0] }
-
     function update() {
       const sx = Number(controls['geo-sx'].value)
       const sy = Number(controls['geo-sy'].value)
       const rho = Number(controls['geo-rho'].value)
       const angleDeg = Number(controls['geo-angle'].value)
-      const angle = angleDeg * Math.PI / 180
       const z = Number(controls['geo-z'].value)
       const sr = Number(controls['geo-sigma'].value)
-      const P = [[sx * sx, rho * sx * sy], [rho * sx * sy, sy * sy]]
-      const h = [Math.cos(angle), Math.sin(angle)]
-      const m = [-1.05, .55]
-      const Ph = [P[0][0] * h[0] + P[0][1] * h[1], P[1][0] * h[0] + P[1][1] * h[1]]
-      const S = h[0] * Ph[0] + h[1] * Ph[1] + sr * sr
-      const K = [Ph[0] / S, Ph[1] / S]
-      const innovation = z - (h[0] * m[0] + h[1] * m[1])
-      const mp = [m[0] + K[0] * innovation, m[1] + K[1] * innovation]
-      const Pp = [
-        [P[0][0] - K[0] * S * K[0], P[0][1] - K[0] * S * K[1]],
-        [P[1][0] - K[1] * S * K[0], P[1][1] - K[1] * S * K[1]]
-      ]
-      const areaRatio = Math.sqrt(Math.max(0, det2(Pp)) / det2(P))
-      state = { sx, sy, rho, angleDeg, angle, z, sr, P, Pp, h, m, mp, S, K, innovation, areaRatio }
+      state = model.covarianceGeometry({ sx, sy, rho, angleDeg, z, measurementSigma: sr })
+      const { K, innovation, S, mp, areaRatio, gainAngleSine } = state
       document.getElementById('geo-sx-out').textContent = fmt(sx, 2)
       document.getElementById('geo-sy-out').textContent = fmt(sy, 2)
       document.getElementById('geo-rho-out').textContent = fmt(rho, 2)
@@ -312,18 +286,11 @@
       document.getElementById('geo-innovation').textContent = `ν = ${fmt(innovation, 4)}\nS = ${fmt(S, 4)}`
       document.getElementById('geo-mean').textContent = `[${fmt(mp[0], 3)}, ${fmt(mp[1], 3)}]ᵀ`
       document.getElementById('geo-area').textContent = `${fmt(100 * areaRatio, 2)}% remains`
-      const sinAngle = Math.abs(K[1] * h[0] - K[0] * h[1]) / Math.max(1e-12, Math.hypot(...K) * Math.hypot(...h))
-      document.getElementById('geo-copy').textContent = sinAngle > .15
+      document.getElementById('geo-copy').textContent = gainAngleSine > .15
         ? 'Prior anisotropy or correlation rotates the gain away from the measurement normal, so one measurement updates coupled state components.'
         : 'The gain is nearly aligned with the measurement normal; the prior supplies little cross-coordinate coupling.'
       setStatus(shell.status, 'posterior remains positive definite', 'good')
       draw()
-    }
-
-    function eigen2(P) {
-      const a = P[0][0], b = (P[0][1] + P[1][0]) / 2, d = P[1][1]
-      const disc = Math.sqrt(Math.max(0, (a - d) ** 2 + 4 * b * b))
-      return { l1: Math.max(1e-12, (a + d + disc) / 2), l2: Math.max(1e-12, (a + d - disc) / 2), angle: .5 * Math.atan2(2 * b, a - d) }
     }
 
     function draw() {
@@ -367,7 +334,7 @@
       ctx.strokeStyle = COLORS.amber; ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(...lineA); ctx.lineTo(...lineB); ctx.stroke()
 
       function ellipse(mean, P, color, fill, widthLine) {
-        const eig = eigen2(P)
+        const eig = model.eigen2(P)
         const c = toPx(mean)
         ctx.save()
         ctx.translate(c[0], c[1])
@@ -698,7 +665,7 @@
     const shell = createShell({
       accent: COLORS.violet,
       eyebrow: 'MATRIX IDENTITIES · FINITE PRECISION',
-      title: 'Same posterior, different arithmetic',
+      title: 'Same target, different arithmetic',
       intro: 'Increase conditioning and lower simulated significant digits. Exact identities can separate numerically even though the target estimator is unchanged.',
       controls: [
         '<div class="control"><div class="control-head"><label for="eq-n">State dimension n</label></div><select id="eq-n"><option>2</option><option selected>3</option><option>4</option></select></div>',
