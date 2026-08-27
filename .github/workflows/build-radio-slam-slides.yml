@@ -82,35 +82,47 @@ jobs:
 
       - name: Verify slide sequence and live mounts
         run: |
-          deck=mpc-detection-to-bounce-count-slides/index.html
-          grep -q '"id": "s-radio-slam-s1"' "$deck"
-          grep -q '"id": "s-bp-slam-equations"' "$deck"
-          grep -q '"id": "s-bp-slam-live"' "$deck"
-          grep -q '"id": "s-pmbm-slam-equations"' "$deck"
-          grep -q '"id": "s-pmbm-slam-live"' "$deck"
-          grep -q '"id": "s-radio-bundle-adjustment"' "$deck"
-          grep -q '"id": "s-radio-graphslam-equations"' "$deck"
-          grep -q '"id": "s-radio-graphslam-live"' "$deck"
-          grep -q '"id": "s-radio-graphslam-iteration"' "$deck"
-          grep -q 'Bundle adjustment: the measurement-only core of joint radio SLAM' "$deck"
-          grep -q 'Radio GraphSLAM: optimize the UE trajectory and radio map jointly' "$deck"
-          grep -q 'full radio GraphSLAM optimizes both trajectory X and map M' "$deck"
-          grep -q 'a=0 uses the clutter likelihood' "$deck"
-          grep -q 'demo=bp' "$deck"
-          grep -q 'demo=pmbm' "$deck"
           node <<'NODE'
           const fs = require('node:fs')
-          const html = fs.readFileSync('mpc-detection-to-bounce-count-slides/index.html', 'utf8')
-          const match = html.match(/<script type="application\/bento\+json" id="bento-doc">\s*([\s\S]*?)\s*<\/script>/)
-          if (!match) throw new Error('Could not parse Bento slide document')
-          const doc = JSON.parse(match[1])
+          const path = 'mpc-detection-to-bounce-count-slides/index.html'
+          const html = fs.readFileSync(path, 'utf8')
+          const opening = '<script type="application/bento+json" id="bento-doc">'
+          const start = html.indexOf(opening)
+          const end = start < 0 ? -1 : html.indexOf('</script>', start + opening.length)
+          if (start < 0 || end < 0) throw new Error('Could not locate the Bento document JSON')
+          const doc = JSON.parse(html.slice(start + opening.length, end).trim())
           const ids = doc.slides.map(slide => slide.id)
+          const requiredIds = [
+            's-radio-slam-s1',
+            's-bp-slam-equations',
+            's-bp-slam-live',
+            's-pmbm-slam-equations',
+            's-pmbm-slam-live',
+            's-radio-bundle-adjustment',
+            's-radio-graphslam-equations',
+            's-radio-graphslam-live',
+            's-radio-graphslam-iteration'
+          ]
+          for (const id of requiredIds) {
+            if (!ids.includes(id)) throw new Error(`Missing required slide: ${id}`)
+          }
           const ba = ids.indexOf('s-radio-bundle-adjustment')
           const graph = ids.indexOf('s-radio-graphslam-equations')
-          if (ba < 0 || graph !== ba + 1) {
+          if (graph !== ba + 1) {
             throw new Error(`Expected bundle adjustment immediately before GraphSLAM; got indices ${ba}, ${graph}`)
           }
-          console.log(`Bundle adjustment is page ${ba + 1}; GraphSLAM is page ${graph + 1}.`)
+          const requiredText = [
+            'Bundle adjustment: the measurement-only core of joint radio SLAM',
+            'Radio GraphSLAM: optimize the UE trajectory and radio map jointly',
+            'full radio GraphSLAM optimizes both trajectory X and map M',
+            'a=0 uses the clutter likelihood',
+            'demo=bp',
+            'demo=pmbm'
+          ]
+          for (const value of requiredText) {
+            if (!html.includes(value)) throw new Error(`Missing required generated text: ${value}`)
+          }
+          console.log(`Validated ${doc.slides.length} slides. Bundle adjustment is page ${ba + 1}; GraphSLAM is page ${graph + 1}.`)
           NODE
 
       - name: Package deployable update
