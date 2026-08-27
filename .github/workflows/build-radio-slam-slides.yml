@@ -11,6 +11,7 @@ on:
       - scripts/patch-radio-slam-slides.mjs
       - scripts/add-bundle-adjustment-slide.mjs
       - scripts/add-isam2-slides.mjs
+      - scripts/fix-isam2-label.mjs
       - scripts/fix-radio-graphslam-slide.mjs
       - scripts/fix-radio-graphslam-clutter-notation.mjs
       - .github/workflows/build-radio-slam-slides.yml
@@ -23,6 +24,7 @@ on:
       - scripts/patch-radio-slam-slides.mjs
       - scripts/add-bundle-adjustment-slide.mjs
       - scripts/add-isam2-slides.mjs
+      - scripts/fix-isam2-label.mjs
       - scripts/fix-radio-graphslam-slide.mjs
       - scripts/fix-radio-graphslam-clutter-notation.mjs
       - .github/workflows/build-radio-slam-slides.yml
@@ -73,10 +75,14 @@ jobs:
       - name: Insert detailed iSAM2 framing slides
         run: node scripts/add-isam2-slides.mjs
 
+      - name: Correct iSAM2 bridge terminology
+        run: node scripts/fix-isam2-label.mjs
+
       - name: Validate JavaScript syntax
         run: |
           node --check scripts/add-bundle-adjustment-slide.mjs
           node --check scripts/add-isam2-slides.mjs
+          node --check scripts/fix-isam2-label.mjs
           node --check scripts/fix-radio-graphslam-slide.mjs
           node --check scripts/fix-radio-graphslam-clutter-notation.mjs
           node --check mpc-detection-to-bounce-count-slides/build.mjs
@@ -136,6 +142,7 @@ jobs:
             'How iSAM2 updates the solution: edit the Bayes tree',
             'Translate radio geometry into sparse iSAM2 factors',
             'Implementation blueprint and evaluation plan',
+            'SAME POSTERIOR AS BATCH BA / GRAPHSLAM',
             'Radio GraphSLAM: optimize the UE trajectory and radio map jointly',
             'full radio GraphSLAM optimizes both trajectory X and map M',
             'a=0 uses the clutter likelihood',
@@ -144,6 +151,9 @@ jobs:
           ]
           for (const value of requiredText) {
             if (!html.includes(value)) throw new Error(`Missing required generated text: ${value}`)
+          }
+          if (html.includes('SAME POSTERIOR AS BATCH BA / GRAPHSAM')) {
+            throw new Error('Legacy GraphSAM typo remains in the generated deck')
           }
           console.log(`Validated ${doc.slides.length} slides. BA/iSAM2/GraphSLAM pages: ${bridgeIndices.map(index => index + 1).join(' → ')}.`)
           NODE
@@ -155,6 +165,7 @@ jobs:
             scripts/patch-radio-slam-slides.mjs \
             scripts/add-bundle-adjustment-slide.mjs \
             scripts/add-isam2-slides.mjs \
+            scripts/fix-isam2-label.mjs \
             scripts/fix-radio-graphslam-slide.mjs \
             scripts/fix-radio-graphslam-clutter-notation.mjs
 
@@ -178,6 +189,7 @@ jobs:
           git add -A \
             scripts/add-bundle-adjustment-slide.mjs \
             scripts/add-isam2-slides.mjs \
+            scripts/fix-isam2-label.mjs \
             scripts/fix-radio-graphslam-slide.mjs \
             scripts/fix-radio-graphslam-clutter-notation.mjs \
             mpc-detection-to-bounce-count-slides/build.mjs \
