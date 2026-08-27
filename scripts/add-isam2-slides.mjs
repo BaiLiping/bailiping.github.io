@@ -159,26 +159,28 @@ function isam2RadioFactorsSlide(ctx) {
 
     card('isam-factor-family-card', 96, 404, 344, 210, C.paper, { stroke: C.line, radius: 8 }),
     text('isam-factor-family-k', 118, 420, 300, 16, 'FACTOR FAMILIES IN THE GRAPH', 9, { color: C.poseDeep, fontFamily: MONO, fontWeight: 700, letterSpacing: .8 }),
-    ;[
+    ...[
       ['PRIOR', 'anchor gauge, heading, clock, or calibration'],
       ['BETWEEN', 'odometry / registration between poses'],
       ['RADIO', 'path length + AoA + AoD to one map entity'],
       ['REVISIT', 'verified nonconsecutive relative constraint'],
       ['SMOOTH', 'optional kinematic or regularization prior']
-    ].forEach((row, index) => {
+    ].flatMap((row, index) => {
       const y = 450 + index * 31
-      elements.push(text('isam-factor-family-head-' + index, 118, y, 74, 15, row[0], 8.2, { color: index === 2 ? C.measurementDeep : C.poseDeep, fontFamily: MONO, fontWeight: 700 }))
-      elements.push(text('isam-factor-family-v-' + index, 196, y - 1, 222, 24, row[1], 9.3, { color: C.soft, fontFamily: SANS, fontWeight: 700, lineHeight: 1.2 }))
-    })
+      return [
+        text('isam-factor-family-head-' + index, 118, y, 74, 15, row[0], 8.2, { color: index === 2 ? C.measurementDeep : C.poseDeep, fontFamily: MONO, fontWeight: 700 }),
+        text('isam-factor-family-v-' + index, 196, y - 1, 222, 24, row[1], 9.3, { color: C.soft, fontFamily: SANS, fontWeight: 700, lineHeight: 1.2 })
+      ]
+    }),
 
     card('isam-factor-assoc-card', 460, 404, 350, 210, C.measurementSoft, { stroke: C.measurement, radius: 8 }),
     text('isam-factor-assoc-k', 482, 420, 306, 16, 'ASSOCIATION IS A FACTOR-LIFECYCLE PROBLEM', 8.7, { color: C.measurementDeep, fontFamily: MONO, fontWeight: 700, letterSpacing: .55 }),
     text('isam-factor-assoc-eq', 474, 446, 322, 42, texBlock§a_{t\ell}=j,\quad q_{t\ell}=q\quad\Longrightarrow\quad f_{t\ell}^{\rm rad}(X_t,M_j;q)§, 12.2, { color: C.measurementDeep, fontWeight: 700, align: 'center' }),
-    text('isam-factor-assoc-v', 482, 492, 306, 102, 'Recommended staging:\n1. gate and score hypotheses;\n2. initialize only geometrically supported entities;\n3. delay insertion or use robust/switchable factors for uncertain matches;\n4. remove and replace rejected factors when the API and bookkeeping permit.', 9.8, { color: C.measurementDeep, fontFamily: SANS, fontWeight: 700, lineHeight: 1.35 }),
+    text('isam-factor-assoc-v', 482, 492, 306, 102, 'Recommended staging:<br>1. gate and score hypotheses;<br>2. initialize only geometrically supported entities;<br>3. delay insertion or use robust/switchable factors for uncertain matches;<br>4. remove and replace rejected factors when the API and bookkeeping permit.', 9.8, { color: C.measurementDeep, fontFamily: SANS, fontWeight: 700, lineHeight: 1.35 }),
 
     card('isam-factor-impl-card', 830, 404, 354, 210, C.mapSoft, { stroke: C.map, radius: 8 }),
     text('isam-factor-impl-k', 852, 420, 310, 16, 'IMPLEMENTATION OF THE RADIO FACTOR', 9, { color: C.mapDeep, fontFamily: MONO, fontWeight: 700, letterSpacing: .7 }),
-    text('isam-factor-impl-v', 852, 450, 310, 132, '• Prefer a typed C++ NonlinearFactor for production speed.\n• A Python CustomFactor is suitable for prototyping but incurs Python-call/GIL overhead.\n• Return analytical Jacobians in GTSAM’s right-perturbation convention.\n• Unit-test every Jacobian against numerical derivatives.\n• Use diagonal/full covariance in consistent units; wrap angle residuals only.', 9.8, { color: C.mapDeep, fontFamily: SANS, fontWeight: 700, lineHeight: 1.35 }),
+    text('isam-factor-impl-v', 852, 450, 310, 132, '• Prefer a typed C++ NonlinearFactor for production speed.<br>• A Python CustomFactor is suitable for prototyping but incurs Python-call/GIL overhead.<br>• Return analytical Jacobians in GTSAM’s right-perturbation convention.<br>• Unit-test every Jacobian against numerical derivatives.<br>• Use diagonal/full covariance in consistent units; wrap angle residuals only.', 9.8, { color: C.mapDeep, fontFamily: SANS, fontWeight: 700, lineHeight: 1.35 }),
     text('isam-factor-impl-foot', 852, 588, 310, 16, 'Sparse factor connectivity is as important as fast residual evaluation.', 8.8, { color: C.mapDeep, fontFamily: MONO, fontWeight: 700, align: 'center' }),
 
     text('isam-factor-ref', 96, 653, 1088, 12, 'Refs · GTSAM NonlinearFactor and CustomFactor documentation · robust incremental alternatives include riSAM for severe outliers', 7, { color: C.faint, fontFamily: MONO, align: 'center' })
@@ -222,11 +224,11 @@ function isam2ImplementationSlide(ctx) {
 
     card('isam-impl-init-card', 646, 206, 256, 196, C.mapSoft, { stroke: C.map, radius: 8 }),
     text('isam-impl-init-k', 666, 222, 216, 16, 'INITIALIZATION', 9, { color: C.mapDeep, fontFamily: MONO, fontWeight: 700, letterSpacing: .8 }),
-    text('isam-impl-init-v', 666, 252, 216, 128, 'Pose Xₜ: propagate registration/odometry estimate.\n\nMap Mⱼ: initialize from VA inversion, multi-pose triangulation, wall fitting, or a prior.\n\nDo not collapse a one-path unobservable family to an arbitrary point; delay the birth or parameterize the family.', 9.7, { color: C.mapDeep, fontFamily: SANS, fontWeight: 700, lineHeight: 1.35 }),
+    text('isam-impl-init-v', 666, 252, 216, 128, 'Pose Xₜ: propagate registration/odometry estimate.<br><br>Map Mⱼ: initialize from VA inversion, multi-pose triangulation, wall fitting, or a prior.<br><br>Do not collapse a one-path unobservable family to an arbitrary point; delay the birth or parameterize the family.', 9.7, { color: C.mapDeep, fontFamily: SANS, fontWeight: 700, lineHeight: 1.35 }),
 
     card('isam-impl-tune-card', 922, 206, 262, 196, C.poseSoft, { stroke: C.pose, radius: 8 }),
     text('isam-impl-tune-k', 942, 222, 222, 16, 'TUNING + DIAGNOSTICS', 9, { color: C.poseDeep, fontFamily: MONO, fontWeight: 700, letterSpacing: .7 }),
-    text('isam-impl-tune-v', 942, 252, 222, 128, '• per-type relinearization thresholds\n• relinearization skip interval\n• constrained ordering for new variables\n• nonlinear error before/after update\n• re-eliminated and relinearized counts\n• marginal covariance for pose/map confidence\n• factor-removal bookkeeping', 9.5, { color: C.poseDeep, fontFamily: SANS, fontWeight: 700, lineHeight: 1.32 }),
+    text('isam-impl-tune-v', 942, 252, 222, 128, '• per-type relinearization thresholds<br>• relinearization skip interval<br>• constrained ordering for new variables<br>• nonlinear error before/after update<br>• re-eliminated and relinearized counts<br>• marginal covariance for pose/map confidence<br>• factor-removal bookkeeping', 9.5, { color: C.poseDeep, fontFamily: SANS, fontWeight: 700, lineHeight: 1.32 }),
 
     card('isam-impl-current-card', 646, 422, 538, 96, C.measurementSoft, { stroke: C.measurement, radius: 8 }),
     text('isam-impl-current-k', 668, 438, 494, 16, 'HOW THIS REFRAMES THE CURRENT IMPLEMENTATION', 9, { color: C.measurementDeep, fontFamily: MONO, fontWeight: 700, letterSpacing: .7 }),
