@@ -10,6 +10,7 @@ on:
       - mpc-detection-to-bounce-count-slides/radio-graphslam-live/**
       - scripts/patch-radio-slam-slides.mjs
       - scripts/add-bundle-adjustment-slide.mjs
+      - scripts/add-isam2-slides.mjs
       - scripts/fix-radio-graphslam-slide.mjs
       - scripts/fix-radio-graphslam-clutter-notation.mjs
       - .github/workflows/build-radio-slam-slides.yml
@@ -21,6 +22,7 @@ on:
       - mpc-detection-to-bounce-count-slides/radio-graphslam-live/**
       - scripts/patch-radio-slam-slides.mjs
       - scripts/add-bundle-adjustment-slide.mjs
+      - scripts/add-isam2-slides.mjs
       - scripts/fix-radio-graphslam-slide.mjs
       - scripts/fix-radio-graphslam-clutter-notation.mjs
       - .github/workflows/build-radio-slam-slides.yml
@@ -68,9 +70,13 @@ jobs:
       - name: Insert bundle-adjustment bridge slide after GraphSLAM normalization
         run: node scripts/add-bundle-adjustment-slide.mjs
 
+      - name: Insert detailed iSAM2 framing slides
+        run: node scripts/add-isam2-slides.mjs
+
       - name: Validate JavaScript syntax
         run: |
           node --check scripts/add-bundle-adjustment-slide.mjs
+          node --check scripts/add-isam2-slides.mjs
           node --check scripts/fix-radio-graphslam-slide.mjs
           node --check scripts/fix-radio-graphslam-clutter-notation.mjs
           node --check mpc-detection-to-bounce-count-slides/build.mjs
@@ -99,6 +105,10 @@ jobs:
             's-pmbm-slam-equations',
             's-pmbm-slam-live',
             's-radio-bundle-adjustment',
+            's-isam2-framing',
+            's-isam2-bayes-tree',
+            's-isam2-radio-factors',
+            's-isam2-implementation',
             's-radio-graphslam-equations',
             's-radio-graphslam-live',
             's-radio-graphslam-iteration'
@@ -106,13 +116,26 @@ jobs:
           for (const id of requiredIds) {
             if (!ids.includes(id)) throw new Error(`Missing required slide: ${id}`)
           }
-          const ba = ids.indexOf('s-radio-bundle-adjustment')
-          const graph = ids.indexOf('s-radio-graphslam-equations')
-          if (graph !== ba + 1) {
-            throw new Error(`Expected bundle adjustment immediately before GraphSLAM; got indices ${ba}, ${graph}`)
+          const orderedBridge = [
+            's-radio-bundle-adjustment',
+            's-isam2-framing',
+            's-isam2-bayes-tree',
+            's-isam2-radio-factors',
+            's-isam2-implementation',
+            's-radio-graphslam-equations'
+          ]
+          const bridgeIndices = orderedBridge.map(id => ids.indexOf(id))
+          for (let i = 1; i < bridgeIndices.length; i += 1) {
+            if (bridgeIndices[i] !== bridgeIndices[i - 1] + 1) {
+              throw new Error(`Expected consecutive BA/iSAM2/GraphSLAM slides; got ${bridgeIndices.join(', ')}`)
+            }
           }
           const requiredText = [
             'Bundle adjustment: the measurement-only core of joint radio SLAM',
+            'Frame the radio-SLAM problem for iSAM2',
+            'How iSAM2 updates the solution: edit the Bayes tree',
+            'Translate radio geometry into sparse iSAM2 factors',
+            'Implementation blueprint and evaluation plan',
             'Radio GraphSLAM: optimize the UE trajectory and radio map jointly',
             'full radio GraphSLAM optimizes both trajectory X and map M',
             'a=0 uses the clutter likelihood',
@@ -122,7 +145,7 @@ jobs:
           for (const value of requiredText) {
             if (!html.includes(value)) throw new Error(`Missing required generated text: ${value}`)
           }
-          console.log(`Validated ${doc.slides.length} slides. Bundle adjustment is page ${ba + 1}; GraphSLAM is page ${graph + 1}.`)
+          console.log(`Validated ${doc.slides.length} slides. BA/iSAM2/GraphSLAM pages: ${bridgeIndices.map(index => index + 1).join(' → ')}.`)
           NODE
 
       - name: Package deployable update
@@ -131,6 +154,7 @@ jobs:
             mpc-detection-to-bounce-count-slides \
             scripts/patch-radio-slam-slides.mjs \
             scripts/add-bundle-adjustment-slide.mjs \
+            scripts/add-isam2-slides.mjs \
             scripts/fix-radio-graphslam-slide.mjs \
             scripts/fix-radio-graphslam-clutter-notation.mjs
 
@@ -153,6 +177,7 @@ jobs:
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add -A \
             scripts/add-bundle-adjustment-slide.mjs \
+            scripts/add-isam2-slides.mjs \
             scripts/fix-radio-graphslam-slide.mjs \
             scripts/fix-radio-graphslam-clutter-notation.mjs \
             mpc-detection-to-bounce-count-slides/build.mjs \
@@ -163,6 +188,6 @@ jobs:
           if git diff --cached --quiet; then
             echo "No generated changes to commit."
           else
-            git commit -m "Generate radio SLAM deck with bundle adjustment"
+            git commit -m "Generate radio SLAM deck with iSAM2 framing"
             git push origin HEAD:"$TARGET_BRANCH"
           fi
