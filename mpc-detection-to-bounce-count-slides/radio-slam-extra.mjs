@@ -381,7 +381,7 @@ function isam2FramingSlide(ctx) {
     text('isam-frame-arrow-2', 214, 440, 78, 22, '↓', 20, { color: C.faint, fontFamily: SANS, fontWeight: 700, align: 'center' }),
 
     card('isam-frame-objective-card', 438, 206, 746, 176, C.paper, { stroke: C.line, radius: 8 }),
-    text('isam-frame-objective-k', 462, 222, 420, 18, 'SAME POSTERIOR AS BATCH BA / GRAPHSAM', 9.5, { color: C.poseDeep, fontFamily: MONO, fontWeight: 700, letterSpacing: .9 }),
+    text('isam-frame-objective-k', 462, 222, 420, 18, 'SAME POSTERIOR AS BATCH BA / GRAPHSLAM', 9.5, { color: C.poseDeep, fontFamily: MONO, fontWeight: 700, letterSpacing: .9 }),
     text('isam-frame-objective-eq', 452, 248, 718, 100, texBlock`\begin{aligned}
       \boldsymbol\Theta_t&=\{\mathbf T_{0:t},\mathcal M_t,\boldsymbol\kappa_t\},\\[-.1em]
       \boldsymbol\Theta_t^*&=\arg\min_{\boldsymbol\Theta_t}\;\|\mathbf r^{\rm prior}\|^2_{\Omega_0}
