@@ -98,9 +98,20 @@ jobs:
           grep -q 'a=0 uses the clutter likelihood' "$deck"
           grep -q 'demo=bp' "$deck"
           grep -q 'demo=pmbm' "$deck"
-          ba_line=$(grep -n '"id": "s-radio-bundle-adjustment"' "$deck" | head -1 | cut -d: -f1)
-          graph_line=$(grep -n '"id": "s-radio-graphslam-equations"' "$deck" | head -1 | cut -d: -f1)
-          test -n "$ba_line" && test -n "$graph_line" && test "$ba_line" -lt "$graph_line"
+          node <<'NODE'
+          const fs = require('node:fs')
+          const html = fs.readFileSync('mpc-detection-to-bounce-count-slides/index.html', 'utf8')
+          const match = html.match(/<script type="application\/bento\+json" id="bento-doc">\s*([\s\S]*?)\s*<\/script>/)
+          if (!match) throw new Error('Could not parse Bento slide document')
+          const doc = JSON.parse(match[1])
+          const ids = doc.slides.map(slide => slide.id)
+          const ba = ids.indexOf('s-radio-bundle-adjustment')
+          const graph = ids.indexOf('s-radio-graphslam-equations')
+          if (ba < 0 || graph !== ba + 1) {
+            throw new Error(`Expected bundle adjustment immediately before GraphSLAM; got indices ${ba}, ${graph}`)
+          }
+          console.log(`Bundle adjustment is page ${ba + 1}; GraphSLAM is page ${graph + 1}.`)
+          NODE
 
       - name: Package deployable update
         run: |
