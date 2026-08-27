@@ -9,6 +9,7 @@ on:
       - mpc-detection-to-bounce-count-slides/radio-slam-extra.mjs
       - mpc-detection-to-bounce-count-slides/radio-graphslam-live/**
       - scripts/patch-radio-slam-slides.mjs
+      - scripts/add-bundle-adjustment-slide.mjs
       - scripts/fix-radio-graphslam-slide.mjs
       - scripts/fix-radio-graphslam-clutter-notation.mjs
       - .github/workflows/build-radio-slam-slides.yml
@@ -19,6 +20,7 @@ on:
       - mpc-detection-to-bounce-count-slides/radio-slam-extra.mjs
       - mpc-detection-to-bounce-count-slides/radio-graphslam-live/**
       - scripts/patch-radio-slam-slides.mjs
+      - scripts/add-bundle-adjustment-slide.mjs
       - scripts/fix-radio-graphslam-slide.mjs
       - scripts/fix-radio-graphslam-clutter-notation.mjs
       - .github/workflows/build-radio-slam-slides.yml
@@ -57,6 +59,9 @@ jobs:
       - name: Patch deck generator
         run: node scripts/patch-radio-slam-slides.mjs
 
+      - name: Insert bundle-adjustment bridge slide
+        run: node scripts/add-bundle-adjustment-slide.mjs
+
       - name: Correct joint radio GraphSLAM formulation
         run: node scripts/fix-radio-graphslam-slide.mjs
 
@@ -65,6 +70,7 @@ jobs:
 
       - name: Validate JavaScript syntax
         run: |
+          node --check scripts/add-bundle-adjustment-slide.mjs
           node --check scripts/fix-radio-graphslam-slide.mjs
           node --check scripts/fix-radio-graphslam-clutter-notation.mjs
           node --check mpc-detection-to-bounce-count-slides/build.mjs
@@ -82,20 +88,26 @@ jobs:
           grep -q '"id": "s-bp-slam-live"' "$deck"
           grep -q '"id": "s-pmbm-slam-equations"' "$deck"
           grep -q '"id": "s-pmbm-slam-live"' "$deck"
+          grep -q '"id": "s-radio-bundle-adjustment"' "$deck"
           grep -q '"id": "s-radio-graphslam-equations"' "$deck"
           grep -q '"id": "s-radio-graphslam-live"' "$deck"
           grep -q '"id": "s-radio-graphslam-iteration"' "$deck"
+          grep -q 'Bundle adjustment: the measurement-only core of joint radio SLAM' "$deck"
           grep -q 'Radio GraphSLAM: optimize the UE trajectory and radio map jointly' "$deck"
           grep -q 'full radio GraphSLAM optimizes both trajectory X and map M' "$deck"
           grep -q 'a=0 uses the clutter likelihood' "$deck"
           grep -q 'demo=bp' "$deck"
           grep -q 'demo=pmbm' "$deck"
+          ba_line=$(grep -n '"id": "s-radio-bundle-adjustment"' "$deck" | head -1 | cut -d: -f1)
+          graph_line=$(grep -n '"id": "s-radio-graphslam-equations"' "$deck" | head -1 | cut -d: -f1)
+          test -n "$ba_line" && test -n "$graph_line" && test "$ba_line" -lt "$graph_line"
 
       - name: Package deployable update
         run: |
           zip -qr radio-slam-slides-update.zip \
             mpc-detection-to-bounce-count-slides \
             scripts/patch-radio-slam-slides.mjs \
+            scripts/add-bundle-adjustment-slide.mjs \
             scripts/fix-radio-graphslam-slide.mjs \
             scripts/fix-radio-graphslam-clutter-notation.mjs
 
@@ -117,6 +129,7 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add -A \
+            scripts/add-bundle-adjustment-slide.mjs \
             scripts/fix-radio-graphslam-slide.mjs \
             scripts/fix-radio-graphslam-clutter-notation.mjs \
             mpc-detection-to-bounce-count-slides/build.mjs \
@@ -127,6 +140,6 @@ jobs:
           if git diff --cached --quiet; then
             echo "No generated changes to commit."
           else
-            git commit -m "Generate corrected radio GraphSLAM deck"
+            git commit -m "Generate radio SLAM deck with bundle adjustment"
             git push origin HEAD:"$TARGET_BRANCH"
           fi
