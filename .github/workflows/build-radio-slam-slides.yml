@@ -59,14 +59,14 @@ jobs:
       - name: Patch deck generator
         run: node scripts/patch-radio-slam-slides.mjs
 
-      - name: Insert bundle-adjustment bridge slide
-        run: node scripts/add-bundle-adjustment-slide.mjs
-
       - name: Correct joint radio GraphSLAM formulation
         run: node scripts/fix-radio-graphslam-slide.mjs
 
       - name: Correct GraphSLAM clutter-association notation
         run: node scripts/fix-radio-graphslam-clutter-notation.mjs
+
+      - name: Insert bundle-adjustment bridge slide after GraphSLAM normalization
+        run: node scripts/add-bundle-adjustment-slide.mjs
 
       - name: Validate JavaScript syntax
         run: |
