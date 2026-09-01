@@ -23,6 +23,28 @@ const C = {
   goldSoft: '#F4EEDC'
 };
 
+function tex(strings, ...values) {
+  const source = String.raw(strings, ...values);
+  return `<span class="math-tex math-inline">\\(${source}\\)</span>`;
+}
+
+function texBlock(strings, ...values) {
+  const source = String.raw(strings, ...values);
+  return `<span class="math-tex math-display">\\[${source}\\]</span>`;
+}
+
+function mathLines(...lines) {
+  return lines.join('<br>');
+}
+
+function mathParagraphs(...paragraphs) {
+  return paragraphs.join('<br><br>');
+}
+
+function muted(html) {
+  return `<span style="color:${C.muted}">${html}</span>`;
+}
+
 function text(id, x, y, w, h, html, options = {}) {
   return {
     id,
@@ -131,11 +153,7 @@ function overviewSlide() {
       fontSize: 62, fontFamily: SERIF, fontWeight: 700, lineHeight: 0.98,
       fx: { enter: 'fade-up', order: 1 }
     }),
-    text('cover-copy', 82, 247, 710, 75, 'Group by the object being solved for—not by every name for the same algebra. Each family keeps its distinctive insight and arrives at the same linear–Gaussian update.', {
-      fontSize: 18, color: C.muted, lineHeight: 1.45,
-      fx: { enter: 'fade-up', order: 2 }
-    }),
-    shape('cover-path', 'line', 82, 345, 698, 2, {
+    shape('cover-path', 'line', 82, 286, 698, 2, {
       fill: C.rust, lineEnd: 'arrow', fx: { loop: { type: 'dash-march' } }
     })
   ];
@@ -148,7 +166,7 @@ function overviewSlide() {
   ];
   families.forEach(([number, name, object, accent, soft, link], index) => {
     const x = 82 + (index % 2) * 366;
-    const y = 382 + Math.floor(index / 2) * 105;
+    const y = 330 + Math.floor(index / 2) * 105;
     elements.push(card(`cover-family-${number}`, x, y, 344, 84, soft, accent, 14));
     elements.push(text(`cover-family-number-${number}`, x + 17, y + 17, 42, 22, number, {
       fontSize: 11, fontFamily: MONO, fontWeight: 900, color: accent, link
@@ -168,14 +186,11 @@ function overviewSlide() {
     }),
     shape('cover-result-ring-a', 'ellipse', 912, 166, 226, 226, { fill: C.greenSoft, stroke: C.green, strokeWidth: 2 }),
     shape('cover-result-ring-b', 'ellipse', 952, 206, 146, 146, { fill: C.panel, stroke: C.rust, strokeWidth: 2 }),
-    text('cover-result-symbol', 952, 243, 146, 64, 'm⁺, P⁺', {
+    text('cover-result-symbol', 952, 243, 146, 64, texBlock`m^+,\;P^+`, {
       fontSize: 31, fontFamily: SERIF, fontWeight: 700, align: 'center', valign: 'middle'
     }),
-    text('cover-result-formula', 874, 424, 302, 88, 'm⁺ = m⁻ + K(z − Hm⁻)<br>P⁺ = P⁻ − KSKᵀ', {
+    text('cover-result-formula', 874, 424, 302, 88, texBlock`\begin{aligned}m^+ &= m^- + K(z-Hm^-)\\ P^+ &= P^- - KSK^\mathsf{T}\end{aligned}`, {
       fontSize: 20, fontFamily: SERIF, fontWeight: 700, align: 'center', lineHeight: 1.55
-    }),
-    text('cover-result-note', 874, 529, 302, 30, 'three live experiments · deterministic defaults', {
-      fontSize: 10, fontFamily: MONO, fontWeight: 800, color: C.muted, align: 'center'
     }),
     ...chrome('Overview', C.rust)
   );
@@ -192,13 +207,27 @@ function overviewSlide() {
 function modelSlide() {
   const elements = [
     ...heading('Shared setup · experiment introduction', 'The model and the common recursion', 'Fix the assumptions first. Then vary confidence and evidence without changing the estimator.', C.green),
-    ...panel('model-dynamics', 72, 180, 354, 176, 'LINEAR–GAUSSIAN MODEL', 'x<sub>k</sub> = F<sub>k</sub>x<sub>k−1</sub> + B<sub>k</sub>u<sub>k</sub> + w<sub>k</sub><br>z<sub>k</sub> = H<sub>k</sub>x<sub>k</sub> + v<sub>k</sub><br><br><span style="color:#66756E">w ∼ N(0,Q), v ∼ N(0,R), independent.</span>', {
+    ...panel('model-dynamics', 72, 180, 354, 176, 'LINEAR–GAUSSIAN MODEL', mathParagraphs(
+      mathLines(
+        tex`x_k = F_k x_{k-1} + B_k u_k + w_k`,
+        tex`z_k = H_k x_k + v_k`
+      ),
+      muted(`${tex`w_k \sim \mathcal{N}(0,Q_k)`}, ${tex`v_k \sim \mathcal{N}(0,R_k)`}, independent.`)
+    ), {
       accent: C.green, fill: C.greenSoft, stroke: C.green, fontFamily: SERIF, fontSize: 18, lineHeight: 1.45
     }),
-    ...panel('model-predict', 463, 180, 354, 176, 'PREDICT', 'm<sup>−</sup><sub>k</sub> = F<sub>k</sub>m<sup>+</sup><sub>k−1</sub> + B<sub>k</sub>u<sub>k</sub><br>P<sup>−</sup><sub>k</sub> = F<sub>k</sub>P<sup>+</sup><sub>k−1</sub>F<sub>k</sub><sup>T</sup> + Q<sub>k</sub>', {
+    ...panel('model-predict', 463, 180, 354, 176, 'PREDICT', mathLines(
+      tex`m_k^- = F_k m_{k-1}^+ + B_k u_k`,
+      tex`P_k^- = F_k P_{k-1}^+ F_k^\mathsf{T} + Q_k`
+    ), {
       accent: C.blue, fill: C.blueSoft, stroke: C.blue, fontFamily: SERIF, fontSize: 20, lineHeight: 1.65
     }),
-    ...panel('model-correct', 854, 180, 354, 176, 'CORRECT', 'ν = z − Hm<sup>−</sup><br>S = HP<sup>−</sup>H<sup>T</sup> + R<br>K = P<sup>−</sup>H<sup>T</sup>S<sup>−1</sup><br>m<sup>+</sup> = m<sup>−</sup> + Kν', {
+    ...panel('model-correct', 854, 180, 354, 176, 'CORRECT', mathLines(
+      tex`\nu_k = z_k - H_k m_k^-`,
+      tex`S_k = H_k P_k^- H_k^\mathsf{T} + R_k`,
+      tex`K_k = P_k^- H_k^\mathsf{T} S_k^{-1}`,
+      tex`m_k^+ = m_k^- + K_k\nu_k`
+    ), {
       accent: C.rust, fill: C.rustSoft, stroke: C.rust, fontFamily: SERIF, fontSize: 18, lineHeight: 1.35
     }),
     card('model-observe', 72, 390, 1136, 214, C.panel, C.rule, 16),
@@ -208,7 +237,7 @@ function modelSlide() {
     text('model-observe-question', 96, 454, 520, 86, 'How far should the posterior move toward the measurement?', {
       fontSize: 29, fontFamily: SERIF, fontWeight: 700, lineHeight: 1.16
     }),
-    text('model-observe-answer', 96, 554, 520, 28, 'The gain K is a confidence-weighted answer.', {
+    text('model-observe-answer', 96, 554, 520, 28, `The gain ${tex`K`} is a confidence-weighted answer.`, {
       fontSize: 15, color: C.muted
     }),
     shape('model-observe-divider', 'rect', 650, 418, 1, 160, { fill: C.rule }),
@@ -236,7 +265,10 @@ function scalarFallback() {
     text('scalar-fallback-controls-label', x + 34, y + 33, 242, 22, 'DETERMINISTIC DEFAULT', {
       fontSize: 10, fontFamily: MONO, fontWeight: 900, color: C.green, letterSpacing: 1
     }),
-    text('scalar-fallback-controls-copy', x + 34, y + 75, 242, 174, 'prior mean&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; m⁻ = −1.2<br>prior deviation&nbsp; σₚ = 1.35<br><br>measurement&nbsp;&nbsp;&nbsp;&nbsp; z = 2.1<br>measurement dev.&nbsp; σᵣ = 0.75', {
+    text('scalar-fallback-controls-copy', x + 34, y + 75, 242, 174, mathParagraphs(
+      mathLines(tex`m^-=-1.2`, tex`\sigma_p=1.35`),
+      mathLines(tex`z=2.1`, tex`\sigma_r=0.75`)
+    ), {
       fontSize: 16, fontFamily: MONO, fontWeight: 700, lineHeight: 1.55
     }),
     text('scalar-fallback-controls-hint', x + 34, y + 352, 242, 76, 'Live controls replace this region only while the Bento slide is active.', {
@@ -255,10 +287,10 @@ function scalarFallback() {
     text('scalar-like-label', x + 676, y + 362, 130, 22, 'likelihood', { fontSize: 11, fontFamily: MONO, fontWeight: 850, color: C.rust, align: 'center' }),
     card('scalar-metric-gain', x + 848, y + 84, 236, 106, C.greenSoft, C.green, 11),
     text('scalar-metric-gain-label', x + 866, y + 100, 200, 20, 'KALMAN GAIN', { fontSize: 9, fontFamily: MONO, fontWeight: 900, color: C.green, align: 'center' }),
-    text('scalar-metric-gain-value', x + 866, y + 130, 200, 42, 'K = 0.764', { fontSize: 25, fontFamily: SERIF, fontWeight: 700, align: 'center' }),
+    text('scalar-metric-gain-value', x + 866, y + 130, 200, 42, texBlock`K=0.764`, { fontSize: 25, fontFamily: SERIF, fontWeight: 700, align: 'center' }),
     card('scalar-metric-post', x + 848, y + 212, 236, 142, C.rustSoft, C.rust, 11),
     text('scalar-metric-post-label', x + 866, y + 228, 200, 20, 'POSTERIOR', { fontSize: 9, fontFamily: MONO, fontWeight: 900, color: C.rust, align: 'center' }),
-    text('scalar-metric-post-value', x + 866, y + 259, 200, 70, 'm⁺ ≈ 1.32<br>σ⁺ ≈ 0.66', { fontSize: 21, fontFamily: SERIF, fontWeight: 700, align: 'center', lineHeight: 1.4 }),
+    text('scalar-metric-post-value', x + 866, y + 259, 200, 70, texBlock`\begin{aligned}m^+&\approx1.32\\ \sigma^+&\approx0.66\end{aligned}`, { fontSize: 21, fontFamily: SERIF, fontWeight: 700, align: 'center', lineHeight: 1.4 }),
     text('scalar-fallback-status', x + 338, y + 421, 746, 24, 'STATIC FALLBACK · four derivations agree at the deterministic default', {
       fontSize: 10, fontFamily: MONO, fontWeight: 850, color: C.muted, align: 'center'
     })
@@ -326,7 +358,7 @@ function bayesSlide() {
     eyebrow: 'Family 01 · solve for a distribution',
     title: 'Gaussian Bayes',
     subtitle: 'Propagate the old posterior through the dynamics, then multiply the prediction by the new likelihood.',
-    formula: 'p<sup>−</sup><sub>k</sub>(x) = ∫ p(x | x′)p<sup>+</sup><sub>k−1</sub>(x′)dx′ &nbsp;&nbsp;·&nbsp;&nbsp; p<sup>+</sup><sub>k</sub>(x) ∝ p(z<sub>k</sub> | x)p<sup>−</sup><sub>k</sub>(x)',
+    formula: texBlock`p_k^-(x)=\int p(x\mid x')p_{k-1}^+(x')\,dx' \qquad p_k^+(x)\propto p(z_k\mid x)p_k^-(x)`,
     leftTitle: 'ONE OPERATION · THREE ALGEBRAIC VIEWS',
     leftBody: '<b>Completing the square</b> reads off mean and covariance.<br><br><b>Information form</b> adds quadratic coefficients.<br><br><b>Joint conditioning</b> reads the conditional Gaussian blocks.',
     rightTitle: 'WHAT HAS BEEN CONSOLIDATED',
@@ -345,12 +377,12 @@ function mseSlide() {
     eyebrow: 'Family 02 · experiment introduction',
     title: 'Minimum-MSE estimation',
     subtitle: 'Choose the gain—not a density. Make the affine correction error as small as possible.',
-    formula: 'x̂(K) = m<sup>−</sup> + Kν &nbsp;&nbsp;·&nbsp;&nbsp; K<sub>⋆</sub> = arg min<sub>K</sub> E‖x − x̂(K)‖²',
+    formula: texBlock`\widehat{x}(K)=m^-+K\nu \qquad K_\star=\underset{K}{\operatorname{arg\,min}}\;\mathbb{E}\!\left[\lVert x-\widehat{x}(K)\rVert_2^2\right]`,
     leftTitle: 'TWO PROOFS · ONE OPTIMUM',
-    leftBody: '<b>Orthogonality:</b> the remaining error is uncorrelated with the innovation.<br><br><b>Covariance minimization:</b> differentiate the trace of the error covariance.<br><br>Both give K<sub>⋆</sub>S = P<sup>−</sup>H<sup>T</sup>.',
+    leftBody: `<b>Orthogonality:</b> the remaining error is uncorrelated with the innovation.<br><br><b>Covariance minimization:</b> differentiate the trace of the error covariance.<br><br>Both give ${tex`K_\star S=P^-H^\mathsf{T}`}.`,
     rightTitle: 'GEOMETRIC READING',
-    rightBody: 'The measurement selects a direction through H. Cross-covariance P<sup>−</sup>H<sup>T</sup> carries that scalar evidence into the state.<br><br>Noise R weakens the contraction; correlation rotates how the correction spreads.',
-    note: 'Rotate H, vary R, and change correlation ρ. Watch the posterior ellipse contract mainly along the measured slice.',
+    rightBody: `The measurement selects a direction through ${tex`H`}. Cross-covariance ${tex`P^-H^\mathsf{T}`} carries that scalar evidence into the state.<br><br>Noise ${tex`R`} weakens the contraction; correlation rotates how the correction spreads.`,
+    note: `Rotate ${tex`H`}, vary ${tex`R`}, and change correlation ${tex`\rho`}. Watch the posterior ellipse contract mainly along the measured slice.`,
     accent: C.blue,
     soft: C.blueSoft,
     liveCue: 'geometry',
@@ -365,11 +397,11 @@ function leastSquaresSlide() {
     eyebrow: 'Family 03 · solve for a state vector',
     title: 'Weighted least squares',
     subtitle: 'Penalize disagreement with the prediction and observation, each weighted by inverse uncertainty.',
-    formula: 'φ(x) = ½‖x − m<sup>−</sup>‖²<sub>(P<sup>−</sup>)<sup>−1</sup></sub> + ½‖z − Hx‖²<sub>R<sup>−1</sup></sub>',
+    formula: texBlock`\phi(x)=\tfrac12\lVert x-m^-\rVert_{(P^-)^{-1}}^2+\tfrac12\lVert z-Hx\rVert_{R^{-1}}^2`,
     leftTitle: 'STATISTICAL INTERPRETATIONS',
     leftBody: '<b>MAP:</b> this is the negative Gaussian log posterior; its mode equals its mean.<br><br><b>BLUE:</b> the same generalized least-squares algebra applies to independent unbiased observations of a fixed state—but the experiment differs.',
     rightTitle: 'ALGORITHMS · NOT NEW PRINCIPLES',
-    rightBody: '<b>RLS</b> updates the normal equations as observations arrive; the static case has F = I and Q = 0.<br><br><b>Square-root / QR</b> solves the whitened system without forming its normal matrix.',
+    rightBody: `<b>RLS</b> updates the normal equations as observations arrive; the static case has ${tex`F=I`} and ${tex`Q=0`}.<br><br><b>Square-root / QR</b> solves the whitened system without forming its normal matrix.`,
     note: 'BLUE requires a random unbiased observation of a fixed state. A fixed Bayesian prior mean is not unbiased for every possible state.',
     accent: C.rust,
     soft: C.rustSoft,
@@ -384,7 +416,7 @@ function klSlide() {
     eyebrow: 'Family 04 · solve for a density',
     title: 'KL variational updating',
     subtitle: 'Penalize departure from the prior while rewarding densities that explain the new observation.',
-    formula: 'q<sub>⋆</sub> = arg min<sub>q≥0, ∫q=1</sub> { D<sub>KL</sub>(q ‖ p<sup>−</sup>) + E<sub>q</sub>[−log p(z | x)] }',
+    formula: texBlock`q_\star=\underset{q\ge 0,\;\int q=1}{\operatorname{arg\,min}}\left\{D_{\mathrm{KL}}(q\Vert p^-)+\mathbb{E}_q[-\log p(z\mid x)]\right\}`,
     leftTitle: 'DIFFERENT FROM LEAST SQUARES',
     leftBody: 'Least squares varies a state or mean. This problem varies the <b>full density</b>, including covariance.<br><br>In the Gaussian reduction, the entropy term determines covariance instead of collapsing the answer to a point.',
     rightTitle: 'WHAT HAS BEEN CONSOLIDATED',
@@ -423,13 +455,32 @@ function equationSheetSlide({ id, family, title, context, panels, accent, soft, 
 function bayesEquationsSlide() {
   return equationSheetSlide({
     id: 'bayes-equations', family: 'Family 01', title: 'Gaussian Bayes · equations',
-    context: 'One correction: x ∼ N(m⁻,P⁻), z = Hx + v, v ∼ N(0,R), independent; P⁻ ≻ 0 and R ≻ 0.',
+    context: `One correction: ${tex`x\sim\mathcal{N}(m^-,P^-)`}, ${tex`z=Hx+v`}, ${tex`v\sim\mathcal{N}(0,R)`}, independent; ${tex`P^-\succ0`} and ${tex`R\succ0`}.`,
     accent: C.green, soft: C.greenSoft,
     panels: [
-      { title: 'Multiply Gaussian factors', body: 'p<sup>+</sup>(x) ∝ p<sup>−</sup>(x)p(z | x)<br><br>−log p<sup>+</sup>(x) = ½‖x−m<sup>−</sup>‖²<sub>(P<sup>−</sup>)<sup>−1</sup></sub><br>&nbsp;&nbsp;&nbsp;&nbsp;+ ½‖z−Hx‖²<sub>R<sup>−1</sup></sub> + c' },
-      { title: 'Collect information', body: 'J<sup>+</sup> = (P<sup>−</sup>)<sup>−1</sup> + H<sup>T</sup>R<sup>−1</sup>H<br><br>h<sup>+</sup> = (P<sup>−</sup>)<sup>−1</sup>m<sup>−</sup> + H<sup>T</sup>R<sup>−1</sup>z<br><br><span style="color:#66756E">Precision and information vector add.</span>' },
-      { title: 'Complete the square', body: 'm<sup>+</sup> = (J<sup>+</sup>)<sup>−1</sup>h<sup>+</sup><br>P<sup>+</sup> = (J<sup>+</sup>)<sup>−1</sup><br><br>p<sup>+</sup>(x) ∝ exp{−½(x−m<sup>+</sup>)<sup>T</sup>J<sup>+</sup>(x−m<sup>+</sup>)}', fontSize: 16 },
-      { title: 'Same answer by conditioning', body: 'S = HP<sup>−</sup>H<sup>T</sup> + R<br>m<sup>+</sup> = m<sup>−</sup> + P<sup>−</sup>H<sup>T</sup>S<sup>−1</sup>(z−Hm<sup>−</sup>)<br>P<sup>+</sup> = P<sup>−</sup> − P<sup>−</sup>H<sup>T</sup>S<sup>−1</sup>HP<sup>−</sup>', fontSize: 15.5 }
+      { title: 'Multiply Gaussian factors', body: mathParagraphs(
+        tex`p^+(x)\propto p^-(x)p(z\mid x)`,
+        mathLines(
+          tex`-\log p^+(x)=\tfrac12\lVert x-m^-\rVert_{(P^-)^{-1}}^2`,
+          tex`\qquad\quad+\tfrac12\lVert z-Hx\rVert_{R^{-1}}^2+c`
+        )
+      ) },
+      { title: 'Collect information', body: mathParagraphs(
+        mathLines(
+          tex`J^+=(P^-)^{-1}+H^\mathsf{T}R^{-1}H`,
+          tex`h^+=(P^-)^{-1}m^-+H^\mathsf{T}R^{-1}z`
+        ),
+        muted('Precision and information vector add.')
+      ) },
+      { title: 'Complete the square', body: mathParagraphs(
+        mathLines(tex`m^+=(J^+)^{-1}h^+`, tex`P^+=(J^+)^{-1}`),
+        tex`p^+(x)\propto\exp\!\left[-\tfrac12(x-m^+)^\mathsf{T}J^+(x-m^+)\right]`
+      ), fontSize: 16 },
+      { title: 'Same answer by conditioning', body: mathLines(
+        tex`S=HP^-H^\mathsf{T}+R`,
+        tex`m^+=m^-+P^-H^\mathsf{T}S^{-1}(z-Hm^-)`,
+        tex`P^+=P^--P^-H^\mathsf{T}S^{-1}HP^-`
+      ), fontSize: 15.5 }
     ],
     notes: 'Walk clockwise: factor multiplication, information addition, completing the square, and joint conditioning. The four boxes are one derivation written in complementary coordinates.'
   });
@@ -438,13 +489,26 @@ function bayesEquationsSlide() {
 function mseEquationsSlide() {
   return equationSheetSlide({
     id: 'mse-equations', family: 'Family 02', title: 'Minimum-MSE estimation · equations',
-    context: 'Let e⁻ = x−m⁻, ν = z−Hm⁻, S = HP⁻Hᵀ+R; e⁻ and v are zero-mean and uncorrelated, and S ≻ 0.',
+    context: `Let ${tex`e^-=x-m^-`}, ${tex`\nu=z-Hm^-`}, ${tex`S=HP^-H^\mathsf{T}+R`}; ${tex`e^-`} and ${tex`v`} are zero-mean and uncorrelated, and ${tex`S\succ0`}.`,
     accent: C.blue, soft: C.blueSoft,
     panels: [
-      { title: 'Error for an arbitrary gain', body: 'e(K) = e<sup>−</sup> − Kν<br><br>E[e<sup>−</sup>ν<sup>T</sup>] = P<sup>−</sup>H<sup>T</sup><br><br><span style="color:#66756E">Choose K inside an affine correction.</span>' },
-      { title: 'Orthogonality gives the gain', body: 'E[e(K<sub>⋆</sub>)ν<sup>T</sup>] = 0<br><br>K<sub>⋆</sub>S = P<sup>−</sup>H<sup>T</sup><br>K<sub>⋆</sub> = P<sup>−</sup>H<sup>T</sup>S<sup>−1</sup>' },
-      { title: 'Equivalent covariance calculation', body: 'P(K) = (I−KH)P<sup>−</sup>(I−KH)<sup>T</sup> + KRK<sup>T</sup><br><br>∇<sub>K</sub> tr P(K) = 2(KS − P<sup>−</sup>H<sup>T</sup>)', fontSize: 16 },
-      { title: 'Certify the minimum; update', body: 'P(K) − P(K<sub>⋆</sub>) = (K−K<sub>⋆</sub>)S(K−K<sub>⋆</sub>)<sup>T</sup> ⪰ 0<br><br>m<sup>+</sup> = m<sup>−</sup> + K<sub>⋆</sub>ν<br>P<sup>+</sup> = P<sup>−</sup> − K<sub>⋆</sub>SK<sub>⋆</sub><sup>T</sup>', fontSize: 15.5 }
+      { title: 'Error for an arbitrary gain', body: mathParagraphs(
+        tex`e(K)=e^--K\nu`,
+        tex`\mathbb{E}[e^-\nu^\mathsf{T}]=P^-H^\mathsf{T}`,
+        muted(`Choose ${tex`K`} inside an affine correction.`)
+      ) },
+      { title: 'Orthogonality gives the gain', body: mathParagraphs(
+        tex`\mathbb{E}[e(K_\star)\nu^\mathsf{T}]=0`,
+        mathLines(tex`K_\star S=P^-H^\mathsf{T}`, tex`K_\star=P^-H^\mathsf{T}S^{-1}`)
+      ) },
+      { title: 'Equivalent covariance calculation', body: mathParagraphs(
+        tex`P(K)=(I-KH)P^-(I-KH)^\mathsf{T}+KRK^\mathsf{T}`,
+        tex`\nabla_K\operatorname{tr}P(K)=2(KS-P^-H^\mathsf{T})`
+      ), fontSize: 16 },
+      { title: 'Certify the minimum; update', body: mathParagraphs(
+        tex`P(K)-P(K_\star)=(K-K_\star)S(K-K_\star)^\mathsf{T}\succeq0`,
+        mathLines(tex`m^+=m^-+K_\star\nu`, tex`P^+=P^--K_\star SK_\star^\mathsf{T}`)
+      ), fontSize: 15.5 }
     ],
     notes: 'Connect the previous geometric experiment back to the algebra. Orthogonality and trace minimization give the same normal equation. The final positive-semidefinite difference certifies global optimality.'
   });
@@ -453,13 +517,35 @@ function mseEquationsSlide() {
 function leastSquaresEquationsSlide() {
   return equationSheetSlide({
     id: 'least-squares-equations', family: 'Family 03', title: 'Weighted least squares · equations',
-    context: 'One correction: x ∼ N(m⁻,P⁻), z = Hx + v, v ∼ N(0,R), independent; P⁻ ≻ 0 and R ≻ 0.',
+    context: `One correction: ${tex`x\sim\mathcal{N}(m^-,P^-)`}, ${tex`z=Hx+v`}, ${tex`v\sim\mathcal{N}(0,R)`}, independent; ${tex`P^-\succ0`} and ${tex`R\succ0`}.`,
     accent: C.rust, soft: C.rustSoft,
     panels: [
-      { title: 'Objective', body: 'φ(x) = ½‖x−m<sup>−</sup>‖²<sub>(P<sup>−</sup>)<sup>−1</sup></sub><br>&nbsp;&nbsp;&nbsp;&nbsp;+ ½‖z−Hx‖²<sub>R<sup>−1</sup></sub><br><br><span style="color:#66756E">Gaussian MAP objective; Hessian = posterior precision.</span>' },
-      { title: 'Normal equations and curvature', body: 'J<sup>+</sup> = (P<sup>−</sup>)<sup>−1</sup> + H<sup>T</sup>R<sup>−1</sup>H<br>h<sup>+</sup> = (P<sup>−</sup>)<sup>−1</sup>m<sup>−</sup> + H<sup>T</sup>R<sup>−1</sup>z<br>∇φ(x)=J<sup>+</sup>x−h<sup>+</sup>=0<br>m<sup>+</sup>=(J<sup>+</sup>)<sup>−1</sup>h<sup>+</sup>, P<sup>+</sup>=(J<sup>+</sup>)<sup>−1</sup>', fontSize: 14.5 },
-      { title: 'Expose the Kalman correction', body: 'ν = z−Hm<sup>−</sup>, &nbsp; S = HP<sup>−</sup>H<sup>T</sup>+R<br><br>(J<sup>+</sup>)<sup>−1</sup>H<sup>T</sup>R<sup>−1</sup> = P<sup>−</sup>H<sup>T</sup>S<sup>−1</sup> = K<br><br>m<sup>+</sup>=m<sup>−</sup>+Kν, &nbsp; P<sup>+</sup>=P<sup>−</sup>−KSK<sup>T</sup>', fontSize: 15 },
-      { title: 'BLUE: a different experiment', body: 'd = [a; z], &nbsp; G = [I; H], &nbsp; W = diag(P<sup>−</sup>,R)<br><br>x̂ = (G<sup>T</sup>W<sup>−1</sup>G)<sup>−1</sup>G<sup>T</sup>W<sup>−1</sup>d<br>&nbsp;&nbsp;= a + K(z−Ha)<br><br><span style="color:#66756E">Here a=x+ε and x is fixed.</span>', fontSize: 14.5 }
+      { title: 'Objective', body: mathParagraphs(
+        mathLines(
+          tex`\phi(x)=\tfrac12\lVert x-m^-\rVert_{(P^-)^{-1}}^2`,
+          tex`\qquad\quad+\tfrac12\lVert z-Hx\rVert_{R^{-1}}^2`
+        ),
+        muted('Gaussian MAP objective; Hessian = posterior precision.')
+      ) },
+      { title: 'Normal equations and curvature', body: mathLines(
+        tex`J^+=(P^-)^{-1}+H^\mathsf{T}R^{-1}H`,
+        tex`h^+=(P^-)^{-1}m^-+H^\mathsf{T}R^{-1}z`,
+        tex`\nabla\phi(x)=J^+x-h^+=0`,
+        tex`m^+=(J^+)^{-1}h^+,\quad P^+=(J^+)^{-1}`
+      ), fontSize: 14.5 },
+      { title: 'Expose the Kalman correction', body: mathParagraphs(
+        tex`\nu=z-Hm^-,\qquad S=HP^-H^\mathsf{T}+R`,
+        tex`(J^+)^{-1}H^\mathsf{T}R^{-1}=P^-H^\mathsf{T}S^{-1}=K`,
+        tex`m^+=m^-+K\nu,\qquad P^+=P^--KSK^\mathsf{T}`
+      ), fontSize: 15 },
+      { title: 'BLUE: a different experiment', body: mathParagraphs(
+        tex`d=\begin{bmatrix}a\\z\end{bmatrix},\quad G=\begin{bmatrix}I\\H\end{bmatrix},\quad W=\operatorname{diag}(P^-,R)`,
+        mathLines(
+          tex`\widehat{x}=(G^\mathsf{T}W^{-1}G)^{-1}G^\mathsf{T}W^{-1}d`,
+          tex`\phantom{\widehat{x}}=a+K(z-Ha)`
+        ),
+        muted(`Here ${tex`a=x+\varepsilon`} and ${tex`x`} is fixed.`)
+      ), fontSize: 14.5 }
     ],
     notes: 'Derive the normal equations, then use Woodbury to expose the Kalman correction. End by restating that BLUE uses a different sampling experiment even when the estimator formula matches.'
   });
@@ -468,13 +554,33 @@ function leastSquaresEquationsSlide() {
 function klEquationsSlide() {
   return equationSheetSlide({
     id: 'kl-equations', family: 'Family 04', title: 'KL variational updating · equations',
-    context: 'One correction: x ∼ N(m⁻,P⁻), z = Hx + v, v ∼ N(0,R), independent; optimize over q ≥ 0 with ∫q = 1.',
+    context: `One correction: ${tex`x\sim\mathcal{N}(m^-,P^-)`}, ${tex`z=Hx+v`}, ${tex`v\sim\mathcal{N}(0,R)`}, independent; optimize over ${tex`q\ge0`} with ${tex`\int q=1`}.`,
     accent: C.violet, soft: C.violetSoft,
     panels: [
-      { title: 'Optimize over densities', body: 'ℓ<sub>z</sub>(x) = −log p(z | x)<br><br>F(q) = D<sub>KL</sub>(q ‖ p<sup>−</sup>) + E<sub>q</sub>[ℓ<sub>z</sub>(x)]<br><br><span style="color:#66756E">Include the likelihood normalizing constant.</span>' },
-      { title: 'Identify the exact minimizer', body: 'F(q) = D<sub>KL</sub>(q ‖ p(x | z)) − log p(z)<br><br>q<sub>⋆</sub>(x) ∝ p<sup>−</sup>(x)e<sup>−ℓ<sub>z</sub>(x)</sup><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;= p<sup>−</sup>(x)p(z | x)' },
-      { title: 'Gaussian parameter objective', body: 'q=N(μ,Σ), &nbsp; J=(P<sup>−</sup>)<sup>−1</sup>+H<sup>T</sup>R<sup>−1</sup>H<br><br>F(μ,Σ)=½‖μ−m<sup>−</sup>‖²<sub>(P<sup>−</sup>)<sup>−1</sup></sub> + ½‖z−Hμ‖²<sub>R<sup>−1</sup></sub><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;+ ½tr(JΣ) − ½log det Σ + c', fontSize: 14.2 },
-      { title: 'Recover mean and covariance', body: 'h=(P<sup>−</sup>)<sup>−1</sup>m<sup>−</sup>+H<sup>T</sup>R<sup>−1</sup>z<br><br>∇<sub>μ</sub>F=0 ⇒ Jμ=h<br>∇<sub>Σ</sub>F=0 ⇒ Σ<sup>−1</sup>=J<br><br>m<sup>+</sup>=J<sup>−1</sup>h, &nbsp; P<sup>+</sup>=J<sup>−1</sup>', fontSize: 15.5 }
+      { title: 'Optimize over densities', body: mathParagraphs(
+        tex`\ell_z(x)=-\log p(z\mid x)`,
+        tex`F(q)=D_{\mathrm{KL}}(q\Vert p^-)+\mathbb{E}_q[\ell_z(x)]`,
+        muted('Include the likelihood normalizing constant.')
+      ) },
+      { title: 'Identify the exact minimizer', body: mathParagraphs(
+        tex`F(q)=D_{\mathrm{KL}}(q\Vert p(x\mid z))-\log p(z)`,
+        mathLines(
+          tex`q_\star(x)\propto p^-(x)e^{-\ell_z(x)}`,
+          tex`\phantom{q_\star(x)}=p^-(x)p(z\mid x)`
+        )
+      ) },
+      { title: 'Gaussian parameter objective', body: mathParagraphs(
+        tex`q=\mathcal{N}(\mu,\Sigma),\quad J=(P^-)^{-1}+H^\mathsf{T}R^{-1}H`,
+        mathLines(
+          tex`F(\mu,\Sigma)=\tfrac12\lVert\mu-m^-\rVert_{(P^-)^{-1}}^2+\tfrac12\lVert z-H\mu\rVert_{R^{-1}}^2`,
+          tex`\qquad\qquad+\tfrac12\operatorname{tr}(J\Sigma)-\tfrac12\log\det\Sigma+c`
+        )
+      ), fontSize: 14.2 },
+      { title: 'Recover mean and covariance', body: mathParagraphs(
+        tex`h=(P^-)^{-1}m^-+H^\mathsf{T}R^{-1}z`,
+        mathLines(tex`\nabla_\mu F=0\;\Longrightarrow\;J\mu=h`, tex`\nabla_\Sigma F=0\;\Longrightarrow\;\Sigma^{-1}=J`),
+        tex`m^+=J^{-1}h,\qquad P^+=J^{-1}`
+      ), fontSize: 15.5 }
     ],
     notes: 'Show that the variational objective is exactly KL to the posterior plus a constant. In the Gaussian parameterization, optimize both μ and Σ; the entropy term is what prevents covariance collapse.'
   });
@@ -486,15 +592,18 @@ function geometryFallback() {
     card('geometry-fallback-region', x, y, width, height, '#FBFAF6', C.rule, 14),
     card('geometry-fallback-controls', x + 16, y + 16, 278, height - 32, C.blueSoft, C.blue, 12),
     text('geometry-fallback-label', x + 34, y + 33, 242, 22, 'DEFAULT GEOMETRY', { fontSize: 10, fontFamily: MONO, fontWeight: 900, color: C.blue, letterSpacing: 1 }),
-    text('geometry-fallback-values', x + 34, y + 75, 242, 214, 'σₓ = 1.80<br>σᵧ = 1.00<br>ρ = 0.65<br><br>measurement angle φ = 28°<br>measured value z = 1.70<br>measurement σᵣ = 0.45', { fontSize: 15.5, fontFamily: MONO, fontWeight: 700, lineHeight: 1.52 }),
-    text('geometry-fallback-hint', x + 34, y + 368, 242, 62, 'Rotate H and watch correlation carry evidence across coordinates.', { fontSize: 13, color: C.muted, lineHeight: 1.45 }),
+    text('geometry-fallback-values', x + 34, y + 75, 242, 214, mathParagraphs(
+      mathLines(tex`\sigma_x=1.80`, tex`\sigma_y=1.00`, tex`\rho=0.65`),
+      mathLines(tex`\varphi=28^\circ`, tex`z=1.70`, tex`\sigma_r=0.45`)
+    ), { fontSize: 15.5, fontFamily: MONO, fontWeight: 700, lineHeight: 1.52 }),
+    text('geometry-fallback-hint', x + 34, y + 368, 242, 62, `Rotate ${tex`H`} and watch correlation carry evidence across coordinates.`, { fontSize: 13, color: C.muted, lineHeight: 1.45 }),
     card('geometry-fallback-stage', x + 312, y + 16, width - 328, height - 32, C.panel, C.rule, 12),
     text('geometry-fallback-stage-label', x + 338, y + 34, 520, 22, 'PRIOR ELLIPSE → MEASUREMENT STRIP → POSTERIOR', { fontSize: 10, fontFamily: MONO, fontWeight: 900, color: C.blue, letterSpacing: 1 }),
     shape('geometry-prior', 'ellipse', x + 410, y + 126, 382, 236, { fill: C.blueSoft, stroke: C.blue, strokeWidth: 4, rotation: 23 }),
     shape('geometry-posterior', 'ellipse', x + 516, y + 176, 205, 132, { fill: C.greenSoft, stroke: C.green, strokeWidth: 5, rotation: 23 }),
     shape('geometry-measurement', 'rect', x + 398, y + 276, 446, 4, { fill: C.rust, rotation: -28 }),
-    text('geometry-prior-label', x + 382, y + 385, 220, 24, 'prior P⁻', { fontSize: 12, fontFamily: MONO, fontWeight: 850, color: C.blue, align: 'center' }),
-    text('geometry-post-label', x + 632, y + 339, 220, 24, 'posterior P⁺', { fontSize: 12, fontFamily: MONO, fontWeight: 850, color: C.green, align: 'center' }),
+    text('geometry-prior-label', x + 382, y + 385, 220, 24, `prior ${tex`P^-`}`, { fontSize: 12, fontFamily: MONO, fontWeight: 850, color: C.blue, align: 'center' }),
+    text('geometry-post-label', x + 632, y + 339, 220, 24, `posterior ${tex`P^+`}`, { fontSize: 12, fontFamily: MONO, fontWeight: 850, color: C.green, align: 'center' }),
     card('geometry-metric', x + 874, y + 94, 194, 164, C.greenSoft, C.green, 11),
     text('geometry-metric-label', x + 892, y + 111, 158, 19, 'OBSERVE', { fontSize: 9, fontFamily: MONO, fontWeight: 900, color: C.green, align: 'center' }),
     text('geometry-metric-copy', x + 892, y + 145, 158, 86, 'Evidence contracts the measured direction most strongly.', { fontSize: 16, fontFamily: SERIF, fontWeight: 700, align: 'center', lineHeight: 1.35 }),
@@ -509,7 +618,7 @@ function geometryLiveSlide() {
     elements: [
       text('live-eyebrow', 74, 37, 870, 21, 'MINIMUM-MSE · LIVE EXPERIMENT', { fontSize: 10, fontFamily: MONO, fontWeight: 900, color: C.blue, letterSpacing: 1.45 }),
       text('live-title', 74, 66, 1050, 48, 'Rotate the measurement. Watch uncertainty contract.', { fontSize: 34, fontFamily: SERIF, fontWeight: 700, lineHeight: 1.05 }),
-      text('live-prompt', 74, 116, 1080, 28, 'Vary H, R, and correlation. Cross-covariance decides how scalar evidence spreads through the state.', { fontSize: 15, color: C.muted }),
+      text('live-prompt', 74, 116, 1080, 28, `Vary ${tex`H`}, ${tex`R`}, and correlation. Cross-covariance decides how scalar evidence spreads through the state.`, { fontSize: 15, color: C.muted }),
       ...geometryFallback(),
       shape('live-demo-mount', 'rect', LIVE_BOUNDS.x, LIVE_BOUNDS.y, LIVE_BOUNDS.width, LIVE_BOUNDS.height, { fill: 'rgba(255,255,255,0)', stroke: 'rgba(255,255,255,0)', strokeWidth: 0, opacity: 0 }),
       ...chrome('Minimum-MSE · live', C.blue)
@@ -520,13 +629,28 @@ function geometryLiveSlide() {
 function graphsSlide() {
   return equationSheetSlide({
     id: 'graphs', family: 'Computational notes', title: 'Gaussian elimination · the computational form',
-    context: 'a ∼ N(mₐ,Pₐ), b = Fa+w, z = Hb+v; independent w ∼ N(0,Q), v ∼ N(0,R), with Pₐ,Q,R ≻ 0.',
+    context: `${tex`a\sim\mathcal{N}(m_a,P_a)`}, ${tex`b=Fa+w`}, ${tex`z=Hb+v`}; independent ${tex`w\sim\mathcal{N}(0,Q)`}, ${tex`v\sim\mathcal{N}(0,R)`}, with ${tex`P_a,Q,R\succ0`}.`,
     accent: C.gold, soft: C.goldSoft,
     panels: [
-      { title: 'Write the joint canonical Gaussian', body: 'u = [a; b], &nbsp; Λ = [A C; C<sup>T</sup> D], &nbsp; η = [ηₐ; ηᵦ]<br><br>p(u) ∝ exp{−½u<sup>T</sup>Λu + u<sup>T</sup>η}', fontSize: 16 },
-      { title: 'Blocks from the transition factor', body: 'A = Pₐ<sup>−1</sup> + F<sup>T</sup>Q<sup>−1</sup>F<br>C = −F<sup>T</sup>Q<sup>−1</sup>, &nbsp; D = Q<sup>−1</sup><br><br>ηₐ = Pₐ<sup>−1</sup>mₐ, &nbsp; ηᵦ = 0' },
-      { title: 'Eliminate a: prediction message', body: 'J<sup>−</sup> = D − C<sup>T</sup>A<sup>−1</sup>C<br>h<sup>−</sup> = ηᵦ − C<sup>T</sup>A<sup>−1</sup>ηₐ<br><br>P<sup>−</sup> = (J<sup>−</sup>)<sup>−1</sup> = FPₐF<sup>T</sup> + Q<br>m<sup>−</sup> = P<sup>−</sup>h<sup>−</sup> = Fmₐ', fontSize: 15 },
-      { title: 'Add the observation factor', body: 'J<sup>+</sup> = J<sup>−</sup> + H<sup>T</sup>R<sup>−1</sup>H<br>h<sup>+</sup> = h<sup>−</sup> + H<sup>T</sup>R<sup>−1</sup>z<br><br>P<sup>+</sup> = (J<sup>+</sup>)<sup>−1</sup><br>m<sup>+</sup> = P<sup>+</sup>h<sup>+</sup>', fontSize: 16 }
+      { title: 'Write the joint canonical Gaussian', body: mathParagraphs(
+        tex`u=\begin{bmatrix}a\\b\end{bmatrix},\quad \Lambda=\begin{bmatrix}A&C\\C^\mathsf{T}&D\end{bmatrix},\quad \eta=\begin{bmatrix}\eta_a\\\eta_b\end{bmatrix}`,
+        tex`p(u)\propto\exp\!\left(-\tfrac12u^\mathsf{T}\Lambda u+u^\mathsf{T}\eta\right)`
+      ), fontSize: 16 },
+      { title: 'Blocks from the transition factor', body: mathParagraphs(
+        mathLines(
+          tex`A=P_a^{-1}+F^\mathsf{T}Q^{-1}F`,
+          tex`C=-F^\mathsf{T}Q^{-1},\qquad D=Q^{-1}`
+        ),
+        tex`\eta_a=P_a^{-1}m_a,\qquad \eta_b=0`
+      ) },
+      { title: 'Eliminate a: prediction message', body: mathParagraphs(
+        mathLines(tex`J^-=D-C^\mathsf{T}A^{-1}C`, tex`h^-=\eta_b-C^\mathsf{T}A^{-1}\eta_a`),
+        mathLines(tex`P^-=(J^-)^{-1}=FP_aF^\mathsf{T}+Q`, tex`m^-=P^-h^-=Fm_a`)
+      ), fontSize: 15 },
+      { title: 'Add the observation factor', body: mathParagraphs(
+        mathLines(tex`J^+=J^-+H^\mathsf{T}R^{-1}H`, tex`h^+=h^-+H^\mathsf{T}R^{-1}z`),
+        mathLines(tex`P^+=(J^+)^{-1}`, tex`m^+=P^+h^+`)
+      ), fontSize: 16 }
     ],
     notes: 'Present Gaussian message passing as block elimination. The Schur complement is the prediction message; adding the observation factor is the information-form correction. This is a computational organization, not a fifth derivation family.'
   });
@@ -535,15 +659,27 @@ function graphsSlide() {
 function implementationsSlide() {
   const elements = [
     ...heading('Numerical forms · experiment introduction', 'Numerical forms and control duality', 'The estimator is fixed. Arithmetic path, conditioning, and factorization determine numerical behavior.', C.violet),
-    ...panel('impl-qr', 72, 184, 552, 300, 'SQUARE ROOT / QR', 'P<sup>−</sup> = L<sub>p</sub>L<sub>p</sub><sup>T</sup>, &nbsp; R = L<sub>r</sub>L<sub>r</sub><sup>T</sup><br><br>A = [L<sub>p</sub><sup>−1</sup>; L<sub>r</sub><sup>−1</sup>H], &nbsp; b = [L<sub>p</sub><sup>−1</sup>m<sup>−</sup>; L<sub>r</sub><sup>−1</sup>z]<br><br>A = UT, &nbsp; Tm<sup>+</sup> = U<sup>T</sup>b<br>P<sup>+</sup> = T<sup>−1</sup>T<sup>−T</sup><br><br><span style="color:#66756E">Use triangular solves; avoid squaring the stacked system’s condition number.</span>', {
+    ...panel('impl-qr', 72, 184, 552, 300, 'SQUARE ROOT / QR', mathParagraphs(
+      tex`P^-=L_pL_p^\mathsf{T},\qquad R=L_rL_r^\mathsf{T}`,
+      tex`A=\begin{bmatrix}L_p^{-1}\\L_r^{-1}H\end{bmatrix},\qquad b=\begin{bmatrix}L_p^{-1}m^-\\L_r^{-1}z\end{bmatrix}`,
+      mathLines(tex`A=UT,\qquad Tm^+=U^\mathsf{T}b`, tex`P^+=T^{-1}T^{-\mathsf{T}}`),
+      muted('Use triangular solves; avoid squaring the stacked system’s condition number.')
+    ), {
       accent: C.violet, fill: C.violetSoft, stroke: C.violet, fontFamily: SERIF, fontSize: 16.5, lineHeight: 1.43
     }),
-    ...panel('impl-riccati', 656, 184, 552, 300, 'RICCATI / LQR DUALITY', 'Π<sub>k+1</sub> = FΠ<sub>k</sub>F<sup>T</sup> + Q<br>&nbsp;&nbsp;− FΠ<sub>k</sub>H<sup>T</sup>(HΠ<sub>k</sub>H<sup>T</sup>+R)<sup>−1</sup>HΠ<sub>k</sub>F<sup>T</sup><br><br>Π<sub>k</sub> = P<sup>−</sup><sub>k</sub><br><br><span style="color:#66756E">LQR uses A<sub>c</sub>=F<sup>T</sup>, B<sub>c</sub>=H<sup>T</sup>; finite-horizon time directions reverse. Constant gain also requires convergence.</span>', {
+    ...panel('impl-riccati', 656, 184, 552, 300, 'RICCATI / LQR DUALITY', mathParagraphs(
+      mathLines(
+        tex`\Pi_{k+1}=F\Pi_kF^\mathsf{T}+Q`,
+        tex`\qquad-F\Pi_kH^\mathsf{T}(H\Pi_kH^\mathsf{T}+R)^{-1}H\Pi_kF^\mathsf{T}`
+      ),
+      tex`\Pi_k=P_k^-`,
+      muted(`LQR uses ${tex`A_c=F^\mathsf{T}`} and ${tex`B_c=H^\mathsf{T}`}; finite-horizon time directions reverse. Constant gain also requires convergence.`)
+    ), {
       accent: C.gold, fill: C.goldSoft, stroke: C.gold, fontFamily: SERIF, fontSize: 16, lineHeight: 1.45
     }),
     card('impl-watch', 72, 516, 1136, 116, C.panel, C.violet, 14),
     text('impl-watch-label', 96, 538, 180, 20, 'WHAT TO WATCH NEXT', { fontSize: 10, fontFamily: MONO, fontWeight: 900, color: C.violet, letterSpacing: 1 }),
-    text('impl-watch-copy', 272, 530, 912, 74, '<b>Raise cond(P⁻), then lower simulated precision.</b><br><span style="color:#66756E">Covariance subtraction, information inversion, Joseph stabilization, and square-root QR target the same P⁺—but cease to behave identically in finite arithmetic.</span>', { fontSize: 16, lineHeight: 1.5, valign: 'middle' }),
+    text('impl-watch-copy', 272, 530, 912, 74, `<b>Raise ${tex`\operatorname{cond}(P^-)`}, then lower simulated precision.</b><br>${muted(`Covariance subtraction, information inversion, Joseph stabilization, and square-root QR target the same ${tex`P^+`}—but cease to behave identically in finite arithmetic.`)}`, { fontSize: 16, lineHeight: 1.5, valign: 'middle' }),
     ...chrome('Numerical forms', C.violet)
   ];
   return {
@@ -556,16 +692,21 @@ function implementationsSlide() {
 function precisionFallback() {
   const { x, y, width, height } = LIVE_BOUNDS;
   const methods = [
-    ['Covariance subtraction', 'P⁻ − KSKᵀ', C.rust, C.rustSoft],
-    ['Information inversion', '(P⁻¹ + HᵀR⁻¹H)⁻¹', C.blue, C.blueSoft],
-    ['Joseph stabilization', '(I−KH)P⁻(I−KH)ᵀ + KRKᵀ', C.green, C.greenSoft],
-    ['Square root / QR', 'whiten → QR → solve', C.violet, C.violetSoft]
+    ['Covariance subtraction', texBlock`P^- - KSK^\mathsf{T}`, C.rust, C.rustSoft],
+    ['Information inversion', texBlock`\left((P^-)^{-1}+H^\mathsf{T}R^{-1}H\right)^{-1}`, C.blue, C.blueSoft],
+    ['Joseph stabilization', texBlock`(I-KH)P^-(I-KH)^\mathsf{T}+KRK^\mathsf{T}`, C.green, C.greenSoft],
+    ['Square root / QR', texBlock`\text{whiten}\;\longrightarrow\;\mathrm{QR}\;\longrightarrow\;\text{solve}`, C.violet, C.violetSoft]
   ];
   const elements = [
     card('precision-fallback-region', x, y, width, height, '#FBFAF6', C.rule, 14),
     card('precision-fallback-controls', x + 16, y + 16, 278, height - 32, C.violetSoft, C.violet, 12),
     text('precision-fallback-label', x + 34, y + 33, 242, 22, 'DEFAULT STRESS TEST', { fontSize: 10, fontFamily: MONO, fontWeight: 900, color: C.violet, letterSpacing: 1 }),
-    text('precision-fallback-values', x + 34, y + 78, 242, 154, 'state dimension&nbsp;&nbsp;&nbsp; n = 3<br>measurement dim.&nbsp;&nbsp; m = 1<br>cond(P⁻)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; = 10³<br>precision&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; = double', { fontSize: 15.5, fontFamily: MONO, fontWeight: 700, lineHeight: 1.55 }),
+    text('precision-fallback-values', x + 34, y + 78, 242, 154, mathLines(
+      tex`n=3`,
+      tex`m=1`,
+      tex`\operatorname{cond}(P^-)=10^3`,
+      tex`\text{precision}=\text{double}`
+    ), { fontSize: 15.5, fontFamily: MONO, fontWeight: 700, lineHeight: 1.55 }),
     text('precision-fallback-hint', x + 34, y + 365, 242, 68, 'Lower significant digits until algebraic identities separate numerically.', { fontSize: 13, color: C.muted, lineHeight: 1.45 }),
     card('precision-fallback-stage', x + 312, y + 16, width - 328, height - 32, C.panel, C.rule, 12),
     text('precision-fallback-stage-label', x + 338, y + 34, 700, 22, 'ONE TARGET COVARIANCE · FOUR ARITHMETIC PATHS', { fontSize: 10, fontFamily: MONO, fontWeight: 900, color: C.violet, letterSpacing: 1 })
@@ -578,7 +719,7 @@ function precisionFallback() {
     elements.push(card(`precision-method-${index}`, mx, my, 348, 136, soft, accent, 11));
     elements.push(text(`precision-method-name-${index}`, mx + 17, my + 15, 314, 24, name, { fontSize: 16, fontFamily: SERIF, fontWeight: 700, color: accent }));
     elements.push(text(`precision-method-formula-${index}`, mx + 17, my + 51, 314, 40, formula, { fontSize: 12.5, fontFamily: MONO, fontWeight: 750, valign: 'middle' }));
-    elements.push(text(`precision-method-status-${index}`, mx + 17, my + 104, 314, 18, 'max Δ ≈ 0 · positive definite', { fontSize: 9.5, fontFamily: MONO, fontWeight: 850, color: C.green }));
+    elements.push(text(`precision-method-status-${index}`, mx + 17, my + 104, 314, 18, `${tex`\max\Delta\approx0`} · positive definite`, { fontSize: 9.5, fontFamily: MONO, fontWeight: 850, color: C.green }));
   });
   elements.push(text('precision-fallback-status', x + 338, y + 421, 730, 24, 'STATIC FALLBACK · all four paths agree at the deterministic default', { fontSize: 10, fontFamily: MONO, fontWeight: 850, color: C.muted, align: 'center' }));
   return elements;
@@ -600,14 +741,33 @@ function precisionLiveSlide() {
 }
 
 function equivalenceSlide() {
+  const choices = [
+    ['PROBABILITY', 'belief and closure', C.green, C.greenSoft],
+    ['PROJECTION', 'optimality and geometry', C.blue, C.blueSoft],
+    ['LEAST SQUARES', 'objectives and solvers', C.rust, C.rustSoft],
+    ['KL', 'distributional updating', C.violet, C.violetSoft],
+    ['QR / INFORMATION', 'numerical structure', C.gold, C.goldSoft]
+  ];
   const elements = [
     ...heading('Synthesis', 'Same answer; different assumptions', 'Under the linear–Gaussian model, the families agree. Outside it, the distinctions matter.', C.rust),
-    ...panel('equiv-linear', 72, 184, 552, 190, 'UNDER THE LINEAR–GAUSSIAN MODEL', '<span style="font-family:Georgia,serif;font-size:24px"><b>posterior mean = MAP = LMMSE</b></span><br><br>Bayes computes the posterior. Projection and least squares recover its mean. Information, graph elimination, and QR reorganize the computation. KL expresses the posterior variationally.', { accent: C.green, fill: C.greenSoft, stroke: C.green, fontSize: 14.5, lineHeight: 1.42 }),
+    ...panel('equiv-linear', 72, 184, 552, 190, 'UNDER THE LINEAR–GAUSSIAN MODEL', `<span style="font-size:24px;font-weight:700">${tex`\operatorname{posterior\ mean}=\mathrm{MAP}=\mathrm{LMMSE}`}</span><br><br>Bayes computes the posterior. Projection and least squares recover its mean. Information, graph elimination, and QR reorganize the computation. KL expresses the posterior variationally.`, { accent: C.green, fill: C.greenSoft, stroke: C.green, fontSize: 14.5, lineHeight: 1.42 }),
     ...panel('equiv-outside', 656, 184, 552, 190, 'OUTSIDE THAT MODEL', 'With non-Gaussian noise, LMMSE need not equal the posterior mean; MAP need not equal it either.<br><br>Correlated noises require modified cross-covariances. Nonlinear models do not preserve the exact equivalences.', { accent: C.rust, fill: C.rustSoft, stroke: C.rust, fontSize: 15.5, lineHeight: 1.46 }),
-    ...panel('equiv-scalar', 72, 402, 552, 206, 'ONE SCALAR SANITY CHECK', 'm<sup>−</sup>=0, P<sup>−</sup>=4, H=1, z=3, R=1<br><br>S=5, &nbsp; K=0.8<br>m<sup>+</sup>=2.4, &nbsp; P<sup>+</sup>=0.8<br><br><span style="color:#66756E">Every applicable route returns these numbers.</span>', { accent: C.blue, fill: C.blueSoft, stroke: C.blue, fontFamily: SERIF, fontSize: 17, lineHeight: 1.4 }),
-    ...panel('equiv-choice', 656, 402, 552, 206, 'CHOOSE THE LANGUAGE FOR THE QUESTION', '<b>Probability</b> for belief and closure.<br><b>Projection</b> for optimality and geometry.<br><b>Least squares</b> for objectives and solvers.<br><b>KL</b> for distributional updating.<br><b>QR / information</b> for numerical structure.', { accent: C.violet, fill: C.violetSoft, stroke: C.violet, fontSize: 16, lineHeight: 1.48 }),
-    ...chrome('Synthesis', C.rust)
+    card('equiv-choice-card', 72, 402, 1136, 206, C.panel, C.violet, 14),
+    text('equiv-choice-title', 94, 421, 1092, 22, 'CHOOSE THE LANGUAGE FOR THE QUESTION', {
+      fontSize: 11, fontFamily: MONO, fontWeight: 850, color: C.violet, letterSpacing: 0.65
+    })
   ];
+  choices.forEach(([label, body, accent, soft], index) => {
+    const x = 92 + index * 219;
+    elements.push(card(`equiv-choice-${index}`, x, 458, 208, 124, soft, accent, 11));
+    elements.push(text(`equiv-choice-${index}-label`, x + 13, 475, 182, 22, label, {
+      fontSize: 9.5, fontFamily: MONO, fontWeight: 900, color: accent, align: 'center', letterSpacing: 0.5
+    }));
+    elements.push(text(`equiv-choice-${index}-body`, x + 15, 516, 178, 44, body, {
+      fontSize: 14, fontFamily: SERIF, fontWeight: 700, align: 'center', lineHeight: 1.25
+    }));
+  });
+  elements.push(...chrome('Synthesis', C.rust));
   return {
     id: 'equivalence', background: C.paper, transition: 'morph',
     notes: 'Close the conceptual argument. The same estimator does not mean the assumptions or outputs are interchangeable. Use the scalar example as a sanity check and the final panel as a decision guide.',

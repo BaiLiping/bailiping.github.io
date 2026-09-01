@@ -22,13 +22,29 @@
     return String(value).replace(/[&<>"]/g, char => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[char])
   }
 
+  function mathHtml(source, display = false) {
+    const escaped = escapeHtml(source)
+    const open = display ? '\\[' : '\\('
+    const close = display ? '\\]' : '\\)'
+    return `<span class="math-tex ${display ? 'math-display' : 'math-inline'}">${open}${escaped}${close}</span>`
+  }
+
+  function tex(strings, ...values) {
+    return mathHtml(String.raw(strings, ...values))
+  }
+
+  function setMath(node, source, display = false) {
+    node.innerHTML = mathHtml(source, display)
+    window.typesetDynamicMath?.()
+  }
+
   function createShell({ accent, eyebrow, title, intro, controls, stageTitle, stageBody }) {
     app.style.setProperty('--accent', accent)
     app.innerHTML = `
       <aside class="control-panel">
         <p class="eyebrow">${escapeHtml(eyebrow)}</p>
         <h1>${escapeHtml(title)}</h1>
-        <p class="intro">${escapeHtml(intro)}</p>
+        <p class="intro">${intro}</p>
         <div class="control-stack">${controls}</div>
       </aside>
       <section class="stage-panel">
@@ -48,13 +64,15 @@
   function rangeControl(id, label, min, max, step, value, output) {
     return `
       <div class="control">
-        <div class="control-head"><label for="${id}">${escapeHtml(label)}</label><output id="${id}-out" for="${id}">${escapeHtml(output)}</output></div>
+        <div class="control-head"><label for="${id}">${label}</label><output id="${id}-out" for="${id}">${escapeHtml(output)}</output></div>
         <input id="${id}" type="range" min="${min}" max="${max}" step="${step}" value="${value}">
       </div>`
   }
 
-  function setStatus(node, text, tone = 'good') {
-    node.querySelector('span').textContent = text
+  function setStatus(node, text, tone = 'good', isMath = false) {
+    const label = node.querySelector('span')
+    if (isMath) setMath(label, text)
+    else label.textContent = text
     const dot = node.querySelector('i')
     dot.style.background = tone === 'bad' ? COLORS.red : tone === 'warn' ? COLORS.amber : COLORS.green
   }
@@ -93,10 +111,10 @@
       title: 'Prior × likelihood',
       intro: 'Change the two Gaussian sources. The common posterior is shown once; an agreement check confirms that four derivations reach it.',
       controls: [
-        rangeControl('prior-mean', 'Prior mean m⁻', -4, 4, .1, -1.2, '−1.2'),
-        rangeControl('prior-sigma', 'Prior standard deviation σₚ', .2, 3, .05, 1.35, '1.35'),
-        rangeControl('measurement', 'Measurement z', -4, 4, .1, 2.1, '2.1'),
-        rangeControl('measurement-sigma', 'Measurement standard deviation σᵣ', .2, 3, .05, .75, '0.75'),
+        rangeControl('prior-mean', `Prior mean ${tex`m^-`}`, -4, 4, .1, -1.2, '−1.2'),
+        rangeControl('prior-sigma', `Prior standard deviation ${tex`\sigma_p`}`, .2, 3, .05, 1.35, '1.35'),
+        rangeControl('measurement', `Measurement ${tex`z`}`, -4, 4, .1, 2.1, '2.1'),
+        rangeControl('measurement-sigma', `Measurement standard deviation ${tex`\sigma_r`}`, .2, 3, .05, .75, '0.75'),
         '<div class="button-row"><button id="scalar-reset" type="button">Reset</button><button id="scalar-swap" class="primary" type="button">Swap certainty</button></div>'
       ].join(''),
       stageTitle: 'POSTERIOR DENSITY AND NUMERICAL AGREEMENT',
@@ -111,9 +129,9 @@
             </div>
           </div>
           <aside class="metric-rail">
-            <div class="metric-card accent"><span class="metric-k">Kalman gain</span><div class="metric-v" id="scalar-gain">—</div><p class="metric-copy">K = P⁻/(P⁻ + R)</p></div>
+            <div class="metric-card accent"><span class="metric-k">Kalman gain</span><div class="metric-v" id="scalar-gain">—</div><p class="metric-copy">${tex`K=P^-/(P^-+R)`}</p></div>
             <div class="metric-card"><span class="metric-k">Posterior</span><div class="metric-v" id="scalar-post">—</div></div>
-            <div class="metric-card"><span class="metric-k">Derivation check</span><div class="metric-v good">Bayes = WLS<br>information = conditioning</div><p class="metric-copy">One posterior, four routes.</p></div>
+            <div class="metric-card"><span class="metric-k">Derivation check</span><div class="metric-v good">Bayes · WLS<br>information · conditioning</div><p class="metric-copy">One posterior, four routes.</p></div>
             <div class="metric-card"><span class="metric-k">Maximum disagreement</span><div class="metric-v good" id="scalar-delta">0</div></div>
           </aside>
         </div>`
@@ -141,7 +159,7 @@
       outputs.measurement.textContent = fmt(z, 2)
       outputs.measurementSigma.textContent = fmt(sr, 2)
       document.getElementById('scalar-gain').textContent = fmt(K, 5)
-      document.getElementById('scalar-post').textContent = `m⁺ = ${fmt(postMean, 4)}\nσ⁺ = ${fmt(Math.sqrt(postVar), 4)}`
+      setMath(document.getElementById('scalar-post'), String.raw`\begin{aligned}m^+&=${fmt(postMean, 4)}\\\sigma^+&=${fmt(Math.sqrt(postVar), 4)}\end{aligned}`, true)
       document.getElementById('scalar-delta').textContent = delta === 0 ? '0 (same arithmetic)' : delta.toExponential(2)
       setStatus(shell.status, 'derivations agree', 'good')
       draw()
@@ -231,14 +249,14 @@
       accent: COLORS.green,
       eyebrow: '2D COVARIANCE GEOMETRY',
       title: 'One scalar slice of a 2D prior',
-      intro: 'Rotate H, change R, and move the measured hyperplane. The Kalman gain follows the state–innovation cross-covariance.',
+      intro: `Rotate ${tex`H`}, change ${tex`R`}, and move the measured hyperplane. The Kalman gain follows the state–innovation cross-covariance.`,
       controls: [
-        rangeControl('geo-sx', 'Prior σₓ', .35, 2.8, .05, 1.8, '1.8'),
-        rangeControl('geo-sy', 'Prior σᵧ', .35, 2.8, .05, 1.0, '1.0'),
-        rangeControl('geo-rho', 'Prior correlation ρ', -.9, .9, .05, .65, '0.65'),
-        rangeControl('geo-angle', 'Measurement angle φ', 0, 180, 1, 28, '28°'),
-        rangeControl('geo-z', 'Measured value z', -3.5, 3.5, .1, 1.7, '1.7'),
-        rangeControl('geo-sigma', 'Measurement σᵣ', .15, 2.2, .05, .45, '0.45'),
+        rangeControl('geo-sx', `Prior ${tex`\sigma_x`}`, .35, 2.8, .05, 1.8, '1.8'),
+        rangeControl('geo-sy', `Prior ${tex`\sigma_y`}`, .35, 2.8, .05, 1.0, '1.0'),
+        rangeControl('geo-rho', `Prior correlation ${tex`\rho`}`, -.9, .9, .05, .65, '0.65'),
+        rangeControl('geo-angle', `Measurement angle ${tex`\varphi`}`, 0, 180, 1, 28, '28°'),
+        rangeControl('geo-z', `Measured value ${tex`z`}`, -3.5, 3.5, .1, 1.7, '1.7'),
+        rangeControl('geo-sigma', `Measurement ${tex`\sigma_r`}`, .15, 2.2, .05, .45, '0.45'),
         '<div class="button-row"><button id="geo-reset" type="button">Reset</button><button id="geo-orthogonal" class="primary" type="button">Rotate 90°</button></div>'
       ].join(''),
       stageTitle: 'PRIOR ELLIPSE → MEASUREMENT STRIP → POSTERIOR ELLIPSE',
@@ -247,16 +265,16 @@
           <div class="canvas-card">
             <canvas id="geo-canvas" aria-label="Prior and posterior covariance ellipses with a linear measurement strip"></canvas>
             <div class="legend" aria-hidden="true">
-              <span style="color:${COLORS.cyan}"><i></i>prior 2σ</span>
+              <span style="color:${COLORS.cyan}"><i></i>prior ${tex`2\sigma`}</span>
               <span style="color:${COLORS.amber}"><i></i>measurement</span>
-              <span style="color:${COLORS.green}"><i></i>posterior 2σ</span>
+              <span style="color:${COLORS.green}"><i></i>posterior ${tex`2\sigma`}</span>
             </div>
           </div>
           <aside class="metric-rail">
-            <div class="metric-card accent"><span class="metric-k">Gain vector</span><div class="metric-v" id="geo-k">—</div><p class="metric-copy">K = P⁻Hᵀ/S</p></div>
+            <div class="metric-card accent"><span class="metric-k">Gain vector</span><div class="metric-v" id="geo-k">—</div><p class="metric-copy">${tex`K=P^-H^\mathsf{T}/S`}</p></div>
             <div class="metric-card"><span class="metric-k">Innovation</span><div class="metric-v" id="geo-innovation">—</div></div>
             <div class="metric-card"><span class="metric-k">Posterior mean</span><div class="metric-v" id="geo-mean">—</div></div>
-            <div class="metric-card"><span class="metric-k">Uncertainty area</span><div class="metric-v good" id="geo-area">—</div><p class="metric-copy">√det(P⁺)/√det(P⁻)</p></div>
+            <div class="metric-card"><span class="metric-k">Uncertainty area</span><div class="metric-v good" id="geo-area">—</div><p class="metric-copy">${tex`\sqrt{\det P^+}/\sqrt{\det P^-}`}</p></div>
             <div class="metric-card"><span class="metric-k">Interpretation</span><p class="metric-copy" id="geo-copy">—</p></div>
           </aside>
         </div>`
@@ -282,9 +300,9 @@
       document.getElementById('geo-angle-out').textContent = `${Math.round(angleDeg)}°`
       document.getElementById('geo-z-out').textContent = fmt(z, 2)
       document.getElementById('geo-sigma-out').textContent = fmt(sr, 2)
-      document.getElementById('geo-k').textContent = `[${fmt(K[0], 4)}, ${fmt(K[1], 4)}]ᵀ`
-      document.getElementById('geo-innovation').textContent = `ν = ${fmt(innovation, 4)}\nS = ${fmt(S, 4)}`
-      document.getElementById('geo-mean').textContent = `[${fmt(mp[0], 3)}, ${fmt(mp[1], 3)}]ᵀ`
+      setMath(document.getElementById('geo-k'), String.raw`\begin{bmatrix}${fmt(K[0], 4)}&${fmt(K[1], 4)}\end{bmatrix}^{\mathsf{T}}`, true)
+      setMath(document.getElementById('geo-innovation'), String.raw`\begin{aligned}\nu&=${fmt(innovation, 4)}\\S&=${fmt(S, 4)}\end{aligned}`, true)
+      setMath(document.getElementById('geo-mean'), String.raw`\begin{bmatrix}${fmt(mp[0], 3)}&${fmt(mp[1], 3)}\end{bmatrix}^{\mathsf{T}}`, true)
       document.getElementById('geo-area').textContent = `${fmt(100 * areaRatio, 2)}% remains`
       document.getElementById('geo-copy').textContent = gainAngleSine > .15
         ? 'Prior anisotropy or correlation rotates the gain away from the measurement normal, so one measurement updates coupled state components.'
@@ -668,8 +686,8 @@
       title: 'Same target, different arithmetic',
       intro: 'Increase conditioning and lower simulated significant digits. Exact identities can separate numerically even though the target estimator is unchanged.',
       controls: [
-        '<div class="control"><div class="control-head"><label for="eq-n">State dimension n</label></div><select id="eq-n"><option>2</option><option selected>3</option><option>4</option></select></div>',
-        '<div class="control"><div class="control-head"><label for="eq-m">Measurement dimension m</label></div><select id="eq-m"><option selected>1</option><option>2</option><option>3</option></select></div>',
+        `<div class="control"><div class="control-head"><label for="eq-n">State dimension ${tex`n`}</label></div><select id="eq-n"><option>2</option><option selected>3</option><option>4</option></select></div>`,
+        `<div class="control"><div class="control-head"><label for="eq-m">Measurement dimension ${tex`m`}</label></div><select id="eq-m"><option selected>1</option><option>2</option><option>3</option></select></div>`,
         rangeControl('eq-condition', 'Prior condition number', 0, 8, .5, 3, '10^3'),
         rangeControl('eq-digits', 'Simulated significant digits', 5, 16, 1, 16, 'native double'),
         '<div class="button-row"><button id="eq-benign" type="button">Benign case</button><button id="eq-random" class="primary" type="button">New problem</button></div>'
@@ -679,8 +697,8 @@
         <div class="eq-layout">
           <div class="eq-grid" id="eq-grid"></div>
           <div class="matrix-strip">
-            <div class="matrix-card"><strong>Reference posterior covariance P⁺</strong><pre id="eq-posterior">—</pre></div>
-            <div class="matrix-card"><strong>Reference Kalman gain K</strong><pre id="eq-gain">—</pre></div>
+            <div class="matrix-card"><strong>Reference posterior covariance ${tex`P^+`}</strong><pre id="eq-posterior">—</pre></div>
+            <div class="matrix-card"><strong>Reference Kalman gain ${tex`K`}</strong><pre id="eq-gain">—</pre></div>
           </div>
         </div>`
     })
@@ -706,15 +724,16 @@
 
     function cardHtml(name, subtitle, diagnostics, extraClass = '', error = null) {
       if (error) {
-        return `<article class="eq-card ${extraClass}"><div class="eq-head"><strong>${name}</strong><span>${subtitle}</span></div><div class="metric-v bad">${escapeHtml(error.message)}</div><p class="metric-copy">The simulated arithmetic lost rank or positive definiteness.</p></article>`
+        return `<article class="eq-card ${extraClass}"><div class="eq-head"><strong>${name}</strong></div><div class="eq-formula">${mathHtml(subtitle, true)}</div><div class="metric-v bad">${escapeHtml(error.message)}</div><p class="metric-copy">The simulated arithmetic lost rank or positive definiteness.</p></article>`
       }
       const values = [
-        ['max Δ', diagnostics.delta, tone(diagnostics.delta)],
+        [mathHtml(String.raw`\max\Delta`), diagnostics.delta, tone(diagnostics.delta)],
         ['symmetry', diagnostics.symmetry, tone(diagnostics.symmetry)],
-        ['min eig', diagnostics.minEigen, tone(diagnostics.minEigen, 'eigen')]
+        [mathHtml(String.raw`\lambda_{\min}`), diagnostics.minEigen, tone(diagnostics.minEigen, 'eigen')]
       ]
       return `<article class="eq-card ${extraClass}">
-        <div class="eq-head"><strong>${name}</strong><span>${subtitle}</span></div>
+        <div class="eq-head"><strong>${name}</strong></div>
+        <div class="eq-formula">${mathHtml(subtitle, true)}</div>
         <div class="eq-metrics">${values.map(([label, value, cls]) => `<div class="eq-metric"><small>${label}</small><code class="${cls}">${fmt(value, 3)}</code></div>`).join('')}</div>
       </article>`
     }
@@ -723,7 +742,7 @@
       if (!problem) return
       const exp = Number(condition.value)
       const d = Number(digits.value)
-      document.getElementById('eq-condition-out').textContent = exp === 0 ? '1' : `10^${fmt(exp, 1)}`
+      setMath(document.getElementById('eq-condition-out'), exp === 0 ? '1' : String.raw`10^{${fmt(exp, 1)}}`)
       document.getElementById('eq-digits-out').textContent = d >= 16 ? 'native double' : `${d} digits`
       const full = makeOps(16)
       let reference
@@ -734,10 +753,10 @@
         return
       }
       const specs = [
-        ['Covariance', 'P − KSKᵀ', ops => covarianceMethod(problem, ops, false), 'reference'],
-        ['Information', '(P⁻¹ + HᵀR⁻¹H)⁻¹', ops => informationMethod(problem, ops), ''],
-        ['Joseph', '(I−KH)P(I−KH)ᵀ + KRKᵀ', ops => covarianceMethod(problem, ops, true), 'stable'],
-        ['QR / square root', 'whiten → QR → triangular solve', ops => qrMethod(problem, ops), 'stable']
+        ['Covariance', String.raw`P^- - KSK^\mathsf{T}`, ops => covarianceMethod(problem, ops, false), 'reference'],
+        ['Information', String.raw`\left((P^-)^{-1}+H^\mathsf{T}R^{-1}H\right)^{-1}`, ops => informationMethod(problem, ops), ''],
+        ['Joseph', String.raw`(I-KH)P^-(I-KH)^\mathsf{T}+KRK^\mathsf{T}`, ops => covarianceMethod(problem, ops, true), 'stable'],
+        ['QR / square root', String.raw`\text{whiten}\to\mathrm{QR}\to\text{triangular solve}`, ops => qrMethod(problem, ops), 'stable']
       ]
       const rendered = []
       let worst = 0, failures = 0, negative = false
@@ -754,11 +773,13 @@
         }
       }
       document.getElementById('eq-grid').innerHTML = rendered.join('')
+      window.typesetDynamicMath?.()
       document.getElementById('eq-posterior').textContent = matrixText(reference.covariance, 4)
       document.getElementById('eq-gain').textContent = matrixText(reference.K, 4)
       if (failures) setStatus(shell.status, `${failures} formulation${failures === 1 ? '' : 's'} failed`, 'bad')
       else if (negative || worst > 1e-4) setStatus(shell.status, 'finite precision separates the forms', 'warn')
-      else setStatus(shell.status, worst < 1e-10 ? 'all forms agree' : `max Δ = ${fmt(worst, 2)}`, 'good')
+      else if (worst < 1e-10) setStatus(shell.status, 'all forms agree', 'good')
+      else setStatus(shell.status, String.raw`\max\Delta=${fmt(worst, 2)}`, 'good', true)
     }
 
     nSelect.addEventListener('change', regenerate)

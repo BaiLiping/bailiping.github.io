@@ -1,7 +1,8 @@
 (() => {
   const selector = '.math-tex:not([data-math-rendered]):not([data-math-pending])'
-  let scheduled = false
-  let queue = Promise.resolve()
+  let timer = 0
+  let running = false
+  let rerun = false
 
   function restoreBentoMathClasses() {
     document.querySelectorAll('.bento-text-inner span:not(.math-tex)').forEach(node => {
@@ -14,34 +15,71 @@
     })
   }
 
-  function typeset() {
-    scheduled = false
+  function markRenderedMath() {
+    document.querySelectorAll('.math-tex').forEach(node => {
+      if (!node.querySelector('mjx-container')) return
+      node.removeAttribute('data-math-pending')
+      node.setAttribute('data-math-rendered', '')
+    })
+  }
+
+  function readMathSource(node) {
+    const source = node.textContent.trim()
+    if (source.startsWith('\\(') && source.endsWith('\\)')) {
+      return { source: source.slice(2, -2), display: false }
+    }
+    if (source.startsWith('\\[') && source.endsWith('\\]')) {
+      return { source: source.slice(2, -2), display: true }
+    }
+    return null
+  }
+
+  async function typeset() {
     const mathJax = window.MathJax
-    if (!mathJax || typeof mathJax.typesetPromise !== 'function') return
+    if (!mathJax || typeof mathJax.tex2svgPromise !== 'function') return
 
     restoreBentoMathClasses()
-    const nodes = [...document.querySelectorAll(selector)]
+    markRenderedMath()
+    const nodes = [...document.querySelectorAll(selector)].filter(node => node.isConnected)
     if (!nodes.length) return
-    nodes.forEach(node => node.setAttribute('data-math-pending', ''))
 
-    queue = queue
-      .then(() => mathJax.typesetPromise(nodes))
-      .then(() => {
-        nodes.forEach(node => {
-          node.removeAttribute('data-math-pending')
+    running = true
+    for (const node of nodes) {
+      if (!node.isConnected || node.querySelector('mjx-container')) continue
+      const math = readMathSource(node)
+      if (!math) continue
+      node.setAttribute('data-math-pending', '')
+      try {
+        const rendered = await mathJax.tex2svgPromise(math.source, { display: math.display })
+        const current = node.isConnected ? readMathSource(node) : null
+        if (current && current.source === math.source && current.display === math.display) {
+          node.replaceChildren(rendered)
           node.setAttribute('data-math-rendered', '')
-        })
-      })
-      .catch(error => {
-        nodes.forEach(node => node.removeAttribute('data-math-pending'))
-        console.error('MathJax typesetting failed', error)
-      })
+        }
+      } catch (error) {
+        if (node.isConnected) console.error('MathJax typesetting failed', error)
+      } finally {
+        if (node.isConnected) node.removeAttribute('data-math-pending')
+      }
+    }
+    running = false
+    markRenderedMath()
+    if (rerun) {
+      rerun = false
+      schedule()
+    }
   }
 
   function schedule() {
-    if (scheduled) return
-    scheduled = true
-    requestAnimationFrame(typeset)
+    clearTimeout(timer)
+    timer = setTimeout(() => {
+      timer = 0
+      if (running) {
+        rerun = true
+        return
+      }
+      typeset()
+    }, 80)
   }
 
   const observer = new MutationObserver(mutations => {

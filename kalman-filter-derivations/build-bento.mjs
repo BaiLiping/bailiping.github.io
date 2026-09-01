@@ -45,6 +45,37 @@ const routeScript = `    <script>
       })();
     </script>`;
 
+const mathHead = String.raw`    <style id="deck-math-style">
+      .math-tex{white-space:nowrap}
+      .math-inline{display:inline-block;vertical-align:-.14em;line-height:1}
+      .math-display{display:flex;width:100%;height:100%;align-items:center;justify-content:center;line-height:1}
+      .math-tex mjx-container{color:inherit!important;margin:0!important}
+      .math-inline mjx-container{display:inline-block!important}
+      .math-display mjx-container[display="true"]{display:block!important;width:100%;margin:0!important;text-align:center}
+      .math-tex mjx-container[jax="SVG"]>svg{overflow:visible}
+      .math-display mjx-container[jax="SVG"]>svg{max-width:100%;height:auto}
+    </style>
+    <script>
+      window.MathJax = {
+        tex: {
+          inlineMath: [['\\(', '\\)']],
+          displayMath: [['\\[', '\\]']],
+          processEscapes: true
+        },
+        svg: { fontCache: 'global' },
+        options: { skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'] },
+        startup: {
+          typeset: false,
+          ready: () => {
+            MathJax.startup.defaultReady();
+            MathJax.startup.promise.then(() => window.dispatchEvent(new Event('mathjax-ready')));
+          }
+        }
+      };
+    </script>
+    <script defer src="https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/tex-svg-full.js"></script>
+    <script defer src="../assets/mathjax-dynamic.js?v=2"></script>`;
+
 const docPattern = /(<script type="application\/bento\+json" id="bento-doc">\s*)[\s\S]*?(\s*<\/script>)/;
 if (!docPattern.test(template)) throw new Error(`Bento document block not found in ${templatePath}`);
 
@@ -63,6 +94,7 @@ if (/<meta name="description"\b[^>]*>/.test(html)) {
 if (!html.includes(canonical)) html = html.replace(pageDescription, `${pageDescription}\n    ${canonical}`);
 if (!html.includes(liveStylesheet)) html = html.replace(canonical, `${canonical}\n    ${liveStylesheet}`);
 if (!html.includes('const routes =')) html = html.replace('</head>', `${routeScript}\n  </head>`);
+if (!html.includes('id="deck-math-style"')) html = html.replace('</head>', `${mathHead}\n  </head>`);
 
 const liveMap = `    <script type="application/json" id="bento-inline-live-map">\n${safeJson(inlineLiveMap)}\n    </script>`;
 const mapPattern = /\s*<script type="application\/json" id="(?:bento-live-config|bento-inline-live-map)">[\s\S]*?<\/script>/;
@@ -84,6 +116,10 @@ html = html.replace(/[ \t]+$/gm, '').replace(/\n*$/, '\n');
 
 if (!html.includes('"docId": "kalman-filter-four-families-bento"')) throw new Error('Bento document replacement failed');
 if (!html.includes('id="bento-inline-live-map"') || html.includes('id="bento-live-config"')) throw new Error('Inline live map replacement failed');
+if (!html.includes('mathjax-dynamic.js') || !html.includes('tex-svg-full.js')) throw new Error('MathJax host injection failed');
+if (deck.slides.some(slide => slide.elements.some(element => element.type === 'text' && /<\/?(?:sup|sub)\b/i.test(element.html)))) {
+  throw new Error('Hand-built sup/sub math found; use LaTeX helpers instead');
+}
 
 await writeFile(outputPath, html);
 console.log(`Built ${outputPath}`);
