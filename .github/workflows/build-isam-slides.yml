@@ -1,0 +1,79 @@
+name: Build and validate iSAM slides
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'isam-mh-isam/bento-deck.mjs'
+      - 'isam-mh-isam/teaching-revisions.mjs'
+      - 'isam-mh-isam/build-bento.mjs'
+      - 'isam-mh-isam/engine.js'
+      - 'isam-mh-isam/test-*.js'
+      - 'isam-mh-isam/test-*.mjs'
+      - 'isam-mh-isam/test-*.py'
+      - 'isam-mh-isam/live/**'
+      - '.github/workflows/build-isam-slides.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: build-isam-slides
+  cancel-in-progress: true
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 1
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Validate sources and numerical identities
+        run: |
+          node --check isam-mh-isam/teaching-revisions.mjs
+          node --check isam-mh-isam/live/dp.js
+          node isam-mh-isam/test-engine.js
+          node isam-mh-isam/test-revisions.mjs
+      - name: Build the native Bento presentation
+        run: node isam-mh-isam/build-bento.mjs
+      - name: Install browser validation dependencies
+        run: |
+          pip install playwright==1.55.0
+          python -m playwright install --with-deps chromium
+      - name: Check math, controls, responsive layout, and embedded demo
+        run: |
+          python -m http.server 8765 --bind 127.0.0.1 > /tmp/isam-http.log 2>&1 &
+          sleep 1
+          python isam-mh-isam/test-published-browser.py
+      - name: Preserve validation evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: isam-slide-validation
+          path: isam-validation/
+          retention-days: 14
+      - name: Commit only the generated presentation
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add isam-mh-isam/index.html
+          if git diff --cached --quiet; then
+            echo 'Generated presentation is already current.'
+          else
+            git commit -m 'Build validated 25-slide iSAM and MH-iSAM2 Bento deck'
+            git pull --rebase origin main
+            git push origin HEAD:main
+          fi
