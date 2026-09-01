@@ -4,7 +4,7 @@ import math
 import os
 import traceback
 from pathlib import Path
-from playwright.sync_api import sync_playwright
+from playwright.sync_api import sync_playwright, expect
 from PIL import Image, ImageDraw
 
 out = Path('viem-validation')
@@ -34,14 +34,22 @@ try:
             root.wait_for(state='visible', timeout=15000)
             root.scroll_into_view_if_needed()
             page.wait_for_timeout(350)
+            if sid in ['comparison', 'summary']:
+                grid = root.locator('table.bento-table')
+                expect(grid).to_have_count(1)
+                expect(grid.locator('td')).to_have_count(15)
+                # Native Bento cells sanitize span classes. Require the local
+                # restoration bridge to render EVERY formula, not just panels.
+                expected = {'comparison': 7, 'summary': 3}[sid]
+                expect(grid.locator('mjx-container')).to_have_count(expected, timeout=15000)
+                expect(grid.locator('.math-tex:not(:has(mjx-container))')).to_have_count(0)
+                visible_text = grid.inner_text()
+                assert '\\(' not in visible_text and '\\[' not in visible_text, 'Raw table LaTeX: '+sid
             errors = root.locator('mjx-merror, [data-mjx-error]').count()
             maths = root.locator('mjx-container').count()
             assert errors == 0, sid
             if root.locator('.math-tex').count():
                 assert maths > 0, 'Math not typeset: '+sid
-            if sid in ['comparison', 'summary']:
-                assert root.locator('table.bento-table').count() == 1
-                assert root.locator('table.bento-table td').count() == 15
             report['slides'].append({'id':sid,'visible':True,'mathErrors':errors,'mathContainers':maths})
             screenshot(page, f'slide-{i+1:02d}-{sid}')
         for mode in ['meanfield','em']:
