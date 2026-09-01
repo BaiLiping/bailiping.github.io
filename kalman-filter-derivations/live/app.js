@@ -161,7 +161,7 @@
       document.getElementById('scalar-gain').textContent = fmt(K, 5)
       setMath(document.getElementById('scalar-post'), String.raw`\begin{aligned}m^+&=${fmt(postMean, 4)}\\\sigma^+&=${fmt(Math.sqrt(postVar), 4)}\end{aligned}`, true)
       document.getElementById('scalar-delta').textContent = delta === 0 ? '0 (same arithmetic)' : delta.toExponential(2)
-      setStatus(shell.status, 'derivations agree', 'good')
+      setStatus(shell.status, 'formulas agree', 'good')
       draw()
     }
 

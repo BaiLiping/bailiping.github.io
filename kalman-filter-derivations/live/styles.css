@@ -2,3 +2,5 @@
 
 /* Mathematical-review disclosure; compact enough for the embedded region. */
 .review-numerics-note { margin: 0; padding: 0 2px; font-size: 10px; line-height: 1.35; color: var(--soft, #b9c4d6); }
+
+.eq-layout:has(.review-numerics-note) { grid-template-rows: auto minmax(min-content, 1fr) auto; }
