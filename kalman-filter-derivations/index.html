@@ -10,7 +10,7 @@
     <title>One Filter, Four Derivation Families | Bai Liping</title>
     <meta name="description" content="An interactive Bento deck presenting four Kalman filter derivation families with equation sheets and deterministic experiments." />
     <link rel="canonical" href="https://bailiping.com/kalman-filter-derivations/" />
-    <link rel="stylesheet" href="../assets/bento-inline-live.css" />
+    <link rel="stylesheet" href="../assets/bento-inline-live.css?v=2" />
     <!--
       NOTICE — bento/slides
       MIT License — © 2026 The Bento authors
@@ -651,7 +651,7 @@
   {
    "id": "model",
    "background": "#F7F5EF",
-   "transition": "morph",
+   "transition": "none",
    "notes": "State the model and the predict–correct schedule once. The next slide is the scalar fusion experiment. Ask the audience to predict which source the posterior will follow when the uncertainty values are swapped.",
    "elements": [
     {
@@ -671,11 +671,7 @@
      "align": "left",
      "valign": "top",
      "lineHeight": 1.25,
-     "letterSpacing": 1.55,
-     "fx": {
-      "enter": "fade-up",
-      "order": 0
-     }
+     "letterSpacing": 1.55
     },
     {
      "id": "slide-title",
@@ -693,11 +689,7 @@
      "color": "#203129",
      "align": "left",
      "valign": "top",
-     "lineHeight": 1.05,
-     "fx": {
-      "enter": "fade-up",
-      "order": 1
-     }
+     "lineHeight": 1.05
     },
     {
      "id": "slide-subtitle",
@@ -715,11 +707,7 @@
      "color": "#66756E",
      "align": "left",
      "valign": "top",
-     "lineHeight": 1.35,
-     "fx": {
-      "enter": "fade-up",
-      "order": 2
-     }
+     "lineHeight": 1.35
     },
     {
      "id": "model-dynamics-card",
@@ -764,14 +752,14 @@
      "h": 114,
      "rotation": 0,
      "opacity": 1,
-     "html": "\u003cspan class=\"math-tex math-inline\">\\(x_k = F_k x_{k-1} + B_k u_k + w_k\\)\u003c/span>\u003cbr>\u003cspan class=\"math-tex math-inline\">\\(z_k = H_k x_k + v_k\\)\u003c/span>\u003cbr>\u003cbr>\u003cspan style=\"color:#66756E\">\u003cspan class=\"math-tex math-inline\">\\(w_k \\sim \\mathcal{N}(0,Q_k)\\)\u003c/span>, \u003cspan class=\"math-tex math-inline\">\\(v_k \\sim \\mathcal{N}(0,R_k)\\)\u003c/span>, independent.\u003c/span>",
-     "fontSize": 18,
+     "html": "\u003cspan class=\"math-tex math-inline\">\\(x_k = F_k x_{k-1} + B_k u_k + w_k\\)\u003c/span>\u003cbr>\u003cspan class=\"math-tex math-inline\">\\(z_k = H_k x_k + v_k\\)\u003c/span>\u003cbr>\u003cspan class=\"math-tex math-inline\">\\(w_k \\sim \\mathcal{N}(0,Q_k)\\)\u003c/span>, \u003cspan class=\"math-tex math-inline\">\\(v_k \\sim \\mathcal{N}(0,R_k)\\)\u003c/span>\u003cbr>\u003cspan style=\"color:#66756E\">independent noises\u003c/span>",
+     "fontSize": 16,
      "fontFamily": "Georgia, 'Times New Roman', serif",
      "fontWeight": 400,
      "color": "#203129",
      "align": "left",
      "valign": "top",
-     "lineHeight": 1.45
+     "lineHeight": 1.28
     },
     {
      "id": "model-predict-card",
@@ -1038,7 +1026,7 @@
   {
    "id": "model-live",
    "background": "#F7F5EF",
-   "transition": "morph",
+   "transition": "none",
    "notes": "The experiment mounts automatically. Move either mean, swap the uncertainty values, and point out that Bayes, weighted least squares, information form, and conditioning produce the same posterior. Press Escape to return focus to Bento; Page Up returns to the model slide.",
    "elements": [
     {
@@ -1522,7 +1510,7 @@
   {
    "id": "bayes",
    "background": "#F7F5EF",
-   "transition": "morph",
+   "transition": "none",
    "notes": "Introduce Bayes as distribution computation. Completing the square, information addition, and Gaussian conditioning are algebraic views of one posterior. Emphasize the model boundary: exactness comes from linear–Gaussian closure.",
    "elements": [
     {
@@ -1542,11 +1530,7 @@
      "align": "left",
      "valign": "top",
      "lineHeight": 1.25,
-     "letterSpacing": 1.55,
-     "fx": {
-      "enter": "fade-up",
-      "order": 0
-     }
+     "letterSpacing": 1.55
     },
     {
      "id": "slide-title",
@@ -1564,11 +1548,7 @@
      "color": "#203129",
      "align": "left",
      "valign": "top",
-     "lineHeight": 1.05,
-     "fx": {
-      "enter": "fade-up",
-      "order": 1
-     }
+     "lineHeight": 1.05
     },
     {
      "id": "slide-subtitle",
@@ -1586,11 +1566,7 @@
      "color": "#66756E",
      "align": "left",
      "valign": "top",
-     "lineHeight": 1.35,
-     "fx": {
-      "enter": "fade-up",
-      "order": 2
-     }
+     "lineHeight": 1.35
     },
     {
      "id": "bayes-formula-card",
@@ -1630,9 +1606,9 @@
      "id": "bayes-formula",
      "type": "text",
      "x": 96,
-     "y": 231,
+     "y": 225,
      "w": 1088,
-     "h": 50,
+     "h": 62,
      "rotation": 0,
      "opacity": 1,
      "html": "\u003cspan class=\"math-tex math-display\">\\[p_k^-(x)=\\int p(x\\mid x')p_{k-1}^+(x')\\,dx' \\qquad p_k^+(x)\\propto p(z_k\\mid x)p_k^-(x)\\]\u003c/span>",
@@ -1858,7 +1834,7 @@
   {
    "id": "bayes-equations",
    "background": "#F7F5EF",
-   "transition": "morph",
+   "transition": "none",
    "notes": "Walk clockwise: factor multiplication, information addition, completing the square, and joint conditioning. The four boxes are one derivation written in complementary coordinates.",
    "elements": [
     {
@@ -1878,11 +1854,7 @@
      "align": "left",
      "valign": "top",
      "lineHeight": 1.25,
-     "letterSpacing": 1.55,
-     "fx": {
-      "enter": "fade-up",
-      "order": 0
-     }
+     "letterSpacing": 1.55
     },
     {
      "id": "slide-title",
@@ -1900,11 +1872,7 @@
      "color": "#203129",
      "align": "left",
      "valign": "top",
-     "lineHeight": 1.05,
-     "fx": {
-      "enter": "fade-up",
-      "order": 1
-     }
+     "lineHeight": 1.05
     },
     {
      "id": "slide-subtitle",
@@ -1922,11 +1890,7 @@
      "color": "#66756E",
      "align": "left",
      "valign": "top",
-     "lineHeight": 1.35,
-     "fx": {
-      "enter": "fade-up",
-      "order": 2
-     }
+     "lineHeight": 1.35
     },
     {
      "id": "bayes-equations-panel-1-card",
@@ -2194,7 +2158,7 @@
   {
    "id": "mse",
    "background": "#F7F5EF",
-   "transition": "morph",
+   "transition": "none",
    "notes": "Explain that finite second moments and the required zero cross-covariances suffice for affine/LMMSE optimality. The next slide turns the projection into geometry: rotate H, adjust R and correlation, and observe covariance contraction.",
    "elements": [
     {
@@ -2214,11 +2178,7 @@
      "align": "left",
      "valign": "top",
      "lineHeight": 1.25,
-     "letterSpacing": 1.55,
-     "fx": {
-      "enter": "fade-up",
-      "order": 0
-     }
+     "letterSpacing": 1.55
     },
     {
      "id": "slide-title",
@@ -2236,11 +2196,7 @@
      "color": "#203129",
      "align": "left",
      "valign": "top",
-     "lineHeight": 1.05,
-     "fx": {
-      "enter": "fade-up",
-      "order": 1
-     }
+     "lineHeight": 1.05
     },
     {
      "id": "slide-subtitle",
@@ -2258,11 +2214,7 @@
      "color": "#66756E",
      "align": "left",
      "valign": "top",
-     "lineHeight": 1.35,
-     "fx": {
-      "enter": "fade-up",
-      "order": 2
-     }
+     "lineHeight": 1.35
     },
     {
      "id": "mse-formula-card",
@@ -2302,9 +2254,9 @@
      "id": "mse-formula",
      "type": "text",
      "x": 96,
-     "y": 231,
+     "y": 225,
      "w": 1088,
-     "h": 50,
+     "h": 62,
      "rotation": 0,
      "opacity": 1,
      "html": "\u003cspan class=\"math-tex math-display\">\\[\\widehat{x}(K)=m^-+K\\nu \\qquad K_\\star=\\underset{K}{\\operatorname{arg\\,min}}\\;\\mathbb{E}\\!\\left[\\lVert x-\\widehat{x}(K)\\rVert_2^2\\right]\\]\u003c/span>",
@@ -2530,7 +2482,7 @@
   {
    "id": "mse-live",
    "background": "#F7F5EF",
-   "transition": "morph",
+   "transition": "none",
    "notes": "The geometry experiment mounts automatically. Rotate H, increase R, and vary ρ. Relate the gain vector to the state–innovation cross-covariance. Press Escape to return focus to Bento; Page Up returns to the minimum-MSE introduction.",
    "elements": [
     {
@@ -2930,7 +2882,7 @@
   {
    "id": "mse-equations",
    "background": "#F7F5EF",
-   "transition": "morph",
+   "transition": "none",
    "notes": "Connect the previous geometric experiment back to the algebra. Orthogonality and trace minimization give the same normal equation. The final positive-semidefinite difference certifies global optimality.",
    "elements": [
     {
@@ -2950,11 +2902,7 @@
      "align": "left",
      "valign": "top",
      "lineHeight": 1.25,
-     "letterSpacing": 1.55,
-     "fx": {
-      "enter": "fade-up",
-      "order": 0
-     }
+     "letterSpacing": 1.55
     },
     {
      "id": "slide-title",
@@ -2972,11 +2920,7 @@
      "color": "#203129",
      "align": "left",
      "valign": "top",
-     "lineHeight": 1.05,
-     "fx": {
-      "enter": "fade-up",
-      "order": 1
-     }
+     "lineHeight": 1.05
     },
     {
      "id": "slide-subtitle",
@@ -2994,11 +2938,7 @@
      "color": "#66756E",
      "align": "left",
      "valign": "top",
-     "lineHeight": 1.35,
-     "fx": {
-      "enter": "fade-up",
-      "order": 2
-     }
+     "lineHeight": 1.35
     },
     {
      "id": "mse-equations-panel-1-card",
@@ -3266,7 +3206,7 @@
   {
    "id": "least-squares",
    "background": "#F7F5EF",
-   "transition": "morph",
+   "transition": "none",
    "notes": "Frame least squares as state-vector optimization. Separate the MAP experiment from the BLUE experiment even though their linear algebra matches. Reserve RLS and QR for implementation, not additional derivation families.",
    "elements": [
     {
@@ -3286,11 +3226,7 @@
      "align": "left",
      "valign": "top",
      "lineHeight": 1.25,
-     "letterSpacing": 1.55,
-     "fx": {
-      "enter": "fade-up",
-      "order": 0
-     }
+     "letterSpacing": 1.55
     },
     {
      "id": "slide-title",
@@ -3308,11 +3244,7 @@
      "color": "#203129",
      "align": "left",
      "valign": "top",
-     "lineHeight": 1.05,
-     "fx": {
-      "enter": "fade-up",
-      "order": 1
-     }
+     "lineHeight": 1.05
     },
     {
      "id": "slide-subtitle",
@@ -3330,11 +3262,7 @@
      "color": "#66756E",
      "align": "left",
      "valign": "top",
-     "lineHeight": 1.35,
-     "fx": {
-      "enter": "fade-up",
-      "order": 2
-     }
+     "lineHeight": 1.35
     },
     {
      "id": "least-squares-formula-card",
@@ -3374,9 +3302,9 @@
      "id": "least-squares-formula",
      "type": "text",
      "x": 96,
-     "y": 231,
+     "y": 225,
      "w": 1088,
-     "h": 50,
+     "h": 62,
      "rotation": 0,
      "opacity": 1,
      "html": "\u003cspan class=\"math-tex math-display\">\\[\\phi(x)=\\tfrac12\\lVert x-m^-\\rVert_{(P^-)^{-1}}^2+\\tfrac12\\lVert z-Hx\\rVert_{R^{-1}}^2\\]\u003c/span>",
@@ -3602,7 +3530,7 @@
   {
    "id": "least-squares-equations",
    "background": "#F7F5EF",
-   "transition": "morph",
+   "transition": "none",
    "notes": "Derive the normal equations, then use Woodbury to expose the Kalman correction. End by restating that BLUE uses a different sampling experiment even when the estimator formula matches.",
    "elements": [
     {
@@ -3622,11 +3550,7 @@
      "align": "left",
      "valign": "top",
      "lineHeight": 1.25,
-     "letterSpacing": 1.55,
-     "fx": {
-      "enter": "fade-up",
-      "order": 0
-     }
+     "letterSpacing": 1.55
     },
     {
      "id": "slide-title",
@@ -3644,11 +3568,7 @@
      "color": "#203129",
      "align": "left",
      "valign": "top",
-     "lineHeight": 1.05,
-     "fx": {
-      "enter": "fade-up",
-      "order": 1
-     }
+     "lineHeight": 1.05
     },
     {
      "id": "slide-subtitle",
@@ -3666,11 +3586,7 @@
      "color": "#66756E",
      "align": "left",
      "valign": "top",
-     "lineHeight": 1.35,
-     "fx": {
-      "enter": "fade-up",
-      "order": 2
-     }
+     "lineHeight": 1.35
     },
     {
      "id": "least-squares-equations-panel-1-card",
@@ -3938,7 +3854,7 @@
   {
    "id": "kl",
    "background": "#F7F5EF",
-   "transition": "morph",
+   "transition": "none",
    "notes": "State the optimization variable clearly: a whole density. Derive the exact minimizer by rewriting the objective as KL to the posterior plus a constant. Correct the common misconception that KL-to-prior alone performs an update.",
    "elements": [
     {
@@ -3958,11 +3874,7 @@
      "align": "left",
      "valign": "top",
      "lineHeight": 1.25,
-     "letterSpacing": 1.55,
-     "fx": {
-      "enter": "fade-up",
-      "order": 0
-     }
+     "letterSpacing": 1.55
     },
     {
      "id": "slide-title",
@@ -3980,11 +3892,7 @@
      "color": "#203129",
      "align": "left",
      "valign": "top",
-     "lineHeight": 1.05,
-     "fx": {
-      "enter": "fade-up",
-      "order": 1
-     }
+     "lineHeight": 1.05
     },
     {
      "id": "slide-subtitle",
@@ -4002,11 +3910,7 @@
      "color": "#66756E",
      "align": "left",
      "valign": "top",
-     "lineHeight": 1.35,
-     "fx": {
-      "enter": "fade-up",
-      "order": 2
-     }
+     "lineHeight": 1.35
     },
     {
      "id": "kl-formula-card",
@@ -4046,9 +3950,9 @@
      "id": "kl-formula",
      "type": "text",
      "x": 96,
-     "y": 231,
+     "y": 225,
      "w": 1088,
-     "h": 50,
+     "h": 62,
      "rotation": 0,
      "opacity": 1,
      "html": "\u003cspan class=\"math-tex math-display\">\\[q_\\star=\\underset{q\\ge 0,\\;\\int q=1}{\\operatorname{arg\\,min}}\\left\\{D_{\\mathrm{KL}}(q\\Vert p^-)+\\mathbb{E}_q[-\\log p(z\\mid x)]\\right\\}\\]\u003c/span>",
@@ -4274,7 +4178,7 @@
   {
    "id": "kl-equations",
    "background": "#F7F5EF",
-   "transition": "morph",
+   "transition": "none",
    "notes": "Show that the variational objective is exactly KL to the posterior plus a constant. In the Gaussian parameterization, optimize both μ and Σ; the entropy term is what prevents covariance collapse.",
    "elements": [
     {
@@ -4294,11 +4198,7 @@
      "align": "left",
      "valign": "top",
      "lineHeight": 1.25,
-     "letterSpacing": 1.55,
-     "fx": {
-      "enter": "fade-up",
-      "order": 0
-     }
+     "letterSpacing": 1.55
     },
     {
      "id": "slide-title",
@@ -4316,11 +4216,7 @@
      "color": "#203129",
      "align": "left",
      "valign": "top",
-     "lineHeight": 1.05,
-     "fx": {
-      "enter": "fade-up",
-      "order": 1
-     }
+     "lineHeight": 1.05
     },
     {
      "id": "slide-subtitle",
@@ -4338,11 +4234,7 @@
      "color": "#66756E",
      "align": "left",
      "valign": "top",
-     "lineHeight": 1.35,
-     "fx": {
-      "enter": "fade-up",
-      "order": 2
-     }
+     "lineHeight": 1.35
     },
     {
      "id": "kl-equations-panel-1-card",
@@ -4610,7 +4502,7 @@
   {
    "id": "graphs",
    "background": "#F7F5EF",
-   "transition": "morph",
+   "transition": "none",
    "notes": "Present Gaussian message passing as block elimination. The Schur complement is the prediction message; adding the observation factor is the information-form correction. This is a computational organization, not a fifth derivation family.",
    "elements": [
     {
@@ -4630,11 +4522,7 @@
      "align": "left",
      "valign": "top",
      "lineHeight": 1.25,
-     "letterSpacing": 1.55,
-     "fx": {
-      "enter": "fade-up",
-      "order": 0
-     }
+     "letterSpacing": 1.55
     },
     {
      "id": "slide-title",
@@ -4652,11 +4540,7 @@
      "color": "#203129",
      "align": "left",
      "valign": "top",
-     "lineHeight": 1.05,
-     "fx": {
-      "enter": "fade-up",
-      "order": 1
-     }
+     "lineHeight": 1.05
     },
     {
      "id": "slide-subtitle",
@@ -4674,11 +4558,7 @@
      "color": "#66756E",
      "align": "left",
      "valign": "top",
-     "lineHeight": 1.35,
-     "fx": {
-      "enter": "fade-up",
-      "order": 2
-     }
+     "lineHeight": 1.35
     },
     {
      "id": "graphs-panel-1-card",
@@ -4946,7 +4826,7 @@
   {
    "id": "implementations",
    "background": "#F7F5EF",
-   "transition": "morph",
+   "transition": "none",
    "notes": "Separate estimator choice from numerical implementation. QR, information form, and Joseph stabilization target the same covariance. The next slide makes conditioning and simulated precision controllable.",
    "elements": [
     {
@@ -4966,11 +4846,7 @@
      "align": "left",
      "valign": "top",
      "lineHeight": 1.25,
-     "letterSpacing": 1.55,
-     "fx": {
-      "enter": "fade-up",
-      "order": 0
-     }
+     "letterSpacing": 1.55
     },
     {
      "id": "slide-title",
@@ -4988,11 +4864,7 @@
      "color": "#203129",
      "align": "left",
      "valign": "top",
-     "lineHeight": 1.05,
-     "fx": {
-      "enter": "fade-up",
-      "order": 1
-     }
+     "lineHeight": 1.05
     },
     {
      "id": "slide-subtitle",
@@ -5010,11 +4882,7 @@
      "color": "#66756E",
      "align": "left",
      "valign": "top",
-     "lineHeight": 1.35,
-     "fx": {
-      "enter": "fade-up",
-      "order": 2
-     }
+     "lineHeight": 1.35
     },
     {
      "id": "impl-qr-card",
@@ -5230,7 +5098,7 @@
   {
    "id": "implementations-live",
    "background": "#F7F5EF",
-   "transition": "morph",
+   "transition": "none",
    "notes": "The finite-precision experiment mounts automatically. Raise the condition number and reduce significant digits. Compare error, symmetry, and minimum eigenvalue for each formulation. Press Escape to return focus to Bento; Page Up returns to the implementation introduction.",
    "elements": [
     {
@@ -5774,7 +5642,7 @@
   {
    "id": "equivalence",
    "background": "#F7F5EF",
-   "transition": "morph",
+   "transition": "none",
    "notes": "Close the conceptual argument. The same estimator does not mean the assumptions or outputs are interchangeable. Use the scalar example as a sanity check and the final panel as a decision guide.",
    "elements": [
     {
@@ -5794,11 +5662,7 @@
      "align": "left",
      "valign": "top",
      "lineHeight": 1.25,
-     "letterSpacing": 1.55,
-     "fx": {
-      "enter": "fade-up",
-      "order": 0
-     }
+     "letterSpacing": 1.55
     },
     {
      "id": "slide-title",
@@ -5816,11 +5680,7 @@
      "color": "#203129",
      "align": "left",
      "valign": "top",
-     "lineHeight": 1.05,
-     "fx": {
-      "enter": "fade-up",
-      "order": 1
-     }
+     "lineHeight": 1.05
     },
     {
      "id": "slide-subtitle",
@@ -5838,11 +5698,7 @@
      "color": "#66756E",
      "align": "left",
      "valign": "top",
-     "lineHeight": 1.35,
-     "fx": {
-      "enter": "fade-up",
-      "order": 2
-     }
+     "lineHeight": 1.35
     },
     {
      "id": "equiv-linear-card",
@@ -6300,7 +6156,7 @@
   {
    "id": "references",
    "background": "#F7F5EF",
-   "transition": "morph",
+   "transition": "none",
    "notes": "Use these sources to mark the boundary between the original results and the editorial consolidation. The citations are clickable in Bento. End by repeating that algorithms and identities should not be counted as independent filters.",
    "elements": [
     {
@@ -6320,11 +6176,7 @@
      "align": "left",
      "valign": "top",
      "lineHeight": 1.25,
-     "letterSpacing": 1.55,
-     "fx": {
-      "enter": "fade-up",
-      "order": 0
-     }
+     "letterSpacing": 1.55
     },
     {
      "id": "slide-title",
@@ -6342,11 +6194,7 @@
      "color": "#203129",
      "align": "left",
      "valign": "top",
-     "lineHeight": 1.05,
-     "fx": {
-      "enter": "fade-up",
-      "order": 1
-     }
+     "lineHeight": 1.05
     },
     {
      "id": "slide-subtitle",
@@ -6364,11 +6212,7 @@
      "color": "#66756E",
      "align": "left",
      "valign": "top",
-     "lineHeight": 1.35,
-     "fx": {
-      "enter": "fade-up",
-      "order": 2
-     }
+     "lineHeight": 1.35
     },
     {
      "id": "ref-card-0",
@@ -7217,14 +7061,15 @@
       })();
     </script>
       <style id="deck-math-style">
-      .math-tex{white-space:nowrap}
+      .math-tex{position:relative;white-space:nowrap}
       .math-inline{display:inline-block;vertical-align:-.14em;line-height:1}
       .math-display{display:flex;width:100%;height:100%;align-items:center;justify-content:center;line-height:1}
       .math-tex mjx-container{color:inherit!important;margin:0!important}
       .math-inline mjx-container{display:inline-block!important}
       .math-display mjx-container[display="true"]{display:block!important;width:100%;margin:0!important;text-align:center}
       .math-tex mjx-container[jax="SVG"]>svg{overflow:visible}
-      .math-display mjx-container[jax="SVG"]>svg{max-width:100%;height:auto}
+      .math-display mjx-container[jax="SVG"]>svg{max-width:100%;max-height:100%;width:auto;height:auto}
+      mjx-assistive-mml{position:absolute!important;top:0!important;left:0!important;clip:rect(1px,1px,1px,1px)!important;clip-path:inset(50%)!important;padding:1px 0 0!important;border:0!important;display:block!important;width:1px!important;height:1px!important;overflow:hidden!important;white-space:nowrap!important}
     </style>
     <script>
       window.MathJax = {
@@ -7233,7 +7078,7 @@
           displayMath: [['\\[', '\\]']],
           processEscapes: true
         },
-        svg: { fontCache: 'global' },
+        svg: { fontCache: 'local' },
         options: { skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'] },
         startup: {
           typeset: false,

@@ -56,6 +56,11 @@
   outline-offset: -3px;
 }
 
+.reveal.overview .companion-demo-stage,
+.reveal.overview .companion-demo-source {
+  display: none !important;
+}
+
 @media print {
   .companion-demo-stage,
   .companion-demo-source {

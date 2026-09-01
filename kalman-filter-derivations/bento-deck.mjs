@@ -112,15 +112,15 @@ function heading(eyebrow, title, subtitle, accent = C.green, options = {}) {
   return [
     text('slide-eyebrow', 72, 38, 900, 22, eyebrow.toUpperCase(), {
       fontSize: 11, fontFamily: MONO, fontWeight: 850, color: accent, letterSpacing: 1.55,
-      fx: options.fx === false ? undefined : { enter: 'fade-up', order: 0 }
+      fx: options.fx ? { enter: 'fade-up', order: 0 } : undefined
     }),
     text('slide-title', 72, 68, 1110, options.titleHeight ?? 55, title, {
       fontSize: options.titleSize ?? 38, fontFamily: SERIF, fontWeight: 700, color: C.ink, lineHeight: 1.05,
-      fx: options.fx === false ? undefined : { enter: 'fade-up', order: 1 }
+      fx: options.fx ? { enter: 'fade-up', order: 1 } : undefined
     }),
     ...(subtitle ? [text('slide-subtitle', 72, options.subtitleY ?? 119, 1110, options.subtitleHeight ?? 43, subtitle, {
       fontSize: options.subtitleSize ?? 16, color: C.muted, lineHeight: 1.35,
-      fx: options.fx === false ? undefined : { enter: 'fade-up', order: 2 }
+      fx: options.fx ? { enter: 'fade-up', order: 2 } : undefined
     })] : [])
   ];
 }
@@ -207,14 +207,13 @@ function overviewSlide() {
 function modelSlide() {
   const elements = [
     ...heading('Shared setup · experiment introduction', 'The model and the common recursion', 'Fix the assumptions first. Then vary confidence and evidence without changing the estimator.', C.green),
-    ...panel('model-dynamics', 72, 180, 354, 176, 'LINEAR–GAUSSIAN MODEL', mathParagraphs(
-      mathLines(
-        tex`x_k = F_k x_{k-1} + B_k u_k + w_k`,
-        tex`z_k = H_k x_k + v_k`
-      ),
-      muted(`${tex`w_k \sim \mathcal{N}(0,Q_k)`}, ${tex`v_k \sim \mathcal{N}(0,R_k)`}, independent.`)
+    ...panel('model-dynamics', 72, 180, 354, 176, 'LINEAR–GAUSSIAN MODEL', mathLines(
+      tex`x_k = F_k x_{k-1} + B_k u_k + w_k`,
+      tex`z_k = H_k x_k + v_k`,
+      `${tex`w_k \sim \mathcal{N}(0,Q_k)`}, ${tex`v_k \sim \mathcal{N}(0,R_k)`}`,
+      muted('independent noises')
     ), {
-      accent: C.green, fill: C.greenSoft, stroke: C.green, fontFamily: SERIF, fontSize: 18, lineHeight: 1.45
+      accent: C.green, fill: C.greenSoft, stroke: C.green, fontFamily: SERIF, fontSize: 16, lineHeight: 1.28
     }),
     ...panel('model-predict', 463, 180, 354, 176, 'PREDICT', mathLines(
       tex`m_k^- = F_k m_{k-1}^+ + B_k u_k`,
@@ -249,7 +248,7 @@ function modelSlide() {
   return {
     id: 'model',
     background: C.paper,
-    transition: 'morph',
+    transition: 'none',
     notes: 'State the model and the predict–correct schedule once. The next slide is the scalar fusion experiment. Ask the audience to predict which source the posterior will follow when the uncertainty values are swapped.',
     elements
   };
@@ -317,7 +316,7 @@ function scalarLiveSlide() {
   return {
     id: 'model-live',
     background: C.paper,
-    transition: 'morph',
+    transition: 'none',
     notes: 'The experiment mounts automatically. Move either mean, swap the uncertainty values, and point out that Bayes, weighted least squares, information form, and conditioning produce the same posterior. Press Escape to return focus to Bento; Page Up returns to the model slide.',
     elements
   };
@@ -330,7 +329,7 @@ function ideaSlide({ id, family, eyebrow, title, subtitle, formula, leftTitle, l
     text(`${id}-formula-label`, 96, 203, 230, 20, 'GOVERNING IDEA', {
       fontSize: 10, fontFamily: MONO, fontWeight: 900, color: accent, letterSpacing: 1
     }),
-    text(`${id}-formula`, 96, 231, 1088, 50, formula, {
+    text(`${id}-formula`, 96, 225, 1088, 62, formula, {
       fontSize: 23, fontFamily: SERIF, fontWeight: 700, align: 'center', valign: 'middle', lineHeight: 1.25
     }),
     ...panel(`${id}-left`, 72, 322, 552, 204, leftTitle, leftBody, {
@@ -348,7 +347,7 @@ function ideaSlide({ id, family, eyebrow, title, subtitle, formula, leftTitle, l
     }),
     ...chrome(family, accent)
   ];
-  return { id, background: C.paper, transition: 'morph', notes, elements };
+  return { id, background: C.paper, transition: 'none', notes, elements };
 }
 
 function bayesSlide() {
@@ -449,7 +448,7 @@ function equationSheetSlide({ id, family, title, context, panels, accent, soft, 
     }));
   });
   elements.push(...chrome(`${family} · equations`, accent));
-  return { id, background: C.paper, transition: 'morph', notes, elements };
+  return { id, background: C.paper, transition: 'none', notes, elements };
 }
 
 function bayesEquationsSlide() {
@@ -613,7 +612,7 @@ function geometryFallback() {
 
 function geometryLiveSlide() {
   return {
-    id: 'mse-live', background: C.paper, transition: 'morph',
+    id: 'mse-live', background: C.paper, transition: 'none',
     notes: 'The geometry experiment mounts automatically. Rotate H, increase R, and vary ρ. Relate the gain vector to the state–innovation cross-covariance. Press Escape to return focus to Bento; Page Up returns to the minimum-MSE introduction.',
     elements: [
       text('live-eyebrow', 74, 37, 870, 21, 'MINIMUM-MSE · LIVE EXPERIMENT', { fontSize: 10, fontFamily: MONO, fontWeight: 900, color: C.blue, letterSpacing: 1.45 }),
@@ -683,7 +682,7 @@ function implementationsSlide() {
     ...chrome('Numerical forms', C.violet)
   ];
   return {
-    id: 'implementations', background: C.paper, transition: 'morph',
+    id: 'implementations', background: C.paper, transition: 'none',
     notes: 'Separate estimator choice from numerical implementation. QR, information form, and Joseph stabilization target the same covariance. The next slide makes conditioning and simulated precision controllable.',
     elements
   };
@@ -727,7 +726,7 @@ function precisionFallback() {
 
 function precisionLiveSlide() {
   return {
-    id: 'implementations-live', background: C.paper, transition: 'morph',
+    id: 'implementations-live', background: C.paper, transition: 'none',
     notes: 'The finite-precision experiment mounts automatically. Raise the condition number and reduce significant digits. Compare error, symmetry, and minimum eigenvalue for each formulation. Press Escape to return focus to Bento; Page Up returns to the implementation introduction.',
     elements: [
       text('live-eyebrow', 74, 37, 870, 21, 'NUMERICAL FORMS · LIVE EXPERIMENT', { fontSize: 10, fontFamily: MONO, fontWeight: 900, color: C.violet, letterSpacing: 1.45 }),
@@ -769,7 +768,7 @@ function equivalenceSlide() {
   });
   elements.push(...chrome('Synthesis', C.rust));
   return {
-    id: 'equivalence', background: C.paper, transition: 'morph',
+    id: 'equivalence', background: C.paper, transition: 'none',
     notes: 'Close the conceptual argument. The same estimator does not mean the assumptions or outputs are interchangeable. Use the scalar example as a sanity check and the final panel as a decision guide.',
     elements
   };
@@ -807,7 +806,7 @@ function referencesSlide() {
     ...chrome('References', C.green)
   );
   return {
-    id: 'references', background: C.paper, transition: 'morph',
+    id: 'references', background: C.paper, transition: 'none',
     notes: 'Use these sources to mark the boundary between the original results and the editorial consolidation. The citations are clickable in Bento. End by repeating that algorithms and identities should not be counted as independent filters.',
     elements
   };

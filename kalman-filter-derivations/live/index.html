@@ -9,16 +9,17 @@
   <meta name="description" content="Interactive scalar fusion, covariance geometry, and matrix-equivalence experiments for the Kalman filter derivation atlas.">
   <link rel="stylesheet" href="styles.css?v=20260901">
   <style id="live-math-style">
-    .math-tex{white-space:nowrap}
+    .math-tex{position:relative;white-space:nowrap}
     .math-inline{display:inline-block;vertical-align:-.14em;line-height:1}
     .math-display{display:block;width:100%;line-height:1;text-align:center}
     .math-tex mjx-container{color:inherit!important;margin:0!important}
     .math-inline mjx-container{display:inline-block!important}
     .math-display mjx-container[display="true"]{display:block!important;width:100%;margin:0!important;text-align:center}
     .math-tex mjx-container[jax="SVG"]>svg{max-width:100%;height:auto;overflow:visible}
+    mjx-assistive-mml{position:absolute!important;top:0!important;left:0!important;clip:rect(1px,1px,1px,1px)!important;clip-path:inset(50%)!important;padding:1px 0 0!important;border:0!important;display:block!important;width:1px!important;height:1px!important;overflow:hidden!important;white-space:nowrap!important}
     .metric-rail{overflow-x:hidden}
     .eq-card .eq-head{margin-bottom:1px}
-    .eq-formula{height:24px;margin:0 0 4px;color:var(--faint);font-size:11.5px;line-height:1;overflow:hidden}
+    .eq-formula{height:24px;margin:0 0 4px;color:var(--soft);font-size:12px;line-height:1;overflow:hidden}
     .eq-formula .math-display{height:100%;display:flex;align-items:center;justify-content:center}
   </style>
   <script>
@@ -28,7 +29,7 @@
         displayMath: [['\\[', '\\]']],
         processEscapes: true
       },
-      svg: { fontCache: 'global' },
+      svg: { fontCache: 'local' },
       options: { skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'] },
       startup: {
         typeset: false,
