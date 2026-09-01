@@ -7532,5 +7532,22 @@
 ]
 </script>
     <script src="../assets/bento-inline-live.js"></script>
-  </body>
+  <script>
+(()=>{
+  function restoreTableMath(){
+    let changed=false;
+    document.querySelectorAll('.bento-cell-inner span:not(.math-tex)').forEach(node=>{
+      const source=node.textContent.trim();
+      const inline=source.startsWith('\\(')&&source.endsWith('\\)');
+      const display=source.startsWith('\\[')&&source.endsWith('\\]');
+      if(inline||display){node.classList.add('math-tex',inline?'math-inline':'math-display');changed=true;}
+    });
+    if(changed)window.typesetDynamicMath?.();
+  }
+  new MutationObserver(restoreTableMath).observe(document.documentElement,{childList:true,subtree:true});
+  document.addEventListener('DOMContentLoaded',restoreTableMath,{once:true});
+  restoreTableMath();
+})();
+</script>
+</body>
 </html>
