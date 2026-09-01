@@ -15,9 +15,13 @@ const deckPath = resolve(here, 'bento-deck.mjs');
 let deck = await readFile(deckPath, 'utf8');
 const importLine = "import { applyMathReview } from './math-review.mjs';\n";
 if (!deck.includes(importLine)) deck = importLine + deck;
-deck = replaceOnce(deck, 'export const deck = {',
-  'applyMathReview(slides, { tex, texBlock, mathLines, mathParagraphs, muted, equationSheetSlide, C });\n\nexport const deck = {',
-  'review hook');
+const reviewHook = 'applyMathReview(slides, { tex, texBlock, mathLines, mathParagraphs, muted, equationSheetSlide, C });';
+if (!deck.includes(reviewHook)) {
+  deck = replaceOnce(deck, 'export const deck = {', reviewHook + '\n\nexport const deck = {', 'review hook');
+}
+// These dimensions were checked against the rendered Bento page, not only the source boxes.
+const layoutAdjustment = "// Keep the three geometry paragraphs inside the existing idea-panel bounds.\nObject.assign(slides.find(s => s.id === 'mse').elements.find(e => e.id === 'mse-right-body'), { fontSize: 14, lineHeight: 1.3 });";
+if (!deck.includes(layoutAdjustment)) deck = deck.replace(reviewHook, reviewHook + '\n\n' + layoutAdjustment);
 await writeFile(deckPath, deck);
 
 const appPath = resolve(here, 'live/app.js');
@@ -26,6 +30,7 @@ app = replaceOnce(app,
   'Change the two Gaussian sources. The common posterior is shown once; an agreement check confirms that four derivations reach it.',
   'Change the two Gaussian sources. Four equivalent formulas agree numerically; this is a consistency check, not four independent derivations.',
   'scalar experiment description');
+app = replaceOnce(app, "setStatus(shell.status, 'derivations agree', 'good')", "setStatus(shell.status, 'formulas agree', 'good')", 'scalar status');
 app = replaceOnce(app,
   'The gain is nearly aligned with the measurement normal; the prior supplies little cross-coordinate coupling.',
   'For this measurement direction, the gain is nearly parallel to the measurement normal. Alignment alone does not imply weak prior correlation.',
@@ -60,6 +65,9 @@ const cssPath = resolve(here, 'live/styles.css');
 let css = await readFile(cssPath, 'utf8');
 if (!css.includes('.review-numerics-note')) {
   css += '\n/* Mathematical-review disclosure; compact enough for the embedded region. */\n.review-numerics-note { margin: 0; padding: 0 2px; font-size: 10px; line-height: 1.35; color: var(--soft, #b9c4d6); }\n';
-  await writeFile(cssPath, css);
 }
-console.log('Applied mathematical review and numerical-demo corrections.');
+if (!css.includes('.eq-layout:has(.review-numerics-note)')) {
+  css += '\n.eq-layout:has(.review-numerics-note) { grid-template-rows: auto minmax(min-content, 1fr) auto; }\n';
+}
+await writeFile(cssPath, css);
+console.log('Applied mathematical review, numerical-demo corrections, and checked layout refinements.');
