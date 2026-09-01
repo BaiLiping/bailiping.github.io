@@ -19,6 +19,10 @@ concurrency:
   group: build-vi-em
   cancel-in-progress: true
 
+defaults:
+  run:
+    shell: bash
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -40,7 +44,8 @@ jobs:
           node --check variational-inference-em/bento-deck.mjs
           node --check variational-inference-em/live/math.js
           node --check variational-inference-em/live/app.js
-          node variational-inference-em/tests.mjs | tee viem-validation/numerical-tests.json
+          node variational-inference-em/tests.mjs > viem-validation/numerical-tests.json
+          cat viem-validation/numerical-tests.json
       - name: Build using the existing Bento renderer
         run: node variational-inference-em/build.mjs
       - name: Install browser validation dependencies
@@ -59,6 +64,9 @@ jobs:
           path: |
             viem-validation/
             variational-inference-em/
+            assets/mathjax-dynamic.js
+            assets/bento-inline-live.js
+            assets/bento-inline-live.css
           retention-days: 14
       - name: Commit only the generated deck
         run: |
