@@ -109,7 +109,7 @@
       accent: COLORS.cyan,
       eyebrow: 'SCALAR FUSION · SHARED POSTERIOR',
       title: 'Prior × likelihood',
-      intro: 'Change the two Gaussian sources. The common posterior is shown once; an agreement check confirms that four derivations reach it.',
+      intro: 'Change the two Gaussian sources. Four equivalent formulas agree numerically; this is a consistency check, not four independent derivations.',
       controls: [
         rangeControl('prior-mean', `Prior mean ${tex`m^-`}`, -4, 4, .1, -1.2, '−1.2'),
         rangeControl('prior-sigma', `Prior standard deviation ${tex`\sigma_p`}`, .2, 3, .05, 1.35, '1.35'),
@@ -306,7 +306,7 @@
       document.getElementById('geo-area').textContent = `${fmt(100 * areaRatio, 2)}% remains`
       document.getElementById('geo-copy').textContent = gainAngleSine > .15
         ? 'Prior anisotropy or correlation rotates the gain away from the measurement normal, so one measurement updates coupled state components.'
-        : 'The gain is nearly aligned with the measurement normal; the prior supplies little cross-coordinate coupling.'
+        : 'For this measurement direction, the gain is nearly parallel to the measurement normal. Alignment alone does not imply weak prior correlation.'
       setStatus(shell.status, 'posterior remains positive definite', 'good')
       draw()
     }
@@ -600,8 +600,11 @@
     const LR = full.cholesky(R)
     const H = Array.from({ length: m }, () => Array.from({ length: n }, () => normal(rng) / Math.sqrt(n)))
     const priorMean = Array.from({ length: n }, () => .6 * normal(rng))
-    const trueState = Array.from({ length: n }, () => normal(rng))
-    const z = H.map((row, i) => row.reduce((sum, value, j) => sum + value * trueState[j], 0) + Math.sqrt(Math.max(R[i][i], 1e-12)) * .18 * normal(rng))
+    // Draw from the same Gaussian model used by every algebraic route.
+    const xi = Array.from({ length: n }, () => normal(rng))
+    const eta = Array.from({ length: m }, () => normal(rng))
+    const trueState = full.addVec(priorMean, full.matVec(LP, xi))
+    const z = full.addVec(full.matVec(H, trueState), full.matVec(LR, eta))
     return { P, R, LP, LR, H, priorMean, z }
   }
 
@@ -654,7 +657,7 @@
     for (let row = 0; row < LP.length; row += 1) {
       for (let column = 0; column <= row; column += 1) {
         let value = 0
-        for (let k = 0; k < LP.length; k += 1) value += W[row][k] * W[column][k]
+        for (let k = 0; k < LP.length; k += 1) value = ops.round(value + ops.round(W[row][k] * W[column][k]))
         covariance[row][column] = value
         covariance[column][row] = value
       }
@@ -684,7 +687,7 @@
       accent: COLORS.violet,
       eyebrow: 'MATRIX IDENTITIES · FINITE PRECISION',
       title: 'Same target, different arithmetic',
-      intro: 'Increase conditioning and lower simulated significant digits. Exact identities can separate numerically even though the target estimator is unchanged.',
+      intro: 'Toy rounding, not IEEE emulation. QR starts from covariance factors; other paths start from matrices. The reference is native double, not exact truth.',
       controls: [
         `<div class="control"><div class="control-head"><label for="eq-n">State dimension ${tex`n`}</label></div><select id="eq-n"><option>2</option><option selected>3</option><option>4</option></select></div>`,
         `<div class="control"><div class="control-head"><label for="eq-m">Measurement dimension ${tex`m`}</label></div><select id="eq-m"><option selected>1</option><option>2</option><option>3</option></select></div>`,
@@ -692,9 +695,10 @@
         rangeControl('eq-digits', 'Simulated significant digits', 5, 16, 1, 16, 'native double'),
         '<div class="button-row"><button id="eq-benign" type="button">Benign case</button><button id="eq-random" class="primary" type="button">New problem</button></div>'
       ].join(''),
-      stageTitle: 'MAXIMUM DIFFERENCE FROM FULL-PRECISION COVARIANCE UPDATE',
+      stageTitle: 'DIFFERENCE FROM NATIVE-DOUBLE REFERENCE',
       stageBody: `
         <div class="eq-layout">
+          <p class="review-numerics-note">P_s = (P + Pᵀ)/2. QR symmetry is enforced by mirroring. Δ is the largest entrywise difference across the toy mean and covariance.</p>
           <div class="eq-grid" id="eq-grid"></div>
           <div class="matrix-strip">
             <div class="matrix-card"><strong>Reference posterior covariance ${tex`P^+`}</strong><pre id="eq-posterior">—</pre></div>
@@ -729,7 +733,7 @@
       const values = [
         [mathHtml(String.raw`\max\Delta`), diagnostics.delta, tone(diagnostics.delta)],
         ['symmetry', diagnostics.symmetry, tone(diagnostics.symmetry)],
-        [mathHtml(String.raw`\lambda_{\min}`), diagnostics.minEigen, tone(diagnostics.minEigen, 'eigen')]
+        [mathHtml(String.raw`\lambda_{\min}(P_s)`), diagnostics.minEigen, tone(diagnostics.minEigen, 'eigen')]
       ]
       return `<article class="eq-card ${extraClass}">
         <div class="eq-head"><strong>${name}</strong></div>

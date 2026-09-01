@@ -1,3 +1,4 @@
+import { applyMathReview } from './math-review.mjs';
 const WIDTH = 1280;
 const HEIGHT = 720;
 const SERIF = "Georgia, 'Times New Roman', serif";
@@ -831,6 +832,8 @@ const slides = [
   equivalenceSlide(),
   referencesSlide()
 ];
+
+applyMathReview(slides, { tex, texBlock, mathLines, mathParagraphs, muted, equationSheetSlide, C });
 
 export const deck = {
   format: 'bento/slides',
