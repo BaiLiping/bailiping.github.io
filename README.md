@@ -22,6 +22,7 @@ GitHub Pages site for `bailiping.com`.
 - `/cir-to-taps/` is an interactive communication-basics lab showing how continuous-delay channel paths become discrete complex channel taps, plus a status-labeled, field-level inventory of the radio-SLAM experiment data and its estimator boundary.
 - `/mpc-detection-to-bounce-count/` is the interactive note for converting resolved MPC delay, AoA, AoD, and path-loss evidence into bounce-count hypotheses under three map/pose knowledge regimes.
 - `/mpc-detection-to-bounce-count-slides/` is the 11-slide Bento presentation of that note, with one consolidated concept/live pair for each map/pose regime and printable static fallbacks.
+- `/variational-inference/` is a 15-slide interactive Bento deck on ELBOs, mean-field inference, coordinate ascent, and stochastic gradients, with a deterministic step-by-step EM experiment.
 
 ## Edit sale items
 
