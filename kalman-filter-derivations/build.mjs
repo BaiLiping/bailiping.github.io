@@ -5,8 +5,8 @@ import { deck, inlineLiveMap } from './deck.mjs';
 
 const here = dirname(fileURLToPath(import.meta.url));
 const templatePath = resolve(here, '../frame-registration-slides/index.html');
-// Preserve the scrollable reference at index.html; this builds the legacy deck only.
-const outputPath = resolve(here, 'slides.html');
+// Preserve the consolidated page and slides; this builds the archived deck only.
+const outputPath = resolve(here, 'legacy-slides.html');
 
 const template = await readFile(templatePath, 'utf8');
 const docPattern = /(<script type="application\/bento\+json" id="bento-doc">\s*)[\s\S]*?(\s*<\/script>)/;
