@@ -1,4 +1,4 @@
-"""Run after build.mjs with the repository served on port 8765."""
+"""Build the deck and serve the repository on port 8765 before running."""
 import json
 import math
 import os
@@ -8,8 +8,7 @@ from playwright.sync_api import sync_playwright
 
 OUT = Path('viem-validation')
 OUT.mkdir(exist_ok=True)
-BASE = os.environ.get('VIEM_TEST_BASE', 'http://127.0.0.1:8765')
-URL = BASE + '/variational-inference-em/'
+URL = os.environ.get('VIEM_TEST_BASE', 'http://127.0.0.1:8765') + '/variational-inference-em/'
 report = {'status': 'running', 'slides': [], 'labs': [], 'errors': []}
 
 
@@ -35,7 +34,6 @@ try:
             page.wait_for_timeout(700)
             locator = page.locator('.bento-slide[data-slide-id="' + sid + '"]').first
             locator.wait_for(state='attached', timeout=15000)
-            # Both standard Reveal and the site's scroll presentation mode are supported.
             if not locator.is_visible():
                 page.reload(wait_until='networkidle')
                 page.wait_for_timeout(600)
@@ -45,13 +43,13 @@ try:
             except Exception:
                 pass
             page.wait_for_timeout(350)
-            bad_math = locator.locator('mjx-merror, [data-mjx-error]').count()
-            data = {'index': i+1, 'id': sid, 'mathErrors': bad_math, 'visible': locator.is_visible(), 'mathContainers': locator.locator('mjx-container').count()}
+            data = {'index': i+1, 'id': sid, 'mathErrors': locator.locator('mjx-merror, [data-mjx-error]').count(), 'visible': locator.is_visible(), 'mathContainers': locator.locator('mjx-container').count()}
             report['slides'].append(data)
             assert data['visible'], 'Slide not visible: ' + sid
-            assert bad_math == 0, 'Math rendering error: ' + sid
+            assert data['mathErrors'] == 0, 'Math rendering error: ' + sid
+            if locator.locator('.math-tex').count():
+                assert data['mathContainers'] > 0, 'Math not typeset: ' + sid
             screen(page, f'slide-{i+1:02d}-{sid}')
-        # Direct lab tests exercise controls independently of the host slideshow.
         for mode in ['meanfield', 'em']:
             page.goto(URL + 'live/?demo=' + mode + '&embed=region', wait_until='networkidle')
             page.wait_for_function('window.VILab')
@@ -66,8 +64,7 @@ try:
                 assert after['updates'] == 1
                 page.locator('#fit').click()
                 close(float(page.locator('#mf-best').inner_text()), -.5*math.log(1-.8**2), .001)
-                page.locator('#rho').fill('0')
-                page.locator('#rho').dispatch_event('input')
+                page.locator('#independent').click()
                 close(float(page.locator('#mf-kl').inner_text()), 0, .001)
                 page.locator('#correlated').click()
                 page.locator('#reset').click()
@@ -91,8 +88,7 @@ try:
                 page.locator('#learn').check()
                 for _ in range(12):
                     page.locator('#step').click()
-                learned = page.evaluate('VILab.getState()')
-                assert min(learned['model']['variance']) >= .09
+                assert min(page.evaluate('VILab.getState()')['model']['variance']) >= .09
             screen(page, 'lab-' + mode + '-desktop')
             assert page.evaluate('document.documentElement.scrollWidth <= innerWidth+1'), 'Horizontal overflow: '+mode
             page.set_viewport_size({'width': 390, 'height': 844})
@@ -100,7 +96,6 @@ try:
             screen(page, 'lab-' + mode + '-mobile')
             assert page.evaluate('document.documentElement.scrollWidth <= innerWidth+1'), 'Mobile horizontal overflow: '+mode
             report['labs'].append({'mode': mode, 'desktop': 'passed', 'mobile': 'passed', 'controls': 'passed'})
-        # Both live regions must load in the real opaque-origin sandbox.
         page.set_viewport_size({'width': 1440, 'height': 900})
         for index, mode in [(9, 'meanfield'), (17, 'em')]:
             page.goto(URL + '#/' + str(index), wait_until='networkidle')
@@ -120,10 +115,9 @@ except Exception as e:
 finally:
     (OUT / 'report.json').write_text(json.dumps(report, indent=2))
     try:
-        from PIL import Image, ImageOps, ImageDraw
-        files = sorted(OUT.glob('slide-*.png'))
+        from PIL import Image, ImageDraw
         thumbs = []
-        for fn in files:
+        for fn in sorted(OUT.glob('slide-*.png')):
             im = Image.open(fn).convert('RGB')
             im.thumbnail((480, 300))
             tile = Image.new('RGB', (500, 330), 'white')
