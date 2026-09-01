@@ -1,0 +1,74 @@
+name: Build and validate VI and EM slides
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'variational-inference-em/bento-deck.mjs'
+      - 'variational-inference-em/build.mjs'
+      - 'variational-inference-em/tests.mjs'
+      - 'variational-inference-em/browser-test.py'
+      - 'variational-inference-em/live/**'
+      - '.github/workflows/build-vi-em.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: build-vi-em
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 1
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Validate syntax and numerical invariants
+        run: |
+          mkdir -p viem-validation
+          node --check variational-inference-em/bento-deck.mjs
+          node --check variational-inference-em/live/math.js
+          node --check variational-inference-em/live/app.js
+          node variational-inference-em/tests.mjs | tee viem-validation/numerical-tests.json
+      - name: Build using the existing Bento renderer
+        run: node variational-inference-em/build.mjs
+      - name: Install browser validation dependencies
+        run: |
+          pip install playwright==1.55.0 Pillow==11.3.0
+          python -m playwright install --with-deps chromium
+      - name: Exercise slides, math, controls, sandboxed labs and mobile layout
+        run: |
+          python -m http.server 8765 --bind 127.0.0.1 > /tmp/viem-http.log 2>&1 &
+          python variational-inference-em/browser-test.py
+      - name: Preserve validation results and screenshots
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: vi-em-validation
+          path: |
+            viem-validation/
+            variational-inference-em/
+          retention-days: 14
+      - name: Commit only the generated deck
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add variational-inference-em/index.html
+          if git diff --cached --quiet; then
+            echo 'Generated deck is already current.'
+          else
+            git commit -m 'Build validated VI and EM Bento presentation'
+            git pull --rebase origin main
+            git push origin HEAD:main
+          fi
