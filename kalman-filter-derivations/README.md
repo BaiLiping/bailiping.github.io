@@ -1,13 +1,13 @@
 # Kalman filter: four derivation families
 
-The public URL serves a 17-slide interactive Bento presentation. There is no separate reading view.
+The public URL serves a 21-slide interactive Bento presentation. There is no separate reading view.
 
-- Edit `bento-deck.mjs` for slide content, notes, order, and inline-live mappings.
+- Edit `bento-deck.mjs` for the base slide composition and inline-live mappings. `math-review.mjs` applies the reviewed mathematical corrections and four additional equation sheets before export.
 - Run `node kalman-filter-derivations/build-bento.mjs` from the repository root to generate the canonical `index.html` and compatibility redirects.
 - `slides.html` and `consolidated-slides.html` redirect to the canonical deck while preserving query strings and hashes.
 - `legacy-slides.html` preserves the earlier 26-slide Bento deck. Its source remains in `deck.mjs` and `routes.mjs`; `build.mjs` rebuilds only that archive.
 
-The deck preserves the original 14 topics and adds three ordinary live slides. Each experiment immediately follows its static introduction:
+The deck preserves the original four-family structure, adds four mathematical-review sheets, and includes three ordinary live slides. Each experiment immediately follows its static introduction:
 
 - `model` → `model-live`: scalar Gaussian fusion
 - `mse` → `mse-live`: covariance geometry

@@ -1,3 +1,4 @@
+import { applyMathReview } from './math-review.mjs';
 const WIDTH = 1280;
 const HEIGHT = 720;
 const SERIF = "Georgia, 'Times New Roman', serif";
@@ -831,6 +832,11 @@ const slides = [
   equivalenceSlide(),
   referencesSlide()
 ];
+
+applyMathReview(slides, { tex, texBlock, mathLines, mathParagraphs, muted, equationSheetSlide, C });
+
+// Keep the three geometry paragraphs inside the existing idea-panel bounds.
+Object.assign(slides.find(s => s.id === 'mse').elements.find(e => e.id === 'mse-right-body'), { fontSize: 14, lineHeight: 1.3 });
 
 export const deck = {
   format: 'bento/slides',
