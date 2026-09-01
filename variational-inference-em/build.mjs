@@ -5,12 +5,20 @@ import {deck,inlineLiveMap} from './bento-deck.mjs';
 const here=dirname(fileURLToPath(import.meta.url));
 const template=await readFile(resolve(here,'../kalman-filter-derivations/index.html'),'utf8');
 const safe=value=>JSON.stringify(value,null,1).replaceAll('<','\\u003c');
-// Editorial fit adjustments are kept here so the original content remains easy to edit.
-const summary=deck.slides.find(s=>s.id==='summary').elements.find(e=>e.id==='summary-table');
-summary.h=320;summary.html=summary.html.replaceAll('font-size:18px','font-size:16px').replaceAll('padding:16px 12px','padding:11px 10px');
+// Text boxes sanitize table tags; compile editorial grids to native Bento tables.
+for(const s of deck.slides){
+  s.elements=s.elements.map(e=>{
+    if(e.type!=='text'||!e.html?.startsWith('<table'))return e;
+    const rows=[...e.html.matchAll(/<tr\b[^>]*>([\s\S]*?)<\/tr>/g)].map(row=>({cells:[...row[1].matchAll(/<t[hd]\b[^>]*>([\s\S]*?)<\/t[hd]>/g)].map(cell=>({html:cell[1]}))}));
+    if(rows.length!==5||rows.some(r=>r.cells.length!==3))throw new Error('Invalid comparison grid: '+e.id);
+    const compact=s.id==='summary';
+    return {id:e.id,type:'table',x:e.x,y:e.y,w:e.w,h:compact?320:e.h,rotation:0,opacity:1,header:true,
+      columns:(compact?[1.45,.95,1.9]:[1.15,1.35,1.5]).map(w=>({w})),rows,
+      style:{headerBg:'#2F6B4F',headerColor:'#FFFFFF',zebra:'#E7F0EA',borderColor:'#D8DED7',borderWidth:1,cellPadX:16,cellPadY:11,fontSize:compact?17:18,color:'#203129',fontFamily:deck.theme.fontFamily,radius:12}};
+  });
+}
 const conjugate=deck.slides.find(s=>s.id==='bayesian-sheet').elements.find(e=>e.id==='bayesian-sheet-0-body');
 conjugate.html=conjugate.html.replace('\\[','\\[\\begin{gathered}').replace('\\]','\\end{gathered}\\]');
-// Keep one line of ambient motion on the cover, as in the existing deck.
 deck.slides[0].elements.push({id:'cover-accent-line',type:'shape',shape:'line',x:77,y:324,w:685,h:1,fill:'none',stroke:'#A94F2A',strokeWidth:2,rotation:0,opacity:.6,fx:{loop:{type:'dash-march'}}});
 for(const [i,s] of deck.slides.entries()){
   if(!s.notes)throw new Error('Missing notes: '+s.id);
