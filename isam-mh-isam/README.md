@@ -1,22 +1,29 @@
 # iSAM & MH-iSAM2 — One Graph, Many Hypotheses
 
-A 24-slide, responsive, light/card-based deck for the site's **Random thoughts** section. Public route: `/isam-mh-isam/`.
+A 24-slide Bento presentation for the site's **Random thoughts** section. Public route: `/isam-mh-isam/`.
 
 ## Files
 
-- `index.html`: accessible page shell and pinned MathJax 3.2.2 loader.
-- `styles.css`: light card theme, responsive layout and print rules.
-- `deck.js`: slide content, LaTeX, source footers, speaker notes and original diagrams.
-- `engine.js`: dependency-free numerical/symbolic teaching models (also loadable with Node).
-- `demos.js`: SVG views and live controls.
-- `app.js`: direct slide links, keyboard/touch navigation, overview, notes and fullscreen.
+- `bento-deck.mjs`: canonical native Bento slide document, LaTeX, notes, links, static lab fallbacks, and live-region map.
+- `build-bento.mjs`: validates and compiles the canonical document into `index.html` using the shared Bento runtime.
+- `index.html`: generated, deployable presentation. Do not edit it directly.
+- `engine.js`: dependency-free numerical and symbolic models, shared by the browser and Node tests.
+- `live/index.html` and `live/app.js`: direct and embedded routes for the three deterministic laboratories.
 - `test-engine.js`: numerical and bookkeeping regression tests.
 
-No build is needed. Open through any static server; the only network dependency is MathJax from the pinned CDN. Equations are typeset once; all demo computation is local. No analytics, data uploads or user storage are added.
+Rebuild from the repository root with:
 
-## Navigation
+```sh
+node isam-mh-isam/build-bento.mjs
+```
 
-Arrow keys / Page Up / Page Down; Home / End; O for overview; N for notes; F for fullscreen. Inputs retain their normal keyboard behavior. Swipe outside a control, equation or plot to navigate on mobile. Links such as `#qr-demo`, `#tree-demo` and `#mh-demo` open experiments directly. Browser Print renders all slides with the current demo states.
+The generated deck uses the site's pinned MathJax 3.2.2 and shared Bento adapters. All experiment computation is local; there are no analytics, uploads, API keys, or persistent storage.
+
+## Presentation behavior
+
+Bento owns slide navigation, overview, notes, fullscreen, accessibility, and print. Each live lab follows its concept slide and mounts automatically in a fixed region—there are no launch buttons or hidden state slides. The underlying native fallback remains useful in print and when JavaScript is unavailable.
+
+Direct routes remain available at `live/?demo=qr`, `live/?demo=tree`, and `live/?demo=mh`. In an embedded lab, Escape returns focus to Bento and Page Up / Page Down move between slides.
 
 ## Scientific scope
 
@@ -28,4 +35,8 @@ The principal sources are the supplied **ICRA 2011 iSAM2** paper by Kaess et al.
 
 Default MH experiment: 1 -> 2 -> 4 -> 2 -> 1 surviving hypotheses. A cap of one discards the needed branch before later evidence and can leave an empty set. No pruned branch is silently restored. Changing any experiment setting resets its data stream.
 
-Run `node isam-mh-isam/test-engine.js` from the repository root. Browser QA was also run at 1440x900, 1280x768 and 390x844 with 50 rendered equations; no JavaScript errors or overflowing content cards were found. Numerical results were independently checked against NumPy least squares and Cholesky during authoring.
+Run `node isam-mh-isam/test-engine.js` from the repository root. Run the strict structural audit with:
+
+```sh
+python3 ~/.codex/skills/build-interactive-slides/scripts/audit_bento.py isam-mh-isam/index.html --strict
+```
