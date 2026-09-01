@@ -1,0 +1,78 @@
+name: Validate Kalman derivation review
+
+on:
+  push:
+    branches: [review-kalman-derivations-2026-09-01]
+    paths:
+      - 'kalman-filter-derivations/**'
+      - '.github/workflows/review-kalman-slides.yml'
+  pull_request:
+    paths:
+      - 'kalman-filter-derivations/**'
+      - '.github/workflows/review-kalman-slides.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: kalman-review-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event_name == 'pull_request' && github.head_ref || github.ref_name }}
+          fetch-depth: 1
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Apply reviewed mathematics and rebuild
+        run: |
+          node kalman-filter-derivations/apply-review.mjs
+          node --check kalman-filter-derivations/math-review.mjs
+          node --check kalman-filter-derivations/live/app.js
+          node kalman-filter-derivations/build-bento.mjs
+          node kalman-filter-derivations/check-review.mjs
+      - name: Set up browser checks
+        run: |
+          mkdir -p /tmp/kalman-review-node
+          npm install --prefix /tmp/kalman-review-node playwright@1.55.0 mathjax@3.2.2
+          if ! command -v google-chrome >/dev/null 2>&1; then
+            /tmp/kalman-review-node/node_modules/.bin/playwright install --with-deps chromium
+          fi
+          python3 -m http.server 8765 > /tmp/kalman-review-server.log 2>&1 &
+      - name: Render all slides and exercise the three live examples
+        run: node kalman-filter-derivations/render-review.mjs
+      - name: Commit reviewed source and generated deck on the review branch only
+        if: github.event_name == 'push' && github.ref_name == 'review-kalman-derivations-2026-09-01'
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add kalman-filter-derivations/bento-deck.mjs \
+            kalman-filter-derivations/index.html \
+            kalman-filter-derivations/live/app.js \
+            kalman-filter-derivations/live/styles.css
+          if ! git diff --cached --quiet; then
+            git commit -m 'Generate mathematically reviewed Kalman deck and corrected demos'
+            git push origin HEAD:review-kalman-derivations-2026-09-01
+          fi
+      - name: Package reviewed deck, source, and validation reports
+        if: always()
+        run: |
+          mkdir -p /tmp/kalman-review-package/kalman-filter-derivations /tmp/kalman-review-package/assets /tmp/kalman-review-package/frame-registration-slides
+          cp kalman-filter-derivations/{bento-deck.mjs,math-review.mjs,apply-review.mjs,build-bento.mjs,check-review.mjs,render-review.mjs,index.html,slides.html,consolidated-slides.html} /tmp/kalman-review-package/kalman-filter-derivations/
+          cp -r kalman-filter-derivations/live /tmp/kalman-review-package/kalman-filter-derivations/
+          if [ -d kalman-filter-derivations/review-results ]; then cp -r kalman-filter-derivations/review-results /tmp/kalman-review-package/kalman-filter-derivations/; fi
+          cp assets/{mathjax-dynamic.js,bento-inline-live.js,bento-inline-live.css} /tmp/kalman-review-package/assets/
+          cp frame-registration-slides/index.html /tmp/kalman-review-package/frame-registration-slides/
+          printf '%s\n' 'Reviewed Kalman derivation deck — review branch, not published to main.' 'Serve this directory with python3 -m http.server 8000 and open /kalman-filter-derivations/.' 'The browser needs internet access for the MathJax CDN. No font files are included.' 'Rebuild: node kalman-filter-derivations/build-bento.mjs' 'Regression checks: node kalman-filter-derivations/check-review.mjs' > /tmp/kalman-review-package/README.txt
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: kalman-review-deck-and-checks
+          path: /tmp/kalman-review-package/
+          if-no-files-found: error
