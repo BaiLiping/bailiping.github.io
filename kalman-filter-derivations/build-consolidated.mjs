@@ -1,4 +1,4 @@
-// index.html is the content source; CSS and JavaScript are shared by both views.
+// index.html is the canonical slide deck; keep the old consolidated URL in sync.
 // Run from any directory: node kalman-filter-derivations/build-consolidated.mjs
 import { readFile, writeFile } from 'node:fs/promises';
 const source = new URL('./index.html', import.meta.url);
