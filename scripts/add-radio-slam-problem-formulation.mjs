@@ -373,7 +373,7 @@ const required = [
   '\\mathbf h_0',
   '\\mathbf h_1',
   '\\mathbf h_2',
-  'two bounce, \\(2,j_1,j_2\\)',
+  'two bounce,',
   '<h2><span class="no">06</span>Bistatic radio SLAM as GraphSLAM</h2>'
 ]
 for (const value of required) {

@@ -555,6 +555,7 @@ window.MathJax={
     <a href="#filter">Known pose + map</a>
     <a href="#unknown-map">Unknown map</a>
     <a href="#unknown-pose-map">Unknown UE + map</a>
+    <a href="#problem-formulation">Problem formulation</a>
     <a href="#bistatic-graphslam">GraphSLAM bridge</a>
     <a href="/mpc-detection-to-bounce-count-slides/">Slides ↗</a>
     <a href="https://bailiping.com/">Home ↗</a>
@@ -1513,21 +1514,338 @@ window.MathJax={
 </section>
 
 
+
+<!-- ============ 05 unified radio-SLAM problem formulation ============ -->
+<section class="sec companion-section" id="problem-formulation">
+  <h2><span class="no">05</span>A complete radio-SLAM problem formulation</h2>
+  <p class="lede">This section collects the problem in one place. The base-station pose is known. The continuous unknowns are the UE trajectory and a persistent radio map. Each detected MPC also has a discrete explanation: clutter, LoS, one bounce on one surface, two ordered bounces on two surfaces, and so on.</p>
+
+  <div class="accuracy"><strong>Recommended representation for this page.</strong> Use <em>physical wall variables</em> as the map state and compute virtual anchors and bounce points deterministically inside each radio factor. This preserves finite-wall support, AoD, visibility, and a shared physical surface across different BSs. A directly optimized VA is an excellent compact state for a one-bounce path, but a single composite-VA point is generally insufficient to identify the individual walls of a multi-bounce path.</div>
+
+  <nav class="subsection-tiles is-four" aria-label="Radio SLAM problem-formulation subsections">
+    <a href="#formulation-state"><span>5.1</span><strong>Continuous state</strong><small>UE · known BS · wall · VA</small></a>
+    <a href="#formulation-hypothesis"><span>5.2</span><strong>Path hypothesis</strong><small>LoS · one bounce · two bounce</small></a>
+    <a href="#formulation-measurement"><span>5.3</span><strong>Measurement model</strong><small>delay · AoA · AoD · path loss</small></a>
+    <a href="#formulation-map"><span>5.4</span><strong>Joint inference</strong><small>factors · association · MAP</small></a>
+  </nav>
+
+  <div class="subsection-block" id="formulation-state">
+    <h3 class="subh"><span class="no">5.1</span>Continuous state: UE trajectory, known BS, and radio map</h3>
+    <p class="lede">The drawings on this page use a planar \(SE(2)\) model. The same construction extends to \(SE(3)\) by replacing headings with rotation matrices and wall segments with finite planes.</p>
+
+    <h4 style="margin:20px 0 8px;font:700 11px var(--mono);letter-spacing:.08em;text-transform:uppercase">UE state</h4>
+    <div class="eq math-eq">
+      \[
+      \mathbf x_t
+      =\big(\mathbf p_t,\theta_t,\delta_t\big)
+      \in \mathbb R^2\times\mathbb S^1\times\mathbb R,
+      \qquad
+      \mathcal X=\{\mathbf x_t\}_{t=0}^{T}.
+      \]
+    </div>
+    <table class="companion-symbols">
+      <thead><tr><th>Quantity</th><th>Status</th><th>Meaning</th></tr></thead>
+      <tbody>
+        <tr><td>\(\mathbf p_t=[p_{x,t},p_{y,t}]^{\mathsf T}\)</td><td>unknown</td><td>UE position in the world/map frame.</td></tr>
+        <tr><td>\(\theta_t\)</td><td>unknown or aided</td><td>UE array/body heading. AoA is measured in this local frame, so heading must be estimated unless supplied by an IMU or another attitude source.</td></tr>
+        <tr><td>\(\delta_t\)</td><td>optional unknown</td><td>UE-to-BS clock and hardware-delay offset in seconds. Set \(\delta_t=0\) only for a synchronized and calibrated system.</td></tr>
+        <tr><td>\(\mathbf v_t,\omega_t,\dot\delta_t\)</td><td>optional extension</td><td>Add velocity, turn rate, or clock drift only when a dynamic or continuous-time prior requires them. They are not required by the radio measurement factor itself.</td></tr>
+      </tbody>
+    </table>
+
+    <h4 style="margin:22px 0 8px;font:700 11px var(--mono);letter-spacing:.08em;text-transform:uppercase">Known base station</h4>
+    <div class="eq math-eq">
+      \[
+      \mathcal B_s=(\mathbf b_s,\theta_s),
+      \qquad
+      \mathbf b_s\in\mathbb R^2,
+      \quad \theta_s\in\mathbb S^1,
+      \qquad \mathcal B_s\;\text{is known}.
+      \]
+    </div>
+    <p class="eq-note">The BS position, array heading, transmit calibration, and any known hardware delay enter the likelihood as fixed parameters. They become graph variables only when the calibration itself is to be estimated.</p>
+
+    <h4 style="margin:22px 0 8px;font:700 11px var(--mono);letter-spacing:.08em;text-transform:uppercase">Physical wall state in 2D</h4>
+    <div class="eq math-eq">
+      \[
+      \mathbf m_j^{\mathrm W}
+      =\big(\mathbf c_j,\alpha_j,\ell_j,\boldsymbol\xi_j\big),
+      \qquad
+      \mathbf n_j=
+      \begin{bmatrix}\cos\alpha_j\\ \sin\alpha_j\end{bmatrix},
+      \qquad
+      \mathbf t_j=
+      \begin{bmatrix}-\sin\alpha_j\\ \cos\alpha_j\end{bmatrix},
+      \]
+      \[
+      \mathcal S_j
+      =\left\{\mathbf c_j+u\mathbf t_j:\;|u|\leq \ell_j/2\right\}.
+      \]
+    </div>
+    <p class="eq-note">\(\mathbf c_j\) is the segment center, \(\mathbf n_j\) its unit normal, \(\mathbf t_j\) its tangent, and \(\ell_j\) its finite length. \(\boldsymbol\xi_j\) denotes optional material parameters used by the path-loss model. If the wall is treated as infinite, omit \(\ell_j\).</p>
+
+    <h4 style="margin:22px 0 8px;font:700 11px var(--mono);letter-spacing:.08em;text-transform:uppercase">Virtual-anchor alternative</h4>
+    <div class="eq math-eq">
+      \[
+      \mathcal R_j(\mathbf y)
+      =\mathbf y-2\mathbf n_j\mathbf n_j^{\mathsf T}(\mathbf y-\mathbf c_j),
+      \qquad
+      \mathbf v_{sj}=\mathcal R_j(\mathbf b_s).
+      \]
+    </div>
+    <div class="companion-math-grid">
+      <article class="companion-math-card"><h4>One-bounce VA state</h4><p>With BS \(s\) known, \(\mathbf m^{\mathrm{VA}}_{sj}=\mathbf v_{sj}\in\mathbb R^2\) is a compact landmark state. The corresponding infinite wall is the perpendicular bisector of \(\mathbf b_s\) and \(\mathbf v_{sj}\).</p></article>
+      <article class="companion-math-card"><h4>Multi-bounce warning</h4><p>For two or more bounces, the final point \(\mathbf v_s^{(k)}\) gives path length and the final unfolded bearing, but generally does not uniquely encode every physical wall, finite support, or first departure direction. Keep the ordered wall variables, or store the complete composite reflection transform rather than only one point.</p></article>
+    </div>
+
+    <div class="accuracy"><strong>3D extension.</strong> Replace \(\theta_t\) and \(\theta_s\) by \(\mathbf R_t,\mathbf R_s\in SO(3)\). A finite rectangular surface needs a center \(\mathbf c_j\), unit normal \(\mathbf n_j\in\mathbb S^2\), an in-plane orientation, length, and width. Center, normal, length, and width alone do not determine rotation about the normal.</div>
+  </div>
+
+  <div class="subsection-block" id="formulation-hypothesis">
+    <h3 class="subh"><span class="no">5.2</span>Discrete path hypothesis and specular geometry</h3>
+    <p class="lede">For detected MPC \(\ell\) at time \(t\) from BS \(s\), let the path hypothesis contain a bounce count and an <em>ordered</em> sequence of wall identities.</p>
+    <div class="eq math-eq">
+      \[
+      h_{ts\ell}=\big(k_{ts\ell},\mathbf j_{ts\ell}\big),
+      \qquad
+      k_{ts\ell}\in\{0,1,2,\ldots,K_{\max}\},
+      \qquad
+      \mathbf j_{ts\ell}=(j_1,\ldots,j_k).
+      \]
+    </div>
+    <p class="eq-note">\(k=0\) means LoS and the wall sequence is empty. For two bounces, \((j_1,j_2)\) and \((j_2,j_1)\) are generally different paths because the first and last interactions—and therefore AoD and AoA—change.</p>
+
+    <h4 style="margin:22px 0 8px;font:700 11px var(--mono);letter-spacing:.08em;text-transform:uppercase">Image-source recursion</h4>
+    <div class="eq math-eq">
+      \[
+      \mathbf v_s^{(0)}=\mathbf b_s,
+      \qquad
+      \mathbf v_s^{(r)}=\mathcal R_{j_r}\!\left(\mathbf v_s^{(r-1)}\right),
+      \quad r=1,\ldots,k.
+      \]
+    </div>
+    <p>For a valid ideal specular path, the physical broken-path length equals the straight distance from the UE to the final image source. The reflection points are recovered by folding the line back through the walls in reverse order.</p>
+
+    <div class="companion-math-grid">
+      <article class="companion-math-card"><h4>LoS: \(k=0\)</h4><p>No wall is involved:</p><p>\(L^{(0)}_{ts}=\|\mathbf p_t-\mathbf b_s\|.\)</p><p>The first and last path points are the UE and BS themselves.</p></article>
+      <article class="companion-math-card"><h4>One bounce: \(k=1\)</h4><p>For wall \(j\):</p><p>\(\mathbf v_s^{(1)}=\mathcal R_j(\mathbf b_s),\)</p><p>\(\mathbf q_1=[\mathbf p_t,\mathbf v_s^{(1)}]\cap\mathcal S_j,\)</p><p>\(L^{(1)}_{tsj}=\|\mathbf p_t-\mathbf v_s^{(1)}\|.\)</p></article>
+      <article class="companion-math-card"><h4>Two bounces: \(k=2\)</h4><p>For ordered walls \((j_1,j_2)\):</p><p>\(\mathbf v_s^{(1)}=\mathcal R_{j_1}(\mathbf b_s),\quad \mathbf v_s^{(2)}=\mathcal R_{j_2}(\mathbf v_s^{(1)}),\)</p><p>\(\mathbf q_2=[\mathbf p_t,\mathbf v_s^{(2)}]\cap\mathcal S_{j_2},\)</p><p>\(\mathbf q_1=[\mathbf q_2,\mathbf v_s^{(1)}]\cap\mathcal S_{j_1},\)</p><p>\(L^{(2)}_{tsj_1j_2}=\|\mathbf p_t-\mathbf v_s^{(2)}\|.\)</p></article>
+      <article class="companion-math-card"><h4>Validity indicator</h4><p>Define \(\chi(h,\mathbf x_t,\mathcal M,\mathcal B_s)\in\{0,1\}\). It is one only when every required line intersection exists, all ordered segment lengths are positive, every hit lies on the finite surface, and all physical legs are visible.</p></article>
+    </div>
+
+    <div class="eq math-eq">
+      \[
+      L^{(k)}_{ts\ell}
+      =\sum_{r=0}^{k}\|\mathbf q_{r+1}-\mathbf q_r\|,
+      \qquad
+      \mathbf q_0=\mathbf b_s,
+      \quad \mathbf q_{k+1}=\mathbf p_t,
+      \qquad
+      L^{(k)}_{ts\ell}=\|\mathbf p_t-\mathbf v_s^{(k)}\|
+      \;\text{for a valid specular path}.
+      \]
+    </div>
+  </div>
+
+  <div class="subsection-block" id="formulation-measurement">
+    <h3 class="subh"><span class="no">5.3</span>Unified measurement model for delay, AoA, AoD, and path loss</h3>
+    <p class="lede">The channel estimator returns one noisy tuple per resolvable MPC. The geometric prediction depends on the current UE state, the known BS, and zero, one, or two ordered wall variables according to the hypothesis.</p>
+    <div class="eq math-eq">
+      \[
+      \mathbf z_{ts\ell}
+      =\begin{bmatrix}
+      \tau_{ts\ell} & \varphi^U_{ts\ell} & \psi^B_{ts\ell} & \mathrm{PL}_{ts\ell}
+      \end{bmatrix}^{\mathsf T}
+      =\mathbf h_{h_{ts\ell}}\!\left(
+      \mathbf x_t,\mathbf m_{j_1},\ldots,\mathbf m_{j_k};\mathcal B_s
+      \right)+\boldsymbol\varepsilon_{ts\ell},
+      \qquad
+      \boldsymbol\varepsilon_{ts\ell}\sim\mathcal N(\mathbf 0,\boldsymbol\Sigma_{h}).
+      \]
+    </div>
+
+    <h4 style="margin:22px 0 8px;font:700 11px var(--mono);letter-spacing:.08em;text-transform:uppercase">Common prediction shared by all bounce orders</h4>
+    <div class="eq math-eq">
+      \[
+      \widehat\tau^{(k)}=\frac{L^{(k)}}{c}+\delta_t,
+      \qquad
+      \widehat\psi^{B,(k)}
+      =\operatorname{ang}\!\left(
+      \mathbf R_s^{\mathsf T}
+      \frac{\mathbf s^{\mathrm{first}}-\mathbf b_s}
+      {\|\mathbf s^{\mathrm{first}}-\mathbf b_s\|}
+      \right),
+      \]
+      \[
+      \widehat\varphi^{U,(k)}
+      =\operatorname{ang}\!\left(
+      \mathbf R_t^{\mathsf T}
+      \frac{\mathbf s^{\mathrm{last}}-\mathbf p_t}
+      {\|\mathbf s^{\mathrm{last}}-\mathbf p_t\|}
+      \right),
+      \]
+      \[
+      \mathbf s^{\mathrm{first}}=
+      \begin{cases}
+      \mathbf p_t,&k=0,\\
+      \mathbf q_1,&k\geq1,
+      \end{cases}
+      \qquad
+      \mathbf s^{\mathrm{last}}=
+      \begin{cases}
+      \mathbf b_s,&k=0,\\
+      \mathbf q_k,&k\geq1.
+      \end{cases}
+      \]
+    </div>
+    <p class="eq-note">\(\mathbf R_s=\mathbf R(\theta_s)\) and \(\mathbf R_t=\mathbf R(\theta_t)\) map local vectors to the world frame; their transposes express a world direction in the BS or UE frame. In 2D, \(\operatorname{ang}([x,y]^{\mathsf T})=\operatorname{atan2}(y,x)\). AoA points from the UE toward the last interaction/source.</p>
+
+    <h4 style="margin:22px 0 8px;font:700 11px var(--mono);letter-spacing:.08em;text-transform:uppercase">The three explicit cases</h4>
+    <div class="eq math-eq">
+      \[
+      \mathbf h_0(\mathbf x_t;\mathcal B_s)
+      =\begin{bmatrix}
+      \|\mathbf p_t-\mathbf b_s\|/c+\delta_t\\
+      \operatorname{ang}\!\big(\mathbf R_t^{\mathsf T}(\mathbf b_s-\mathbf p_t)\big)\\
+      \operatorname{ang}\!\big(\mathbf R_s^{\mathsf T}(\mathbf p_t-\mathbf b_s)\big)\\
+      \widehat{\mathrm{PL}}^{(0)}
+      \end{bmatrix},
+      \]
+      \[
+      \mathbf h_1(\mathbf x_t,\mathbf m_j;\mathcal B_s)
+      =\begin{bmatrix}
+      \|\mathbf p_t-\mathbf v_s^{(1)}\|/c+\delta_t\\
+      \operatorname{ang}\!\big(\mathbf R_t^{\mathsf T}(\mathbf q_1-\mathbf p_t)\big)\\
+      \operatorname{ang}\!\big(\mathbf R_s^{\mathsf T}(\mathbf q_1-\mathbf b_s)\big)\\
+      \widehat{\mathrm{PL}}^{(1)}
+      \end{bmatrix},
+      \]
+      \[
+      \mathbf h_2(\mathbf x_t,\mathbf m_{j_1},\mathbf m_{j_2};\mathcal B_s)
+      =\begin{bmatrix}
+      \|\mathbf p_t-\mathbf v_s^{(2)}\|/c+\delta_t\\
+      \operatorname{ang}\!\big(\mathbf R_t^{\mathsf T}(\mathbf q_2-\mathbf p_t)\big)\\
+      \operatorname{ang}\!\big(\mathbf R_s^{\mathsf T}(\mathbf q_1-\mathbf b_s)\big)\\
+      \widehat{\mathrm{PL}}^{(2)}
+      \end{bmatrix}.
+      \]
+    </div>
+
+    <h4 style="margin:22px 0 8px;font:700 11px var(--mono);letter-spacing:.08em;text-transform:uppercase">Path-loss component</h4>
+    <div class="eq math-eq">
+      \[
+      \widehat{\mathrm{PL}}^{(k)}
+      =\mathcal P_k\!\left(
+      \{\|\mathbf q_{r+1}-\mathbf q_r\|\}_{r=0}^{k},
+      \{\mathbf q_r,\mathbf n_{j_r},\boldsymbol\xi_{j_r}\}_{r=1}^{k},
+      f_c,\widehat\varphi^U,\widehat\psi^B,\boldsymbol\eta
+      \right).
+      \]
+    </div>
+    <p>The function \(\mathcal P_k\) is deliberately modular. In dB it may contain propagation spreading, BS and UE antenna gains, one interaction loss per bounce as a function of incidence angle and material, blockage, polarization, and calibration offsets. The interaction sum is empty for LoS. Do not infer bounce count from path loss alone unless these nuisance terms are calibrated.</p>
+
+    <h4 style="margin:22px 0 8px;font:700 11px var(--mono);letter-spacing:.08em;text-transform:uppercase">Residual used by the optimizer</h4>
+    <div class="eq math-eq">
+      \[
+      \mathbf r^{\mathrm{rad}}_{ts\ell}(h)=
+      \begin{bmatrix}
+      c\big(\tau_{ts\ell}-\widehat\tau_h\big)\\
+      \operatorname{wrap}_{\pi}\!\big(\varphi^U_{ts\ell}-\widehat\varphi^U_h\big)\\
+      \operatorname{wrap}_{\pi}\!\big(\psi^B_{ts\ell}-\widehat\psi^B_h\big)\\
+      \mathrm{PL}_{ts\ell}-\widehat{\mathrm{PL}}_h
+      \end{bmatrix},
+      \qquad
+      \|\mathbf r\|^2_{\boldsymbol\Omega_h}
+      =\mathbf r^{\mathsf T}\boldsymbol\Sigma_h^{-1}\mathbf r.
+      \]
+    </div>
+    <p class="eq-note">Multiplying the delay residual by \(c\) expresses it in metres. The covariance must use the same units and should retain delay–angle correlations when the channel estimator provides them.</p>
+  </div>
+
+  <div class="subsection-block" id="formulation-map">
+    <h3 class="subh"><span class="no">5.4</span>Factor graph, unknown association, and the joint MAP problem</h3>
+    <p class="lede">With the BS fixed, the arity of a radio factor grows with bounce count. This is the cleanest way to see how LoS and multipath coexist in one GraphSLAM model.</p>
+    <table class="companion-symbols">
+      <thead><tr><th>Hypothesis</th><th>Unknown nodes touched</th><th>Known input</th></tr></thead>
+      <tbody>
+        <tr><td>clutter / false alarm</td><td>none, or a latent assignment variable</td><td>clutter intensity over measurement space</td></tr>
+        <tr><td>LoS, \(k=0\)</td><td>\(\mathbf x_t\)</td><td>\(\mathcal B_s\)</td></tr>
+        <tr><td>one bounce, \((1,j)\)</td><td>\(\mathbf x_t,\mathbf m_j\)</td><td>\(\mathcal B_s\)</td></tr>
+        <tr><td>two bounce, \((2,j_1,j_2)\)</td><td>\(\mathbf x_t,\mathbf m_{j_1},\mathbf m_{j_2}\)</td><td>\(\mathcal B_s\)</td></tr>
+        <tr><td>\(k\) bounce</td><td>\(\mathbf x_t,\mathbf m_{j_1},\ldots,\mathbf m_{j_k}\)</td><td>\(\mathcal B_s\)</td></tr>
+      </tbody>
+    </table>
+
+    <div class="eq math-eq">
+      \[
+      a_{ts\ell}\in
+      \left\{0,\mathrm{LoS},(1,j),(2,j_1,j_2),\ldots\right\},
+      \]
+    </div>
+    <p class="eq-note">\(a=0\) denotes clutter. Otherwise \(a\) selects both the bounce order and the ordered surface identities. The current scan index \(\ell\) is not itself a persistent feature identity.</p>
+
+    <h4 style="margin:22px 0 8px;font:700 11px var(--mono);letter-spacing:.08em;text-transform:uppercase">Conditioned problem: the front end has selected one hypothesis</h4>
+    <div class="eq math-eq">
+      \[
+      \begin{aligned}
+      (\widehat{\mathcal X},\widehat{\mathcal M})
+      =\arg\min_{\mathcal X,\mathcal M}\;&
+      J_{\mathrm{prior}}(\mathcal X,\mathcal M)
+      +\lambda_{\mathrm{mot}}J_{\mathrm{mot}}(\mathcal X)\\
+      &+\sum_{t,s,\ell:\,a_{ts\ell}\neq0}
+      \rho\!\left(
+      \|\mathbf r^{\mathrm{rad}}_{ts\ell}(a_{ts\ell})\|^2_{\boldsymbol\Omega_{a_{ts\ell}}}
+      \right),
+      \end{aligned}
+      \]
+    </div>
+    <p>Set \(\lambda_{\mathrm{mot}}=0\) for motion-model-free radio bundle adjustment. Then different UE poses are coupled only through re-observation of common wall or VA variables. Add odometry, IMU, clock-drift, smoothness, or calibration factors when those measurements are available.</p>
+
+    <h4 style="margin:22px 0 8px;font:700 11px var(--mono);letter-spacing:.08em;text-transform:uppercase">Hybrid problem: association and bounce order are unknown</h4>
+    <div class="eq math-eq">
+      \[
+      (\widehat{\mathcal X},\widehat{\mathcal M},\widehat A)
+      =\arg\max_{\mathcal X,\mathcal M,A}
+      p(\mathcal X,\mathcal M)
+      \prod_{t,s}p(\mathcal Z_{ts}\mid\mathbf x_t,\mathcal M,A_{ts},\mathcal B_s),
+      \]
+      \[
+      \phi_{ts\ell}(\mathbf x_t,\mathcal M)
+      =\kappa_{ts}(\mathbf z_{ts\ell})
+      +\sum_{h\in\mathcal H_{ts\ell}}
+      w_h p_{\mathrm D}(h)
+      \mathcal N\!\left(
+      \mathbf z_{ts\ell};
+      \mathbf h_h(\mathbf x_t,\mathcal M;\mathcal B_s),
+      \boldsymbol\Sigma_h
+      \right).
+      \]
+    </div>
+    <p class="eq-note">\(\kappa\) is a clutter intensity, \(\mathcal H_{ts\ell}\) is a gated candidate set, \(w_h\) is a prior weight, and \(p_{\mathrm D}(h)\) is path-detection probability. Exact one-to-one assignment is combinatorial; practical systems use front-end association, alternating inference, branching, or sum-/max-mixture factors.</p>
+
+    <div class="companion-steps">
+      <article><span>Front end</span><strong>Resolve and propose</strong>Estimate MPC tuples and covariances; normalize frames; propose LoS, ordered wall sequences, and clutter; reject impossible visibility cases.</article>
+      <article><span>Back end</span><strong>Optimize continuous states</strong>Given active hypotheses, jointly update UE poses, clock terms, and wall or VA states with sparse Gauss–Newton, LM, bundle adjustment, or iSAM2.</article>
+      <article><span>Validation</span><strong>Inspect ambiguity</strong>A known BS anchors the coordinate frame, but NLoS-only mirror ambiguities, corridor null spaces, clock ambiguity, and non-unique multi-wall decompositions can remain.</article>
+    </div>
+  </div>
+</section>
+
 <!-- ============ 05 bistatic radio to GraphSLAM ============ -->
 <section class="sec companion-section" id="bistatic-graphslam">
-  <h2><span class="no">05</span>Bistatic radio SLAM as GraphSLAM</h2>
+  <h2><span class="no">06</span>Bistatic radio SLAM as GraphSLAM</h2>
   <p class="lede">The transmitter being off the UE does not require a different SLAM backend. It changes the radio measurement function and, when transmitter calibration is uncertain, the number of variables touched by each factor.</p>
   <div class="accuracy"><strong>Core correction.</strong> GraphSLAM does not assume that every physical device is onboard. A factor graph records which <em>unknown variables</em> enter each prior or likelihood. A calibrated BS is therefore a fixed argument of a radio factor; an uncertain BS pose, clock, or array orientation is promoted to a variable with its own prior.</div>
 
   <nav class="subsection-tiles is-four" aria-label="Bistatic GraphSLAM subsections">
-    <a href="#factor-language"><span>5.1</span><strong>Factor language</strong><small>known BS as a parameter</small></a>
-    <a href="#bistatic-factor"><span>5.2</span><strong>MPC factor</strong><small>delay · AoA · AoD · gain</small></a>
-    <a href="#va-factor"><span>5.3</span><strong>VA / wall factor</strong><small>unfold specular paths</small></a>
-    <a href="#radio-graph-objective"><span>5.4</span><strong>Joint objective</strong><small>trajectory · map · association</small></a>
+    <a href="#factor-language"><span>6.1</span><strong>Factor language</strong><small>known BS as a parameter</small></a>
+    <a href="#bistatic-factor"><span>6.2</span><strong>MPC factor</strong><small>delay · AoA · AoD · gain</small></a>
+    <a href="#va-factor"><span>6.3</span><strong>VA / wall factor</strong><small>unfold specular paths</small></a>
+    <a href="#radio-graph-objective"><span>6.4</span><strong>Joint objective</strong><small>trajectory · map · association</small></a>
   </nav>
 
   <div class="subsection-block" id="factor-language">
-    <h3 class="subh"><span class="no">5.1</span>The sensor placement changes \(h(\cdot)\), not the graph machinery</h3>
+    <h3 class="subh"><span class="no">6.1</span>The sensor placement changes \(h(\cdot)\), not the graph machinery</h3>
     <div class="companion-math-grid">
       <article class="companion-math-card"><h4>Typical onboard observation</h4><p>A sensor rigidly attached to the robot gives</p><p>\(\mathbf z_{tj}=\mathbf h(\mathbf T_t,\mathbf m_j)+\boldsymbol\varepsilon.\)</p><p>The likelihood touches the current pose and the observed landmark.</p></article>
       <article class="companion-math-card"><h4>Bistatic radio observation</h4><p>A path begins at BS \(s\), interacts with the map, and ends at UE pose \(t\):</p><p>\(\mathbf z_{ts\ell}=\mathbf h_q(\mathbf T_t,\mathbf m_j;\mathbf B_s,\boldsymbol\kappa)+\boldsymbol\varepsilon.\)</p><p>The semicolon separates optimized variables from known parameters.</p></article>
@@ -1543,7 +1861,7 @@ window.MathJax={
   </div>
 
   <div class="subsection-block" id="bistatic-factor">
-    <h3 class="subh"><span class="no">5.2</span>One MPC becomes one sparse bistatic likelihood factor</h3>
+    <h3 class="subh"><span class="no">6.2</span>One MPC becomes one sparse bistatic likelihood factor</h3>
     <p class="lede">A point-scatterer model makes the endpoint geometry explicit. Let \(\mathbf b_s\) be the known BS position, \(\mathbf p_t\) the UE position, and \(\mathbf s_j\) a persistent point interaction.</p>
     <div class="eq math-eq">
       \[
@@ -1581,7 +1899,7 @@ window.MathJax={
   </div>
 
   <div class="subsection-block" id="va-factor">
-    <h3 class="subh"><span class="no">5.3</span>A specular wall becomes a landmark through the image-source construction</h3>
+    <h3 class="subh"><span class="no">6.3</span>A specular wall becomes a landmark through the image-source construction</h3>
     <p class="lede">For one ideal reflecting line, parameterize the wall by a unit normal \(\mathbf n_j\) and signed offset \(d_j\). Reflecting the known BS across that wall produces a virtual anchor.</p>
     <div class="eq math-eq">
       \[
@@ -1631,7 +1949,7 @@ window.MathJax={
   </div>
 
   <div class="subsection-block" id="radio-graph-objective">
-    <h3 class="subh"><span class="no">5.4</span>Joint trajectory–map posterior and GraphSLAM objective</h3>
+    <h3 class="subh"><span class="no">6.4</span>Joint trajectory–map posterior and GraphSLAM objective</h3>
     <p class="lede">Collect continuous unknowns in \(\boldsymbol\Theta\), associations in \(A\), and path classes or bounce orders in \(Q\). Known BS states are conditioned on; uncertain BS or calibration states are included in \(\boldsymbol\Theta\).</p>
     <div class="eq math-eq">
       \[
