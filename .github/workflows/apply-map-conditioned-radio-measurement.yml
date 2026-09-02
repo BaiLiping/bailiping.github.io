@@ -30,6 +30,7 @@ jobs:
         run: |
           node --check scripts/clarify-map-conditioned-radio-measurement.mjs
           node --check scripts/normalize-map-conditioned-residual-notation.mjs
+          node --check scripts/add-direct-wall-measurement-model.mjs
           node --check scripts/retain-2d-and-3d-radio-slam-formulations.mjs
 
       - name: Clarify complete-map and local-factor notation
@@ -37,6 +38,9 @@ jobs:
 
       - name: Normalize residual notation
         run: node scripts/normalize-map-conditioned-residual-notation.mjs
+
+      - name: Add direct physical-wall measurement models
+        run: node scripts/add-direct-wall-measurement-model.mjs
 
       - name: Regenerate the 2D and 3D companion sections
         run: node scripts/retain-2d-and-3d-radio-slam-formulations.mjs
@@ -49,31 +53,54 @@ jobs:
           const required = [
             'id="problem-formulation-2d"',
             'id="problem-formulation-3d"',
-            'Map-conditioned model and hypothesis-local measurement functions',
+            'Map-conditioned VA / image-source measurement model',
+            'Direct wall-state measurement model — no VA in the factor definition',
+            'Direct planar-wall measurement model — no VA in the factor definition',
             '\\mathcal M_h=\\mathcal S_h(\\mathcal M)',
+            '\\mathcal M_h^{\\mathrm W}=\\mathcal S_h(\\mathcal M^{\\mathrm W})',
+            '\\operatorname{SpecularSolve}',
+            '\\mathbf u_r^{+}',
+            '\\mathbf I-2\\mathbf n_{j_r}\\mathbf n_{j_r}^{\\mathsf T}',
+            '\\mathbf h_h^{\\mathrm W}(\\mathbf x_t,\\mathcal M_h^{\\mathrm W};\\mathcal B_s)',
+            '\\mathbf h_h^{\\mathrm W}(\\mathbf x_t,\\mathcal M_h^{\\mathrm W};{}^W\\mathbf T_{B_s})',
+            '\\mathbf h_h^{\\mathrm{VA}}=\\mathbf h_h^{\\mathrm W}',
             '\\mathbf h(\\mathbf x_t,\\mathcal M,h;',
             '\\mathcal H_{ts\\ell}(\\mathcal M)',
             '\\mathbf r^{\\mathrm{rad}}_{ts\\ell}(\\mathbf x_t,\\mathcal M,h)',
             '\\mathbf r^{\\mathrm{rad}}_{ts\\ell}(\\mathbf x_t,\\mathcal M,h)\\sim\\mathcal N',
             '\\mathbf r^{\\mathrm{rad}}_{ts\\ell}(\\mathbf x_t,\\mathcal M,a_{ts\\ell})',
             'Global model versus one factor',
-            'Do not confuse global conditioning with factor adjacency'
+            'Do not confuse global conditioning with factor adjacency',
+            'Same ideal physics, two useful forms',
+            'VA and wall formulations are complementary'
           ]
           for (const value of required) {
-            if (!html.includes(value)) throw new Error(`Missing generated map-conditioned notation: ${value}`)
+            if (!html.includes(value)) throw new Error(`Missing generated radio measurement notation: ${value}`)
           }
-          const heading = 'Map-conditioned model and hypothesis-local measurement functions'
-          const headingCount = html.split(heading).length - 1
-          if (headingCount !== 2) throw new Error(`Expected the map-conditioned heading in 2D and 3D; found ${headingCount}`)
+
+          const vaHeading = 'Map-conditioned VA / image-source measurement model'
+          const vaHeadingCount = html.split(vaHeading).length - 1
+          if (vaHeadingCount !== 2) throw new Error(`Expected the VA/image-source heading in 2D and 3D; found ${vaHeadingCount}`)
+
+          const directWallHeadings = [
+            'Direct wall-state measurement model — no VA in the factor definition',
+            'Direct planar-wall measurement model — no VA in the factor definition'
+          ]
+          for (const heading of directWallHeadings) {
+            const count = html.split(heading).length - 1
+            if (count !== 1) throw new Error(`Expected one direct-wall heading ${heading}; found ${count}`)
+          }
+
           for (const legacy of [
             '>The three explicit cases</h4>',
             '>LoS, one-bounce, and two-bounce measurement functions</h4>',
+            '>Map-conditioned model and hypothesis-local measurement functions</h4>',
             '=\\mathbf h_{h_{ts\\ell}}\\!\\left(\n      \\mathbf x_t,\\mathbf m_{j_1}',
             '\\mathbf r^{\\mathrm{rad}}_{ts\\ell}(h)'
           ]) {
             if (html.includes(legacy)) throw new Error(`Legacy local-only presentation remains: ${legacy}`)
           }
-          console.log('Validated whole-map generative likelihood and hypothesis-local sparse factors in both formulations.')
+          console.log('Validated whole-map likelihoods, VA/image-source evaluation, and direct physical-wall factors in 2D and 3D.')
           NODE
 
       - name: Check generated diff
@@ -86,12 +113,13 @@ jobs:
           git add \
             scripts/clarify-map-conditioned-radio-measurement.mjs \
             scripts/normalize-map-conditioned-residual-notation.mjs \
+            scripts/add-direct-wall-measurement-model.mjs \
             scripts/add-radio-slam-problem-formulation.mjs \
             scripts/upgrade-radio-slam-formulation-3d.mjs \
             mpc-detection-to-bounce-count/index.html
           if git diff --cached --quiet; then
             echo "No generated changes to commit."
           else
-            git commit -m "Finalize whole-map radio measurement notation"
+            git commit -m "Add direct wall-state radio measurement models"
             git push origin HEAD:main
           fi
