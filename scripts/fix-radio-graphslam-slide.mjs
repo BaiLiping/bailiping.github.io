@@ -114,8 +114,8 @@ const graphSlides = String.raw`function graphEquationSlide(ctx) {
       card('gs-joint-cost-card', 640, 482, 544, 140, C.measurementSoft, { stroke: C.measurement, radius: 8 }),
       text('gs-joint-cost-k', 664, 498, 310, 16, 'COVARIANCE-WEIGHTED MAP OBJECTIVE', 8.5, { color: C.measurementDeep, fontFamily: MONO, fontWeight: 700, letterSpacing: .75 }),
       text('gs-joint-cost-eq', 650, 518, 524, 62, texBlock§\begin{aligned}
-        (\mathbf X^*,\mathcal M^*)&=\arg\min_{\mathbf X,\mathcal M}\;\|\mathbf r_1^{\mathrm{prior}}\|_{\Omega_1}^{2}+\sum_{t=2}^{T}\|\mathbf r_t^{\mathrm{rel}}\|_{\Omega_t^{\mathrm{rel}}}^{2}\\[-.1em]
-        &\quad+\sum_{t,\ell}\rho\!\left(\|\mathbf r_{t\ell}^{\mathrm{rad}}(a_{t\ell},q_{t\ell})\|_{\Omega_{t\ell}^{\mathrm{rad}}}^{2}\right),\qquad \Omega=\Sigma^{-1}\\[-.1em]
+        (\mathbf X^*,\mathcal M^*)&=\arg\min_{\mathbf X,\mathcal M}\;\|\mathbf r_1^{\mathrm{prior}}\|_{\Omega_1}^{2}+\sum\nolimits_{t=2}^{T}\|\mathbf r_t^{\mathrm{rel}}\|_{\Omega_t^{\mathrm{rel}}}^{2}\\[-.1em]
+        &\quad+\sum\nolimits_{t,\ell}\rho\!\left(\|\mathbf r_{t\ell}^{\mathrm{rad}}(a_{t\ell},q_{t\ell})\|_{\Omega_{t\ell}^{\mathrm{rad}}}^{2}\right),\qquad \Omega=\Sigma^{-1}\\[-.1em]
         \mathbf r_{t\ell}^{\mathrm{rad}}(j,q)&=[c\tau,\varphi^{\mathrm{AoA}},\varphi^{\mathrm{AoD}}]^{\mathsf T}\boxminus\mathbf h_q(\mathbf T_t,\mathbf m_j,\mathbf b)
       \end{aligned}§, 8.8, { fontWeight: 700, align: 'center', lineHeight: 1.2 }),
       text('gs-joint-cost-v', 664, 584, 496, 24, 'Fixed A,Q → ordinary nonlinear least squares. Unknown A,Q → marginalize, maximize, or alternate association and continuous-state updates.', 7.5, { color: C.measurementDeep, fontFamily: SANS, fontWeight: 700, align: 'center', lineHeight: 1.25 }),
@@ -210,9 +210,9 @@ function graphIterationSlide(ctx) {
   elements.push(card('gs-impl-eq-card', 96, 386, 1088, 116, C.paper, { stroke: C.line, radius: 8 }))
   elements.push(text('gs-impl-eq-k', 120, 402, 420, 16, 'ACTUAL STATE AND QUADRATIC FACTORS FOR A FIXED MAP', 9, { color: C.poseDeep, fontFamily: MONO, fontWeight: 700, letterSpacing: .7 }))
   elements.push(text('gs-impl-eq-v', 108, 424, 1064, 66, texBlock§\begin{aligned}
-    \mathbf p^*=\arg\min_{\mathbf p_{0:K-1}}{}&\|\mathbf p_0-\bar{\mathbf p}_0\|_{\Omega_0}^{2}+\sum_k\|(\mathbf p_k-\mathbf p_{k-1})-\mathbf d_k^{\mathrm{odo}}\|_{\Omega_k^{\mathrm{odo}}}^{2}\\[-.1em]
-    &+\sum_k\|\mathbf p_{k-1}-2\mathbf p_k+\mathbf p_{k+1}\|_{\Omega^{\mathrm{smooth}}}^{2}+\sum_k\|\mathbf p_k-\mathbf z_k^{\mathrm{reg/LoS}}\|_{\Omega_k}^{2}\\[-.1em]
-    &+\sum_{(i,j)\in\mathcal L}\|(\mathbf p_j-\mathbf p_i)-\mathbf d_{ij}^{\mathrm{loop}}\|_{\Omega_{ij}}^{2},\qquad \Omega=\Sigma^{-1}
+    \mathbf p^*=\arg\min_{\mathbf p_{0:K-1}}{}&\|\mathbf p_0-\bar{\mathbf p}_0\|_{\Omega_0}^{2}+\sum\nolimits_k\|(\mathbf p_k-\mathbf p_{k-1})-\mathbf d_k^{\mathrm{odo}}\|_{\Omega_k^{\mathrm{odo}}}^{2}\\[-.1em]
+    &+\sum\nolimits_k\|\mathbf p_{k-1}-2\mathbf p_k+\mathbf p_{k+1}\|_{\Omega^{\mathrm{smooth}}}^{2}+\sum\nolimits_k\|\mathbf p_k-\mathbf z_k^{\mathrm{reg/LoS}}\|_{\Omega_k}^{2}\\[-.1em]
+    &+\sum\nolimits_{(i,j)\in\mathcal L}\|(\mathbf p_j-\mathbf p_i)-\mathbf d_{ij}^{\mathrm{loop}}\|_{\Omega_{ij}}^{2},\qquad \Omega=\Sigma^{-1}
   \end{aligned}§, 9.8, { fontWeight: 700, align: 'center', lineHeight: 1.2 }))
 
   elements.push(card('gs-impl-state-card', 96, 520, 344, 102, C.poseSoft, { stroke: C.pose, radius: 8 }))

@@ -23,8 +23,8 @@ replaceRequired(
 )
 
 replaceRequired(
-  String.raw`\sum_{t,\ell}\rho\!\left(\|\mathbf r_{t\ell}^{\mathrm{rad}}(a_{t\ell},q_{t\ell})\|_{\Omega_{t\ell}^{\mathrm{rad}}}^{2}\right)`,
-  String.raw`\sum_{(t,\ell):a_{t\ell}>0}\rho\!\left(\|\mathbf r_{t\ell}^{\mathrm{rad}}(a_{t\ell},q_{t\ell})\|_{\Omega_{t\ell}^{\mathrm{rad}}}^{2}\right)`,
+  String.raw`\sum\nolimits_{t,\ell}\rho\!\left(\|\mathbf r_{t\ell}^{\mathrm{rad}}(a_{t\ell},q_{t\ell})\|_{\Omega_{t\ell}^{\mathrm{rad}}}^{2}\right)`,
+  String.raw`\sum\nolimits_{(t,\ell):a_{t\ell}>0}\rho\!\left(\|\mathbf r_{t\ell}^{\mathrm{rad}}(a_{t\ell},q_{t\ell})\|_{\Omega_{t\ell}^{\mathrm{rad}}}^{2}\right)`,
   'geometric radio residual restricted to associated MPCs'
 )
 
@@ -36,7 +36,7 @@ replaceRequired(
 
 for (const marker of [
   String.raw`p(\mathbf z_{t\ell}\mid\mathbf T_t,\mathcal M,a_{t\ell},q_{t\ell},\mathbf b)`,
-  String.raw`\sum_{(t,\ell):a_{t\ell}>0}`,
+  String.raw`\sum\nolimits_{(t,\ell):a_{t\ell}>0}`,
   'a=0 uses the clutter likelihood'
 ]) {
   if (!source.includes(marker)) throw new Error(`Clutter-notation validation failed: ${marker}`)

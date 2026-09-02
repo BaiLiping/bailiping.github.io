@@ -119,8 +119,8 @@ function methodEquationSlide(kind, ctx) {
         text('bp-post-k', 122, 218, 330, 18, 'JOINT STATE–MAP FACTORIZATION', 10, { color: C.mapDeep, fontFamily: MONO, fontWeight: 700, letterSpacing: 1.2 }),
         text('bp-post-eq', 118, 248, 1044, 70,
           texBlock`\begin{aligned}
-            p(\mathbf X,\mathcal M\mid Z,U,\mathbf b,A)\propto\;&p(\mathbf x_1)\prod_{t=2}^{5}f_t^{\mathrm{mot}}(\mathbf x_{t-1},\mathbf x_t;\mathbf u_t)\\[-.1em]
-            &\times\prod_{j\in\{A,B\}}p(\mathbf m_j)\prod_{t=1}^{5}f_t^{\mathrm{rad}}(\mathbf x_t,\mathbf m_A,\mathbf m_B;Z_t,A_t,\mathbf b)
+            p(\mathbf X,\mathcal M\mid Z,U,\mathbf b,A)\propto\;&p(\mathbf x_1)\prod\nolimits_{t=2}^{5}f_t^{\mathrm{mot}}(\mathbf x_{t-1},\mathbf x_t;\mathbf u_t)\\[-.1em]
+            &\times\prod\nolimits_{j\in\{A,B\}}p(\mathbf m_j)\prod\nolimits_{t=1}^{5}f_t^{\mathrm{rad}}(\mathbf x_t,\mathbf m_A,\mathbf m_B;Z_t,A_t,\mathbf b)
           \end{aligned}`,
           16, { fontWeight: 700, align: 'center', valign: 'middle', lineHeight: 1.35 }),
 
@@ -139,8 +139,8 @@ function methodEquationSlide(kind, ctx) {
         text('bp-radio-k', 684, 376, 470, 18, 'SUM–PRODUCT RETURNS TWO BELIEF FAMILIES', 10, { color: C.measurementDeep, fontFamily: MONO, fontWeight: 700, letterSpacing: 1.05 }),
         text('bp-radio-eq', 684, 408, 470, 104,
           texBlock`\begin{aligned}
-            b(\mathbf x_t)&\propto\prod_{f\in\mathcal N(\mathbf x_t)}\mu_{f\to\mathbf x_t}(\mathbf x_t)\\[.6em]
-            b(\mathbf m_j)&\propto p(\mathbf m_j)\prod_{t=1}^{5}\mu_{f_t^{\mathrm{rad}}\to\mathbf m_j}(\mathbf m_j)
+            b(\mathbf x_t)&\propto\prod\nolimits_{f\in\mathcal N(\mathbf x_t)}\mu_{f\to\mathbf x_t}(\mathbf x_t)\\[.6em]
+            b(\mathbf m_j)&\propto p(\mathbf m_j)\prod\nolimits_{t=1}^{5}\mu_{f_t^{\mathrm{rad}}\to\mathbf m_j}(\mathbf m_j)
           \end{aligned}`,
           17, { fontWeight: 700, align: 'center', lineHeight: 1.5 }),
         text('bp-radio-note', 684, 520, 470, 34, 'Radio-factor messages make state and map inform each other.', 12, { color: C.soft, fontFamily: SANS, lineHeight: 1.35, align: 'center' }),
@@ -180,7 +180,7 @@ function methodEquationSlide(kind, ctx) {
       text('pmbm-hyp-v', 864, 488, 296, 52, 'The MBM represents detected map features; global histories live inside this conditional map.', 13, { color: C.soft, fontFamily: SANS, lineHeight: 1.4, align: 'center' }),
 
       card('pmbm-return-card', 96, 590, 1088, 46, C.measurementDeep, { stroke: C.measurementDeep, radius: 7 }),
-      text('pmbm-return', 120, 602, 1040, 22, texBlock`f(\mathbf X,\mathcal M\mid Z,U)\approx\sum_{n=1}^{N}w^{(n)}\delta(\mathbf X-\mathbf X^{(n)})\,f_{\mathrm{PMBM}}^{(n)}(\mathcal M)`, 14, { color: C.paper, fontWeight: 700, align: 'center' }),
+      text('pmbm-return', 120, 599, 1040, 28, texBlock`f(\mathbf X,\mathcal M\mid Z,U)\approx\sum\nolimits_{n=1}^{N}w^{(n)}\delta(\mathbf X-\mathbf X^{(n)})\,f_{\mathrm{PMBM}}^{(n)}(\mathcal M)`, 14, { color: C.paper, fontWeight: 700, align: 'center' }),
       text('pmbm-source', 96, 650, 1088, 17, 'The following live example selects a trajectory particle and opens its PPP + MBM conditional map.', 9, { color: C.faint, fontFamily: MONO, align: 'center' })
     ], { accent: C.measurement, titleSize: 32, transition: 'none' }
   )
@@ -659,7 +659,7 @@ function isam2BayesTreeSlide(ctx) {
     text('isam-tree-arrow-2', 756, 252, 26, 28, '→', 20, { color: C.faint, fontFamily: SANS, fontWeight: 700, align: 'center' }),
 
     card('isam-tree-visual-card', 96, 360, 570, 264, C.paper, { stroke: C.line, radius: 8 }),
-    text('isam-tree-visual-k', 116, 376, 530, 16, 'BAYES TREE AFTER A NEW RADIO FACTOR f(T₅,m_B)', 9, { color: C.poseDeep, fontFamily: MONO, fontWeight: 700, letterSpacing: .75 }),
+    text('isam-tree-visual-k', 116, 376, 530, 16, 'BAYES TREE AFTER A NEW RADIO FACTOR ' + tex`f(\mathbf T_5,\mathbf m_B)`, 9, { color: C.poseDeep, fontFamily: MONO, fontWeight: 700, letterSpacing: .75 }),
 
     line('isam-tree-edge-root-left', 382, 428, 258, 486, C.soft, 2, { opacity: .72 }),
     line('isam-tree-edge-root-right', 382, 428, 504, 486, C.pose, 3, { opacity: .95 }),
@@ -797,7 +797,7 @@ function isam2ImplementationSlide(ctx) {
 
     card('isam-impl-init-card', 646, 206, 256, 196, C.mapSoft, { stroke: C.map, radius: 8 }),
     text('isam-impl-init-k', 666, 222, 216, 16, 'INITIALIZATION', 9, { color: C.mapDeep, fontFamily: MONO, fontWeight: 700, letterSpacing: .8 }),
-    text('isam-impl-init-v', 666, 252, 216, 128, 'Pose Xₜ: propagate registration/odometry estimate.<br><br>Map Mⱼ: initialize from VA inversion, multi-pose triangulation, wall fitting, or a prior.<br><br>Do not collapse a one-path unobservable family to an arbitrary point; delay the birth or parameterize the family.', 9.7, { color: C.mapDeep, fontFamily: SANS, fontWeight: 700, lineHeight: 1.35 }),
+    text('isam-impl-init-v', 666, 252, 216, 128, 'Pose ' + tex`X_t` + ': propagate registration/odometry estimate.<br><br>Map ' + tex`M_j` + ': initialize from VA inversion, multi-pose triangulation, wall fitting, or a prior.<br><br>Do not collapse a one-path unobservable family to an arbitrary point; delay the birth or parameterize the family.', 9.7, { color: C.mapDeep, fontFamily: SANS, fontWeight: 700, lineHeight: 1.35 }),
 
     card('isam-impl-tune-card', 922, 206, 262, 196, C.poseSoft, { stroke: C.pose, radius: 8 }),
     text('isam-impl-tune-k', 942, 222, 222, 16, 'TUNING + DIAGNOSTICS', 9, { color: C.poseDeep, fontFamily: MONO, fontWeight: 700, letterSpacing: .7 }),
@@ -918,8 +918,8 @@ function graphEquationSlide(ctx) {
       card('gs-joint-cost-card', 640, 482, 544, 140, C.measurementSoft, { stroke: C.measurement, radius: 8 }),
       text('gs-joint-cost-k', 664, 498, 310, 16, 'COVARIANCE-WEIGHTED MAP OBJECTIVE', 8.5, { color: C.measurementDeep, fontFamily: MONO, fontWeight: 700, letterSpacing: .75 }),
       text('gs-joint-cost-eq', 650, 518, 524, 62, texBlock`\begin{aligned}
-        (\mathbf X^*,\mathcal M^*)&=\arg\min_{\mathbf X,\mathcal M}\;\|\mathbf r_1^{\mathrm{prior}}\|_{\Omega_1}^{2}+\sum_{t=2}^{T}\|\mathbf r_t^{\mathrm{rel}}\|_{\Omega_t^{\mathrm{rel}}}^{2}\\[-.1em]
-        &\quad+\sum_{(t,\ell):a_{t\ell}>0}\rho\!\left(\|\mathbf r_{t\ell}^{\mathrm{rad}}(a_{t\ell},q_{t\ell})\|_{\Omega_{t\ell}^{\mathrm{rad}}}^{2}\right),\qquad \Omega=\Sigma^{-1}\\[-.1em]
+        (\mathbf X^*,\mathcal M^*)&=\arg\min_{\mathbf X,\mathcal M}\;\|\mathbf r_1^{\mathrm{prior}}\|_{\Omega_1}^{2}+\sum\nolimits_{t=2}^{T}\|\mathbf r_t^{\mathrm{rel}}\|_{\Omega_t^{\mathrm{rel}}}^{2}\\[-.1em]
+        &\quad+\sum\nolimits_{(t,\ell):a_{t\ell}>0}\rho\!\left(\|\mathbf r_{t\ell}^{\mathrm{rad}}(a_{t\ell},q_{t\ell})\|_{\Omega_{t\ell}^{\mathrm{rad}}}^{2}\right),\qquad \Omega=\Sigma^{-1}\\[-.1em]
         \mathbf r_{t\ell}^{\mathrm{rad}}(j,q)&=[c\tau,\varphi^{\mathrm{AoA}},\varphi^{\mathrm{AoD}}]^{\mathsf T}\boxminus\mathbf h_q(\mathbf T_t,\mathbf m_j,\mathbf b)
       \end{aligned}`, 8.8, { fontWeight: 700, align: 'center', lineHeight: 1.2 }),
       text('gs-joint-cost-v', 664, 584, 496, 24, 'Fixed A,Q → nonlinear least squares over associated MPCs; a=0 uses the clutter likelihood. Unknown A,Q → marginalize, maximize, or alternate association and state updates.', 7.5, { color: C.measurementDeep, fontFamily: SANS, fontWeight: 700, align: 'center', lineHeight: 1.25 }),
@@ -1014,9 +1014,9 @@ function graphIterationSlide(ctx) {
   elements.push(card('gs-impl-eq-card', 96, 386, 1088, 116, C.paper, { stroke: C.line, radius: 8 }))
   elements.push(text('gs-impl-eq-k', 120, 402, 420, 16, 'ACTUAL STATE AND QUADRATIC FACTORS FOR A FIXED MAP', 9, { color: C.poseDeep, fontFamily: MONO, fontWeight: 700, letterSpacing: .7 }))
   elements.push(text('gs-impl-eq-v', 108, 424, 1064, 66, texBlock`\begin{aligned}
-    \mathbf p^*=\arg\min_{\mathbf p_{0:K-1}}{}&\|\mathbf p_0-\bar{\mathbf p}_0\|_{\Omega_0}^{2}+\sum_k\|(\mathbf p_k-\mathbf p_{k-1})-\mathbf d_k^{\mathrm{odo}}\|_{\Omega_k^{\mathrm{odo}}}^{2}\\[-.1em]
-    &+\sum_k\|\mathbf p_{k-1}-2\mathbf p_k+\mathbf p_{k+1}\|_{\Omega^{\mathrm{smooth}}}^{2}+\sum_k\|\mathbf p_k-\mathbf z_k^{\mathrm{reg/LoS}}\|_{\Omega_k}^{2}\\[-.1em]
-    &+\sum_{(i,j)\in\mathcal L}\|(\mathbf p_j-\mathbf p_i)-\mathbf d_{ij}^{\mathrm{loop}}\|_{\Omega_{ij}}^{2},\qquad \Omega=\Sigma^{-1}
+    \mathbf p^*=\arg\min_{\mathbf p_{0:K-1}}{}&\|\mathbf p_0-\bar{\mathbf p}_0\|_{\Omega_0}^{2}+\sum\nolimits_k\|(\mathbf p_k-\mathbf p_{k-1})-\mathbf d_k^{\mathrm{odo}}\|_{\Omega_k^{\mathrm{odo}}}^{2}\\[-.1em]
+    &+\sum\nolimits_k\|\mathbf p_{k-1}-2\mathbf p_k+\mathbf p_{k+1}\|_{\Omega^{\mathrm{smooth}}}^{2}+\sum\nolimits_k\|\mathbf p_k-\mathbf z_k^{\mathrm{reg/LoS}}\|_{\Omega_k}^{2}\\[-.1em]
+    &+\sum\nolimits_{(i,j)\in\mathcal L}\|(\mathbf p_j-\mathbf p_i)-\mathbf d_{ij}^{\mathrm{loop}}\|_{\Omega_{ij}}^{2},\qquad \Omega=\Sigma^{-1}
   \end{aligned}`, 9.8, { fontWeight: 700, align: 'center', lineHeight: 1.2 }))
 
   elements.push(card('gs-impl-state-card', 96, 520, 344, 102, C.poseSoft, { stroke: C.pose, radius: 8 }))

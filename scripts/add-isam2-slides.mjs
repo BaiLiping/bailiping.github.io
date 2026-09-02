@@ -86,7 +86,7 @@ function isam2BayesTreeSlide(ctx) {
     text('isam-tree-arrow-2', 756, 252, 26, 28, '→', 20, { color: C.faint, fontFamily: SANS, fontWeight: 700, align: 'center' }),
 
     card('isam-tree-visual-card', 96, 360, 570, 264, C.paper, { stroke: C.line, radius: 8 }),
-    text('isam-tree-visual-k', 116, 376, 530, 16, 'BAYES TREE AFTER A NEW RADIO FACTOR f(T₅,m_B)', 9, { color: C.poseDeep, fontFamily: MONO, fontWeight: 700, letterSpacing: .75 }),
+    text('isam-tree-visual-k', 116, 376, 530, 16, 'BAYES TREE AFTER A NEW RADIO FACTOR ' + tex§f(\mathbf T_5,\mathbf m_B)§, 9, { color: C.poseDeep, fontFamily: MONO, fontWeight: 700, letterSpacing: .75 }),
 
     line('isam-tree-edge-root-left', 382, 428, 258, 486, C.soft, 2, { opacity: .72 }),
     line('isam-tree-edge-root-right', 382, 428, 504, 486, C.pose, 3, { opacity: .95 }),
@@ -224,7 +224,7 @@ function isam2ImplementationSlide(ctx) {
 
     card('isam-impl-init-card', 646, 206, 256, 196, C.mapSoft, { stroke: C.map, radius: 8 }),
     text('isam-impl-init-k', 666, 222, 216, 16, 'INITIALIZATION', 9, { color: C.mapDeep, fontFamily: MONO, fontWeight: 700, letterSpacing: .8 }),
-    text('isam-impl-init-v', 666, 252, 216, 128, 'Pose Xₜ: propagate registration/odometry estimate.<br><br>Map Mⱼ: initialize from VA inversion, multi-pose triangulation, wall fitting, or a prior.<br><br>Do not collapse a one-path unobservable family to an arbitrary point; delay the birth or parameterize the family.', 9.7, { color: C.mapDeep, fontFamily: SANS, fontWeight: 700, lineHeight: 1.35 }),
+    text('isam-impl-init-v', 666, 252, 216, 128, 'Pose ' + tex§X_t§ + ': propagate registration/odometry estimate.<br><br>Map ' + tex§M_j§ + ': initialize from VA inversion, multi-pose triangulation, wall fitting, or a prior.<br><br>Do not collapse a one-path unobservable family to an arbitrary point; delay the birth or parameterize the family.', 9.7, { color: C.mapDeep, fontFamily: SANS, fontWeight: 700, lineHeight: 1.35 }),
 
     card('isam-impl-tune-card', 922, 206, 262, 196, C.poseSoft, { stroke: C.pose, radius: 8 }),
     text('isam-impl-tune-k', 942, 222, 222, 16, 'TUNING + DIAGNOSTICS', 9, { color: C.poseDeep, fontFamily: MONO, fontWeight: 700, letterSpacing: .7 }),

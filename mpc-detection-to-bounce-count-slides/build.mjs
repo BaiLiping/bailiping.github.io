@@ -696,7 +696,7 @@ for (const unit of sectionUnits) {
 
         card('pose-double-estimation-card', 834, 238, 350, 348, C.paper, { stroke: C.poseDeep, strokeWidth: 2 }),
         text('pose-double-estimation-k', 856, 258, 306, 20, 'CONSTRAINED MAXIMUM LIKELIHOOD', 10, { color: C.poseDeep, fontFamily: MONO, fontWeight: 700, letterSpacing: 1 }),
-        text('pose-double-estimation-eq', 852, 286, 314, 86, texBlock`\begin{aligned}r_{k,L}&=c\tilde\tau_k-L_k(\mathbf x),\\r_{k,\psi}&=\operatorname{wrap}(\tilde\psi_k^{\rm g}-\psi_k^{\rm g}(\mathbf x)),\\r_{k,\varphi}&=\operatorname{wrap}(\tilde\varphi_k^{\rm b}-\varphi_k^{\rm b}(\mathbf x)),\\\widehat{\mathbf x}&=\arg\min_{\mathbf x}\sum_{k=1}^{2}\mathbf r_k^{\mathsf T}\mathbf R_k^{-1}\mathbf r_k.\end{aligned}`, 11.2, { color: C.ink, align: 'center' }),
+        text('pose-double-estimation-eq', 852, 286, 314, 86, texBlock`\begin{aligned}r_{k,L}&=c\tilde\tau_k-L_k(\mathbf x),\\r_{k,\psi}&=\operatorname{wrap}(\tilde\psi_k^{\rm g}-\psi_k^{\rm g}(\mathbf x)),\\r_{k,\varphi}&=\operatorname{wrap}(\tilde\varphi_k^{\rm b}-\varphi_k^{\rm b}(\mathbf x)),\\\widehat{\mathbf x}&=\arg\min_{\mathbf x}\sum\nolimits_{k=1}^{2}\mathbf r_k^{\mathsf T}\mathbf R_k^{-1}\mathbf r_k.\end{aligned}`, 11.2, { color: C.ink, align: 'center' }),
         text('pose-double-constraints', 856, 382, 306, 70, 'Subject to: shared wall A, wall incidence, equal-angle reflection, positive residual length, and the ordered route A→B.', 12.5, { color: C.soft, fontFamily: SANS, lineHeight: 1.4 }),
         card('pose-double-rank-card', 854, 468, 310, 94, C.poseSoft, { stroke: C.pose }),
         text('pose-double-rank-k', 870, 480, 278, 16, 'LOCAL OBSERVABILITY', 9.5, { color: C.poseDeep, fontFamily: MONO, fontWeight: 700, letterSpacing: 1 }),
@@ -747,7 +747,8 @@ function liveUrl(unit, embed) {
 
 const inlineLiveMap = [
   ...sectionUnits.map(unit => {
-  const introSlide = `s-${unit.id}`, slide = `${introSlide}-live`
+  const slide = `s-${unit.id}-live`
+  const introSlide = unit.id === 'pose' ? 's-pose-double-math' : `s-${unit.id}`
   return {
     introSlide, slide, slideIndex: slides.findIndex(entry => entry.id === slide), inline: true, layout: 'region', bounds: LIVE_BOUNDS,
     src: liveUrl(unit, true), source: liveUrl(unit, false), title: `${unit.section} · consolidated cases`,
@@ -768,14 +769,15 @@ const serializedDeck = JSON.stringify(deck, null, 1).replaceAll('<', '\\u003c')
 const serializedMap = JSON.stringify(inlineLiveMap, null, 2).replaceAll('<', '\\u003c')
 const mathHead = String.raw`
     <style id="deck-math-style">
-      .math-tex{white-space:nowrap}
+      .math-tex{position:relative;white-space:nowrap}
       .math-inline{display:inline-block;vertical-align:-.14em;line-height:1}
       .math-display{display:flex;width:100%;height:100%;align-items:center;justify-content:center;line-height:1}
       .math-tex mjx-container{color:inherit!important;margin:0!important}
       .math-inline mjx-container{display:inline-block!important}
       .math-display mjx-container[display="true"]{display:block!important;width:100%;margin:0!important;text-align:center}
       .math-tex mjx-container[jax="SVG"]>svg{overflow:visible}
-      .math-display mjx-container[jax="SVG"]>svg{max-width:100%;height:auto}
+      .math-display mjx-container[jax="SVG"]>svg{max-width:100%;max-height:100%;width:auto;height:auto}
+      mjx-assistive-mml{position:absolute!important;top:0!important;left:0!important;clip:rect(1px,1px,1px,1px)!important;clip-path:inset(50%)!important;padding:1px 0 0!important;border:0!important;display:block!important;width:1px!important;height:1px!important;overflow:hidden!important;white-space:nowrap!important}
     </style>
     <script>
       window.MathJax = {
@@ -784,7 +786,7 @@ const mathHead = String.raw`
           displayMath: [['\\[', '\\]']],
           processEscapes: true
         },
-        svg: { fontCache: 'global' },
+        svg: { fontCache: 'local' },
         options: { skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'] },
         startup: {
           typeset: false,
@@ -808,5 +810,8 @@ html = html.replace('\n  </head>', `${mathHead}\n  </head>`)
 
 if (!html.includes('"docId": "mpc-detection-to-bounce-count-deck"')) throw new Error('Bento document replacement failed')
 if (!html.includes('id="bento-inline-live-map"')) throw new Error('Inline-live map replacement failed')
+if (!html.includes("fontCache: 'local'") || !html.includes('mjx-assistive-mml')) {
+  throw new Error('MathJax SVG glyph cache or assistive-MathML styling is missing')
+}
 writeFileSync(outputPath, html)
 console.log(`Wrote ${outputPath} with ${slides.length} regular slides and ${inlineLiveMap.length} consolidated paired inline demo.`)

@@ -6744,7 +6744,7 @@
      "h": 70,
      "rotation": 0,
      "opacity": 1,
-     "html": "\u003cspan class=\"math-tex math-display\">\\[\\begin{aligned}\n            p(\\mathbf X,\\mathcal M\\mid Z,U,\\mathbf b,A)\\propto\\;&p(\\mathbf x_1)\\prod_{t=2}^{5}f_t^{\\mathrm{mot}}(\\mathbf x_{t-1},\\mathbf x_t;\\mathbf u_t)\\\\[-.1em]\n            &\\times\\prod_{j\\in\\{A,B\\}}p(\\mathbf m_j)\\prod_{t=1}^{5}f_t^{\\mathrm{rad}}(\\mathbf x_t,\\mathbf m_A,\\mathbf m_B;Z_t,A_t,\\mathbf b)\n          \\end{aligned}\\]\u003c/span>",
+     "html": "\u003cspan class=\"math-tex math-display\">\\[\\begin{aligned}\n            p(\\mathbf X,\\mathcal M\\mid Z,U,\\mathbf b,A)\\propto\\;&p(\\mathbf x_1)\\prod\\nolimits_{t=2}^{5}f_t^{\\mathrm{mot}}(\\mathbf x_{t-1},\\mathbf x_t;\\mathbf u_t)\\\\[-.1em]\n            &\\times\\prod\\nolimits_{j\\in\\{A,B\\}}p(\\mathbf m_j)\\prod\\nolimits_{t=1}^{5}f_t^{\\mathrm{rad}}(\\mathbf x_t,\\mathbf m_A,\\mathbf m_B;Z_t,A_t,\\mathbf b)\n          \\end{aligned}\\]\u003c/span>",
      "fontSize": 16,
      "fontFamily": "Georgia, 'Times New Roman', serif",
      "fontWeight": 700,
@@ -6902,7 +6902,7 @@
      "h": 104,
      "rotation": 0,
      "opacity": 1,
-     "html": "\u003cspan class=\"math-tex math-display\">\\[\\begin{aligned}\n            b(\\mathbf x_t)&\\propto\\prod_{f\\in\\mathcal N(\\mathbf x_t)}\\mu_{f\\to\\mathbf x_t}(\\mathbf x_t)\\\\[.6em]\n            b(\\mathbf m_j)&\\propto p(\\mathbf m_j)\\prod_{t=1}^{5}\\mu_{f_t^{\\mathrm{rad}}\\to\\mathbf m_j}(\\mathbf m_j)\n          \\end{aligned}\\]\u003c/span>",
+     "html": "\u003cspan class=\"math-tex math-display\">\\[\\begin{aligned}\n            b(\\mathbf x_t)&\\propto\\prod\\nolimits_{f\\in\\mathcal N(\\mathbf x_t)}\\mu_{f\\to\\mathbf x_t}(\\mathbf x_t)\\\\[.6em]\n            b(\\mathbf m_j)&\\propto p(\\mathbf m_j)\\prod\\nolimits_{t=1}^{5}\\mu_{f_t^{\\mathrm{rad}}\\to\\mathbf m_j}(\\mathbf m_j)\n          \\end{aligned}\\]\u003c/span>",
      "fontSize": 17,
      "fontFamily": "Georgia, 'Times New Roman', serif",
      "fontWeight": 700,
@@ -8643,12 +8643,12 @@
      "id": "pmbm-return",
      "type": "text",
      "x": 120,
-     "y": 602,
+     "y": 599,
      "w": 1040,
-     "h": 22,
+     "h": 28,
      "rotation": 0,
      "opacity": 1,
-     "html": "\u003cspan class=\"math-tex math-display\">\\[f(\\mathbf X,\\mathcal M\\mid Z,U)\\approx\\sum_{n=1}^{N}w^{(n)}\\delta(\\mathbf X-\\mathbf X^{(n)})\\,f_{\\mathrm{PMBM}}^{(n)}(\\mathcal M)\\]\u003c/span>",
+     "html": "\u003cspan class=\"math-tex math-display\">\\[f(\\mathbf X,\\mathcal M\\mid Z,U)\\approx\\sum\\nolimits_{n=1}^{N}w^{(n)}\\delta(\\mathbf X-\\mathbf X^{(n)})\\,f_{\\mathrm{PMBM}}^{(n)}(\\mathcal M)\\]\u003c/span>",
      "fontSize": 14,
      "fontFamily": "Georgia, 'Times New Roman', serif",
      "fontWeight": 700,
@@ -10433,7 +10433,7 @@
      "h": 86,
      "rotation": 0,
      "opacity": 1,
-     "html": "\u003cspan class=\"math-tex math-display\">\\[\\begin{aligned}r_{k,L}&=c\\tilde\\tau_k-L_k(\\mathbf x),\\\\r_{k,\\psi}&=\\operatorname{wrap}(\\tilde\\psi_k^{\\rm g}-\\psi_k^{\\rm g}(\\mathbf x)),\\\\r_{k,\\varphi}&=\\operatorname{wrap}(\\tilde\\varphi_k^{\\rm b}-\\varphi_k^{\\rm b}(\\mathbf x)),\\\\\\widehat{\\mathbf x}&=\\arg\\min_{\\mathbf x}\\sum_{k=1}^{2}\\mathbf r_k^{\\mathsf T}\\mathbf R_k^{-1}\\mathbf r_k.\\end{aligned}\\]\u003c/span>",
+     "html": "\u003cspan class=\"math-tex math-display\">\\[\\begin{aligned}r_{k,L}&=c\\tilde\\tau_k-L_k(\\mathbf x),\\\\r_{k,\\psi}&=\\operatorname{wrap}(\\tilde\\psi_k^{\\rm g}-\\psi_k^{\\rm g}(\\mathbf x)),\\\\r_{k,\\varphi}&=\\operatorname{wrap}(\\tilde\\varphi_k^{\\rm b}-\\varphi_k^{\\rm b}(\\mathbf x)),\\\\\\widehat{\\mathbf x}&=\\arg\\min_{\\mathbf x}\\sum\\nolimits_{k=1}^{2}\\mathbf r_k^{\\mathsf T}\\mathbf R_k^{-1}\\mathbf r_k.\\end{aligned}\\]\u003c/span>",
      "fontSize": 11.2,
      "fontFamily": "Georgia, 'Times New Roman', serif",
      "fontWeight": 400,
@@ -16384,7 +16384,7 @@
      "h": 16,
      "rotation": 0,
      "opacity": 1,
-     "html": "BAYES TREE AFTER A NEW RADIO FACTOR f(T₅,m_B)",
+     "html": "BAYES TREE AFTER A NEW RADIO FACTOR \u003cspan class=\"math-tex math-inline\">\\(f(\\mathbf T_5,\\mathbf m_B)\\)\u003c/span>",
      "fontSize": 9,
      "fontFamily": "Menlo, Consolas, monospace",
      "fontWeight": 700,
@@ -17818,7 +17818,7 @@
      "h": 128,
      "rotation": 0,
      "opacity": 1,
-     "html": "Pose Xₜ: propagate registration/odometry estimate.\u003cbr>\u003cbr>Map Mⱼ: initialize from VA inversion, multi-pose triangulation, wall fitting, or a prior.\u003cbr>\u003cbr>Do not collapse a one-path unobservable family to an arbitrary point; delay the birth or parameterize the family.",
+     "html": "Pose \u003cspan class=\"math-tex math-inline\">\\(X_t\\)\u003c/span>: propagate registration/odometry estimate.\u003cbr>\u003cbr>Map \u003cspan class=\"math-tex math-inline\">\\(M_j\\)\u003c/span>: initialize from VA inversion, multi-pose triangulation, wall fitting, or a prior.\u003cbr>\u003cbr>Do not collapse a one-path unobservable family to an arbitrary point; delay the birth or parameterize the family.",
      "fontSize": 9.7,
      "fontFamily": "Arial, Helvetica, sans-serif",
      "fontWeight": 700,
@@ -19358,7 +19358,7 @@
      "h": 62,
      "rotation": 0,
      "opacity": 1,
-     "html": "\u003cspan class=\"math-tex math-display\">\\[\\begin{aligned}\n        (\\mathbf X^*,\\mathcal M^*)&=\\arg\\min_{\\mathbf X,\\mathcal M}\\;\\|\\mathbf r_1^{\\mathrm{prior}}\\|_{\\Omega_1}^{2}+\\sum_{t=2}^{T}\\|\\mathbf r_t^{\\mathrm{rel}}\\|_{\\Omega_t^{\\mathrm{rel}}}^{2}\\\\[-.1em]\n        &\\quad+\\sum_{(t,\\ell):a_{t\\ell}>0}\\rho\\!\\left(\\|\\mathbf r_{t\\ell}^{\\mathrm{rad}}(a_{t\\ell},q_{t\\ell})\\|_{\\Omega_{t\\ell}^{\\mathrm{rad}}}^{2}\\right),\\qquad \\Omega=\\Sigma^{-1}\\\\[-.1em]\n        \\mathbf r_{t\\ell}^{\\mathrm{rad}}(j,q)&=[c\\tau,\\varphi^{\\mathrm{AoA}},\\varphi^{\\mathrm{AoD}}]^{\\mathsf T}\\boxminus\\mathbf h_q(\\mathbf T_t,\\mathbf m_j,\\mathbf b)\n      \\end{aligned}\\]\u003c/span>",
+     "html": "\u003cspan class=\"math-tex math-display\">\\[\\begin{aligned}\n        (\\mathbf X^*,\\mathcal M^*)&=\\arg\\min_{\\mathbf X,\\mathcal M}\\;\\|\\mathbf r_1^{\\mathrm{prior}}\\|_{\\Omega_1}^{2}+\\sum\\nolimits_{t=2}^{T}\\|\\mathbf r_t^{\\mathrm{rel}}\\|_{\\Omega_t^{\\mathrm{rel}}}^{2}\\\\[-.1em]\n        &\\quad+\\sum\\nolimits_{(t,\\ell):a_{t\\ell}>0}\\rho\\!\\left(\\|\\mathbf r_{t\\ell}^{\\mathrm{rad}}(a_{t\\ell},q_{t\\ell})\\|_{\\Omega_{t\\ell}^{\\mathrm{rad}}}^{2}\\right),\\qquad \\Omega=\\Sigma^{-1}\\\\[-.1em]\n        \\mathbf r_{t\\ell}^{\\mathrm{rad}}(j,q)&=[c\\tau,\\varphi^{\\mathrm{AoA}},\\varphi^{\\mathrm{AoD}}]^{\\mathsf T}\\boxminus\\mathbf h_q(\\mathbf T_t,\\mathbf m_j,\\mathbf b)\n      \\end{aligned}\\]\u003c/span>",
      "fontSize": 8.8,
      "fontFamily": "Georgia, 'Times New Roman', serif",
      "fontWeight": 700,
@@ -21256,7 +21256,7 @@
      "h": 66,
      "rotation": 0,
      "opacity": 1,
-     "html": "\u003cspan class=\"math-tex math-display\">\\[\\begin{aligned}\n    \\mathbf p^*=\\arg\\min_{\\mathbf p_{0:K-1}}{}&\\|\\mathbf p_0-\\bar{\\mathbf p}_0\\|_{\\Omega_0}^{2}+\\sum_k\\|(\\mathbf p_k-\\mathbf p_{k-1})-\\mathbf d_k^{\\mathrm{odo}}\\|_{\\Omega_k^{\\mathrm{odo}}}^{2}\\\\[-.1em]\n    &+\\sum_k\\|\\mathbf p_{k-1}-2\\mathbf p_k+\\mathbf p_{k+1}\\|_{\\Omega^{\\mathrm{smooth}}}^{2}+\\sum_k\\|\\mathbf p_k-\\mathbf z_k^{\\mathrm{reg/LoS}}\\|_{\\Omega_k}^{2}\\\\[-.1em]\n    &+\\sum_{(i,j)\\in\\mathcal L}\\|(\\mathbf p_j-\\mathbf p_i)-\\mathbf d_{ij}^{\\mathrm{loop}}\\|_{\\Omega_{ij}}^{2},\\qquad \\Omega=\\Sigma^{-1}\n  \\end{aligned}\\]\u003c/span>",
+     "html": "\u003cspan class=\"math-tex math-display\">\\[\\begin{aligned}\n    \\mathbf p^*=\\arg\\min_{\\mathbf p_{0:K-1}}{}&\\|\\mathbf p_0-\\bar{\\mathbf p}_0\\|_{\\Omega_0}^{2}+\\sum\\nolimits_k\\|(\\mathbf p_k-\\mathbf p_{k-1})-\\mathbf d_k^{\\mathrm{odo}}\\|_{\\Omega_k^{\\mathrm{odo}}}^{2}\\\\[-.1em]\n    &+\\sum\\nolimits_k\\|\\mathbf p_{k-1}-2\\mathbf p_k+\\mathbf p_{k+1}\\|_{\\Omega^{\\mathrm{smooth}}}^{2}+\\sum\\nolimits_k\\|\\mathbf p_k-\\mathbf z_k^{\\mathrm{reg/LoS}}\\|_{\\Omega_k}^{2}\\\\[-.1em]\n    &+\\sum\\nolimits_{(i,j)\\in\\mathcal L}\\|(\\mathbf p_j-\\mathbf p_i)-\\mathbf d_{ij}^{\\mathrm{loop}}\\|_{\\Omega_{ij}}^{2},\\qquad \\Omega=\\Sigma^{-1}\n  \\end{aligned}\\]\u003c/span>",
      "fontSize": 9.8,
      "fontFamily": "Georgia, 'Times New Roman', serif",
      "fontWeight": 700,
@@ -21905,14 +21905,15 @@
 @media (prefers-reduced-motion:reduce){#bento-splash,#bento-splash *,.bs-mark:after{animation-duration:.01ms;animation-delay:0ms;animation-iteration-count:1}}
     </style>
     <style id="deck-math-style">
-      .math-tex{white-space:nowrap}
+      .math-tex{position:relative;white-space:nowrap}
       .math-inline{display:inline-block;vertical-align:-.14em;line-height:1}
       .math-display{display:flex;width:100%;height:100%;align-items:center;justify-content:center;line-height:1}
       .math-tex mjx-container{color:inherit!important;margin:0!important}
       .math-inline mjx-container{display:inline-block!important}
       .math-display mjx-container[display="true"]{display:block!important;width:100%;margin:0!important;text-align:center}
       .math-tex mjx-container[jax="SVG"]>svg{overflow:visible}
-      .math-display mjx-container[jax="SVG"]>svg{max-width:100%;height:auto}
+      .math-display mjx-container[jax="SVG"]>svg{max-width:100%;max-height:100%;width:auto;height:auto}
+      mjx-assistive-mml{position:absolute!important;top:0!important;left:0!important;clip:rect(1px,1px,1px,1px)!important;clip-path:inset(50%)!important;padding:1px 0 0!important;border:0!important;display:block!important;width:1px!important;height:1px!important;overflow:hidden!important;white-space:nowrap!important}
     </style>
     <script>
       window.MathJax = {
@@ -21921,7 +21922,7 @@
           displayMath: [['\\[', '\\]']],
           processEscapes: true
         },
-        svg: { fontCache: 'global' },
+        svg: { fontCache: 'local' },
         options: { skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'] },
         startup: {
           typeset: false,
@@ -22021,7 +22022,7 @@
     "unloadWhenHidden": true
   },
   {
-    "introSlide": "s-pose",
+    "introSlide": "s-pose-double-math",
     "slide": "s-pose-live",
     "slideIndex": 16,
     "inline": true,

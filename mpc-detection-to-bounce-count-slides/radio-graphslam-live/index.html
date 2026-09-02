@@ -10,12 +10,13 @@
   <link rel="stylesheet" href="styles.css">
   <link rel="stylesheet" href="../../assets/interactive-slide-system.css">
   <style>
-    .math-tex{white-space:nowrap}.math-inline{display:inline-block;vertical-align:-.14em;line-height:1}
+    .math-tex{position:relative;white-space:nowrap}.math-inline{display:inline-block;vertical-align:-.14em;line-height:1}
     .math-tex mjx-container{color:inherit!important;margin:0!important;display:inline-block!important}
     .math-tex mjx-container[jax="SVG"]>svg{overflow:visible}
+    mjx-assistive-mml{position:absolute!important;top:0!important;left:0!important;clip:rect(1px,1px,1px,1px)!important;clip-path:inset(50%)!important;padding:1px 0 0!important;border:0!important;display:block!important;width:1px!important;height:1px!important;overflow:hidden!important;white-space:nowrap!important}
   </style>
   <script>
-    window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],processEscapes:true},svg:{fontCache:'global'},options:{skipHtmlTags:['script','noscript','style','textarea','pre','code']},startup:{typeset:false,ready:()=>{MathJax.startup.defaultReady();MathJax.startup.promise.then(()=>window.dispatchEvent(new Event('mathjax-ready')))}}}
+    window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],processEscapes:true},svg:{fontCache:'local'},options:{skipHtmlTags:['script','noscript','style','textarea','pre','code']},startup:{typeset:false,ready:()=>{MathJax.startup.defaultReady();MathJax.startup.promise.then(()=>window.dispatchEvent(new Event('mathjax-ready')))}}}
   </script>
   <script defer src="https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/tex-svg-full.js"></script>
   <script defer src="../../assets/mathjax-dynamic.js"></script>
