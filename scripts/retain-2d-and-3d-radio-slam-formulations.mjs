@@ -194,27 +194,34 @@ function normalizeTopNavigation(document) {
 }
 
 function renumberGraphSlamSection(document) {
-  document = document.replace(
+  const sectionIndex = document.indexOf('<section class="sec companion-section" id="bistatic-graphslam">')
+  if (sectionIndex < 0) throw new Error('Could not find the GraphSLAM section for renumbering')
+  const markerIndex = document.lastIndexOf('<!-- ============', sectionIndex)
+  const sectionEnd = document.indexOf('</section>', sectionIndex)
+  if (markerIndex < 0 || sectionEnd < 0) throw new Error('Could not isolate the GraphSLAM section for renumbering')
+  const endIndex = sectionEnd + '</section>'.length
+  let graph = document.slice(markerIndex, endIndex)
+  graph = graph.replace(
     /<!-- ============ (?:05|06|07) bistatic radio to GraphSLAM ============ -->/,
     '<!-- ============ 07 bistatic radio to GraphSLAM ============ -->'
   )
-  document = document.replace(
+  graph = graph.replace(
     /<h2><span class="no">(?:05|06|07)<\/span>Bistatic radio SLAM as GraphSLAM<\/h2>/,
     '<h2><span class="no">07</span>Bistatic radio SLAM as GraphSLAM</h2>'
   )
   for (let i = 1; i <= 4; i += 1) {
     for (const oldSection of [5, 6, 7]) {
-      document = document.replaceAll(
+      graph = graph.replaceAll(
         `<span>${oldSection}.${i}</span>`,
         `<span>7.${i}</span>`
       )
-      document = document.replaceAll(
+      graph = graph.replaceAll(
         `<span class="no">${oldSection}.${i}</span>`,
         `<span class="no">7.${i}</span>`
       )
     }
   }
-  return document
+  return document.slice(0, markerIndex) + graph + document.slice(endIndex)
 }
 
 const twoD = canonicalTwoDSection()
