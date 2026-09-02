@@ -228,7 +228,7 @@ const formulation3D = String.raw`
 
   <div class="subsection-block" id="formulation-measurement">
     <h3 class="subh"><span class="no">5.3</span>3D delay, AoA, AoD, and path-gain measurement model</h3>
-    <p class="lede">In three dimensions each angle measurement is an azimuth/elevation pair, or equivalently a unit direction on \(\mathbb S^2\). Unit directions make the coordinate frames and the optimizer residual unambiguous.</p>
+    <p class="lede">In three dimensions each angle measurement is an azimuth/elevation pair, or equivalently a unit direction on \(\mathbb S^2\). At the scene level the likelihood is conditioned on the complete map \(\mathcal M\); a discrete path hypothesis then selects the ordered reflector tuple used by the sparse geometric factor.</p>
 
     <div class="eq math-eq">
       \[
@@ -283,16 +283,48 @@ const formulation3D = String.raw`
     </div>
     <p class="eq-note">\(\gamma_h\) is a calibrated radiometric model. Geometry alone does not determine path loss. When transmit power, antenna patterns, material coefficients, or receiver calibration are unavailable, omit this residual from the geometric optimizer and use gain only for soft gating or association.</p>
 
-    <h4 style="margin:22px 0 8px;font:700 11px var(--mono);letter-spacing:.08em;text-transform:uppercase">LoS, one-bounce, and two-bounce measurement functions</h4>
+    <h4 style="margin:22px 0 8px;font:700 11px var(--mono);letter-spacing:.08em;text-transform:uppercase">Map-conditioned model and hypothesis-local measurement functions</h4>
+    <p>Let \(\mathcal M\) contain every persistent plane, finite patch, VA, or other radio-map entity. The path hypothesis \(h=(k,j_{1:k})\) selects the ordered tuple used to construct the current ray:</p>
+    <div class="eq math-eq">
+      \[
+      \mathcal M=\{\mathbf m_j^{\mathrm W}\}_{j=1}^{J},
+      \qquad
+      \mathcal M_h=\mathcal S_h(\mathcal M)
+      =\begin{cases}
+      \varnothing,&h=\mathrm{LoS},\\
+      (\mathbf m_j^{\mathrm W}),&h=(1,j),\\
+      (\mathbf m_{j_1}^{\mathrm W},\mathbf m_{j_2}^{\mathrm W}),&h=(2,j_1,j_2),\\
+      (\mathbf m_{j_1}^{\mathrm W},\ldots,\mathbf m_{j_k}^{\mathrm W}),&h=(k,j_{1:k}).
+      \end{cases}
+      \]
+      \[
+      \mathbf z_{ts\ell}
+      =\mathbf h\!\left(\mathbf x_t,\mathcal M,h_{ts\ell};{}^W\mathbf T_{B_s}\right)
+      +\boldsymbol\varepsilon_{ts\ell},
+      \qquad
+      h_{ts\ell}\in\mathcal H_{ts\ell}(\mathcal M),
+      \]
+      \[
+      \mathbf h(\mathbf x_t,\mathcal M,h;{}^W\mathbf T_{B_s})
+      \equiv
+      \mathbf h_h(\mathbf x_t,\mathcal M_h;{}^W\mathbf T_{B_s}).
+      \]
+    </div>
+    <p class="eq-note">This notation separates the complete scene-level model from its hypothesis-conditioned sparse computation. The candidate set, path prior, finite-patch validity, visibility, occlusion, and blockage may depend on all of \(\mathcal M\). Once those decisions are conditioned on, the geometric prediction uses only \(\mathcal M_h\).</p>
+    <div class="accuracy"><strong>Do not confuse global conditioning with factor adjacency.</strong> Writing \(p(\mathbf z_{ts\ell}\mid\mathbf x_t,\mathcal M,{}^W\mathbf T_{B_s})\) is correct before association. In a standard sparse GraphSLAM back end, a selected one-bounce factor is adjacent only to the UE state and \(\mathbf m_j^{\mathrm W}\), while a selected two-bounce factor is adjacent only to the UE state and the ordered pair \((\mathbf m_{j_1}^{\mathrm W},\mathbf m_{j_2}^{\mathrm W})\). A fully differentiable scene-wide visibility model would create additional dependencies.</div>
+
     <div class="eq math-eq">
       \[
       \begin{aligned}
-      \mathbf h_0(\mathbf x_t;{}^W\mathbf T_{B_s})
-      &=\big[\widehat\tau_0,{}^{U_t}\widehat{\mathbf u}^{\mathrm A}_0,{}^{B_s}\widehat{\mathbf u}^{\mathrm D}_0,\widehat g_0^{\mathrm{dB}}\big],\\
-      \mathbf h_1(\mathbf x_t,\mathbf m_j^{\mathrm W};{}^W\mathbf T_{B_s})
-      &=\big[\widehat\tau_1,{}^{U_t}\widehat{\mathbf u}^{\mathrm A}_1,{}^{B_s}\widehat{\mathbf u}^{\mathrm D}_1,\widehat g_1^{\mathrm{dB}}\big],\\
-      \mathbf h_2(\mathbf x_t,\mathbf m_{j_1}^{\mathrm W},\mathbf m_{j_2}^{\mathrm W};{}^W\mathbf T_{B_s})
-      &=\big[\widehat\tau_2,{}^{U_t}\widehat{\mathbf u}^{\mathrm A}_2,{}^{B_s}\widehat{\mathbf u}^{\mathrm D}_2,\widehat g_2^{\mathrm{dB}}\big].
+      \mathbf h(\mathbf x_t,\mathcal M,\mathrm{LoS};{}^W\mathbf T_{B_s})
+      &\equiv\mathbf h_0(\mathbf x_t;{}^W\mathbf T_{B_s})
+      =\big[\widehat\tau_0,{}^{U_t}\widehat{\mathbf u}^{\mathrm A}_0,{}^{B_s}\widehat{\mathbf u}^{\mathrm D}_0,\widehat g_0^{\mathrm{dB}}\big],\\
+      \mathbf h(\mathbf x_t,\mathcal M,(1,j);{}^W\mathbf T_{B_s})
+      &\equiv\mathbf h_1(\mathbf x_t,\mathbf m_j^{\mathrm W};{}^W\mathbf T_{B_s})
+      =\big[\widehat\tau_1,{}^{U_t}\widehat{\mathbf u}^{\mathrm A}_1,{}^{B_s}\widehat{\mathbf u}^{\mathrm D}_1,\widehat g_1^{\mathrm{dB}}\big],\\
+      \mathbf h(\mathbf x_t,\mathcal M,(2,j_1,j_2);{}^W\mathbf T_{B_s})
+      &\equiv\mathbf h_2(\mathbf x_t,\mathbf m_{j_1}^{\mathrm W},\mathbf m_{j_2}^{\mathrm W};{}^W\mathbf T_{B_s})
+      =\big[\widehat\tau_2,{}^{U_t}\widehat{\mathbf u}^{\mathrm A}_2,{}^{B_s}\widehat{\mathbf u}^{\mathrm D}_2,\widehat g_2^{\mathrm{dB}}\big].
       \end{aligned}
       \]
     </div>
@@ -313,7 +345,7 @@ const formulation3D = String.raw`
 
     <div class="eq math-eq">
       \[
-      \mathbf r^{\mathrm{rad}}_{ts\ell}(h)
+      \mathbf r^{\mathrm{rad}}_{ts\ell}(\mathbf x_t,\mathcal M,h)
       =\begin{bmatrix}
       c\big(\tau_{ts\ell}-\widehat\tau_h\big)\\
       \mathbf r_{\mathbb S^2}\!\left({}^{U_t}\mathbf u^{\mathrm A}_{ts\ell},{}^{U_t}\widehat{\mathbf u}^{\mathrm A}_h\right)\\
@@ -329,7 +361,7 @@ const formulation3D = String.raw`
 
   <div class="subsection-block" id="formulation-map">
     <h3 class="subh"><span class="no">5.4</span>Factor graph and joint manifold MAP inference</h3>
-    <p class="lede">The known BS transform is conditioned on. Continuous variables live on a product manifold; bounce order and association are discrete front-end or hybrid-inference variables.</p>
+    <p class="lede">The known BS transform is conditioned on and the complete likelihood is a function of the whole map \(\mathcal M\). Conditional on one association and bounce-order hypothesis, however, the corresponding sparse factor touches only the selected map tuple \(\mathcal M_h\). Continuous variables live on a product manifold; bounce order and association are discrete front-end or hybrid-inference variables.</p>
 
     <div class="eq math-eq">
       \[
@@ -405,14 +437,14 @@ const formulation3D = String.raw`
       \[
       \phi_{ts\ell}
       =\kappa_{ts}(\mathbf z_{ts\ell})
-      +\sum_{h\in\mathcal H_{ts\ell}}
+      +\sum_{h\in\mathcal H_{ts\ell}(\mathcal M)}
       w_h p_{\mathrm D}(h)\,
       \mathcal N\!\left(
       \mathbf r^{\mathrm{rad}}_{ts\ell}(h);\mathbf0,\boldsymbol\Sigma_h
       \right).
       \]
     </div>
-    <p class="eq-note">\(\kappa_{ts}\) is clutter intensity, \(\mathcal H_{ts\ell}\) is a gated set of LoS and ordered-reflection candidates, \(w_h\) is a prior hypothesis weight, and \(p_{\mathrm D}(h)\) is path-detection probability. Exact one-to-one association is combinatorial; practical systems use a front end, alternating optimization, branching, marginalization, or mixture/max-mixture factors.</p>
+    <p class="eq-note">\(\kappa_{ts}\) is clutter intensity and \(\mathcal H_{ts\ell}(\mathcal M)\) is the gated set of LoS and ordered-reflection candidates generated from the complete map. The prior weight \(w_h\), detection probability \(p_{\mathrm D}(h)\), and validity/visibility of a candidate may depend on all of \(\mathcal M\), while its conditioned geometric residual uses only \(\mathcal M_h\). Exact one-to-one association is combinatorial; practical systems use a front end, alternating optimization, branching, marginalization, or mixture/max-mixture factors.</p>
 
     <div class="companion-steps">
       <article><span>Front end</span><strong>Resolve and propose in 3D</strong>Estimate delay, azimuth/elevation AoA and AoD, gain, and covariance; convert directions to the stated frames; propose LoS and ordered-plane hypotheses; reject invalid finite-support and visibility cases.</article>

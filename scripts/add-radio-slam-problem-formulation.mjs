@@ -159,17 +159,19 @@ const problemFormulationSection = String.raw`
 
   <div class="subsection-block" id="formulation-measurement">
     <h3 class="subh"><span class="no">5.3</span>Unified measurement model for delay, AoA, AoD, and path loss</h3>
-    <p class="lede">The channel estimator returns one noisy tuple per resolvable MPC. The geometric prediction depends on the current UE state, the known BS, and zero, one, or two ordered wall variables according to the hypothesis.</p>
+    <p class="lede">The channel estimator returns one noisy tuple per resolvable MPC. At the scene level, its distribution is conditioned on the current UE state, the complete map \(\mathcal M\), the known BS, and a latent path hypothesis. Once that hypothesis selects an ordered reflector sequence, the corresponding GraphSLAM factor uses only the selected subset of map variables.</p>
     <div class="eq math-eq">
       \[
       \mathbf z_{ts\ell}
       =\begin{bmatrix}
       \tau_{ts\ell} & \varphi^U_{ts\ell} & \psi^B_{ts\ell} & \mathrm{PL}_{ts\ell}
       \end{bmatrix}^{\mathsf T}
-      =\mathbf h_{h_{ts\ell}}\!\left(
-      \mathbf x_t,\mathbf m_{j_1},\ldots,\mathbf m_{j_k};\mathcal B_s
+      =\mathbf h\!\left(
+      \mathbf x_t,\mathcal M,h_{ts\ell};\mathcal B_s
       \right)+\boldsymbol\varepsilon_{ts\ell},
       \qquad
+      h_{ts\ell}\in\mathcal H_{ts\ell}(\mathcal M),
+      \quad
       \boldsymbol\varepsilon_{ts\ell}\sim\mathcal N(\mathbf 0,\boldsymbol\Sigma_{h}).
       \]
     </div>
@@ -210,10 +212,33 @@ const problemFormulationSection = String.raw`
     </div>
     <p class="eq-note">\(\mathbf R_s=\mathbf R(\theta_s)\) and \(\mathbf R_t=\mathbf R(\theta_t)\) map local vectors to the world frame; their transposes express a world direction in the BS or UE frame. In 2D, \(\operatorname{ang}([x,y]^{\mathsf T})=\operatorname{atan2}(y,x)\). AoA points from the UE toward the last interaction/source.</p>
 
-    <h4 style="margin:22px 0 8px;font:700 11px var(--mono);letter-spacing:.08em;text-transform:uppercase">The three explicit cases</h4>
+    <h4 style="margin:22px 0 8px;font:700 11px var(--mono);letter-spacing:.08em;text-transform:uppercase">Map-conditioned model and hypothesis-local measurement functions</h4>
+    <p>Let the complete radio map contain all persistent map entities. A path hypothesis selects an <em>ordered tuple</em> from that map:</p>
     <div class="eq math-eq">
       \[
-      \mathbf h_0(\mathbf x_t;\mathcal B_s)
+      \mathcal M=\{\mathbf m_j\}_{j=1}^{J},
+      \qquad
+      \mathcal M_h=\mathcal S_h(\mathcal M)
+      =\begin{cases}
+      \varnothing,&h=\mathrm{LoS},\\
+      (\mathbf m_j),&h=(1,j),\\
+      (\mathbf m_{j_1},\mathbf m_{j_2}),&h=(2,j_1,j_2),\\
+      (\mathbf m_{j_1},\ldots,\mathbf m_{j_k}),&h=(k,j_{1:k}).
+      \end{cases}
+      \]
+      \[
+      \mathbf h(\mathbf x_t,\mathcal M,h;\mathcal B_s)
+      \equiv
+      \mathbf h_h(\mathbf x_t,\mathcal M_h;\mathcal B_s).
+      \]
+    </div>
+    <p class="eq-note">The left-hand side is the complete map-conditioned model. The right-hand side exposes the sparse geometric computation after \(h\) has selected the active map variables. Candidate generation, path prior, finite-support validity, visibility, and blockage can still depend on the rest of \(\mathcal M\).</p>
+    <div class="accuracy"><strong>Global model versus one factor.</strong> Before association, use \(p(\mathbf z_{ts\ell}\mid\mathbf x_t,\mathcal M,\mathcal B_s)\). After conditioning on \(h=(k,j_{1:k})\), a sparse back-end factor normally connects only to the UE state and \(\mathcal M_h\). It would connect to additional map variables only if occlusion or other scene-wide effects were differentiated through the optimizer rather than fixed by the front end.</div>
+
+    <div class="eq math-eq">
+      \[
+      \mathbf h(\mathbf x_t,\mathcal M,\mathrm{LoS};\mathcal B_s)
+      \equiv \mathbf h_0(\mathbf x_t;\mathcal B_s)
       =\begin{bmatrix}
       \|\mathbf p_t-\mathbf b_s\|/c+\delta_t\\
       \operatorname{ang}\!\big(\mathbf R_t^{\mathsf T}(\mathbf b_s-\mathbf p_t)\big)\\
@@ -222,7 +247,8 @@ const problemFormulationSection = String.raw`
       \end{bmatrix},
       \]
       \[
-      \mathbf h_1(\mathbf x_t,\mathbf m_j;\mathcal B_s)
+      \mathbf h(\mathbf x_t,\mathcal M,(1,j);\mathcal B_s)
+      \equiv \mathbf h_1(\mathbf x_t,\mathbf m_j;\mathcal B_s)
       =\begin{bmatrix}
       \|\mathbf p_t-\mathbf v_s^{(1)}\|/c+\delta_t\\
       \operatorname{ang}\!\big(\mathbf R_t^{\mathsf T}(\mathbf q_1-\mathbf p_t)\big)\\
@@ -231,7 +257,8 @@ const problemFormulationSection = String.raw`
       \end{bmatrix},
       \]
       \[
-      \mathbf h_2(\mathbf x_t,\mathbf m_{j_1},\mathbf m_{j_2};\mathcal B_s)
+      \mathbf h(\mathbf x_t,\mathcal M,(2,j_1,j_2);\mathcal B_s)
+      \equiv \mathbf h_2(\mathbf x_t,\mathbf m_{j_1},\mathbf m_{j_2};\mathcal B_s)
       =\begin{bmatrix}
       \|\mathbf p_t-\mathbf v_s^{(2)}\|/c+\delta_t\\
       \operatorname{ang}\!\big(\mathbf R_t^{\mathsf T}(\mathbf q_2-\mathbf p_t)\big)\\
@@ -257,7 +284,7 @@ const problemFormulationSection = String.raw`
     <h4 style="margin:22px 0 8px;font:700 11px var(--mono);letter-spacing:.08em;text-transform:uppercase">Residual used by the optimizer</h4>
     <div class="eq math-eq">
       \[
-      \mathbf r^{\mathrm{rad}}_{ts\ell}(h)=
+      \mathbf r^{\mathrm{rad}}_{ts\ell}(\mathbf x_t,\mathcal M,h)=
       \begin{bmatrix}
       c\big(\tau_{ts\ell}-\widehat\tau_h\big)\\
       \operatorname{wrap}_{\pi}\!\big(\varphi^U_{ts\ell}-\widehat\varphi^U_h\big)\\
@@ -274,7 +301,7 @@ const problemFormulationSection = String.raw`
 
   <div class="subsection-block" id="formulation-map">
     <h3 class="subh"><span class="no">5.4</span>Factor graph, unknown association, and the joint MAP problem</h3>
-    <p class="lede">With the BS fixed, the arity of a radio factor grows with bounce count. This is the cleanest way to see how LoS and multipath coexist in one GraphSLAM model.</p>
+    <p class="lede">The complete measurement likelihood is conditioned on \(\mathcal M\), but after a path hypothesis is selected the corresponding factor touches only the UE state and the selected tuple \(\mathcal M_h\). Its arity therefore grows with bounce count while the global map remains the object being jointly estimated.</p>
     <table class="companion-symbols">
       <thead><tr><th>Hypothesis</th><th>Unknown nodes touched</th><th>Known input</th></tr></thead>
       <tbody>
@@ -304,7 +331,7 @@ const problemFormulationSection = String.raw`
       +\lambda_{\mathrm{mot}}J_{\mathrm{mot}}(\mathcal X)\\
       &+\sum_{t,s,\ell:\,a_{ts\ell}\neq0}
       \rho\!\left(
-      \|\mathbf r^{\mathrm{rad}}_{ts\ell}(a_{ts\ell})\|^2_{\boldsymbol\Omega_{a_{ts\ell}}}
+      \|\mathbf r^{\mathrm{rad}}_{ts\ell}(\mathbf x_t,\mathcal M,a_{ts\ell})\|^2_{\boldsymbol\Omega_{a_{ts\ell}}}
       \right),
       \end{aligned}
       \]
@@ -322,16 +349,16 @@ const problemFormulationSection = String.raw`
       \[
       \phi_{ts\ell}(\mathbf x_t,\mathcal M)
       =\kappa_{ts}(\mathbf z_{ts\ell})
-      +\sum_{h\in\mathcal H_{ts\ell}}
+      +\sum_{h\in\mathcal H_{ts\ell}(\mathcal M)}
       w_h p_{\mathrm D}(h)
       \mathcal N\!\left(
       \mathbf z_{ts\ell};
-      \mathbf h_h(\mathbf x_t,\mathcal M;\mathcal B_s),
+      \mathbf h(\mathbf x_t,\mathcal M,h;\mathcal B_s),
       \boldsymbol\Sigma_h
       \right).
       \]
     </div>
-    <p class="eq-note">\(\kappa\) is a clutter intensity, \(\mathcal H_{ts\ell}\) is a gated candidate set, \(w_h\) is a prior weight, and \(p_{\mathrm D}(h)\) is path-detection probability. Exact one-to-one assignment is combinatorial; practical systems use front-end association, alternating inference, branching, or sum-/max-mixture factors.</p>
+    <p class="eq-note">\(\kappa\) is a clutter intensity and \(\mathcal H_{ts\ell}(\mathcal M)\) is the gated set of LoS and ordered-reflection hypotheses generated from the complete map. The weight \(w_h\), detection probability \(p_{\mathrm D}(h)\), and validity/visibility of each candidate may depend on the whole scene, whereas its conditioned geometric factor uses only \(\mathcal M_h\). Exact one-to-one assignment is combinatorial; practical systems use front-end association, alternating inference, branching, or sum-/max-mixture factors.</p>
 
     <div class="companion-steps">
       <article><span>Front end</span><strong>Resolve and propose</strong>Estimate MPC tuples and covariances; normalize frames; propose LoS, ordered wall sequences, and clutter; reject impossible visibility cases.</article>
