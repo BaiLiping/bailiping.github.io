@@ -7,6 +7,7 @@ on:
     paths:
       - scripts/enhance-radio-slam-companion.mjs
       - scripts/add-radio-slam-problem-formulation.mjs
+      - scripts/upgrade-radio-slam-formulation-3d.mjs
       - mpc-detection-to-bounce-count/companion.css
       - mpc-detection-to-bounce-count/index.html
       - .github/workflows/build-radio-slam-companion.yml
@@ -28,7 +29,7 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: '24'
 
       - name: Normalize problem-formulation validator
         run: |
@@ -45,12 +46,16 @@ jobs:
         run: |
           node --check scripts/enhance-radio-slam-companion.mjs
           node --check scripts/add-radio-slam-problem-formulation.mjs
+          node --check scripts/upgrade-radio-slam-formulation-3d.mjs
 
       - name: Apply detailed companion-page revision
         run: node scripts/enhance-radio-slam-companion.mjs
 
       - name: Add unified radio SLAM problem formulation
         run: node scripts/add-radio-slam-problem-formulation.mjs
+
+      - name: Upgrade the formal model and factors to 3D
+        run: node scripts/upgrade-radio-slam-formulation-3d.mjs
 
       - name: Validate generated page
         run: |
@@ -67,6 +72,7 @@ jobs:
             'id="measurement-noise"',
             'id="model-boundary"',
             'id="problem-formulation"',
+            'data-formulation-dimension="3d"',
             'id="formulation-state"',
             'id="formulation-hypothesis"',
             'id="formulation-measurement"',
@@ -74,13 +80,19 @@ jobs:
             'id="bistatic-graphslam"',
             'id="factor-language"',
             'id="bistatic-factor"',
+            'data-radio-factor-dimension="3d"',
             'id="va-factor"',
+            'data-va-factor-dimension="3d"',
             'id="radio-graph-objective"',
-            'A complete radio-SLAM problem formulation',
-            'Recommended representation for this page',
-            '\\mathbf x_t',
-            '\\mathbf m_j^{\\mathrm W}',
-            '\\mathcal R_j(\\mathbf y)',
+            'A complete 3D radio-SLAM problem formulation',
+            'Recommended map state',
+            '{}^{W}\\mathbf T_{U_t}',
+            '\\in SE(3)\\times\\mathbb R',
+            '\\boldsymbol\\pi_j=(\\mathbf n_j,d_j)\\in\\mathbb S^2\\times\\mathbb R',
+            '\\mathbf H_j\\in O(3),\\quad\\det\\mathbf H_j=-1',
+            '\\operatorname{Log}_{\\mathbb S^2,\\widehat{\\mathbf u}}',
+            'O(3)\\setminus SO(3)',
+            '\\mathfrak{se}(3)\\simeq\\mathbb R^6',
             '\\mathbf h_0',
             '\\mathbf h_1',
             '\\mathbf h_2',
@@ -129,12 +141,24 @@ jobs:
           for (const value of forbidden) {
             if (html.includes(value)) throw new Error(`Legacy wording remains: ${value}`)
           }
+          const start = html.indexOf('data-formulation-dimension="3d"')
+          const end = html.indexOf('<!-- ============ 06 bistatic radio to GraphSLAM ============ -->', start)
+          if (start < 0 || end < 0) throw new Error('Could not isolate the 3D problem-formulation section')
+          const formulation = html.slice(start, end)
+          for (const value of [
+            'planar \\(SE(2)\\) model',
+            '\\mathbb R^2\\times\\mathbb S^1',
+            'Physical wall state in 2D',
+            '\\mathbf m^{\\mathrm{VA}}_{sj}=\\mathbf v_{sj}\\in\\mathbb R^2'
+          ]) {
+            if (formulation.includes(value)) throw new Error(`Legacy 2D formulation remains: ${value}`)
+          }
           if (html.includes('\u0000')) throw new Error('Generated page contains a null byte')
           const css = fs.readFileSync('mpc-detection-to-bounce-count/companion.css', 'utf8')
           for (const selector of ['.companion-math-grid', '.factor-bridge', '.reference-list']) {
             if (!css.includes(selector)) throw new Error(`Missing companion style: ${selector}`)
           }
-          console.log('Validated notation, explicit LoS/one-bounce/two-bounce models, hybrid MAP, and GraphSLAM bridge.')
+          console.log('Validated 3D SE(3) states, spherical directions, LoS/one-/two-bounce factors, hybrid MAP, and GraphSLAM bridge.')
           NODE
 
       - name: Check whitespace and generated diff
@@ -150,11 +174,12 @@ jobs:
             .github/workflows/build-radio-slam-companion.yml \
             scripts/enhance-radio-slam-companion.mjs \
             scripts/add-radio-slam-problem-formulation.mjs \
+            scripts/upgrade-radio-slam-formulation-3d.mjs \
             mpc-detection-to-bounce-count/companion.css \
             mpc-detection-to-bounce-count/index.html
           if git diff --cached --quiet; then
             echo "No generated changes to commit."
           else
-            git commit -m "Add formal radio SLAM problem formulation"
+            git commit -m "Generate 3D radio SLAM problem formulation"
             git push origin HEAD:"$TARGET_BRANCH"
           fi
