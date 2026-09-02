@@ -1,0 +1,120 @@
+name: Build detailed radio SLAM companion page
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - scripts/enhance-radio-slam-companion.mjs
+      - mpc-detection-to-bounce-count/companion.css
+      - mpc-detection-to-bounce-count/index.html
+      - .github/workflows/build-radio-slam-companion.yml
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out source branch
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.ref_name }}
+          fetch-depth: 0
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Validate companion-page patch syntax
+        run: node --check scripts/enhance-radio-slam-companion.mjs
+
+      - name: Apply detailed companion-page revision
+        run: node scripts/enhance-radio-slam-companion.mjs
+
+      - name: Validate generated page
+        run: |
+          node <<'NODE'
+          const fs = require('node:fs')
+          const path = 'mpc-detection-to-bounce-count/index.html'
+          const html = fs.readFileSync(path, 'utf8')
+          const required = [
+            'href="companion.css"',
+            'id="radio-companion-mathjax-config"',
+            'id="notation"',
+            'id="indices-and-states"',
+            'id="angle-frames"',
+            'id="measurement-noise"',
+            'id="model-boundary"',
+            'id="bistatic-graphslam"',
+            'id="factor-language"',
+            'id="bistatic-factor"',
+            'id="va-factor"',
+            'id="radio-graph-objective"',
+            'GraphSLAM does not assume that every physical device is onboard',
+            'L_{ts\\ell}=c\\big(\\tau_{ts\\ell}-\\delta_{ts}\\big)',
+            '\\(a=0\\) uses a clutter likelihood',
+            'Only after calibration should gain enter',
+            'Detailed interactive companion'
+          ]
+          for (const value of required) {
+            if (!html.includes(value)) throw new Error(`Missing required generated content: ${value}`)
+          }
+          const uniqueIds = [
+            'notation',
+            'indices-and-states',
+            'angle-frames',
+            'measurement-noise',
+            'model-boundary',
+            'bistatic-graphslam',
+            'factor-language',
+            'bistatic-factor',
+            'va-factor',
+            'radio-graph-objective'
+          ]
+          for (const id of uniqueIds) {
+            const count = html.split(`id="${id}"`).length - 1
+            if (count !== 1) throw new Error(`Expected exactly one id=${id}; found ${count}`)
+          }
+          const forbidden = [
+            'a <strong>delay</strong> (a path length)',
+            'These 2D checks assume synchronized delay and globally oriented AoA/AoD.',
+            'Each 2D construction assumes synchronized delay and globally oriented AoA/AoD.',
+            'AoD ψ is available in the global frame.',
+            'Paths with the same travel distance span ~20&nbsp;dB',
+            'half of all matched pairs differ by more than 3&nbsp;dB'
+          ]
+          for (const value of forbidden) {
+            if (html.includes(value)) throw new Error(`Legacy wording remains: ${value}`)
+          }
+          if (html.includes('\u0000')) throw new Error('Generated page contains a null byte')
+          const css = fs.readFileSync('mpc-detection-to-bounce-count/companion.css', 'utf8')
+          for (const selector of ['.companion-math-grid', '.factor-bridge', '.reference-list']) {
+            if (!css.includes(selector)) throw new Error(`Missing companion style: ${selector}`)
+          }
+          console.log('Validated detailed notation, measurement, bistatic-factor, VA, and GraphSLAM sections.')
+          NODE
+
+      - name: Check whitespace and generated diff
+        run: git diff --check
+
+      - name: Commit generated companion page
+        env:
+          TARGET_BRANCH: ${{ github.ref_name }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add \
+            .github/workflows/build-radio-slam-companion.yml \
+            scripts/enhance-radio-slam-companion.mjs \
+            mpc-detection-to-bounce-count/companion.css \
+            mpc-detection-to-bounce-count/index.html
+          if git diff --cached --quiet; then
+            echo "No generated changes to commit."
+          else
+            git commit -m "Expand radio SLAM companion webpage"
+            git push origin HEAD:"$TARGET_BRANCH"
+          fi
