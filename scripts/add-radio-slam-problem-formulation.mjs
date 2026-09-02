@@ -212,7 +212,8 @@ const problemFormulationSection = String.raw`
     </div>
     <p class="eq-note">\(\mathbf R_s=\mathbf R(\theta_s)\) and \(\mathbf R_t=\mathbf R(\theta_t)\) map local vectors to the world frame; their transposes express a world direction in the BS or UE frame. In 2D, \(\operatorname{ang}([x,y]^{\mathsf T})=\operatorname{atan2}(y,x)\). AoA points from the UE toward the last interaction/source.</p>
 
-    <h4 style="margin:22px 0 8px;font:700 11px var(--mono);letter-spacing:.08em;text-transform:uppercase">Map-conditioned model and hypothesis-local measurement functions</h4>
+    <h4 style="margin:22px 0 8px;font:700 11px var(--mono);letter-spacing:.08em;text-transform:uppercase">Map-conditioned VA / image-source measurement model</h4>
+    <p>The equations in this first form retain the virtual-anchor or image-source construction. The complete map supplies the selected walls or VAs, and the factor evaluates the corresponding unfolded path.</p>
     <p>Let the complete radio map contain all persistent map entities. A path hypothesis selects an <em>ordered tuple</em> from that map:</p>
     <div class="eq math-eq">
       \[
@@ -268,7 +269,84 @@ const problemFormulationSection = String.raw`
       \]
     </div>
 
-    <h4 style="margin:22px 0 8px;font:700 11px var(--mono);letter-spacing:.08em;text-transform:uppercase">Path-loss component</h4>
+        <h4 style="margin:22px 0 8px;font:700 11px var(--mono);letter-spacing:.08em;text-transform:uppercase">Direct wall-state measurement model — no VA in the factor definition</h4>
+    <p>The same ideal specular path can be defined directly from the physical wall states. In this form the optimization variables are the walls themselves; the physical reflection points are implicit functions of the UE pose, the known BS, and the ordered wall tuple selected from the complete map.</p>
+    <div class="eq math-eq">
+      \[
+      \mathcal M^{\mathrm W}=\{\mathbf m_j^{\mathrm W}\}_{j=1}^{J},
+      \qquad
+      \mathcal M_h^{\mathrm W}=\mathcal S_h(\mathcal M^{\mathrm W})
+      =(\mathbf m_{j_1}^{\mathrm W},\ldots,\mathbf m_{j_k}^{\mathrm W}),
+      \]
+      \[
+      \mathbf q_{1:k}^{\mathrm W}
+      =\operatorname{SpecularSolve}\!\left(
+      \mathbf b_s,\mathbf p_t;\mathcal M_h^{\mathrm W}
+      \right),
+      \qquad
+      \mathbf q_0=\mathbf b_s,
+      \quad
+      \mathbf q_{k+1}=\mathbf p_t.
+      \]
+    </div>
+    <p class="eq-note">\(\operatorname{SpecularSolve}\) denotes the geometric operation that returns a valid ordered set of physical reflection points, or rejects the hypothesis when no such path exists. It does not introduce extra optimization variables.</p>
+
+    <div class="eq math-eq">
+      \[
+      \mathbf q_r\in\mathcal S_{j_r},
+      \qquad
+      \mathbf u_r^{-}
+      =\frac{\mathbf q_r-\mathbf q_{r-1}}
+      {\|\mathbf q_r-\mathbf q_{r-1}\|},
+      \qquad
+      \mathbf u_r^{+}
+      =\frac{\mathbf q_{r+1}-\mathbf q_r}
+      {\|\mathbf q_{r+1}-\mathbf q_r\|},
+      \]
+      \[
+      \mathbf u_r^{+}
+      =\underbrace{\left(\mathbf I-2\mathbf n_{j_r}\mathbf n_{j_r}^{\mathsf T}\right)}_{\mathbf H_{j_r}}
+      \mathbf u_r^{-},
+      \qquad r=1,\ldots,k,
+      \qquad
+      \chi_h^{\mathrm W}(\mathbf x_t,\mathcal M^{\mathrm W};\mathcal B_s)=1.
+      \]
+    </div>
+    <p class="eq-note">These equations state the law of specular reflection directly at each wall. The validity indicator additionally enforces finite-segment support, positive ordered legs, and visibility. The sign choice of the wall normal does not matter because \(\mathbf n_j\mathbf n_j^{\mathsf T}\) is unchanged.</p>
+
+    <div class="eq math-eq">
+      \[
+      L_h^{\mathrm W}
+      =\sum_{r=0}^{k}\|\mathbf q_{r+1}^{\mathrm W}-\mathbf q_r^{\mathrm W}\|,
+      \]
+      \[
+      \mathbf h_h^{\mathrm W}(\mathbf x_t,\mathcal M_h^{\mathrm W};\mathcal B_s)
+      =\begin{bmatrix}
+      L_h^{\mathrm W}/c+\delta_t\\
+      \operatorname{ang}\!\left(\mathbf R_t^{\mathsf T}
+      (\mathbf q_k^{\mathrm W}-\mathbf q_{k+1}^{\mathrm W})\right)\\
+      \operatorname{ang}\!\left(\mathbf R_s^{\mathsf T}
+      (\mathbf q_1^{\mathrm W}-\mathbf q_0^{\mathrm W})\right)\\
+      \widehat{\mathrm{PL}}_{h}^{\mathrm W}
+      \end{bmatrix},
+      \qquad
+      \mathbf h^{\mathrm W}(\mathbf x_t,\mathcal M^{\mathrm W},h;\mathcal B_s)
+      \equiv
+      \mathbf h_h^{\mathrm W}(\mathbf x_t,\mathcal M_h^{\mathrm W};\mathcal B_s).
+      \]
+    </div>
+    <p class="eq-note">For LoS, \(k=0\), use \(\mathbf q_0=\mathbf b_s\) and \(\mathbf q_1=\mathbf p_t\); the selected wall tuple is empty. For one bounce, \(\mathbf q_1\) is the wall hit. For two bounces, \(\mathbf q_1\) controls AoD and \(\mathbf q_2\) controls AoA.</p>
+
+    <div class="companion-math-grid">
+      <article class="companion-math-card"><h4>LoS · direct wall form</h4><p>\(\mathcal M_h^{\mathrm W}=\varnothing\) and no reflection equation is active:</p><p>\(\mathbf h_0^{\mathrm W}(\mathbf x_t;\mathcal B_s)=\mathbf h_0(\mathbf x_t;\mathcal B_s).\)</p></article>
+      <article class="companion-math-card"><h4>One bounce · direct wall form</h4><p>For \(h=(1,j)\), solve directly for \(\mathbf q_1^{\mathrm W}\in\mathcal S_j\), then evaluate</p><p>\(\mathbf h^{\mathrm W}(\mathbf x_t,\mathcal M^{\mathrm W},(1,j);\mathcal B_s)=\mathbf h_1^{\mathrm W}(\mathbf x_t,\mathbf m_j^{\mathrm W};\mathcal B_s).\)</p></article>
+      <article class="companion-math-card"><h4>Two bounces · direct wall form</h4><p>For \(h=(2,j_1,j_2)\), solve jointly for \((\mathbf q_1^{\mathrm W},\mathbf q_2^{\mathrm W})\) on the ordered walls, then evaluate</p><p>\(\mathbf h_2^{\mathrm W}(\mathbf x_t,\mathbf m_{j_1}^{\mathrm W},\mathbf m_{j_2}^{\mathrm W};\mathcal B_s).\)</p></article>
+      <article class="companion-math-card"><h4>What the factor touches</h4><p>The global likelihood is conditioned on \(\mathcal M^{\mathrm W}\). Once \(h\) is fixed, the sparse factor is adjacent only to the UE state and the selected wall tuple \(\mathcal M_h^{\mathrm W}\).</p></article>
+    </div>
+
+    <div class="accuracy"><strong>Same ideal physics, two useful forms.</strong> When each VA is generated by reflecting the known BS through the selected physical walls and the resulting path is valid, the image-source and direct-wall predictions agree: \(\mathbf h_h^{\mathrm{VA}}=\mathbf h_h^{\mathrm W}\). The VA form is usually the faster geometric evaluation; the wall-direct form makes the estimated physical map, finite support, reflection law, and factor adjacency explicit.</div>
+
+<h4 style="margin:22px 0 8px;font:700 11px var(--mono);letter-spacing:.08em;text-transform:uppercase">Path-loss component</h4>
     <div class="eq math-eq">
       \[
       \widehat{\mathrm{PL}}^{(k)}
