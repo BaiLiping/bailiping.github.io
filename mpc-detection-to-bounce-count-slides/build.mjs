@@ -527,12 +527,12 @@ slides.push({
 slides.push(regular(
   's-measurement', '01 · MEASUREMENT', 'One resolved path gives four observables',
   'Geometry starts with delay and bearings; power helps distinguish otherwise similar routes.',
-  'Define the resolved path tuple. Use the right-hand scene as three separate route examples—not three explanations of one measured tuple. Each reflected route is constructed with the image-source method, so incidence and reflection angles match at every wall contact. Delay becomes path length, AoA and AoD are local until headings are known, and the calibrated complex MPC gain remains radiometric evidence rather than a direct bounce counter.',
+  'Define the resolved path tuple. Use the right-hand scene as three separate route examples—not three explanations of one measured tuple. Each reflected route is constructed with the image-source method, so incidence and reflection angles match at every wall contact. After synchronization and hardware-delay calibration, delay becomes path length. AoA and AoD must use explicit UE/BS array-frame conventions, and the calibrated complex MPC gain remains radiometric evidence rather than a direct bounce counter.',
   [
     card('tuple-card', 96, 214, 690, 300, C.paper, { stroke: C.measurement, strokeWidth: 2 }),
     text('tuple', 132, 246, 618, 72, texBlock`(\tau,\,\varphi,\,\psi,\,\alpha)`, 52, { color: C.measurementDeep, fontWeight: 700, align: 'center' }),
-    text('tuple-map', 132, 334, 618, 122, `delay ${tex`\tau`} → ${tex`L=c\tau`}<br>AoA ${tex`\varphi`} → arrival bearing at the UE<br>AoD ${tex`\psi`} → departure bearing at the BS<br>${tex`\alpha\in\mathbb C`} → complex MPC gain; ${tex`|\alpha|^2`} → power gain`, 19, { lineHeight: 1.48 }),
-    text('tuple-attenuation', 132, 470, 618, 24, `${tex`-10\log_{10}|\alpha|^2`} → path loss (dB)`, 15, { color: C.measurementDeep, fontFamily: SANS, fontWeight: 700, align: 'center' }),
+    text('tuple-map', 132, 334, 618, 122, `delay ${tex`\tau`} → ${tex`L=c(\tau-\delta_\tau)`}; synchronized: ${tex`\delta_\tau=0`}<br>AoA ${tex`\varphi`} → arrival bearing in the UE frame<br>AoD ${tex`\psi`} → departure bearing in the BS frame<br>${tex`\alpha\in\mathbb C`} → complex MPC gain; ${tex`|\alpha|^2`} → power gain`, 19, { lineHeight: 1.48 }),
+    text('tuple-attenuation', 132, 470, 618, 24, `${tex`-10\log_{10}|\alpha|^2`} → calibrated / normalized path loss (dB)`, 15, { color: C.measurementDeep, fontFamily: SANS, fontWeight: 700, align: 'center' }),
     image(
       'measurement-route-scene', 800, 206, 384, 256,
       './assets/mpc-route-scene.webp',
@@ -577,9 +577,9 @@ slides.push(regular(
 ))
 
 slides.push(regular(
-  's-pdp', '01 · MEASUREMENT', 'The PDP separates paths; calibrated gain grades them',
+  's-pdp', '01 · MEASUREMENT', 'When delay-resolved, the PDP separates paths',
   'Delay resolves candidate routes into peaks. Relative power adds evidence about their physical plausibility.',
-  'Read the power-delay profile from left to right. Each resolved peak contributes one tuple, while the calibrated power gain from the squared magnitude of the complex MPC gain can penalize implausible material, roughness, interaction-count, or blockage hypotheses. Power supports geometry; it does not replace it.',
+  'Read the power-delay profile from left to right. Each resolvable peak contributes one tuple; components inside the delay resolution remain superposed. The calibrated power gain from the squared magnitude of the complex MPC gain can penalize implausible material, roughness, interaction-count, or blockage hypotheses. Power supports geometry; it does not replace it.',
   [
     card('pdp-chart', 96, 214, 690, 330, C.paper, { stroke: C.line }),
     text('pdp-k', 124, 236, 320, 20, 'POWER–DELAY PROFILE', 11, { color: C.measurementDeep, fontFamily: MONO, fontWeight: 700, letterSpacing: 1.3 }),
@@ -608,7 +608,7 @@ slides.push(regular(
     card('power-card', 820, 214, 364, 330, C.measurementSoft, { stroke: C.measurement }),
     text('power-k', 848, 238, 308, 20, `WHY ${tex`|\alpha|^2`} HELPS`, 11, { color: C.measurementDeep, fontFamily: MONO, fontWeight: 700, letterSpacing: 1.2 }),
     ...[
-      ['01', 'interactions', 'more bounces usually spend more power'],
+      ['01', 'interactions', 'each interaction often adds loss—not a strict ordering'],
       ['02', 'materials', 'reflection loss depends on the surface'],
       ['03', 'roughness', 'diffuse scattering weakens the specular path'],
       ['04', 'blockage', 'occlusion can remove an otherwise valid route']
