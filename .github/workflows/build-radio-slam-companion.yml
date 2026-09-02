@@ -6,6 +6,7 @@ on:
       - main
     paths:
       - scripts/enhance-radio-slam-companion.mjs
+      - scripts/add-radio-slam-problem-formulation.mjs
       - mpc-detection-to-bounce-count/companion.css
       - mpc-detection-to-bounce-count/index.html
       - .github/workflows/build-radio-slam-companion.yml
@@ -29,11 +30,27 @@ jobs:
         with:
           node-version: '20'
 
+      - name: Normalize problem-formulation validator
+        run: |
+          node <<'NODE'
+          const fs = require('node:fs')
+          const path = 'scripts/add-radio-slam-problem-formulation.mjs'
+          const lines = fs.readFileSync(path, 'utf8').split('\n')
+          const index = lines.findIndex(line => line.trim().startsWith("'two bounce,") && line.includes('j_1'))
+          if (index >= 0) lines[index] = "  'two bounce, \\((2,j_1,j_2)\\)',"
+          fs.writeFileSync(path, lines.join('\n'))
+          NODE
+
       - name: Validate companion-page patch syntax
-        run: node --check scripts/enhance-radio-slam-companion.mjs
+        run: |
+          node --check scripts/enhance-radio-slam-companion.mjs
+          node --check scripts/add-radio-slam-problem-formulation.mjs
 
       - name: Apply detailed companion-page revision
         run: node scripts/enhance-radio-slam-companion.mjs
+
+      - name: Add unified radio SLAM problem formulation
+        run: node scripts/add-radio-slam-problem-formulation.mjs
 
       - name: Validate generated page
         run: |
@@ -49,11 +66,27 @@ jobs:
             'id="angle-frames"',
             'id="measurement-noise"',
             'id="model-boundary"',
+            'id="problem-formulation"',
+            'id="formulation-state"',
+            'id="formulation-hypothesis"',
+            'id="formulation-measurement"',
+            'id="formulation-map"',
             'id="bistatic-graphslam"',
             'id="factor-language"',
             'id="bistatic-factor"',
             'id="va-factor"',
             'id="radio-graph-objective"',
+            'A complete radio-SLAM problem formulation',
+            'Recommended representation for this page',
+            '\\mathbf x_t',
+            '\\mathbf m_j^{\\mathrm W}',
+            '\\mathcal R_j(\\mathbf y)',
+            '\\mathbf h_0',
+            '\\mathbf h_1',
+            '\\mathbf h_2',
+            'two bounce, \\((2,j_1,j_2)\\)',
+            'clutter / false alarm',
+            '<h2><span class="no">06</span>Bistatic radio SLAM as GraphSLAM</h2>',
             'GraphSLAM does not assume that every physical device is onboard',
             'L_{ts\\ell}=c\\big(\\tau_{ts\\ell}-\\delta_{ts}\\big)',
             '\\(a=0\\) uses a clutter likelihood',
@@ -69,6 +102,11 @@ jobs:
             'angle-frames',
             'measurement-noise',
             'model-boundary',
+            'problem-formulation',
+            'formulation-state',
+            'formulation-hypothesis',
+            'formulation-measurement',
+            'formulation-map',
             'bistatic-graphslam',
             'factor-language',
             'bistatic-factor',
@@ -85,7 +123,8 @@ jobs:
             'Each 2D construction assumes synchronized delay and globally oriented AoA/AoD.',
             'AoD ψ is available in the global frame.',
             'Paths with the same travel distance span ~20&nbsp;dB',
-            'half of all matched pairs differ by more than 3&nbsp;dB'
+            'half of all matched pairs differ by more than 3&nbsp;dB',
+            '<h2><span class="no">05</span>Bistatic radio SLAM as GraphSLAM</h2>'
           ]
           for (const value of forbidden) {
             if (html.includes(value)) throw new Error(`Legacy wording remains: ${value}`)
@@ -95,7 +134,7 @@ jobs:
           for (const selector of ['.companion-math-grid', '.factor-bridge', '.reference-list']) {
             if (!css.includes(selector)) throw new Error(`Missing companion style: ${selector}`)
           }
-          console.log('Validated detailed notation, measurement, bistatic-factor, VA, and GraphSLAM sections.')
+          console.log('Validated notation, explicit LoS/one-bounce/two-bounce models, hybrid MAP, and GraphSLAM bridge.')
           NODE
 
       - name: Check whitespace and generated diff
@@ -110,11 +149,12 @@ jobs:
           git add \
             .github/workflows/build-radio-slam-companion.yml \
             scripts/enhance-radio-slam-companion.mjs \
+            scripts/add-radio-slam-problem-formulation.mjs \
             mpc-detection-to-bounce-count/companion.css \
             mpc-detection-to-bounce-count/index.html
           if git diff --cached --quiet; then
             echo "No generated changes to commit."
           else
-            git commit -m "Expand radio SLAM companion webpage"
+            git commit -m "Add formal radio SLAM problem formulation"
             git push origin HEAD:"$TARGET_BRANCH"
           fi
