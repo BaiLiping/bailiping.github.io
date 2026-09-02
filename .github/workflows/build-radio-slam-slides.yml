@@ -11,6 +11,7 @@ on:
       - scripts/patch-radio-slam-slides.mjs
       - scripts/add-bundle-adjustment-slide.mjs
       - scripts/add-isam2-slides.mjs
+      - scripts/add-bistatic-graphslam-bridge.mjs
       - scripts/fix-isam2-label.mjs
       - scripts/fix-radio-graphslam-slide.mjs
       - scripts/fix-radio-graphslam-clutter-notation.mjs
@@ -24,6 +25,7 @@ on:
       - scripts/patch-radio-slam-slides.mjs
       - scripts/add-bundle-adjustment-slide.mjs
       - scripts/add-isam2-slides.mjs
+      - scripts/add-bistatic-graphslam-bridge.mjs
       - scripts/fix-isam2-label.mjs
       - scripts/fix-radio-graphslam-slide.mjs
       - scripts/fix-radio-graphslam-clutter-notation.mjs
@@ -78,10 +80,14 @@ jobs:
       - name: Correct iSAM2 bridge terminology
         run: node scripts/fix-isam2-label.mjs
 
+      - name: Insert bistatic radio-to-GraphSLAM bridge and audit measurements
+        run: node scripts/add-bistatic-graphslam-bridge.mjs
+
       - name: Validate JavaScript syntax
         run: |
           node --check scripts/add-bundle-adjustment-slide.mjs
           node --check scripts/add-isam2-slides.mjs
+          node --check scripts/add-bistatic-graphslam-bridge.mjs
           node --check scripts/fix-isam2-label.mjs
           node --check scripts/fix-radio-graphslam-slide.mjs
           node --check scripts/fix-radio-graphslam-clutter-notation.mjs
@@ -110,6 +116,10 @@ jobs:
             's-bp-slam-live',
             's-pmbm-slam-equations',
             's-pmbm-slam-live',
+            's-bistatic-graphslam-bridge',
+            's-bistatic-mpc-factor',
+            's-bistatic-virtual-anchor',
+            's-bistatic-graph-construction',
             's-radio-bundle-adjustment',
             's-isam2-framing',
             's-isam2-bayes-tree',
@@ -123,6 +133,10 @@ jobs:
             if (!ids.includes(id)) throw new Error(`Missing required slide: ${id}`)
           }
           const orderedBridge = [
+            's-bistatic-graphslam-bridge',
+            's-bistatic-mpc-factor',
+            's-bistatic-virtual-anchor',
+            's-bistatic-graph-construction',
             's-radio-bundle-adjustment',
             's-isam2-framing',
             's-isam2-bayes-tree',
@@ -133,10 +147,16 @@ jobs:
           const bridgeIndices = orderedBridge.map(id => ids.indexOf(id))
           for (let i = 1; i < bridgeIndices.length; i += 1) {
             if (bridgeIndices[i] !== bridgeIndices[i - 1] + 1) {
-              throw new Error(`Expected consecutive BA/iSAM2/GraphSLAM slides; got ${bridgeIndices.join(', ')}`)
+              throw new Error(`Expected consecutive bistatic/BA/iSAM2/GraphSLAM slides; got ${bridgeIndices.join(', ')}`)
             }
           }
           const requiredText = [
+            'Radio SLAM is bistatic; GraphSLAM is sensor-agnostic',
+            'One MPC becomes one sparse bistatic factor',
+            'Specular reflection becomes a landmark through a virtual anchor',
+            'The resulting graph is ordinary GraphSLAM',
+            'Only a synchronized and hardware-calibrated delay obeys L=cτ',
+            'Multiple bounces use an ordered reflector chain or a higher-arity factor',
             'Bundle adjustment: the measurement-only core of joint radio SLAM',
             'Frame the radio-SLAM problem for iSAM2',
             'How iSAM2 updates the solution: edit the Bayes tree',
@@ -146,16 +166,24 @@ jobs:
             'Radio GraphSLAM: optimize the UE trajectory and radio map jointly',
             'full radio GraphSLAM optimizes both trajectory X and map M',
             'a=0 uses the clutter likelihood',
+            'When delay-resolved, the PDP separates paths',
+            'calibrated / normalized path loss',
+            'each interaction often adds loss—not a strict ordering',
             'demo=bp',
             'demo=pmbm'
           ]
           for (const value of requiredText) {
             if (!html.includes(value)) throw new Error(`Missing required generated text: ${value}`)
           }
-          if (html.includes('SAME POSTERIOR AS BATCH BA / GRAPHSAM')) {
-            throw new Error('Legacy GraphSAM typo remains in the generated deck')
+          const forbiddenText = [
+            'SAME POSTERIOR AS BATCH BA / GRAPHSAM',
+            'more bounces usually spend more power',
+            'The PDP separates paths; calibrated gain grades them'
+          ]
+          for (const value of forbiddenText) {
+            if (html.includes(value)) throw new Error(`Legacy or overstrong wording remains: ${value}`)
           }
-          console.log(`Validated ${doc.slides.length} slides. BA/iSAM2/GraphSLAM pages: ${bridgeIndices.map(index => index + 1).join(' → ')}.`)
+          console.log(`Validated ${doc.slides.length} slides. Bistatic/BA/iSAM2/GraphSLAM pages: ${bridgeIndices.map(index => index + 1).join(' → ')}.`)
           NODE
 
       - name: Package deployable update
@@ -165,6 +193,7 @@ jobs:
             scripts/patch-radio-slam-slides.mjs \
             scripts/add-bundle-adjustment-slide.mjs \
             scripts/add-isam2-slides.mjs \
+            scripts/add-bistatic-graphslam-bridge.mjs \
             scripts/fix-isam2-label.mjs \
             scripts/fix-radio-graphslam-slide.mjs \
             scripts/fix-radio-graphslam-clutter-notation.mjs
@@ -189,6 +218,7 @@ jobs:
           git add -A \
             scripts/add-bundle-adjustment-slide.mjs \
             scripts/add-isam2-slides.mjs \
+            scripts/add-bistatic-graphslam-bridge.mjs \
             scripts/fix-isam2-label.mjs \
             scripts/fix-radio-graphslam-slide.mjs \
             scripts/fix-radio-graphslam-clutter-notation.mjs \
@@ -200,6 +230,6 @@ jobs:
           if git diff --cached --quiet; then
             echo "No generated changes to commit."
           else
-            git commit -m "Generate radio SLAM deck with iSAM2 framing"
+            git commit -m "Generate radio SLAM deck with bistatic GraphSLAM bridge"
             git push origin HEAD:"$TARGET_BRANCH"
           fi
