@@ -1,0 +1,89 @@
+name: Apply map-conditioned radio measurement notation
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - .github/workflows/apply-map-conditioned-radio-measurement.yml
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out main
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+
+      - name: Validate patch syntax
+        run: |
+          node --check scripts/clarify-map-conditioned-radio-measurement.mjs
+          node --check scripts/retain-2d-and-3d-radio-slam-formulations.mjs
+
+      - name: Clarify complete-map and local-factor notation
+        run: node scripts/clarify-map-conditioned-radio-measurement.mjs
+
+      - name: Regenerate the 2D and 3D companion sections
+        run: node scripts/retain-2d-and-3d-radio-slam-formulations.mjs
+
+      - name: Validate generated notation
+        run: |
+          node <<'NODE'
+          const fs = require('node:fs')
+          const html = fs.readFileSync('mpc-detection-to-bounce-count/index.html', 'utf8')
+          const required = [
+            'id="problem-formulation-2d"',
+            'id="problem-formulation-3d"',
+            'Map-conditioned model and hypothesis-local measurement functions',
+            '\\mathcal M_h=\\mathcal S_h(\\mathcal M)',
+            '\\mathbf h(\\mathbf x_t,\\mathcal M,h;',
+            '\\mathcal H_{ts\\ell}(\\mathcal M)',
+            '\\mathbf r^{\\mathrm{rad}}_{ts\\ell}(\\mathbf x_t,\\mathcal M,h)',
+            'Global model versus one factor',
+            'Do not confuse global conditioning with factor adjacency'
+          ]
+          for (const value of required) {
+            if (!html.includes(value)) throw new Error(`Missing generated map-conditioned notation: ${value}`)
+          }
+          const heading = 'Map-conditioned model and hypothesis-local measurement functions'
+          const headingCount = html.split(heading).length - 1
+          if (headingCount !== 2) throw new Error(`Expected the map-conditioned heading in 2D and 3D; found ${headingCount}`)
+          for (const legacy of [
+            '>The three explicit cases</h4>',
+            '>LoS, one-bounce, and two-bounce measurement functions</h4>',
+            '=\\mathbf h_{h_{ts\\ell}}\\!\\left(\n      \\mathbf x_t,\\mathbf m_{j_1}'
+          ]) {
+            if (html.includes(legacy)) throw new Error(`Legacy local-only presentation remains: ${legacy}`)
+          }
+          console.log('Validated whole-map generative likelihood and hypothesis-local sparse factors in both formulations.')
+          NODE
+
+      - name: Check generated diff
+        run: git diff --check
+
+      - name: Commit corrected formulation
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add \
+            scripts/clarify-map-conditioned-radio-measurement.mjs \
+            scripts/add-radio-slam-problem-formulation.mjs \
+            scripts/upgrade-radio-slam-formulation-3d.mjs \
+            mpc-detection-to-bounce-count/index.html
+          if git diff --cached --quiet; then
+            echo "No generated changes to commit."
+          else
+            git commit -m "Clarify whole-map radio measurement likelihood"
+            git push origin HEAD:main
+          fi
