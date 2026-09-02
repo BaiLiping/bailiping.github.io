@@ -37,7 +37,7 @@ jobs:
           const path = 'scripts/add-radio-slam-problem-formulation.mjs'
           const lines = fs.readFileSync(path, 'utf8').split('\n')
           const index = lines.findIndex(line => line.trim().startsWith("'two bounce,") && line.includes('j_1'))
-          if (index >= 0) lines[index] = "  'two bounce, \\((2,j_1,j_2)\\)',"
+          if (index >= 0) lines[index] = "  'two bounce,',"
           fs.writeFileSync(path, lines.join('\n'))
           NODE
 
@@ -84,7 +84,7 @@ jobs:
             '\\mathbf h_0',
             '\\mathbf h_1',
             '\\mathbf h_2',
-            'two bounce, \\((2,j_1,j_2)\\)',
+            'two bounce,',
             'clutter / false alarm',
             '<h2><span class="no">06</span>Bistatic radio SLAM as GraphSLAM</h2>',
             'GraphSLAM does not assume that every physical device is onboard',
