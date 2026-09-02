@@ -29,10 +29,14 @@ jobs:
       - name: Validate patch syntax
         run: |
           node --check scripts/clarify-map-conditioned-radio-measurement.mjs
+          node --check scripts/normalize-map-conditioned-residual-notation.mjs
           node --check scripts/retain-2d-and-3d-radio-slam-formulations.mjs
 
       - name: Clarify complete-map and local-factor notation
         run: node scripts/clarify-map-conditioned-radio-measurement.mjs
+
+      - name: Normalize residual notation
+        run: node scripts/normalize-map-conditioned-residual-notation.mjs
 
       - name: Regenerate the 2D and 3D companion sections
         run: node scripts/retain-2d-and-3d-radio-slam-formulations.mjs
@@ -50,6 +54,8 @@ jobs:
             '\\mathbf h(\\mathbf x_t,\\mathcal M,h;',
             '\\mathcal H_{ts\\ell}(\\mathcal M)',
             '\\mathbf r^{\\mathrm{rad}}_{ts\\ell}(\\mathbf x_t,\\mathcal M,h)',
+            '\\mathbf r^{\\mathrm{rad}}_{ts\\ell}(\\mathbf x_t,\\mathcal M,h)\\sim\\mathcal N',
+            '\\mathbf r^{\\mathrm{rad}}_{ts\\ell}(\\mathbf x_t,\\mathcal M,a_{ts\\ell})',
             'Global model versus one factor',
             'Do not confuse global conditioning with factor adjacency'
           ]
@@ -62,7 +68,8 @@ jobs:
           for (const legacy of [
             '>The three explicit cases</h4>',
             '>LoS, one-bounce, and two-bounce measurement functions</h4>',
-            '=\\mathbf h_{h_{ts\\ell}}\\!\\left(\n      \\mathbf x_t,\\mathbf m_{j_1}'
+            '=\\mathbf h_{h_{ts\\ell}}\\!\\left(\n      \\mathbf x_t,\\mathbf m_{j_1}',
+            '\\mathbf r^{\\mathrm{rad}}_{ts\\ell}(h)'
           ]) {
             if (html.includes(legacy)) throw new Error(`Legacy local-only presentation remains: ${legacy}`)
           }
@@ -78,12 +85,13 @@ jobs:
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add \
             scripts/clarify-map-conditioned-radio-measurement.mjs \
+            scripts/normalize-map-conditioned-residual-notation.mjs \
             scripts/add-radio-slam-problem-formulation.mjs \
             scripts/upgrade-radio-slam-formulation-3d.mjs \
             mpc-detection-to-bounce-count/index.html
           if git diff --cached --quiet; then
             echo "No generated changes to commit."
           else
-            git commit -m "Clarify whole-map radio measurement likelihood"
+            git commit -m "Finalize whole-map radio measurement notation"
             git push origin HEAD:main
           fi
