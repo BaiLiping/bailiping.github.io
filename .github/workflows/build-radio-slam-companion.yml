@@ -144,8 +144,8 @@ jobs:
             if (count !== 1) throw new Error(`Expected exactly one id=${id}; found ${count}`)
           }
           for (const [link, expected] of [
-            ['href="#problem-formulation"', 1],
-            ['href="#bistatic-graphslam"', 1]
+            ['<a href="#problem-formulation">3D formulation</a>', 1],
+            ['<a href="#bistatic-graphslam">GraphSLAM bridge</a>', 1]
           ]) {
             const count = html.split(link).length - 1
             if (count !== expected) throw new Error(`Expected ${expected} occurrence of ${link}; found ${count}`)
