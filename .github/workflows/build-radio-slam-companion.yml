@@ -8,6 +8,7 @@ on:
       - scripts/enhance-radio-slam-companion.mjs
       - scripts/add-radio-slam-problem-formulation.mjs
       - scripts/upgrade-radio-slam-formulation-3d.mjs
+      - scripts/retain-2d-and-3d-radio-slam-formulations.mjs
       - mpc-detection-to-bounce-count/companion.css
       - mpc-detection-to-bounce-count/index.html
       - .github/workflows/build-radio-slam-companion.yml
@@ -31,45 +32,63 @@ jobs:
         with:
           node-version: '24'
 
-      - name: Normalize problem-formulation validator
+      - name: Normalize dual-formulation generator
         run: |
           node <<'NODE'
           const fs = require('node:fs')
-          const path = 'scripts/add-radio-slam-problem-formulation.mjs'
-          const lines = fs.readFileSync(path, 'utf8').split('\n')
-          const index = lines.findIndex(line => line.trim().startsWith("'two bounce,") && line.includes('j_1'))
-          if (index >= 0) lines[index] = "  'two bounce,',"
-          fs.writeFileSync(path, lines.join('\n'))
+          const path = 'scripts/retain-2d-and-3d-radio-slam-formulations.mjs'
+          let source = fs.readFileSync(path, 'utf8')
+          const startMarker = 'function renumberGraphSlamSection(document) {'
+          const endMarker = '\n\nconst twoD = canonicalTwoDSection()'
+          const start = source.indexOf(startMarker)
+          const end = source.indexOf(endMarker, start)
+          if (start < 0 || end < 0) throw new Error('Could not isolate graph-section renumbering function')
+          const replacement = `function renumberGraphSlamSection(document) {
+            const sectionIndex = document.indexOf('<section class="sec companion-section" id="bistatic-graphslam">')
+            if (sectionIndex < 0) throw new Error('Could not find the GraphSLAM section for renumbering')
+            const markerIndex = document.lastIndexOf('<!-- ============', sectionIndex)
+            const sectionEnd = document.indexOf('</section>', sectionIndex)
+            if (markerIndex < 0 || sectionEnd < 0) throw new Error('Could not isolate the GraphSLAM section for renumbering')
+            const endIndex = sectionEnd + '</section>'.length
+            let graph = document.slice(markerIndex, endIndex)
+            graph = graph.replace(
+              /<!-- ============ (?:05|06|07) bistatic radio to GraphSLAM ============ -->/,
+              '<!-- ============ 07 bistatic radio to GraphSLAM ============ -->'
+            )
+            graph = graph.replace(
+              /<h2><span class="no">(?:05|06|07)<\\/span>Bistatic radio SLAM as GraphSLAM<\\/h2>/,
+              '<h2><span class="no">07</span>Bistatic radio SLAM as GraphSLAM</h2>'
+            )
+            for (let i = 1; i <= 4; i += 1) {
+              for (const oldSection of [5, 6, 7]) {
+                graph = graph.replaceAll(
+                  \`<span>\${oldSection}.\${i}</span>\`,
+                  \`<span>7.\${i}</span>\`
+                )
+                graph = graph.replaceAll(
+                  \`<span class="no">\${oldSection}.\${i}</span>\`,
+                  \`<span class="no">7.\${i}</span>\`
+                )
+              }
+            }
+            return document.slice(0, markerIndex) + graph + document.slice(endIndex)
+          }`
+          source = source.slice(0, start) + replacement + source.slice(end)
+          fs.writeFileSync(path, source)
           NODE
 
-      - name: Validate companion-page patch syntax
+      - name: Validate companion-page generator syntax
         run: |
           node --check scripts/enhance-radio-slam-companion.mjs
           node --check scripts/add-radio-slam-problem-formulation.mjs
           node --check scripts/upgrade-radio-slam-formulation-3d.mjs
+          node --check scripts/retain-2d-and-3d-radio-slam-formulations.mjs
 
       - name: Apply detailed companion-page revision
         run: node scripts/enhance-radio-slam-companion.mjs
 
-      - name: Add unified radio SLAM problem formulation
-        run: node scripts/add-radio-slam-problem-formulation.mjs
-
-      - name: Upgrade the formal model and factors to 3D
-        run: node scripts/upgrade-radio-slam-formulation-3d.mjs
-
-      - name: Normalize generated companion navigation
-        run: |
-          node <<'NODE'
-          const fs = require('node:fs')
-          const path = 'mpc-detection-to-bounce-count/index.html'
-          let html = fs.readFileSync(path, 'utf8')
-          const graphLink = '    <a href="#bistatic-graphslam">GraphSLAM bridge</a>\n'
-          while (html.split(graphLink).length - 1 > 1) {
-            const first = html.indexOf(graphLink)
-            html = html.slice(0, first) + html.slice(first + graphLink.length)
-          }
-          fs.writeFileSync(path, html)
-          NODE
+      - name: Generate simplified 2D and full 3D formulations
+        run: node scripts/retain-2d-and-3d-radio-slam-formulations.mjs
 
       - name: Validate generated page
         run: |
@@ -85,12 +104,19 @@ jobs:
             'id="angle-frames"',
             'id="measurement-noise"',
             'id="model-boundary"',
-            'id="problem-formulation"',
-            'data-formulation-dimension="3d"',
-            'id="formulation-state"',
-            'id="formulation-hypothesis"',
-            'id="formulation-measurement"',
-            'id="formulation-map"',
+            'id="problem-formulation-2d" data-formulation-dimension="2d-simplified"',
+            'id="formulation-2d-state"',
+            'id="formulation-2d-hypothesis"',
+            'id="formulation-2d-measurement"',
+            'id="formulation-2d-map"',
+            'A simplified 2D radio-SLAM problem formulation',
+            'The full 3D formulation in Section 06 is the model intended for implementation',
+            'id="problem-formulation-3d" data-formulation-dimension="3d"',
+            'id="formulation-3d-state"',
+            'id="formulation-3d-hypothesis"',
+            'id="formulation-3d-measurement"',
+            'id="formulation-3d-map"',
+            'The full 3D radio-SLAM problem formulation',
             'id="bistatic-graphslam"',
             'id="factor-language"',
             'id="bistatic-factor"',
@@ -98,8 +124,6 @@ jobs:
             'id="va-factor"',
             'data-va-factor-dimension="3d"',
             'id="radio-graph-objective"',
-            'A complete 3D radio-SLAM problem formulation',
-            'Recommended map state',
             '{}^{W}\\mathbf T_{U_t}',
             '\\in SE(3)\\times\\mathbb R',
             '\\boldsymbol\\pi_j=(\\mathbf n_j,d_j)\\in\\mathbb S^2\\times\\mathbb R',
@@ -112,7 +136,7 @@ jobs:
             '\\mathbf h_2',
             'two bounce,',
             'clutter / false alarm',
-            '<h2><span class="no">06</span>Bistatic radio SLAM as GraphSLAM</h2>',
+            '<h2><span class="no">07</span>Bistatic radio SLAM as GraphSLAM</h2>',
             'GraphSLAM does not assume that every physical device is onboard',
             'L_{ts\\ell}=c\\big(\\tau_{ts\\ell}-\\delta_{ts}\\big)',
             '\\(a=0\\) uses a clutter likelihood',
@@ -122,17 +146,23 @@ jobs:
           for (const value of required) {
             if (!html.includes(value)) throw new Error(`Missing required generated content: ${value}`)
           }
+
           const uniqueIds = [
             'notation',
             'indices-and-states',
             'angle-frames',
             'measurement-noise',
             'model-boundary',
-            'problem-formulation',
-            'formulation-state',
-            'formulation-hypothesis',
-            'formulation-measurement',
-            'formulation-map',
+            'problem-formulation-2d',
+            'formulation-2d-state',
+            'formulation-2d-hypothesis',
+            'formulation-2d-measurement',
+            'formulation-2d-map',
+            'problem-formulation-3d',
+            'formulation-3d-state',
+            'formulation-3d-hypothesis',
+            'formulation-3d-measurement',
+            'formulation-3d-map',
             'bistatic-graphslam',
             'factor-language',
             'bistatic-factor',
@@ -143,13 +173,53 @@ jobs:
             const count = html.split(`id="${id}"`).length - 1
             if (count !== 1) throw new Error(`Expected exactly one id=${id}; found ${count}`)
           }
+
           for (const [link, expected] of [
-            ['<a href="#problem-formulation">3D formulation</a>', 1],
+            ['<a href="#problem-formulation-2d">Simplified 2D</a>', 1],
+            ['<a href="#problem-formulation-3d">Full 3D</a>', 1],
             ['<a href="#bistatic-graphslam">GraphSLAM bridge</a>', 1]
           ]) {
             const count = html.split(link).length - 1
             if (count !== expected) throw new Error(`Expected ${expected} occurrence of ${link}; found ${count}`)
           }
+
+          if (html.includes('id="problem-formulation"')) throw new Error('Legacy unsuffixed formulation id remains')
+          if (html.includes('href="#problem-formulation"')) throw new Error('Legacy unsuffixed formulation link remains')
+
+          const twoDStart = html.indexOf('data-formulation-dimension="2d-simplified"')
+          const threeDMarker = html.indexOf('<!-- ============ 06 full 3D radio-SLAM problem formulation ============ -->', twoDStart)
+          if (twoDStart < 0 || threeDMarker < 0) throw new Error('Could not isolate the simplified 2D section')
+          const twoD = html.slice(twoDStart, threeDMarker)
+          for (const value of [
+            '\\mathbb R^2\\times\\mathbb S^1\\times\\mathbb R',
+            'Physical wall state in 2D',
+            'id="formulation-2d-state"',
+            '<span class="no">5.4</span>'
+          ]) {
+            if (!twoD.includes(value)) throw new Error(`Simplified 2D formulation is missing: ${value}`)
+          }
+
+          const threeDStart = html.indexOf('data-formulation-dimension="3d"')
+          const graphMarker = html.indexOf('<!-- ============ 07 bistatic radio to GraphSLAM ============ -->', threeDStart)
+          if (threeDStart < 0 || graphMarker < 0) throw new Error('Could not isolate the full 3D section')
+          const threeD = html.slice(threeDStart, graphMarker)
+          for (const value of [
+            '<span class="no">6.1</span>',
+            '<span class="no">6.4</span>',
+            '{}^{W}\\mathbf T_{U_t}',
+            '\\mathbb S^2'
+          ]) {
+            if (!threeD.includes(value)) throw new Error(`Full 3D formulation is missing: ${value}`)
+          }
+          for (const value of [
+            'planar \\(SE(2)\\) model',
+            '\\mathbb R^2\\times\\mathbb S^1',
+            'Physical wall state in 2D',
+            '\\mathbf m^{\\mathrm{VA}}_{sj}=\\mathbf v_{sj}\\in\\mathbb R^2'
+          ]) {
+            if (threeD.includes(value)) throw new Error(`Legacy 2D expression remains inside the 3D section: ${value}`)
+          }
+
           const forbidden = [
             'a <strong>delay</strong> (a path length)',
             'These 2D checks assume synchronized delay and globally oriented AoA/AoD.',
@@ -157,29 +227,19 @@ jobs:
             'AoD ψ is available in the global frame.',
             'Paths with the same travel distance span ~20&nbsp;dB',
             'half of all matched pairs differ by more than 3&nbsp;dB',
-            '<h2><span class="no">05</span>Bistatic radio SLAM as GraphSLAM</h2>'
+            '<h2><span class="no">05</span>Bistatic radio SLAM as GraphSLAM</h2>',
+            '<h2><span class="no">06</span>Bistatic radio SLAM as GraphSLAM</h2>'
           ]
           for (const value of forbidden) {
             if (html.includes(value)) throw new Error(`Legacy wording remains: ${value}`)
           }
-          const start = html.indexOf('data-formulation-dimension="3d"')
-          const end = html.indexOf('<!-- ============ 06 bistatic radio to GraphSLAM ============ -->', start)
-          if (start < 0 || end < 0) throw new Error('Could not isolate the 3D problem-formulation section')
-          const formulation = html.slice(start, end)
-          for (const value of [
-            'planar \\(SE(2)\\) model',
-            '\\mathbb R^2\\times\\mathbb S^1',
-            'Physical wall state in 2D',
-            '\\mathbf m^{\\mathrm{VA}}_{sj}=\\mathbf v_{sj}\\in\\mathbb R^2'
-          ]) {
-            if (formulation.includes(value)) throw new Error(`Legacy 2D formulation remains: ${value}`)
-          }
+
           if (html.includes('\u0000')) throw new Error('Generated page contains a null byte')
           const css = fs.readFileSync('mpc-detection-to-bounce-count/companion.css', 'utf8')
           for (const selector of ['.companion-math-grid', '.factor-bridge', '.reference-list']) {
             if (!css.includes(selector)) throw new Error(`Missing companion style: ${selector}`)
           }
-          console.log('Validated 3D SE(3) states, spherical directions, LoS/one-/two-bounce factors, hybrid MAP, and GraphSLAM bridge.')
+          console.log('Validated the simplified 2D teaching model, full 3D SE(3) model, spherical directions, multipath hypotheses, and GraphSLAM bridge.')
           NODE
 
       - name: Check whitespace and generated diff
@@ -196,11 +256,12 @@ jobs:
             scripts/enhance-radio-slam-companion.mjs \
             scripts/add-radio-slam-problem-formulation.mjs \
             scripts/upgrade-radio-slam-formulation-3d.mjs \
+            scripts/retain-2d-and-3d-radio-slam-formulations.mjs \
             mpc-detection-to-bounce-count/companion.css \
             mpc-detection-to-bounce-count/index.html
           if git diff --cached --quiet; then
             echo "No generated changes to commit."
           else
-            git commit -m "Generate 3D radio SLAM problem formulation"
+            git commit -m "Keep simplified 2D and full 3D radio SLAM formulations"
             git push origin HEAD:"$TARGET_BRANCH"
           fi
