@@ -23,6 +23,7 @@ GitHub Pages site for `bailiping.com`.
 - `/mpc-detection-to-bounce-count/` is the interactive note for converting resolved MPC delay, AoA, AoD, and path-loss evidence into bounce-count hypotheses under three map/pose knowledge regimes.
 - `/mpc-detection-to-bounce-count-slides/` is the 11-slide Bento presentation of that note, with one consolidated concept/live pair for each map/pose regime and printable static fallbacks.
 - `/variational-inference/` is a 15-slide interactive Bento deck on ELBOs, mean-field inference, coordinate ascent, and stochastic gradients, with a deterministic step-by-step EM experiment.
+- `/advanced-state-representations/` is a 24-slide interactive Bento deck on manifold-valued states, Lie-group optimization, splines, and sparse continuous-time Gaussian processes, with three deterministic live labs.
 
 ## Edit sale items
 
