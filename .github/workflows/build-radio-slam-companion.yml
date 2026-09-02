@@ -57,6 +57,20 @@ jobs:
       - name: Upgrade the formal model and factors to 3D
         run: node scripts/upgrade-radio-slam-formulation-3d.mjs
 
+      - name: Normalize generated companion navigation
+        run: |
+          node <<'NODE'
+          const fs = require('node:fs')
+          const path = 'mpc-detection-to-bounce-count/index.html'
+          let html = fs.readFileSync(path, 'utf8')
+          const graphLink = '    <a href="#bistatic-graphslam">GraphSLAM bridge</a>\n'
+          while (html.split(graphLink).length - 1 > 1) {
+            const first = html.indexOf(graphLink)
+            html = html.slice(0, first) + html.slice(first + graphLink.length)
+          }
+          fs.writeFileSync(path, html)
+          NODE
+
       - name: Validate generated page
         run: |
           node <<'NODE'
@@ -128,6 +142,13 @@ jobs:
           for (const id of uniqueIds) {
             const count = html.split(`id="${id}"`).length - 1
             if (count !== 1) throw new Error(`Expected exactly one id=${id}; found ${count}`)
+          }
+          for (const [link, expected] of [
+            ['href="#problem-formulation"', 1],
+            ['href="#bistatic-graphslam"', 1]
+          ]) {
+            const count = html.split(link).length - 1
+            if (count !== expected) throw new Error(`Expected ${expected} occurrence of ${link}; found ${count}`)
           }
           const forbidden = [
             'a <strong>delay</strong> (a path length)',
