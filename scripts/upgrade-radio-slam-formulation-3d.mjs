@@ -353,7 +353,7 @@ const formulation3D = String.raw`
       g^{\mathrm{dB}}_{ts\ell}-\widehat g_h^{\mathrm{dB}}
       \end{bmatrix},
       \qquad
-      \mathbf r^{\mathrm{rad}}_{ts\ell}(h)\sim\mathcal N(\mathbf0,\boldsymbol\Sigma_h).
+      \mathbf r^{\mathrm{rad}}_{ts\ell}(\mathbf x_t,\mathcal M,h)\sim\mathcal N(\mathbf0,\boldsymbol\Sigma_h).
       \]
     </div>
     <p class="eq-note">With gain included this is a six-dimensional local residual: one range-equivalent delay component, two AoA tangent coordinates, two AoD tangent coordinates, and one gain component. The covariance \(\boldsymbol\Sigma_h\) must use the same coordinates and should preserve delay–direction correlations provided by the channel estimator.</p>
@@ -399,7 +399,7 @@ const formulation3D = String.raw`
       +\lambda_{\mathrm{mot}}J_{\mathrm{mot}}(\mathcal X)
       +\sum_{t,s,\ell:\,a_{ts\ell}\ne0}
       \rho\!\left(
-      \|\mathbf r^{\mathrm{rad}}_{ts\ell}(a_{ts\ell})\|^2_{\boldsymbol\Sigma^{-1}_{a_{ts\ell}}}
+      \|\mathbf r^{\mathrm{rad}}_{ts\ell}(\mathbf x_t,\mathcal M,a_{ts\ell})\|^2_{\boldsymbol\Sigma^{-1}_{a_{ts\ell}}}
       \right).
       \]
     </div>
@@ -440,7 +440,7 @@ const formulation3D = String.raw`
       +\sum_{h\in\mathcal H_{ts\ell}(\mathcal M)}
       w_h p_{\mathrm D}(h)\,
       \mathcal N\!\left(
-      \mathbf r^{\mathrm{rad}}_{ts\ell}(h);\mathbf0,\boldsymbol\Sigma_h
+      \mathbf r^{\mathrm{rad}}_{ts\ell}(\mathbf x_t,\mathcal M,h);\mathbf0,\boldsymbol\Sigma_h
       \right).
       \]
     </div>
