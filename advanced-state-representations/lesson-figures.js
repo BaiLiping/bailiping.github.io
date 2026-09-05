@@ -10,7 +10,7 @@ const text=(x,y,s,c=C.ink,size=14,anchor='start')=>`<text x="${x}" y="${y}" fill
 const line=(x,y,X,Y,c=C.rule,w=1,dash='')=>`<line x1="${x}" y1="${y}" x2="${X}" y2="${Y}" stroke="${c}" stroke-width="${w}" ${dash?`stroke-dasharray="${dash}"`:''}/>`;
 const dot=(x,y,c=C.teal,r=5)=>`<circle cx="${x}" cy="${y}" r="${r}" fill="${c}" stroke="white" stroke-width="1.5"/>`;
 const path=(pts,c=C.teal,w=3,dash='')=>`<polyline points="${pts.map(p=>p.join(',')).join(' ')}" fill="none" stroke="${c}" stroke-width="${w}" stroke-linejoin="round" ${dash?`stroke-dasharray="${dash}"`:''}/>`;
-function arrow(a,b,c=C.teal,w=3){const d=Math.atan2(b[1]-a[1],b[0]-a[0]),s=8;return line(...a,...b,c,w)+`<path d="M${b} L${[b[0]-s*Math.cos(d-.45),b[1]-s*Math.sin(d-.45)]} L${[b[0]-s*Math.cos(d+.45),b[1]-s*Math.sin(d+.45)]} Z" fill="${c}"/>`;}
+function arrow(a,b,c=C.teal,w=3){const length=Math.hypot(b[0]-a[0],b[1]-a[1]);if(length<1e-9)return '';const d=Math.atan2(b[1]-a[1],b[0]-a[0]),s=Math.min(8,.35*length);return line(...a,...b,c,w)+`<path d="M${b} L${[b[0]-s*Math.cos(d-.45),b[1]-s*Math.sin(d-.45)]} L${[b[0]-s*Math.cos(d+.45),b[1]-s*Math.sin(d+.45)]} Z" fill="${c}"/>`;}
 function plot(x,y,w,h,x0,x1,y0,y1,equal=false){if(equal){const sy=h/(y1-y0),sx=w/(x1-x0),s=Math.min(sx,sy);x+=(w-s*(x1-x0))/2;y+=(h-s*(y1-y0))/2;w=s*(x1-x0);h=s*(y1-y0);}const P=p=>[x+(p[0]-x0)*w/(x1-x0),y+h-(p[1]-y0)*h/(y1-y0)];return {P,x,y,w,h,x0,x1,y0,y1};}
 function axes(a,xname='x (m)',yname='y (m)',ticks=4){let out='';for(let k=0;k<=ticks;k++){const x=a.x0+(a.x1-a.x0)*k/ticks,y=a.y0+(a.y1-a.y0)*k/ticks,[X]=a.P([x,0]),[,Y]=a.P([0,y]);out+=line(X,a.y,X,a.y+a.h)+line(a.x,Y,a.x+a.w,Y)+text(X,a.y+a.h+17,fmt(x,1),C.muted,11,'middle')+text(a.x-8,Y+4,fmt(y,1),C.muted,11,'end');}return out+text(a.x+a.w/2,a.y+a.h+34,xname,C.muted,12,'middle')+text(a.x,a.y-8,yname,C.muted,12);}
 function frame(a,T,c=C.teal,length=.5,dash=''){const p=[T[0][2],T[1][2]],o=a.P(p),x=a.P(M.apply2(T,[length,0])),y=a.P(M.apply2(T,[0,length]));return dot(...o,c,3)+arrow(o,x,c,3)+line(...o,...y,c,3,dash)+dot(...y,c,2);}
@@ -35,7 +35,7 @@ if(demo==='tangent'){
  metrics=[['exact determinant',fmt(M.valid2(r.exact).det)],['shortcut determinant',fmt(M.valid2(r.naive).det)],['shortcut orthogonality error',fmt(M.valid2(r.naive).error)],['shortcut angle bias (deg)',fmt((r.naiveAngle-r.exactAngle)/rad)]];
  caption='Use smaller steps or more updates. Each shortcut multiplies length by sqrt(1 + delta²); exact group composition preserves a unit orthonormal frame.';title='Repeated rotations and loss of group constraints';
 }else if(demo==='adjoint'){
- const r=M.sides(s.theta*rad,s.tx,s.delta*rad),a=plot(65,45,490,265,-2,4,-2,3.2,true),P=a.P;
+ const r=M.sides(s.theta*rad,s.tx,s.delta*rad),a=plot(65,45,490,265,-2,4,-2.5,3.5,true),P=a.P;
  b=axes(a)+frame(a,M.pose(),C.blue,.7)+frame(a,r.T,C.muted,.65)+frame(a,r.wrong,C.coral,.7)+frame(a,r.left,C.amber,.7,'3 2')+frame(a,r.right,C.teal,.7);
  b+=text(10,18,'GRAY: start   TEAL / AMBER: same pose   CORAL: wrong side, unchanged coordinates',C.muted,12)+text(545,98,'Right increment (body)',C.teal,16)+text(545,124,r.xi.map(v=>fmt(v,2)).join(', '),C.ink,16)+text(545,180,'Left increment (world)',C.amber,16)+text(545,206,r.eta.map(v=>fmt(v,2)).join(', '),C.ink,16);
  metrics=[['correct side-switch error',fmt(r.error)],['unchanged-vector error',fmt(r.wrongError)]];
