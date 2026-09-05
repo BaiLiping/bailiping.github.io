@@ -27,7 +27,7 @@ function comparison(){
 }
 function summary(g){
  const els=heading(g,g.name,g.question+'  Five principal routes, with their governing equations.');
- g.rows.forEach(([name,eq,why],i)=>{const y=184+i*78;els.push(rect(`summary-card-${i}`,72,y,1136,72,palette.panel,palette.rule,10),rect(`summary-line-${i}`,87,y+18,3,35,g.color,'none',1),text(`summary-name-${i}`,104,y+14,319,46,name,{fontSize:16,fontWeight:700,color:g.color,lineHeight:1.25}),text(`summary-equation-${i}`,442,y+7,741,38,math(eq),{fontSize:18,align:'center',valign:'middle'}),text(`summary-reading-${i}`,451,y+48,724,19,why,{fontSize:12.7,color:palette.muted,align:'center'}));});
+ g.rows.forEach(([name,eq,why],i)=>{const y=184+i*78;els.push(rect(`summary-card-${i}`,72,y,1136,72,palette.panel,palette.rule,10),rect(`summary-line-${i}`,87,y+18,3,35,g.color,'none',1),text(`summary-name-${i}`,104,y+14,319,46,name,{fontSize:16,fontWeight:700,color:g.color,lineHeight:1.25}),text(`summary-equation-${i}`,442,y+7,741,38,math(R`\textstyle `+eq),{fontSize:18,align:'center',valign:'middle'}),text(`summary-reading-${i}`,451,y+48,724,19,why,{fontSize:12.7,color:palette.muted,align:'center'}));});
  const next=g.id==='numerical'?'implementations':' '+g.id+'-lab';
  els.push(rect('summary-demo-chip',73,586,184,26,g.soft,'none',7),text('summary-demo-link',87,590,157,18,'EXPLORE THE DEMO ↗',{fontSize:10,fontFamily:mono,fontWeight:800,color:g.color,link:next.trim()}),text('summary-demo',275,584,920,35,g.demo,{fontSize:13.1,lineHeight:1.3}),text('summary-limit',79,626,1120,33,g.boundary,{fontSize:11.7,color:palette.muted,lineHeight:1.26}));
  return els;
@@ -45,11 +45,17 @@ export function applyVisualPolish(slides){
   if(s.id.startsWith('group-'))s.elements=[...summary(group),...footer];
   s.background=palette.paper;
   s.elements.unshift(rect('polish-progress-track',0,0,1280,4,'#E1E8DF','none',0),rect('polish-progress-line',0,0,1280*(index+1)/slides.length,4,active?.color||groups[0].color,'none',0));
+  const fitted={
+   overview:{'hero-result-eq':{y:118,h:84,fontSize:24}},
+   mse:{'mse-left-body':{fontSize:15,lineHeight:1.3},'mse-right-body':{h:150}},
+   boundaries:{'boundaries-panel-3-body':{lineHeight:1.35},'boundaries-panel-4-body':{lineHeight:1.35}}
+  }[s.id]||{};
   for(const e of s.elements){
+   if(fitted[e.id])Object.assign(e,fitted[e.id]);
    if(e.type==='shape'&&e.fill==='#F7F5EF')e.fill=palette.paper;
+   if(e.type==='text'&&['atlas-foot','cmp-context'].includes(e.id))e.html=e.html.replaceAll('\n','<br>');
    if(e.type==='text'&&e.id==='guide-toc'){e.fontSize=10;e.fontWeight=750;}
   }
-  // The context label sits outside every existing heading's authored bounds.
   if(active&&!s.id.startsWith('group-'))s.elements.push(text('polish-group-tag',1030,38,178,19,`${active.n} / ${active.short.toUpperCase()}`,{fontSize:9.5,fontFamily:mono,color:active.color,fontWeight:800,align:'right'}));
  });
 }
