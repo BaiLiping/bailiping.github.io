@@ -1,0 +1,65 @@
+name: Apply and validate mathematical audit corrections
+
+on:
+  push:
+    branches: [fix/site-math-audit-2026-09-05]
+    paths:
+      - .github/workflows/apply-math-audit.yml
+      - scripts/apply-math-audit.py
+      - tests/math-audit.test.cjs
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: math-audit-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  correct-and-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.ref }}
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - name: Apply narrowly scoped audit corrections
+        run: python scripts/apply-math-audit.py
+      - name: Regenerate the affected slide deck and 2D/3D sections
+        run: |
+          node advanced-state-representations/build.mjs
+          node scripts/retain-2d-and-3d-radio-slam-formulations.mjs
+      - name: Test mathematics, content, and the existing teaching model
+        run: |
+          node --test tests/math-audit.test.cjs
+          node advanced-state-representations/test-model.cjs
+          node --check advanced-state-representations/bento-deck.mjs
+          node --check advanced-state-representations/live/app.js
+          node --check scripts/enhance-radio-slam-companion.mjs
+          node --check scripts/add-radio-slam-problem-formulation.mjs
+          node --check scripts/upgrade-radio-slam-formulation-3d.mjs
+          git diff --check
+      - name: Verify corrections are repeatable
+        run: |
+          git diff --binary > /tmp/math-audit-first.diff
+          python scripts/apply-math-audit.py
+          node advanced-state-representations/build.mjs
+          node scripts/retain-2d-and-3d-radio-slam-formulations.mjs
+          git diff --binary > /tmp/math-audit-second.diff
+          cmp /tmp/math-audit-first.diff /tmp/math-audit-second.diff
+      - name: Commit tested source and deployed artifacts
+        env:
+          TARGET_BRANCH: ${{ github.ref_name }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add bp-vs-pmbm/index.html jvs-slam/index.html frame-registration/index.html differentiable-ray-tracing/index.html graph-slam/index.html sampling-playground/index.html mpc-detection-to-bounce-count/index.html scripts/enhance-radio-slam-companion.mjs scripts/add-radio-slam-problem-formulation.mjs scripts/upgrade-radio-slam-formulation-3d.mjs advanced-state-representations/bento-deck.mjs advanced-state-representations/index.html advanced-state-representations/live/app.js advanced-state-representations/model.js
+          if ! git diff --cached --quiet; then
+            git commit -m "Correct audited probability identities, geometry, and inference assumptions"
+            git push origin HEAD:"$TARGET_BRANCH"
+          fi
+          git log -1 --format='%H %s'
