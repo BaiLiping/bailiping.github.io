@@ -71,6 +71,13 @@ jobs:
             git push origin HEAD:"$TARGET_BRANCH"
           fi
           git log -1 --format='%H %s'
+      - name: Package the scoped browser preview for QA
+        if: always()
+        run: |
+          mkdir -p asr-qa/site/assets
+          cp -R advanced-state-representations asr-qa/site/
+          cp assets/bento-inline-* assets/mathjax-dynamic.js asr-qa/site/assets/
+          if [ -f /tmp/asr-mathjax.js ]; then cp /tmp/asr-mathjax.js asr-qa/site/mathjax.js; fi
       - name: Retain numerical results and browser screenshots
         if: always()
         uses: actions/upload-artifact@v4
