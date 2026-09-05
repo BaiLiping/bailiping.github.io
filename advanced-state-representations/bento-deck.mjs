@@ -1,9 +1,22 @@
 // Canonical entry point retained for existing build commands.
-// Content lives in lesson-deck.mjs; this adapter makes links native to Bento,
-// whose text sanitizer intentionally removes ordinary HTML anchor elements.
+// Content lives in lesson-deck.mjs. This boundary encodes TeX safely for HTML
+// and makes links native to Bento's intentionally restricted text renderer.
 import { deck as authoredDeck, inlineLiveMap, references } from './lesson-deck.mjs';
 export const deck = structuredClone(authoredDeck);
 export { inlineLiveMap, references };
+
+// For example, raw TeX "0<a<h" is otherwise misread as an HTML start tag.
+// Both the presentation and study companion consume this encoded document.
+for (const slide of deck.slides) {
+  for (const element of slide.elements) {
+    if (typeof element.html !== 'string') continue;
+    element.html = element.html.replace(
+      /(<span class="math-tex[^\"]*">)([\s\S]*?)(<\/span>)/g,
+      (_, open, tex, close) => open + tex.replaceAll('&', '&amp;')
+        .replaceAll('<', '&lt;').replaceAll('>', '&gt;') + close,
+    );
+  }
+}
 
 const overview = deck.slides.find(s => s.id === 'overview');
 for (const e of overview.elements) {
