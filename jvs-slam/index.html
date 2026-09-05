@@ -238,22 +238,22 @@ footer a{color:var(--ink-soft)}
       <tr><td>association</td><td class="cvc">one-shot, local evidence (nearest neighbour / best descriptor); ties broken arbitrarily</td><td class="jvc">multi-scan hypotheses kept as a random variable A₁:ₖ; global consistency arbitrates</td></tr>
       <tr><td>map size</td><td class="cvc">heuristic map management (spawn / delete rules) outside the estimator</td><td class="jvc">map is a random finite set — landmark count is itself estimated (p<sub>D</sub>, clutter, birth in the likelihood)</td></tr>
       <tr><td>wrong match</td><td class="cvc">becomes a confident constraint; optimizer warps the map to satisfy it; residual gets averaged away</td><td class="jvc">survives as a low-weight hypothesis (here w≈0.09) and can be revived or killed by later evidence</td></tr>
-      <tr><td>uncertainty</td><td class="cvc">covariance of <i>one</i> linearization point — blind to association ambiguity</td><td class="jvc">mixture over globally coherent explanations — calibrated, multi-modal</td></tr>
+      <tr><td>uncertainty</td><td class="cvc">covariance of <i>one</i> linearization point — blind to association ambiguity</td><td class="jvc">mixture over globally coherent explanations — multi-modal; calibration depends on the model</td></tr>
       <tr><td>failure mode</td><td class="cvc">confidently wrong; recovery requires outlier surgery (switchable constraints, RANSAC, …)</td><td class="jvc">gracefully uncertain; weights shift as evidence arrives</td></tr>
     </tbody>
   </table>
-  </div><div class="figcap"><b>The one-line summary.</b> The conventional answer is not absent from JVS-SLAM — it is <i>inside</i> it, as hypothesis H₂, carrying the 9% it deserves.</div></div>
+  </div><div class="figcap"><b>The one-line summary.</b> The conventional answer is not absent from JVS-SLAM — it is <i>inside</i> it, as hypothesis H₂, carrying an illustrative weight of 9%.</div></div>
 </section>
 
 <!-- ================= PAPER ================= -->
 <section class="sec" id="paper">
   <h2><span class="no">05</span>Where this lives in the paper</h2>
-  <p class="lede">JVS-SLAM maintains the joint density over the trajectory (a vector), the map (a labeled random finite set, so the number of landmarks is uncertain too), and the data associations:</p>
+  <p class="lede">JVS-SLAM maintains the joint density over the trajectory (a vector), the map (a labeled random finite set, so the number of landmarks is uncertain too), and the data associations. Summing over association histories gives the marginal trajectory–map posterior:</p>
   <div class="eq">
-    <i>p</i>( <i>X</i><sub>0:k</sub>, <i>M</i>, <i>A</i><sub>1:k</sub> | <i>Z</i><sub>1:k</sub> )
+    <i>p</i>( <i>X</i><sub>0:k</sub>, <i>M</i> | <i>Z</i><sub>1:k</sub> )
     &nbsp;=&nbsp; Σ<sub>A</sub> <i>w</i><sup>(A)</sup> · <i>p</i>( <i>X</i><sub>0:k</sub>, <i>M</i> | <i>A</i>, <i>Z</i><sub>1:k</sub> )
   </div>
-  <p class="lede">Each association hypothesis <i>A</i> conditions a smooth estimation problem solved by nonlinear least squares (the familiar back-end); its weight <i>w</i><sup>(A)</sup> comes from Bayes’ rule and folds in the optimized fit <em>and</em> the set-likelihood terms — detection probability p<sub>D</sub>, clutter intensity, landmark birth — that conventional pipelines relegate to front-end heuristics. In the animation: step 6 is the “population of hypotheses,” step 7 is the per-hypothesis least squares, step 8 is the reweighting. That is the whole idea: <strong>the front-end’s decisions become random variables of the back-end’s posterior.</strong></p>
+  <p class="lede">Here <i>w</i><sup>(A)</sup> = <i>p</i>(<i>A</i><sub>1:k</sub> = <i>A</i> | <i>Z</i><sub>1:k</sub>), and the weights sum to one. Each association hypothesis <i>A</i> conditions a smooth estimation problem solved by nonlinear least squares (the familiar back-end); its weight <i>w</i><sup>(A)</sup> comes from Bayes’ rule and folds in the optimized fit <em>and</em> the set-likelihood terms — detection probability p<sub>D</sub>, clutter intensity, landmark birth — that conventional pipelines relegate to front-end heuristics. In the animation: step 6 is the “population of hypotheses,” step 7 is the per-hypothesis least squares, step 8 is the reweighting. That is the whole idea: <strong>the front-end’s decisions become random variables of the back-end’s posterior.</strong></p>
 </section>
 
 <footer>

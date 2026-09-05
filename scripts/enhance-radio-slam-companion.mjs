@@ -114,7 +114,7 @@ const notationSection = String.raw`
         <tr><td>\(\ell=1,\ldots,n_{ts}\)</td><td>MPC index</td><td>One resolved component in the measurement set at time \(t\) from BS \(s\). It is not automatically a persistent path label.</td></tr>
         <tr><td>\(j=1,\ldots,J\)</td><td>map index</td><td>A persistent scatterer, wall, virtual anchor, or reflector-chain state.</td></tr>
         <tr><td>\(q\)</td><td>path class</td><td>LoS, one-bounce, two-bounce, or another explicitly modeled propagation family.</td></tr>
-        <tr><td>\(a_{ts\ell}\)</td><td>association</td><td>The map entity assigned to MPC \(\ell\); \(a=0\) denotes clutter or no accepted assignment.</td></tr>
+        <tr><td>\(a_{ts\ell}\)</td><td>association</td><td>The complete path assigned to MPC \(\ell\): LoS or an ordered wall chain; \(a=0\) denotes clutter.</td></tr>
         <tr><td>\(\mathbf B_s=(\mathbf b_s,\theta_s)\)</td><td>known or calibrated</td><td>BS position and array heading. Promote it to a graph variable only when uncertain.</td></tr>
         <tr><td>\(\mathbf T_t=(\mathbf p_t,\theta_t)\)</td><td>unknown UE pose</td><td>UE position and orientation in 2D; use an \(SE(3)\) pose in 3D.</td></tr>
         <tr><td>\(\mathcal M=\{\mathbf m_j\}_{j=1}^{J}\)</td><td>unknown map</td><td>The collection of persistent radio-map variables.</td></tr>
@@ -224,7 +224,7 @@ replaceBlock(
 
 replaceOptional(
   '    <h3 class="subh"><span class="no">1.2</span>The power–delay profile</h3>\n    <figure class="fig"',
-  '    <h3 class="subh"><span class="no">1.2</span>The power–delay profile</h3>\n    <p class="lede">Finite bandwidth gives finite delay resolution. As a useful scale, \(\Delta\tau\sim 1/B\) and \(\Delta L\sim c/B\), although waveform, windowing, SNR, array processing, and super-resolution estimation determine the practical limit. Two physical paths inside one resolution cell may appear as a single component.</p>\n    <figure class="fig"'
+  '    <h3 class="subh"><span class="no">1.2</span>The power–delay profile</h3>\n    <p class="lede">Finite bandwidth gives finite delay resolution. As a useful scale, \\(\\Delta\\tau\\sim 1/B\\) and \\(\\Delta L\\sim c/B\\), although waveform, windowing, SNR, array processing, and super-resolution estimation determine the practical limit. Two physical paths inside one resolution cell may appear as a single component.</p>\n    <figure class="fig"'
 )
 replaceOptional(
   'A random power-delay profile',
@@ -402,45 +402,42 @@ const graphSlamSection = String.raw`
 
   <div class="subsection-block" id="radio-graph-objective">
     <h3 class="subh"><span class="no">5.4</span>Joint trajectory–map posterior and GraphSLAM objective</h3>
-    <p class="lede">Collect continuous unknowns in \(\boldsymbol\Theta\), associations in \(A\), and path classes or bounce orders in \(Q\). Known BS states are conditioned on; uncertain BS or calibration states are included in \(\boldsymbol\Theta\).</p>
+    <p class="lede">Collect continuous unknowns in \(\boldsymbol\Theta\). Each entry of \(A\) selects a complete path hypothesis: clutter, LoS, or an ordered wall chain. Known BS states are conditioned on; uncertain BS and calibration states are included in \(\boldsymbol\Theta\).</p>
     <div class="eq math-eq">
       \[
-      \boldsymbol\Theta=
-      \{\mathbf T_{1:T},\mathcal M,\boldsymbol\delta,\boldsymbol\xi,\mathbf B_{\mathrm{uncertain}}\},
-      \qquad
-      a_{ts\ell}\in\{0,1,\ldots,J\},
-      \qquad
-      q_{ts\ell}\in\{\mathrm{LoS},1,2,\ldots\}.
+      \boldsymbol\Theta=\{\mathbf T_{1:T},\mathcal M,\boldsymbol\delta,\boldsymbol\xi,\mathbf B_{\mathrm{uncertain}}\},
+      \]
+      \[
+      a_{ts\ell}\in\mathcal H=\{0,\mathrm{LoS}\}\cup
+      \{(k,j_1,\ldots,j_k):k\ge1,\text{ ordered wall chain}\}.
       \]
     </div>
+    <p class="eq-note">Here \(0\) denotes clutter, not a map entity. LoS has no reflector; a reflected path selects every wall in its ordered chain. Bounce count is determined by the hypothesis, not an additional independent association variable. Finite-support and visibility tests determine admissible candidates.</p>
     <div class="eq math-eq">
       \[
-      \begin{aligned}
-      p(\boldsymbol\Theta,A,Q\mid Z,U,\mathbf B_{\mathrm{known}})
-      \propto{}&p(\boldsymbol\Theta)
-      \prod_{t=2}^{T} f_t^{\mathrm{rel}}(\mathbf T_{t-1},\mathbf T_t;\widetilde{\mathbf T}_{t-1,t})\\
-      &\times\prod_{t,s,\ell}p(a_{ts\ell},q_{ts\ell})
-      \,p\!\left(\mathbf z_{ts\ell}\mid
-      \mathbf T_t,\mathcal M,a_{ts\ell},q_{ts\ell},\mathbf B_s,\boldsymbol\kappa\right).
-      \end{aligned}
+      p(\boldsymbol\Theta,A\mid Z,U,\mathbf B_{\mathrm{known}})
+      \propto p(\boldsymbol\Theta)
+      \prod_{t=2}^{T}f_t^{\mathrm{rel}}
+      \prod_{t,s}\mathcal L_{\mathrm{set}}(\mathcal Z_{ts},A_{ts}\mid\boldsymbol\Theta,\mathbf B_s).
       \]
     </div>
-    <p class="eq-note">\(U\) denotes optional motion or odometry information. A factor is conditioned on the observed tuple even though the measurement itself is not drawn as an unknown variable node.</p>
+    <p class="eq-note">\(U\) is optional motion information, and \(f_t^{\mathrm{rel}}\) is the corresponding relative-pose factor. The joint set likelihood \(\mathcal L_{\mathrm{set}}\) includes association weights, clutter, missed detections, count terms, and the admissibility constraints of the declared observation model. A product of independent per-MPC mixture factors is not automatically this set likelihood. One-to-one constraints, when assumed, apply to a physical path hypothesis within a scan, not to every use of the same wall.</p>
     <div class="eq math-eq">
       \[
       \begin{aligned}
       \boldsymbol\Theta^*=\arg\min_{\boldsymbol\Theta}\;&
       \|\mathbf r^{\mathrm{prior}}\|^2_{\boldsymbol\Omega_0}
       +\sum_{t=2}^{T}\|\mathbf r_t^{\mathrm{rel}}\|^2_{\boldsymbol\Omega_t}\\
-      &+\sum_{(t,s,\ell):a_{ts\ell}>0}
-      \rho\!\left(\|\mathbf r_{ts\ell}^{\mathrm{rad}}(a_{ts\ell},q_{ts\ell})\|^2_{\boldsymbol\Omega_{ts\ell}}\right).
+      &+\sum_{(t,s,\ell):a_{ts\ell}\ne0}
+      \rho\!\left(\|\mathbf r^{\mathrm{rad}}_{ts\ell}(\mathbf x_t,\mathcal M,a_{ts\ell})\|^2_{\boldsymbol\Omega_{ts\ell}}\right).
       \end{aligned}
       \]
     </div>
+    <p class="eq-note">This is the fixed-association geometric back-end objective; it includes LoS. Ordinary Gaussian least squares uses \(\rho(s)=s\), fixed covariances, and state-independent omitted likelihood terms. A robust loss is a modeling choice. Retain state-dependent log-determinants, detection/count, association, and visibility terms when claiming the full MAP objective.</p>
     <div class="companion-steps">
       <article><span>Front end</span><strong>Propose the discrete explanation</strong>Resolve MPCs, normalize angle conventions, generate associations and bounce-order candidates, test visibility, initialize new variables, and attach covariances.</article>
       <article><span>Factor graph</span><strong>State the probabilistic problem</strong>Pose, map, clock, and calibration nodes are connected only to the priors and likelihoods in which they participate. Reobserving one map entity couples distant UE poses.</article>
-      <article><span>Back end</span><strong>Optimize or marginalize</strong>With fixed \(A,Q\), solve nonlinear least squares. With uncertain \(A,Q\), alternate, marginalize, branch, or use mixture/max-mixture and robust factors. \(a=0\) uses a clutter likelihood, not \(\mathbf m_0\).</article>
+      <article><span>Back end</span><strong>Optimize or marginalize</strong>With fixed complete path assignments \(A\), solve the conditioned problem. With uncertain \(A\), alternate, marginalize, or branch; mixture/max-mixture and robust factors are practical approximations. \(a=0\) uses a clutter likelihood, not \(\mathbf m_0\).</article>
     </div>
 
     <h4 style="margin:22px 0 8px;font:700 11px var(--mono);letter-spacing:.08em;text-transform:uppercase">Bundle adjustment, GraphSLAM, and iSAM2</h4>

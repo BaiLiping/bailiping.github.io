@@ -1157,8 +1157,7 @@ mean landmark error of the initial triangulation: 0.696 m</pre></div>
             extra number: the <em>length</em> of the baseline to the second camera. Our demo is lazier —
             it pins the first two poses outright, over-constraining the gauge (6&nbsp;dof pinned where 4
             would do) and clamping pose&nbsp;1's heading and the baseline direction to their dead-reckoned
-            values along the way. Those small errors, like the scale, are frozen into the solution:
-            nothing in the bearings can ever correct them — the monocular gauge ambiguity in action.</li>
+            values along the way. The relative-heading and baseline-direction errors are frozen by these extra hard constraints, not by monocular gauge freedom: sufficiently informative bearings can generally constrain them. Only the four planar-similarity degrees of freedom are gauge. A minimal gauge choice fixes the first pose and one nonzero baseline length.</li>
         <li><strong>The Schur complement.</strong> Order the unknowns as (all poses, all landmarks) and the
             normal equations take the block form
             $$\begin{bmatrix} H_{pp} &amp; H_{pl} \\ H_{pl}^\top &amp; H_{ll} \end{bmatrix}

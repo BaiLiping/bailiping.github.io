@@ -374,7 +374,7 @@ const problemFormulationSection = String.raw`
       =\mathbf r^{\mathsf T}\boldsymbol\Sigma_h^{-1}\mathbf r.
       \]
     </div>
-    <p class="eq-note">Multiplying the delay residual by \(c\) expresses it in metres. The covariance must use the same units and should retain delay–angle correlations when the channel estimator provides them.</p>
+    <p class="eq-note">Multiplying the delay residual by \(c\) expresses it in metres. The covariance must use the same units and should retain delay–angle correlations when the channel estimator provides them. Explicitly, for raw delay/angle/gain covariance \(\boldsymbol\Sigma_z\), let \(D=\operatorname{diag}(c,1,\ldots,1)\). Then \(\boldsymbol\Sigma_h=D\boldsymbol\Sigma_zD^{\mathsf T}\) and \(\boldsymbol\Omega_h=\boldsymbol\Sigma_h^{-1}\), including all cross-covariances.</p>
   </div>
 
   <div class="subsection-block" id="formulation-map">
@@ -422,7 +422,7 @@ const problemFormulationSection = String.raw`
       (\widehat{\mathcal X},\widehat{\mathcal M},\widehat A)
       =\arg\max_{\mathcal X,\mathcal M,A}
       p(\mathcal X,\mathcal M)
-      \prod_{t,s}p(\mathcal Z_{ts}\mid\mathbf x_t,\mathcal M,A_{ts},\mathcal B_s),
+      \prod_{t,s}p(\mathcal Z_{ts},A_{ts}\mid\mathbf x_t,\mathcal M,\mathcal B_s),
       \]
       \[
       \phi_{ts\ell}(\mathbf x_t,\mathcal M)
@@ -430,13 +430,13 @@ const problemFormulationSection = String.raw`
       +\sum_{h\in\mathcal H_{ts\ell}(\mathcal M)}
       w_h p_{\mathrm D}(h)
       \mathcal N\!\left(
-      \mathbf z_{ts\ell};
-      \mathbf h(\mathbf x_t,\mathcal M,h;\mathcal B_s),
+      \mathbf r^{\mathrm{rad}}_{ts\ell}(\mathbf x_t,\mathcal M,h);\mathbf0,
       \boldsymbol\Sigma_h
       \right).
       \]
     </div>
     <p class="eq-note">\(\kappa\) is a clutter intensity and \(\mathcal H_{ts\ell}(\mathcal M)\) is the gated set of LoS and ordered-reflection hypotheses generated from the complete map. The weight \(w_h\), detection probability \(p_{\mathrm D}(h)\), and validity/visibility of each candidate may depend on the whole scene, whereas its conditioned geometric factor uses only \(\mathcal M_h\). Exact one-to-one assignment is combinatorial; practical systems use front-end association, alternating inference, branching, or sum-/max-mixture factors.</p>
+    <p class="eq-note" data-math-audit="mixture-scope">The joint set likelihood includes association weights and the detection/count and admissibility terms of the chosen model. The displayed \(\phi\) is a local mixture surrogate, not automatically a normalized observation density or a complete set likelihood. Clutter and path terms must share measurement coordinates and base measure. For a PPP intensity \(\lambda_\Theta\), the set likelihood includes \(e^{-\Lambda_\Theta}\prod_{z\in Z}\lambda_\Theta(z)\), where \(\Lambda_\Theta=\int\lambda_\Theta(z)\,dz\); a Bernoulli-path model instead requires its own missed-detection terms. Independent mixtures do not enforce one-to-one assignment. The conditioned least-squares form also assumes that omitted likelihood normalizers and detection terms are constant, or is only a geometric surrogate.</p>
 
     <div class="companion-steps">
       <article><span>Front end</span><strong>Resolve and propose</strong>Estimate MPC tuples and covariances; normalize frames; propose LoS, ordered wall sequences, and clutter; reject impossible visibility cases.</article>

@@ -626,7 +626,7 @@
           <p class="card-kicker">derived, not free</p>
           <h3>The angle is a consequence of the geometry.</h3>
           <div class="formula-block" role="math" tabindex="0">θ<sub>i</sub> = θ<sub>r</sub> = atan[ |x<sub>R</sub> − x<sub>S</sub>| / |2h − y<sub>S</sub> − y<sub>R</sub>| ]</div>
-          <p>Every quantity on this diagram — hit point, angle, length, AoD/AoA — is a deterministic function of the specified scene. There is no free variable left here, which is exactly why gradients in a radio ray tracer attach to other quantities: the electromagnetic and system parameters covered in the next section.</p>
+          <p>Hit point, angle, length, and AoD/AoA are deterministic functions of the scene inputs, not independent optimization variables. They can still be differentiated with respect to those inputs. This demo holds the wall fixed; that is a modeling choice, not a mathematical restriction on geometric gradients.</p><div class="formula-block" role="math" tabindex="0">∂ℓ/∂h = 2(2h − y<sub>S</sub> − y<sub>R</sub>) / ℓ(h)</div><p>This derivative applies to a nonzero-length path while the same valid reflection branch is retained.</p>
         </article>
       </div>
 
@@ -644,7 +644,7 @@
         <article>
           <span>trainable in Sionna RT</span>
           <h3>Materials ε<sub>r</sub>, σ, S, XPD · antenna &amp; scattering patterns · poses</h3>
-          <p>These are the parameters Sionna's gradients actually attach to — the exact list, with what stays non-differentiable, is in the next section.</p>
+          <p>Supported material, system, and geometric parameters can be optimized. The next section separates smooth geometric derivatives from discrete path selection.</p>
         </article>
       </div>
 
@@ -657,11 +657,7 @@
         <h2 id="sionna-diff-title">What the gradients<br><em>actually attach to.</em></h2>
         <p>
           Sionna RT, built on Mitsuba&nbsp;3 and Dr.Jit, computes gradients of
-          paths, CIRs, and radio maps with respect to — in the documentation's
-          own words — “most parameters of the ray tracing process, including
-          material properties, antenna and scattering patterns, orientations,
-          and positions of objects.” That is an explicit, finite list, and the
-          geometry you specified is not on it.
+          channel responses and radio maps with respect to supported material, pattern, and geometric parameters. The official introduction explicitly includes object positions and orientations. These are examples, not an exhaustive list. Support for arbitrary mesh deformations must be checked for the chosen solver and parameterization.
         </p>
       </div>
 
@@ -675,9 +671,9 @@
           <p><strong>One switch required:</strong> the default <code>loop_mode = "symbolic"</code> “does not support automatic differentiation” — set the solver's <code>loop_mode = "evaluated"</code> before calling <code>dr.backward</code>.</p>
         </article>
         <article>
-          <p class="card-kicker">not differentiable ✗</p>
-          <h3>The things this page derives or enumerates</h3>
-          <p><strong>Mesh geometry.</strong> No official parameter list includes scene mesh vertices or a wall coordinate. The wall from section&nbsp;02 stays a constant of the forward model — exactly as you would expect.</p>
+          <p class="card-kicker">support and smoothness limits</p>
+          <h3>Separate geometry from discrete path selection</h3>
+          <p><strong>Geometric parameterization.</strong> A wall coordinate or object pose can influence path length and angles differentiably on a fixed valid branch. Supported rigid poses do not establish automatic-differentiation support for every mesh-vertex deformation. The wall in section&nbsp;02 is held fixed only for that demonstration.</p>
           <p><strong>Discrete path topology.</strong> Which surfaces a path visits is decided by SBR candidate discovery plus image-method refinement — a discrete selection, outside automatic differentiation. Gradients flow through the field computation of discovered paths, not through the discovery.</p>
           <p><strong>RIS, currently.</strong> Sionna RT v1/v2 has no reconfigurable intelligent surfaces; the TF-based v0.19 had them, including a gradient-based optimization tutorial for phase and amplitude profiles.</p>
         </article>

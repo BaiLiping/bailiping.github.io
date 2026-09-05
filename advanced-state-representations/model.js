@@ -207,6 +207,8 @@
     { t: 5.36, z: 1.66 }, { t: 6.68, z: 2.54 }
   ];
 
+  // Finite random-walk control model with deterministic linear interpolation.
+  // quad(row, covariance) is control-interpolation variance, not Wiener-bridge variance.
   function gpExperiment(options = {}) {
     const count = 8;
     const processVariance = clamp(Number(options.processVariance ?? 0.18), 0.02, 1.2);

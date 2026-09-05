@@ -441,7 +441,7 @@ const formulation3D = String.raw`
       \mathbf r^{\mathrm{rad}}_{ts\ell}(\mathbf x_t,\mathcal M,h)\sim\mathcal N(\mathbf0,\boldsymbol\Sigma_h).
       \]
     </div>
-    <p class="eq-note">With gain included this is a six-dimensional local residual: one range-equivalent delay component, two AoA tangent coordinates, two AoD tangent coordinates, and one gain component. The covariance \(\boldsymbol\Sigma_h\) must use the same coordinates and should preserve delay–direction correlations provided by the channel estimator.</p>
+    <p class="eq-note">With gain included this is a six-dimensional local residual: one range-equivalent delay component, two AoA tangent coordinates, two AoD tangent coordinates, and one gain component. The covariance \(\boldsymbol\Sigma_h\) must use the same coordinates and should preserve delay–direction correlations provided by the channel estimator. If the estimator supplies azimuth/elevation coordinates, first use the local residual Jacobian \(J\): \(\boldsymbol\Sigma_h\approx J\boldsymbol\Sigma_zJ^{\mathsf T}\). If directions are already in the chosen tangent bases, the delay-unit conversion is exactly \(D\boldsymbol\Sigma_zD^{\mathsf T}\), with \(D=\operatorname{diag}(c,1,\ldots,1)\). The spherical logarithm has domain \(0\le\theta<\pi\), with its continuous zero-angle limit. At the antipode \(\theta=\pi\), its direction is not unique; gate out that candidate or use an explicitly chosen alternative residual. Clamp dot products to \([-1,1]\) before numerical arccos evaluation.</p>
   </div>
 
   <div class="subsection-block" id="formulation-map">
@@ -513,11 +513,8 @@ const formulation3D = String.raw`
     <div class="eq math-eq">
       \[
       p(\boldsymbol\Theta,A\mid Z,{}^W\mathbf T_{B_{1:S}})
-      \propto p(\boldsymbol\Theta)
-      \prod_{t,s,\ell}
-      p(a_{ts\ell})\,
-      p\!\left(\mathbf z_{ts\ell}\mid
-      \boldsymbol\Theta,a_{ts\ell},{}^W\mathbf T_{B_s}\right),
+      \propto p(\boldsymbol\Theta)\prod_{t,s}
+      \mathcal L_{\mathrm{set}}(\mathcal Z_{ts},A_{ts}\mid\boldsymbol\Theta,{}^W\mathbf T_{B_s}),
       \]
       \[
       \phi_{ts\ell}
@@ -530,6 +527,7 @@ const formulation3D = String.raw`
       \]
     </div>
     <p class="eq-note">\(\kappa_{ts}\) is clutter intensity and \(\mathcal H_{ts\ell}(\mathcal M)\) is the gated set of LoS and ordered-reflection candidates generated from the complete map. The prior weight \(w_h\), detection probability \(p_{\mathrm D}(h)\), and validity/visibility of a candidate may depend on all of \(\mathcal M\), while its conditioned geometric residual uses only \(\mathcal M_h\). Exact one-to-one association is combinatorial; practical systems use a front end, alternating optimization, branching, marginalization, or mixture/max-mixture factors.</p>
+    <p class="eq-note" data-math-audit="mixture-scope">The joint set likelihood includes association weights and the detection/count and admissibility terms of the chosen model. The displayed \(\phi\) is a local mixture surrogate, not automatically a normalized observation density or a complete set likelihood. Clutter and path terms must share measurement coordinates and base measure. For a PPP intensity \(\lambda_\Theta\), the set likelihood includes \(e^{-\Lambda_\Theta}\prod_{z\in Z}\lambda_\Theta(z)\), where \(\Lambda_\Theta=\int\lambda_\Theta(z)\,dz\); a Bernoulli-path model instead requires its own missed-detection terms. Independent mixtures do not enforce one-to-one assignment. The conditioned least-squares form also assumes that omitted likelihood normalizers and detection terms are constant, or is only a geometric surrogate.</p>
 
     <div class="companion-steps">
       <article><span>Front end</span><strong>Resolve and propose in 3D</strong>Estimate delay, azimuth/elevation AoA and AoD, gain, and covariance; convert directions to the stated frames; propose LoS and ordered-plane hypotheses; reject invalid finite-support and visibility cases.</article>

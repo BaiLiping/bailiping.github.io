@@ -7062,7 +7062,7 @@
    "id": "kernel-trick",
    "background": "#F5F3ED",
    "transition": "none",
-   "notes": "The kernel trick does not eliminate modeling decisions; it changes them. The inverse kernel acts as a smoothing prior in the normal equations. A generic kernel may produce a dense inverse, which motivates the SDE construction next.",
+   "notes": "The kernel trick does not eliminate modeling decisions; it changes them. The inverse-kernel equation requires K positive definite. The equivalent inverse-free solution remains valid for a positive-semidefinite, rank-deficient finite-basis kernel. A generic kernel may produce a dense inverse, which motivates the SDE construction next.",
    "elements": [
     {
      "id": "eyebrow",
@@ -7214,7 +7214,7 @@
      "h": 350,
      "rotation": 0,
      "opacity": 1,
-     "html": "\u003cspan class=\"math-tex math-display\">\\[K=\\Psi\\Psi^{\\mathsf T}\\]\u003c/span>The normal equations can be written directly in pose updates:\u003cbr>\u003cspan class=\"math-tex math-display\">\\[(A^{\\mathsf T}A+K^{-1})\\,\\delta^*=A^{\\mathsf T}b\\]\u003c/span>A kernel function \u003cspan class=\"math-tex math-inline\">\\(K(t,t')\\)\u003c/span> replaces the explicit inner product of basis functions.\u003cbr>\u003cbr>\u003cb>New choice:\u003c/b> kernel family and hyperparameters.",
+     "html": "\u003cspan class=\"math-tex math-display\">\\[K=\\Psi\\Psi^{\\mathsf T}\\]\u003c/span>For a positive-definite kernel, the pose-update equations are:\u003cbr>\u003cspan class=\"math-tex math-display\">\\[(A^{\\mathsf T}A+K^{-1})\\,\\delta^*=A^{\\mathsf T}b\\]\u003c/span>A finite-basis \u003cspan class=\"math-tex math-inline\">\\(K\\)\u003c/span> can be singular. The inverse-free form remains valid:\u003cbr>\u003cspan class=\"math-tex math-display\">\\[\\delta^*=K A^{\\mathsf T}(I+A K A^{\\mathsf T})^{-1}b\\]\u003c/span>",
      "fontSize": 17,
      "fontFamily": "Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
      "fontWeight": 400,
@@ -7858,7 +7858,7 @@
    "id": "gp-live",
    "background": "#F5F3ED",
    "transition": "morph",
-   "notes": "Change process variance, measurement noise, and query time. The experiment performs an actual linear Gaussian solve for eight scalar control states, then inverts the information matrix for the displayed interpolation uncertainty. The synthetic measurements are deterministic and the model is intentionally one-dimensional.",
+   "notes": "Change process variance, measurement noise, and query time. The experiment performs an actual linear Gaussian solve for eight scalar control states, then inverts the information matrix for the uncertainty of the deterministically interpolated controls. It omits continuous-process bridge uncertainty; adding a query-only bridge term would not repair the asynchronous measurement model. The synthetic measurements are deterministic and the model is intentionally one-dimensional.",
    "elements": [
     {
      "id": "eyebrow",
@@ -7939,7 +7939,7 @@
      "h": 20,
      "rotation": 0,
      "opacity": 1,
-     "html": "STATIC FALLBACK · RANDOM-WALK GP",
+     "html": "STATIC FALLBACK · INTERPOLATED CONTROL MODEL",
      "fontSize": 10.5,
      "fontFamily": "'SFMono-Regular', Consolas, monospace",
      "fontWeight": 800,
@@ -7976,7 +7976,7 @@
      "h": 300,
      "rotation": 0,
      "opacity": 1,
-     "html": "\u003cb>Initial controls\u003c/b>\u003cbr>Eight control states · eight asynchronous measurements · query at \u003cspan class=\"math-tex math-inline\">\\(t=3.65\\,\\mathrm{s}\\)\u003c/span>.\u003cbr>\u003cbr>\u003cb>Model\u003c/b>\u003cbr>Scalar random-walk motion factors connect neighbors; measurements interpolate between adjacent controls.\u003cbr>\u003cbr>\u003cb>Observe:\u003c/b> changing process variance alters path flexibility and posterior uncertainty, but the information matrix remains tridiagonal.",
+     "html": "\u003cb>Initial controls\u003c/b>\u003cbr>Eight control states · eight asynchronous measurements · query at \u003cspan class=\"math-tex math-inline\">\\(t=3.65\\,\\mathrm{s}\\)\u003c/span>.\u003cbr>\u003cbr>\u003cb>Model\u003c/b>\u003cbr>Random-walk control prior; deterministic linear interpolation between controls. The band describes this finite-control model, not full continuous-time GP uncertainty.\u003cbr>\u003cbr>\u003cb>Observe:\u003c/b> changing process variance alters path flexibility and posterior uncertainty, but the information matrix remains tridiagonal.",
      "fontSize": 16.5,
      "fontFamily": "Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
      "fontWeight": 400,

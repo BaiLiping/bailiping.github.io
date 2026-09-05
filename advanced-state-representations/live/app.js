@@ -136,7 +136,7 @@
       $('gp-sigma').textContent = `±${(2 * state.querySigma).toFixed(3)}`;
       $('gp-rough').textContent = state.roughness.toFixed(3);
       $('gp-nnz').textContent = `${state.nonzeros} / 64`;
-      $('gp-status').innerHTML = `<div class="legend"><span><i style="background:${colors.teal}"></i>posterior mean</span><span><i style="background:${colors.blue}"></i>95% band</span><span><i style="background:${colors.coral}"></i>measurements</span></div>The Markov prior produces a <b>tridiagonal information pattern</b>. Change process variance to trade smoothness against data fit without making the graph dense.`;
+      $('gp-status').innerHTML = `<div class="legend"><span><i style="background:${colors.teal}"></i>posterior mean</span><span><i style="background:${colors.blue}"></i>≈95% interpolation band</span><span><i style="background:${colors.coral}"></i>measurements</span></div>The Markov prior produces a <b>tridiagonal information pattern</b>. Change process variance to trade smoothness against data fit without making the graph dense. The band is for deterministic interpolation of uncertain controls, not the full continuous-time GP.`;
     }
     step = () => { $('gp-query').value = Math.min(7, Number($('gp-query').value) + 0.5); draw(); };
     ['gp-query', 'gp-process', 'gp-noise'].forEach(id => $(id).addEventListener('input', draw));
