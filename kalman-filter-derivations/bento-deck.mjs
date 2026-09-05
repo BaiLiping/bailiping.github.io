@@ -1,4 +1,6 @@
 import { applyMathReview } from './math-review.mjs';
+import { applyFamilyGuide, familyLiveEntries } from './family-guide.mjs';
+import { applyVisualPolish } from './visual-polish.mjs';
 const WIDTH = 1280;
 const HEIGHT = 720;
 const SERIF = "Georgia, 'Times New Roman', serif";
@@ -838,11 +840,14 @@ applyMathReview(slides, { tex, texBlock, mathLines, mathParagraphs, muted, equat
 // Keep the three geometry paragraphs inside the existing idea-panel bounds.
 Object.assign(slides.find(s => s.id === 'mse').elements.find(e => e.id === 'mse-right-body'), { fontSize: 14, lineHeight: 1.3 });
 
+applyFamilyGuide(slides);
+applyVisualPolish(slides);
+
 export const deck = {
   format: 'bento/slides',
   version: 1,
   docId: 'kalman-filter-four-families-bento',
-  title: 'One Filter, Four Derivation Families',
+  title: 'One Filter, Many Derivations',
   readonly: true,
   meta: {
     author: 'Bai Liping',
@@ -861,6 +866,7 @@ function indexOf(id) {
 }
 
 export const inlineLiveMap = [
+  ...familyLiveEntries(slides),
   {
     introSlide: 'model',
     slide: 'model-live',

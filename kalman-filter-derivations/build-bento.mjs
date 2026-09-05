@@ -81,8 +81,9 @@ const docPattern = /(<script type="application\/bento\+json" id="bento-doc">\s*)
 if (!docPattern.test(template)) throw new Error(`Bento document block not found in ${templatePath}`);
 
 let html = template.replace(docPattern, `$1${safeJson(deck)}$2`);
-const pageTitle = '<title>One Filter, Four Derivation Families | Bai Liping</title>';
-const pageDescription = '<meta name="description" content="An interactive Bento deck presenting four Kalman filter derivation families with equation sheets and deterministic experiments." />';
+html = html.replace('</head>', '<link rel="stylesheet" href="visual.css?v=20260905">\n</head>');
+const pageTitle = '<title>One Filter, Many Derivations | Bai Liping</title>';
+const pageDescription = '<meta name="description" content="Six viewpoints on Kalman filter derivations: a governing-equation overview, group summaries, reviewed equation sheets, and eight interactive experiments." />';
 const canonical = '<link rel="canonical" href="https://bailiping.com/kalman-filter-derivations/" />';
 const liveStylesheet = '<link rel="stylesheet" href="../assets/bento-inline-live.css" />';
 
@@ -137,7 +138,7 @@ if (!preview) {
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta http-equiv="refresh" content="0; url=./">
-    <title>One Filter, Four Derivation Families</title>
+    <title>One Filter, Many Derivations</title>
     <script>location.replace('./' + location.search + location.hash);</script>
   </head>
   <body><p><a href="./">Open the interactive Bento deck</a>.</p></body>

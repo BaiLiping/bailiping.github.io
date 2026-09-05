@@ -51,6 +51,7 @@ function mount(){
  const settings={bayes:{z:0,R:1,separation:2,shape:'mixture'},mse:{K:.3,R:1,shape:'gaussian'},wls:{x:0,alpha:1,R:.5625},kl:{mu:0,sigma:1.6},graphs:{last:2.5,Q:.6,eliminated:0}};
  const titles={bayes:['Probability','A posterior is more than its mean.','Switch shapes while retaining the same prior mean and variance.'],mse:['Projection','Choose the gain; remove error correlation.','The risk uses exact second moments, not a sample estimate.'],wls:['Quadratic objectives','Find the bottom of the cost.','One Newton step solves this scalar quadratic exactly.'],kl:['Variational updating','Correct mean ≠ correct belief.','Move location and spread independently. The gap is an exact Gaussian KL.'],graphs:['Recursive inference','Eliminate the past, retain a message.','All estimates use the same four-state random-walk model.']};
  if(!settings[mode]){app.innerHTML='<p class="error">Unknown experiment. Use bayes, mse, wls, kl, or graphs.</p>';return;}
+ document.body.dataset.family=mode;
  const state={...settings[mode]};let result;
  const range=(key,label,min,max,step)=>`<div class="ctrl"><label for="${key}">${label}<output id="out-${key}"></output></label><input id="${key}" type="range" min="${min}" max="${max}" step="${step}" value="${state[key]}"></div>`;
  const shape=text=>`<div class="ctrl"><label for="shape">${text}</label><select id="shape"><option value="${mode==='bayes'?'mixture':'gaussian'}">${mode==='bayes'?'Two Gaussian components':'Gaussian variables'}</option><option value="${mode==='bayes'?'gaussian':'two-point'}">${mode==='bayes'?'Moment-matched Gaussian':'Symmetric two-point variables'}</option></select></div>`;
@@ -101,7 +102,7 @@ function mount(){
  }
  app.addEventListener('input',e=>{if(e.target.id in state){state[e.target.id]=e.target.id==='shape'?e.target.value:Number(e.target.value);draw();}});
  app.addEventListener('click',e=>{const el=e.target.closest('button');if(!el)return;if(el.dataset.nav){parent.postMessage({type:'bento-inline-nav',direction:Number(el.dataset.nav)},'*');return;}const a=el.dataset.action;if(a==='reset')Object.assign(state,settings[mode]);else if(a==='optimum')state.K=mse(state).optimum;else if(a==='newton')state.x=wls(state).newton;else if(a==='mean')state.mu=variational(state).post.mean;else if(a==='posterior'){const p=variational(state).post;state.mu=p.mean;state.sigma=Math.sqrt(p.variance);}else if(a==='eliminate')state.eliminated=Math.min(3,state.eliminated+1);else if(a==='all')state.eliminated=3;else return;draw();});
- try{draw();window.KalmanFamilyLab={mode,getState:()=>({...state}),getResult:()=>result,setState:patch=>{Object.assign(state,patch);draw();}}catch(e){app.innerHTML='<p class="error">The experiment could not initialize. Reload this page.</p>';console.error(e);}
+ try{draw();window.KalmanFamilyLab={mode,getState:()=>({...state}),getResult:()=>result,setState:patch=>{Object.assign(state,patch);draw();}};}catch(e){app.innerHTML='<p class="error">The experiment could not initialize. Reload this page.</p>';console.error(e);}
 }
 return{normal,scalar,bayes,mse,wls,variational,chain,solve,mount};
 });

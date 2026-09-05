@@ -1,6 +1,6 @@
 // Exercise the canonical Bento runtime and shared numerical models in Chromium.
 const {chromium}=require('playwright'),http=require('node:http'),fs=require('node:fs'),path=require('node:path'),assert=require('node:assert/strict');
-const root=path.resolve(__dirname,'../../..');
+const root=path.resolve(__dirname,'..','..');
 const qa=path.join(root,'kalman-qa');
 fs.mkdirSync(qa,{recursive:true});
 // Preserve the generated preview for independent inspection even after failure.
