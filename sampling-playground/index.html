@@ -1,0 +1,1827 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="An interactive visual guide to Gibbs sampling, Metropolis–Hastings, HMC, slice sampling, importance sampling, rejection sampling, and sequential Monte Carlo — every demo is the real algorithm running live.">
+<meta name="theme-color" content="#f4efe4">
+<title>Sampling playground — see how samplers think | Bai Liping</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:ital,wght@0,400..700;1,400..700&family=Source+Serif+4:ital,opsz,wght@0,8..60,300..700;1,8..60,300..700&family=Caveat:wght@500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  color-scheme: light;
+  --paper: #f4efe4;
+  --paper-raised: #fbf8f0;
+  --ink: #172759;
+  --ink-soft: #586075;
+  --coral: #e9604f;
+  --mustard: #d5a01c;
+  --mustard-deep: #cc9415;
+  --slice: #59669b;
+  --line: rgba(23, 39, 89, 0.22);
+  --line-soft: rgba(23, 39, 89, 0.12);
+  --shadow: rgba(72, 58, 36, 0.16);
+  --serif: "Source Serif 4", Georgia, "Times New Roman", serif;
+  --sans: "Instrument Sans", ui-sans-serif, system-ui, -apple-system, sans-serif;
+  --hand: "Caveat", "Bradley Hand", "Comic Sans MS", cursive;
+  --mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+}
+
+* { box-sizing: border-box; }
+
+html { scroll-behavior: smooth; scroll-padding-top: 76px; }
+
+body {
+  margin: 0;
+  background:
+    radial-gradient(1200px 500px at 85% -5%, rgba(213, 160, 28, 0.07), transparent 60%),
+    radial-gradient(900px 480px at -10% 30%, rgba(233, 96, 79, 0.05), transparent 55%),
+    var(--paper);
+  color: var(--ink);
+  font-family: var(--sans);
+  font-size: 17px;
+  line-height: 1.62;
+  -webkit-font-smoothing: antialiased;
+}
+
+a { color: inherit; }
+
+code, .formula { font-family: var(--mono); }
+
+/* ---- site header ---- */
+.bl-site-header {
+  border-bottom: 1px solid var(--line-soft);
+  background: rgba(251, 248, 240, 0.9);
+  backdrop-filter: blur(10px);
+  position: sticky;
+  top: 0;
+  z-index: 40;
+}
+
+.bl-header-inner {
+  width: min(1080px, calc(100% - 40px));
+  margin-inline: auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  min-height: 58px;
+}
+
+.bl-brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  font-weight: 700;
+  text-decoration: none;
+  letter-spacing: 0.01em;
+}
+
+.bl-brand-mark {
+  display: grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  border-radius: 8px;
+  background: #2f7d5b;
+  color: #fff;
+  font-weight: 800;
+}
+
+.bl-top-nav { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 4px 18px; font-size: 0.92rem; }
+
+.bl-top-nav a {
+  text-decoration: none;
+  color: var(--ink-soft);
+  font-weight: 600;
+}
+
+.bl-top-nav a:hover { color: var(--coral); }
+
+main { width: min(1080px, calc(100% - 40px)); margin-inline: auto; padding: 40px 0 90px; }
+
+/* ---- hero ---- */
+.hero { padding: 46px 0 18px; }
+
+.kicker {
+  margin: 0 0 10px;
+  color: var(--coral);
+  font-size: 0.82rem;
+  font-weight: 700;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+}
+
+.hero h1 {
+  margin: 0 0 18px;
+  font-family: var(--serif);
+  font-weight: 600;
+  font-size: clamp(2.6rem, 7vw, 4.4rem);
+  line-height: 1.04;
+  letter-spacing: -0.015em;
+}
+
+.hero h1 em { font-style: italic; color: var(--coral); }
+
+.hero-lede {
+  margin: 0 0 14px;
+  max-width: 34em;
+  font-size: 1.16rem;
+  color: var(--ink-soft);
+}
+
+.source-note {
+  margin: 0 0 26px;
+  max-width: 44em;
+  font-size: 0.92rem;
+  color: var(--ink-soft);
+  border-left: 3px solid var(--mustard);
+  padding-left: 12px;
+}
+
+.primary-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  margin: 0 0 20px;
+  padding: 12px 24px;
+  border: 0;
+  border-radius: 999px;
+  background: var(--coral);
+  color: #fff;
+  font: 700 1rem var(--sans);
+  cursor: pointer;
+  box-shadow: 0 4px 0 rgba(72, 58, 36, 0.25);
+  transition: transform 120ms ease;
+}
+
+.primary-button:hover { transform: translateY(-1px); }
+
+.method-stamps { display: flex; flex-wrap: wrap; gap: 10px; }
+
+.method-stamps button {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  padding: 9px 16px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: var(--paper-raised);
+  color: var(--ink);
+  font: 600 0.95rem var(--sans);
+  cursor: pointer;
+  box-shadow: 0 2px 0 var(--shadow);
+  transition: transform 120ms ease, border-color 120ms ease;
+}
+
+.method-stamps button:hover { transform: translateY(-1px); }
+
+.method-stamps button[aria-pressed="true"] {
+  border-color: var(--ink);
+  box-shadow: inset 0 0 0 1px var(--ink), 0 2px 0 var(--shadow);
+}
+
+.stamp-dot { width: 11px; height: 11px; border-radius: 50%; }
+
+.stamp-dot.hollow { background: transparent; border: 2.5px solid var(--ink); width: 10px; height: 10px; }
+
+/* ---- section scaffolding ---- */
+.section { margin-top: 74px; }
+
+.section-heading { display: grid; grid-template-columns: auto 1fr; gap: 20px; align-items: start; max-width: 56em; }
+
+.margin-number {
+  margin: 4px 0 0;
+  font-family: var(--serif);
+  font-size: 2rem;
+  font-weight: 300;
+  color: var(--mustard-deep);
+  line-height: 1;
+}
+
+.section-heading h2 {
+  margin: 4px 0 10px;
+  font-family: var(--serif);
+  font-weight: 600;
+  font-size: clamp(1.6rem, 3.6vw, 2.3rem);
+  line-height: 1.16;
+  letter-spacing: -0.01em;
+}
+
+.section-heading .lede { margin: 0; color: var(--ink-soft); max-width: 40em; }
+
+/* ---- pinned demo card ---- */
+.plot-card {
+  position: relative;
+  margin-top: 30px;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background: var(--paper-raised);
+  box-shadow: 0 14px 34px var(--shadow);
+  padding: 26px 26px 22px;
+}
+
+.pin {
+  position: absolute;
+  top: -11px;
+  left: 50%;
+  width: 20px;
+  height: 20px;
+  transform: translateX(-50%);
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 30%, #ff9d8f, var(--coral) 65%);
+  box-shadow: 0 3px 5px rgba(72, 58, 36, 0.35);
+}
+
+.plot-heading { display: flex; align-items: baseline; justify-content: space-between; gap: 14px; flex-wrap: wrap; margin-bottom: 8px; }
+
+.plot-heading .eyebrow { margin: 0; color: var(--coral); font-size: 0.8rem; font-weight: 700; letter-spacing: 0.2em; text-transform: uppercase; }
+
+.plot-heading h2, .plot-heading h3 { margin: 2px 0 0; font-family: var(--serif); font-weight: 600; font-size: 1.7rem; line-height: 1.1; }
+
+.live-badge { display: inline-flex; align-items: center; gap: 8px; font-size: 0.85rem; font-weight: 700; color: var(--ink-soft); }
+
+.live-badge .dot { width: 9px; height: 9px; border-radius: 50%; background: var(--coral); animation: pulse 1.6s infinite; }
+
+@keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.35; } }
+
+@media (prefers-reduced-motion: reduce) { .live-badge .dot { animation: none; } }
+
+.method-tabs { display: flex; flex-wrap: wrap; gap: 8px; margin: 8px 0 16px; }
+
+.method-tabs button {
+  padding: 7px 15px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: transparent;
+  color: var(--ink);
+  font: 600 0.92rem var(--sans);
+  cursor: pointer;
+}
+
+.method-tabs button[aria-pressed="true"] { background: var(--ink); border-color: var(--ink); color: var(--paper-raised); }
+
+.lab-crossref { margin: -4px 2px 14px; font-size: 0.85rem; color: var(--ink-soft); }
+
+.lab-crossref a { color: var(--coral); font-weight: 600; }
+
+.plot-wrap { position: relative; }
+
+canvas.lab-canvas {
+  display: block;
+  width: 100%;
+  height: auto;
+  border: 1px solid var(--line-soft);
+  border-radius: 10px;
+  background: var(--paper);
+}
+
+.annotation {
+  position: absolute;
+  top: 14px;
+  right: 16px;
+  padding: 10px 14px 8px;
+  background: #fdf6cf;
+  border: 1px solid rgba(72, 58, 36, 0.2);
+  box-shadow: 0 4px 9px rgba(72, 58, 36, 0.2);
+  transform: rotate(2.2deg);
+  font-family: var(--hand);
+  font-size: 1.25rem;
+  line-height: 1.05;
+  color: #4c3f1d;
+  pointer-events: none;
+}
+
+.annotation .tack {
+  position: absolute;
+  top: -7px;
+  left: 50%;
+  width: 12px;
+  height: 12px;
+  transform: translateX(-50%);
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 30%, #9aa7d8, var(--slice) 70%);
+}
+
+.method-explanation { margin: 14px 2px 6px; color: var(--ink-soft); max-width: 52em; }
+
+.control-dock { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; margin-top: 12px; }
+
+.step-readout {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 7px;
+  padding: 8px 14px;
+  border: 1px dashed var(--line);
+  border-radius: 8px;
+  font-size: 0.9rem;
+  color: var(--ink-soft);
+}
+
+.step-readout strong { font-family: var(--mono); font-size: 1.15rem; color: var(--ink); }
+
+.control-dock button {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 16px;
+  border: 1px solid var(--ink);
+  border-radius: 8px;
+  background: var(--paper-raised);
+  color: var(--ink);
+  font: 600 0.93rem var(--sans);
+  cursor: pointer;
+  box-shadow: 0 2px 0 var(--shadow);
+}
+
+.control-dock button:disabled { opacity: 0.4; cursor: default; box-shadow: none; }
+
+.control-dock button.playing { background: var(--ink); color: var(--paper-raised); }
+
+.lab-strip {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(200px, 100%), 1fr));
+  gap: 12px;
+  margin-top: 18px;
+}
+
+.lab-strip > div {
+  border: 1px solid var(--line-soft);
+  border-radius: 10px;
+  background: var(--paper-raised);
+  padding: 12px 14px;
+}
+
+.field-label, .stat span { display: block; font-size: 0.76rem; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: var(--ink-soft); }
+
+.stat strong { display: block; margin-top: 3px; font-family: var(--serif); font-size: 1.35rem; line-height: 1.15; }
+
+.stat strong em { font-style: normal; font-size: 0.95rem; color: var(--ink-soft); }
+
+.stat small { color: var(--ink-soft); }
+
+.rho-box input[type="range"] { width: 100%; margin: 10px 0 4px; accent-color: var(--coral); }
+
+.rho-box strong { font-family: var(--mono); font-size: 1.05rem; }
+
+.fignote {
+  margin: 16px 2px 0;
+  padding-top: 12px;
+  border-top: 1px dashed var(--line-soft);
+  font-size: 0.9rem;
+  color: var(--ink-soft);
+  max-width: 60em;
+}
+
+.fignote strong { color: var(--ink); }
+
+/* ---- atlas ---- */
+.catalog-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(300px, 100%), 1fr));
+  gap: 16px;
+  margin-top: 28px;
+}
+
+.catalog-card {
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: var(--paper-raised);
+  padding: 20px 20px 16px;
+  box-shadow: 0 8px 20px rgba(72, 58, 36, 0.09);
+}
+
+.catalog-topline { display: flex; justify-content: space-between; align-items: baseline; font-size: 0.78rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink-soft); }
+
+.catalog-topline .num { font-family: var(--serif); font-size: 1.1rem; color: var(--mustard-deep); }
+
+.catalog-card h3 { margin: 0; font-family: var(--serif); font-weight: 600; font-size: 1.45rem; }
+
+.catalog-card .formula {
+  padding: 8px 10px;
+  border-left: 3px solid var(--mustard);
+  background: rgba(213, 160, 28, 0.08);
+  font-size: 0.86rem;
+  color: var(--ink);
+  overflow-x: auto;
+  white-space: nowrap;
+}
+
+.catalog-card .idea { margin: 0; color: var(--ink); }
+
+.catalog-card dl { margin: 2px 0 0; display: grid; gap: 6px; font-size: 0.92rem; }
+
+.catalog-card dt { font-weight: 700; font-size: 0.78rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink-soft); }
+
+.catalog-card dd { margin: 0; color: var(--ink-soft); }
+
+.catalog-card .card-foot { margin-top: auto; padding-top: 10px; display: flex; justify-content: space-between; align-items: center; gap: 8px; flex-wrap: wrap; }
+
+.catalog-card .open-lab {
+  border: 0;
+  padding: 0;
+  background: none;
+  color: var(--coral);
+  font: 700 0.92rem var(--sans);
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.catalog-card .open-lab:hover { text-decoration: underline; }
+
+.population-badge {
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--slice);
+  border: 1px solid var(--slice);
+  border-radius: 999px;
+  padding: 3px 9px;
+}
+
+/* ---- taped lesson note ---- */
+.conditional-lesson {
+  position: relative;
+  margin-top: 34px;
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  background: #fffdf4;
+  padding: 26px 28px 22px;
+  box-shadow: 0 10px 24px var(--shadow);
+  transform: rotate(-0.4deg);
+  max-width: 46em;
+}
+
+.tape {
+  position: absolute;
+  top: -12px;
+  left: 38px;
+  width: 92px;
+  height: 24px;
+  background: rgba(213, 160, 28, 0.35);
+  transform: rotate(-3deg);
+  border-left: 1px dashed rgba(72, 58, 36, 0.25);
+  border-right: 1px dashed rgba(72, 58, 36, 0.25);
+}
+
+.conditional-lesson h3 { margin: 0 0 6px; font-family: var(--serif); font-size: 1.4rem; font-weight: 600; }
+
+.lesson-kicker { margin: 0 0 8px; font-size: 0.75rem; }
+
+.lesson-note { margin: 0 0 16px; color: var(--ink-soft); }
+
+.equation-line { display: grid; grid-template-columns: 130px 1fr; gap: 12px; align-items: baseline; padding: 7px 0; border-bottom: 1px dotted var(--line-soft); }
+
+.equation-line:last-of-type { border-bottom: 0; }
+
+.equation-label { font-size: 0.78rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink-soft); }
+
+.equation-line .formula { font-size: 0.95rem; overflow-x: auto; }
+
+.equation-line.result .formula { color: var(--coral); font-weight: 700; font-size: 1.2rem; }
+
+.lesson-coda { margin: 14px 0 0; color: var(--ink-soft); font-size: 0.95rem; }
+
+/* ---- population lab ---- */
+.mode-picker { border: 0; margin: 8px 0 16px; padding: 0; display: flex; flex-wrap: wrap; gap: 8px; }
+
+.mode-picker legend { font-size: 0.78rem; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: var(--ink-soft); margin-bottom: 8px; }
+
+.mode-picker label {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 15px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 0.92rem;
+  background: transparent;
+}
+
+.mode-picker label:has(input:checked) { background: var(--ink); border-color: var(--ink); color: var(--paper-raised); }
+
+.mode-picker input { position: absolute; opacity: 0; pointer-events: none; }
+
+/* ---- chooser ---- */
+.scenario-tabs { display: flex; flex-wrap: wrap; gap: 8px; margin: 24px 0 0; }
+
+.scenario-tabs button {
+  display: grid;
+  gap: 4px;
+  max-width: 240px;
+  padding: 10px 14px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--paper-raised);
+  color: var(--ink);
+  font: 600 0.9rem var(--sans);
+  text-align: left;
+  cursor: pointer;
+}
+
+.scenario-tabs button small { font-weight: 500; font-size: 0.78rem; line-height: 1.35; color: var(--ink-soft); }
+
+.scenario-tabs button[aria-pressed="true"] { background: var(--coral); border-color: var(--coral); color: #fff; }
+
+.scenario-tabs button[aria-pressed="true"] small { color: rgba(255, 255, 255, 0.88); }
+
+.recommendation {
+  margin-top: 16px;
+  display: grid;
+  grid-template-columns: minmax(220px, 300px) 1fr;
+  gap: 0;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  overflow: hidden;
+  background: var(--paper-raised);
+  box-shadow: 0 8px 20px rgba(72, 58, 36, 0.09);
+}
+
+.recommendation .pick { background: var(--ink); color: var(--paper-raised); padding: 20px 22px; }
+
+.recommendation .pick .try { font-size: 0.75rem; font-weight: 700; letter-spacing: 0.2em; text-transform: uppercase; opacity: 0.7; }
+
+.recommendation .pick strong { display: block; margin-top: 6px; font-family: var(--serif); font-size: 1.5rem; font-weight: 600; line-height: 1.15; }
+
+.recommendation .pick .note { display: inline-block; margin-top: 10px; font-size: 0.78rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--mustard); }
+
+.recommendation .why { padding: 20px 22px; }
+
+.recommendation .why .prompt { margin: 0 0 8px; font-family: var(--serif); font-style: italic; font-size: 1.05rem; }
+
+.recommendation .why .reason { margin: 0; color: var(--ink-soft); }
+
+.pencil-line { margin: 18px 2px 0; font-family: var(--hand); font-size: 1.3rem; color: #6b5a2a; }
+
+/* ---- comparison table ---- */
+.comparison-table-wrap { margin-top: 30px; overflow-x: auto; border: 1px solid var(--line); border-radius: 12px; background: var(--paper-raised); box-shadow: 0 8px 20px rgba(72, 58, 36, 0.09); }
+
+.comparison-table-wrap table { border-collapse: collapse; width: 100%; min-width: 760px; font-size: 0.92rem; }
+
+.comparison-table-wrap caption { text-align: left; padding: 14px 16px 4px; font-weight: 700; color: var(--ink-soft); font-size: 0.85rem; letter-spacing: 0.06em; text-transform: uppercase; }
+
+.comparison-table-wrap th, .comparison-table-wrap td { padding: 10px 14px; text-align: left; border-top: 1px solid var(--line-soft); vertical-align: top; }
+
+.comparison-table-wrap thead th { border-top: 0; font-size: 0.78rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink-soft); }
+
+.comparison-table-wrap tbody th { font-family: var(--serif); font-size: 1.02rem; font-weight: 600; white-space: nowrap; }
+
+.comparison-table-wrap td.strength { color: var(--ink); }
+
+.comparison-table-wrap td.failure { color: var(--coral); }
+
+/* ---- diagnostics ---- */
+.diagnostic-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(230px, 100%), 1fr)); gap: 14px; margin-top: 26px; }
+
+.diagnostic-cards article { border: 1px solid var(--line); border-radius: 12px; background: var(--paper-raised); padding: 18px 18px 14px; }
+
+.diagnostic-cards .num { font-family: var(--serif); color: var(--mustard-deep); font-size: 1.15rem; }
+
+.diagnostic-cards h3 { margin: 4px 0 6px; font-family: var(--serif); font-weight: 600; font-size: 1.3rem; }
+
+.diagnostic-cards p { margin: 0; font-size: 0.94rem; color: var(--ink-soft); }
+
+/* ---- outro ---- */
+.outro { margin-top: 80px; border-top: 1px solid var(--line); padding-top: 30px; max-width: 56em; }
+
+.outro h2 { font-family: var(--serif); font-weight: 600; font-size: 1.7rem; margin: 0 0 12px; }
+
+.outro p { color: var(--ink-soft); }
+
+.outro a { color: var(--ink); font-weight: 600; }
+
+footer.page-foot { margin-top: 60px; border-top: 1px dashed var(--line-soft); padding: 22px 0 8px; display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; color: var(--ink-soft); font-size: 0.9rem; }
+
+footer.page-foot a { color: var(--ink); font-weight: 600; }
+
+button:focus-visible, a:focus-visible, input:focus-visible { outline: 2px solid var(--coral); outline-offset: 2px; }
+
+.mode-picker label:has(input:focus-visible) { outline: 2px solid var(--coral); outline-offset: 2px; }
+
+@media (max-width: 720px) {
+  html { scroll-padding-top: 112px; }
+  .bl-top-nav { gap: 2px 12px; font-size: 0.84rem; }
+  .bl-header-inner { padding: 6px 0; }
+  .recommendation { grid-template-columns: 1fr; }
+  .section-heading { grid-template-columns: 1fr; gap: 4px; }
+  .annotation { font-size: 0.85rem; padding: 6px 9px 5px; top: 8px; right: 8px; opacity: 0.92; }
+  .plot-card { padding: 18px 14px 16px; }
+}
+</style>
+</head>
+<body>
+
+<header class="bl-site-header">
+  <div class="bl-header-inner">
+    <a class="bl-brand" href="/" aria-label="Bai Liping home">
+      <span class="bl-brand-mark" aria-hidden="true">B</span>
+      <span>Bai Liping</span>
+    </a>
+    <nav class="bl-top-nav" aria-label="Primary">
+      <a href="#lab">Lab</a>
+      <a href="#methods">Atlas</a>
+      <a href="#population">Populations</a>
+      <a href="#compare">Choose</a>
+      <a href="#diagnostics">Diagnose</a>
+      <a href="/">Home</a>
+    </nav>
+  </div>
+</header>
+
+<main id="top">
+
+  <!-- ================= hero ================= -->
+  <section class="hero" aria-labelledby="page-title">
+    <p class="kicker">Monte Carlo, made visible</p>
+    <h1 id="page-title">See how<br><em>samplers</em> think.</h1>
+    <p class="hero-lede">Explore Gibbs sampling—and the six other dominant methods—one step at a time. All seven run live in your browser: four chain samplers in the lab, and the weighted and particle methods in a second lab below. Every demo is the genuine algorithm, not an animation of one.</p>
+    <p class="source-note">Rebuilt as a single self-contained note from the original <a href="https://sampling-playground.sugary-book-2058.chatgpt.site/" target="_blank" rel="noopener">Sampling Playground</a>: same correlated-Gaussian target, same four chains with identical parameters — plus live demos for the three population methods the original only described.</p>
+    <button type="button" class="primary-button" id="startGibbs" data-method="gibbs">Start with Gibbs <span aria-hidden="true">→</span></button>
+    <div class="method-stamps" role="group" aria-label="Sampler shortcuts">
+      <button type="button" data-method="gibbs" aria-pressed="true"><span class="stamp-dot" style="background:#172759"></span><strong>Gibbs</strong></button>
+      <button type="button" data-method="mh" aria-pressed="false"><span class="stamp-dot" style="background:#e9604f"></span><strong>Metropolis–Hastings</strong></button>
+      <button type="button" data-method="hmc" aria-pressed="false"><span class="stamp-dot" style="background:#cc9415"></span><strong>HMC</strong></button>
+      <button type="button" data-method="slice" aria-pressed="false"><span class="stamp-dot" style="background:#59669b"></span><strong>Slice</strong></button>
+      <button type="button" data-popmode="importance" aria-pressed="false"><span class="stamp-dot hollow" style="border-color:#59669b"></span><strong>Importance</strong></button>
+      <button type="button" data-popmode="rejection" aria-pressed="false"><span class="stamp-dot hollow" style="border-color:#172759"></span><strong>Rejection</strong></button>
+      <button type="button" data-popmode="smc" aria-pressed="false"><span class="stamp-dot hollow" style="border-color:#e9604f"></span><strong>SMC</strong></button>
+    </div>
+  </section>
+
+  <!-- ================= chain lab ================= -->
+  <section class="plot-card" id="lab" aria-labelledby="lab-title">
+    <div class="pin" aria-hidden="true"></div>
+    <div class="plot-heading">
+      <div>
+        <p class="eyebrow" id="lab-eyebrow">Condition, then draw</p>
+        <h2 id="lab-title">Gibbs sampling</h2>
+      </div>
+      <span class="live-badge"><span class="dot" aria-hidden="true"></span> Live sampler</span>
+    </div>
+
+    <div class="method-tabs" role="group" aria-label="Choose the sampler to run">
+      <button type="button" data-method="gibbs" aria-pressed="true">Gibbs</button>
+      <button type="button" data-method="mh" aria-pressed="false">Metropolis–Hastings</button>
+      <button type="button" data-method="hmc" aria-pressed="false">HMC</button>
+      <button type="button" data-method="slice" aria-pressed="false">Slice</button>
+    </div>
+    <p class="lab-crossref">These four are the chain samplers. The other three of the seven — importance, rejection, and SMC — are population methods and run in <a href="#population">their own lab below ↘</a>.</p>
+
+    <div class="plot-wrap">
+      <canvas class="lab-canvas" id="chainCanvas" width="640" height="480" role="img" aria-label="Sampler path over a correlated Gaussian target"></canvas>
+      <div class="annotation" id="labAnnotation"><span class="tack" aria-hidden="true"></span>conditional<br>draw</div>
+    </div>
+
+    <p class="method-explanation" id="labExplanation">Freeze one coordinate, draw the other from its exact conditional distribution, then swap. Every proposal is accepted.</p>
+
+    <div class="control-dock">
+      <span class="step-readout">Step <strong id="stepNow">09</strong><span>/ <span id="stepMax">72</span></span></span>
+      <button type="button" id="stepBtn"><span aria-hidden="true">↦</span>Step once</button>
+      <button type="button" id="autoBtn"><span aria-hidden="true" id="autoIcon">▶</span><span id="autoLabel">Auto</span></button>
+      <button type="button" id="resetBtn"><span aria-hidden="true">↻</span>Reset</button>
+    </div>
+
+    <div class="lab-strip" aria-label="Sampler diagnostics">
+      <div class="rho-box">
+        <span class="field-label">Target correlation</span>
+        <input type="range" id="rhoSlider" min="0.1" max="0.95" step="0.01" value="0.88" aria-label="Target correlation">
+        <strong id="rhoReadout">ρ = 0.88</strong>
+      </div>
+      <div class="stat">
+        <span>Acceptance</span>
+        <strong id="acceptStat">100%</strong>
+        <small id="acceptNote">built into the conditional draw</small>
+      </div>
+      <div class="stat">
+        <span>ESS proxy</span>
+        <strong id="essStat">7 <em>/ 10</em></strong>
+        <small>roughly independent information</small>
+      </div>
+      <div class="stat">
+        <span>Characteristic move</span>
+        <strong id="moveStat">horizontal / vertical</strong>
+        <small>watch the path above</small>
+      </div>
+    </div>
+
+    <p class="fignote"><strong>Measured on this page's seeds</strong> (ρ = 0.88, all 72 steps): Gibbs accepts every draw by construction, but its lag-1-autocorrelation ESS proxy is only <strong>4</strong> of 73 visible points — the coordinate-wise zig-zag pays for the free acceptances. Random-walk Metropolis–Hastings accepts <strong>42%</strong> of its σ = 0.72 proposals and does no better (ESS proxy 4). HMC accepts <strong>99%</strong> of its 9-leapfrog-step trajectories at ε = 0.16 and reaches an ESS proxy of <strong>28</strong> — the gradient buys distant moves that survive the accept test. Slice sampling accepts everything and lands at an ESS proxy of <strong>6</strong>: it adapts its scale, but still moves one coordinate at a time. A separately seeded 20,000-move Gibbs run recovers the target's moments — variances within 0.01 of 1, correlation within 0.004 of 0.88 — so the chains are sampling the right thing, slowly or quickly. The ESS proxy uses only the lag-1 autocorrelation of x₁; treat it as a mixing hint, not a certified effective sample size.</p>
+  </section>
+
+  <!-- ================= central idea ================= -->
+  <section class="section" id="idea" aria-labelledby="idea-title">
+    <div class="section-heading">
+      <p class="margin-number">01</p>
+      <div>
+        <p class="kicker">The central idea</p>
+        <h2 id="idea-title">A sampler turns a difficult distribution into a sequence of manageable moves.</h2>
+        <p class="lede">The cloud of visited points becomes an empirical approximation of the target. The methods differ mainly in <em>how they choose the next point</em>—and therefore in what they require, how quickly they mix, and where they struggle.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= atlas ================= -->
+  <section class="section" id="methods" aria-labelledby="methods-title">
+    <div class="section-heading">
+      <p class="margin-number">02</p>
+      <div>
+        <p class="kicker">The sampler atlas</p>
+        <h2 id="methods-title">Seven methods worth knowing.</h2>
+        <p class="lede">These are not seven interchangeable buttons. They belong to different families, make different assumptions, and sometimes return fundamentally different objects: a chain, exact independent draws, weighted samples, or a particle population.</p>
+      </div>
+    </div>
+
+    <div class="catalog-grid">
+      <article class="catalog-card">
+        <div class="catalog-topline"><span class="num">01</span><span>MCMC · conditional</span></div>
+        <h3>Gibbs</h3>
+        <p class="formula">x′ ∼ p(x | y),&nbsp; y′ ∼ p(y | x′)</p>
+        <p class="idea">Replace one variable at a time using an exact conditional draw.</p>
+        <dl>
+          <dt>Best when</dt><dd>Models with easy full conditionals; latent-variable and hierarchical models.</dd>
+          <dt>Watch out</dt><dd>Strongly correlated variables can make coordinate-wise progress painfully slow.</dd>
+        </dl>
+        <div class="card-foot"><button type="button" class="open-lab" data-method="gibbs">Open in the lab ↗</button></div>
+      </article>
+
+      <article class="catalog-card">
+        <div class="catalog-topline"><span class="num">02</span><span>MCMC · accept/reject</span></div>
+        <h3>Metropolis–Hastings</h3>
+        <p class="formula">accept with&nbsp; min(1, π(x′)q(x|x′) / π(x)q(x′|x))</p>
+        <p class="idea">Correct almost any proposal mechanism with an acceptance probability.</p>
+        <dl>
+          <dt>Best when</dt><dd>A dependable general-purpose baseline when only an unnormalized density is known.</dd>
+          <dt>Watch out</dt><dd>Proposal scale is delicate: too small crawls, too large rejects.</dd>
+        </dl>
+        <div class="card-foot"><button type="button" class="open-lab" data-method="mh">Open in the lab ↗</button></div>
+      </article>
+
+      <article class="catalog-card">
+        <div class="catalog-topline"><span class="num">03</span><span>MCMC · gradient</span></div>
+        <h3>HMC &amp; NUTS</h3>
+        <p class="formula">H(x, p) = −log π(x) + ½pᵀp</p>
+        <p class="idea">Use gradients and auxiliary momentum to propose distant, informed moves.</p>
+        <dl>
+          <dt>Best when</dt><dd>Smooth, differentiable, medium- to high-dimensional Bayesian posteriors.</dd>
+          <dt>Watch out</dt><dd>Needs gradients and tuning; discrete or discontinuous variables are awkward.</dd>
+        </dl>
+        <div class="card-foot"><button type="button" class="open-lab" data-method="hmc">Open in the lab ↗</button></div>
+      </article>
+
+      <article class="catalog-card">
+        <div class="catalog-topline"><span class="num">04</span><span>MCMC · auxiliary variable</span></div>
+        <h3>Slice sampling</h3>
+        <p class="formula">u ∼ Uniform(0, π(x));&nbsp; x′ ∼ {x : π(x) ≥ u}</p>
+        <p class="idea">Turn density evaluation into uniform sampling under the density curve.</p>
+        <dl>
+          <dt>Best when</dt><dd>One-dimensional or coordinate updates where proposal-scale tuning is undesirable.</dd>
+          <dt>Watch out</dt><dd>Finding and shrinking the slice can cost many density evaluations.</dd>
+        </dl>
+        <div class="card-foot"><button type="button" class="open-lab" data-method="slice">Open in the lab ↗</button></div>
+      </article>
+
+      <article class="catalog-card">
+        <div class="catalog-topline"><span class="num">05</span><span>Weighted · independent</span></div>
+        <h3>Importance sampling</h3>
+        <p class="formula">wᵢ ∝ π(xᵢ) / q(xᵢ),&nbsp; xᵢ ∼ q</p>
+        <p class="idea">Draw from an easier proposal and repair the mismatch with weights.</p>
+        <dl>
+          <dt>Best when</dt><dd>Estimating expectations, evidence, and reusing independently drawn samples.</dd>
+          <dt>Watch out</dt><dd>In high dimensions, a few enormous weights can carry nearly everything.</dd>
+        </dl>
+        <div class="card-foot"><a class="open-lab" href="#population" data-popmode="importance">Open below ↘</a><span class="population-badge">Independent / population method</span></div>
+      </article>
+
+      <article class="catalog-card">
+        <div class="catalog-topline"><span class="num">06</span><span>Exact · independent</span></div>
+        <h3>Rejection sampling</h3>
+        <p class="formula">accept if&nbsp; u ≤ π(x) / Mq(x)</p>
+        <p class="idea">Keep proposal draws in proportion to how well they match the target.</p>
+        <dl>
+          <dt>Best when</dt><dd>Low-dimensional targets with a tight, easy envelope.</dd>
+          <dt>Watch out</dt><dd>Acceptance collapses when the envelope is loose or dimension grows.</dd>
+        </dl>
+        <div class="card-foot"><a class="open-lab" href="#population" data-popmode="rejection">Open below ↘</a><span class="population-badge">Independent / population method</span></div>
+      </article>
+
+      <article class="catalog-card">
+        <div class="catalog-topline"><span class="num">07</span><span>Particles · sequential</span></div>
+        <h3>Sequential Monte Carlo</h3>
+        <p class="formula">propagate → weight → resample</p>
+        <p class="idea">Move a population of weighted particles through time or intermediate targets.</p>
+        <dl>
+          <dt>Best when</dt><dd>State-space models, filtering, online inference, and multimodal target sequences.</dd>
+          <dt>Watch out</dt><dd>Particles can impoverish after repeated resampling; computation scales with population.</dd>
+        </dl>
+        <div class="card-foot"><a class="open-lab" href="#population" data-popmode="smc">Open below ↘</a><span class="population-badge">Independent / population method</span></div>
+      </article>
+    </div>
+
+    <aside class="conditional-lesson" aria-labelledby="lesson-title">
+      <span class="tape" aria-hidden="true"></span>
+      <h3 id="lesson-title">Why Gibbs has its own name</h3>
+      <p class="lesson-note">Gibbs is a special case of Metropolis–Hastings whose acceptance probability is always one.</p>
+      <p class="kicker lesson-kicker">One cancellation tells the story</p>
+      <div class="equation-line"><span class="equation-label">Proposal</span><span class="formula">q(x′ | x) = p(x′ⱼ | x₋ⱼ)</span></div>
+      <div class="equation-line"><span class="equation-label">MH ratio</span><span class="formula">π(x′) q(x | x′) / π(x) q(x′ | x)</span></div>
+      <div class="equation-line result"><span class="equation-label">After cancellation</span><span class="formula">1</span></div>
+      <p class="lesson-coda">The exact conditional already proposes in the right proportion, so there is no correction left to make. That elegance is also the limitation: the full conditional must be available and sampleable.</p>
+    </aside>
+  </section>
+
+  <!-- ================= population lab ================= -->
+  <section class="plot-card section" id="population" aria-labelledby="pop-title">
+    <div class="pin" aria-hidden="true"></div>
+    <div class="plot-heading">
+      <div>
+        <p class="eyebrow" id="popEyebrow">Draw, then repair</p>
+        <h3 id="pop-title">The population methods, live</h3>
+      </div>
+      <span class="live-badge"><span class="dot" aria-hidden="true"></span> Live sampler</span>
+    </div>
+
+    <fieldset class="mode-picker" id="popPicker">
+      <legend>Method</legend>
+      <label><input type="radio" name="popMode" value="rejection" checked><span>Rejection sampling</span></label>
+      <label><input type="radio" name="popMode" value="importance"><span>Importance sampling</span></label>
+      <label><input type="radio" name="popMode" value="smc"><span>Sequential Monte Carlo</span></label>
+    </fieldset>
+
+    <div class="plot-wrap">
+      <canvas class="lab-canvas" id="popCanvas" width="640" height="380" role="img" aria-label="Population sampler running on a bimodal target"></canvas>
+    </div>
+
+    <p class="method-explanation" id="popExplanation"></p>
+
+    <div class="control-dock">
+      <span class="step-readout"><span id="popCounterLabel">Draws</span> <strong id="popCounter">0</strong></span>
+      <button type="button" id="popStepBtn"><span aria-hidden="true">↦</span><span id="popStepLabel">Draw 25</span></button>
+      <button type="button" id="popAutoBtn"><span aria-hidden="true" id="popAutoIcon">▶</span><span id="popAutoLabel">Auto</span></button>
+      <button type="button" id="popResetBtn"><span aria-hidden="true">↻</span>Reset</button>
+    </div>
+
+    <div class="lab-strip" aria-label="Population diagnostics">
+      <div class="stat"><span id="popStatALabel">Acceptance</span><strong id="popStatA">—</strong><small id="popStatANote"></small></div>
+      <div class="stat"><span id="popStatBLabel">—</span><strong id="popStatB">—</strong><small id="popStatBNote"></small></div>
+      <div class="stat"><span id="popStatCLabel">—</span><strong id="popStatC">—</strong><small id="popStatCNote"></small></div>
+    </div>
+
+    <p class="fignote"><strong>Measured on this page's seeds.</strong> The static target is the bimodal mixture 0.55·N(−1.35, 0.60²) + 0.45·N(1.15, 0.45²) with proposal q = N(0, 1.5²). Rejection sampling under the numerically tightened envelope (M = 2.36) accepts <strong>42.6%</strong> of 4,000 attempts, matching the 1/M = <strong>42.4%</strong> the envelope predicts — and every kept point is an exact independent draw. Importance sampling keeps all 600 draws, but its Kish effective sample size is <strong>388</strong> (65% of nominal), and its estimate of E[x] sits at −0.10 against the true −0.23 — about 1.9 standard errors off, consistent with the approximately 0.07 large-sample standard error for this particular mean estimator. The 388-draw Kish weight ESS is a weight-degeneracy diagnostic, not a general function-specific standard-error guarantee. The SMC panel filters the state-space model xₜ = 0.92·xₜ₋₁ + 0.45·ε with observations y = x + 0.5·ν using 44 particles; systematic resampling triggers whenever the weight ESS drops below N/2, which happens on <strong>28 of 60</strong> filtering steps, each time keeping on average only <strong>45%</strong> distinct particles — the impoverishment the atlas card warns about, visible when duplicate particles stack at the same position. The weighted-particle mean still tracks the hidden state with RMS error <strong>0.37</strong> over the full 60-step run, under the 0.5 observation noise.</p>
+  </section>
+
+  <!-- ================= chooser ================= -->
+  <section class="section" id="compare" aria-labelledby="compare-title">
+    <div class="section-heading">
+      <p class="margin-number">03</p>
+      <div>
+        <p class="kicker">Choose by structure</p>
+        <h2 id="compare-title">What does your problem give you?</h2>
+        <p class="lede">Start from the mathematical access you have—not from which sampler sounds most sophisticated.</p>
+      </div>
+    </div>
+
+    <div class="chooser">
+      <div class="scenario-tabs" role="group" aria-label="Problem scenarios">
+        <button type="button" data-scenario="hierarchical" aria-pressed="false">Easy conditionals<small>A hierarchical model has closed-form conditional distributions.</small></button>
+        <button type="button" data-scenario="smooth" aria-pressed="true">Smooth + high-dimensional<small>A 100-dimensional continuous posterior is differentiable.</small></button>
+        <button type="button" data-scenario="blackbox" aria-pressed="false">Density only<small>You can evaluate an unnormalized target, but have no gradients or conditionals.</small></button>
+        <button type="button" data-scenario="online" aria-pressed="false">Arrives over time<small>A hidden state evolves while observations arrive sequentially.</small></button>
+        <button type="button" data-scenario="expectation" aria-pressed="false">One expectation<small>You need one expectation and already have a good proposal distribution.</small></button>
+      </div>
+
+      <div class="recommendation">
+        <div class="pick">
+          <span class="try">Try</span>
+          <strong id="pickName">NUTS / HMC</strong>
+          <span class="note" id="pickNote">Usually strongest</span>
+        </div>
+        <div class="why">
+          <p class="prompt" id="pickPrompt">A 100-dimensional continuous posterior is differentiable.</p>
+          <p class="reason" id="pickWhy">Gradients prevent random-walk behavior, and NUTS adapts the trajectory length automatically.</p>
+        </div>
+      </div>
+
+      <p class="pencil-line">Always verify with diagnostics: trace plots, multiple chains, effective sample size, and—when applicable—weight degeneracy.</p>
+    </div>
+
+    <div class="comparison-table-wrap">
+      <table>
+        <caption>A practical comparison of the dominant sampling families</caption>
+        <thead>
+          <tr><th scope="col">Method</th><th scope="col">Needs</th><th scope="col">Returns</th><th scope="col">Signature strength</th><th scope="col">Typical failure</th></tr>
+        </thead>
+        <tbody>
+          <tr><th scope="row">Gibbs</th><td>Sampleable conditionals</td><td>Correlated chain</td><td class="strength">No rejection or step-size tuning</td><td class="failure">Slow zig-zagging</td></tr>
+          <tr><th scope="row">Metropolis–Hastings</th><td>Density ratios</td><td>Correlated chain</td><td class="strength">Works with almost any proposal</td><td class="failure">Random walk or rejections</td></tr>
+          <tr><th scope="row">HMC / NUTS</th><td>Density + gradients</td><td>Correlated chain</td><td class="strength">Efficient long moves in high dimension</td><td class="failure">Bad geometry or divergences</td></tr>
+          <tr><th scope="row">Slice</th><td>Density evaluations</td><td>Correlated chain</td><td class="strength">Adapts its own local scale</td><td class="failure">Expensive interval search</td></tr>
+          <tr><th scope="row">Importance</th><td>Proposal density + target</td><td>Weighted independent draws</td><td class="strength">Parallel and reusable</td><td class="failure">Weight collapse</td></tr>
+          <tr><th scope="row">Rejection</th><td>Bounded envelope Mq ≥ π</td><td>Exact independent draws</td><td class="strength">Conceptually clean and exact</td><td class="failure">Vanishing acceptance</td></tr>
+          <tr><th scope="row">SMC</th><td>Proposal + incremental weights</td><td>Weighted particle population</td><td class="strength">Online and multimodal</td><td class="failure">Particle impoverishment</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- ================= diagnostics ================= -->
+  <section class="section" id="diagnostics" aria-labelledby="diag-title">
+    <div class="section-heading">
+      <p class="margin-number">04</p>
+      <div>
+        <p class="kicker">Never stop at “it ran”</p>
+        <h2 id="diag-title">Four words that matter after sampling.</h2>
+      </div>
+    </div>
+
+    <div class="diagnostic-cards">
+      <article>
+        <span class="num">01</span>
+        <h3>Burn-in</h3>
+        <p>Early draws may still remember the arbitrary starting point. Discarding them can remove initialization bias—but cannot repair a chain that never mixed.</p>
+      </article>
+      <article>
+        <span class="num">02</span>
+        <h3>Mixing</h3>
+        <p>A well-mixing chain explores relevant regions quickly. Slow wandering, sticky runs, or separated chains warn that the sample is incomplete.</p>
+      </article>
+      <article>
+        <span class="num">03</span>
+        <h3>ESS</h3>
+        <p>Effective sample size translates correlated or weighted draws into the approximate number of independent draws carrying the same information.</p>
+      </article>
+      <article>
+        <span class="num">04</span>
+        <h3>Convergence</h3>
+        <p>Run multiple chains. Agreement, stable traces, and diagnostics such as R̂ near one support—not prove—that they reached the same target.</p>
+      </article>
+    </div>
+  </section>
+
+  <!-- ================= outro ================= -->
+  <div class="outro">
+    <h2>Where these samplers show up on this site</h2>
+    <p>The particle population that SMC pushes through time is the same object the <a href="/eo-mtt/">EO-MTT note</a> wrestles with when it maintains uncertainty over measurement partitions, and the weighted hypothesis mixtures in the <a href="/bp-vs-pmbm/">BP vs PMBM note</a> are exactly the "keep several weighted explanations alive" move that importance weighting formalizes — PMBM's ranked global hypotheses are a discrete cousin of a particle population. The annealed soft-assignment EM in the <a href="/frame-registration/">frame-registration note</a> shares SMC's tempering trick: walk a sequence of easier intermediate objectives toward the hard one instead of attacking it cold. This page was rebuilt from the original <a href="https://sampling-playground.sugary-book-2058.chatgpt.site/" target="_blank" rel="noopener">Sampling Playground</a>; the four chain samplers here use the same algorithms and tuning constants, re-implemented as commented vanilla JavaScript you can read in this file's source.</p>
+  </div>
+
+  <footer class="page-foot">
+    <span>Sampling playground — a visual field guide to Monte Carlo reasoning.</span>
+    <span><a href="#top">Back to the lab ↑</a> · <a href="/">Home</a></span>
+  </footer>
+
+</main>
+
+<script>
+/* ================= chain lab: four MCMC samplers on a correlated Gaussian ================= */
+(function () {
+'use strict';
+// $(id): shorthand element lookup. Takes an element id string, returns the DOM element or null.
+const $ = id => document.getElementById(id);
+const TAU = Math.PI * 2;
+
+// Method metadata: colors and copy mirror the original playground.
+const METHODS = [
+  { id: 'gibbs', name: 'Gibbs sampling', eyebrow: 'Condition, then draw', color: '#172759',
+    explanation: 'Freeze one coordinate, draw the other from its exact conditional distribution, then swap. Every proposal is accepted.',
+    move: 'horizontal / vertical', annotation: 'conditional<br>draw' },
+  { id: 'mh', name: 'Metropolis–Hastings', eyebrow: 'Propose, then judge', color: '#e9604f',
+    explanation: 'Make a local random proposal. Accept it when it lands in a plausible region; sometimes accept a move downhill.',
+    move: 'random local proposal', annotation: 'accept or<br>stay put' },
+  { id: 'hmc', name: 'Hamiltonian Monte Carlo', eyebrow: 'Use the gradient', color: '#cc9415',
+    explanation: 'Add momentum and simulate a short physical trajectory. The gradient turns many small computations into one distant proposal.',
+    move: 'curved trajectory', annotation: 'follow the<br>gradient' },
+  { id: 'slice', name: 'Slice sampling', eyebrow: 'Sample under the curve', color: '#59669b',
+    explanation: 'Choose a random density height, find the horizontal slice above it, then sample a new position from that admissible interval.',
+    move: 'adaptive interval', annotation: 'sample the<br>slice' },
+];
+
+const STEPS = 72;          // moves per chain beyond the fixed start point
+const START = { x: -2.35, y: -2.05 };
+const CX = 320, CY = 240;  // plot center in canvas units
+const SCALE = 78;          // pixels per target-space unit for samples
+const CONTOUR_SCALE = 66;  // pixels per unit for the contour ellipses
+
+// mulberry32(seed): deterministic 32-bit PRNG. Takes an integer seed, returns a function yielding floats in [0, 1).
+function mulberry32(seed) {
+  let t = seed >>> 0;
+  return function () {
+    t += 0x6D2B79F5;
+    let r = Math.imul(t ^ t >>> 15, t | 1);
+    r ^= r + Math.imul(r ^ r >>> 7, r | 61);
+    return ((r ^ r >>> 14) >>> 0) / 4294967296;
+  };
+}
+
+// randn(rng): one standard-normal draw via Box–Muller. Takes a PRNG function, returns a float.
+function randn(rng) {
+  const a = Math.max(rng(), 1e-9), b = Math.max(rng(), 1e-9);
+  return Math.sqrt(-2 * Math.log(a)) * Math.cos(TAU * b);
+}
+
+// logPi(p, rho): unnormalized log density of the standard bivariate Gaussian with correlation rho.
+// Takes a point {x, y} and rho, returns a float.
+function logPi(p, rho) {
+  const n = 1 - rho * rho;
+  return -(p.x * p.x - 2 * rho * p.x * p.y + p.y * p.y) / (2 * n);
+}
+
+// gradLogPi(p, rho): gradient of logPi at p. Takes a point {x, y} and rho, returns {x, y}.
+function gradLogPi(p, rho) {
+  const n = 1 - rho * rho;
+  return { x: -(p.x - rho * p.y) / n, y: -(p.y - rho * p.x) / n };
+}
+
+// buildChain(methodId, rho): precomputes the whole trajectory for one sampler, seeded per method so
+// switching tabs is deterministic. Takes a method id string and rho, returns an array of
+// {x, y, accepted} whose first entry is the fixed start point.
+function buildChain(methodId, rho) {
+  const idx = METHODS.findIndex(m => m.id === methodId);
+  const rng = mulberry32(431 + idx * 997);
+  const pts = [{ x: START.x, y: START.y, accepted: true }];
+  const condSd = Math.sqrt(1 - rho * rho);
+
+  for (let n = 0; n < STEPS; n++) {
+    const cur = pts[pts.length - 1];
+
+    if (methodId === 'gibbs') {
+      // Exact conditional draw: x | y ~ N(rho·y, 1−rho²), alternating coordinates.
+      const updateX = n % 2 === 0;
+      pts.push(updateX
+        ? { x: rho * cur.y + condSd * randn(rng), y: cur.y, accepted: true }
+        : { x: cur.x, y: rho * cur.x + condSd * randn(rng), accepted: true });
+      continue;
+    }
+
+    if (methodId === 'mh') {
+      // Random-walk proposal with sigma 0.72 per coordinate, log-uniform accept test.
+      const prop = { x: cur.x + 0.72 * randn(rng), y: cur.y + 0.72 * randn(rng) };
+      const accept = Math.log(Math.max(rng(), 1e-9)) < logPi(prop, rho) - logPi(cur, rho);
+      pts.push(accept ? { x: prop.x, y: prop.y, accepted: true }
+                      : { x: cur.x, y: cur.y, accepted: false });
+      continue;
+    }
+
+    if (methodId === 'hmc') {
+      // Leapfrog integration: 9 position steps at eps 0.16 with momentum half-steps, then a
+      // Metropolis test on the Hamiltonian difference.
+      const eps = 0.16;
+      let q = { x: cur.x, y: cur.y };
+      const p0 = { x: randn(rng), y: randn(rng) };
+      const p = { x: p0.x, y: p0.y };
+      let g = gradLogPi(q, rho);
+      p.x += eps / 2 * g.x; p.y += eps / 2 * g.y;
+      for (let l = 0; l < 9; l++) {
+        q = { x: q.x + eps * p.x, y: q.y + eps * p.y };
+        g = gradLogPi(q, rho);
+        if (l < 8) { p.x += eps * g.x; p.y += eps * g.y; }
+      }
+      p.x += eps / 2 * g.x; p.y += eps / 2 * g.y;
+      const h0 = -logPi(cur, rho) + (p0.x ** 2 + p0.y ** 2) / 2;
+      const h1 = -logPi(q, rho) + (p.x ** 2 + p.y ** 2) / 2;
+      const accept = Math.log(Math.max(rng(), 1e-9)) < h0 - h1;
+      pts.push(accept ? { x: q.x, y: q.y, accepted: true }
+                      : { x: cur.x, y: cur.y, accepted: false });
+      continue;
+    }
+
+    // Slice sampling on alternating coordinates: draw the level, step the interval out in units
+    // of width 1.7 (at most 10 each way), then shrink on rejected interior points (at most 30).
+    const onX = n % 2 === 0;
+    const level = logPi(cur, rho) + Math.log(Math.max(rng(), 1e-9));
+    // evalAt(v): log density along the active coordinate with the other frozen. Takes a float, returns a float.
+    const evalAt = v => logPi(onX ? { x: v, y: cur.y } : { x: cur.x, y: v }, rho);
+    let lo = (onX ? cur.x : cur.y) - rng() * 1.7;
+    let hi = lo + 1.7;
+    for (let k = 0; k < 10 && evalAt(lo) > level; k++) lo -= 1.7;
+    for (let k = 0; k < 10 && evalAt(hi) > level; k++) hi += 1.7;
+    let v = onX ? cur.x : cur.y;
+    for (let k = 0; k < 30; k++) {
+      v = lo + rng() * (hi - lo);
+      if (evalAt(v) >= level) break;
+      if (v < (onX ? cur.x : cur.y)) lo = v; else hi = v;
+    }
+    pts.push(onX ? { x: v, y: cur.y, accepted: true } : { x: cur.x, y: v, accepted: true });
+  }
+  return pts;
+}
+
+// essProxy(pts): crude effective-sample-size estimate from the lag-1 autocorrelation of the x
+// coordinate, n·(1−a)/(1+a) with a clamped to ±0.95. Takes the visible chain, returns an integer ≥ 1.
+function essProxy(pts) {
+  if (pts.length < 4) return pts.length;
+  const xs = pts.map(p => p.x);
+  const mean = xs.reduce((s, v) => s + v, 0) / xs.length;
+  let varSum = 0, covSum = 0;
+  for (let i = 0; i < xs.length; i++) {
+    varSum += (xs[i] - mean) ** 2;
+    if (i > 0) covSum += (xs[i] - mean) * (xs[i - 1] - mean);
+  }
+  if (varSum < 1e-9) return 1;
+  const a = Math.max(-0.95, Math.min(0.95, covSum / varSum));
+  return Math.max(1, Math.round(xs.length * (1 - a) / (1 + a)));
+}
+
+// toCanvas(p): maps a target-space point to canvas coordinates. Takes {x, y}, returns {x, y} in pixels.
+function toCanvas(p) {
+  return { x: CX + p.x * SCALE, y: CY - p.y * SCALE };
+}
+
+/* ---------------- state ---------------- */
+const canvas = $('chainCanvas');
+const ctx = canvas.getContext('2d');
+let method = 'gibbs';
+let rho = 0.88;
+let step = 9;            // index of the last visible chain entry
+let autoTimer = null;
+let chain = buildChain(method, rho);
+let displayScale = 1;   // CSS pixels per logical plot unit; drawing stays in 640×480 logical space
+
+// setupHiDpi(): sizes the canvas backing store from its rendered CSS width times the device pixel
+// ratio, so the plot is crisp at any display size while draw code keeps 640×480 logical
+// coordinates. Takes nothing, returns nothing.
+function setupHiDpi() {
+  const dpr = Math.min(window.devicePixelRatio || 1, 2);
+  const cssW = canvas.clientWidth || 640;
+  displayScale = cssW / 640;
+  canvas.width = Math.round(640 * displayScale * dpr);
+  canvas.height = Math.round(480 * displayScale * dpr);
+  ctx.setTransform(displayScale * dpr, 0, 0, displayScale * dpr, 0, 0);
+}
+
+// drawContour(k, coral): strokes one covariance-ellipse contour at radius multiple k.
+// Takes the level multiple and whether to use the coral accent, returns nothing.
+function drawContour(k, coral) {
+  const r = CONTOUR_SCALE * k;
+  const s = Math.sqrt(1 - rho * rho);
+  ctx.beginPath();
+  for (let i = 0; i <= 80; i++) {
+    const t = i / 80 * TAU;
+    const px = CX + r * Math.cos(t);
+    const py = CY - r * (rho * Math.cos(t) + s * Math.sin(t));
+    if (i === 0) ctx.moveTo(px, py); else ctx.lineTo(px, py);
+  }
+  ctx.closePath();
+  ctx.strokeStyle = coral ? 'rgba(233, 96, 79, 0.55)' : 'rgba(23, 39, 89, 0.22)';
+  ctx.lineWidth = coral ? 1.6 : 1;
+  ctx.stroke();
+}
+
+// render(): redraws the whole lab scene — grid, contours, axes, visited path, samples, current
+// point — for the visible prefix of the chain. Takes nothing, returns nothing.
+function render() {
+  const meta = METHODS.find(m => m.id === method);
+  const visible = chain.slice(0, step + 1);
+
+  ctx.clearRect(0, 0, 640, 480);
+
+  // dashed background grid, 39 px pitch like the original
+  ctx.save();
+  ctx.strokeStyle = 'rgba(23, 39, 89, 0.10)';
+  ctx.lineWidth = 0.65;
+  ctx.setLineDash([2, 5]);
+  for (let gx = 39; gx < 640; gx += 39) { ctx.beginPath(); ctx.moveTo(gx, 0); ctx.lineTo(gx, 480); ctx.stroke(); }
+  for (let gy = 39; gy < 480; gy += 39) { ctx.beginPath(); ctx.moveTo(0, gy); ctx.lineTo(640, gy); ctx.stroke(); }
+  ctx.restore();
+
+  [0.65, 1, 1.35, 1.7, 2.05, 2.4].forEach((k, i) => drawContour(k, i === 3));
+
+  // axes with arrowheads
+  ctx.strokeStyle = 'rgba(23, 39, 89, 0.6)';
+  ctx.lineWidth = 1.4;
+  ctx.beginPath(); ctx.moveTo(52, 430); ctx.lineTo(610, 430); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(70, 452); ctx.lineTo(70, 28); ctx.stroke();
+  ctx.fillStyle = 'rgba(23, 39, 89, 0.6)';
+  ctx.beginPath(); ctx.moveTo(610, 430); ctx.lineTo(597, 423); ctx.lineTo(597, 437); ctx.closePath(); ctx.fill();
+  ctx.beginPath(); ctx.moveTo(70, 28); ctx.lineTo(63, 41); ctx.lineTo(77, 41); ctx.closePath(); ctx.fill();
+  ctx.font = 'italic 15px Georgia, serif';
+  ctx.fillText('x₁', 594, 458);
+  ctx.fillText('x₂', 28, 46);
+
+  // visited path
+  ctx.strokeStyle = meta.color;
+  ctx.lineWidth = 1.8;
+  ctx.globalAlpha = 0.75;
+  ctx.beginPath();
+  visible.forEach((p, i) => {
+    const c = toCanvas(p);
+    if (i === 0) ctx.moveTo(c.x, c.y); else ctx.lineTo(c.x, c.y);
+  });
+  ctx.stroke();
+  ctx.globalAlpha = 1;
+
+  // samples: start dot in mustard, rejected proposals annotated, first dozen numbered.
+  // Label fonts grow when the canvas displays small so they stay legible on phones.
+  const numFont = displayScale < 0.75 ? '700 13px' : '700 9px';
+  const rejFont = displayScale < 0.75 ? 'italic 15px' : 'italic 12px';
+  visible.forEach((p, i) => {
+    const c = toCanvas(p);
+    const rejected = i > 0 && p.accepted === false;
+    const isCurrent = i === visible.length - 1;
+    const r = i === 0 ? 10 : rejected ? 7 : 7.5;
+
+    if (isCurrent) {
+      ctx.beginPath(); ctx.arc(c.x, c.y, r + 5, 0, TAU);
+      ctx.strokeStyle = meta.color; ctx.lineWidth = 1.5; ctx.globalAlpha = 0.5; ctx.stroke();
+      ctx.globalAlpha = 1;
+    }
+
+    ctx.beginPath(); ctx.arc(c.x, c.y, r, 0, TAU);
+    ctx.fillStyle = i === 0 ? '#d5a01c' : meta.color;
+    ctx.globalAlpha = rejected ? 0.45 : 1;
+    ctx.fill();
+    ctx.globalAlpha = 1;
+    ctx.strokeStyle = '#fbf8f0'; ctx.lineWidth = 1.5; ctx.stroke();
+
+    if (i > 0 && !rejected && i < 13) {
+      ctx.fillStyle = '#fbf8f0';
+      ctx.font = numFont + ' "Instrument Sans", sans-serif';
+      ctx.textAlign = 'center';
+      ctx.fillText(String(i), c.x, c.y + 3);
+      ctx.textAlign = 'left';
+    }
+    if (rejected) {
+      ctx.fillStyle = 'rgba(233, 96, 79, 0.9)';
+      ctx.font = rejFont + ' Georgia, serif';
+      ctx.fillText('reject', c.x + 12, c.y - 10);
+    }
+  });
+}
+
+// updateStats(): refreshes the readouts under the plot — step counter, acceptance, ESS proxy,
+// characteristic move. Takes nothing, returns nothing.
+function updateStats() {
+  const meta = METHODS.find(m => m.id === method);
+  const visible = chain.slice(0, step + 1);
+  const accepted = visible.filter((p, i) => i === 0 || p.accepted !== false).length;
+  const pct = Math.round(accepted / Math.max(1, visible.length) * 100);
+
+  $('stepNow').textContent = String(step).padStart(2, '0');
+  $('stepMax').textContent = String(chain.length - 1);
+  $('acceptStat').textContent = (method === 'gibbs' || method === 'slice') ? '100%' : pct + '%';
+  $('acceptNote').textContent = method === 'gibbs' ? 'built into the conditional draw'
+    : method === 'slice' ? 'shrinkage always lands inside the slice' : 'of proposals so far';
+  $('essStat').innerHTML = essProxy(visible) + ' <em>/ ' + visible.length + '</em>';
+  $('moveStat').textContent = meta.move;
+  $('stepBtn').disabled = step >= chain.length - 1;
+  $('resetBtn').disabled = step === 1;
+}
+
+// setMethod(id): switches the active sampler tab, rebuilds its chain, resets the view to step 9.
+// Takes a method id string, returns nothing.
+function setMethod(id) {
+  method = id;
+  stopAuto();
+  chain = buildChain(method, rho);
+  step = Math.min(9, chain.length - 1);
+  const meta = METHODS.find(m => m.id === id);
+  $('lab-eyebrow').textContent = meta.eyebrow;
+  $('lab-title').textContent = meta.name;
+  $('labExplanation').textContent = meta.explanation;
+  $('labAnnotation').innerHTML = '<span class="tack" aria-hidden="true"></span>' + meta.annotation;
+  canvas.setAttribute('aria-label', meta.name + ' path over a correlated Gaussian target');
+  // only true toggles carry pressed state; the atlas/CTA jump buttons stay plain actions
+  document.querySelectorAll('.method-stamps button[data-method], .method-tabs button').forEach(b => {
+    b.setAttribute('aria-pressed', String(b.dataset.method === id));
+  });
+  render();
+  updateStats();
+}
+
+// stopAuto(): cancels autoplay if running and restores the button label. Takes nothing, returns nothing.
+function stopAuto() {
+  if (autoTimer) { clearInterval(autoTimer); autoTimer = null; }
+  $('autoIcon').textContent = '▶';
+  $('autoLabel').textContent = 'Auto';
+  $('autoBtn').classList.remove('playing');
+}
+
+/* ---------------- wiring ---------------- */
+$('stepBtn').addEventListener('click', () => {
+  step = Math.min(chain.length - 1, step + 1);
+  render(); updateStats();
+});
+
+$('autoBtn').addEventListener('click', () => {
+  if (autoTimer) { stopAuto(); return; }
+  $('autoIcon').textContent = 'Ⅱ';
+  $('autoLabel').textContent = 'Pause';
+  $('autoBtn').classList.add('playing');
+  autoTimer = setInterval(() => {
+    if (step >= chain.length - 1) { stopAuto(); return; }
+    step += 1;
+    render(); updateStats();
+  }, 620);
+});
+
+$('resetBtn').addEventListener('click', () => {
+  stopAuto();
+  step = 1;
+  render(); updateStats();
+});
+
+$('rhoSlider').addEventListener('input', e => {
+  rho = Number(e.target.value);
+  stopAuto();
+  chain = buildChain(method, rho);
+  step = Math.min(9, chain.length - 1);
+  $('rhoReadout').textContent = 'ρ = ' + rho.toFixed(2);
+  render(); updateStats();
+});
+
+document.querySelectorAll('.method-stamps button[data-method], .method-tabs button, button.open-lab, #startGibbs').forEach(b => {
+  b.addEventListener('click', () => {
+    setMethod(b.dataset.method);
+    if (!b.closest('.method-tabs')) $('lab').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  });
+});
+
+// Re-fit the backing store when the layout changes width (debounced), then repaint.
+let resizeTimer = null;
+window.addEventListener('resize', () => {
+  clearTimeout(resizeTimer);
+  resizeTimer = setTimeout(() => { setupHiDpi(); render(); }, 150);
+});
+
+setupHiDpi();
+setMethod('gibbs');
+})();
+
+/* ================= population lab: rejection, importance, and SMC ================= */
+(function () {
+'use strict';
+// $(id): shorthand element lookup. Takes an element id string, returns the DOM element or null.
+const $ = id => document.getElementById(id);
+const TAU = Math.PI * 2;
+const W = 640, H = 380;
+
+// mulberry32(seed): deterministic 32-bit PRNG. Takes an integer seed, returns a function yielding floats in [0, 1).
+function mulberry32(seed) {
+  let t = seed >>> 0;
+  return function () {
+    t += 0x6D2B79F5;
+    let r = Math.imul(t ^ t >>> 15, t | 1);
+    r ^= r + Math.imul(r ^ r >>> 7, r | 61);
+    return ((r ^ r >>> 14) >>> 0) / 4294967296;
+  };
+}
+
+// randn(rng): one standard-normal draw via Box–Muller. Takes a PRNG function, returns a float.
+function randn(rng) {
+  const a = Math.max(rng(), 1e-9), b = Math.max(rng(), 1e-9);
+  return Math.sqrt(-2 * Math.log(a)) * Math.cos(TAU * b);
+}
+
+// normalPdf(x, mu, sd): Gaussian density value. Takes a point, mean, and standard deviation, returns a float.
+function normalPdf(x, mu, sd) {
+  const z = (x - mu) / sd;
+  return Math.exp(-0.5 * z * z) / (sd * Math.sqrt(TAU));
+}
+
+// piX(x): the bimodal target density 0.55·N(−1.35, 0.6²) + 0.45·N(1.15, 0.45²).
+// Takes a float, returns the (normalized) density value.
+function piX(x) {
+  return 0.55 * normalPdf(x, -1.35, 0.6) + 0.45 * normalPdf(x, 1.15, 0.45);
+}
+
+// qX(x): the proposal density N(0, 1.5²). Takes a float, returns the density value.
+function qX(x) {
+  return normalPdf(x, 0, 1.5);
+}
+
+// TRUE_MEAN: exact mean of the mixture, for the importance-sampling error readout.
+const TRUE_MEAN = 0.55 * -1.35 + 0.45 * 1.15;
+
+// envelopeM(): numerically tightened envelope constant so that M·q ≥ π on a fine grid, with 6%
+// safety margin. Takes nothing, returns the float M.
+function envelopeM() {
+  let m = 0;
+  for (let x = -5; x <= 5; x += 0.002) m = Math.max(m, piX(x) / qX(x));
+  return m * 1.06;
+}
+const M = envelopeM();
+
+const XMIN = -4.2, XMAX = 4.2;
+
+// xToPx(x): maps target-space x to canvas pixels. Takes a float, returns a float.
+function xToPx(x) { return (x - XMIN) / (XMAX - XMIN) * W; }
+
+// densityToPx(d, dmax, base, span): maps a density value to a canvas y above a baseline.
+// Takes the density, the plot's max density, the baseline y, and the pixel span, returns a float.
+function densityToPx(d, dmax, base, span) { return base - d / dmax * span; }
+
+/* ---------------- mode metadata ---------------- */
+const MODES = {
+  rejection: {
+    eyebrow: 'Draw, test, keep or discard',
+    explanation: 'Every step draws x from the wide proposal q and a uniform height under the envelope M·q. Points that land under the target curve are kept as exact independent draws; the rest are discarded. The gap between the curves is pure waste.',
+    counterLabel: 'Draws', stepLabel: 'Draw 25',
+  },
+  importance: {
+    eyebrow: 'Draw, then repair with weights',
+    explanation: 'Every draw from q is kept, but carries the weight π(x)/q(x): oversized where q under-covers the target, tiny where q wastes effort. The Kish effective sample size says how many equally-weighted draws this weighted set is really worth.',
+    counterLabel: 'Draws', stepLabel: 'Draw 40',
+  },
+  smc: {
+    eyebrow: 'Propagate, weight, resample',
+    explanation: 'A particle filter tracks a drifting hidden state from noisy observations. Each step propagates 44 particles through the dynamics, reweights them against the newest observation, and — whenever the weight ESS drops below N/2 — resamples, concentrating the population and discarding unlucky particles.',
+    counterLabel: 'Time step', stepLabel: 'Advance t',
+  },
+};
+
+/* ---------------- state ---------------- */
+const canvas = $('popCanvas');
+const ctx = canvas.getContext('2d');
+let mode = 'rejection';
+let autoTimer = null;
+let displayScale = 1;   // CSS pixels per logical plot unit; drawing stays in 640×380 logical space
+let rng, rejDraws, isDraws, smc;
+const DRAW_CAP = 3000;  // dots rendered per frame; statistics always use every draw
+
+// resetState(): re-seeds the active mode's state from scratch so Reset is deterministic.
+// Takes nothing, returns nothing.
+function resetState() {
+  rng = mulberry32(1913);
+  rejDraws = [];   // {x, u, ok} pairs under the envelope
+  isDraws = [];    // {x, w} weighted draws
+  smc = {
+    t: 0,
+    truth: 0.4,
+    particles: Array.from({ length: 44 }, () => ({ x: randn(rng) * 0.8, w: 1 / 44 })),
+    truthHist: [], obsHist: [], meanHist: [], essHist: [],
+    resampleCount: 0, uniqueSum: 0, errSum: 0, errCount: 0,
+  };
+}
+
+// smcStep(): advances the particle filter one time step — propagate, weight, adaptive systematic
+// resample — and records history for the strip chart. Takes nothing, returns nothing.
+function smcStep() {
+  const s = smc;
+  // hidden state and observation
+  s.truth = 0.92 * s.truth + 0.45 * randn(rng);
+  const obs = s.truth + 0.5 * randn(rng);
+
+  // propagate through the same dynamics, then weight against the observation likelihood
+  s.particles.forEach(p => { p.x = 0.92 * p.x + 0.45 * randn(rng); });
+  let wsum = 0;
+  s.particles.forEach(p => { p.w *= normalPdf(obs, p.x, 0.5) + 1e-12; wsum += p.w; });
+  s.particles.forEach(p => { p.w /= wsum; });
+
+  const ess = 1 / s.particles.reduce((acc, p) => acc + p.w * p.w, 0);
+  const mean = s.particles.reduce((acc, p) => acc + p.w * p.x, 0);
+  s.errSum += (mean - s.truth) ** 2;
+  s.errCount += 1;
+
+  // systematic resampling when the ESS falls below half the population
+  if (ess < s.particles.length / 2) {
+    const n = s.particles.length;
+    const starts = new Set();
+    const newParticles = [];
+    let cum = 0, i = 0;
+    const u0 = rng() / n;
+    const cumW = s.particles.map(p => (cum += p.w));
+    for (let k = 0; k < n; k++) {
+      const u = u0 + k / n;
+      while (i < n - 1 && cumW[i] < u) i++;
+      starts.add(i);
+      newParticles.push({ x: s.particles[i].x, w: 1 / n });
+    }
+    s.particles = newParticles;
+    s.resampleCount += 1;
+    s.uniqueSum += starts.size / n;
+  }
+
+  s.t += 1;
+  s.truthHist.push(s.truth);
+  s.obsHist.push(obs);
+  s.meanHist.push(mean);
+  s.essHist.push(ess);
+  const KEEP = 30;
+  if (s.truthHist.length > KEEP) {
+    s.truthHist.shift(); s.obsHist.shift(); s.meanHist.shift(); s.essHist.shift();
+  }
+}
+
+// stepMode(): performs one press of the step button for the active mode — a batch of draws for the
+// static methods, one filtering step for SMC. Takes nothing, returns nothing.
+function stepMode() {
+  if (mode === 'rejection') {
+    for (let k = 0; k < 25; k++) {
+      const x = 1.5 * randn(rng);
+      const u = rng() * M * qX(x);
+      rejDraws.push({ x, u, ok: u <= piX(x) });
+    }
+  } else if (mode === 'importance') {
+    for (let k = 0; k < 40; k++) {
+      const x = 1.5 * randn(rng);
+      isDraws.push({ x, w: piX(x) / qX(x) });
+    }
+  } else {
+    smcStep();
+  }
+  render(); updateStats();
+}
+
+/* ---------------- rendering ---------------- */
+
+// drawCurve(fn, dmax, base, span, color, dash): plots a 1-D density curve across the canvas.
+// Takes the density function, max density, baseline y, pixel span, stroke color, and dash array;
+// returns nothing.
+function drawCurve(fn, dmax, base, span, color, dash) {
+  ctx.save();
+  ctx.strokeStyle = color;
+  ctx.lineWidth = 2;
+  ctx.setLineDash(dash || []);
+  ctx.beginPath();
+  for (let px = 0; px <= W; px += 2) {
+    const x = XMIN + px / W * (XMAX - XMIN);
+    const y = densityToPx(fn(x), dmax, base, span);
+    if (px === 0) ctx.moveTo(px, y); else ctx.lineTo(px, y);
+  }
+  ctx.stroke();
+  ctx.restore();
+}
+
+// render(): redraws the population-lab canvas for the active mode. Takes nothing, returns nothing.
+function render() {
+  ctx.clearRect(0, 0, W, H);
+  ctx.save();
+  ctx.strokeStyle = 'rgba(23, 39, 89, 0.10)';
+  ctx.lineWidth = 0.65;
+  ctx.setLineDash([2, 5]);
+  for (let gx = 39; gx < W; gx += 39) { ctx.beginPath(); ctx.moveTo(gx, 0); ctx.lineTo(gx, H); ctx.stroke(); }
+  for (let gy = 39; gy < H; gy += 39) { ctx.beginPath(); ctx.moveTo(0, gy); ctx.lineTo(W, gy); ctx.stroke(); }
+  ctx.restore();
+
+  if (mode === 'rejection' || mode === 'importance') {
+    const base = H - 46, span = H - 120;
+    const dmax = M * qX(0) * 1.06;
+
+    ctx.strokeStyle = 'rgba(23, 39, 89, 0.5)';
+    ctx.lineWidth = 1.2;
+    ctx.beginPath(); ctx.moveTo(0, base); ctx.lineTo(W, base); ctx.stroke();
+
+    drawCurve(piX, dmax, base, span, '#172759');
+    ctx.font = 'italic 14px Georgia, serif';
+    ctx.fillStyle = '#172759';
+    ctx.fillText('π(x)', xToPx(-1.35) - 14, densityToPx(piX(-1.35), dmax, base, span) - 10);
+
+    if (mode === 'rejection') {
+      drawCurve(x => M * qX(x), dmax, base, span, '#e9604f', [6, 4]);
+      ctx.fillStyle = '#e9604f';
+      ctx.fillText('M·q(x)', xToPx(0) + 12, densityToPx(M * qX(0), dmax, base, span) - 8);
+      rejDraws.slice(-DRAW_CAP).forEach(d => {
+        const px = xToPx(d.x), py = densityToPx(d.u, dmax, base, span);
+        ctx.beginPath(); ctx.arc(px, py, 3, 0, TAU);
+        ctx.fillStyle = d.ok ? 'rgba(23, 39, 89, 0.85)' : 'rgba(233, 96, 79, 0.32)';
+        ctx.fill();
+      });
+    } else {
+      drawCurve(qX, dmax, base, span, '#cc9415', [6, 4]);
+      ctx.fillStyle = '#cc9415';
+      ctx.fillText('q(x)', xToPx(0) + 10, densityToPx(qX(0), dmax, base, span) - 8);
+      const wmax = isDraws.reduce((m2, d) => Math.max(m2, d.w), 1e-9);
+      isDraws.slice(-DRAW_CAP).forEach(d => {
+        const px = xToPx(d.x);
+        const r = 1.5 + 9 * Math.sqrt(d.w / wmax);
+        ctx.beginPath(); ctx.arc(px, base + 22, r, 0, TAU);
+        ctx.fillStyle = 'rgba(89, 102, 155, 0.45)';
+        ctx.fill();
+        ctx.beginPath(); ctx.moveTo(px, base); ctx.lineTo(px, base - 2 - 26 * d.w / wmax);
+        ctx.strokeStyle = 'rgba(89, 102, 155, 0.5)'; ctx.lineWidth = 1; ctx.stroke();
+      });
+      ctx.fillStyle = '#586075';
+      ctx.font = '12px "Instrument Sans", sans-serif';
+      ctx.fillText('dot area ∝ weight', 12, base + 34);
+    }
+    return;
+  }
+
+  // SMC strip chart: time flows left to right over the last 30 steps
+  const s = smc;
+  const n = s.truthHist.length;
+  // yOf(v): maps a state value to a canvas y around the mid-line. Takes a float, returns a float.
+  const yOf = v => H / 2 - v * 52;
+  // tOf(i): maps a history index to a canvas x across the strip. Takes an integer, returns a float.
+  const tOf = i => 60 + (W - 100) * (n <= 1 ? 1 : i / (Math.max(29, n - 1)));
+
+  ctx.strokeStyle = 'rgba(23, 39, 89, 0.5)';
+  ctx.lineWidth = 1.2;
+  ctx.beginPath(); ctx.moveTo(0, H / 2); ctx.lineTo(W, H / 2); ctx.stroke();
+
+  if (n > 0) {
+    // truth trajectory
+    ctx.strokeStyle = '#172759'; ctx.lineWidth = 2; ctx.beginPath();
+    s.truthHist.forEach((v, i) => { const px = tOf(i), py = yOf(v); if (i === 0) ctx.moveTo(px, py); else ctx.lineTo(px, py); });
+    ctx.stroke();
+    // filtered mean
+    ctx.strokeStyle = '#e9604f'; ctx.lineWidth = 2; ctx.setLineDash([5, 4]); ctx.beginPath();
+    s.meanHist.forEach((v, i) => { const px = tOf(i), py = yOf(v); if (i === 0) ctx.moveTo(px, py); else ctx.lineTo(px, py); });
+    ctx.stroke(); ctx.setLineDash([]);
+    // observations
+    ctx.strokeStyle = 'rgba(204, 148, 21, 0.9)'; ctx.lineWidth = 1.6;
+    s.obsHist.forEach((v, i) => {
+      const px = tOf(i), py = yOf(v);
+      ctx.beginPath(); ctx.moveTo(px - 4, py - 4); ctx.lineTo(px + 4, py + 4);
+      ctx.moveTo(px + 4, py - 4); ctx.lineTo(px - 4, py + 4); ctx.stroke();
+    });
+    // current particle cloud at the right edge; radius stays proportional to weight without
+    // saturating at the uniform post-resample weight (r = 6 at w = 1/N)
+    const px = tOf(n - 1);
+    s.particles.forEach(p => {
+      const r = 1 + 5 * Math.sqrt(p.w * s.particles.length);
+      ctx.beginPath(); ctx.arc(px + 16, yOf(p.x), Math.min(r, 9), 0, TAU);
+      ctx.fillStyle = 'rgba(89, 102, 155, 0.4)';
+      ctx.fill();
+    });
+  }
+
+  // legend drawn with measured widths so items never overlap at any font size
+  const legendFont = displayScale < 0.75 ? 14 : 12;
+  ctx.font = legendFont + 'px "Instrument Sans", sans-serif';
+  let lx = 12;
+  [['#172759', '— hidden state'], ['#e9604f', '- - filtered mean'],
+   ['#cc9415', '× observations'], ['#59669b', '● particles (area ∝ weight)']].forEach(item => {
+    ctx.fillStyle = item[0];
+    ctx.fillText(item[1], lx, 20);
+    lx += ctx.measureText(item[1]).width + 16;
+  });
+}
+
+// updateStats(): refreshes the three stat boxes and the counter for the active mode.
+// Takes nothing, returns nothing.
+function updateStats() {
+  const A = { label: $('popStatALabel'), val: $('popStatA'), note: $('popStatANote') };
+  const B = { label: $('popStatBLabel'), val: $('popStatB'), note: $('popStatBNote') };
+  const C = { label: $('popStatCLabel'), val: $('popStatC'), note: $('popStatCNote') };
+
+  if (mode === 'rejection') {
+    const acc = rejDraws.filter(d => d.ok).length;
+    $('popCounter').textContent = String(rejDraws.length);
+    A.label.textContent = 'Acceptance';
+    A.val.textContent = rejDraws.length ? Math.round(acc / rejDraws.length * 100) + '%' : '—';
+    A.note.textContent = 'measured so far · 1/M predicts ' + Math.round(100 / M) + '%';
+    B.label.textContent = 'Kept draws'; B.val.textContent = String(acc);
+    B.note.textContent = 'each one exact and independent';
+    C.label.textContent = 'Envelope M'; C.val.textContent = M.toFixed(2);
+    C.note.textContent = 'numerically tightened, +6% margin';
+  } else if (mode === 'importance') {
+    const wsum = isDraws.reduce((s2, d) => s2 + d.w, 0);
+    const w2sum = isDraws.reduce((s2, d) => s2 + d.w * d.w, 0);
+    const ess = wsum > 0 ? (wsum * wsum) / w2sum : 0;
+    const est = wsum > 0 ? isDraws.reduce((s2, d) => s2 + d.w * d.x, 0) / wsum : 0;
+    const wmax = isDraws.reduce((m2, d) => Math.max(m2, d.w), 0);
+    $('popCounter').textContent = String(isDraws.length);
+    A.label.textContent = 'Weight ESS';
+    A.val.innerHTML = isDraws.length ? Math.round(ess) + ' <em>/ ' + isDraws.length + '</em>' : '—';
+    A.note.textContent = 'Kish effective sample size';
+    B.label.textContent = 'Estimate of E[x]';
+    B.val.textContent = isDraws.length ? est.toFixed(3) : '—';
+    B.note.textContent = 'true mixture mean ' + TRUE_MEAN.toFixed(3);
+    C.label.textContent = 'Largest weight share';
+    C.val.textContent = wsum > 0 ? Math.round(wmax / wsum * 100) + '%' : '—';
+    C.note.textContent = 'one draw carrying this much is a warning';
+  } else {
+    const s = smc;
+    const ess = s.essHist.length ? s.essHist[s.essHist.length - 1] : s.particles.length;
+    $('popCounter').textContent = String(s.t);
+    A.label.textContent = 'Weight ESS';
+    A.val.innerHTML = Math.round(ess) + ' <em>/ ' + s.particles.length + '</em>';
+    A.note.textContent = 'resample triggers below N/2 = 22';
+    B.label.textContent = 'Resamples';
+    B.val.textContent = String(s.resampleCount);
+    B.note.textContent = s.resampleCount
+      ? 'avg ' + Math.round(100 * s.uniqueSum / s.resampleCount) + '% distinct particles kept'
+      : 'none triggered yet';
+    const rmse = s.errCount ? Math.sqrt(s.errSum / s.errCount) : 0;
+    C.label.textContent = 'Tracking RMSE';
+    C.val.textContent = s.t ? rmse.toFixed(2) : '—';
+    C.note.textContent = 'filtered mean vs hidden state, all ' + s.t + ' steps';
+  }
+}
+
+// setMode(id): switches the population lab between rejection, importance, and SMC, resetting
+// state so every mode starts from its seed. Takes a mode id string, returns nothing.
+function setMode(id) {
+  mode = id;
+  stopAuto();
+  resetState();
+  const meta = MODES[id];
+  $('popEyebrow').textContent = meta.eyebrow;
+  $('popExplanation').textContent = meta.explanation;
+  $('popCounterLabel').textContent = meta.counterLabel;
+  $('popStepLabel').textContent = meta.stepLabel;
+  const radio = document.querySelector('input[name="popMode"][value="' + id + '"]');
+  if (radio) radio.checked = true;
+  document.querySelectorAll('button[data-popmode]').forEach(b => {
+    b.setAttribute('aria-pressed', String(b.dataset.popmode === id));
+  });
+  render(); updateStats();
+}
+
+// stopAuto(): cancels autoplay if running and restores the button label. Takes nothing, returns nothing.
+function stopAuto() {
+  if (autoTimer) { clearInterval(autoTimer); autoTimer = null; }
+  $('popAutoIcon').textContent = '▶';
+  $('popAutoLabel').textContent = 'Auto';
+  $('popAutoBtn').classList.remove('playing');
+}
+
+/* ---------------- wiring ---------------- */
+$('popStepBtn').addEventListener('click', stepMode);
+
+$('popAutoBtn').addEventListener('click', () => {
+  if (autoTimer) { stopAuto(); return; }
+  $('popAutoIcon').textContent = 'Ⅱ';
+  $('popAutoLabel').textContent = 'Pause';
+  $('popAutoBtn').classList.add('playing');
+  autoTimer = setInterval(stepMode, mode === 'smc' ? 450 : 300);
+});
+
+$('popResetBtn').addEventListener('click', () => { stopAuto(); resetState(); render(); updateStats(); });
+
+$('popPicker').addEventListener('change', e => { if (e.target.name === 'popMode') setMode(e.target.value); });
+
+document.querySelectorAll('[data-popmode]').forEach(el => {
+  el.addEventListener('click', () => {
+    // re-clicking the active mode's shortcut only jumps to the lab, keeping accumulated draws
+    if (el.dataset.popmode !== mode) setMode(el.dataset.popmode);
+    if (el.tagName === 'BUTTON') $('population').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  });
+});
+
+// sizeCanvas(): sizes the backing store from the rendered CSS width times the device pixel ratio,
+// keeping draw code in 640×380 logical coordinates. Takes nothing, returns nothing.
+function sizeCanvas() {
+  const dpr = Math.min(window.devicePixelRatio || 1, 2);
+  const cssW = canvas.clientWidth || W;
+  displayScale = cssW / W;
+  canvas.width = Math.round(W * displayScale * dpr);
+  canvas.height = Math.round(H * displayScale * dpr);
+  ctx.setTransform(displayScale * dpr, 0, 0, displayScale * dpr, 0, 0);
+}
+
+// Re-fit the backing store when the layout changes width (debounced), then repaint.
+let resizeTimer = null;
+window.addEventListener('resize', () => {
+  clearTimeout(resizeTimer);
+  resizeTimer = setTimeout(() => { sizeCanvas(); render(); }, 150);
+});
+
+sizeCanvas();
+setMode('rejection');
+})();
+
+/* ================= chooser: recommend a sampler from problem structure ================= */
+(function () {
+'use strict';
+// $(id): shorthand element lookup. Takes an element id string, returns the DOM element or null.
+const $ = id => document.getElementById(id);
+
+// Scenario metadata mirrors the original playground's five problem shapes.
+const SCENARIOS = {
+  hierarchical: { pick: 'Gibbs sampling', note: 'First choice',
+    prompt: 'A hierarchical model has closed-form conditional distributions.',
+    why: 'Exploit those exact conditionals. Add blocking or reparameterization if correlation makes the chain zig-zag.' },
+  smooth: { pick: 'NUTS / HMC', note: 'Usually strongest',
+    prompt: 'A 100-dimensional continuous posterior is differentiable.',
+    why: 'Gradients prevent random-walk behavior, and NUTS adapts the trajectory length automatically.' },
+  blackbox: { pick: 'Metropolis–Hastings', note: 'Robust baseline',
+    prompt: 'You can evaluate an unnormalized target, but have no gradients or conditionals.',
+    why: 'It needs only density ratios. Start with random-walk proposals, then improve the proposal using structure.' },
+  online: { pick: 'Sequential Monte Carlo', note: 'Online inference',
+    prompt: 'A hidden state evolves while observations arrive sequentially.',
+    why: 'Particles naturally propagate, reweight, and resample as each new observation arrives.' },
+  expectation: { pick: 'Importance sampling', note: 'No Markov chain',
+    prompt: 'You need one expectation and already have a good proposal distribution.',
+    why: 'Independent weighted draws can be parallelized and reused; monitor the effective sample size of the weights.' },
+};
+
+// selectScenario(id): shows one scenario's recommendation and marks its tab active.
+// Takes a scenario id string, returns nothing.
+function selectScenario(id) {
+  const s = SCENARIOS[id];
+  $('pickName').textContent = s.pick;
+  $('pickNote').textContent = s.note;
+  $('pickPrompt').textContent = s.prompt;
+  $('pickWhy').textContent = s.why;
+  document.querySelectorAll('.scenario-tabs button').forEach(b => {
+    b.setAttribute('aria-pressed', String(b.dataset.scenario === id));
+  });
+}
+
+document.querySelectorAll('.scenario-tabs button').forEach(b => {
+  b.addEventListener('click', () => selectScenario(b.dataset.scenario));
+});
+
+selectScenario('smooth');
+})();
+</script>
+
+</body>
+</html>

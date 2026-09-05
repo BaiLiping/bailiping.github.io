@@ -1,0 +1,136 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="only light">
+  <meta name="theme-color" content="#fbf8f1">
+  <title>Frame Registration Lab · Bai Liping</title>
+  <meta name="description" content="A hands-on, dependency-free lab for RANSAC, ICP, and the NDT score landscape.">
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="../../assets/interactive-slide-system.css">
+  <script src="../../assets/interactive-slide-system.js"></script>
+  <script src="app.js" defer></script>
+  <script src="../../assets/bento-inline-frame.js" defer></script>
+</head>
+<body data-bento-live-app data-interactive-slides="frame-registration">
+  <main class="demo-shell interactive-slide-shell" id="demo">
+    <header class="masthead interactive-slide-header">
+      <div class="interactive-slide-heading">
+        <p class="eyebrow">FRAME REGISTRATION · LIVE LAB</p>
+        <h1>Make the two scans agree.</h1>
+      </div>
+      <div class="interactive-slide-actions">
+        <span class="interactive-slide-chip" title="The live page uses a deterministic two-dimensional teaching model.">2-D teaching model</span>
+        <a class="back-link interactive-slide-back" id="back-link" href="../" aria-label="Back to frame-registration slides">
+          <span aria-hidden="true">←</span> Back to slides <kbd>Esc</kbd>
+        </a>
+      </div>
+    </header>
+
+    <nav class="method-tabs interactive-slide-tabs" role="tablist" aria-label="Registration method">
+      <button class="method-tab is-active" id="tab-ransac" type="button" role="tab" aria-selected="true" aria-controls="panel-ransac" data-mode="ransac">
+        <span>01</span> RANSAC
+      </button>
+      <button class="method-tab" id="tab-icp" type="button" role="tab" aria-selected="false" aria-controls="panel-icp" data-mode="icp" tabindex="-1">
+        <span>02</span> ICP
+      </button>
+      <button class="method-tab" id="tab-ndt" type="button" role="tab" aria-selected="false" aria-controls="panel-ndt" data-mode="ndt" tabindex="-1">
+        <span>03</span> NDT landscape
+      </button>
+    </nav>
+
+    <div class="lab-grid interactive-slide-body">
+      <aside class="control-rail interactive-slide-controls interactive-slide-panel" aria-label="Experiment controls">
+        <div class="method-copy">
+          <p class="method-kicker" id="method-kicker">GLOBAL SEARCH</p>
+          <h2 id="method-title">Find consensus among outliers</h2>
+          <p id="method-copy">Each step proposes rigid transforms from compatible point pairs. The pose with the most geometric support survives.</p>
+        </div>
+
+        <section class="control-panel" id="panel-ransac" role="tabpanel" aria-labelledby="tab-ransac">
+          <label class="range-label" for="outlier-range">
+            <span>Scan outliers</span><output id="outlier-value" for="outlier-range">28%</output>
+          </label>
+          <input id="outlier-range" type="range" min="0" max="45" value="28" step="1">
+          <p class="microcopy">Step to test 36 pair hypotheses. Green points support the current best pose.</p>
+          <div class="button-row">
+            <button class="button primary" id="ransac-step" type="button">Test 36</button>
+            <button class="button" id="ransac-run" type="button" aria-pressed="false">Run</button>
+            <button class="icon-button" id="ransac-reset" type="button" title="Reset RANSAC" aria-label="Reset RANSAC">↺</button>
+          </div>
+        </section>
+
+        <section class="control-panel" id="panel-icp" role="tabpanel" aria-labelledby="tab-icp" hidden>
+          <label class="range-label" for="gate-range">
+            <span>Match gate</span><output id="gate-value" for="gate-range">0.90 u</output>
+          </label>
+          <input id="gate-range" type="range" min="45" max="150" value="90" step="5">
+          <p class="microcopy">Drag the blue scan to give ICP a start. <kbd>Shift</kbd>-drag rotates; focused canvas arrows nudge.</p>
+          <div class="button-row">
+            <button class="button primary" id="icp-step" type="button">One iteration</button>
+            <button class="button" id="icp-run" type="button" aria-pressed="false">Run</button>
+            <button class="icon-button" id="icp-reset" type="button" title="Reset ICP" aria-label="Reset ICP">↺</button>
+          </div>
+          <label class="check-label"><input id="show-matches" type="checkbox" checked> Show nearest pairs</label>
+        </section>
+
+        <section class="control-panel" id="panel-ndt" role="tabpanel" aria-labelledby="tab-ndt" hidden>
+          <label class="range-label" for="angle-range">
+            <span>Fixed rotation</span><output id="angle-value" for="angle-range">14°</output>
+          </label>
+          <input id="angle-range" type="range" min="-10" max="35" value="14" step="1">
+          <p class="microcopy">Click or drag on the score map to choose a translation, then climb toward a local maximum.</p>
+          <div class="button-row">
+            <button class="button primary" id="ndt-step" type="button">Climb once</button>
+            <button class="button" id="ndt-run" type="button" aria-pressed="false">Run</button>
+            <button class="icon-button" id="ndt-reset" type="button" title="Reset NDT" aria-label="Reset NDT">↺</button>
+          </div>
+        </section>
+
+        <dl class="metrics" aria-label="Current result">
+          <div><dt id="metric-a-label">Hypotheses</dt><dd id="metric-a">0</dd></div>
+          <div><dt id="metric-b-label">Inliers</dt><dd id="metric-b">—</dd></div>
+          <div><dt>Pose θ / t</dt><dd id="metric-pose">0.0° / 0.00</dd></div>
+        </dl>
+
+        <div class="legend" aria-label="Point cloud legend">
+          <span><i class="dot target-dot"></i>Target map</span>
+          <span><i class="dot source-dot"></i>Moving scan</span>
+        </div>
+      </aside>
+
+      <section class="stage-card interactive-slide-stage interactive-slide-panel" aria-labelledby="stage-heading">
+        <div class="stage-bar">
+          <h2 id="stage-heading">PAIR-CONGRUENCE SEARCH</h2>
+          <p class="status" id="status" role="status" aria-live="polite"><i></i> Ready — test the first batch</p>
+        </div>
+        <canvas id="registration-canvas" width="900" height="500" tabindex="0" aria-label="Interactive point-cloud registration plot. Use the controls for the selected method.">
+          This interactive plot needs canvas support. The red target is fixed while each method estimates a transform for the blue source scan.
+        </canvas>
+        <p class="canvas-hint" id="canvas-hint">Pair segments show the latest proposal; the outlined pose is the best so far.</p>
+      </section>
+    </div>
+
+    <footer class="interactive-slide-footer">
+      <p>2-D teaching model · same rigid-transform mathematics as the 3-D case</p>
+      <p><span class="truth-swatch"></span>Dashed outline = hidden ground truth</p>
+    </footer>
+  </main>
+
+  <noscript>
+    <style>.demo-shell{display:none!important}</style>
+    <main class="fallback">
+      <p class="eyebrow">FRAME REGISTRATION · LIVE LAB</p>
+      <h1>Three ways to align a scan</h1>
+      <p>This page becomes interactive when JavaScript is enabled. The red cloud is the fixed map and the blue cloud is the moving scan.</p>
+      <div class="fallback-grid">
+        <section><h2>RANSAC</h2><p>Samples compatible pairs, scores their consensus, and keeps the strongest rigid pose.</p></section>
+        <section><h2>ICP</h2><p>Alternates nearest-neighbour matching with a closed-form least-squares rigid fit.</p></section>
+        <section><h2>NDT</h2><p>Fits local Gaussian cells to the map and optimizes the scan’s likelihood landscape.</p></section>
+      </div>
+      <a class="back-link" href="../">← Back to slides</a>
+    </main>
+  </noscript>
+</body>
+</html>

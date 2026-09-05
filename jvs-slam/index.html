@@ -1,0 +1,624 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>JVS-SLAM vs conventional SLAM — an animated walkthrough | Bai Liping</title>
+<meta name="description" content="An animated, step-by-step comparison of the conventional SLAM pipeline (detect → hard association → optimize) and JVS-SLAM's joint vector-set posterior (hypothesize → optimize → Bayes reweight).">
+<style>
+:root{
+  --paper:#f4f6f8; --panel:#ffffff; --ink:#16222e; --ink-soft:#51606e; --ink-faint:#8a97a3;
+  --line:#d7dee5; --grid:#e6ebef;
+  --cv:#e8720c; --cv-deep:#b45607; --cv-wash:#fceede;
+  --jv:#1f77b4; --jv-deep:#155d8f; --jv-wash:#e5eff7;
+  --h1:#1f77b4; --h2:#9467bd; --h3:#0e8f7e;
+  --err:#c22f2f; --ok:#2ca02c;
+  --serif:"Charter","Bitstream Charter","Sitka Text",Cambria,Georgia,serif;
+  --mono:ui-monospace,"SF Mono","Cascadia Mono",Menlo,Consolas,monospace;
+  --sans:system-ui,-apple-system,"Segoe UI",sans-serif;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0; color:var(--ink); font:17px/1.62 var(--serif); background:var(--paper);
+  background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);
+  background-size:26px 26px;
+}
+@media (prefers-reduced-motion: reduce){ html{scroll-behavior:auto} }
+
+/* ---- chrome ---- */
+.topbar{position:sticky;top:0;z-index:50;background:rgba(244,246,248,.92);backdrop-filter:blur(6px);border-bottom:1px solid var(--line)}
+.topbar .in{max-width:1120px;margin:0 auto;padding:9px 20px;display:flex;gap:18px;align-items:baseline;flex-wrap:wrap}
+.brand{font:700 15px var(--serif);letter-spacing:.2px}
+.brand .c{color:var(--cv-deep)} .brand .j{color:var(--jv-deep)} .brand .x{color:var(--ink-faint);padding:0 4px}
+.topnav{display:flex;gap:14px;flex-wrap:wrap;margin-left:auto}
+.topnav a{font:11.5px var(--mono);color:var(--ink-soft);text-decoration:none;letter-spacing:.02em}
+.topnav a:hover{color:var(--ink);text-decoration:underline}
+main{max-width:1120px;margin:0 auto;padding:0 20px 90px}
+
+/* ---- hero ---- */
+.hero{padding:54px 0 26px;max-width:860px}
+.eyebrow{font:10.5px var(--mono);letter-spacing:.16em;text-transform:uppercase;color:var(--ink-faint)}
+h1{font:700 clamp(29px,4.4vw,42px)/1.14 var(--serif);margin:.35em 0 .4em;letter-spacing:-.01em}
+h1 .c{color:var(--cv-deep)} h1 .j{color:var(--jv-deep)}
+.thesis{font-size:18.5px;color:var(--ink-soft);max-width:66ch}
+.thesis strong{color:var(--ink)}
+.accuracy{max-width:80ch;margin:18px 0 0;padding:13px 16px;border:1px solid var(--line);border-left:3px solid var(--jv);border-radius:0 6px 6px 0;background:#fff;color:var(--ink-soft);font:13px/1.55 var(--sans)}
+.accuracy strong{color:var(--ink)}
+.accuracy a{color:var(--jv-deep)}
+
+/* ---- sections ---- */
+.sec{margin-top:64px;scroll-margin-top:64px}
+h2{font:700 27px/1.25 var(--serif);margin:0 0 10px}
+h2 .no{font:400 15px var(--mono);vertical-align:.14em;margin-right:10px;color:var(--ink-faint)}
+.lede{max-width:74ch;color:var(--ink-soft)}
+p em{font-style:italic}
+.fig{background:var(--panel);border:1px solid var(--line);border-radius:6px;margin:22px 0;overflow:hidden}
+.fig .body{padding:16px}
+.figcap{border-top:1px solid var(--line);padding:9px 16px;font:11.5px/1.55 var(--mono);color:var(--ink-soft);background:#fbfcfd}
+.figcap b{color:var(--ink);font-weight:600}
+
+/* ---- animation stage ---- */
+.stage{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+@media (max-width:840px){ .stage{grid-template-columns:1fr} }
+.pane{border:1px solid var(--line);border-radius:6px;overflow:hidden;background:#fff;display:flex;flex-direction:column}
+.pane h3{margin:0;padding:8px 12px;font:600 12px var(--mono);letter-spacing:.08em;text-transform:uppercase;border-bottom:1px solid var(--line)}
+.pane.cv h3{color:var(--cv-deep);background:var(--cv-wash)}
+.pane.jv h3{color:var(--jv-deep);background:var(--jv-wash)}
+.pane svg{display:block;width:100%;height:auto;background:#fdfefe}
+.sub{min-height:74px;border-top:1px dashed var(--line);padding:8px 12px;font:12px/1.6 var(--sans);color:var(--ink-soft);display:flex;flex-direction:column;gap:6px;justify-content:center}
+.sub .chip{display:inline-block;font:11px var(--mono);border:1px solid var(--line);border-radius:4px;padding:2px 7px;margin-right:6px;background:#fbfcfd;color:var(--ink)}
+.sub .chip.pick{border-color:var(--cv);background:var(--cv-wash);color:var(--cv-deep);font-weight:700}
+.sub .chip.bad{border-color:var(--err);color:var(--err)}
+.sub .chip.good{border-color:var(--ok);color:#1d7a1d}
+.wbar{display:grid;grid-template-columns:34px 1fr 44px;gap:8px;align-items:center;font:11px var(--mono)}
+.wbar .tr{height:10px;background:#eef1f4;border-radius:5px;overflow:hidden}
+.wbar .fl{height:100%;border-radius:5px;transition:width .5s ease}
+.wbar.w1 .fl{background:var(--h1)} .wbar.w2 .fl{background:var(--h2)} .wbar.w3 .fl{background:var(--h3)}
+
+/* ---- stepper ---- */
+.stepbar{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:14px 0 8px;font-family:var(--sans)}
+.stepbar button{font:13px var(--sans);cursor:pointer;padding:7px 13px;border:1px solid var(--line);border-radius:5px;background:#fff;color:var(--ink)}
+.stepbar button:hover{border-color:var(--ink-soft)}
+.stepbar button.primary{background:var(--ink);color:#fff;border-color:var(--ink)}
+.stepbar button:disabled{opacity:.4;cursor:default}
+.dots{display:flex;gap:6px;margin-left:4px}
+.dots button{width:12px;height:12px;padding:0;border-radius:50%;border:1px solid var(--ink-faint);background:#fff}
+.dots button.on{background:var(--ink);border-color:var(--ink)}
+.stepnum{font:11.5px var(--mono);color:var(--ink-faint);margin-left:auto}
+.explain{border:1px solid var(--line);border-left:3px solid var(--ink);border-radius:0 6px 6px 0;background:#fff;padding:14px 18px;margin-top:12px;min-height:118px}
+.explain h4{margin:0 0 6px;font:700 16.5px var(--serif)}
+.explain h4 .sn{font:400 12px var(--mono);color:var(--ink-faint);margin-right:8px}
+.explain p{margin:0;font:14.5px/1.6 var(--sans);color:var(--ink-soft);max-width:90ch}
+.explain .watch{margin-top:7px;font:12px var(--mono);color:var(--ink)}
+.explain .watch::before{content:"▸ watch: ";color:var(--ink-faint)}
+.explain.cvside{border-left-color:var(--cv)} .explain.jvside{border-left-color:var(--jv)}
+.hint{font:12.5px var(--sans);color:var(--ink-faint)}
+button:focus-visible,input:focus-visible,a:focus-visible{outline:2px solid var(--jv);outline-offset:2px}
+
+/* ---- sandbox ---- */
+.sand{display:grid;grid-template-columns:260px 1fr;gap:22px}
+@media (max-width:760px){ .sand{grid-template-columns:1fr} }
+.ctl{font-family:var(--sans)}
+.ctl label{display:flex;justify-content:space-between;font:12.5px var(--sans);color:var(--ink-soft);margin:12px 0 3px}
+.ctl label output{font-family:var(--mono);color:var(--ink)}
+input[type=range]{width:100%;accent-color:var(--jv)}
+.terms{font:12px/1.9 var(--mono);color:var(--ink-soft);border-top:1px dashed var(--line);margin-top:14px;padding-top:10px}
+.terms b{color:var(--ink)}
+.sbars{display:flex;flex-direction:column;gap:14px;justify-content:center}
+.sbar{display:grid;grid-template-columns:150px 1fr 52px;gap:10px;align-items:center;font:12.5px var(--sans)}
+.sbar .nm{font-family:var(--mono);font-size:11.5px}
+.sbar .tr{height:16px;background:#eef1f4;border-radius:8px;overflow:hidden}
+.sbar .fl{height:100%;border-radius:8px;transition:width .25s ease}
+.sbar.b1 .fl{background:var(--h1)} .sbar.b2 .fl{background:var(--h2)} .sbar.b3 .fl{background:var(--h3)}
+.sbar .vv{font-family:var(--mono);text-align:right}
+.verdict{margin-top:10px;font:13px var(--sans);color:var(--ink-soft)}
+.verdict b{color:var(--ink)}
+
+/* ---- recap / table ---- */
+.recap ol{margin:14px 0 0;padding-left:24px;max-width:84ch}
+.recap li{margin-bottom:13px;font:15px/1.62 var(--sans);color:var(--ink-soft)}
+.recap li b{color:var(--ink);font-family:var(--serif);font-size:16px}
+table{border-collapse:collapse;width:100%;font:14px/1.55 var(--sans);background:#fff}
+th,td{border:1px solid var(--line);padding:10px 13px;text-align:left;vertical-align:top}
+th{font:600 12px var(--mono);letter-spacing:.06em;text-transform:uppercase;color:var(--ink-soft);background:#fbfcfd}
+td:first-child{font-family:var(--mono);font-size:12px;color:var(--ink-soft);white-space:nowrap}
+th.cv,td.cvc{background:var(--cv-wash)} th.jv,td.jvc{background:var(--jv-wash)}
+td.cvc,td.jvc{background-clip:padding-box}
+.eq{font:15px/1.8 var(--serif);background:#fff;border:1px solid var(--line);border-radius:6px;padding:14px 18px;margin:16px 0;overflow-x:auto}
+.eq i{font-style:italic}
+footer{margin-top:70px;border-top:1px solid var(--line);padding-top:16px;font:12.5px/1.7 var(--sans);color:var(--ink-faint)}
+footer a{color:var(--ink-soft)}
+</style>
+</head>
+<body>
+
+<div class="topbar"><div class="in">
+  <span class="brand"><span class="c">Conventional</span><span class="x">vs</span><span class="j">JVS-SLAM</span></span>
+  <nav class="topnav">
+    <a href="#animation">animation</a>
+    <a href="#sandbox">sandbox</a>
+    <a href="#steps">step by step</a>
+    <a href="#compare">comparison</a>
+    <a href="#paper">the paper</a>
+    <a href="/">← bailiping.com</a>
+  </nav>
+</div></div>
+
+<main>
+
+<header class="hero">
+  <div class="eyebrow">Interactive note · Inostroza &amp; Adams, IJRR 2025</div>
+  <h1>One posterior, not a pipeline: <span class="c">conventional SLAM</span> vs <span class="j">JVS-SLAM</span></h1>
+  <p class="thesis">Conventional feature-based SLAM is a relay race: a front-end <strong>decides</strong> data associations, then a back-end <strong>optimizes</strong> the graph it was handed. When the baton is dropped — one wrong match — the optimizer polishes a wrong map with full confidence. <strong>JVS-SLAM</strong> refuses to drop the baton: it keeps trajectory, map <em>and</em> associations inside one joint vector-set posterior, optimizes every plausible explanation, and lets Bayes decide the weights.</p>
+  <div class="accuracy"><strong>Source.</strong> F. Inostroza and M. Adams, <a href="https://doi.org/10.1177/02783649241303770">“Combining the SLAM back and front ends with a joint vector-set distribution,”</a> <i>The International Journal of Robotics Research</i> 44(7), 2025. This page is a pedagogical animation of the paper’s core idea, built to accompany the <a href="https://joint-slam-lab.sugary-book-2058.chatgpt.site/">interactive paper companion</a>. The scenario below is a deliberately simplified 2-D toy problem; numbers are illustrative, not from the paper.</div>
+</header>
+
+<!-- ================= ANIMATION ================= -->
+<section class="sec" id="animation">
+  <h2><span class="no">01</span>The same robot, the same data — two philosophies</h2>
+  <p class="lede">A robot drives one loop and comes home. Odometry has drifted, and near the start sit <em>two look-alike landmarks</em> (same appearance, different places). At the loop closure the robot gets two measurements: an ambiguous one, and a distant unambiguous one. Step through what each paradigm does with exactly the same evidence.</p>
+
+  <div class="fig">
+    <div class="body">
+      <div class="stepbar">
+        <button id="btnPrev" aria-label="previous step">◀ Prev</button>
+        <button id="btnNext" class="primary" aria-label="next step">Next ▶</button>
+        <button id="btnPlay" aria-label="play all steps">▶ Play all</button>
+        <div class="dots" id="dots" role="tablist" aria-label="animation steps"></div>
+        <span class="stepnum" id="stepNum">step 1 / 8</span>
+      </div>
+
+      <div class="stage">
+        <div class="pane cv">
+          <h3>Conventional — decide, then optimize</h3>
+          <svg id="svgL" viewBox="0 0 420 300" role="img" aria-label="conventional SLAM panel"></svg>
+          <div class="sub" id="subL"><span class="hint">front-end + back-end pipeline</span></div>
+        </div>
+        <div class="pane jv">
+          <h3>JVS-SLAM — hypothesize, optimize, reweight</h3>
+          <svg id="svgR" viewBox="0 0 420 300" role="img" aria-label="JVS-SLAM panel"></svg>
+          <div class="sub" id="subR"><span class="hint">one joint vector-set posterior</span></div>
+        </div>
+      </div>
+
+      <div class="explain" id="explain">
+        <h4><span class="sn" id="exNo"></span><span id="exTitle"></span></h4>
+        <p id="exBody"></p>
+        <div class="watch" id="exWatch"></div>
+      </div>
+      <p class="hint" style="margin:10px 0 0">Use ← → arrow keys, the dots, or <b>Play all</b>. Steps 1–3 are identical on both sides — the paradigms only diverge once a decision is (or isn’t) made.</p>
+    </div>
+    <div class="figcap"><b>Legend.</b> dashed grey = ground-truth path · orange/blue = estimated path · ▲ teal triangles = the two look-alike landmarks m₁, m₂ · ◆ grey diamonds = other mapped landmarks · arrows = loop-closure measurements z<sub>a</sub> (ambiguous) and z<sub>b</sub> (unambiguous, far corner).</div>
+  </div>
+</section>
+
+<!-- ================= SANDBOX ================= -->
+<section class="sec" id="sandbox">
+  <h2><span class="no">02</span>The reweighting, in your hands</h2>
+  <p class="lede">Step 8’s weights are not magic — each hypothesis is scored by how well it explains <em>everything</em>: geometry (least-squares fit), appearance (descriptors), and detection statistics (probability of detection <i>p</i><sub>D</sub>, clutter rate λ). Move the sliders and watch probability mass flow between the three explanations.</p>
+  <div class="fig">
+    <div class="body sand">
+      <div class="ctl">
+        <label><span>probability of detection p<sub>D</sub></span> <output id="oPd">0.86</output></label>
+        <input type="range" id="sPd" min="0.50" max="0.99" step="0.01" value="0.86">
+        <label>relative clutter rate λ <output id="oLam">0.32</output></label>
+        <input type="range" id="sLam" min="0" max="1" step="0.01" value="0.32">
+        <label>descriptor agreement with m₁ <output id="oDesc">0.78</output></label>
+        <input type="range" id="sDesc" min="0" max="1" step="0.01" value="0.78">
+        <div class="terms" id="terms"></div>
+      </div>
+      <div class="sbars">
+        <div class="sbar b1"><span class="nm">H₁ true loop → m₁</span><div class="tr"><div class="fl" id="b1"></div></div><span class="vv" id="v1"></span></div>
+        <div class="sbar b2"><span class="nm">H₂ swap → m₂</span><div class="tr"><div class="fl" id="b2"></div></div><span class="vv" id="v2"></span></div>
+        <div class="sbar b3"><span class="nm">H₃ new landmark</span><div class="tr"><div class="fl" id="b3"></div></div><span class="vv" id="v3"></span></div>
+        <div class="verdict" id="verdict"></div>
+      </div>
+    </div>
+    <div class="figcap"><b>Read it.</b> High p<sub>D</sub> makes H₃ expensive (a missed detection of m₁ must be explained); high clutter λ makes “it was a false alarm / new thing” cheap again; descriptor agreement arbitrates between the two look-alikes. The conventional pipeline collapses this whole panel into a single hard pick.</div>
+  </div>
+</section>
+
+<!-- ================= STEP BY STEP ================= -->
+<section class="sec recap" id="steps">
+  <h2><span class="no">03</span>The animation, step by step</h2>
+  <p class="lede">The eight steps above, in words — what happens, and why it is the crux of the paper.</p>
+  <ol id="recapList"></ol>
+</section>
+
+<!-- ================= COMPARISON ================= -->
+<section class="sec" id="compare">
+  <h2><span class="no">04</span>Side-by-side comparison</h2>
+  <div class="fig"><div class="body" style="overflow-x:auto">
+  <table>
+    <thead><tr><th></th><th class="cv">Conventional SLAM</th><th class="jv">JVS-SLAM</th></tr></thead>
+    <tbody>
+      <tr><td>architecture</td><td class="cvc">detect + describe → <b>hard association</b> → one factor graph</td><td class="jvc">hypothesis set ⇄ graph optimizer ⇄ Bayes weights, in one posterior</td></tr>
+      <tr><td>philosophy</td><td class="cvc">decide first, optimize second</td><td class="jvc">sample, optimize and compare jointly</td></tr>
+      <tr><td>association</td><td class="cvc">one-shot, local evidence (nearest neighbour / best descriptor); ties broken arbitrarily</td><td class="jvc">multi-scan hypotheses kept as a random variable A₁:ₖ; global consistency arbitrates</td></tr>
+      <tr><td>map size</td><td class="cvc">heuristic map management (spawn / delete rules) outside the estimator</td><td class="jvc">map is a random finite set — landmark count is itself estimated (p<sub>D</sub>, clutter, birth in the likelihood)</td></tr>
+      <tr><td>wrong match</td><td class="cvc">becomes a confident constraint; optimizer warps the map to satisfy it; residual gets averaged away</td><td class="jvc">survives as a low-weight hypothesis (here w≈0.09) and can be revived or killed by later evidence</td></tr>
+      <tr><td>uncertainty</td><td class="cvc">covariance of <i>one</i> linearization point — blind to association ambiguity</td><td class="jvc">mixture over globally coherent explanations — multi-modal; calibration depends on the model</td></tr>
+      <tr><td>failure mode</td><td class="cvc">confidently wrong; recovery requires outlier surgery (switchable constraints, RANSAC, …)</td><td class="jvc">gracefully uncertain; weights shift as evidence arrives</td></tr>
+    </tbody>
+  </table>
+  </div><div class="figcap"><b>The one-line summary.</b> The conventional answer is not absent from JVS-SLAM — it is <i>inside</i> it, as hypothesis H₂, carrying an illustrative weight of 9%.</div></div>
+</section>
+
+<!-- ================= PAPER ================= -->
+<section class="sec" id="paper">
+  <h2><span class="no">05</span>Where this lives in the paper</h2>
+  <p class="lede">JVS-SLAM maintains the joint density over the trajectory (a vector), the map (a labeled random finite set, so the number of landmarks is uncertain too), and the data associations. Summing over association histories gives the marginal trajectory–map posterior:</p>
+  <div class="eq">
+    <i>p</i>( <i>X</i><sub>0:k</sub>, <i>M</i> | <i>Z</i><sub>1:k</sub> )
+    &nbsp;=&nbsp; Σ<sub>A</sub> <i>w</i><sup>(A)</sup> · <i>p</i>( <i>X</i><sub>0:k</sub>, <i>M</i> | <i>A</i>, <i>Z</i><sub>1:k</sub> )
+  </div>
+  <p class="lede">Here <i>w</i><sup>(A)</sup> = <i>p</i>(<i>A</i><sub>1:k</sub> = <i>A</i> | <i>Z</i><sub>1:k</sub>), and the weights sum to one. Each association hypothesis <i>A</i> conditions a smooth estimation problem solved by nonlinear least squares (the familiar back-end); its weight <i>w</i><sup>(A)</sup> comes from Bayes’ rule and folds in the optimized fit <em>and</em> the set-likelihood terms — detection probability p<sub>D</sub>, clutter intensity, landmark birth — that conventional pipelines relegate to front-end heuristics. In the animation: step 6 is the “population of hypotheses,” step 7 is the per-hypothesis least squares, step 8 is the reweighting. That is the whole idea: <strong>the front-end’s decisions become random variables of the back-end’s posterior.</strong></p>
+</section>
+
+<footer>
+  Animated companion by Bai Liping · scenario and numbers are illustrative ·
+  paper: <a href="https://doi.org/10.1177/02783649241303770">doi:10.1177/02783649241303770</a> ·
+  original walkthrough: <a href="https://joint-slam-lab.sugary-book-2058.chatgpt.site/">joint-slam-lab</a>
+</footer>
+</main>
+
+<script>
+(function(){
+"use strict";
+/* ---------------- geometry ---------------- */
+const TRUE=[[95,240],[80,175],[95,108],[160,70],[245,62],[310,92],[330,160],[295,225],[175,250]];
+const ramp=i=>Math.pow(i/8,1.4);
+const add=(p,v,k)=>[p[0]+v[0]*k,p[1]+v[1]*k];
+const DRIFT=TRUE.map((p,i)=>add(p,[-50,-30],ramp(i)));          // odometry estimate
+const CONV =DRIFT.map((p,i)=>add(p,[20.5,-4.5],ramp(i)));       // wrong-match compromise (also H2 optimum)
+const H1P  =DRIFT.map((p,i)=>add(p,[50,30],ramp(i)*0.96));      // corrected ≈ truth
+const LT={m1:[120,258],m2:[60,190],m3:[70,120],m4:[205,48],m5:[345,125],m6:[255,180]};   // true landmarks
+const LE={m1:[121,257],m2:[61,189],m3:[72,118],m4:[216,39],m5:[365,109],m6:[285,156]};   // mapped (drifted) landmarks
+const ZA=[-55,8], ZB=[-105,-130];   // body-frame measurements taken at the TRUE final pose
+const lerp=(a,b,t)=>a+(b-a)*t;
+const lerpP=(A,B,t)=>A.map((p,i)=>[lerp(p[0],B[i][0],t),lerp(p[1],B[i][1],t)]);
+const poly=P=>"M"+P.map(p=>p[0].toFixed(1)+","+p[1].toFixed(1)).join(" L");
+/* arc-length point + tangent for the driving robot */
+function measure(P){const L=[0];for(let i=1;i<P.length;i++){L.push(L[i-1]+Math.hypot(P[i][0]-P[i-1][0],P[i][1]-P[i-1][1]));}return L;}
+const DLEN=measure(DRIFT);
+function pointAt(P,L,u){
+  const s=u*L[L.length-1];
+  for(let i=1;i<P.length;i++){
+    if(s<=L[i]){const f=(s-L[i-1])/(L[i]-L[i-1]||1);
+      return {x:lerp(P[i-1][0],P[i][0],f),y:lerp(P[i-1][1],P[i][1],f),
+              a:Math.atan2(P[i][1]-P[i-1][1],P[i][0]-P[i-1][0])};}
+  }
+  const n=P.length-1;
+  return {x:P[n][0],y:P[n][1],a:Math.atan2(P[n][1]-P[n-1][1],P[n][0]-P[n-1][0])};
+}
+function trimmed(P,L,u){ // polyline prefix up to fraction u
+  const s=u*L[L.length-1],out=[P[0]];
+  for(let i=1;i<P.length;i++){
+    if(s>=L[i]){out.push(P[i]);}
+    else{const f=(s-L[i-1])/(L[i]-L[i-1]||1);out.push([lerp(P[i-1][0],P[i][0],f),lerp(P[i-1][1],P[i][1],f)]);break;}
+  }
+  return out;
+}
+
+/* ---------------- svg fragments ---------------- */
+const tri=(x,y,c,o)=>`<path d="M${x},${y-6} L${x+5.5},${y+4} L${x-5.5},${y+4} Z" fill="${c}" opacity="${o??1}"/>`;
+const dia=(x,y,c,o)=>`<rect x="${x-4}" y="${y-4}" width="8" height="8" transform="rotate(45 ${x} ${y})" fill="${c}" opacity="${o??1}"/>`;
+const txt=(x,y,s,c,sz,anchor)=>`<text x="${x}" y="${y}" fill="${c??'#51606e'}" font-size="${sz??10}" font-family="ui-monospace,Menlo,monospace" text-anchor="${anchor??'start'}">${s}</text>`;
+function arrow(x1,y1,x2,y2,c,w,dash,o){
+  const a=Math.atan2(y2-y1,x2-x1),h=6;
+  const p1=[x2-h*Math.cos(a-0.45),y2-h*Math.sin(a-0.45)],p2=[x2-h*Math.cos(a+0.45),y2-h*Math.sin(a+0.45)];
+  return `<g opacity="${o??1}"><line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="${c}" stroke-width="${w??1.6}" ${dash?`stroke-dasharray="${dash}"`:""}/>`+
+         `<path d="M${x2},${y2} L${p1[0]},${p1[1]} L${p2[0]},${p2[1]} Z" fill="${c}"/></g>`;
+}
+const robot=(x,y,a,c)=>`<g><circle cx="${x}" cy="${y}" r="5" fill="#fff" stroke="${c}" stroke-width="2.2"/>`+
+  `<line x1="${x}" y1="${y}" x2="${x+9*Math.cos(a)}" y2="${y+9*Math.sin(a)}" stroke="${c}" stroke-width="2.2"/></g>`;
+function landmarks(showEst,estOp){
+  let s="";
+  s+=tri(LT.m1[0],LT.m1[1],"#0e8f7e",showEst?0.28:1)+tri(LT.m2[0],LT.m2[1],"#0e8f7e",showEst?0.28:1);
+  for(const k of ["m3","m4","m5","m6"]) s+=dia(LT[k][0],LT[k][1],"#8a97a3",showEst?0.22:0.85);
+  s+=txt(LT.m1[0]+8,LT.m1[1]+4,"m₁","#0e8f7e",11)+txt(LT.m2[0]-8,LT.m2[1]+4,"m₂","#0e8f7e",11,"end");
+  s+=txt(LT.m3[0]-9,LT.m3[1]-6,"m₃","#8a97a3")+txt(LT.m4[0]+8,LT.m4[1],"m₄","#8a97a3")
+    +txt(LT.m5[0]-2,LT.m5[1]+14,"m₅","#8a97a3")+txt(LT.m6[0]+8,LT.m6[1]+4,"m₆","#8a97a3");
+  if(showEst){
+    const o=estOp??1;
+    s+=tri(LE.m1[0],LE.m1[1],"#0e8f7e",o)+tri(LE.m2[0],LE.m2[1],"#0e8f7e",o);
+    for(const k of ["m3","m4","m5","m6"]) s+=dia(LE[k][0],LE[k][1],"#6b7885",0.8*o);
+  }
+  return s;
+}
+const truthPath=op=>`<path d="${poly(TRUE)}" fill="none" stroke="#9aa6b0" stroke-width="1.4" stroke-dasharray="5 5" opacity="${op??0.8}"/>`
+  +TRUE.map(p=>`<circle cx="${p[0]}" cy="${p[1]}" r="1.6" fill="#9aa6b0" opacity="${op??0.8}"/>`).join("");
+function rays(pose,op,withGates){
+  const a=[pose[0]+ZA[0],pose[1]+ZA[1]], b=[pose[0]+ZB[0],pose[1]+ZB[1]];
+  let s=arrow(pose[0],pose[1],a[0],a[1],"#16222e",1.5,null,op)+arrow(pose[0],pose[1],b[0],b[1],"#16222e",1.5,"4 3",op);
+  s+=txt(a[0]-4,a[1]+15,"z_a","#16222e",10.5)+txt(b[0]+7,b[1],"z_b","#16222e",10.5);
+  if(withGates){
+    s+=`<line x1="${a[0]}" y1="${a[1]}" x2="${LE.m1[0]}" y2="${LE.m1[1]}" stroke="#0e8f7e" stroke-width="1.3" stroke-dasharray="3 3" opacity="${op}"/>`
+      +`<line x1="${a[0]}" y1="${a[1]}" x2="${LE.m2[0]}" y2="${LE.m2[1]}" stroke="#0e8f7e" stroke-width="1.3" stroke-dasharray="3 3" opacity="${op}"/>`
+      +txt((a[0]+LE.m1[0])/2+6,(a[1]+LE.m1[1])/2,"?","#0e8f7e",12)
+      +txt((a[0]+LE.m2[0])/2-8,(a[1]+LE.m2[1])/2,"?","#0e8f7e",12)
+      +txt(a[0]+14,a[1]+18,"m₁? m₂? new?","#0e8f7e",10.5);
+    s+=`<line x1="${b[0]}" y1="${b[1]}" x2="${LE.m3[0]}" y2="${LE.m3[1]}" stroke="#2ca02c" stroke-width="1.3" stroke-dasharray="3 3" opacity="${op}"/>`
+      +txt(LE.m3[0]+16,LE.m3[1]-8,"→ m₃, only match ✓","#2ca02c",10.5);
+  }
+  return s;
+}
+function residual(from,to,o){return `<line x1="${from[0]}" y1="${from[1]}" x2="${to[0]}" y2="${to[1]}" stroke="#c22f2f" stroke-width="1.6" stroke-dasharray="2 2" opacity="${o??1}"/>`;}
+const pathLine=(P,c,w,dash,o)=>`<path d="${poly(P)}" fill="none" stroke="${c}" stroke-width="${w}" ${dash?`stroke-dasharray="${dash}"`:""} opacity="${o??1}" stroke-linejoin="round"/>`;
+
+/* ---------------- weights model ---------------- */
+function weights(pD,lam,s){
+  const L1=pD*(0.35+0.65*s)*Math.exp(-0.3);
+  const L2=pD*(0.95-0.6*s)*Math.exp(-2.0);
+  const L3=((1-pD)*0.25+0.125*lam)*Math.exp(-0.5);
+  const S=L1+L2+L3;
+  return {w:[L1/S,L2/S,L3/S],L:[L1,L2,L3]};
+}
+const W0=weights(0.86,0.32,0.78).w;   // defaults ≈ [0.84, 0.09, 0.07]
+
+/* ---------------- step definitions ---------------- */
+const STEPS=[
+ {t:"The scene: one loop, two look-alike landmarks",side:"",
+  b:"Ground truth. A robot will drive one counter-clockwise loop (dashed path) past six landmarks and return to the start. The two teal triangles m₁ and m₂ are physically different landmarks with nearly identical appearance — same descriptor, different place. Everything that follows hinges on them.",
+  w:"the two teal triangles near the start — they are the trap.",dur:0},
+ {t:"Odometry drifts",side:"",
+  b:"The robot drives the loop using odometry alone. Small motion errors compound, so the estimated path (solid) shears away from the truth (dashed); by the return the pose is off by half a corridor and its uncertainty ellipse has grown. Both paradigms are in exactly this state — nothing has gone wrong yet.",
+  w:"the solid path peeling away from the dashed one; the gap arrow at the end.",dur:2300},
+ {t:"The ambiguous return: two measurements",side:"",
+  b:"At the final pose the robot takes two measurements. z_b hits the distant corner landmark m₃ — unambiguous, and (unknown to the robot) it contains exactly the information needed to undo the drift. z_a is the trap: it is physically a sighting of m₁, but plotted from the drifted pose it lands nearer to the wrong twin m₂ — and the descriptors cannot tell the twins apart. Three explanations exist: it’s m₁, it’s m₂, or it’s something new.",
+  w:"z_a with two dashed candidate matches; z_b with exactly one.",dur:0},
+ {t:"Conventional front-end: decide now, on local evidence",side:"cv",
+  b:"The pipeline must output one graph, so the front-end scores each measurement locally and commits. Descriptors can’t separate the look-alikes (0.81 vs 0.79), and from the drifted pose the geometry favours the wrong twin — so z_a→m₂ is locked in and the alternatives are discarded. JVS-SLAM (right) does nothing of the sort: it records all three explanations and moves on.",
+  w:"left: the bold orange edge to m₂, the crossed-out edge to m₁. right: three thin candidate edges, none chosen.",dur:600},
+ {t:"Conventional back-end: optimize the wrong graph",side:"cv",
+  b:"Least squares now faces two constraints that contradict each other: z_a→m₂ pulls the loop one way, z_b→m₃ pulls it the other. It does what least squares does — splits the difference. The map warps, both residuals are ‘acceptably’ small, χ² passes, and the covariance reports high confidence. The error hasn’t been flagged; it has been laundered.",
+  w:"the orange path settling between truth and the wrong answer; red residual whiskers on both measurements.",dur:1300},
+ {t:"JVS-SLAM: keep every explanation alive",side:"jv",
+  b:"Instead of one graph, JVS-SLAM instantiates a population of joint hypotheses over trajectory, map and associations: H₁ (z_a is m₁ — a true loop closure), H₂ (z_a is m₂ — the descriptor swap the pipeline just committed to), H₃ (z_a is a brand-new landmark, and m₁ went undetected). Each is a complete, globally coherent story about the world.",
+  w:"right: the three coloured association edges — blue to m₁, purple to m₂, teal to a dashed ‘new’ landmark.",dur:800},
+ {t:"Optimize all hypotheses jointly",side:"jv",
+  b:"Each hypothesis gets its own nonlinear least-squares solve — the same back-end machinery, just run per explanation. H₁ snaps the whole loop back onto the truth: both z_a and z_b agree, residual tiny. H₂ reproduces the conventional compromise: warped map, large joint residual. H₃ also recovers the geometry (z_b still fixes the drift) but must invent a duplicate landmark right where m₁ already is. Global consistency, not local matching, does the sorting.",
+  w:"blue path landing on the dashed truth; purple path landing exactly where the left panel ended up.",dur:1500},
+ {t:"Bayes reweights — the pipeline’s answer gets 9%",side:"jv",
+  b:"Bayes’ rule turns each optimized fit, the descriptor evidence, and the set-statistics (detection probability p_D, clutter λ, landmark birth) into a posterior weight: H₁≈0.84, H₂≈0.09, H₃≈0.07. Note what just happened: the conventional pipeline’s answer wasn’t refuted by a heuristic — it survives inside the posterior, carrying exactly the small probability it deserves, ready to be revived if future evidence supports it. The left panel, meanwhile, can never change its mind.",
+  w:"the weight bars filling; purple and teal paths fading to ghosts while blue turns solid.",dur:900}
+];
+
+/* ---------------- rendering ---------------- */
+const svgL=document.getElementById("svgL"), svgR=document.getElementById("svgR");
+const subL=document.getElementById("subL"), subR=document.getElementById("subR");
+const reduced=matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+function sceneCommon(step,t){
+  // shared steps 0–2 rendering (returns markup)
+  if(step===0){
+    return truthPath(0.9)+landmarks(false)
+      +robot(TRUE[0][0],TRUE[0][1],-Math.PI/2,"#16222e")
+      +txt(TRUE[0][0]-13,TRUE[0][1]-8,"start / end","#51606e",10.5,"end")
+      +txt(150,292,"same appearance ⟶ same descriptor","#0e8f7e",10.5);
+  }
+  if(step===1){
+    const u=reduced?1:t, P=trimmed(DRIFT,DLEN,u), r=pointAt(DRIFT,DLEN,u);
+    let s=truthPath(0.55)+landmarks(true,0.95)+pathLine(P,"#51606e",2.2)+robot(r.x,r.y,r.a,"#16222e");
+    if(u>0.98){
+      s+=arrow(TRUE[8][0],TRUE[8][1],DRIFT[8][0]+6,DRIFT[8][1]+4,"#c22f2f",1.4,"3 3",0.9)
+        +txt((TRUE[8][0]+DRIFT[8][0])/2+8,(TRUE[8][1]+DRIFT[8][1])/2+4,"drift","#c22f2f",10.5)
+        +`<ellipse cx="${DRIFT[8][0]}" cy="${DRIFT[8][1]}" rx="27" ry="15" transform="rotate(-18 ${DRIFT[8][0]} ${DRIFT[8][1]})" fill="rgba(194,47,47,.07)" stroke="#c22f2f" stroke-dasharray="3 3" opacity="0.8"/>`;
+    }
+    return s;
+  }
+  // step 2
+  const r=pointAt(DRIFT,DLEN,1);
+  return truthPath(0.45)+landmarks(true,0.95)+pathLine(DRIFT,"#51606e",2.2)
+    +robot(r.x,r.y,r.a,"#16222e")+rays(DRIFT[8],1,true);
+}
+
+function renderL(step,t){
+  if(step<=2) return sceneCommon(step,t);
+  const r8=DRIFT[8];
+  if(step===3){
+    let s=truthPath(0.4)+landmarks(true,0.95)+pathLine(DRIFT,"#51606e",2.2)+rays(r8,0.85,false);
+    const za=[r8[0]+ZA[0],r8[1]+ZA[1]];
+    s+=`<line x1="${za[0]}" y1="${za[1]}" x2="${LE.m2[0]}" y2="${LE.m2[1]}" stroke="#e8720c" stroke-width="3"/>`
+      +`<g opacity="0.75"><line x1="${za[0]}" y1="${za[1]}" x2="${LE.m1[0]}" y2="${LE.m1[1]}" stroke="#8a97a3" stroke-width="1.4"/>`
+      +txt((za[0]+LE.m1[0])/2+6,(za[1]+LE.m1[1])/2+12,"✕","#c22f2f",13)+`</g>`
+      +txt(LE.m2[0]+12,LE.m2[1]-2,"z_a := m₂ (locked)","#b45607",10.5)
+      +`<line x1="${r8[0]+ZB[0]}" y1="${r8[1]+ZB[1]}" x2="${LE.m3[0]}" y2="${LE.m3[1]}" stroke="#2ca02c" stroke-width="2" opacity="0.8"/>`;
+    const rb=pointAt(DRIFT,DLEN,1);
+    return s+robot(rb.x,rb.y,rb.a,"#16222e");
+  }
+  // steps 4–7: morph DRIFT → CONV at step 4, then hold
+  const m=step===4?(reduced?1:t):1;
+  const P=lerpP(DRIFT,CONV,m), p8=P[8];
+  const za=[p8[0]+ZA[0],p8[1]+ZA[1]], zb=[p8[0]+ZB[0],p8[1]+ZB[1]];
+  const dim=(step===5||step===6)?0.5:1;
+  let s=`<g opacity="${dim}">`+truthPath(0.4)+landmarks(true,0.95)
+    +pathLine(P,"#e8720c",2.6)
+    +`<line x1="${za[0]}" y1="${za[1]}" x2="${LE.m2[0]}" y2="${LE.m2[1]}" stroke="#e8720c" stroke-width="2.4"/>`
+    +`<line x1="${zb[0]}" y1="${zb[1]}" x2="${LE.m3[0]}" y2="${LE.m3[1]}" stroke="#2ca02c" stroke-width="1.8" opacity="0.8"/>`
+    +residual(za,LE.m2,0.9)+residual(zb,LE.m3,0.9)
+    +robot(p8[0],p8[1],pointAt(P,measure(P),1).a,"#b45607");
+  if(m>0.95){
+    s+=arrow(TRUE[8][0],TRUE[8][1],p8[0]+5,p8[1]+3,"#c22f2f",1.4,"3 3",0.9)
+      +txt(210,30,"residuals averaged away · confidence: high","#b45607",11,"middle")
+      +txt(210,44,"actual state: wrong","#c22f2f",11,"middle");
+  }
+  s+="</g>";
+  if(step===5||step===6) s+=txt(210,286,"frozen — the decision is irreversible","#8a97a3",10.5,"middle");
+  return s;
+}
+
+function renderR(step,t){
+  if(step<=2) return sceneCommon(step,t);
+  const r8=DRIFT[8], za=[r8[0]+ZA[0],r8[1]+ZA[1]];
+  if(step===3||step===4){
+    let s=truthPath(0.4)+landmarks(true,0.95)+pathLine(DRIFT,"#51606e",2.2)+rays(r8,0.8,false);
+    s+=`<line x1="${za[0]}" y1="${za[1]}" x2="${LE.m1[0]}" y2="${LE.m1[1]}" stroke="#1f77b4" stroke-width="1.4" opacity="0.7"/>`
+      +`<line x1="${za[0]}" y1="${za[1]}" x2="${LE.m2[0]}" y2="${LE.m2[1]}" stroke="#9467bd" stroke-width="1.4" opacity="0.7"/>`
+      +`<circle cx="${za[0]}" cy="${za[1]}" r="9" fill="none" stroke="#0e8f7e" stroke-width="1.4" stroke-dasharray="3 3" opacity="0.7"/>`
+      +txt(210,30,"no decision — all three explanations recorded","#155d8f",11,"middle");
+    const rb=pointAt(DRIFT,DLEN,1);
+    return s+robot(rb.x,rb.y,rb.a,"#16222e");
+  }
+  if(step===5){
+    const o=step===5?(reduced?1:t):1;
+    let s=truthPath(0.4)+landmarks(true,0.95)+pathLine(DRIFT,"#51606e",2.2)+rays(r8,0.55,false);
+    s+=`<g opacity="${o}">`
+      +`<line x1="${za[0]}" y1="${za[1]}" x2="${LE.m1[0]}" y2="${LE.m1[1]}" stroke="#1f77b4" stroke-width="2.6"/>`+txt((za[0]+LE.m1[0])/2+16,(za[1]+LE.m1[1])/2+16,"H₁","#1f77b4",12)
+      +`<line x1="${za[0]}" y1="${za[1]}" x2="${LE.m2[0]}" y2="${LE.m2[1]}" stroke="#9467bd" stroke-width="2.6"/>`+txt((za[0]+LE.m2[0])/2-2,(za[1]+LE.m2[1])/2-8,"H₂","#9467bd",12)
+      +`<circle cx="${za[0]+4}" cy="${za[1]+8}" r="8" fill="none" stroke="#0e8f7e" stroke-width="2" stroke-dasharray="3 3"/>`+txt(za[0]-16,za[1]+27,"H₃ (new)","#0e8f7e",11)
+      +"</g>";
+    const rb=pointAt(DRIFT,DLEN,1);
+    return s+robot(rb.x,rb.y,rb.a,"#16222e");
+  }
+  // steps 6–7: three optimized hypotheses
+  const m=step===6?(reduced?1:t):1;
+  const P1=lerpP(DRIFT,H1P,m), P2=lerpP(DRIFT,CONV,m), P3=lerpP(DRIFT,H1P,m).map(p=>[p[0]+3,p[1]+3]);
+  const w=step===7?W0:[0.55,0.55,0.55];
+  const o3=step===7?Math.max(0.14,w[2]):0.55;
+  const p18=P1[8];
+  let s=truthPath(0.4)+landmarks(true,0.95);
+  s+=pathLine(P2,"#9467bd",2,null,step===7?0.22:0.7)
+    +pathLine(P3,"#0e8f7e",2,"5 4",step===7?0.25:0.7)
+    +pathLine(P1,"#1f77b4",step===7?3:2.2,null,1);
+  const za1=[p18[0]+ZA[0],p18[1]+ZA[1]], zb1=[p18[0]+ZB[0],p18[1]+ZB[1]];
+  s+=`<line x1="${za1[0]}" y1="${za1[1]}" x2="${LE.m1[0]}" y2="${LE.m1[1]}" stroke="#1f77b4" stroke-width="2"/>`
+    +`<line x1="${zb1[0]}" y1="${zb1[1]}" x2="${LE.m3[0]}" y2="${LE.m3[1]}" stroke="#2ca02c" stroke-width="1.6" opacity="0.8"/>`;
+  if(step>=6&&m>0.5){ // H3 duplicate landmark ghost
+    s+=`<g opacity="${step===7?o3:0.8}">`
+      +`<path d="M${LT.m1[0]+9},${LT.m1[1]-15} L${LT.m1[0]+14.5},${LT.m1[1]-5} L${LT.m1[0]+3.5},${LT.m1[1]-5} Z" fill="none" stroke="#0e8f7e" stroke-width="1.6" stroke-dasharray="3 2"/>`
+      +txt(LT.m1[0]+18,LT.m1[1]-8,"m₇?","#0e8f7e",10.5)+"</g>";
+  }
+  s+=robot(p18[0],p18[1],Math.PI*0.9,"#155d8f");
+  if(step===6&&m>0.9){
+    s+=txt(210,30,"H₁ fits everything · H₂ strains · H₃ fits but invents m₇","#155d8f",10.5,"middle");
+  }
+  if(step===7){
+    s+=txt(210,30,`MAP: H₁ (w≈${W0[0].toFixed(2)}) — truth recovered, doubt retained`,"#155d8f",11,"middle");
+  }
+  return s;
+}
+
+/* ---------------- sub-panel HTML ---------------- */
+function subHTML(step){
+  const L={
+    0:'<span class="hint">front-end + back-end pipeline</span>',
+    1:'<span class="hint">odometry only — same as the right panel</span>',
+    2:'<span class="hint">gating: two credible matches for z_a, one for z_b</span>',
+    3:'<div><span class="chip">score(z_a→m₂) 0.81</span><span class="chip">score(z_a→m₁) 0.79</span><span class="chip pick">pick m₂ — locked</span></div><div class="hint">a 0.02 margin becomes a hard constraint; alternatives discarded</div>',
+    4:'<div><span class="chip">residuals: averaged</span><span class="chip">covariance: tight</span><span class="chip bad">map: wrong</span></div><div class="hint">contradiction averaged into the whole trajectory — no alarm raised</div>',
+    5:'<div><span class="chip bad">cannot revisit the decision</span></div><div class="hint">the graph has one association baked in</div>',
+    6:'<div><span class="chip bad">cannot revisit the decision</span></div><div class="hint">the graph has one association baked in</div>',
+    7:'<div><span class="chip bad">confidently wrong</span><span class="chip">recovery needs outlier surgery</span></div><div class="hint">switchable constraints / RANSAC are patches for this exact failure</div>'
+  }[step];
+  const wb=(i,v,nm)=>`<div class="wbar w${i}"><span>${nm}</span><div class="tr"><div class="fl" style="width:${(v*100).toFixed(0)}%"></div></div><span>${v.toFixed(2)}</span></div>`;
+  const R={
+    0:'<span class="hint">one joint vector-set posterior</span>',
+    1:'<span class="hint">odometry only — same as the left panel</span>',
+    2:'<span class="hint">ambiguity noted, not resolved</span>',
+    3:'<div><span class="chip">H₁: z_a→m₁</span><span class="chip">H₂: z_a→m₂</span><span class="chip">H₃: z_a→new</span></div><div class="hint">association is a random variable, not a preprocessing output</div>',
+    4:'<div><span class="chip">H₁: z_a→m₁</span><span class="chip">H₂: z_a→m₂</span><span class="chip">H₃: z_a→new</span></div><div class="hint">waiting is free — nothing is thrown away</div>',
+    5:'<div><span class="chip">3 joint hypotheses instantiated</span></div><div class="hint">each = full trajectory + map + association story</div>',
+    6:'<div><span class="chip good">r(H₁) ≈ 0.3</span><span class="chip bad">r(H₂) ≈ 3.4</span><span class="chip">r(H₃) ≈ 0.5 + birth cost</span></div><div class="hint">per-hypothesis least squares; H₃’s price is probabilistic, not geometric</div>',
+    7:wb(1,W0[0],"H₁")+wb(2,W0[1],"H₂")+wb(3,W0[2],"H₃")+'<div class="hint">Σw = 1 · the left panel’s answer is H₂, weight '+W0[1].toFixed(2)+'</div>'
+  }[step];
+  subL.innerHTML=L; subR.innerHTML=R;
+}
+
+/* ---------------- stepper engine ---------------- */
+let step=0, raf=null, playing=false, playTimer=null;
+const dots=document.getElementById("dots");
+STEPS.forEach((s,i)=>{
+  const b=document.createElement("button");
+  b.setAttribute("aria-label","step "+(i+1)+": "+s.t);
+  b.title=s.t;
+  b.addEventListener("click",()=>{stopPlay();go(i);});
+  dots.appendChild(b);
+});
+const btnPrev=document.getElementById("btnPrev"),btnNext=document.getElementById("btnNext"),btnPlay=document.getElementById("btnPlay");
+
+function draw(t){
+  svgL.innerHTML=renderL(step,t);
+  svgR.innerHTML=renderR(step,t);
+}
+function go(s){
+  step=Math.max(0,Math.min(STEPS.length-1,s));
+  if(raf)cancelAnimationFrame(raf);
+  const st=STEPS[step];
+  document.getElementById("exNo").textContent="step "+(step+1)+"/"+STEPS.length;
+  document.getElementById("exTitle").textContent=st.t;
+  document.getElementById("exBody").textContent=st.b;
+  document.getElementById("exWatch").textContent=st.w;
+  const ex=document.getElementById("explain");
+  ex.className="explain"+(st.side?" "+st.side+"side":"");
+  document.getElementById("stepNum").textContent="step "+(step+1)+" / "+STEPS.length;
+  [...dots.children].forEach((d,i)=>d.classList.toggle("on",i===step));
+  btnPrev.disabled=step===0; btnNext.disabled=step===STEPS.length-1;
+  subHTML(step);
+  const dur=reduced?0:st.dur;
+  if(!dur){draw(1);return Promise.resolve();}
+  return new Promise(res=>{
+    const t0=performance.now();
+    const tick=now=>{
+      const t=Math.min(1,(now-t0)/dur);
+      draw(t<1?(1-Math.cos(Math.PI*t))/2:1);   // ease in-out
+      if(t<1){raf=requestAnimationFrame(tick);}else{res();}
+    };
+    raf=requestAnimationFrame(tick);
+  });
+}
+function stopPlay(){playing=false;btnPlay.textContent="▶ Play all";if(playTimer)clearTimeout(playTimer);}
+async function playFrom(s){
+  playing=true;btnPlay.textContent="⏸ Pause";
+  for(let i=s;i<STEPS.length&&playing;i++){
+    await go(i);
+    if(!playing)break;
+    if(i<STEPS.length-1) await new Promise(r=>{playTimer=setTimeout(r,reduced?1500:2600);});
+  }
+  stopPlay();
+}
+btnPrev.addEventListener("click",()=>{stopPlay();go(step-1);});
+btnNext.addEventListener("click",()=>{stopPlay();go(step+1);});
+btnPlay.addEventListener("click",()=>{ if(playing){stopPlay();} else {playFrom(step===STEPS.length-1?0:step);} });
+document.addEventListener("keydown",e=>{
+  if(e.key==="ArrowLeft"){stopPlay();go(step-1);}
+  if(e.key==="ArrowRight"){stopPlay();go(step+1);}
+});
+const q=+(new URLSearchParams(location.search).get("step")||0);
+go(q>=1&&q<=STEPS.length?q-1:0);
+
+/* ---------------- recap list ---------------- */
+document.getElementById("recapList").innerHTML=STEPS.map(s=>`<li><b>${s.t}.</b> ${s.b}</li>`).join("");
+
+/* ---------------- sandbox ---------------- */
+const sPd=document.getElementById("sPd"),sLam=document.getElementById("sLam"),sDesc=document.getElementById("sDesc");
+function sandbox(){
+  const pD=+sPd.value, lam=+sLam.value, s=+sDesc.value;
+  document.getElementById("oPd").textContent=pD.toFixed(2);
+  document.getElementById("oLam").textContent=lam.toFixed(2);
+  document.getElementById("oDesc").textContent=s.toFixed(2);
+  const {w,L}=weights(pD,lam,s);
+  const ids=[["b1","v1"],["b2","v2"],["b3","v3"]];
+  ids.forEach(([b,v],i)=>{
+    document.getElementById(b).style.width=(w[i]*100).toFixed(1)+"%";
+    document.getElementById(v).textContent=w[i].toFixed(2);
+  });
+  document.getElementById("terms").innerHTML=
+    `<b>ℓ(H₁)</b> = p_D · desc · e^(−r₁) = ${L[0].toFixed(3)}<br>`+
+    `<b>ℓ(H₂)</b> = p_D · desc′ · e^(−r₂) = ${L[1].toFixed(3)}<br>`+
+    `<b>ℓ(H₃)</b> = miss(1−p_D) + clutter·λ = ${L[2].toFixed(3)}`;
+  const top=w.indexOf(Math.max(...w));
+  const msg=[
+    "H₁ leads: the loop closes, the map stays correct, and the runner-up hypotheses stay on file.",
+    "H₂ leads: appearance now favours the swap — the posterior honestly reports a likely wrong-way loop closure.",
+    "H₃ leads: with detection this unreliable (or clutter this heavy), ‘it’s something new’ is the rational bet — note that map size itself just changed."
+  ][top];
+  document.getElementById("verdict").innerHTML=`<b>MAP hypothesis: H${"₁₂₃"[top]}</b> · ${msg}`;
+}
+[sPd,sLam,sDesc].forEach(el=>el.addEventListener("input",sandbox));
+sandbox();
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,170 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="color-scheme" content="light">
+    <meta name="description" content="Compact interactive examples for partition uncertainty in extended-object multi-target tracking.">
+    <title>Live EO-MTT examples | Bai Liping</title>
+    <link rel="stylesheet" href="./styles.css">
+    <link rel="stylesheet" href="../../assets/interactive-slide-system.css">
+    <script src="../../assets/interactive-slide-system.js"></script>
+    <script src="./app.js" defer></script>
+    <script src="../../assets/bento-inline-frame.js" defer></script>
+  </head>
+  <body data-bento-live-app data-interactive-slides="eo-mtt" data-view="partition">
+    <div class="app-shell interactive-slide-shell" id="appShell">
+      <header class="app-header interactive-slide-header">
+        <div class="title-block interactive-slide-heading">
+          <p class="eyebrow" id="viewKicker">LIVE EXAMPLE · CANDIDATE PARTITIONS</p>
+          <h1 id="viewTitle">What can a distance sweep see?</h1>
+        </div>
+        <div class="header-actions interactive-slide-actions">
+          <span class="scope-chip interactive-slide-chip" title="The examples use two geometric extended objects and ten point detections.">Teaching model</span>
+          <a class="back-button interactive-slide-back" id="backButton" href="../" target="_top" aria-label="Back to presentation">
+            <svg aria-hidden="true" viewBox="0 0 20 20"><path d="m12.5 4-6 6 6 6M7 10h8"/></svg>
+            Back to slides
+          </a>
+        </div>
+      </header>
+
+      <nav class="view-nav interactive-slide-tabs" aria-label="Interactive example">
+        <a href="?view=partition" data-view-link="partition">1 · Candidate set</a>
+        <a href="?view=hypotheses" data-view-link="hypotheses">2 · Retain &amp; prune</a>
+        <a href="?view=inference" data-view-link="inference">3 · Search vs SPA</a>
+      </nav>
+
+      <main class="view-stage">
+        <section class="view-panel partition-panel interactive-slide-body" data-view-panel="partition" aria-labelledby="partitionHeading">
+          <div class="scene-card interactive-slide-stage interactive-slide-panel">
+            <div class="card-heading">
+              <div>
+                <h2 id="partitionHeading">Same ten measurements, threshold-selected cells</h2>
+                <p>Dashed ellipses mark the two unknown extended objects; m₉ is ambiguous and m₁₀ is clutter.</p>
+              </div>
+              <span class="family-badge family-a">A · restricted set</span>
+            </div>
+            <svg class="measurement-scene" id="partitionScene" viewBox="0 0 720 355" role="img" aria-label="Ten measurements partitioned by single-linkage distance clustering"></svg>
+            <div class="scene-legend" aria-hidden="true">
+              <span><i class="dot object-one"></i>object 1</span>
+              <span><i class="dot object-two"></i>object 2</span>
+              <span><i class="dot ambiguous"></i>m₉ ambiguous</span>
+              <span><i class="dot clutter"></i>m₁₀ clutter</span>
+            </div>
+          </div>
+
+          <aside class="control-card interactive-slide-controls interactive-slide-panel">
+            <section class="control-section">
+              <div class="section-title"><h3>Combinatorial load</h3><output id="bellOutput" for="bellM">B(10) = 115 975</output></div>
+              <label class="slider-label" for="bellM">Measurements M <b id="bellMValue">10</b></label>
+              <input id="bellM" type="range" min="4" max="30" value="10" step="1" disabled>
+              <p class="hint">B(M) counts set partitions only; cell-to-object assignments add more possibilities.</p>
+            </section>
+
+            <section class="control-section">
+              <div class="section-title"><h3>Single-linkage threshold</h3><output id="distanceOutput" for="distanceThreshold">d = 8.0</output></div>
+              <label class="slider-label" for="distanceThreshold">Merge when closest pair ≤ d</label>
+              <input id="distanceThreshold" type="range" min="0.5" max="40" value="8" step="0.25" disabled>
+              <div class="metric-grid">
+                <div><span>cells now</span><strong id="cellCount">—</strong></div>
+                <div><span>distinct sweep candidates</span><strong id="candidateCount">9</strong></div>
+                <div><span>of all B(10)</span><strong>0.0078%</strong></div>
+              </div>
+            </section>
+
+            <button class="reveal-button" id="missingButton" type="button" disabled aria-pressed="false">Show a plausible partition the sweep misses</button>
+            <div class="boundary-note" id="partitionNote">
+              The heuristic decides which hypotheses can receive non-zero weight. Move d to watch the candidate set change.
+            </div>
+            <p class="model-note"><strong>Teaching simplification.</strong> Geometry and the single-linkage sweep match the source page’s ten-point example. This is not a complete PHD/CPHD update or calibrated likelihood.</p>
+          </aside>
+        </section>
+
+        <section class="view-panel hypotheses-panel interactive-slide-body" data-view-panel="hypotheses" aria-labelledby="hypothesesHeading">
+          <div class="hypothesis-workbench interactive-slide-stage interactive-slide-panel">
+            <div class="card-heading">
+              <div>
+                <h2 id="hypothesesHeading">A PMBM mixture branches; management keeps it finite</h2>
+                <p>Each global hypothesis carries one partition–association history and its own weight.</p>
+              </div>
+              <span class="family-badge family-b">B1 · retain hypotheses</span>
+            </div>
+            <div class="hypothesis-flow" aria-label="Hypothesis-management controls">
+              <button class="primary-button" id="branchButton" type="button" disabled>Update at t+1</button>
+              <span class="flow-arrow">→</span>
+              <button id="pruneButton" type="button" disabled>Prune &amp; cap at 4</button>
+              <button id="hypothesisReset" type="button" disabled>Reset</button>
+              <output id="hypothesisStatus">4 global hypotheses</output>
+            </div>
+            <div class="hypothesis-cards" id="hypothesisCards"></div>
+          </div>
+
+          <aside class="marginal-card interactive-slide-controls interactive-slide-panel">
+            <p class="eyebrow">PMB PROJECTION · ILLUSTRATIVE</p>
+            <h2>Mixture → selected marginals</h2>
+            <div class="ambiguous-mark" id="ambiguousMark" role="img" aria-label="Current marginal association weights for measurement 9"><span>m₉</span></div>
+            <div class="marginal-bars" id="marginalBars"></div>
+            <div class="projection-callout">
+              Marginal association information can survive projection to one multi-Bernoulli density; global cross-track correlations do not.
+            </div>
+            <p class="model-note"><strong>Scope.</strong> The 0.46 / 0.31 / 0.14 / 0.09 weights and 3-way branching factors come from the source page’s teaching example. They explain mixture management, not a normalized end-to-end PMBM benchmark.</p>
+          </aside>
+        </section>
+
+        <section class="view-panel inference-panel" data-view-panel="inference" aria-labelledby="inferenceHeading">
+          <header class="inference-heading">
+            <div>
+              <h2 id="inferenceHeading">Two approximations, two different outputs</h2>
+              <p>Sampling explores joint hypotheses. This Family C SPA schematic passes messages to approximate marginals without enumerating those hypotheses.</p>
+            </div>
+            <div class="accuracy-pill">JOINT SEARCH ≠ MARGINAL INFERENCE</div>
+          </header>
+
+          <div class="inference-grid">
+            <article class="inference-card gibbs-card">
+              <div class="method-heading">
+                <div><span class="method-number">B2a</span><h3>Gibbs-style search</h3></div>
+                <output id="gibbsMoves">0 moves</output>
+              </div>
+              <p class="method-thesis">Visits high-weight <strong>joint partition hypotheses</strong>; finite runs may miss modes.</p>
+              <svg class="mini-scene" id="gibbsScene" viewBox="0 0 620 225" role="img" aria-label="Current partition visited by a deterministic Gibbs-style sampler"></svg>
+              <div class="button-row">
+                <button class="primary-button" id="gibbsRun" type="button" disabled>Run 100 moves</button>
+                <button id="gibbsStep" type="button" disabled>Single move</button>
+                <button id="gibbsReset" type="button" disabled>Reset</button>
+              </div>
+              <div class="visit-list" id="visitList"></div>
+              <p class="fine-print">Deterministic-seed toy chain with a CRP-flavored Gaussian score; visit frequencies are not a calibrated posterior.</p>
+            </article>
+
+            <article class="inference-card bp-card">
+              <div class="method-heading">
+                <div><span class="method-number">C · SCHEMATIC</span><h3>Per-measurement SPA</h3></div>
+                <output id="bpIteration">iteration 0</output>
+              </div>
+              <p class="method-thesis">Approximates <strong>association marginals</strong>; it does not enumerate or sample partitions.</p>
+              <svg class="mini-scene" id="bpScene" viewBox="0 0 620 225" role="img" aria-label="Soft measurement-to-object associations updated by simplified belief propagation"></svg>
+              <div class="button-row">
+                <button class="primary-button" id="bpRun" type="button" disabled>Run to fixed point</button>
+                <button id="bpStep" type="button" disabled>Iterate once</button>
+                <button id="bpReset" type="button" disabled>Reset</button>
+              </div>
+              <div class="bp-readout" id="bpReadout"></div>
+              <p class="fine-print">Simplified per-measurement SPA teaching update for association/existence only. Reference [32] also uses BP, but in a distinct trajectory-PMB model; real trackers also infer kinematics and extent.</p>
+            </article>
+          </div>
+        </section>
+      </main>
+
+      <footer class="app-footer interactive-slide-footer">
+        <span><kbd>Esc</kbd> back to the presentation</span>
+        <span>Two extended objects · ten point detections · all stochastic-looking runs use a fixed seed</span>
+      </footer>
+    </div>
+
+    <noscript>
+      <style>.app-shell { display: none !important; }</style>
+      <div class="noscript-note"><strong>Static fallback.</strong> The source scene has 10 measurements and 115,975 possible partitions. Enable JavaScript to change thresholds and run the teaching approximations.</div>
+    </noscript>
+  </body>
+</html>

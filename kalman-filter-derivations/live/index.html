@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="only light">
+  <meta name="theme-color" content="#f6f2e8">
+  <title>Kalman filter derivation laboratory</title>
+  <meta name="description" content="Interactive scalar fusion, covariance geometry, and matrix-equivalence experiments for the Kalman filter derivation atlas.">
+  <link rel="stylesheet" href="styles.css?v=20260901">
+  <style id="live-math-style">
+    .math-tex{position:relative;white-space:nowrap}
+    .math-inline{display:inline-block;vertical-align:-.14em;line-height:1}
+    .math-display{display:block;width:100%;line-height:1;text-align:center}
+    .math-tex mjx-container{color:inherit!important;margin:0!important}
+    .math-inline mjx-container{display:inline-block!important}
+    .math-display mjx-container[display="true"]{display:block!important;width:100%;margin:0!important;text-align:center}
+    .math-tex mjx-container[jax="SVG"]>svg{max-width:100%;height:auto;overflow:visible}
+    mjx-assistive-mml{position:absolute!important;top:0!important;left:0!important;clip:rect(1px,1px,1px,1px)!important;clip-path:inset(50%)!important;padding:1px 0 0!important;border:0!important;display:block!important;width:1px!important;height:1px!important;overflow:hidden!important;white-space:nowrap!important}
+    .metric-rail{overflow-x:hidden}
+    .eq-card .eq-head{margin-bottom:1px}
+    .eq-formula{height:24px;margin:0 0 4px;color:var(--soft);font-size:12px;line-height:1;overflow:hidden}
+    .eq-formula .math-display{height:100%;display:flex;align-items:center;justify-content:center}
+  </style>
+  <script>
+    window.MathJax = {
+      tex: {
+        inlineMath: [['\\(', '\\)']],
+        displayMath: [['\\[', '\\]']],
+        processEscapes: true
+      },
+      svg: { fontCache: 'local' },
+      options: { skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'] },
+      startup: {
+        typeset: false,
+        ready: () => {
+          MathJax.startup.defaultReady()
+          MathJax.startup.promise.then(() => window.dispatchEvent(new Event('mathjax-ready')))
+        }
+      }
+    }
+  </script>
+  <script defer src="https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/tex-svg-full.js"></script>
+  <script defer src="../../assets/mathjax-dynamic.js?v=2"></script>
+  <script src="model.js" defer></script>
+  <script src="app.js?v=20260901-latex2" defer></script>
+  <script src="../../assets/bento-inline-frame.js" defer></script>
+</head>
+<body data-bento-live-app>
+  <main id="app" class="app-shell" aria-live="polite"></main>
+  <noscript>
+    <section class="noscript-card">
+      <h1>Kalman filter derivation laboratory</h1>
+      <p>This experiment requires JavaScript.</p>
+      <a href="../">Back to the slides</a>
+    </section>
+  </noscript>
+</body>
+</html>
