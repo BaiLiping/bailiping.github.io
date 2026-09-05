@@ -15,15 +15,15 @@ function plot(x,y,w,h,x0,x1,y0,y1,equal=false){if(equal){const sy=h/(y1-y0),sx=w
 function axes(a,xname='x (m)',yname='y (m)',ticks=4){let out='';for(let k=0;k<=ticks;k++){const x=a.x0+(a.x1-a.x0)*k/ticks,y=a.y0+(a.y1-a.y0)*k/ticks,[X]=a.P([x,0]),[,Y]=a.P([0,y]);out+=line(X,a.y,X,a.y+a.h)+line(a.x,Y,a.x+a.w,Y)+text(X,a.y+a.h+17,fmt(x,1),C.muted,11,'middle')+text(a.x-8,Y+4,fmt(y,1),C.muted,11,'end');}return out+text(a.x+a.w/2,a.y+a.h+34,xname,C.muted,12,'middle')+text(a.x,a.y-8,yname,C.muted,12);}
 function frame(a,T,c=C.teal,length=.5,dash=''){const p=[T[0][2],T[1][2]],o=a.P(p),x=a.P(M.apply2(T,[length,0])),y=a.P(M.apply2(T,[0,length]));return dot(...o,c,3)+arrow(o,x,c,3)+line(...o,...y,c,3,dash)+dot(...y,c,2);}
 const samples=(n,f)=>Array.from({length:n+1},(_,i)=>f(i/n));
-function wrap(body,title){return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 360" role="img" aria-label="${esc(title)}" style="font-family:Arial,sans-serif;background:${C.paper}"><title>${esc(title)}</title>${body}</svg>`;}
+function wrap(body,title){return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 360" role="img" aria-label="${esc(title)}" style="font-family:Arial,sans-serif;background:${C.paper}"><title>${esc(title)}</title><rect width="800" height="360" fill="${C.paper}"/>${body}</svg>`;}
 const gpCache=new Map();
 function render(demo,state={}){if(!defaults[demo])throw Error('Unknown demonstration');const s={...defaults[demo],...state};let b='',metrics=[],caption='',title='';
 if(demo==='tangent'){
- const r=M.tangent(s.theta*rad,s.delta),a=plot(85,40,630,265,-1.9,1.9,-1.65,1.65,true),P=a.P;
+ const r=M.tangent(s.theta*rad,s.delta),a=plot(55,40,490,265,-1.9,1.9,-1.65,1.65,true),P=a.P;
  b=axes(a,'first column: x','first column: y')+path(samples(120,u=>P([Math.cos(2*Math.PI*u),Math.sin(2*Math.PI*u)])),C.blue,3);
- const ends=[-1.5,1.5].map(t=>P(r.p.map((v,i)=>v+t*r.v[i])));b+=line(...ends[0],...ends[1],C.coral,2,'6 4');
+ let lo=-Infinity,hi=Infinity;for(let i=0;i<2;i++){if(Math.abs(r.v[i])<1e-12)continue;const limits=(i===0?[a.x0,a.x1]:[a.y0,a.y1]).map(x=>(x-r.p[i])/r.v[i]).sort((x,y)=>x-y);lo=Math.max(lo,limits[0]);hi=Math.min(hi,limits[1]);}const ends=[lo,hi].map(t=>P(r.p.map((v,i)=>v+t*r.v[i])));b+=line(...ends[0],...ends[1],C.coral,2,'6 4');
  b+=arrow(P(r.p),P(r.linear),C.coral)+path(samples(50,u=>P([Math.cos(s.theta*rad+u*s.delta),Math.sin(s.theta*rad+u*s.delta)])),C.teal,5);
- for(const [p,l,c,dy] of [[r.p,'current',C.ink,17],[r.linear,'linear step',C.coral,-10],[r.exact,'Exp step',C.teal,-10]]){const q=P(p);b+=dot(...q,c)+text(q[0]+8,q[1]+dy,l,c,13);}
+ for(const [i,p,l,c] of [[0,r.p,'Current state',C.ink],[1,r.linear,'Straight tangent step',C.coral],[2,r.exact,'Valid Exp step',C.teal]]){b+=dot(...P(p),c)+dot(560,113+38*i,c)+text(577,118+38*i,l,c,14);}if(Math.abs(s.delta)<1e-12)b+=text(552,246,'Zero step: all points coincide.',C.muted,13);
  b+=text(15,18,'BLUE: valid rotations    DASHED: tangent through the current point',C.muted,13);
  metrics=[['tangent · radius',fmt(r.dot)],['linear norm',fmt(Math.hypot(...r.linear))],['Exp norm',fmt(Math.hypot(...r.exact))]];
  caption='Change the increment. The straight tangent step leaves the circle; the exponential follows the circle. The diagram is SO(2), not a picture of SO(3).';title='Exact unit circle, tangent and retraction';
@@ -35,7 +35,7 @@ if(demo==='tangent'){
  metrics=[['exact determinant',fmt(M.valid2(r.exact).det)],['shortcut determinant',fmt(M.valid2(r.naive).det)],['shortcut orthogonality error',fmt(M.valid2(r.naive).error)],['shortcut angle bias (deg)',fmt((r.naiveAngle-r.exactAngle)/rad)]];
  caption='Use smaller steps or more updates. Each shortcut multiplies length by sqrt(1 + delta²); exact group composition preserves a unit orthonormal frame.';title='Repeated rotations and loss of group constraints';
 }else if(demo==='adjoint'){
- const r=M.sides(s.theta*rad,s.tx,s.delta*rad),a=plot(65,45,490,265,-2,4,-1.8,2.2,true),P=a.P;
+ const r=M.sides(s.theta*rad,s.tx,s.delta*rad),a=plot(65,45,490,265,-2,4,-2,3.2,true),P=a.P;
  b=axes(a)+frame(a,M.pose(),C.blue,.7)+frame(a,r.T,C.muted,.65)+frame(a,r.wrong,C.coral,.7)+frame(a,r.left,C.amber,.7,'3 2')+frame(a,r.right,C.teal,.7);
  b+=text(10,18,'GRAY: start   TEAL / AMBER: same pose   CORAL: wrong side, unchanged coordinates',C.muted,12)+text(545,98,'Right increment (body)',C.teal,16)+text(545,124,r.xi.map(v=>fmt(v,2)).join(', '),C.ink,16)+text(545,180,'Left increment (world)',C.amber,16)+text(545,206,r.eta.map(v=>fmt(v,2)).join(', '),C.ink,16);
  metrics=[['correct side-switch error',fmt(r.error)],['unchanged-vector error',fmt(r.wrongError)]];
