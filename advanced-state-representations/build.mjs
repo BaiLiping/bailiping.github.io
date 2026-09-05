@@ -1,68 +1,53 @@
-import { readFile, writeFile } from 'node:fs/promises';
+import { readFile, writeFile, mkdir } from 'node:fs/promises';
 import { fileURLToPath } from 'node:url';
 import { dirname, resolve } from 'node:path';
-import { deck, inlineLiveMap } from './bento-deck.mjs';
-
-const here = dirname(fileURLToPath(import.meta.url));
-const template = await readFile(resolve(here, '../kalman-filter-derivations/index.html'), 'utf8');
-const safe = value => JSON.stringify(value, null, 1).replaceAll('<', '\\u003c');
-
-if (deck.format !== 'bento/slides' || deck.size.width !== 1280 || deck.size.height !== 720) throw new Error('Invalid Bento document envelope');
-const slideIds = new Set(deck.slides.map(slide => slide.id));
-if (slideIds.size !== deck.slides.length) throw new Error('Duplicate slide id');
-for (const [index, slide] of deck.slides.entries()) {
-  if (!slide.notes) throw new Error(`Missing notes: ${slide.id}`);
-  if (slide.stateOf) throw new Error(`Live teaching slides must be regular slides: ${slide.id}`);
-  const elementIds = new Set();
-  for (const element of slide.elements) {
-    if (elementIds.has(element.id)) throw new Error(`Duplicate element ${slide.id}/${element.id}`);
-    elementIds.add(element.id);
-    if (element.x < -0.01 || element.y < -0.01 || element.x + element.w > 1280.01 || element.y + element.h > 720.01) throw new Error(`Out of slide: ${slide.id}/${element.id}`);
-  }
-  slide.elements.push({ id: 'slide-number', type: 'text', x: 940, y: 684, w: 82, h: 20, html: `${String(index + 1).padStart(2, '0')} / ${deck.slides.length}`, fontSize: 10, fontFamily: 'monospace', color: '#60747A', align: 'center' });
+import { deck as sourceDeck, inlineLiveMap, references } from './bento-deck.mjs';
+import Figures from './lesson-figures.js';
+const here=dirname(fileURLToPath(import.meta.url));
+const deck=structuredClone(sourceDeck);
+// Retain this presentation's existing vendor/runtime payload. Do not take a
+// moving template from another deck that may be edited concurrently.
+const template=await readFile(resolve(here,'index.html'),'utf8');
+const safe=v=>JSON.stringify(v,null,1).replaceAll('<','\\u003c');
+const escape=s=>String(s).replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;');
+const ids=new Set(deck.slides.map(s=>s.id));
+if(deck.format!=='bento/slides'||deck.size.width!==1280||deck.size.height!==720||ids.size!==deck.slides.length)throw Error('Invalid Bento document');
+const previous=JSON.parse(template.match(/<script type="application\/bento\+json" id="bento-doc">([\s\S]*?)<\/script>/)[1]);
+for(const s of previous.slides)if(!ids.has(s.id))throw Error('Existing named route removed: '+s.id);
+for(const [i,s] of deck.slides.entries()){
+ if(!s.notes||s.stateOf)throw Error('Missing notes or nonregular slide: '+s.id);
+ const eids=new Set();for(const e of s.elements){if(eids.has(e.id))throw Error('Duplicate element '+s.id+'/'+e.id);eids.add(e.id);if(e.x<0||e.y<0||e.x+e.w>1280.01||e.y+e.h>720.01)throw Error('Out of bounds '+s.id+'/'+e.id);}
+ s.elements.push({id:'slide-number',type:'text',x:920,y:684,w:85,h:20,html:`${String(i+1).padStart(2,'0')} / ${deck.slides.length}`,fontSize:10,fontFamily:'monospace',color:'#60747A',align:'center'});
 }
-
-for (const entry of inlineLiveMap) {
-  const liveIndex = deck.slides.findIndex(slide => slide.id === entry.slide);
-  const introIndex = deck.slides.findIndex(slide => slide.id === entry.introSlide);
-  if (liveIndex < 0 || introIndex !== liveIndex - 1) throw new Error(`Live slide must immediately follow its intro: ${entry.slide}`);
-  if (entry.slideIndex !== liveIndex) throw new Error(`Incorrect live slide index: ${entry.slide}`);
-  const marker = deck.slides[liveIndex].elements.find(element => element.id === 'live-demo-mount');
-  if (!marker) throw new Error(`Missing live-demo-mount: ${entry.slide}`);
-  const bounds = entry.bounds;
-  if (marker.x !== bounds.x || marker.y !== bounds.y || marker.w !== bounds.width || marker.h !== bounds.height) throw new Error(`Live marker/bounds mismatch: ${entry.slide}`);
-}
-
-const authored = JSON.stringify(deck);
-if (/<(sup|sub)\b/i.test(authored) || /[⁰¹²³⁴⁵⁶⁷⁸⁹₀₁₂₃₄₅₆₇₈₉]/.test(authored)) throw new Error('Hand-built mathematical superscript or subscript found');
-
-const documentPattern = /(<script type="application\/bento\+json" id="bento-doc">\s*)[\s\S]*?(\s*<\/script>)/;
-if (!documentPattern.test(template)) throw new Error('Bento template document not found');
-let html = template.replace(documentPattern, (_, before, after) => before + safe(deck) + after);
-const mapPattern = /<script type="application\/json" id="bento-inline-live-map">[\s\S]*?<\/script>/;
-if (!mapPattern.test(html)) throw new Error('Bento inline-live map not found');
-html = html.replace(mapPattern, `<script type="application/json" id="bento-inline-live-map">\n${safe(inlineLiveMap)}\n</script>`);
-
-const routes = Object.fromEntries(deck.slides.map((slide, index) => [slide.id, index]));
-const routeScript = `<script>(()=>{const routes=${JSON.stringify(routes)};function routeToSlide(){let route;try{route=decodeURIComponent(location.hash.replace(/^#\\/?/,''));}catch{return;}if(route&&!/^\\d+$/.test(route)&&Number.isInteger(routes[route]))history.replaceState(null,'',location.pathname+location.search+'#/'+routes[route]);}addEventListener('hashchange',routeToSlide);routeToSlide();})();</script>`;
-let routeReplaced = false;
-html = html.replace(/<script\b([^>]*)>([\s\S]*?)<\/script>/g, (full, attributes, body) => {
-  if (!attributes.trim() && body.includes('const routes =') && body.includes('routeToSlide')) { routeReplaced = true; return routeScript; }
-  return full;
-});
-if (!routeReplaced) throw new Error('Template route mapper not found');
-
-html = html.replace(/<title>[\s\S]*?<\/title>/, '<title>Advanced State Variable Representations | Bai Liping</title>');
-html = html.replace(/<meta name="description"[^>]*>/, `<meta name="description" content="${deck.slides.length} interactive Bento slides on manifold-valued states, Lie-group optimization, splines, and sparse continuous-time Gaussian processes, with three live teaching labs." />`);
-html = html.replace(/<link rel="canonical"[^>]*>/, '<link rel="canonical" href="https://bailiping.com/advanced-state-representations/" />');
-html = html.replace(/<!-- Generated by kalman-filter-derivations[^>]*-->/, '<!-- Generated by advanced-state-representations/build.mjs. Edit bento-deck.mjs, then rebuild. -->');
-html = html.replace('</head>', `<style id="asr-math-layout">
-.bento-slide .math-display{height:auto!important;min-height:0;margin:.48em 0;}
-.bento-slide .bento-text-inner>.math-display:first-child{margin-top:.08em;}
-.bento-slide .bento-text-inner>.math-display:last-child{margin-bottom:.08em;}
-</style>\n</head>`);
-if (!html.includes('tex-svg-full.js') || !html.includes('mathjax-dynamic.js') || !html.includes('bento-inline-live.js')) throw new Error('Required shared runtime missing');
-
-await writeFile(resolve(here, 'index.html'), html);
-console.log(`Built ${deck.slides.length} advanced-state slides and ${inlineLiveMap.length} live labs (${html.length} characters).`);
-console.log(`Slide routes: ${deck.slides.map(slide => slide.id).join(', ')}`);
+for(const e of inlineLiveMap){const i=deck.slides.findIndex(s=>s.id===e.slide),intro=deck.slides.findIndex(s=>s.id===e.introSlide),m=deck.slides[i]?.elements.find(x=>x.id==='live-demo-mount');if(i!==e.slideIndex||intro!==i-1||!m||m.x!==e.bounds.x||m.y!==e.bounds.y||m.w!==e.bounds.width||m.h!==e.bounds.height)throw Error('Invalid live mapping '+e.slide);}
+let html=template.replace(/(<script type="application\/bento\+json" id="bento-doc">\s*)[\s\S]*?(\s*<\/script>)/,(_,a,b)=>a+safe(deck)+b);
+html=html.replace(/<script type="application\/json" id="bento-inline-live-map">[\s\S]*?<\/script>/,`<script type="application/json" id="bento-inline-live-map">\n${safe(inlineLiveMap)}\n</script>`);
+const routes=Object.fromEntries(deck.slides.map((s,i)=>[s.id,i]));
+const routeScript=`<script>(()=>{const routes=${JSON.stringify(routes)};function routeToSlide(){let r;try{r=decodeURIComponent(location.hash.replace(/^#\\/?/,''));}catch{return;}if(r&&!/^\\d+$/.test(r)&&Number.isInteger(routes[r]))history.replaceState(null,'',location.pathname+location.search+'#/'+routes[r]);}addEventListener('hashchange',routeToSlide);routeToSlide();})();</script>`;
+let mapped=0;html=html.replace(/<script\b([^>]*)>([\s\S]*?)<\/script>/g,(full,attrs,body)=>{if(!attrs.trim()&&/const routes\s*=/.test(body)&&body.includes('routeToSlide')){mapped++;return routeScript;}return full;});if(mapped!==1)throw Error('Expected one route mapper; got '+mapped);
+html=html.replace(/<meta name="description"[^>]*>/,`<meta name="description" content="${deck.slides.length} worked slides and seven interactive labs on Lie groups, frame conventions, pose optimization, B-splines, and exact continuous-time Gaussian-process uncertainty." />`);
+html=html.replace(/<!-- Generated by advanced-state-representations[^>]*-->/,'<!-- Generated by advanced-state-representations/build.mjs. Edit lesson-deck.mjs, then rebuild. -->');
+const styles=`<style id="asr-math-layout">
+.bento-slide .math-display{height:auto!important;min-height:0;margin:.4em 0;}
+.bento-slide .bento-text-inner p{margin:0 0 .62em;}
+.bento-slide .bento-text-inner p:last-child{margin-bottom:0;}
+.bento-slide .bento-text-inner>.math-display:first-child{margin-top:0;}
+.bento-slide .bento-text-inner>.math-display:last-child{margin-bottom:0;}
+.bento-slide .math-display mjx-container{max-width:100%;}
+.bento-slide .math-display mjx-container svg{max-width:100%;height:auto;}
+@media print{.bento-inline-live-frame,.bento-inline-live-region,iframe{display:none!important;}}
+</style>`;
+if(/<style id="asr-math-layout">[\s\S]*?<\/style>/.test(html))html=html.replace(/<style id="asr-math-layout">[\s\S]*?<\/style>/,styles);else html=html.replace('</head>',styles+'\n</head>');
+for(const token of ['tex-svg-full.js','mathjax-dynamic.js','bento-inline-live.js'])if(!html.includes(token))throw Error('Runtime missing '+token);
+await mkdir(resolve(here,'figures'),{recursive:true});for(const demo of Object.keys(Figures.defaults))await writeFile(resolve(here,'figures',demo+'.svg'),Figures.render(demo).svg);
+await writeFile(resolve(here,'index.html'),html);
+const studySections=sourceDeck.slides.map((s,index)=>{
+ const body=s.elements.filter(e=>!['eyebrow','heading','subtitle'].includes(e.id)&&!e.id.startsWith('footer-')&&e.type==='text').map(e=>`<div class="piece ${e.id.endsWith('-label')?'label':''}">${e.html}</div>`).join('\n');
+ const image=s.elements.find(e=>e.id==='model-figure');
+ return `<section id="${s.id}"><p class="chapter">${index+1} / ${sourceDeck.slides.length}</p><h2>${escape(s.lessonTitle)}</h2><p class="lead">${escape(s.lessonSubtitle)}</p><div class="lesson">${body}</div>${image?`<figure><img src="${image.src}" alt="${escape(image.alt)}"><figcaption>The same model-generated default figure used in the interactive slide.</figcaption></figure>`:''}<details open><summary>Explanation and assumptions</summary><p>${escape(s.notes)}</p></details><p class="sources">Sources: ${s.sources.map(k=>`<a href="${references[k].url}">${escape(references[k].label)}</a>`).join(' · ')} · <a href="./#/${s.id}">Open this slide</a></p></section>`;
+}).join('\n');
+const study=`<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Advanced State Representations · Study notes</title><meta name="description" content="Worked explanations, derivations, corrected diagrams, and mathematical assumptions for the advanced-state slides."><style>
+:root{font:18px/1.65 Arial,sans-serif;color:#182D33;background:#F5F3ED}body{margin:0}main{max-width:940px;padding:40px 22px;margin:auto}a{color:#16736E}h1,h2{font-family:Georgia,serif;line-height:1.15}h1{font-size:42px}h2{font-size:30px}.chapter,.label{font-size:13px;letter-spacing:.04em;font-weight:700;color:#16736E}.lead{color:#60747A}section{background:#FFFDFA;margin:34px 0;padding:28px;border:1px solid #D6DEDC;border-radius:12px;scroll-margin:20px}.piece{margin:12px 0}.piece.label{margin-top:25px}details{background:#E4F0ED;padding:16px 20px;margin:25px 0}summary{font-weight:700;cursor:pointer}.sources,figcaption{font-size:13px;color:#60747A}.math-display{display:block;overflow-x:auto;margin:18px 0}.math-display svg{max-width:100%;height:auto}figure{margin:24px 0}img{max-width:100%;height:auto}nav{display:flex;flex-wrap:wrap;gap:14px}#toc{columns:2;font-size:15px}#toc a{display:block;margin:5px 0}@media(max-width:600px){section{padding:18px}h1{font-size:32px}#toc{columns:1}}@media print{section{break-inside:auto;border:0}nav,#toc{display:none}details{background:none}}
+</style><script>window.MathJax={tex:{inlineMath:[['\\\\(','\\\\)']],displayMath:[['\\\\[','\\\\]']]},svg:{fontCache:'local'}};</script><script defer src="https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/tex-svg-full.js"></script><script defer src="../assets/mathjax-dynamic.js?v=2"></script></head><body><main><nav><a href="./">Presentation</a><a href="./live/">Interactive laboratories</a><a href="./math-audit.md">Mathematical audit</a></nav><h1>Advanced State Variable Representations</h1><p>A worked companion to the slides: geometry first, time second, then the connection. Updated September 5, 2026.</p><div id="toc">${sourceDeck.slides.map((s,i)=>`<a href="#${s.id}">${i+1}. ${escape(s.lessonTitle)}</a>`).join('')}</div>${studySections}</main></body></html>`;
+await writeFile(resolve(here,'study.html'),study);
+console.log(`Built ${deck.slides.length} regular Bento slides, ${inlineLiveMap.length} inline laboratories, seven exact SVG fallbacks, and study.html.`);
