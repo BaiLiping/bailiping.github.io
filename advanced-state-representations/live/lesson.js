@@ -11,7 +11,13 @@ const config={
  optimize:{name:'Watch the optimizer actually solve',intro:'The numbered correspondences stay fixed. Advance one iteration and compare residual length, cost, and group validity.',controls:[['angle','Initial orientation (deg)',-100,100,5],['steps','Gauss–Newton iteration',0,8,1]]},
  adjoint:{name:'Same motion, different coordinates',intro:'The correctly converted left update overlaps the right update. The coral frame uses the same numbers on the wrong side.',controls:[['theta','Starting orientation (deg)',-90,90,5],['tx','Starting x-position (m)',-.5,1.8,.1],['delta','Angular increment (deg)',-60,60,5]]},
  spline:{name:'One coefficient, one support interval',intro:'Select a coefficient and move it. The shaded region is its mathematical support, not an arbitrary neighborhood.',controls:[['degree','Spline degree',[[1,'Linear (degree 1)'],[3,'Cubic (degree 3)']]],['t','Query time (s)',0,6,.05],['selected','Moved coefficient index',0,8,1],['shift','Coefficient displacement (m)',-.8,.8,.1]]},
- gp:{name:'Motion prior, measurements, uncertainty',intro:'Compare position random walk with a position–velocity prior. Then inspect the query variance and matrix structure.',controls:[['kind','Motion prior',[['rw','Random walk: state = position'],['cv','Constant velocity: state = [p, v]']]],['q','Process spectral density q',.05,1,.05],['sigma','Measurement standard deviation (m)',.05,.5,.05],['t','Query time (s)',0,6,.05],['matrix','Show matrix',[['info','Posterior information'],['cov','Posterior covariance']]]},
+ gp:{name:'Motion prior, measurements, uncertainty',intro:'Compare position random walk with a position–velocity prior. Then inspect the query variance and matrix structure.',controls:[
+  ['kind','Motion prior',[['rw','Random walk: state = position'],['cv','Constant velocity: state = [p, v]']]],
+  ['q','Process spectral density q',.05,1,.05],
+  ['sigma','Measurement standard deviation (m)',.05,.5,.05],
+  ['t','Query time (s)',0,6,.05],
+  ['matrix','Show matrix',[['info','Posterior information'],['cov','Posterior covariance']]]
+ ]},
  pose:{name:'Valid poses can follow different paths',intro:'Compare group interpolation with a valid rotation/translation split and an invalid entrywise matrix blend.',controls:[['angle','End orientation (deg)',-175,180,5],['u','Fraction of interval',0,1,.05]]}
 };
 const cfg=config[demo],state={...F.defaults[demo]},app=document.getElementById('app');
