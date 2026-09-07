@@ -1,0 +1,38 @@
+name: BP and PMBM lesson quality
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/bp-pmbm-quality.yml'
+      - 'bp-vs-pmbm/**'
+      - 'bp-vs-pmbm-slides/**'
+      - 'scripts/refine-bp-pmbm.py'
+      - 'tests/bp-pmbm*'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: bp-pmbm-quality
+  cancel-in-progress: false
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Check lesson JavaScript
+        run: node --check bp-vs-pmbm-slides/build-deck.mjs
+      - name: Export scoped sources for inspection
+        uses: actions/upload-artifact@v4
+        with:
+          name: bp-pmbm-sources
+          path: |
+            bp-vs-pmbm/
+            bp-vs-pmbm-slides/
+          retention-days: 7
