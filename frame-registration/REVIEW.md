@@ -41,6 +41,7 @@ ranking or a global-correctness guarantee.
 python -m pip install matplotlib playwright
 python -m playwright install chromium
 python scripts/frame-registration-audit.py
+python scripts/finalize-frame-registration.py
 node --test tests/frame-registration.test.cjs
 python tests/frame-registration-browser.py
 ```
@@ -81,7 +82,7 @@ exhaustive accessibility or device-compatibility certification.
 - Myronenko and Song, *Point Set Registration: Coherent Point Drift*, TPAMI, 2010.
   https://arxiv.org/abs/0905.2635
 - Gao and Tedrake, *FilterReg: Robust and Efficient Probabilistic Point-Set
-  Registration Using Gaussian Filter and Twist Parameterization*, ICRA, 2019.
+  Registration Using Gaussian Filter and Twist Parameterization*, CVPR, 2019.
   Section 3.3 explicitly discusses optimized variance.
   https://arxiv.org/html/1811.10136v3
 - Crane et al., *MMD-Reg*, 2026. https://arxiv.org/abs/2606.27818
