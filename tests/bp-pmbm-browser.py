@@ -102,7 +102,7 @@ try:
             page.screenshot(path=str(OUT/f'slide-{index+1:02}.png'))
             report['slides'].append(slide['id'])
             if index+1<len(doc['slides']):
-                page.locator('.navigate-right.enabled').first.click()
+                page.keyboard.press('ArrowRight')
         assert len(report['slides'])==19
         assert report['embedded_modes']==['assignment','bp','hypotheses']
         assert not errors, errors
@@ -112,4 +112,20 @@ finally:
     server.shutdown()
     report['errors']=errors
     (OUT/'report.json').write_text(json.dumps(report,indent=2))
+# Deployment is independent of CI. Record current public bytes without making
+# a local regression check depend on CDN propagation or external availability.
+from urllib.request import Request, urlopen
+import hashlib
+report['public_files'] = {}
+for relative in ['bp-vs-pmbm/index.html', 'bp-vs-pmbm/association-model.js', 'bp-vs-pmbm-slides/index.html']:
+    url='https://bailiping.com/'+relative
+    try:
+        request=Request(url, headers={'Cache-Control':'no-cache', 'User-Agent':'BP-PMBM-Lesson-Audit'})
+        with urlopen(request, timeout=15) as response:
+            actual=response.read()
+        expected=(ROOT/relative).read_bytes()
+        report['public_files'][relative]={'matches_checkout':actual==expected,'sha256':hashlib.sha256(actual).hexdigest()}
+    except Exception as error:
+        report['public_files'][relative]={'verification_error':str(error)}
+(OUT/'report.json').write_text(json.dumps(report,indent=2))
 print(json.dumps(report,indent=2))
