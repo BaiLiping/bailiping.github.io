@@ -12,7 +12,7 @@ on:
       - 'tests/bp-pmbm*'
 
 permissions:
-  contents: read
+  contents: write
 
 concurrency:
   group: bp-pmbm-quality
@@ -23,18 +23,48 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
-      - name: Check lesson JavaScript
-        run: node --check bp-vs-pmbm-slides/build-deck.mjs
-      - name: Export scoped sources for inspection
+      - name: Apply scoped and idempotent editorial corrections
+        run: python3 scripts/refine-bp-pmbm.py
+      - name: Build and validate the shared lesson
+        run: |
+          node --check bp-vs-pmbm/association-model.js
+          node --check bp-vs-pmbm-slides/live/app.js
+          node --check bp-vs-pmbm-slides/build-deck.mjs
+          node bp-vs-pmbm-slides/build-deck.mjs
+          node --test tests/bp-pmbm.test.cjs
+          git diff --check
+      - name: Verify regeneration is reproducible
+        run: |
+          sha256sum bp-vs-pmbm/index.html bp-vs-pmbm-slides/build-deck.mjs bp-vs-pmbm-slides/index.html > /tmp/first.sha
+          python3 scripts/refine-bp-pmbm.py
+          node bp-vs-pmbm-slides/build-deck.mjs
+          sha256sum bp-vs-pmbm/index.html bp-vs-pmbm-slides/build-deck.mjs bp-vs-pmbm-slides/index.html > /tmp/second.sha
+          diff /tmp/first.sha /tmp/second.sha
+      - name: Commit tested lesson sources and generated deck
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add bp-vs-pmbm/index.html bp-vs-pmbm-slides/build-deck.mjs bp-vs-pmbm-slides/index.html
+          if ! git diff --cached --quiet; then
+            git commit -m 'Correct BP and PMBM article, regenerate slides from tested shared solver'
+            git push origin HEAD:main
+          fi
+          git log -1 --format='%H %s'
+      - name: Export validated sources
         uses: actions/upload-artifact@v4
         with:
-          name: bp-pmbm-sources
+          name: bp-pmbm-validated
           path: |
             bp-vs-pmbm/
             bp-vs-pmbm-slides/
+            tests/bp-pmbm*
+            scripts/refine-bp-pmbm.py
             frame-registration-slides/index.html
             assets/bento-inline-live.js
             assets/bento-inline-live.css
