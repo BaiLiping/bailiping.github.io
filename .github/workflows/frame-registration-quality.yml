@@ -1,0 +1,30 @@
+name: Frame registration accuracy and quality
+on:
+  push:
+    branches: [fix/frame-registration-audit-2026-09-07]
+    paths:
+      - .github/workflows/frame-registration-quality.yml
+      - scripts/frame-registration-audit.py
+      - tests/frame-registration.test.cjs
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          sparse-checkout: |
+            frame-registration
+            frame-registration-slides
+            scripts
+            tests
+      - name: Export relevant source for inspection
+        uses: actions/upload-artifact@v4
+        with:
+          name: frame-registration-source
+          path: |
+            frame-registration/
+            frame-registration-slides/
+          retention-days: 7
