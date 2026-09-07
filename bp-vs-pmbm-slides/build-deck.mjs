@@ -1,4 +1,6 @@
 import fs from "node:fs";
+import Model from "../bp-vs-pmbm/association-model.js";
+// bp-pmbm-audit-2026-09-07
 
 const SERIF = "Georgia, 'Times New Roman', serif";
 const SANS = "Arial, Helvetica, sans-serif";
@@ -98,107 +100,16 @@ function inlineMount() {
   );
 }
 
-function matrixWeight(track, measurement, covariance, pd = 0.9, clutter = 5e-5) {
-  const dx = measurement.x - track.x;
-  const dy = measurement.y - track.y;
-  const det = covariance[0][0] * covariance[1][1] - covariance[0][1] * covariance[1][0];
-  const q = (dx * (covariance[1][1] * dx - covariance[0][1] * dy) +
-    dy * (-covariance[1][0] * dx + covariance[0][0] * dy)) / det;
-  if (q > 9.21) return 0;
-  return pd * Math.exp(-0.5 * q) / (2 * Math.PI * Math.sqrt(det)) / clutter;
-}
-
-const benchmarkTracks = [
-  { x: 285, y: 205, S: [[520, 140], [140, 340]] },
-  { x: 352, y: 232, S: [[460, -120], [-120, 480]] },
-  { x: 318, y: 158, S: [[620, 0], [0, 300]] }
-];
-const benchmarkMeasurements = [
-  { x: 318, y: 198 }, { x: 322, y: 215 }, { x: 314, y: 186 }, { x: 560, y: 120 }
-];
-const L = benchmarkTracks.map(track => [
-  0.1,
-  ...benchmarkMeasurements.map(measurement => matrixWeight(track, measurement, track.S))
-]);
-
-function bpHistory(weights) {
-  const n = weights.length;
-  const m = weights[0].length - 1;
-  let nu = Array.from({ length: m }, () => Array(n).fill(1));
-  const mu = Array.from({ length: n }, () => Array(m).fill(0));
-  const marg = () => weights.map((row, i) => {
-    const r = [row[0], ...Array.from({ length: m }, (_, j) => row[j + 1] * nu[j][i])];
-    const z = r.reduce((a, b) => a + b, 0);
-    return r.map(v => v / z);
-  });
-  const history = [marg()];
-  for (let sweep = 1; sweep <= 50; sweep += 1) {
-    for (let i = 0; i < n; i += 1) {
-      let total = weights[i][0];
-      for (let j = 0; j < m; j += 1) total += weights[i][j + 1] * nu[j][i];
-      for (let j = 0; j < m; j += 1) {
-        mu[i][j] = weights[i][j + 1] / Math.max(1e-15, total - weights[i][j + 1] * nu[j][i]);
-      }
-    }
-    const next = Array.from({ length: m }, () => Array(n).fill(1));
-    let delta = 0;
-    for (let j = 0; j < m; j += 1) {
-      let total = 1;
-      for (let i = 0; i < n; i += 1) total += mu[i][j];
-      for (let i = 0; i < n; i += 1) {
-        next[j][i] = 1 / Math.max(1e-15, total - mu[i][j]);
-        delta = Math.max(delta, Math.abs(next[j][i] - nu[j][i]));
-      }
-    }
-    nu = next;
-    history.push(marg());
-    if (delta < 1e-10) break;
-  }
-  return history;
-}
-
-function enumerate(weights) {
-  const n = weights.length;
-  const m = weights[0].length - 1;
-  const a = Array(n).fill(-1);
-  const events = [];
-  function rec(i, used, weight) {
-    if (i === n) {
-      events.push({ a: a.slice(), weight });
-      return;
-    }
-    a[i] = -1;
-    rec(i + 1, used, weight * weights[i][0]);
-    for (let j = 0; j < m; j += 1) {
-      if ((used & (1 << j)) || weights[i][j + 1] <= 0) continue;
-      a[i] = j;
-      rec(i + 1, used | (1 << j), weight * weights[i][j + 1]);
-    }
-    a[i] = -1;
-  }
-  rec(0, 0, 1);
-  const z = events.reduce((sum, event) => sum + event.weight, 0);
-  events.forEach(event => { event.p = event.weight / z; });
-  events.sort((a, b) => b.p - a.p);
-  return events;
-}
-
-function marginals(events, n = 3, m = 4) {
-  const M = Array.from({ length: n }, () => Array(m + 1).fill(0));
-  for (const event of events) {
-    for (let i = 0; i < n; i += 1) M[i][event.a[i] < 0 ? 0 : event.a[i] + 1] += event.p;
-  }
-  return M;
-}
-
-const bp = bpHistory(L).at(-1);
-const events = enumerate(L);
-const exact = marginals(events);
-let maxBpError = 0;
-for (let i = 0; i < 3; i += 1) {
-  for (let j = 0; j < 5; j += 1) maxBpError = Math.max(maxBpError, Math.abs(bp[i][j] - exact[i][j]));
-}
-const topFiveMass = events.slice(0, 5).reduce((sum, event) => sum + event.p, 0);
+const benchmarkTracks = Model.DEFAULT.T;
+const benchmarkMeasurements = Model.DEFAULT.Z;
+const {L} = Model.buildWeights(Model.DEFAULT);
+const bpResult = Model.bp(L, {history:false});
+if (!bpResult.converged) throw new Error("Default benchmark did not meet the BP stopping tolerance.");
+const bp = bpResult.marginals;
+const events = Model.enumerate(L);
+const exact = Model.eventMarginals(events, L.length, L[0].length-1).marginals;
+const maxBpError = Model.maxDifference(bp,exact);
+const topFiveMass = Model.eventMarginals(events,L.length,L[0].length-1,5).mass;
 
 function fmtWeight(value) {
   if (value <= 0) return "·";
@@ -216,7 +127,7 @@ slides.push({
   id: "s-cover",
   background: PAPER,
   transition: "none",
-  notes: "Open with the shared data-association question. The deck contrasts two inference representations, not two incompatible measurement models. BP will approximate marginals; the joint-hypothesis route will preserve compatible global stories.",
+  notes: "Open with the shared data-association question. BP is an inference algorithm; PMBM is a posterior family. The two can be combined, rather than being mutually exclusive filters. BP will approximate marginals; the joint-hypothesis route will preserve compatible global stories.",
   elements: [
     text("cover-kicker", 72, 68, 900, 28, "MULTI-TARGET TRACKING · DATA ASSOCIATION", 15, BP_DEEP, {
       fontWeight: 700, letterSpacing: 2.6, fx: { enter: "fade-up", order: 0 }
@@ -267,21 +178,21 @@ slides.push(regular(
 slides.push(regular(
   "s-boundary", "02 · MODEL BOUNDARY",
   "First, name exactly what is being compared.",
-  "The live computation is exact for a normalized one-scan assignment model—not for an entire PMBM filter update.",
+  "Exact enumeration is the reference for a one-scan model; BP approximates it. Neither demo is a full PMBM tracker.",
   "This is the key accuracy slide. Exact refers only to exhaustive summation of the toy assignment events. A complete PMBM update also includes PPP-driven new-target evidence, Bernoulli existence and state densities, and the rest of the RFS recursion.",
   [
     rect("boundary-main", 72, 232, 1136, 126, WHITE, { stroke: PM, strokeWidth: 3, radius: 12 }),
     text("boundary-eq", 104, 256, 1072, 36, "EXACT HERE = Σ over every valid normalized assignment event", 25, PM_DEEP, { fontWeight: 700, align: "center" }),
-    text("boundary-not", 104, 307, 1072, 28, "≠ a complete PMBM posterior update", 21, INK, { fontWeight: 700, align: "center" }),
+    text("boundary-not", 104, 307, 1072, 28, "BP = inference algorithm; PMBM = posterior family. They can be combined.", 21, INK, { fontWeight: 700, align: "center" }),
     rect("boundary-in", 72, 394, 542, 220, BP_WASH, { radius: 12 }),
     text("boundary-in-head", 104, 422, 478, 28, "IN THE BENCHMARK", 14, BP_DEEP, { fontWeight: 700, letterSpacing: 1.7 }),
     text("boundary-in-body", 104, 464, 470, 130,
-      "• existing tracks may be missed\u003cbr>• each track claims at most one measurement\u003cbr>• each measurement has at most one existing-track owner\u003cbr>• unassigned-measurement baseline weight = 1",
+      "• certain existing tracks may be missed\u003cbr>• each track claims at most one measurement\u003cbr>• each measurement has at most one existing-track owner\u003cbr>• unassigned-measurement baseline weight = 1",
       18, INK, { lineHeight: 1.55 }),
     rect("boundary-out", 666, 394, 542, 220, PM_WASH, { radius: 12 }),
     text("boundary-out-head", 698, 422, 478, 28, "REQUIRED IN A FULL PMBM UPDATE", 14, PM_DEEP, { fontWeight: 700, letterSpacing: 1.4 }),
     text("boundary-out-body", 698, 464, 470, 130,
-      "• undetected-target Poisson intensity\u003cbr>• measurement-specific PPP birth evidence\u003cbr>• Bernoulli existence and state densities\u003cbr>• global-hypothesis history and RFS state update",
+      "• undetected-target Poisson intensity\u003cbr>• measurement-specific new-detection evidence\u003cbr>• Bernoulli existence and state densities\u003cbr>• global-hypothesis history and RFS state update",
       18, INK, { lineHeight: 1.55 })
   ],
   { sectionColor: PM_DEEP }
@@ -299,8 +210,8 @@ const weightRows = [
 slides.push(regular(
   "s-weights", "03 · SHARED INPUT",
   "Both routes consume the same gated assignment weights.",
-  "Change geometry, Pᴅ, or clutter density and the entire inference problem changes.",
-  "Walk through the matrix. The missed-detection column is one minus detection probability. Gated pairs use the likelihood-to-clutter ratio. A dot is exactly zero after gating. Unassigned measurements contribute the normalized baseline one.",
+  "Certain targets, zero undetected PPP. Gating truncates pair weights; it is not a corrected sensor model.",
+  "Walk through the matrix. For certain existence and no gate correction, the missed-detection column is one minus detection probability. Gated pairs use the likelihood-to-clutter ratio. A dot is exactly zero after gating. Unassigned measurements contribute the normalized baseline one.",
   [
     {
       id: "weight-table", type: "table", x: 72, y: 242, w: 694, h: 250, rotation: 0, opacity: 1,
@@ -329,14 +240,15 @@ slides.push(regular(
 
 const graphElements = [];
 const leftYs = [290, 400, 510];
-const rightYs = [250, 345, 440, 535];
+const rightYs = [285, 375, 465, 555];
 const gatedPairs = [];
 for (let i = 0; i < 3; i += 1) {
   for (let j = 0; j < 4; j += 1) if (L[i][j + 1] > 0) gatedPairs.push([i, j]);
 }
 for (const [i, j] of gatedPairs) {
   const x1 = 188, x2 = 590, y1 = leftYs[i], y2 = rightYs[j];
-  graphElements.push(rect("graph-edge-" + i + "-" + j, x1, y1, Math.hypot(x2 - x1, y2 - y1), 2, TRACKS[i], {
+  const length = Math.hypot(x2-x1,y2-y1);
+  graphElements.push(rect("graph-edge-" + i + "-" + j, (x1+x2-length)/2, (y1+y2)/2-1, length, 2, TRACKS[i], {
     rotation: Math.atan2(y2 - y1, x2 - x1) * 180 / Math.PI,
     opacity: 0.38
   }));
@@ -350,7 +262,7 @@ for (let j = 0; j < 4; j += 1) {
   graphElements.push(text("graph-b-label-" + j, 596, rightYs[j] - 9, 24, 18, "b" + (j + 1), 14, SOFT, { fontWeight: 700, align: "center" }));
 }
 slides.push(regular(
-  "s-constraint", "04 · FACTOR GRAPH",
+  "s-constraint", "04 · PAIRWISE CONSISTENCY GRAPH",
   "Duplicate the bookkeeping so consistency can be local.",
   "Track variable aᵢ and measurement variable bⱼ describe the same ownership decision from opposite sides.",
   "The variables are redundant by design. Pairwise consistency factors ensure that a_i equals j if and only if b_j equals i. This construction converts the global one-to-one constraint into local messages on a bipartite graph.",
@@ -395,7 +307,7 @@ slides.push(regular(
 slides.push(regular(
   "s-bp-messages", "06 · WILLIAMS–LAU BP",
   "Two reciprocal messages, repeated to a fixed point.",
-  "The specific association construction converges; each sweep touches every track–measurement edge.",
+  "Positive miss/unassigned weights: this association BP converges. A small residual does not imply exact marginals.",
   "Use careful wording: the Williams–Lau data-association BP construction has a convergence guarantee. Its cost is O(nm) per sweep, or O(Tnm) for T sweeps. This statement should not be generalized to arbitrary loopy BP models.",
   [
     rect("bp-eq-one", 72, 246, 536, 164, BP_WASH, { stroke: BP, strokeWidth: 1, radius: 12 }),
@@ -415,7 +327,7 @@ slides.push(regular(
     text("bp-arrow-3", 914, 482, 64, 28, "→", 24, BP, { fontWeight: 700, align: "center" }),
     text("bp-step-3", 984, 484, 180, 26, "fixed point", 20, BP_DEEP, { fontWeight: 700, align: "center" }),
     text("bp-complexity", 128, 545, 1024, 30,
-      "Williams–Lau construction: O(nm) per sweep · O(Tnm) for T sweeps · convergence guarantee for this association model",
+      "Williams–Lau construction: O(nm) per sweep · O(Tnm) for T sweeps · positive miss/unassigned weights; not a guarantee for arbitrary loopy BP",
       16, SOFT, { align: "center" }),
     inlineMount()
   ]
@@ -496,7 +408,7 @@ slides.push(regular(
   "s-pmbm", "09 · PMBM CONTEXT",
   "PMBM keeps ambiguity in a global-hypothesis mixture.",
   "An undetected-target Poisson process sits beside a multi-Bernoulli mixture for detected targets.",
-  "This slide places the joint-assignment table in the correct PMBM context. A full PMBM point-target update is conjugate under its assumed model. New-target Bernoulli evidence is measurement specific and comes from integrating the likelihood against the undetected-target PPP.",
+  "This slide places the joint-assignment table in the correct PMBM context. A full PMBM point-target update is conjugate under independent point detections, Poisson clutter/birth, and independent survival/motion. New-target Bernoulli evidence is measurement specific and comes from integrating the likelihood against the undetected-target PPP.",
   [
     rect("pmbm-ppp", 72, 250, 346, 286, PM_WASH, { stroke: PM, strokeWidth: 2, radius: 143 }),
     text("pmbm-ppp-label", 116, 300, 258, 28, "UNDETECTED", 14, PM_DEEP, { fontWeight: 700, align: "center", letterSpacing: 1.8 }),
@@ -515,7 +427,7 @@ slides.push(regular(
     }),
     rect("pmbm-boundary", 72, 574, 1136, 60, PM_WASH, { stroke: PM, strokeWidth: 1, radius: 10 }),
     text("pmbm-boundary-copy", 96, 582, 1088, 44,
-      "The live table mirrors normalized assignment/hypothesis bookkeeping only. It does not compute PPP birth evidence, Bernoulli existence, or state densities.",
+      "The live table mirrors normalized assignment/hypothesis bookkeeping only. It does not compute PPP new-detection evidence, Bernoulli existence, or state densities.",
       17, INK, { fontWeight: 700, align: "center", valign: "middle" })
   ],
   { sectionColor: PM_DEEP }
@@ -527,8 +439,8 @@ const hypBarData = events.slice(0, 10).map((event, i) => ({
 }));
 slides.push(regular(
   "s-pruning", "10 · HYPOTHESIS MANAGEMENT",
-  "Retain the head. Quantify the tail.",
-  "Practical joint-hypothesis filters generate selected high-weight children, then prune, recycle, merge, or cap.",
+  "Retain the head. Inspect the truncation error.",
+  "Top-k restriction changes marginals after renormalization. Full tail mass is available only in this exhaustive demo.",
   "The chart ranks exact normalized event weights for the default scene. Top-k truncation loses probability mass and changes marginals after renormalization. The MAP row alone is one association story, not a complete multi-object estimate.",
   [
     {
@@ -569,9 +481,9 @@ slides.push(regular(
       columns: [{ w: 0.9 }, { w: 1.45 }, { w: 1.45 }],
       rows: [
         { cells: [{ html: "" }, { html: "Belief propagation" }, { html: "Joint hypotheses / PMBM view" }] },
-        { cells: [{ html: "Retains", bold: true }, { html: "marginal p(aᵢ=j)" }, { html: "weighted compatible global stories h" }] },
+        { cells: [{ html: "Retains", bold: true }, { html: "BP belief q(aᵢ=j)" }, { html: "weighted compatible global stories h" }] },
         { cells: [{ html: "Core operation", bold: true }, { html: "iterated μ and ν messages" }, { html: "assignment generation + weight + pruning" }] },
-        { cells: [{ html: "Correlation", bold: true }, { html: "projected into marginals" }, { html: "preserved across tracks and hypotheses" }] },
+        { cells: [{ html: "Correlation", bold: true }, { html: "not represented by marginals alone" }, { html: "encoded by the retained mixture" }] },
         { cells: [{ html: "Approximation", bold: true }, { html: "Bethe fixed-point marginals on loops" }, { html: "gating, selected children, truncation, numerical state integrals" }] },
         { cells: [{ html: "Best pressure", bold: true }, { html: "scale and latency" }, { html: "ambiguity, identity, history" }] }
       ],
@@ -629,10 +541,10 @@ slides.push(regular(
 slides.push(regular(
   "s-time", "13 · ACROSS SCANS",
   "The representational choice compounds over time.",
-  "Marginalize now, or preserve alternative histories until later evidence resolves them.",
-  "Many BP-based filters carry one belief set forward after each scan, avoiding explicit hypothesis-tree growth. That does not make runtime flat: T association sweeps over n tracks and m measurements cost O(Tnm) per scan. Marginalization can merge modes and contribute to coalescence, while PMBM-style global hypotheses preserve alternative association histories and then prune them under computational pressure.",
+  "A product-of-marginals projection discards dependence. Gaussian moment matching is a separate approximation.",
+  "Many BP-based filters carry one belief set forward after each scan, avoiding explicit hypothesis-tree growth. That does not make runtime flat: T association sweeps over n tracks and m measurements cost O(Tnm) per scan. Marginalization itself need not merge modes. A track-product projection loses cross-track dependence; optional Gaussian moment matching can additionally merge modes. These are filter choices, not requirements of BP. Retained hypotheses preserve alternatives only until pruning removes them. A trajectory posterior is needed when trajectories are the explicit state.",
   [
-    text("time-bp-label", 72, 236, 250, 28, "BP-BASED TRACKER", 14, BP_DEEP, { fontWeight: 700, letterSpacing: 1.5 }),
+    text("time-bp-label", 72, 236, 250, 28, "MARGINAL-FILTER EXAMPLE", 14, BP_DEEP, { fontWeight: 700, letterSpacing: 1.5 }),
     ...[0,1,2].flatMap((i) => {
       const x = 96 + i * 250;
       return [
@@ -656,18 +568,18 @@ slides.push(regular(
         text("time-branch-b-label-" + i, x + 10, 554, 108, 22, "h" + (i + 1) + "b", 15, INK, { fontWeight: 700, align: "center" })
       ];
     }),
-    text("time-prune", 948, 504, 260, 62, "branch → weight → prune\u003cbr>identity ambiguity can survive", 18, PM_DEEP, { fontWeight: 700, align: "center", lineHeight: 1.45 })
+    text("time-prune", 948, 504, 260, 62, "branch → weight → prune\u003cbr>retained alternatives can survive", 18, PM_DEEP, { fontWeight: 700, align: "center", lineHeight: 1.45 })
   ]
 ));
 
 slides.push(regular(
   "s-bridge", "14 · THE BRIDGE",
   "TOMB/P meets the two views in a specific middle.",
-  "Approximate a PMBM-style mixture by one multi-Bernoulli using marginal association probabilities.",
-  "The bridge is precise: TOMB/P uses marginal association probabilities to approximate a mixture by a single multi-Bernoulli. BP is one efficient method for approximating those marginals. This does not make every BP or sum-product tracker a PMBM filter with hypotheses removed.",
+  "TOMB/P approximates the detected-object MBM by one MB and retains the undetected-object PPP.",
+  "TOMB/P uses track-oriented marginal association probabilities to approximate the MBM by one MB while retaining the PPP. MOMB/P uses a different grouping. BP is one efficient method for approximating those marginals. This does not make every BP or sum-product tracker a PMBM filter with hypotheses removed.",
   [
     rect("bridge-left", 72, 272, 290, 220, PM_WASH, { stroke: PM, strokeWidth: 2, radius: 12 }),
-    text("bridge-left-head", 100, 304, 234, 28, "PMBM-STYLE MIXTURE", 13, PM_DEEP, { fontWeight: 700, align: "center", letterSpacing: 1.1 }),
+    text("bridge-left-head", 100, 304, 234, 28, "DETECTED-OBJECT MBM", 13, PM_DEEP, { fontWeight: 700, align: "center", letterSpacing: 1.1 }),
     text("bridge-left-big", 100, 354, 234, 82, "Σₕ wₕ · MBₕ", 30, INK, { fontWeight: 700, align: "center", valign: "middle" }),
     text("bridge-arrow-one", 370, 350, 105, 58, "→", 42, PM, { fontWeight: 700, align: "center", lineHeight: 1.0 }),
     rect("bridge-middle", 480, 242, 330, 280, WHITE, { stroke: BP, strokeWidth: 2, radius: 140 }),
@@ -680,7 +592,7 @@ slides.push(regular(
     text("bridge-right-big", 950, 354, 228, 82, "one multi-\u003cbr>Bernoulli", 29, INK, { fontWeight: 700, align: "center", lineHeight: 1.25 }),
     rect("bridge-boundary", 160, 560, 960, 58, INK, { radius: 10 }),
     text("bridge-boundary-copy", 188, 576, 904, 28,
-      "A specific bridge—not a universal equivalence between BP/SPA trackers and PMBM.",
+      "PPP retained on both sides. This is a specific projection, not a universal BP = PMBM equivalence.",
       18, WHITE, { fontWeight: 700, align: "center" })
   ]
 ));
@@ -700,7 +612,7 @@ slides.push(regular(
     rect("decision-pm", 692, 244, 516, 322, PM_WASH, { stroke: PM, strokeWidth: 2, radius: 14 }),
     text("decision-pm-head", 728, 278, 444, 30, "PRESERVE HYPOTHESES WHEN…", 16, PM_DEEP, { fontWeight: 700, letterSpacing: 1.1 }),
     text("decision-pm-body", 728, 332, 430, 172,
-      "• crossings and close encounters dominate\u003cbr>• identity and history are first-class\u003cbr>• later evidence may settle ambiguity\u003cbr>• accuracy outweighs flat cost\u003cbr>• pruning mass can be monitored",
+      "• crossings and close encounters dominate\u003cbr>• identity and history are first-class\u003cbr>• later evidence may settle ambiguity\u003cbr>• joint dependence is worth its cost\u003cbr>• hypothesis growth fits the budget",
       21, INK, { lineHeight: 1.55 }),
     text("decision-pm-foot", 728, 520, 430, 28, "Cost paid: hypothesis management.", 16, PM_DEEP, { fontWeight: 700 }),
     text("decision-bottom", 160, 602, 960, 26, "The design question is not “which is best?” It is “which correlations must survive this scan?”", 19, INK, { fontWeight: 700, align: "center" })
@@ -715,8 +627,8 @@ slides.push(regular(
   [
     ...[
       ["01", "Same question, same weights.", "The benchmark isolates inference representation by feeding BP and enumeration the identical normalized assignment model.", BP_WASH, BP_DEEP],
-      ["02", "BP returns approximate marginals.", "It passes Williams–Lau messages without enumerating joint events; O(nm) is per sweep for this construction.", WHITE, BP_DEEP],
-      ["03", "PMBM is more than an assignment table.", "Its full update includes PPP-driven birth evidence and Bernoulli existence/state densities alongside global hypotheses.", PM_WASH, PM_DEEP],
+      ["02", "Association BP approximates marginals.", "It passes Williams–Lau messages without enumerating joint events; O(nm) is per sweep for this construction.", WHITE, BP_DEEP],
+      ["03", "PMBM is more than an assignment table.", "Its full update includes PPP-driven new-detection evidence and Bernoulli existence/state densities alongside global hypotheses.", PM_WASH, PM_DEEP],
       ["04", "TOMB/P is a specific bridge.", "Marginal projection can connect the views; it does not make every BP tracker equivalent to PMBM.", WHITE, PM_DEEP]
     ].flatMap((item, i) => {
       const col = i % 2;
@@ -737,11 +649,62 @@ slides.push(regular(
   ]
 ));
 
+
+const pmbmWeightsSlide = regular(
+  "s-pmbm-weights", "PMBM · ACTUAL ASSOCIATION EVIDENCE",
+  "What changes in a full PMBM update?",
+  "Condition on one predicted parent hypothesis. Integrate states first; then solve the same assignment structure.",
+  "r_i is Bernoulli existence, p_i(x) is its conditional state density, lambda^u is the undetected PPP intensity, c(z) is clutter intensity, and g(z|x) is the likelihood. All equations are before gating. The parent's hypothesis weight multiplies each child; all parents and histories must be included in a complete PMBM. New means newly detected, not necessarily physically born this scan. New existence below is conditional on the measurement not being assigned to an existing track. See the article for state densities and both set-partition sums in the PMBM density.",
+  [
+    rect("pw-left",72,226,554,326,WHITE,{stroke:LINE,strokeWidth:1,radius:12}),
+    text("pw-head",98,244,500,28,"EXISTING BERNOULLI COMPONENTS",14,BP_DEEP,{fontWeight:700}),
+    text("pw-old",98,289,500,162,
+      "ρᵢ₀ = 1 − rᵢ + rᵢ ∫ (1−pᴅ(x)) pᵢ(x) dx<br><br>ρᵢⱼ = rᵢ ∫ pᴅ(x) g(zⱼ|x) pᵢ(x) dx<br><br>ℓᵢ₀ = ρᵢ₀ &nbsp;;&nbsp; ℓᵢⱼ = ρᵢⱼ / qⱼ",21,INK,{lineHeight:1.45}),
+    text("pw-explanation",98,480,500,50,"The toy weights require rᵢ = 1 and zero PPP evidence. A full update also changes existence and state density.",17,SOFT,{lineHeight:1.35}),
+    rect("pw-right",654,226,554,326,PM_WASH,{stroke:PM,strokeWidth:1,radius:12}),
+    text("pw-head2",680,244,500,28,"UNASSIGNED-MEASUREMENT EVIDENCE",14,PM_DEEP,{fontWeight:700}),
+    text("pw-new",680,289,500,162,
+      "eⱼ = ∫ pᴅ(x) g(zⱼ|x) λᵘ(x) dx<br><br>qⱼ = c(zⱼ) + eⱼ<br><br>rⱼ,new = eⱼ / qⱼ",21,INK,{lineHeight:1.45}),
+    text("pw-condition",680,480,500,54,"Conditional on zⱼ being unassigned. Marginal existence = P(unassigned zⱼ | Z) · eⱼ/qⱼ.",17,SOFT,{lineHeight:1.35}),
+    text("pw-weight",98,573,1080,60,"Child weight ∝ parent weight × ∏<sub>i</sub> ρ<sub>i,aᵢ</sub> × ∏<sub>j unassigned</sub> q<sub>j</sub>.<br>Divide out common ∏<sub>all j</sub> q<sub>j</sub> to obtain the normalized ℓ weights above.",20,INK,{fontWeight:700,align:"center",lineHeight:1.4})
+  ],{sectionColor:PM_DEEP}
+);
+slides.splice(slides.findIndex(s=>s.id==="s-pmbm")+1,0,pmbmWeightsSlide);
+
+const dependenceSlide = regular(
+  "s-dependence", "MARGINALS · WHAT IS LOST?",
+  "Exact marginals do not determine the joint posterior.",
+  "Two certain tracks, two measurements, no misses in this illustrative distribution: only two legal joint events.",
+  "This is an illustrative discrete posterior, not a call to the positive-miss BP demo. The exact joint puts probability one half on each permutation. Each marginal is uniform. Multiplying those exact marginals creates four events with weight one quarter, including two illegal double claims. Thus loss of dependence comes from a product projection, even with exact marginals. It is not caused by BP convergence error, and does not require moment matching a state density.",
+  [
+    rect("dep-left",72,234,536,290,PM_WASH,{stroke:PM,strokeWidth:1,radius:12}),
+    text("dep-left-head",104,262,470,28,"EXACT JOINT: TWO COMPATIBLE EVENTS",14,PM_DEEP,{fontWeight:700}),
+    text("dep-left-body",104,310,470,180,"P(a₁=1, a₂=2) = 1/2<br><br>P(a₁=2, a₂=1) = 1/2<br><br>No event assigns one measurement twice.",24,INK,{lineHeight:1.4}),
+    rect("dep-right",672,234,536,290,WHITE,{stroke:BP,strokeWidth:1,radius:12}),
+    text("dep-right-head",704,262,470,28,"PRODUCT OF EXACT MARGINALS",14,BP_DEEP,{fontWeight:700}),
+    text("dep-right-body",704,310,470,180,"P(aᵢ=1) = P(aᵢ=2) = 1/2<br><br>∏ᵢ P(aᵢ) gives four events of 1/4.<br><br>Two are illegal double claims: total 1/2.",23,INK,{lineHeight:1.4}),
+    text("dep-note",106,562,1070,66,"Marginalization ≠ product projection ≠ Gaussian moment matching.<br>BP only estimates marginals here; it does not instruct you to sample assignments independently.",22,INK,{fontWeight:700,align:"center",lineHeight:1.4})
+  ]
+);
+slides.splice(slides.findIndex(s=>s.id==="s-time"),0,dependenceSlide);
+
+// Small, clickable primary references are present on every teaching slide.
+const references = [
+ {text:"Williams & Lau (2014), §§III–IV · association BP",url:"https://arxiv.org/abs/1209.6299"},
+ {text:"García-Fernández et al. (2018), §III · PMBM",url:"https://arxiv.org/abs/1703.04264"},
+ {text:"Williams (2015), §§III–V · TOMB/P and MOMB/P",url:"https://arxiv.org/abs/1203.2995"}
+];
+for(const slide of slides){
+ if(slide.id==="s-cover")continue;
+ const r=slide.id.includes("pmbm")||slide.id.includes("joint")?references[1]:["s-time","s-bridge","s-dependence","s-decision"].includes(slide.id)?references[2]:references[0];
+ slide.elements.push(text("primary-reference",72,661,1040,17,r.text,10,SOFT,{fontFamily:SANS,link:r.url}));
+}
+
 const doc = {
   format: "bento/slides",
   version: 1,
   docId: "bp-vs-pmbm-data-association-deck",
-  title: "BP × PMBM — One Association Problem, Two Philosophies",
+  title: "BP × PMBM — One Association Problem, Two Views",
   readonly: true,
   meta: {
     author: "Bai Liping",
@@ -804,7 +767,7 @@ let html = fs.readFileSync(referenceUrl, "utf8");
 const serializedDoc = JSON.stringify(doc, null, 1).replace(/</g, "\\u003c");
 const serializedConfig = JSON.stringify(inlineLiveMap, null, 2).replace(/</g, "\\u003c");
 
-html = html.replace("<title>bento/slides</title>", "<title>BP × PMBM — data association slides | Bai Liping</title>");
+html = html.replace(/<title>[^<]*<\/title>/, "<title>BP × PMBM — data association slides | Bai Liping</title>");
 html = html.replace(
   /(<script type="application\/bento\+json" id="bento-doc">\s*)[\s\S]*?(\s*<\/script>)/,
   "$1" + serializedDoc + "$2"

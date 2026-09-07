@@ -5,6 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>BP vs PMBM — data association, side by side | Bai Liping</title>
 <style>
+#full-pmbm{max-width:none;font-size:14px;line-height:1.6;padding:18px 20px}
+#full-pmbm .eq{display:block;white-space:nowrap;overflow-x:auto;line-height:1.8;padding:4px 0}
 :root{
   --paper:#f4f6f8; --panel:#ffffff; --ink:#16222e; --ink-soft:#51606e; --ink-faint:#8a97a3;
   --line:#d7dee5; --grid:#e6ebef;
@@ -185,7 +187,7 @@ svg text{font-family:var(--mono)}
       <span>Bai Liping</span>
     </a>
     <nav class="bl-top-nav" aria-label="Primary">
-      <a href="/">Home</a>
+      <a href="/bp-vs-pmbm-slides/">Slides</a> · <a href="/">Home</a>
     </nav>
   </div>
 </header>
@@ -198,22 +200,22 @@ svg text{font-family:var(--mono)}
   </nav>
 </div></div>
 
-<main>
+<main data-audit="bp-pmbm-audit-2026-09-07">
 <header class="hero">
   <div class="eyebrow">An interactive note · Multi-target tracking · Data association</div>
   <h1>One association problem, <span class="b">two</span> <span class="p">philosophies</span>.</h1>
   <p class="thesis">Every scan, a tracker faces the same combinatorial question: <strong>which measurement belongs to which target?</strong>
   Exact marginalization requires a sum over valid global association events and is generally combinatorial. This page puts two important routes side by side on one live scenario:
-  <strong style="color:var(--bp-deep)">belief propagation</strong>, which never enumerates events and instead passes messages until the <em>marginal</em> association probabilities emerge; and the
-  <strong style="color:var(--pm-deep)">Poisson multi-Bernoulli mixture</strong>, which represents ambiguity as a weighted mixture of global hypotheses and manages that mixture with hypothesis selection and pruning. Drag anything in Fig.&nbsp;1 — every figure below recomputes.</p>
+  <strong style="color:var(--bp-deep)">belief propagation</strong>, an inference algorithm that approximates association marginals using messages instead of enumerating events; and the
+  <strong style="color:var(--pm-deep)">Poisson multi-Bernoulli mixture</strong>, a posterior family whose detected-target part retains a weighted mixture of compatible global hypotheses. The numerical figures recompute when you drag Fig.&nbsp;1; the across-scan diagram is schematic.</p>
 </header>
 
-<div class="accuracy"><strong>Model boundary.</strong> The live comparison is an exact benchmark for a normalized one-scan assignment model: existing tracks may be missed or claim at most one measurement, and unassigned measurements have baseline weight 1. It is <em>not</em> a complete PMBM update. In a PMBM filter, a new-target Bernoulli is driven by measurement-specific evidence from the undetected-target Poisson intensity; this demo instead applies a separate birth-versus-clutter slider after association so BP and enumeration receive identical weights.</div>
+<div class="accuracy"><strong>BP is an algorithm; PMBM is a posterior family.</strong> They are not mutually exclusive alternatives. Here the numerical comparison is <em>association BP versus exhaustive summation of the same one-scan assignment posterior</em>, with a separate explanation of how that posterior occurs inside PMBM. The benchmark has three certainly existing point targets, constant detection probability, positive Poisson clutter intensity, and no undetected-target PPP. It is not a complete PMBM filter or an empirical comparison of tracking accuracy over time. See §3 for uncertain existence, newly detected targets, and the correct PMBM weights.</div>
 
 <!-- ============ §1 ============ -->
 <section class="sec" id="s1">
   <h2><span class="no">§1</span>The shared problem: three tracks in a tangle, four measurements</h2>
-  <p class="lede">Three targets have predicted positions <span style="font-style:italic">ẑ</span><sub>i</sub> with innovation covariances <span style="font-style:italic">S</span><sub>i</sub> (gates drawn at the 99&nbsp;% χ² contour) — and their gates overlap three ways. A sensor returns four measurements with detection probability <span style="font-style:italic">P</span><sub>D</sub> and Poisson clutter density <span style="font-style:italic">λ</span><sub>c</sub>. BP and exhaustive enumeration consume exactly the same existing-track assignment weights ℓ, making their marginal-association comparison exact for the toy model.</p>
+  <p class="lede">Three targets have predicted positions <span style="font-style:italic">ẑ</span><sub>i</sub> with innovation covariances <span style="font-style:italic">S</span><sub>i</sub> (gates drawn at the 99&nbsp;% χ² contour) — and their gates overlap three ways. A sensor returns four measurements with detection probability <span style="font-style:italic">P</span><sub>D</sub> and Poisson clutter intensity <span style="font-style:italic">λ</span><sub>c</sub>. BP and exhaustive enumeration consume exactly the same existing-track assignment weights ℓ, so exhaustive enumeration is an exact reference for this benchmark; BP remains approximate on a loopy graph.</p>
 
   <div class="fig">
     <div class="body split">
@@ -221,6 +223,8 @@ svg text{font-family:var(--mono)}
       <div class="rail">
         <h4>Scenario — the three-way tangle</h4>
         <button class="preset" id="layoutReset"><b>Reset layout</b><br><span style="font-size:11.5px;opacity:.75">restore the tangle after dragging</span></button>
+        <button class="preset" id="treePreset">Separated tracks (acyclic)</button>
+        <button class="preset" id="symmetricPreset">Symmetric ambiguity (loopy)</button>
         <h4>Sensor model</h4>
         <div class="ctl">
           <label>Detection probability <output id="pdOut">0.90</output></label>
@@ -228,22 +232,19 @@ svg text{font-family:var(--mono)}
         </div>
         <div class="ctl">
           <label>Clutter density λ<sub>c</sub> <output id="ccOut">5.0×10⁻⁵</output></label>
-          <input type="range" id="ccSlider" min="-5" max="-3.3" step="0.05" value="-4.301" aria-label="Clutter density, log scale">
+          <input type="range" id="ccSlider" min="-5" max="-3.3" step="0.001" value="-4.30103" aria-label="Clutter density, log scale">
         </div>
-        <div class="ctl">
-          <label>Toy birth score λ̃<sub>b</sub> <output id="bbOut">1.0×10⁻⁵</output></label>
-          <input type="range" id="bbSlider" min="-6" max="-4" step="0.05" value="-5" aria-label="Toy birth score, log scale">
-        </div>
+        <label class="hint"><input type="checkbox" id="gateToggle" checked> Restrict pairs to the 99% gate</label>
         <div class="statline" id="stat1"></div>
         <div class="hint">Drag the × marks and the track centers. Everything on this page follows.</div>
       </div>
     </div>
-    <div class="figcap"><b>Fig. 1 —</b> The scan to be explained: three gates knotted around z₁–z₃, with z₄ off in the clutter. Dashed ellipses are validation gates (99 % χ², 2 dof); thin gray links mark the gated target–measurement pairs, i.e. the only associations either method will consider.</div>
+    <div class="figcap"><b>Fig. 1 —</b> The scan to be explained: three gates knotted around z₁–z₃, with z₄ initially outside every gate. Dashed ellipses are validation gates (99 % χ², 2 dof); thin gray links mark the gated target–measurement pairs, i.e. the pairs retained when gating is enabled. The gate is a likelihood truncation approximation, not a probability that an association is correct.</div>
   </div>
 
   <div class="fig">
     <div class="body">
-      <div class="heatnote">ℓ<sub>ij</sub> = P<sub>D</sub>·N(z<sub>j</sub>; ẑ<sub>i</sub>, S<sub>i</sub>)/λ<sub>c</sub> for gated pairs&nbsp;&nbsp;·&nbsp;&nbsp;ℓ<sub>i∅</sub> = 1−P<sub>D</sub> (missed detection)&nbsp;&nbsp;·&nbsp;&nbsp;an unassigned measurement carries normalized baseline weight 1. For display only, its mass is later split by the toy score β̃ = λ̃<sub>b</sub>/(λ̃<sub>b</sub>+λ<sub>c</sub>).</div>
+      <div class="heatnote">ℓ<sub>ij</sub> = P<sub>D</sub>·N(z<sub>j</sub>; ẑ<sub>i</sub>, S<sub>i</sub>)/λ<sub>c</sub> for gated pairs&nbsp;&nbsp;·&nbsp;&nbsp;ℓ<sub>i∅</sub> = 1−P<sub>D</sub> (missed detection)&nbsp;&nbsp;·&nbsp;&nbsp;an unassigned measurement carries normalized baseline weight 1. No target-birth model is used in this benchmark.</div>
       <div class="matwrap"><table class="mat" id="lmat"></table></div>
     </div>
       <div class="figcap"><b>Fig. 2 —</b> Existing-track association weights for the normalized benchmark. BP runs messages over this table; exhaustive enumeration multiplies its entries into global assignment weights. A dot means the pair fell outside the gate.</div>
@@ -253,7 +254,7 @@ svg text{font-family:var(--mono)}
 <!-- ============ §2 ============ -->
 <section class="sec bp" id="s2">
   <h2><span class="no">§2</span>Route one — belief propagation on the association graph</h2>
-  <p class="lede">Introduce a target-oriented variable <em>a<sub>i</sub></em> (which measurement did target <em>i</em> generate, or ∅) and a measurement-oriented variable <em>b<sub>j</sub></em> (which target generated measurement <em>j</em>, or clutter/new). Redundant on purpose: the pairwise factors Ψ<sub>ij</sub>(a<sub>i</sub>,b<sub>j</sub>) only enforce that the two bookkeepings <em>agree</em>. Loopy sum–product on this bipartite graph is <em>provably convergent</em> (Williams &amp; Lau, 2014), costs O(n·m) per sweep, and its fixed point delivers approximate <strong>marginal</strong> association probabilities — no hypothesis is ever written down.</p>
+  <p class="lede">Introduce a target-oriented variable <em>a<sub>i</sub></em> (which measurement did target <em>i</em> generate, or ∅) and a measurement-oriented variable <em>b<sub>j</sub></em> (which target generated measurement <em>j</em>, or unassigned to an existing track). Redundant on purpose: the pairwise factors Ψ<sub>ij</sub>(a<sub>i</sub>,b<sub>j</sub>) only enforce that the two bookkeepings <em>agree</em>. For this specific Williams–Lau association construction, finite nonnegative weights and strictly positive missed/unassigned weights give a convergence guarantee. The guarantee is not a theorem about arbitrary loopy BP. Our dense implementation costs O(n·m) per sweep and O(T·n·m) for T sweeps. Its fixed point gives approximate <strong>marginal</strong> probabilities without listing global assignments. Convergence and accuracy are different questions <a href="#ref-bp">[1]</a>.</p>
 
   <div class="fig">
     <div class="body">
@@ -262,7 +263,7 @@ svg text{font-family:var(--mono)}
         <button id="bpBack">◂ Back</button>
         <button id="bpStep">Half-step ▸</button>
         <button id="bpPlay" class="primary">Play sweeps</button>
-        <button id="bpEnd">Converged ⏭</button>
+        <button id="bpEnd">Final iterate ⏭</button>
         <span class="ro" id="bpRO"></span>
       </div>
       <div class="grid2">
@@ -279,40 +280,57 @@ svg text{font-family:var(--mono)}
           <div class="edgeRO" id="edgeRO">hover any edge for its ℓ, μ, ν and the marginal it feeds</div>
         </div>
         <div>
-          <div class="heatnote">p(a<sub>i</sub> = ·) — BP marginals; they move only when a ν half-step lands</div>
+          <div class="heatnote">q(a<sub>i</sub> = ·) — BP beliefs; they move only when a ν half-step lands</div>
           <div class="matwrap"><table class="mat" id="bpheat"></table></div>
-          <div class="heatnote" style="margin-top:14px">Convergence — max message change per full sweep</div>
+          <div class="heatnote" style="margin-top:14px">Convergence diagnostic — max |log ν(new) − log ν(old)| per sweep</div>
           <svg id="spark" viewBox="0 0 280 80" width="280" height="80" aria-label="Convergence plot"></svg>
-          <div class="heatnote" style="margin-top:14px">p(b<sub>j</sub> = ·) — measurement-oriented marginals; for illustration, unassigned mass splits into <b>⊕ possible birth</b> vs ∅ clutter by the toy score β̃</div>
+          <div class="heatnote" style="margin-top:14px">q(b<sub>j</sub> = ·) — measurement beliefs update after μ; ∅ means unassigned (clutter in this benchmark). Track and measurement beliefs agree on each edge only at a fixed point.</div>
           <div class="matwrap"><table class="mat" id="bjheat"></table></div>
         </div>
       </div>
-      <div class="heatnote" style="margin-top:16px">State beliefs b(x<sub>i</sub>) — Gaussian mixtures, one Kalman-updated component per gated measurement plus the prior for ∅, weighted by the live marginals above (95 % ellipses; opacity ∝ weight; prior P<sub>i</sub> = S<sub>i</sub> − R with R = 60·I)</div>
+      <div class="heatnote" style="margin-top:16px">Single-track state beliefs b(x<sub>i</sub>) — Gaussian mixtures, one Kalman-updated component per gated measurement plus the prior for ∅, weighted by the live marginals above (each ellipse is a component’s 95% contour, not a 95% contour of the whole mixture; opacity ∝ weight; prior P<sub>i</sub> = S<sub>i</sub> − R with R = 60·I)</div>
       <div class="beliefs" id="beliefs"></div>
       <div class="eqbox">
         <div class="eq"><span class="m">μ<sub>i→j</sub></span> = <span class="frac"><span class="m">ℓ<sub>ij</sub></span><span class="m">ℓ<sub>i∅</sub> + Σ<sub>k≠j</sub> ℓ<sub>ik</sub> ν<sub>k→i</sub></span></span><span class="num">(1) target i tells measurement j how claimed it already is elsewhere</span></div>
         <div class="eq"><span class="m">ν<sub>j→i</sub></span> = <span class="frac"><span class="m">1</span><span class="m">1 + Σ<sub>l≠i</sub> μ<sub>l→j</sub></span></span><span class="num">(2) measurement j tells target i how contested it is</span></div>
-        <div class="eq"><span class="m">p(a<sub>i</sub>=j) ∝ ℓ<sub>ij</sub> ν<sub>j→i</sub></span>,&nbsp;&nbsp;<span class="m">p(a<sub>i</sub>=∅) ∝ ℓ<sub>i∅</sub></span><span class="num">(3) read the marginals off the fixed point</span></div>
+        <div class="eq"><span class="m">q(a<sub>i</sub>=j) ∝ ℓ<sub>ij</sub> ν<sub>j→i</sub></span>,&nbsp;&nbsp;<span class="m">q(a<sub>i</sub>=∅) ∝ ℓ<sub>i∅</sub></span><span class="num">(3) read the marginals off the fixed point</span></div>
+        <div class="eq"><span class="m">q(b<sub>j</sub>=i) = μ<sub>i→j</sub> / (1 + Σ<sub>l</sub> μ<sub>l→j</sub>), &nbsp; q(b<sub>j</sub>=∅) = 1 / (1 + Σ<sub>l</sub> μ<sub>l→j</sub>)</span><span class="num">(3b) measurement-side normalization</span></div>
+        <div class="eqnote">Here q denotes a BP belief; p denotes an exact probability when the distinction matters. The consistency factor is Ψ<sub>ij</sub> = 1{(a<sub>i</sub>=j) ⇔ (b<sub>j</sub>=i)}. Thus p(a,b|Z) ∝ ∏<sub>i</sub>ℓ<sub>i,aᵢ</sub> ∏<sub>ij</sub>Ψ<sub>ij</sub>. The scalar messages are ratios, not probabilities: μ may exceed one.</div>
         <div class="eqnote">t = 0 is the uncoupled start: ν ≡ 1, so each track just normalizes its own row of Fig. 2. One time step is one application of (1) followed by (2) — exactly the two half-steps of the player above. The iterations exist purely to negotiate the one-to-one constraint.</div>
       </div>
     </div>
-    <div class="figcap"><b>Fig. 3 —</b> Left: the <i>complete</i> bipartite Williams–Lau factor graph — every (aᵢ, bⱼ) pair carries a consistency factor Ψ (mid-edge diamond); faint dashed edges are gated out (ℓᵢⱼ = 0, so μ ≡ 0 and the pair is inert). Every live edge wears its two current messages: μᵢ→ⱼ in the track’s color, νⱼ→ᵢ in slate — the bold set is the one that just updated. One time step = two presses of <b>Half-step ▸</b>: first all μ fire left→right, then all ν answer right→left, and only then do the marginals, edge thicknesses and Δ move. Hover any edge for its numbers.</div>
+    <div class="figcap"><b>Fig. 3 —</b> Left: the <i>complete</i> bipartite Williams–Lau factor graph — every (aᵢ, bⱼ) pair carries a consistency factor Ψ (mid-edge diamond); faint dashed edges are gated out (ℓᵢⱼ = 0, so μ ≡ 0 and the pair is inert). Every live edge wears its two current messages: μᵢ→ⱼ in the track’s color, νⱼ→ᵢ in slate — the bold set is the one that just updated. One time step = two presses of <b>Half-step ▸</b>: first all μ fire left→right, then all ν answer right→left, measurement beliefs update after μ; track beliefs, edge thicknesses, and Δ update after ν. Hover any edge for its numbers.</div>
   </div>
 </section>
 
 <!-- ============ §3 ============ -->
 <section class="sec pm" id="s3">
   <h2><span class="no">§3</span>Route two — PMBM: keep the hypotheses, prune the tail</h2>
-  <p class="lede">The Poisson multi-Bernoulli mixture is a <em>conjugate</em> multi-object posterior under the standard point-target model: a Poisson process represents never-detected targets and a multi-Bernoulli mixture represents detected ones. Each global hypothesis is one compatible association story. The table below visualizes that hypothesis bookkeeping for the page’s normalized assignment model; a full PMBM update additionally computes a measurement-specific Bernoulli existence and state density from the undetected-target Poisson intensity.</p>
+  <p class="lede">Under independent point-target detections, Poisson clutter, independent survival/motion, and Poisson birth, the PMBM family is conjugate: a Poisson process represents never-detected targets and a multi-Bernoulli mixture represents detected ones. Each global hypothesis selects mutually compatible local histories. Bernoulli components are conditionally independent within that hypothesis, but the mixture generally couples them. “Detected” includes potentially existing targets, not only certain objects <a href="#ref-pmbm">[4]</a>. The table below visualizes that hypothesis bookkeeping for the page’s normalized assignment model; a full PMBM update additionally computes a measurement-specific Bernoulli existence and state density from the undetected-target Poisson intensity.</p>
 
   <div class="eqbox">
     <div class="eq"><span class="m">f(X) = Σ<sub>X<sup>u</sup> ⊎ X<sup>d</sup> = X</sub> f<sup>ppp</sup>(X<sup>u</sup>) Σ<sub>h</sub> w<sub>h</sub> f<sup>MB</sup><sub>h</sub>(X<sup>d</sup>)</span><span class="num">(4a) undetected Poisson ⊎ multi-Bernoulli mixture</span></div>
     <div class="eq"><span class="m">f<sup>MB</sup><sub>h</sub>(X<sup>d</sup>) = Σ<sub>X₁ ⊎ ··· ⊎ X<sub>n<sub>h</sub></sub> = X<sup>d</sup></sub> Π<sub>i=1</sub><sup>n<sub>h</sub></sup> f<sup>bern</sup><sub>h,i</sub>(X<sub>i</sub>)</span><span class="num">(4b) sum over disjoint component-set decompositions</span></div>
     <div class="eqnote">The component sets may be empty; each Bernoulli density is zero on sets with more than one element. The hypothesis weights are nonnegative and sum to one. Both disjoint-set sums are part of the unlabelled PMBM density.</div>
     <div class="eq"><span class="m">w<sub>A</sub> ∝ Π<sub>(i,j)∈A</sub> ℓ<sub>ij</sub> · Π<sub>i missed</sub> ℓ<sub>i∅</sub> · Π<sub>j unassigned</sub> 1</span><span class="num">(5) exact weight in this normalized assignment benchmark</span></div>
-    <div class="eqnote">Exact inference for this benchmark carries every valid A. Practical PMBM implementations instead generate selected high-weight children using assignment or sampling methods, then prune and recycle. The problem here is small enough to enumerate every gated assignment, providing the exact reference for §4 — but not the full PMBM state update.</div>
+    <div class="eqnote">For a PPP, f<sup>ppp</sup>(U)=exp(−Λ)∏<sub>x∈U</sub>λ<sup>u</sup>(x), with Λ=∫λ<sup>u</sup>(x)dx. A Bernoulli has f(∅)=1−r, f({x})=r p(x), and zero density for larger sets.</div>
+    <div class="eqnote">Exact inference for this benchmark carries every valid A. Practical PMBM implementations instead generate selected high-weight children using assignment or sampling methods, then prune or apply optional reductions such as recycling (which changes the representation). The problem here is small enough to enumerate every gated assignment, providing the exact reference for §4 — but not the full PMBM state update.</div>
   </div>
 
+
+  <details class="accuracy" id="full-pmbm" open>
+    <summary><strong>The actual PMBM association update — one predicted parent hypothesis</strong></summary>
+    <p>Let r<sub>i</sub> be existence probability, p<sub>i</sub>(x) the normalized single-target density, λ<sup>u</sup>(x) the predicted undetected-target PPP intensity, c(z) the clutter intensity, and g(z|x) the measurement likelihood. The superscript “−” denotes the predicted parent. Detection probability may depend on x. The following equations are before gating:</p>
+    <div class="eq">ρ<sub>i0</sub> = 1 − r<sub>i</sub> + r<sub>i</sub> ∫(1−p<sub>D</sub>(x))p<sub>i</sub>(x)dx</div>
+    <div class="eq">ρ<sub>ij</sub> = r<sub>i</sub> ∫p<sub>D</sub>(x)g(z<sub>j</sub>|x)p<sub>i</sub>(x)dx</div>
+    <div class="eq">e<sub>j</sub> = ∫p<sub>D</sub>(x)g(z<sub>j</sub>|x)λ<sup>u</sup>(x)dx, &nbsp; q<sub>j</sub> = c(z<sub>j</sub>) + e<sub>j</sub></div>
+    <div class="eq">w<sub>h,A</sub><sup>+</sup> ∝ w<sub>h</sub><sup>−</sup> ∏<sub>i</sub>ρ<sub>i,aᵢ</sub> ∏<sub>j unassigned</sub>q<sub>j</sub></div>
+    <p>After factoring out the common ∏<sub>j</sub>q<sub>j</sub>, use <strong>ℓ<sub>i0</sub>=ρ<sub>i0</sub> and ℓ<sub>ij</sub>=ρ<sub>ij</sub>/q<sub>j</sub></strong> in exactly the same assignment solver. The q<sub>j</sub> here is evidence, not the BP belief q(a). Our displayed ℓ<sub>i0</sub>=1−P<sub>D</sub> and clutter-only denominator require r<sub>i</sub>=1 and e<sub>j</sub>=0. With multiple predicted parents, their weights and local histories must also be retained and updated.</p>
+    <div class="eq">r<sub>j,new</sub> = e<sub>j</sub>/q<sub>j</sub>, &nbsp; p<sub>j,new</sub>(x) = p<sub>D</sub>(x)g(z<sub>j</sub>|x)λ<sup>u</sup>(x)/e<sub>j</sub></div>
+    <p>This existence is <em>conditional on z<sub>j</sub> being unassigned to existing tracks</em>. Its marginal existence is P(unassigned z<sub>j</sub>|Z)·e<sub>j</sub>/q<sub>j</sub>. The density is needed only when e<sub>j</sub>&gt;0. “New” means <em>newly detected</em>; it need not mean physically born in the current scan. Clutter and a new target are the two existence outcomes of one Bernoulli, not necessarily two separately enumerated global events.</p>
+    <div class="eq">r<sub>i,miss</sub><sup>+</sup> = r<sub>i</sub>∫(1−p<sub>D</sub>(x))p<sub>i</sub>(x)dx / ρ<sub>i0</sub>, &nbsp; λ<sup>u,+</sup>(x) = (1−p<sub>D</sub>(x))λ<sup>u</sup>(x)</div>
+    <p>A detected existing-target branch has existence one. Its state density is proportional to p<sub>D</sub>(x)g(z<sub>j</sub>|x)p<sub>i</sub>(x); a missed branch’s state density is proportional to (1−p<sub>D</sub>(x))p<sub>i</sub>(x). Zero-evidence branches are omitted. These are conditional state updates; a complete filter also needs prediction, history management, and a specified estimator <a href="#ref-pmbm">[4]</a>.</p>
+  </details>
   <div class="fig">
     <div class="body">
       <div class="kbar">
@@ -324,13 +342,16 @@ svg text{font-family:var(--mono)}
       </div>
       <div class="matwrap"><table class="hyps" id="hypTable"></table></div>
     </div>
-    <div class="figcap"><b>Fig. 4 —</b> Every valid assignment hypothesis in the normalized benchmark, ranked by eq. 5. Each row assigns a measurement to at most one existing track or leaves it unassigned. The ⊕ badge uses β̃ only as a visual birth-versus-clutter split; a real PMBM Bernoulli uses measurement-dependent PPP evidence. Slide k to see how truncation discards normalized assignment mass. The first row is the toy model’s highest-weight association event, not by itself a complete PMBM multi-object estimate.</div>
+    <div class="figcap"><b>Fig. 4 —</b> The highest-ranked assignment hypotheses in the normalized benchmark, ranked by eq. 5 (remaining rows are summarized if necessary). Each row assigns a measurement to at most one existing track or leaves it unassigned. ∅ means the measurement is unassigned, hence clutter in this benchmark. Slide k to see both discarded mass and the renormalized top-k marginals. Exact marginals continue to use all events. The first row is the toy model’s highest-weight association event, not by itself a complete PMBM multi-object estimate.</div>
   </div>
 
   <div class="fig">
     <div class="body">
       <div class="heatnote">p(a<sub>i</sub> = ·) — exact marginals, obtained by summing <span id="hypCount2">all</span> hypotheses above</div>
       <div class="matwrap"><table class="mat" id="exheat"></table></div>
+      <div class="heatnote" style="margin-top:18px">Renormalized top-k marginals — a different approximation from BP</div>
+      <div class="matwrap"><table class="mat" id="topkheat"></table></div>
+      <div class="eqnote" id="topkRO"></div>
     </div>
     <div class="figcap"><b>Fig. 5 —</b> Summing every row gives the exact existing-track association marginals for this normalized model — the quantity §2 approximates without constructing the list.</div>
   </div>
@@ -344,8 +365,8 @@ svg text{font-family:var(--mono)}
   <div class="fig">
     <div class="body">
       <div class="tri">
-        <div class="b"><h5>BP marginals (converged)</h5><div class="matwrap"><table class="mat" id="cmpBP"></table></div></div>
-        <div class="p"><h5>Exact / PMBM marginals</h5><div class="matwrap"><table class="mat" id="cmpEX"></table></div></div>
+        <div class="b"><h5 id="cmpBPTitle">BP final-iterate marginals</h5><div class="matwrap"><table class="mat" id="cmpBP"></table></div></div>
+        <div class="p"><h5>Exact assignment marginals</h5><div class="matwrap"><table class="mat" id="cmpEX"></table></div></div>
         <div class="d"><h5>|difference|, percentage points</h5><div class="matwrap"><table class="mat" id="cmpDF"></table></div></div>
       </div>
       <div class="errline" id="errRO"></div>
@@ -355,14 +376,14 @@ svg text{font-family:var(--mono)}
 
   <div class="fig">
     <div class="body"><svg id="timeDiag" viewBox="0 0 900 210" width="100%" aria-label="How each method evolves over scans"></svg></div>
-    <div class="figcap"><b>Fig. 7 —</b> The difference compounds over time. PMBM branches every scan and prunes (dashed = discarded); identity ambiguity can stay unresolved until later evidence settles it. A BP-based tracker instead re-negotiates marginals within each scan and carries a single belief set forward — O(n·m) flat cost, but modes merged at every step (the JPDA-style coalescence risk).</div>
+    <div class="figcap"><b>Fig. 7 —</b> Schematic, not a multi-scan experiment. Retained PMBM hypotheses can preserve competing explanations; pruning loses discarded histories. A track-oriented marginal filter may instead carry a product of single-track beliefs forward. That projection discards inter-track dependence even when each belief stays multimodal. Gaussian moment matching is a further, separate approximation. Neither operation is inherent to BP. The dense association subproblem costs O(T·n·m), not constant time; trajectory formulations are needed when identity/history is the explicit inference object.</div>
   </div>
 
   <div class="bridge">
     <div class="bar"></div>
     <div class="body">
       <h3>The bridge: they meet in the middle</h3>
-      <p>Marginal multi-Bernoulli/Poisson filters such as TOMB/P approximate a PMBM-style mixture by a single multi-Bernoulli using marginal association probabilities; BP is one efficient way to approximate those marginals. That is a specific bridge between the frameworks. It does not mean that every BP/SPA tracker is simply a PMBM filter with its hypotheses removed.</p>
+      <p>Marginal multi-Bernoulli/Poisson filters such as TOMB/P approximate a PMBM-style mixture by a single multi-Bernoulli for detected targets, while retaining the undetected-target PPP, using marginal association probabilities; BP is one efficient way to approximate those marginals. That is a specific bridge between the frameworks. It does not mean that every BP/SPA tracker is simply a PMBM filter with its hypotheses removed. TOMB/P (track-oriented) and MOMB/P (measurement-oriented) use different groupings and can have different coalescence behavior <a href="#ref-marginal">[2]</a>.</p>
     </div>
   </div>
 </section>
@@ -372,15 +393,15 @@ svg text{font-family:var(--mono)}
   <h2><span class="no">§5</span>Cheat sheet</h2>
   <div class="fig"><div class="body matwrap">
     <table class="cheat">
-      <tr><th></th><th class="b">Belief propagation (SPA / BP tracker)</th><th class="p">PMBM</th></tr>
-      <tr><td class="rl">object kept</td><td>Marginal association probabilities p(a<sub>i</sub>=j); one belief per track</td><td>Weighted mixture of global hypotheses; a Bernoulli per potential target per hypothesis, plus a Poisson for the undetected</td></tr>
-      <tr><td class="rl">core computation</td><td>Iterated messages (1)–(2) on the bipartite graph until fixed point</td><td>Hypothesis generation (Murty’s k-best or Gibbs) + weight update (5) + pruning, recycling, merging</td></tr>
-      <tr><td class="rl">cost / scan</td><td><code>O(T·n·m)</code>, T ≈ tens of sweeps; embarrassingly scalable, message-parallel</td><td><code>O(k·N³)</code> per Murty call plus hypothesis bookkeeping; combinatorial pressure managed, not removed</td></tr>
+      <tr><th></th><th class="b">Association BP inside a marginal tracker</th><th class="p">PMBM</th></tr>
+      <tr><td class="rl">object kept</td><td>Approximate association marginals q(a<sub>i</sub>=j); any downstream state representation is a separate design choice</td><td>Weighted mixture of global hypotheses; a Bernoulli per potential target per hypothesis, plus a Poisson for the undetected</td></tr>
+      <tr><td class="rl">core computation</td><td>Iterated messages (1)–(2) on the bipartite graph until fixed point</td><td>Compatible child generation (e.g. ranked assignment or sampling), PMBM evidence/state updates, and optional hypothesis reduction</td></tr>
+      <tr><td class="rl">cost / scan</td><td><code>O(T·n·m)</code> for this dense association solver; T depends on weights and tolerance. Sparse implementations can exploit active edges. State updates cost extra.</td><td>Depends on retained parents, gated subproblems, children requested, state integration, and the assignment/sampling implementation; no universal cubic per-scan cost.</td></tr>
       <tr><td class="rl">what’s approximate</td><td>The marginals themselves (Bethe fixed point; exact on acyclic factor graphs, potentially biased with loops)</td><td>The PMBM family is conjugate for the assumed model; implementations also approximate single-target integrals and use gating, hypothesis selection/pruning, merging, and numerical state representations</td></tr>
-      <tr><td class="rl">ambiguity over time</td><td>Marginalized each scan in many BP-based filters; efficient, but projection can merge modes and promote coalescence</td><td>Retained global histories preserve competing explanations; trajectory variants can represent identity and history explicitly</td></tr>
-      <tr><td class="rl">track birth</td><td>Depends on the tracker; scalable SPA methods can introduce measurement-oriented potential objects</td><td>Undetected-target PPP; each measurement can create a Bernoulli whose evidence depends on the PPP intensity and likelihood</td></tr>
+      <tr><td class="rl">ambiguity over time</td><td>Track-oriented factorization discards dependence; moment matching may additionally merge modes. These are tracker choices, not a requirement of BP.</td><td>Retained global histories preserve competing explanations; trajectory variants can represent identity and history explicitly</td></tr>
+      <tr><td class="rl">new detections</td><td>Depends on the tracker; scalable SPA methods can introduce measurement-oriented potential objects</td><td>Undetected-target PPP; each measurement can create a Bernoulli whose evidence depends on the PPP intensity and likelihood</td></tr>
       <tr><td class="rl">reach for it when</td><td>n, m are large; hard real-time budgets; dense scenes where enumeration is hopeless anyway</td><td>Ambiguity is the point: crossing / closely spaced targets, identity matters, offline or accuracy-first pipelines</td></tr>
-      <tr><td class="rl">lineage</td><td>JPDA’s soft spirit, made scalable and convergent</td><td>MHT’s hypothesis spirit, made Bayes-exact via RFS conjugacy</td></tr>
+      <tr><td class="rl">lineage</td><td>Related to JPDA marginalization; convergence is specific to this association graph and assumptions</td><td>Related to MHT-style association histories, with an explicit RFS existence and undetected-object model</td></tr>
     </table>
   </div>
   <div class="figcap"><b>Table 1 —</b> The one-screen version. Neither column dominates: retaining hypotheses is valuable when ambiguity and identity matter; BP is attractive when scale and latency dominate.</div>
@@ -388,31 +409,30 @@ svg text{font-family:var(--mono)}
 
   <h2 style="font-size:21px;margin-top:44px"><span class="no">§</span>References</h2>
   <div class="refs">
-    <p><a href="https://arxiv.org/abs/1209.6299" target="_blank" rel="noopener">J. L. Williams and R. Lau, “Approximate evaluation of marginal association probabilities with belief propagation,”</a> <i>IEEE Trans. Aerosp. Electron. Syst.</i>, 50(4), 2014 — the message schedule and convergence proof behind §2.</p>
-    <p><a href="https://arxiv.org/abs/1203.2995" target="_blank" rel="noopener">J. L. Williams, “Marginal multi-Bernoulli filters: RFS derivation of MHT, JIPDA, and association-based MeMBer,”</a> <i>IEEE Trans. Aerosp. Electron. Syst.</i>, 51(3), 2015 — TOMB/P and MOMB/P, the bridge of §4.</p>
-    <p><a href="https://doi.org/10.1109/JPROC.2018.2789427" target="_blank" rel="noopener">F. Meyer et al., “Message passing algorithms for scalable multitarget tracking,”</a> <i>Proc. IEEE</i>, 106(2), 2018 — a broader BP/SPA tracking framework.</p>
-    <p><a href="https://arxiv.org/abs/1703.04264" target="_blank" rel="noopener">Á. F. García-Fernández et al., “Poisson multi-Bernoulli mixture filter: direct derivation and implementation,”</a> <i>IEEE Trans. Aerosp. Electron. Syst.</i>, 54(4), 2018 — the standard point-target PMBM recursion.</p>
+    <p id="ref-bp"><a href="https://arxiv.org/abs/1209.6299" target="_blank" rel="noopener">J. L. Williams and R. Lau, “Approximate evaluation of marginal association probabilities with belief propagation,”</a> <i>IEEE Trans. Aerosp. Electron. Syst.</i>, 50(4), 2014 — the message schedule and convergence proof behind §2.</p>
+    <p id="ref-marginal"><a href="https://arxiv.org/abs/1203.2995" target="_blank" rel="noopener">J. L. Williams, “Marginal multi-Bernoulli filters: RFS derivation of MHT, JIPDA, and association-based MeMBer,”</a> <i>IEEE Trans. Aerosp. Electron. Syst.</i>, 51(3), 2015 — TOMB/P and MOMB/P, the bridge of §4.</p>
+    <p id="ref-meyer"><a href="https://doi.org/10.1109/JPROC.2018.2789427" target="_blank" rel="noopener">F. Meyer et al., “Message passing algorithms for scalable multitarget tracking,”</a> <i>Proc. IEEE</i>, 106(2), 2018 — a broader BP/SPA tracking framework.</p>
+    <p id="ref-pmbm"><a href="https://arxiv.org/abs/1703.04264" target="_blank" rel="noopener">Á. F. García-Fernández et al., “Poisson multi-Bernoulli mixture filter: direct derivation and implementation,”</a> <i>IEEE Trans. Aerosp. Electron. Syst.</i>, 54(4), 2018 — the standard point-target PMBM recursion.</p>
   </div>
 
-  <p class="footnote">Model notes for the demo: one scan, point targets, linear-Gaussian existing-track likelihoods, and normalized unassigned-measurement weight 1. The post-hoc toy split β̃ = λ̃<sub>b</sub>/(λ̃<sub>b</sub>+λ<sub>c</sub>) is deliberately decoupled from association and must not be read as the general PMBM birth update. Under the standard PMBM point-target model, a measurement z has new-target evidence e(z) = ∫p<sub>D</sub>(x)l(z|x)λ<sup>u</sup>(x)dx and existence e(z)/(c(z)+e(z)); its state density is proportional to the same integrand. The simplified split keeps BP and enumeration byte-identical. Gating uses χ²(2 dof) = 9.21. The state-belief strip assumes R = 60·I and Gaussian priors with P<sub>i</sub> = S<sub>i</sub> − R. “Exact” on the page means exhaustive summation of every gated assignment in this toy model (≤ 73), not an exact real-world tracker.</p>
-
-  <div class="foot">A single self-contained HTML file · no libraries, no network · the solver in your browser is the real Williams–Lau iteration, not an illustration of one.</div>
+  <p class="footnote">Benchmark assumptions: one scan; three independent, certainly existing targets; one measurement at most per target and one owner at most per measurement; constant P<sub>D</sub>; homogeneous Poisson clutter; no PPP of undetected targets. Observation model z=x+v with R=60I and Gaussian priors P<sub>i</sub>=S<sub>i</sub>−R. Coordinates are arbitrary 2D units, covariances have squared units, and clutter intensity has inverse-area units. Clutter intensity is not the expected clutter count; over area V that count is λ<sub>c</sub>V.</p>
+  <p class="footnote">Gating is optional. With gating on, pairs outside χ²<sub>2</sub>(0.99)=9.210340… are set to zero and the remaining assignment distribution is renormalized. “Exact” means exact for that restricted distribution, not for the original untruncated sensor likelihood. The demo retains ℓ<sub>i0</sub>=1−P<sub>D</sub>. A genuinely censored-detection model instead needs a consistently normalized in-gate likelihood and a no-in-gate-detection probability such as 1−P<sub>D</sub>P<sub>G</sub>. Simply drawing a 99% gate does not perform that model correction.</p>
+  <p class="footnote">The solver checks both log-message change and agreement of the two edge-belief views, to tolerance 10<sup>−10</sup>, with a 10,000-sweep safety cap. A cap is reported as a cap, not convergence. These stopping diagnostics do not bound BP’s error relative to exhaustive enumeration. The exact problem has at most Σ<sub>k=0</sub><sup>3</sup>C(3,k)C(4,k)k! = 73 assignments.</p>
+  <div class="foot">Shared, dependency-free JavaScript solver for the article and slides · all computation stays in your browser · references are linked above.</div>
 </section>
 </main>
 
+<script src="./association-model.js"></script>
 <script>
 'use strict';
 /* ================= model ================= */
-const GATE = 9.21, BELIEF_CHI2 = 5.99, VBW = 720, VBH = 420, Rm = 60;
+const GATE = AssociationModel.GATE, BELIEF_CHI2 = -2*Math.log(0.05), VBW = 720, VBH = 420, Rm = 60;
 const TCOL = ['#2ca02c','#9467bd','#d62728'];
 const S1=[[520,140],[140,340]], S2=[[460,-120],[-120,480]], S3=[[620,0],[0,300]];
-const DEFAULT = {
-  T:[{x:285,y:205,S:S1},{x:352,y:232,S:S2},{x:318,y:158,S:S3}],
-  Z:[{x:318,y:198},{x:322,y:215},{x:314,y:186},{x:560,y:120}]
-};
+const DEFAULT = AssociationModel.DEFAULT;
 const clone = o => JSON.parse(JSON.stringify(o));
 const state = { T: clone(DEFAULT.T), Z: clone(DEFAULT.Z),
-                PD: 0.90, c: 5e-5, b: 1e-5, k: 5, iter: 0, playing:false };
+                PD: DEFAULT.PD, c: DEFAULT.c, gated: true, k: 5, iter: 0, playing:false };
 let R = null; // results cache
 
 function gauss2(dx,dy,S){
@@ -433,64 +453,15 @@ function kalmanUpd(m,P,z){
   return { m:{x:m.x+K[0][0]*ix+K[0][1]*iy, y:m.y+K[1][0]*ix+K[1][1]*iy},
            P:msub(P,mmul(K,P)) };
 }
-function buildL(){
-  const n=state.T.length,m=state.Z.length,L=[],gate=[];
-  for(let i=0;i<n;i++){ L.push([1-state.PD]); gate.push([]);
-    for(let j=0;j<m;j++){
-      const g=gauss2(state.Z[j].x-state.T[i].x, state.Z[j].y-state.T[i].y, state.T[i].S);
-      const inG=g.d2<=GATE; gate[i].push(inG);
-      L[i].push(inG? state.PD*g.pdf/state.c : 0);
-    }}
-  return {L,gate,n,m};
-}
-function margFrom(L,nu){ // p(a_i=·) given current nu
-  const n=L.length,m=L[0].length-1,M=[];
-  for(let i=0;i<n;i++){ const r=[L[i][0]];
-    for(let j=0;j<m;j++) r.push(L[i][j+1]*nu[j][i]);
-    const Z=r.reduce((a,b)=>a+b,0); M.push(r.map(v=>v/Z)); }
-  return M;
-}
-/* history of half-steps: 'init' (ν≡1), then per sweep t: 'mu' (all μ fired), 'nu' (all ν answered) */
-function runBP(L,maxIter=5,tol=1e-9){
-  const n=L.length,m=L[0].length-1;
-  const nu=Array.from({length:m},()=>Array(n).fill(1));
-  const mu=Array.from({length:n},()=>Array(m).fill(0));
-  const cp=A=>A.map(r=>r.slice());
-  const hist=[{kind:'init',t:0,mu:null,nu:cp(nu),marg:margFrom(L,nu),delta:null}];
-  for(let t=1;t<=maxIter;t++){
-    for(let i=0;i<n;i++){ let tot=L[i][0];
-      for(let k=0;k<m;k++) tot+=L[i][k+1]*nu[k][i];
-      for(let j=0;j<m;j++) mu[i][j]=L[i][j+1]/(tot-L[i][j+1]*nu[j][i]); }
-    hist.push({kind:'mu',t,mu:cp(mu),nu:cp(nu),marg:hist[hist.length-1].marg,delta:null});
-    let d=0;
-    for(let j=0;j<m;j++){ let tot=1;
-      for(let l=0;l<n;l++) tot+=mu[l][j];
-      for(let i=0;i<n;i++){ const nv=1/(tot-mu[i][j]); d=Math.max(d,Math.abs(nv-nu[j][i])); nu[j][i]=nv; } }
-    hist.push({kind:'nu',t,mu:cp(mu),nu:cp(nu),marg:margFrom(L,nu),delta:d});
-    if(d<tol) break;
-  }
-  return hist;
-}
-function enumHyps(L){
-  const n=L.length,m=L[0].length-1,ev=[],a=Array(n).fill(-1);
-  (function rec(i,used,w){
-    if(i===n){ ev.push({a:a.slice(),w}); return; }
-    a[i]=-1; rec(i+1,used,w*L[i][0]);
-    for(let j=0;j<m;j++){ if(used&(1<<j)||L[i][j+1]<=0) continue;
-      a[i]=j; rec(i+1,used|(1<<j),w*L[i][j+1]); }
-    a[i]=-1;
-  })(0,0,1);
-  const Z=ev.reduce((s,e)=>s+e.w,0); ev.forEach(e=>e.p=e.w/Z);
-  ev.sort((x,y)=>y.p-x.p); return ev;
-}
-function exactMarg(ev,n,m){
-  const M=Array.from({length:n},()=>Array(m+1).fill(0));
-  for(const e of ev) for(let i=0;i<n;i++) M[i][(e.a[i]<0?0:e.a[i]+1)]+=e.p;
-  return M;
-}
+function buildL(){return AssociationModel.buildWeights(state,state.gated!==false);}
+function margFrom(L,nu){return AssociationModel.targetMarginals(L,nu);}
+function runBP(L,maxIter=10000,tol=1e-10){return AssociationModel.bp(L,{maxIterations:maxIter,tolerance:tol}).history;}
+function enumHyps(L){return AssociationModel.enumerate(L);}
+function exactMarg(ev,n,m){return AssociationModel.eventMarginals(ev,n,m).marginals;}
 function compute(){
   const {L,gate,n,m}=buildL();
-  const hist=runBP(L);
+  const solve=AssociationModel.bp(L);
+  const hist=solve.history;
   const ev=enumHyps(L);
   const ex=exactMarg(ev,n,m);
   const bpFinal=hist[hist.length-1].marg;
@@ -505,13 +476,12 @@ function compute(){
     for(let j=0;j<m;j++) if(gate[i][j]) comps.push({ j, ...kalmanUpd(prior.m,prior.P,state.Z[j]) });
     return { prior, comps };
   });
-  return {L,gate,n,m,hist,ev,ex,bpFinal,sweeps,sweepDeltas,maxErr,pairs,beliefComps};
+  return {L,gate,n,m,hist,ev,ex,bpFinal,sweeps,sweepDeltas,maxErr,pairs,beliefComps,solve,graph:AssociationModel.topology(L)};
 }
 
 /* ================= formatting helpers ================= */
 const $ = id => document.getElementById(id);
 const pct = p => p<0.0005 ? '·' : (p<0.095 ? (100*p).toFixed(1) : Math.round(100*p)) + '%';
-const beta = () => state.b/(state.b+state.c); // didactic post-hoc split, not a PMBM birth update
 const fmtL = v => v<=0 ? '·' : (v>=100? v.toFixed(0) : v>=10 ? v.toFixed(1) : v.toFixed(2));
 const fmtMsg = v => v==null ? '–' : (v<9.995 ? v.toFixed(2) : v<99.5 ? v.toFixed(1) : String(Math.round(v)));
 function heatCell(p,rgb){
@@ -564,9 +534,10 @@ function renderScene(){
 }
 function renderStat1(){
   $('stat1').innerHTML=`n = <b>${R.n}</b> tracks · m = <b>${R.m}</b> measurements<br>`+
-    `gated pairs: <b>${R.pairs.length}</b> of ${R.n*R.m}<br>valid global hypotheses: <b>${R.ev.length}</b><br>`+
-    `BP sweeps to converge: <b>${R.sweeps}</b><br>`+
-    `toy birth share β̃ of unassigned mass: <b>${pct(beta())}</b>`;
+    `positive-weight edges: <b>${R.graph.edges}</b>; independent cycles: <b>${R.graph.cycles}</b><br>`+
+    `valid assignments: <b>${R.ev.length}</b><br>BP: <b>${R.sweeps}</b> sweeps; `+
+    (R.solve.converged?'tolerance met':'iteration cap reached')+`<br>log-message change: ${R.solve.delta.toExponential(1)}`;
+  $('bpEnd').textContent=R.solve.converged?'Final iterate ⏭':'Capped iterate ⏭';
 }
 function renderLMat(){
   let h='<tr><th></th><th>∅ miss</th>'; for(let j=0;j<R.m;j++) h+=`<th>z${j+1}</th>`; h+='</tr>';
@@ -619,20 +590,14 @@ function renderGraph(){
   $('fgraph').innerHTML=s.join('');
 }
 function renderBMarg(){
-  const st=curState(),bt=beta();
-  let h='<tr><th></th>';
-  for(let i=0;i<R.n;i++) h+=`<th style="color:${TCOL[i]}">T${i+1}</th>`;
-  h+='<th>⊕ new</th><th>∅ clutter</th></tr>';
-  for(let j=0;j<R.m;j++){
-    let den=1;const mu=[];
-    for(let i=0;i<R.n;i++){const v=st.mu?st.mu[i][j]:0;mu.push(v);den+=v;}
-    h+=`<tr><td class="rowh">z${j+1}</td>`;
-    for(let i=0;i<R.n;i++) h+=heatCell(mu[i]/den,'31,119,180');
-    h+=heatCell(bt/den,'193,102,32');
-    h+=heatCell((1-bt)/den,'100,116,139');
-    h+='</tr>';}
+  const st=curState();
+  if(!st.bmarg){$('bjheat').innerHTML='<tr><td>Measurement beliefs appear after the first μ half-step.</td></tr>';return;}
+  let h='<tr><th></th><th>∅ unassigned</th>';
+  for(let i=0;i<R.n;i++)h+=`<th>T${i+1}</th>`;h+='</tr>';
+  st.bmarg.forEach((row,j)=>{h+=`<tr><td class="rowh">z${j+1}</td>`;row.forEach(v=>h+=heatCell(v,'31,119,180'));h+='</tr>';});
   $('bjheat').innerHTML=h;
 }
+
 function renderBPHeat(){
   const st=curState();
   $('bpheat').innerHTML=heatTable(st.marg,'31,119,180');
@@ -640,7 +605,7 @@ function renderBPHeat(){
   let ro;
   if(st.kind==='init') ro=`t = 0 · initialization: ν ≡ 1 — each track normalizes its own row of Fig. 2`;
   else if(st.kind==='mu') ro=`sweep ${st.t} / ${R.sweeps} · μ half-step fired — tracks announce their commitments`;
-  else ro=`sweep ${st.t} / ${R.sweeps} · ν half-step landed — max Δ = ${st.delta.toExponential(1)}`;
+  else ro=`sweep ${st.t} / ${R.sweeps} · ν half-step landed — max |Δ log ν| = ${st.delta.toExponential(1)}`;
   $('bpRO').textContent=ro;
 }
 function renderSpark(){
@@ -696,30 +661,23 @@ function renderBeliefs(){
 }
 /* --- PMBM --- */
 function renderHyps(){
-  const ev=R.ev, kMax=ev.length;
-  const kS=$('kSlider'); kS.max=kMax; if(state.k>kMax) state.k=kMax; kS.value=state.k;
-  $('kOut').textContent=state.k;
-  const kept=ev.slice(0,state.k).reduce((s,e)=>s+e.p,0);
-  $('kRO').textContent=`kept mass: ${(100*kept).toFixed(1)}%  ·  discarded: ${ev.length-state.k} hypotheses (${(100*(1-kept)).toFixed(1)}%)`;
-  const SHOW=14;
-  let h='<tr><th>#</th>'; for(let j=0;j<R.m;j++) h+=`<th>z${j+1} →</th>`;
-  h+='<th>missed</th><th class="wcell">weight w<sub>A</sub></th></tr>';
+  const ev=R.ev;state.k=Math.min(state.k,ev.length);
+  $('kSlider').max=ev.length;$('kSlider').value=state.k;$('kOut').textContent=state.k;
+  const top=AssociationModel.eventMarginals(ev,R.n,R.m,state.k);
+  $('kRO').textContent=`retained ${(100*top.mass).toFixed(2)}% · discarded ${(100*top.discardedMass).toFixed(2)}%`;
+  let h='<tr><th>rank</th>';for(let j=0;j<R.m;j++)h+=`<th>z${j+1}</th>`;h+='<th>missed tracks</th><th>all-event probability</th></tr>';
+  const SHOW=25;
   ev.slice(0,SHOW).forEach((e,r)=>{
-    const cells=[]; for(let j=0;j<R.m;j++){
-      const owner=e.a.indexOf(j);
-      cells.push(owner>=0?`<td><span class="chip" style="--c:${TCOL[owner]}">T${owner+1}</span></td>`
-                         :`<td><span class="chip nul">⊕ ${pct(beta())}</span></td>`);}
-    const missed=e.a.map((v,i)=>v<0?`T${i+1}`:null).filter(Boolean).join(' ')||'—';
-    const w=(100*e.p);
-    h+=`<tr class="${r<state.k?'kept':'cut'}"><td>${r+1}</td>${cells.join('')}<td style="color:var(--ink-faint)">${missed}</td>`+
-       `<td class="wcell"><div class="wbar"><i style="width:${Math.max(1.2,(e.p/ev[0].p)*100).toFixed(1)}%"></i><span>${w<0.95?w.toFixed(2):w.toFixed(1)}%</span></div></td></tr>`;
+    h+=`<tr class="${r<state.k?'kept':'cut'}"><td>${r+1}</td>`;
+    for(let j=0;j<R.m;j++){const i=e.a.indexOf(j);h+=i<0?'<td><span class="chip nul">∅</span></td>':`<td><span class="chip" style="--c:${TCOL[i]}">T${i+1}</span></td>`;}
+    const missed=e.a.map((j,i)=>j<0?`T${i+1}`:null).filter(Boolean).join(', ')||'—';
+    h+=`<td>${missed}</td><td>${(100*e.p).toFixed(3)}%</td></tr>`;
   });
-  if(ev.length>SHOW){
-    const rest=ev.slice(SHOW).reduce((s,e)=>s+e.p,0);
-    h+=`<tr class="cut"><td colspan="${R.m+3}" style="color:var(--ink-faint)">… ${ev.length-SHOW} more hypotheses, ${(100*rest).toFixed(2)}% of the mass in total</td></tr>`;
-  }
-  $('hypTable').innerHTML=h;
-  $('hypCount2').textContent=`all ${ev.length}`;
+  if(ev.length>SHOW)h+=`<tr><td colspan="${R.m+3}">${ev.length-SHOW} further hypotheses (included in all exact calculations).</td></tr>`;
+  $('hypTable').innerHTML=h;$('hypCount2').textContent=`all ${ev.length}`;
+  $('topkheat').innerHTML=heatTable(top.marginals,'232,114,12');
+  const error=100*AssociationModel.maxDifference(top.marginals,R.ex);
+  $('topkRO').textContent=`Top-k maximum marginal error: ${error.toFixed(3)} pp. Discarded mass ε = ${(100*top.discardedMass).toFixed(3)}%. For restriction and renormalization of this discrete assignment posterior, total variation is ε, so every marginal error is at most ε (in probability units). The tail is known here only because all hypotheses were enumerated; a production k-best solver generally does not know it.`;
 }
 function renderExact(){ $('exheat').innerHTML=heatTable(R.ex,'232,114,12'); }
 function renderCompare(){
@@ -732,10 +690,9 @@ function renderCompare(){
       h+=`<td class="${v<0.05?'dim':''}" style="background:rgba(194,47,47,${a.toFixed(3)});color:${a>0.5?'#fff':'var(--ink)'}">${v<0.05?'·':v.toFixed(1)}</td>`; }
     h+='</tr>'; }
   $('cmpDF').innerHTML=h;
-  const verdict = R.maxErr<0.005 ? 'the association graph is (near-)tree-structured here — BP is exact.'
-                : R.maxErr<0.03 ? 'mild loopiness — BP is a very good deal.'
-                : 'strong loops: this is the regime where paying for hypotheses buys real accuracy.';
-  $('errRO').innerHTML=`max deviation: <b>${(100*R.maxErr).toFixed(1)} pp</b> across all ${R.n*(R.m+1)} marginals — ${verdict}`;
+  $('cmpBPTitle').textContent=R.solve.converged?'BP marginals (stopping tolerance met)':'BP marginals (iteration cap; unfinished)';
+  const topology=R.graph.acyclic?'The positive-weight association graph is acyclic.':'The positive-weight association graph is cyclic.';
+  $('errRO').textContent=`Maximum absolute BP–exact difference: ${(100*R.maxErr).toFixed(3)} pp. ${topology} Graph structure is computed from edges, not inferred from a small error. Edge-belief consistency residual: ${R.solve.dualResidual.toExponential(2)}. `+(R.solve.converged?'Stopping tolerance met; loopy approximation error may remain.':'Iteration cap reached: this comparison includes unfinished iteration error.');
 }
 /* --- time diagram (static) --- */
 function renderTimeDiag(){
@@ -743,7 +700,7 @@ function renderTimeDiag(){
   const node=(x,y,r,fill,stroke,dash)=>`<circle cx="${x}" cy="${y}" r="${r}" fill="${fill}" stroke="${stroke}" stroke-width="1.6"${dash?' stroke-dasharray="4 3"':''}/>`;
   const edge=(x1,y1,x2,y2,w,col,dash)=>`<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="${col}" stroke-width="${w}"${dash?' stroke-dasharray="4 3"':''} stroke-linecap="round"/>`;
   s.push(`<text x="12" y="24" font-size="11" font-weight="600" fill="#b45607">PMBM — hypothesis tree</text>`);
-  s.push(`<text x="472" y="24" font-size="11" font-weight="600" fill="#155d8f">BP tracker — marginalize &amp; move on</text>`);
+  s.push(`<text x="472" y="24" font-size="11" font-weight="600" fill="#155d8f">Marginal-filter example — project &amp; move on</text>`);
   [['k−1',80],['k',225],['k+1',370]].forEach(([t,x])=>{ s.push(`<text x="${x}" y="200" font-size="10" fill="#8a97a3" text-anchor="middle">scan ${t}</text>`);
     s.push(`<text x="${x+460}" y="200" font-size="10" fill="#8a97a3" text-anchor="middle">scan ${t}</text>`); });
   const P='#e8720c', PW='#fceede';
@@ -841,11 +798,19 @@ $('ccSlider').addEventListener('input',e=>{ state.c=Math.pow(10,+e.target.value)
   const ex=Math.floor(Math.log10(state.c)), mant=state.c/Math.pow(10,ex);
   $('ccOut').textContent=`${mant.toFixed(1)}×10${String(ex).replace('-','⁻').replace(/(\d)/g,m=>'⁰¹²³⁴⁵⁶⁷⁸⁹'[+m])}`;
   refresh(true); });
-$('bbSlider').addEventListener('input',e=>{ state.b=Math.pow(10,+e.target.value);
-  const ex=Math.floor(Math.log10(state.b)), mant=state.b/Math.pow(10,ex);
-  $('bbOut').textContent=`${mant.toFixed(1)}×10${String(ex).replace('-','⁻').replace(/(\d)/g,m=>'⁰¹²³⁴⁵⁶⁷⁸⁹'[+m])}`;
-  renderBMarg(); renderStat1(); renderHyps(); });
+
 $('kSlider').addEventListener('input',e=>{ state.k=+e.target.value; renderHyps(); });
+$('gateToggle').addEventListener('change',e=>{state.gated=e.target.checked;refresh(true);});
+$('treePreset').addEventListener('click',()=>{
+  state.T=clone(DEFAULT.T);state.Z=clone(DEFAULT.Z);
+  state.T.forEach((t,i)=>{t.x=120+220*i;t.y=210;state.Z[i]={x:t.x+5,y:t.y-3};});
+  state.Z[3]={x:660,y:45};state.gated=true;$('gateToggle').checked=true;refresh(true);
+});
+$('symmetricPreset').addEventListener('click',()=>{
+  state.T=clone(DEFAULT.T);state.T.forEach(t=>{t.x=320;t.y=210;t.S=[[500,0],[0,500]];});
+  state.Z=[{x:305,y:200},{x:320,y:225},{x:335,y:200},{x:560,y:60}];
+  state.gated=true;$('gateToggle').checked=true;refresh(true);
+});
 
 /* drag interaction (delegated on the svg; survives innerHTML re-render) */
 const sceneEl=$('scene');
@@ -877,6 +842,7 @@ function refresh(jumpToConverged){
   renderGraph(); renderBPHeat(); renderSpark(); renderBeliefs();
   renderHyps(); renderExact(); renderCompare();
 }
+window.BPAssociationAudit = {snapshot:()=>({L:R.L,exact:R.ex,bp:R.bpFinal,iterations:R.sweeps,converged:R.solve.converged,graph:R.graph,delta:R.solve.delta})};
 /* boot */
 refresh(true);
 renderTimeDiag();
