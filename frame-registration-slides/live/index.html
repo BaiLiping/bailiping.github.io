@@ -66,7 +66,7 @@
             <span>Match gate</span><output id="gate-value" for="gate-range">0.90 u</output>
           </label>
           <input id="gate-range" type="range" min="45" max="150" value="90" step="5">
-          <p class="microcopy">Drag the blue scan to give ICP a start. <kbd>Shift</kbd>-drag rotates; focused canvas arrows nudge.</p>
+          <p class="microcopy">Gated point-to-point ICP also trims the worst 16% of surviving pairs. Drag the blue scan to set its start. <kbd>Shift</kbd>-drag rotates; focused canvas arrows nudge.</p>
           <div class="button-row">
             <button class="button primary" id="icp-step" type="button">One iteration</button>
             <button class="button" id="icp-run" type="button" aria-pressed="false">Run</button>
@@ -80,7 +80,7 @@
             <span>Fixed rotation</span><output id="angle-value" for="angle-range">14°</output>
           </label>
           <input id="angle-range" type="range" min="-10" max="35" value="14" step="1">
-          <p class="microcopy">Click or drag on the score map to choose a translation, then climb toward a local maximum.</p>
+          <p class="microcopy">Translation-only direct search on four shifted grids (cell size 1.3 u; covariance regularization 0.026 u²). Rotation stays fixed; stopping is not a maximum certificate.</p>
           <div class="button-row">
             <button class="button primary" id="ndt-step" type="button">Climb once</button>
             <button class="button" id="ndt-run" type="button" aria-pressed="false">Run</button>
@@ -113,7 +113,7 @@
     </div>
 
     <footer class="interactive-slide-footer">
-      <p>2-D teaching model · same rigid-transform mathematics as the 3-D case</p>
+      <p>2-D teaching model · SE(2) has 3 pose parameters; SE(3) has 6</p>
       <p><span class="truth-swatch"></span>Dashed outline = hidden ground truth</p>
     </footer>
   </main>
@@ -127,7 +127,7 @@
       <div class="fallback-grid">
         <section><h2>RANSAC</h2><p>Samples compatible pairs, scores their consensus, and keeps the strongest rigid pose.</p></section>
         <section><h2>ICP</h2><p>Alternates nearest-neighbour matching with a closed-form least-squares rigid fit.</p></section>
-        <section><h2>NDT</h2><p>Fits local Gaussian cells to the map and optimizes the scan’s likelihood landscape.</p></section>
+        <section><h2>NDT</h2><p>Fits local Gaussian cells to the map and explores a point-to-cell score by translation-only direct search.</p></section>
       </div>
       <a class="back-link" href="../">← Back to slides</a>
     </main>
