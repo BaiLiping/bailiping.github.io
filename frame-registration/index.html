@@ -112,19 +112,20 @@ input[type=range]{accent-color:var(--accent);width:140px}
 <div class="wrap">
   <div class="eyebrow"><span class="spark">✳</span> Frame registration · the whole story, live</div>
   <h1>How two frames find each other</h1>
-  <p class="premise">A robot looks at the same scene twice, from two different places. Registration is the problem of recovering the rigid motion between the two views — the atomic operation under scan matching, odometry, loop-closure verification, and map merging. This note is the whole story in one place. First the correspondence ladder: matches known (one closed-form solve), matches corrupted (RANSAC), matches unknown (ICP), matches structured (point-to-plane, GICP). Then the rung that dissolves matches entirely — the Normal Distributions Transform, which turns the map into a grid of Gaussians and hands registration to Newton's method. Then the wider field, raced: hard, soft, and correspondence-free objectives side by side on one shared problem. And to close, the field's three champions — CPD, FilterReg, MMD-Reg — walked stage by stage on a single scene, down to the one question that separates them: what does each keep in place of the matches? Every rung is a live demo you can break with your own hands.</p>
-  <p class="source-note">Sources: <a href="https://doi.org/10.1145/358669.358692" target="_blank" rel="noopener">Fischler &amp; Bolles, RANSAC (1981)</a> · <a href="https://doi.org/10.1109/34.121791" target="_blank" rel="noopener">Besl &amp; McKay, ICP (1992)</a> · <a href="https://doi.org/10.1109/TPAMI.1987.4767965" target="_blank" rel="noopener">Arun et&nbsp;al., least-squares fitting of two 3-D point sets (1987)</a> · <a href="https://doi.org/10.1109/34.88573" target="_blank" rel="noopener">Umeyama (1991)</a> · <a href="https://doi.org/10.1109/IM.2001.924423" target="_blank" rel="noopener">Rusinkiewicz &amp; Levoy, efficient ICP variants (2001)</a> · <a href="https://arxiv.org/abs/2209.15397" target="_blank" rel="noopener">KISS-ICP (2023)</a> · <a href="https://doi.org/10.1109/IROS.2003.1249285" target="_blank" rel="noopener">Biber &amp; Straßer, the normal distributions transform (IROS&nbsp;2003)</a> · <a href="http://urn.kb.se/resolve?urn=urn:nbn:se:oru:diva-8458" target="_blank" rel="noopener">Magnusson, the 3D-NDT (PhD thesis, 2009)</a> · <a href="https://doi.org/10.1177/0278364912460895" target="_blank" rel="noopener">Stoyanov et&nbsp;al., D2D-NDT registration (IJRR&nbsp;2012)</a> · <a href="https://doi.org/10.1109/IVS.2017.7995900" target="_blank" rel="noopener">Akai et&nbsp;al., NDT localization with uncertainty (IV&nbsp;2017)</a> · <a href="https://doi.org/10.1016/0262-8856(92)90066-C" target="_blank" rel="noopener">Chen &amp; Medioni, point-to-plane (1992)</a> · <a href="https://doi.org/10.15607/RSS.2009.V.021" target="_blank" rel="noopener">Segal et&nbsp;al., Generalized-ICP (RSS&nbsp;2009)</a> · <a href="https://doi.org/10.1109/ICPR.2002.1047997" target="_blank" rel="noopener">Chetverikov et&nbsp;al., trimmed ICP (ICPR&nbsp;2002)</a> · <a href="https://arxiv.org/abs/2007.07627" target="_blank" rel="noopener">Zhang et&nbsp;al., fast and robust ICP (TPAMI&nbsp;2021)</a> · <a href="https://arxiv.org/abs/2606.27818" target="_blank" rel="noopener">Crane et&nbsp;al., MMD-Reg (ICML&nbsp;2026)</a> · <a href="https://github.com/csiro-robotics/mmd-reg" target="_blank" rel="noopener">MMD-Reg code</a> · <a href="https://arxiv.org/abs/0905.2635" target="_blank" rel="noopener">Myronenko &amp; Song, CPD (TPAMI&nbsp;2010)</a> · <a href="https://doi.org/10.1109/TPAMI.2010.223" target="_blank" rel="noopener">Jian &amp; Vemuri, GMMReg (2011)</a> · <a href="https://arxiv.org/abs/1811.10136" target="_blank" rel="noopener">Gao &amp; Tedrake, FilterReg (CVPR&nbsp;2019)</a> · <a href="https://papers.nips.cc/paper_files/paper/2007/hash/013a006f03dbc5392effeb8f18fda755-Abstract.html" target="_blank" rel="noopener">Rahimi &amp; Recht, random features (2007)</a> · <a href="https://arxiv.org/abs/1209.6299" target="_blank" rel="noopener">Williams &amp; Lau, data-association BP (TAES&nbsp;2014)</a> · <a href="https://arxiv.org/abs/1703.04264" target="_blank" rel="noopener">García-Fernández et&nbsp;al., PMBM filter (TAES&nbsp;2018)</a> · <a href="https://jmlr.org/papers/v13/gretton12a.html" target="_blank" rel="noopener">Gretton et&nbsp;al., MMD (2012)</a> · <a href="https://arxiv.org/abs/2506.05282" target="_blank" rel="noopener">Sun et&nbsp;al., Rectified Point Flow (NeurIPS&nbsp;2025)</a> · <a href="https://arxiv.org/abs/2512.01850" target="_blank" rel="noopener">Pan et&nbsp;al., Register Any Point — registration by flow matching (2025)</a> · <a href="https://github.com/PRBonn/RAP" target="_blank" rel="noopener">RAP code</a> · <a href="https://github.com/BaiLiping/frame-registration-demos" target="_blank" rel="noopener">this page's solver code (repo)</a></p>
+  <p class="premise">A robot observes a scene from two poses. <strong>Registration estimates the transform that maps the source coordinates into the target coordinates.</strong> This guide separates three questions: what information links the clouds, what objective measures alignment, and how that objective is optimized. Start with known pairs (Kabsch), then corrupted pairs (RANSAC), unknown pairs (ICP), surface-aware residuals, and point-to-cell NDT. Next compare soft-assignment and distribution objectives, then explore four step-by-step demonstrations. These are <strong>planar teaching implementations, not official paper replications or a universal ranking</strong>. <a href="/frame-registration-slides/">Open the companion slides</a>.</p>
+<div class="scope-note" id="registration-scope"><strong>Conventions and reading path.</strong> Source → target: $T(p)=Rp+t$. The demos use $SE(2)$ (one rotation, two translations); 3-D uses $SE(3)$ (three rotational and three translational degrees of freedom). A similarity additionally estimates scale. $c_i$ denotes an association, $h$ a grid-cell size, $\sigma$ a mixture standard deviation, $\ell$ a kernel length scale, and $D$ a frequency count (giving $2D$ features). The CPD subsection uses the original letters $y_m$ for source and $x_n$ for target; the MMD subsection explicitly reverses them. World units are arbitrary, not automatically meters. <strong>Keep separate: low objective, numerical stopping, and correct pose.</strong> Begin with Kabsch/ICP, then read the NDT and mixture details. Reviewed 7 September 2026.</div>
+  <p class="source-note">Sources: <a href="https://doi.org/10.1145/358669.358692" target="_blank" rel="noopener">Fischler &amp; Bolles, RANSAC (1981)</a> · <a href="https://doi.org/10.1109/34.121791" target="_blank" rel="noopener">Besl &amp; McKay, ICP (1992)</a> · <a href="https://doi.org/10.1109/TPAMI.1987.4767965" target="_blank" rel="noopener">Arun et&nbsp;al., least-squares fitting of two 3-D point sets (1987)</a> · <a href="https://doi.org/10.1109/34.88573" target="_blank" rel="noopener">Umeyama (1991)</a> · <a href="https://doi.org/10.1109/IM.2001.924423" target="_blank" rel="noopener">Rusinkiewicz &amp; Levoy, efficient ICP variants (2001)</a> · <a href="https://arxiv.org/abs/2209.15397" target="_blank" rel="noopener">KISS-ICP (2023)</a> · <a href="https://doi.org/10.1109/IROS.2003.1249285" target="_blank" rel="noopener">Biber &amp; Straßer, the normal distributions transform (IROS&nbsp;2003)</a> · <a href="http://urn.kb.se/resolve?urn=urn:nbn:se:oru:diva-8458" target="_blank" rel="noopener">Magnusson, the 3D-NDT (PhD thesis, 2009)</a> · <a href="https://doi.org/10.1177/0278364912460895" target="_blank" rel="noopener">Stoyanov et&nbsp;al., D2D-NDT registration (IJRR&nbsp;2012)</a> · <a href="https://doi.org/10.1109/IVS.2017.7995900" target="_blank" rel="noopener">Akai et&nbsp;al., NDT localization with uncertainty (IV&nbsp;2017)</a> · <a href="https://doi.org/10.1016/0262-8856(92)90066-C" target="_blank" rel="noopener">Chen &amp; Medioni, point-to-plane (1992)</a> · <a href="https://doi.org/10.15607/RSS.2009.V.021" target="_blank" rel="noopener">Segal et&nbsp;al., Generalized-ICP (RSS&nbsp;2009)</a> · <a href="https://doi.org/10.1109/ICPR.2002.1047997" target="_blank" rel="noopener">Chetverikov et&nbsp;al., trimmed ICP (ICPR&nbsp;2002)</a> · <a href="https://arxiv.org/abs/2007.07627" target="_blank" rel="noopener">Zhang et&nbsp;al., fast and robust ICP (TPAMI&nbsp;2021)</a> · <a href="https://arxiv.org/abs/2606.27818" target="_blank" rel="noopener">Crane et&nbsp;al., MMD-Reg (ICML&nbsp;2026)</a> · <a href="https://github.com/csiro-robotics/mmd-reg" target="_blank" rel="noopener">MMD-Reg code</a> · <a href="https://arxiv.org/abs/0905.2635" target="_blank" rel="noopener">Myronenko &amp; Song, CPD (TPAMI&nbsp;2010)</a> · <a href="https://doi.org/10.1109/TPAMI.2010.223" target="_blank" rel="noopener">Jian &amp; Vemuri, GMMReg (2011)</a> · <a href="https://arxiv.org/abs/1811.10136" target="_blank" rel="noopener">Gao &amp; Tedrake, FilterReg (CVPR&nbsp;2019)</a> · <a href="https://papers.nips.cc/paper_files/paper/2007/hash/013a006f03dbc5392effeb8f18fda755-Abstract.html" target="_blank" rel="noopener">Rahimi &amp; Recht, random features (2007)</a> · <a href="https://arxiv.org/abs/1209.6299" target="_blank" rel="noopener">Williams &amp; Lau, data-association BP (TAES&nbsp;2014)</a> · <a href="https://arxiv.org/abs/1703.04264" target="_blank" rel="noopener">García-Fernández et&nbsp;al., PMBM filter (TAES&nbsp;2018)</a> · <a href="https://jmlr.org/papers/v13/gretton12a.html" target="_blank" rel="noopener">Gretton et&nbsp;al., MMD (2012)</a> · <a href="https://arxiv.org/abs/2506.05282" target="_blank" rel="noopener">Sun et&nbsp;al., Rectified Point Flow (NeurIPS&nbsp;2025)</a> · <a href="https://arxiv.org/abs/2512.01850" target="_blank" rel="noopener">Pan et&nbsp;al., Register Any Point — registration by flow matching (2025)</a> · <a href="https://github.com/PRBonn/RAP" target="_blank" rel="noopener">RAP code</a> · <a href="https://github.com/BaiLiping/frame-registration-demos" target="_blank" rel="noopener">historical companion code (may differ)</a></p>
   <div class="scope-note"><strong>Scope of the demos.</strong> Everything here is planar: 2-D points, an angle and a translation instead of SE(3), and brute-force nearest neighbors instead of a kd-tree. The estimators are genuine — the closed-form fits, the consensus loops, the ICP, point-to-plane, and GICP iterations, and the NDT Newton solver run live, unscripted — but real systems add voxelized correspondence search and the third dimension. The NDT part follows Biber's 2003 paper: square 2-D cells, the point-to-distribution score with four half-cell-shifted grids, eigenvalue-clamped maximum-likelihood covariances (Magnusson's thesis prefers $1/(n_c\!-\!1)$), and Newton's method with analytic derivatives; the third dimension, distribution-to-distribution scores, and More–Thuente line searches are pointers at the end. The family race late in the note matches the MMD-Reg paper's baselines: gated point-to-point and point-to-plane ICP, an annealed EM soft-assignment solver standing in for CPD/GMMReg/FilterReg, and a genuine mini MMD-Reg — random Fourier features, an analytic-Jacobian Levenberg–Marquardt solver, and the paper's coarse-to-fine kernel schedule. Three ladder rungs race alongside as controls — a two-point-congruence RANSAC with Kabsch polish, plane-to-plane GICP, and the four-grid Newton NDT on its coarse-to-fine schedule — plus two data-association transplants from target tracking: belief-propagation marginals and a PMBM-flavored hypothesis mixture, both on the soft assigner's scaffold. Most scan demos carry a <strong>scene selector</strong> reproducing the paper's stress settings: noise, skewed sampling density, outliers — and the selectors now default to the meanest combination, high noise plus 20% outliers, so each demo opens on the stress test rather than the warm-up.</div>
 
   <!-- ============ Section 1: closed form ============ -->
   <div class="section">
     <p class="kicker">Rung one · correspondences known</p>
     <h2>The lucky case has a closed form</h2>
-    <p>Suppose an oracle hands you paired points: $p_i$ in the new frame is the same physical point as $q_i$ in the old frame. Registration is then a least-squares problem over a rotation and a translation,</p>
-    <div class="math">$$(\hat R,\hat t)\;=\;\arg\min_{R,\,t}\ \sum_i \big\lVert R\,p_i + t - q_i \big\rVert^2,$$</div>
-    <p>and — unusually for anything involving rotations — it needs <strong>no iteration at all</strong>. Center both clouds on their centroids $\bar p,\bar q$, build the cross-covariance $H=\sum_i (p_i-\bar p)(q_i-\bar q)^{\!\top}$, and the optimal rotation falls out of an SVD (Arun, Umeyama). In the plane the whole SVD collapses to a single angle,</p>
+    <p>Suppose an oracle supplies pairs: source point $p_i$ and target point $q_i$ represent the same landmark, possibly with noise. We use $T(p)=Rp+t$, with $R\in SO(d)$, $R^\top R=I$, $\det R=1$, and $t\in\mathbb R^d$. Thus reflections and scale changes are excluded. The paired least-squares problem is</p>
+    <div class="math">$$(\hat R,\hat t)\;=\;\arg\min_{R\in SO(d),\,t\in\mathbb R^d}\ \sum_i \big\lVert R\,p_i + t - q_i \big\rVert^2,$$</div>
+    <p>With fixed pairs and isotropic squared residuals, no iterative pose initialization is needed. Center the points, set $H=\sum_i\tilde p_i\tilde q_i^\top=U\Lambda V^\top$, and use the <strong>proper-rotation correction</strong> $D_c=\operatorname{diag}(1,\ldots,1,\det(VU^\top))$: $\hat R=VD_cU^\top$, $\hat t=\bar q-\hat R\bar p$. Without $D_c$, the SVD can return a reflection. In two dimensions this reduces to</p>
     <div class="math">$$\hat\theta=\operatorname{atan2}\!\Big(\textstyle\sum_i \tilde p_i \!\times\! \tilde q_i,\ \sum_i \tilde p_i \!\cdot\! \tilde q_i\Big),\qquad \hat t=\bar q-R(\hat\theta)\,\bar p,$$</div>
-    <p>with $\tilde p_i, \tilde q_i$ the centered points. Drag and twist the orange constellation below as far off as you like, then press <strong>Solve</strong>: one evaluation of these formulas lands it exactly, every time, from anywhere. No initialization, no local minima. Hold on to how good this feels — the next two rungs are about losing it.</p>
+    <p>Here $a\times b=a_xb_y-a_yb_x$ is the scalar planar cross product. <strong>Solve finds the global minimum of this paired least-squares objective, not necessarily the true motion.</strong> Noise and incorrect pairs can move the optimum. Distinct source points are needed to determine a planar rotation; in 3-D, three noncollinear correct pairs suffice in the noise-free rigid case. Collinearity in 3-D leaves rotation about the line undetermined. Drag the display to change its starting pose, then solve: the algebraic result is independent of that start.</p>
     <div class="card"><canvas id="kabC" width="640" height="400" aria-label="Closed-form alignment demo: drag the orange point cloud, then solve"></canvas></div>
     <div class="controls">
       <button class="primary" id="kabSolve">Solve (closed form)</button>
@@ -143,17 +144,17 @@ input[type=range]{accent-color:var(--accent);width:140px}
       <span>RMS residual <b id="kabRms">–</b></span>
       <span>sensor noise floor <b id="kabFloor">–</b></span>
     </div>
-    <p class="fignote">The residual never reaches zero — it converges to the level implied by the noise baked into the measurements (per-axis σ = 0.14&nbsp;u in the default noisy scene, 0.045&nbsp;u in the clean one; 2-D residuals run about √2·σ, less the small share the three fitted parameters absorb). A registration that consistently fits far below its sensor noise is a sign of overfitting somewhere else in the pipeline. And switch the scene to <em>20% outliers</em>, then Solve: the closed form dutifully appeases the junk and abandons the honest points — least squares' 0% breakdown point, one rung early. The next rung is the answer.</p>
+    <p class="fignote">A noisy fit generally has a nonzero residual. Its expected size depends on which clouds are noisy, the noise covariance, the number of points, and fitted parameters; there is no universal rule that a below-noise residual proves overfitting. Compare the clean, noisy, and outlier scenes. The solver still minimizes its objective when the correspondences are bad, but the minimizing pose can be poor.</p>
   </div>
 
   <!-- ============ Section 2: RANSAC ============ -->
   <div class="section">
     <p class="kicker">Rung two · correspondences corrupted</p>
     <h2>Real matchers lie: RANSAC</h2>
-    <p>In practice nobody hands you correspondences; a feature matcher proposes them, and some fraction are simply wrong — repetitive texture, occlusion, a moving pedestrian. Least squares has <strong>zero tolerance</strong> for this: its breakdown point is 0%, so a single gross outlier can drag the closed-form fit arbitrarily far. The gray ghost below is the closed-form solve applied to <em>all</em> matches. Push the outlier slider and watch it wander off.</p>
-    <p>RANSAC inverts the logic: instead of letting every match vote on one fit, it lets many small fits compete for votes. Draw the <strong>minimal sample</strong> — two matches fix a planar rigid motion — solve exactly, and count how many other matches agree within a threshold $\varepsilon$. Keep the hypothesis with the largest consensus, then re-run the closed-form fit on its inliers. The number of draws needed to hit one all-inlier sample with confidence $p$ is</p>
-    <div class="math">$$N \;=\; \frac{\log(1-p)}{\log\!\big(1-w^{s}\big)},$$</div>
-    <p>with $w$ the inlier ratio and $s=2$ the sample size — which is why minimal samples matter: $N$ explodes exponentially in $s$. The demo re-estimates $w$ from the best consensus so far and shrinks $N$ adaptively as it runs.</p>
+    <p>A feature matcher proposes correspondences, some of which are incorrect because of repeated structure, occlusion, or motion. Ordinary least squares has unbounded sensitivity to gross contamination in its translation estimate: its asymptotic replacement breakdown point is zero. That does <em>not</em> mean every incorrect match ruins a fit. The gray ghost shows the least-squares solution using all proposed pairs; compare it with the consensus solution.</p>
+    <p>RANSAC fits hypotheses to small random subsets, counts matches within a distance threshold $\varepsilon$, and refits a strong consensus. Two distinct paired points give a minimal planar rigid hypothesis; exact interpolation also requires compatible interpoint distances. Noisy pairs instead give a least-squares hypothesis. Three noncollinear pairs are the usual 3-D rigid minimum. Under independent sampling with all-inlier probability approximated by $w^s$, the trial count is</p>
+    <div class="math">$$N \;=\; \left\lceil\frac{\log(1-p)}{\log\!\big(1-w^{s}\big)}\right\rceil,$$</div>
+    <p>Here $0<p<1$ is the desired sampling confidence, $w$ the inlier fraction, and $s$ the sample size. The formula assumes a usable all-inlier sample; it does not certify that the winning consensus is correct. For $I$ inliers among $L$ matches sampled without replacement within a trial, the exact all-inlier probability is $\binom{I}{s}/\binom{L}{s}$, rather than $w^s$. The demo uses the common adaptive approximation based on its best consensus. Degenerate samples, false consensus, and finite iteration caps still matter.</p>
     <div class="card"><canvas id="ranC" width="640" height="400" aria-label="RANSAC demo: sample minimal sets and count consensus"></canvas></div>
     <div class="controls">
       <button class="primary" id="ranRun">Run RANSAC</button>
@@ -177,16 +178,16 @@ input[type=range]{accent-color:var(--accent);width:140px}
       <span>naive LS error <b id="ranLsErr">–</b></span>
       <span>RANSAC error <b id="ranErr">–</b></span>
     </div>
-    <p class="fignote"><strong>Things worth trying.</strong> At 45% outliers the naive fit is garbage while RANSAC recovers the motion in a handful of draws. Push outliers to 80% and $N$ climbs into the hundreds — consensus still wins, it just needs patience. Now widen ε: rejected matches start counting as inliers, and the "consensus" quietly absorbs corruption. The threshold is doing the epistemology.</p>
+    <p class="fignote"><strong>Try this:</strong> increase the outlier fraction and watch the estimated trial budget grow. Then widen $\varepsilon$: more matches count as inliers, including false ones. Tighten it too far and genuine noisy pairs are rejected. A high sampling confidence cannot repair a poor threshold or repeated geometry.</p>
   </div>
 
   <!-- ============ Section 3: ICP ============ -->
   <div class="section">
     <p class="kicker">Rung three · correspondences unknown</p>
     <h2>No correspondences at all: ICP</h2>
-    <p>A lidar scan has no feature descriptors — just anonymous points along the walls. Now the problem is circular: <strong>knowing the transform would reveal the correspondences, and knowing the correspondences would give the transform</strong> in closed form. ICP (Besl &amp; McKay) breaks the circle by alternation: guess correspondences by nearest neighbor, solve rung one's closed form on that guess, move the cloud, guess again.</p>
+    <p>A raw lidar scan is an unpaired point set, although geometric descriptors can be computed. Without trusted feature matches, pose and correspondence are coupled: a pose suggests matches, and fixed matches allow a pose fit. ICP alternates nearest-neighbor assignment and pose estimation. In the point-to-point version, the second step is the paired rigid least-squares solve.</p>
     <div class="math">$$c_i \leftarrow \operatorname*{arg\,min}_{j}\,\lVert T p_i - q_j \rVert \qquad\longrightarrow\qquad T \leftarrow \operatorname*{arg\,min}_{R,t}\,\sum_i \lVert R\,p_i + t - q_{c_i}\rVert^2$$</div>
-    <p>For vanilla ICP — every point matched against the full reference cloud — neither half-step can increase the error, so the iteration always converges, though only to <strong>a local minimum picked by the initialization</strong>. The closed form's from-anywhere guarantee is gone: what you get now depends entirely on where you start. The orange scan below also covers only part of the room, so points hanging past the overlap have no true partner; the demo therefore <strong>gates</strong> far-away matches and <strong>trims</strong> the worst quarter each iteration to keep those from voting. That robustness is bought by giving up even the monotone-descent guarantee — the RMS strip can occasionally tick upward as the match set changes membership.</p>
+    <p>For a fixed source set, exact nearest neighbors, and exact point-to-point fitting, $E(T)=\sum_i\min_j\|Tp_i-q_j\|^2$ is non-increasing and bounded below, so its <em>values</em> converge. This is not a global-optimality or correct-pose guarantee; pose convergence and local-optimality statements need additional conditions. The demo gates distant pairs and trims a fraction of the surviving set. Its displayed RMS therefore changes its contributing points and need not be monotone. Trimming or gating does not inherently remove every descent guarantee: fixed-count trimmed and capped-distance objectives admit appropriate monotonic formulations.</p>
     <div class="card"><canvas id="icpC" width="640" height="400" aria-label="ICP demo: drag the orange scan to set the initial pose, then iterate"></canvas></div>
     <div class="controls">
       <button class="primary" id="icpRun">Run ICP</button>
@@ -210,7 +211,7 @@ input[type=range]{accent-color:var(--accent);width:140px}
       <span>pose error <b id="icpErr">–</b></span>
       <span>status <b id="icpStat">idle</b></span>
     </div>
-    <p class="fignote"><strong>Things worth trying.</strong> The default scene now stacks σ&nbsp;=&nbsp;0.10 noise with a fifth of junk, and from the default pose Run ends in honest failure: ICP declares convergence in a dozen-odd iterations at a pose some 35° off, its trimmed consensus happily built on outliers. Remember that opening state — rung three and a half repairs part of it, and the race later in this note shows what surviving it actually takes. Flip to <em>high noise</em> for the classic picture: ICP settles in about forty iterations — watch the RMS strip decay — and parks visibly off the truth, the pose-error stat reading about 4° and 0.13&nbsp;u. Keep both numbers for the next rung. Now set the rotation past ±90° and run again: it converges just as confidently onto the <em>wrong</em> wall and stops, pose error high, perfectly satisfied. That is a local minimum, not a bug. On <em>clean</em> the bias disappears — the forty iterations of crabbing do not. And try unticking <em>trim worst 25%</em> on <em>high noise</em>: the discarded quarter is honest data, and the rank-cut itself is most of the bias — rung three and a half picks this thread up. The next rung's residuals are the cure for the crabbing.</p>
+    <p class="fignote"><strong>Try this:</strong> compare a nearby start with a large rotation, then switch noise, outliers, and trimming independently. Record both the residual and the error against the simulated truth. A small change in RMS only triggers a stopping rule; it does not prove the pose is right. Repeated walls, insufficient overlap, and a moving inlier set can make a convincing but incorrect fit.</p>
   </div>
 
   <!-- ============ Section 3.5: point-to-plane & GICP ============ -->
@@ -219,13 +220,13 @@ input[type=range]{accent-color:var(--accent);width:140px}
     <h2>Point-to-plane, GICP &amp; robust kernels: matches with structure</h2>
     <p>Vanilla ICP's residual pretends the reference is a bag of isolated points. But it is a <em>wall</em>, sampled at arbitrary positions: the point your nearest neighbor should have matched almost never exists in the other scan, so point-to-point drags every pair all the way together and crabs sideways along every wall. Chen &amp; Medioni's <strong>point-to-plane</strong> residual fixes the model instead of the matches: estimate a surface normal $n_j$ at each reference point (PCA over its neighbors — the blue ticks in the demo below, drawn once its residual selector is set to point-to-plane), and penalize only the error component <em>across</em> the surface,</p>
     <div class="math">$$\min_{R,t}\ \sum_i \Big(n_{c_i}^{\!\top}\big(R\,p_i + t - q_{c_i}\big)\Big)^{\!2},$$</div>
-    <p>so sliding along a wall costs nothing. The price is the closed form: each iteration now linearizes the rotation and solves a tiny 3×3 Gauss–Newton system. <strong>GICP</strong> (Segal et&nbsp;al.) then completes the thought symmetrically: give <em>every point in both clouds</em> a covariance disc — thin across its estimated surface, long along it; the blue and orange slivers the demo draws in GICP mode — and weigh each matched pair by the pair's combined uncertainty,</p>
+    <p>Sliding within a single plane does not change the point-to-plane residual. That can avoid unnecessary tangential motion, but also creates <strong>unobservable directions</strong>: a single infinite plane cannot determine its two tangential translations or rotation about its normal. A useful 3-D fit needs sufficiently varied geometry; the planar demo needs varied line normals. We linearize and solve a 3-parameter Gauss–Newton system here (6 parameters in 3-D). GICP uses anisotropic covariances on both sides:</p>
     <div class="math">$$\min_{R,t}\ \sum_i d_i^{\!\top}\big(C^B_{c_i} + R\,C^A_i R^{\!\top}\big)^{-1} d_i,\qquad d_i = R\,p_i + t - q_{c_i}.$$</div>
-    <p>Point-to-point (spherical covariances) and point-to-plane ($C^A\!\to\!0$, $C^B$ a surface disc) drop out as special cases. Notice what just happened: every point became a <strong>little Gaussian</strong>, and matching became Gaussian against Gaussian. Hold that thought — rung four is one step away.</p>
-    <p>In practice the split between the two upgrades is clean. Point-to-plane already cures the crabbing: on structured scenes it captures most of the win, needs only one normal per reference point, and its scalar residual is cheap — which is why it remains the default polish stage in lidar pipelines. But it hands structure to one cloud only; the moving points stay structureless dots. GICP — <em>plane-to-plane</em>, in Segal et&nbsp;al.'s own naming — earns its extra eigendecompositions when the two scans are noisy <em>peers</em> rather than a clean map plus a fresh scan: the Mahalanobis weight discounts exactly the directions in which <em>both</em> surfaces are uncertain, and a shaky normal fattens its own disc, automatically softening that pair's vote instead of trusting a bad estimate at full strength. Watch the iteration counts in the demo below — the two share a basin; GICP's better-conditioned steps simply land a few iterations sooner.</p>
-    <p>One more upgrade completes the practical kit: <strong>robust kernels</strong> — the "robust" in robust ICP. Trimming is a hard vote: a pair is either in or out, decided by rank. M-estimators soften it: replace the squared loss with one that stops growing for large residuals, and solve by <strong>iteratively reweighted least squares</strong> — exactly the same solvers as above, with each pair scaled by a weight computed from its current residual $r$ and a robust scale $s$ (here $1.4826\cdot\mathrm{MAD}$ of the match distances):</p>
+    <p>Isotropic combined covariance gives a scaled point-to-point objective. A normal-direction precision matrix with zero tangential precision gives point-to-plane as a limiting case, not merely any finite thin covariance. In GICP the covariance sum depends on $R$. The demo freezes it within each Gauss–Newton step; this is an approximation to optimizing the full rotation-dependent objective.</p>
+    <p>Point-to-plane uses target normals; GICP uses local orientation from both clouds. Canonical GICP typically assigns prescribed tangent/normal eigenvalues after estimating orientation by PCA. These are <strong>surface-model covariances, not automatically calibrated uncertainty in a normal estimate</strong>: an unreliable normal does not necessarily inflate its covariance. Both methods can help on well-observed surfaces and fail on poor normals or degenerate geometry. Neither must have the same basin or fewer iterations than the other.</p>
+    <p>Robust losses reduce the influence of large residuals. <strong>Huber has quadratic behavior near zero and linear, unbounded tails; Tukey's loss is bounded.</strong> For a nonnegative residual magnitude $r$ and scale $s>0$, their IRLS weights are below, with the Huber weight defined as 1 at $r=0$. The demo computes its weights from Euclidean pair distances for all three residual models. Its $1.4826\,\mathrm{MAD}$ scale is a heuristic for these nonnegative distances, not a calibrated Gaussian standard deviation or exact residual-specific IRLS for GICP.</p>
     <div class="math">$$w_{\text{Huber}}(r)=\min\!\Big(1,\ \tfrac{1.345\,s}{r}\Big),\qquad w_{\text{Tukey}}(r)=\Big[\,1-\big(\tfrac{r}{4.685\,s}\big)^{2}\Big]_{+}^{2}.$$</div>
-    <p>Huber (convex, safe) merely tapers a far pair's influence; Tukey's redescending biweight drives it to <em>exactly zero</em> — an outlier eventually stops voting at all. Modern "fast and robust ICP" (Zhang et&nbsp;al.) is this recipe industrialized: a Welsch kernel inside the same alternation, plus Anderson acceleration to claw back the iterations robustness costs. The kernel composes with every residual above. Below, the same scans and the same start; <strong>pick a residual and a kernel</strong> — point-to-point, point-to-plane, and GICP are all in the residual selector — and compare iteration counts and pose errors.</p>
+    <p>Huber caps the magnitude of the scalar residual's influence, but convexity in a residual does not make the pose-and-association problem convex. Tukey can reject a pair completely, potentially discarding useful data when the starting pose is poor. Robust weights change the objective and can change its basin; they offer no global-registration guarantee. Compare the same residual with different weighting rules, keeping the scene and start fixed.</p>
     <div class="card"><canvas id="gicC" width="640" height="400" style="cursor:grab" aria-label="Point-to-plane and GICP demo: drag the orange scan, pick a residual, and run"></canvas></div>
     <div class="controls">
       <button class="primary" id="gicRun">Run</button>
@@ -251,18 +252,18 @@ input[type=range]{accent-color:var(--accent);width:140px}
       <span>pose error <b id="gicErr">–</b></span>
       <span>status <b id="gicStat">idle</b></span>
     </div>
-    <p class="fignote"><strong>Things worth trying.</strong> The default scene now opens on the hardest case — σ&nbsp;=&nbsp;0.10 noise <em>plus</em> 20% junk, from the far default start. Press Run and every residual loses: with <em>trim 25%</em> all three finish tens of degrees off, the rank-cut consensus latched onto junk; switch robustness to <em>Huber</em> and point-to-plane recovers to about a degree while the other two still wander. That is this section's closing lesson delivered up front: kernels and trimming protect the fit <em>inside</em> the basin, they do not widen it — drag the scan near the truth and the very same scene converges for every residual under every kernel, point-to-plane and GICP around 1–2° with point-to-point a little behind. Flip to <em>high noise</em> for the cleaner story the residuals were built for: point-to-point grinds for about forty iterations and still parks visibly short of the truth — the pose-error stat gives it away — while point-to-plane and GICP land on it in under twenty, their surface models averaging the noise out along the walls; there, point-to-point's parked bias is largely <em>trimming's</em> doing — under pure noise the "worst quarter" is honest data, and cutting it by rank tilts the fit; <em>Huber</em> (or even <em>none</em>: pure noise has nothing to reject) makes the bias all but disappear. On <em>clean</em>, point-to-point reaches the truth too, but the counts keep talking: about forty iterations of crabbing against point-to-plane's thirteen and GICP's nine. <em>Striped density</em> barely bothers any of them here (trimming plus structure absorb it; the race later in this note shows where that stops being true). And on <em>20% outliers</em> alone, from a close start, <em>none</em> lets the junk visibly drag GICP, <em>trim 25%</em> mostly fixes it, and <em>Huber</em>/<em>Tukey</em> do better still — a weight computed from the residual rejects junk more surgically than cutting a fixed quarter by rank. Robustness is a tool with a price, not a free upgrade.</p>
+    <p class="fignote"><strong>Try this:</strong> start close to the truth and compare point-to-point, point-to-plane, and GICP under clean data, then under noise and outliers. Repeat from a distant pose. Compare rotation and translation error, not iteration count alone. The same threshold or robust scale need not suit different residuals. Removing the largest distances under pure noise also discards genuine observations; whether that helps depends on sampling, overlap, and geometry.</p>
   </div>
 
   <!-- ============ Section 1: the transform ============ -->
   <div class="section" id="ndt">
     <p class="kicker">Rung four · correspondences dissolved</p>
-    <h2>NDT: trade points for sufficient statistics</h2>
-    <p>Every rung so far still trafficked in correspondences — an oracle's, a matcher's, or nearest-neighbor guesses remade each iteration, each paid for with a search against the raw reference cloud. The <strong>Normal Distributions Transform</strong> (Biber &amp; Straßer, 2003) dissolves them. Its observation: what the reference actually contributes to registration is <strong>local surface shape</strong>, and a Gaussian per cell captures exactly that. Subdivide the plane into square cells of side $h$; every cell $c$ holding at least three points gets the mean and covariance of its points,</p>
+    <h2>NDT: approximate local geometry with Gaussian cells</h2>
+    <p>NDT replaces raw target-point search with <strong>point-to-cell association</strong>. Each sufficiently populated grid cell is approximated by a Gaussian. The mean and covariance summarize that Gaussian model; they do not preserve arbitrary multimodal geometry inside the cell. Subdivide the plane into cells of side $h$. The teaching implementation keeps cells with at least three points and uses the maximum-likelihood covariance normalization $1/n_c$:</p>
     <div class="math">$$\mu_c=\frac{1}{n_c}\sum_{x_i\in c}x_i,\qquad \Sigma_c=\frac{1}{n_c}\sum_{x_i\in c}\big(x_i-\mu_c\big)\big(x_i-\mu_c\big)^{\!\top}.$$</div>
-    <p>The covariance <em>is</em> the local geometry: a cell on a straight wall gets a needle-shaped Gaussian — long along the wall, thin as the sensor noise across it — while a cell containing a corner gets a round blob. One degenerate case needs care: perfectly collinear points make $\Sigma_c$ singular, so the smaller eigenvalue is clamped to $0.001\,\lambda_{\max}$ before inverting (the demo does this too). The result is a piecewise-defined density that answers, for any location, "how likely is a surface point here?":</p>
-    <div class="math">$$p(x)\;\propto\;\exp\!\Big(\!-\tfrac12\,(x-\mu_c)^{\!\top}\Sigma_c^{-1}(x-\mu_c)\Big),\qquad c = \text{cell containing } x.$$</div>
-    <p>Below is a lidar scan of a room with a pillar, and its transform. <strong>Hover the cells</strong> to inspect each Gaussian: walls collapse into Gaussians exactly as thin as the sensor noise — generous in the default noisy-plus-junk scene, where a few stray cells also appear off the walls entirely; flip it to <em>clean</em> and they sharpen into needles — while corners become blobs. Then press <strong>Nudge grid</strong> a few times: the same points, binned with a shifted grid, give visibly different Gaussians. That discretization sensitivity is not cosmetic — it is the reason for a trick in step two.</p>
+    <p>A wall segment often yields an elongated covariance, whereas mixed surfaces may produce a broader one. These shapes depend on sampling and cell boundaries as well as sensor noise. The implementation discards nearly coincident cells ($\lambda_{\max}<10^{-9}$) and floors the other eigenvalue at $0.001\lambda_{\max}$ before inversion. Its cellwise exponential is an <strong>unnormalized alignment score</strong>, not a globally normalized probability density:</p>
+    <div class="math">$$a_c(x)\;=\;\exp\!\Big(\!-\tfrac12\,(x-\mu_c)^{\!\top}\Sigma_c^{-1}(x-\mu_c)\Big),\qquad c = \text{cell containing } x.$$</div>
+    <p>Hover over cells to inspect their fitted Gaussians. Change the noise and cell size, then nudge the grid without moving any points. The fitted map changes because the cell memberships change. A single Gaussian may blur a corner or merge unrelated surfaces; this is approximation error, not simply sensor uncertainty.</p>
     <div class="card"><canvas id="fldC" width="640" height="400" aria-label="The transform: reference scan, grid cells, and fitted Gaussian ellipses; hover to inspect a cell"></canvas></div>
     <div class="controls">
       <button id="fldNudge">Nudge grid (½ cell)</button>
@@ -283,14 +284,14 @@ input[type=range]{accent-color:var(--accent);width:140px}
       <span>cells dropped (&lt;3 pts) <b id="fldDropped">–</b></span>
       <span>hovered cell <b id="fldHover">–</b></span>
     </div>
-    <p class="fignote"><strong>Things worth trying.</strong> Shrink the cell size to 0.6: more, sharper Gaussians — a finer sculpture of the room, but each built from fewer points, and more cells dropped entirely. Push it to 2.4 and corners, walls, and the pillar melt together into fat blobs. Toggle the <em>density field</em> and look along a single wall: the density jumps at every cell border, because each location is explained by exactly one Gaussian. NDT's fidelity–smoothness dial is this one slider, and you will feel it again in both demos below.</p>
+    <p class="fignote"><strong>Try this:</strong> reduce $h$ to preserve finer structure, while watching sparse cells disappear. Increase $h$ and observe merged surfaces. The cellwise score can jump across boundaries because adjacent cells have different Gaussian parameters. Cell size changes representation, coverage, and optimization behavior; it is not a pure smoothing parameter.</p>
   </div>
 
   <!-- ============ Section 2: the score ============ -->
   <div class="section">
     <p class="kicker">Rung four · score a pose</p>
     <h2>Registration becomes function evaluation</h2>
-    <p>To register a new scan, transform its points $x_i$ by a candidate pose $p=(t_x,t_y,\varphi)$ with $T_p(x)=R(\varphi)\,x+t$, look up the one cell each transformed point lands in — an $O(1)$ cell lookup, where ICP does a nearest-neighbor search — and sum the density under the scan:</p>
+    <p>For this subsection only, $p=(t_x,t_y,\varphi)$ is a pose vector, not a source point. Transform scan points by $T_p(x)=R(\varphi)x+t$, perform a constant-time lookup per grid (under the usual hash-map assumption), and sum cell scores. Empty or discarded cells contribute zero. This chosen score omits Gaussian determinant factors; it is not a log-likelihood and alternative NDT formulations use different objectives.</p>
     <div class="math">$$s(p)\;=\;\sum_i\;\sum_{g=1}^{4}\exp\!\Big(\!-\tfrac12\,\tilde q_{ig}^{\;\top}\,\Sigma_{ig}^{-1}\,\tilde q_{ig}\Big),\qquad \tilde q_{ig}\;=\;T_p(x_i)-\mu_{ig},$$</div>
     <p>where $(\mu_{ig},\Sigma_{ig})$ is the Gaussian of the cell of grid $g$ that $T_p(x_i)$ falls into. The inner sum is Biber's answer to the discretization sensitivity you just saw: keep <strong>four copies of the grid, each shifted by half a cell</strong> horizontally, vertically, and both, and let every point be scored by all four cells it lands in. The shifted grids reduce sensitivity to individual cell boundaries, but their sum is not guaranteed to be continuous or globally analytic.</p>
     <p>The heatmap below is this score over candidate translations, rotation held at the slider value — dark is high. The green ring marks the true pose. <strong>Click anywhere to drop a start</strong>, and a translation-only Newton iteration (the next section's machinery, with $\varphi$ frozen) runs on the actual score function and draws its path.</p>
@@ -313,7 +314,7 @@ input[type=range]{accent-color:var(--accent);width:140px}
       <span>score at truth <b id="landTruth">–</b></span>
       <span>path <b id="landPath">click the map to start</b></span>
     </div>
-    <p class="fignote"><strong>Things worth trying.</strong> The default scene stacks σ&nbsp;=&nbsp;0.10 noise with 20% junk, and on this landscape the noise does all the talking — the junk only fills a few cells the ring never visits — so what you see is softened everywhere: wide gentle ridges and an easy stroll to the peak. And yet the path stat rarely reads zero, because with that noise in <em>both</em> scans the score's maximum genuinely sits a few hundredths of a unit off the true pose. That residual offset is the estimator's own noise bias, not a solver failure. Now flip the scene to <em>clean</em> at cell size 1.2 with a single grid: the landscape sharpens into a razor — thin dark ridges over wide flat shelves, terraced by cell borders. Click a start two cells from the ring and Newton stalls immediately — on a shelf the gradient is numerically zero, and no line search can fix a direction that does not exist. Turn on the four-grid sum: the terraces soften and the basin visibly widens — clean or noisy, it converts a good share of stalling starts into converging ones. Push cell size to 2.4: the peak broadens and clicks a full unit out stroll home, at the price of a blunter optimum — though the outermost corners of this map still win, because a straight wall's Gaussian stays only as thick as the sensor noise across it no matter how large the cell, so even a coarse grid has finite reach. Drag the rotation slider off zero and watch the whole mountain range decay: translation cannot repair a wrong rotation. This picture — sharp-but-narrow versus wide-but-blunt, set by one slider and by the sensor itself — is the entire art of tuning NDT.</p>
+    <p class="fignote"><strong>Try this:</strong> hold rotation fixed, move the translation start, and compare one grid with four shifted grids. The shifts reduce some boundary artifacts without guaranteeing continuity. Noise may broaden fitted Gaussians, but it can also corrupt the optimum; outliers can create distracting cells. An offset from ground truth in one noisy realization is estimation error, not evidence of statistical bias, which is an expectation over repeated data. Translation-only optimization cannot correct a rotation error.</p>
   </div>
 
   <!-- ============ Section 3: Newton ============ -->
@@ -325,7 +326,7 @@ input[type=range]{accent-color:var(--accent);width:140px}
     <p>and the translation derivatives are constant. Writing $f=-s$ (minimize the negative score), $s_i=\exp(-\tfrac12\tilde q_i^{\;\top}\Sigma_i^{-1}\tilde q_i)$ for each point–cell pair, and suppressing the sum over the four grids, the derivatives are</p>
     <div class="math">$$g_k=\frac{\partial f}{\partial p_k}=\sum_i s_i\;\tilde q_i^{\;\top}\Sigma_i^{-1}\,\frac{\partial \tilde q_i}{\partial p_k},$$</div>
     <div class="math">$$H_{k\ell}=\sum_i s_i\left[\frac{\partial \tilde q_i}{\partial p_\ell}^{\!\top}\!\Sigma_i^{-1}\frac{\partial \tilde q_i}{\partial p_k}\;+\;\tilde q_i^{\;\top}\Sigma_i^{-1}\frac{\partial^2 \tilde q_i}{\partial p_k\,\partial p_\ell}\;-\;\Big(\tilde q_i^{\;\top}\Sigma_i^{-1}\frac{\partial \tilde q_i}{\partial p_k}\Big)\Big(\tilde q_i^{\;\top}\Sigma_i^{-1}\frac{\partial \tilde q_i}{\partial p_\ell}\Big)\right],$$</div>
-    <p>a handful of dot products per point. Each iteration solves $(H+\lambda I)\,\Delta p=-g$, with $\lambda$ raised just enough to make $H$ positive definite when the surface is locally saddle-shaped, then backtracks along $\Delta p$ until the score improves. (The demo also caps a single step at half a unit and 0.2&nbsp;rad — an uncapped Newton jump can leap into a better-scoring wrong basin and strand there.) Inside the basin this homes in within a <strong>couple dozen capped steps</strong> — watch the score strip. The orange scan covers only part of the room. <strong>Drag and twist it</strong>, then run.</p>
+    <p>The code solves $(H+\lambda I)\Delta p=-g$, increases damping geometrically until Cholesky succeeds, caps the step, and accepts only a score improvement after backtracking. It is $H+\lambda I$, not necessarily $H$, that becomes positive definite. These are local safeguards, not a certificate of a maximum. Rotation is in radians and translation in world units; damping and step limits therefore depend on the parameter scaling.</p>
     <div class="card"><canvas id="regC" width="640" height="400" style="cursor:grab" aria-label="Full NDT registration: drag the orange scan to set the initial pose, then run Newton's method"></canvas></div>
     <div class="controls">
       <button class="primary" id="regRun">Run NDT</button>
@@ -350,38 +351,38 @@ input[type=range]{accent-color:var(--accent);width:140px}
       <span>pose error <b id="regErr">–</b></span>
       <span>status <b id="regStat">idle</b></span>
     </div>
-    <p class="fignote"><strong>Things worth trying.</strong> From the default pose on the default scene, plain Run now fails honestly: noise-fattened Gaussians <em>plus</em> 20% junk leave the 1.2-unit basin just short of the start, and the solver freezes a short walk from the truth while calling itself converged — <em>compare the score stat against the truth score</em>; a stall like this scores a fraction of it, which is exactly how a real system flags a failed registration. Press <strong>Coarse → fine</strong>: the same start is first pulled in by a 2.4-unit grid's wide basin, then polished at your slider's resolution — the standard NDT recipe, and on this scene not a refinement but a necessity. Flip to <em>high noise</em> alone and plain Run lands in about fifteen iterations — worth doing once to feel exactly how much difficulty the junk adds. It is not magic, though: twist the scan past ±40° and even the coarse grid hands you a confidently wrong pose. At cell size 0.6 the basin is a razor (drag the scan a few pixels and Run fails); at 2.4 it forgives sloppy starts but the final pose error stat reads visibly worse. One slider, both failure modes. The scene selector reshapes the transform itself: <em>high noise</em> fattens every wall Gaussian and — counterintuitively — <em>widens</em> the basin (24/40 hard starts converge under noise against 15/40 clean, in the study behind this demo) at the price of a blunter, slightly biased peak; <em>outliers</em> alone barely dent it, because junk points just make a few extra cells the true alignment never visits — but stacked on noise they shave the basin's edge, which is precisely what the default start now sits just outside of.</p>
+    <p class="fignote"><strong>Try this:</strong> compare Run with Coarse → fine from the same pose, then change cell size or rotation. A schedule can improve reach but cannot guarantee the correct basin, and changing the grid changes the objective. No improving tested step, a tiny gradient, or an iteration cap means <strong>stopped</strong>, not necessarily aligned. The truth score is available only in this synthetic demo. Real systems need overlap, consistency, observability, and independent verification checks; there is no universal NDT angular capture range.</p>
   </div>
 
   <!-- ============ taxonomy ============ -->
   <div class="section" id="families">
     <p class="kicker">The wider field · the contestants</p>
     <h2>Three answers to one question: what stands in for the matches?</h2>
-    <p>The rungs above climbed one ladder — ever more structure per match, until the matches dissolved. The wider field contains whole other ladders. <strong>MMD-Reg</strong> (Crane et&nbsp;al., ICML&nbsp;2026) benchmarks three families of registration methods — hard-correspondence ICP variants, soft-correspondence probabilistic methods, and its own correspondence-<em>free</em> objective — under noise, skewed sampling density, and outliers. The rest of this note is a faithful 2-D miniature of that comparison, run live on one shared problem, so you can watch <em>where</em> and <em>why</em> the families part ways.</p>
+    <p>The following comparison is inspired by the registration families studied in <a href="https://arxiv.org/abs/2606.27818">MMD-Reg (Crane et al., 2026)</a>. Its geometry, noise, dimensionality, solvers, and tuning are different. Treat the browser race as a controlled teaching experiment, <strong>not a reproduction of the paper's benchmarks</strong>.</p>
     <p>Every local registration method minimizes some misalignment measure between a transformed source cloud and a target cloud. Since true correspondences are unknown, each family substitutes something for them — and that substitution is the method. <strong>Hard-correspondence</strong> methods commit to one nearest neighbor per point and re-decide each iteration. <strong>Soft-correspondence</strong> methods let every source point fractionally match every target point, weighted by a probabilistic model. <strong>Correspondence-free</strong> MMD-Reg matches no points at all: it compares the two clouds as <em>distributions</em>, through the distance between their kernel mean embeddings.</p>
     <table class="cmp">
       <thead><tr><th>Method (demo)</th><th>Stands in for matches</th><th>Cost per iteration</th><th>Smooth?</th></tr></thead>
       <tbody>
-        <tr><td><b><span class="swatch" style="background:var(--accent)"></span>ICP point-to-point</b></td><td>hard nearest neighbor, re-assigned each iteration</td><td>NN search — $O(m\log n)$ with a k-d tree</td><td>no — assignments flip discretely</td></tr>
-        <tr><td><b><span class="swatch" style="background:var(--blue)"></span>ICP point-to-plane</b></td><td>hard NN, residual projected on the target normal</td><td>NN search + normals</td><td>no — same flips, faster basin</td></tr>
-        <tr><td><b><span class="swatch" style="background:var(--good)"></span>Soft assignment (CPD-style)</b></td><td>all pairs, Gaussian-weighted, width from EM or a schedule + outlier bin</td><td>$O(mn)$ naive — the family's burden; FilterReg filters those sums down to near-linear</td><td>yes — EM on a mixture</td></tr>
+        <tr><td><b><span class="swatch" style="background:var(--accent)"></span>ICP point-to-point</b></td><td>hard nearest neighbor, re-assigned each iteration</td><td>typically $O(m\log n)$ with an index; demo uses brute force</td><td>piecewise smooth; assignment switches may be nonsmooth</td></tr>
+        <tr><td><b><span class="swatch" style="background:var(--blue)"></span>ICP point-to-plane</b></td><td>hard NN, residual projected on the target normal</td><td>NN search + normals</td><td>smooth for fixed matches/normals; switching can be nonsmooth</td></tr>
+        <tr><td><b><span class="swatch" style="background:var(--good)"></span>Annealed soft targets (toy)</b></td><td>Gaussian soft targets with scheduled width and a heuristic miss score</td><td>$O(mn)$ naive — the family's burden; FilterReg filters those sums down to near-linear</td><td>smooth fixed-bandwidth Gaussian model; demo uses a schedule</td></tr>
         <tr><td><b><span class="swatch" style="background:var(--violet)"></span>MMD-Reg</b></td><td>nothing — distance between feature-space means</td><td>$O((m+n)D)$, linear in points</td><td>yes — smooth least squares</td></tr>
       </tbody>
     </table>
-    <p>The last two rows are the unfamiliar ones, and each gets its own section before the race: the soft family's mixture machinery first, then MMD-Reg's mean embeddings. The race then runs all of them — with RANSAC, GICP, and NDT from the ladder as controls, and two data-association transplants from target tracking as guests — so you know exactly what each panel is spending. A fourth answer — <em>generate</em> the registered scene outright and read the poses off afterwards — arrived with flow matching in late 2025, and waits at the end of the race's reading. And the note closes by putting the three classical families' champions through their loops <em>stage by stage</em> on one scene, ending in a single design table.</p>
+    <p>Read the next sections for soft assignments and mean embeddings, then use the race to compare their simplified implementations. RANSAC, GICP, and NDT provide additional examples. Two experimental panels transplant one-to-one association ideas from tracking; neither establishes that a tracking filter is a suitable point-cloud registration method. The final walkthrough adds a learned-flow analogy.</p>
   </div>
 
   <!-- ============ the soft family: CPD & FilterReg ============ -->
   <div class="section" id="soft">
     <p class="kicker">The wider field · the soft family</p>
     <h2>Soft assignment: registration as mixture fitting</h2>
-    <p>The founding move of the soft family is to stop asking <em>which</em> target point each source point matches and ask instead: if the moving cloud were a probability density, how likely would the fixed cloud be? <strong>Coherent Point Drift</strong> (Myronenko &amp; Song, TPAMI&nbsp;2010) makes the construction concrete. Put a Gaussian of width $\sigma$ on every transformed source point $\mathcal T(y_m)$, so the moving cloud becomes a mixture of $M$ equal-weight components; add one flat uniform component with weight $w$ to own the junk; then choose the transform that maximizes the likelihood of the $N$ target points $x_n\in\mathbb R^{d}$ as a sample from that mixture. Expectation–maximization (EM) solves it, and since the whole family lives inside that loop, it is worth spelling out once. The unknown correspondences are the latent variables. The <strong>E-step</strong> (expectation) freezes the transform and computes, for every target point, the posterior probability that each mixture component generated it — not a decision about who matches whom, but a distribution over the possibilities. The <strong>M-step</strong> (maximization) freezes those probabilities — the <em>responsibilities</em> — and re-fits the transform that best explains the points weighted by them. Alternate until nothing moves; each round is guaranteed not to decrease the likelihood, which is EM's whole contract. And the E-step's output is precisely the object the family is named for — a soft assignment over every pair:</p>
-    <div class="math">$$P(m\mid x_n)\;=\;\frac{\exp\!\big(-\tfrac{1}{2\sigma^2}\lVert x_n-\mathcal T(y_m)\rVert^2\big)}{\displaystyle\sum_{k=1}^{M}\exp\!\big(-\tfrac{1}{2\sigma^2}\lVert x_n-\mathcal T(y_k)\rVert^2\big)\;+\;(2\pi\sigma^2)^{d/2}\,\tfrac{w}{1-w}\,\tfrac{M}{N}}.$$</div>
-    <p>Read the denominator as two competing explanations: either some Gaussian claims the target point, or the flat term does — and a point far from everything quietly hands its mass to the outlier bin and stops voting. The M-step is rung one wearing weights: with responsibilities fixed, the best rotation comes from an SVD of the responsibility-weighted cross-covariance $\hat X^{\!\top}P^{\!\top}\hat Y$, det-corrected exactly like Kabsch — Myronenko &amp; Song point out this exact weighted multidimensional solution had not been derived before them (earlier attempts dropped terms). Then the detail that defines the method: <strong>$\sigma^2$ gets its own closed-form update</strong> from the same likelihood. It starts wide — every pair sees every pair, the basin is broad — and tightens as the fit improves, sharpening the assignment automatically. The family's ancestors, Gold &amp; Rangarajan's <strong>Softassign</strong> and Chui &amp; Rangarajan's <strong>RPM</strong>, ran the same soften-then-sharpen loop with an explicit temperature schedule and Sinkhorn normalization; CPD's argument is that maximum likelihood already knows the schedule — "it is preferable to estimate $\sigma^2$ instead of using deterministic annealing." The zero-noise limit needs a qualification: with no outlier component and a unique nearest neighbor, responsibilities concentrate on that neighbor as $\sigma\to0$. With a positive outlier weight, this nearest-neighbor limit applies only conditional on an inlier assignment. At fixed nonzero distances to every Gaussian center, all unconditional inlier responsibilities instead tend to zero and the outlier probability tends to one.</p>
-    <p>One aside on the name, because this note stays rigid: the "coherent" refers to CPD's non-rigid variant, where the transform becomes a smoothly regularized displacement field and nearby points are made to drift together — a story set aside here. In the rigid case the loop above is the whole algorithm: responsibilities, weighted SVD, $\sigma^2$ update, repeat. What remains of the scale question is the E-step's all-$MN$-pairs sum, and the paper's own remedy — a fast Gauss transform — already made it effectively linear (36k-point bunny: 3.5 hours naive, 51 seconds with FGT), a decade before that became table stakes.</p>
-    <p><strong>FilterReg</strong> (Gao &amp; Tedrake, CVPR&nbsp;2019) is the same probabilistic sentence spoken nine years later, re-engineered end to end — and each change is a decision about where the compute goes. First it flips the mixture: the Gaussians sit on the <em>fixed</em> cloud and the <em>moving</em> cloud plays the data, so the sums run over points that never move and the spatial index is built once — where CPD's centroids drag their index along every EM iteration. Second, it notices that the E-step <em>is</em> a Gaussian blur: everything the M-step needs are two filtered moments of the fixed cloud — around each moving point, the Gaussian-weighted mass $M^0$ and mean $M^1$ — so a permutohedral-lattice filter (splat, blur, slice: the machinery of fast bilateral image filtering) delivers the E-step in linear time, with another 8× from a GPU. Third, it abandons the closed form CPD was proud of: the M-step is Gauss–Newton on a twist $\zeta\in\mathfrak{se}(3)$, which for a single rigid body merely approximates what the SVD solves exactly. The trade is generality — the same per-point Jacobian extends unchanged past the single rigid body (articulated chains, deformable node graphs; outside this note's rigid scope) — and, staying rigid, it buys one concrete thing: a point-to-plane residual drops straight into EM via filtered normals, which no closed form accommodates. On $\sigma$ it is agnostic: fix it and keep the index truly static, or run CPD's closed-form update and converge in fewer sweeps.</p>
-    <p>Measured on the same 3&nbsp;500-point bunny, 50° off, the reversal buys two orders of magnitude — 38&nbsp;ms against reference CPD's 6.1&nbsp;s, with robust ICP between them at 218&nbsp;ms (CPD's own FGT variant closes part of that gap; all of it paper-specific 2019 hardware, not a law of nature). The fair reading is not that CPD was slow but that the family's costs turned out to be engineering, not physics: the robustness lives in the mixture-plus-uniform model, which both share — the quadratic E-step and the bespoke M-step were negotiable. One branch of the family took a different exit entirely: <strong>GMMReg</strong> (Jian &amp; Vemuri) fits mixtures to <em>both</em> clouds and minimizes the closed-form $L_2$ distance between the two densities — no EM, no assignments even soft ones — and <strong>SVR</strong> sparsifies those mixtures with support vectors. Compare the clouds as distributions and skip correspondence altogether: that is the next section's move, made with kernels instead of fitted mixtures. (The full three-way ledger — CPD against FilterReg against MMD-Reg, row by row — closes the note.)</p>
-    <p class="fignote"><strong>Where this runs below.</strong> In the race, the green panel is this section at demo scale: Gaussian responsibilities over all pairs, the uniform outlier bin, a responsibility-weighted Kabsch M-step. One honest simplification — its σ follows an RPM-style fixed schedule (×0.90 per iteration) rather than CPD's closed-form update; at demo size the two behave alike, and the naive quadratic E-step is affordable precisely because there are only a few hundred points.</p>
+    <p>CPD places Gaussian mixture components at transformed source points $\mathcal T(y_m)$ and treats fixed points $x_n$ as observations. Here $M$ is the source count, $N$ the target count, $w\in[0,1)$ the outlier-mixture weight, and $\sigma$ the isotropic Gaussian standard deviation. With a uniform clutter density $1/V$ inside an observation window of volume $V$, posterior responsibilities are as follows. An exact E-step and an M-step that increases the auxiliary objective cannot decrease the likelihood of a <em>fixed model</em>. Changing a bandwidth by schedule, approximate filtering, or an unchecked linearized step does not automatically retain that guarantee.</p>
+    <div class="math">$$P(m\mid x_n)\;=\;\frac{\exp\!\big(-\tfrac{1}{2\sigma^2}\lVert x_n-\mathcal T(y_m)\rVert^2\big)}{\displaystyle\sum_{k=1}^{M}\exp\!\big(-\tfrac{1}{2\sigma^2}\lVert x_n-\mathcal T(y_k)\rVert^2\big)\;+\;(2\pi\sigma^2)^{d/2}\,\tfrac{w}{1-w}\,\tfrac{M}{V}}.$$</div>
+    <p>Each target point divides probability between Gaussian components and the outlier component. The displayed formula uses a spatial density $1/V$; CPD's original $1/N$ convention instead yields $M/N$ in the final denominator term. With fixed responsibilities, the rigid or similarity M-step is weighted Procrustes. CPD can also update $\sigma^2$ by maximum likelihood. This update is <strong>not a prescribed annealing schedule and need not decrease at every iteration</strong>. As $\sigma\to0$, a unique nearest component dominates conditional on an inlier assignment. With positive clutter density and nonzero distances, unconditional inlier probabilities can instead vanish.</p>
+    <p>CPD supports rigid, similarity, and non-rigid formulations. The non-rigid variant introduces a smooth displacement regularizer. The walkthrough below enables a similarity scale $s$; rigid CPD fixes $s=1$. A naive E-step costs $O(MN)$, but storing the whole matrix is not necessary: sufficient sums can be accumulated in blocks, and Gaussian-transform approximations can accelerate them. The full matrix is retained here to visualize the assignments.</p>
+    <p>FilterReg puts Gaussian components on the fixed cloud and queries them with moving points. Gaussian-weighted mass and first moments provide a soft target and confidence for each query; additional moments support variance updates and other residuals. A customized permutohedral-lattice filter accelerates these sums, and a twist-based Gauss–Newton M-step supports rigid, articulated, or deformable models. <strong>FilterReg can optimize isotropic variance analytically</strong> (Section 3.3 of the paper). Fixing the bandwidth allows index reuse; changing it can require rebuilding the filter. Approximate filtering and linearized steps must be distinguished from exact EM.</p>
+    <p>Runtime comparisons depend on point count, implementation, bandwidth, hardware, and stopping criteria; the browser demos are not timing reproductions of the original papers. <strong>GMMReg</strong> takes a different route: fit mixtures to both clouds and minimize their $L_2$ density distance. It is distribution matching, not a CPD-like soft-correspondence E-step. Both this construction and kernel mean embeddings compare distributions, but their parameterizations and objectives differ.</p>
+    <p class="fignote"><strong>Implementation boundary.</strong> The race's green panel is an annealed Gaussian soft-target heuristic, not full CPD. It normalizes each moving point's target weights with a constant score offset 0.12, rejects low-support rows, and applies weighted Kabsch. The offset is not a fixed outlier probability: its effective weight changes with bandwidth and point count. Its source/target normalization is also opposite to the CPD formula above. The final walkthrough, rather than this race panel, implements similarity CPD's variance update.</p>
   </div>
 
   <!-- ============ MMD math ============ -->
@@ -390,18 +391,18 @@ input[type=range]{accent-color:var(--accent);width:140px}
     <h2>What MMD-Reg actually minimizes</h2>
     <p>GMMReg ended the last section comparing two <em>fitted</em> densities; MMD-Reg keeps the density view and drops the fitting — no mixture is estimated, the clouds enter directly. Maximum Mean Discrepancy embeds a distribution $P$ into a reproducing kernel Hilbert space by averaging the kernel's feature map, $\mu_P=\mathbb{E}_{x\sim P}[k(x,\cdot)]$, and measures the distance between two distributions as the distance between their embeddings:</p>
     <div class="math">$$\mathrm{MMD}^2(P,Q)=\lVert \mu_P-\mu_Q\rVert_{\mathcal H}^2 .$$</div>
-    <p>For a characteristic kernel this is zero only when $P=Q$, so it compares <em>whole densities</em>, not just a few moments. Estimated on point clouds it needs every pairwise kernel evaluation — quadratic cost. The paper's trick is Rahimi–Recht <strong>random Fourier features</strong>: sample $D$ frequencies $\omega_k\sim\mathcal N(0,\ell^{-2}I)$ and map each point to</p>
+    <p>For a characteristic kernel, exact population MMD vanishes only when the two probability measures agree; densities need not exist. Point clouds define empirical measures, which can differ because of sampling density, partial overlap, or outliers even at the correct pose. Exact pairwise evaluation is quadratic. Random Fourier features approximate the Gaussian kernel by sampling $D$ frequencies $\omega_k\sim\mathcal N(0,\ell^{-2}I)$:</p>
     <div class="math">$$z(x)=\tfrac{1}{\sqrt D}\big[\cos(\omega_k^{\!\top}x),\ \sin(\omega_k^{\!\top}x)\big]_{k=1}^{D}\in\mathbb R^{2D},\qquad k(x,y)\approx z(x)^{\!\top}z(y),$$</div>
     <p>so the squared MMD becomes the squared distance between two <strong>feature means</strong> — one pass over each cloud, linear in the number of points. Registration is then the nonlinear least-squares problem — here $X$ is the moving cloud and $Y$ the fixed one, the reverse of CPD's lettering —</p>
     <div class="math">$$F(\theta)=\big\lVert \hat\mu_{T_\theta(X)}-\hat\mu_Y\big\rVert_2^2=\sum_{k=1}^{2D} r_k(\theta)^2,$$</div>
-    <p>handed to Levenberg–Marquardt. Two knobs matter. The kernel scale $\ell$ sets what the objective can see: <strong>large $\ell$ gives a wide, smooth, forgiving basin; small $\ell$ gives a sharp, accurate, narrow one</strong> — so standalone MMD-Reg runs a decreasing $\ell$-schedule, coarse to fine (the paper uses $\ell$ from 4.0 down to 0.25 on outdoor LiDAR). The feature count $D$ sets how faithfully the random surrogate approximates the true MMD: small $D$ is fast but noisy, large $D$ smooth but slower. Implicit differentiation requires more than stationarity. Let $\mathcal D$ denote the input clouds and suppose $F(\theta,\mathcal D)$ is twice continuously differentiable with a nonsingular pose Hessian at the selected local optimum. Then the implicit function theorem gives $\partial\theta^\star/\partial\mathcal D=-[\nabla^2_{\theta\theta}F]^{-1}\nabla^2_{\theta\mathcal D}F$, evaluated there. Gauge freedom, degeneracy, or switching between minima can invalidate this local derivative. Under these conditions, Neural MMD-Reg can differentiate through its solver.</p>
+    <p>Levenberg–Marquardt optimizes this nonconvex residual. Larger $\ell$ often makes a broader alignment signal; smaller $\ell$ can resolve detail, but neither choice guarantees accuracy or a particular basin. A scale schedule changes the objective between stages. Every finite-$D$ feature objective is smooth; more frequencies improve approximation fidelity, not differentiability. Its $2D$-dimensional embedding is not itself characteristic. For an isolated selected optimum and a nonsingular pose Hessian, the implicit function theorem gives $\partial\theta^\star/\partial\mathcal D=-[\nabla^2_{\theta\theta}F]^{-1}\nabla^2_{\theta\mathcal D}F$. This local derivative can fail at degeneracy or when the selected minimum switches.</p>
   </div>
 
   <!-- ============ demo 1: the race ============ -->
   <div class="section">
     <p class="kicker">The wider field · the race</p>
     <h2>Same scans, same start — nine solvers</h2>
-    <p>Two partially-overlapping scans of the same room, misaligned by the sliders' rotation and offset. Each panel runs its own solver on identical data. Alongside the paper's four contestants, three rungs from the ladder above race as controls: <strong>RANSAC</strong> samples two-point congruences over the whole map and polishes with rung one's closed form — as a global method it never reads the init sliders at all; <strong>GICP</strong> is the hard family's covariance-weighted upgrade; and <strong>NDT</strong> runs rung four's damped Newton on a four-grid transform of the target, with its standard coarse-to-fine cell schedule. Two more panels are transplants from a neighboring field: registration's correspondence problem <em>is</em> a data-association problem, and target tracking has its own answers. <strong>BP</strong> computes association marginals by belief propagation on the bipartite match graph — every source point may claim at most one target point and vice versa, a mutual-exclusion constraint the CPD-style E-step simply does not have — and <strong>PMBM</strong> keeps a small weighted mixture of one-to-one <em>global</em> assignment hypotheses and, to feed the shared M-step, collapses them to per-pair weights — strictly a TOMB/MOMB-style marginalization; the real filter's defining trait is that it carries the mixture forward instead. Both are grafted onto the green panel's exact scaffold — same annealed σ, same 0.12 miss mass, same weighted-Kabsch M-step — so whatever separates them from the soft assigner is the association rule alone. (The two are compared on their home turf in the <a href="/bp-vs-pmbm/">BP vs PMBM note</a>; the PMBM here is a flavor, not the filter — ranked hypotheses by randomized greedy sweeps, no Bernoulli bookkeeping.) The stress settings recreate the paper's PCPNet conditions: <strong>high noise</strong> perturbs every point, <strong>gradient density</strong> smoothly over-samples one end of the room, <strong>striped density</strong> alternates dense and sparse bands, and <strong>outliers</strong> replaces a fifth of each cloud with uniform junk — and the default, <strong>noise + outliers</strong>, stacks the first and last into the meanest of the lot. Watch who cares about which.</p>
+    <p>All nine panels receive the same seeded clouds. Local methods receive the same initial pose; RANSAC's geometric pair-congruence search ignores it. GICP uses frozen-covariance steps, NDT uses a coarse-to-fine grid schedule, and MMD uses a random-feature scale schedule. The <strong>BP</strong> panel approximates one-to-one association marginals. The <strong>hypothesis-mixture toy</strong> samples randomized greedy one-to-one assignments and averages their pair weights. It is <strong>not PMBM</strong>: there are no Poisson components, Bernoulli existence updates, or propagated multi-object posterior. Both association toys share a heuristic miss score of 0.12 with the soft-target panel. One-to-one landmark constraints need not model independently sampled surface points. Noise, density, and outlier controls create illustrative stresses, not the paper's PCPNet datasets.</p>
     <div class="controls">
       <button class="primary" id="raceRun">Run all</button>
       <button id="raceStep">Step all</button>
@@ -423,13 +424,13 @@ input[type=range]{accent-color:var(--accent);width:140px}
     <div class="grid2">
       <div class="card cell"><h3><span class="swatch" style="background:var(--accent)"></span>ICP point-to-point</h3><canvas id="cvPt" width="320" height="230" style="aspect-ratio:320/230" aria-label="ICP point-to-point panel"></canvas><div class="mstat" id="stPt"></div></div>
       <div class="card cell"><h3><span class="swatch" style="background:var(--blue)"></span>ICP point-to-plane</h3><canvas id="cvPl" width="320" height="230" style="aspect-ratio:320/230" aria-label="ICP point-to-plane panel"></canvas><div class="mstat" id="stPl"></div></div>
-      <div class="card cell"><h3><span class="swatch" style="background:var(--good)"></span>Soft assignment (CPD-style)</h3><canvas id="cvSa" width="320" height="230" style="aspect-ratio:320/230" aria-label="Soft assignment panel"></canvas><div class="mstat" id="stSa"></div></div>
+      <div class="card cell"><h3><span class="swatch" style="background:var(--good)"></span>Annealed soft targets (toy)</h3><canvas id="cvSa" width="320" height="230" style="aspect-ratio:320/230" aria-label="Soft assignment panel"></canvas><div class="mstat" id="stSa"></div></div>
       <div class="card cell"><h3><span class="swatch" style="background:var(--violet)"></span>MMD-Reg (RFF + LM)</h3><canvas id="cvMd" width="320" height="230" style="aspect-ratio:320/230" aria-label="MMD-Reg panel"></canvas><div class="mstat" id="stMd"></div></div>
       <div class="card cell"><h3><span class="swatch" style="background:#B8860B"></span>RANSAC (global two-point)</h3><canvas id="cvRa" width="320" height="230" style="aspect-ratio:320/230" aria-label="RANSAC panel"></canvas><div class="mstat" id="stRa"></div></div>
       <div class="card cell"><h3><span class="swatch" style="background:#2F8F83"></span>GICP (plane-to-plane)</h3><canvas id="cvGi" width="320" height="230" style="aspect-ratio:320/230" aria-label="GICP panel"></canvas><div class="mstat" id="stGi"></div></div>
       <div class="card cell"><h3><span class="swatch" style="background:#5A6B7A"></span>NDT (Newton, coarse→fine)</h3><canvas id="cvNd" width="320" height="230" style="aspect-ratio:320/230" aria-label="NDT panel"></canvas><div class="mstat" id="stNd"></div></div>
       <div class="card cell"><h3><span class="swatch" style="background:#C2588C"></span>BP data association</h3><canvas id="cvBp" width="320" height="230" style="aspect-ratio:320/230" aria-label="BP data association panel"></canvas><div class="mstat" id="stBp"></div></div>
-      <div class="card cell"><h3><span class="swatch" style="background:#7E8B3A"></span>PMBM data association</h3><canvas id="cvPm" width="320" height="230" style="aspect-ratio:320/230" aria-label="PMBM data association panel"></canvas><div class="mstat" id="stPm"></div></div>
+      <div class="card cell"><h3><span class="swatch" style="background:#7E8B3A"></span>Hypothesis mixture (toy)</h3><canvas id="cvPm" width="320" height="230" style="aspect-ratio:320/230" aria-label="Hypothesis mixture (toy) panel"></canvas><div class="mstat" id="stPm"></div></div>
     </div>
     <div class="card" style="margin-top:10px">
       <canvas id="cvChart" width="640" height="200" style="aspect-ratio:640/200" aria-label="Rotation error versus iteration for all nine solvers"></canvas>
@@ -439,7 +440,7 @@ input[type=range]{accent-color:var(--accent);width:140px}
       <span><span style="width:9px;height:9px;border-radius:50%;background:currentColor;display:inline-block;color:var(--accent)"></span>source scan, colored per method</span>
       <span>chart: rotation error (°, log scale) per iteration</span>
     </div>
-    <p>The stats under each panel are the field's standard evaluation pair — <strong>RRE</strong>, the rotation error against ground truth, and <strong>RTE</strong>, the translation error — plus iterations spent. But a single run is an anecdote: the paper's protocol, like every registration benchmark's, is <em>distributions</em> — medians and success rates over many draws. The button below reruns all nine solvers over 25 seeded scenes at whatever setting and start the controls show, and fills the table with median RRE, median RTE, the success rate at a 5° threshold, and median iterations-to-stop; at the defaults it reproduces the fignote's success counts exactly. One honest asterisk: RRE and RTE exist here because the scene is synthetic — we own the truth. A deployed system does not, and must judge a match from the inside: residual RMS and inlier fraction for the ICP family and RANSAC, the mass in the outlier bin for soft assignment, a score threshold for NDT (the registration demo above flags a stall by comparing against the truth score — a luxury of simulation; deployed NDT settles for thresholds and consistency checks), and the size of the residual objective for MMD. Every one of those internal signals can be fooled — a confident local minimum scores well on all of them — which is why loop-closure pipelines verify registrations independently before trusting them. And the code is not sealed inside this page: every solver here, the scene generator, and this exact benchmark protocol live as readable modules in the <a href="https://github.com/BaiLiping/frame-registration-demos" target="_blank" rel="noopener">companion repository</a> — clone it and <code>node benchmark.js</code> reproduces the table below.</p>
+    <p>The panels report relative rotation error (RRE) and relative translation error (RTE) against known synthetic truth. The benchmark runs 25 seeds $40+13k$, $k=0,\ldots,24$, with the current controls and a 70-step cap. It reports medians, rotation-only counts, and <strong>joint success: RRE &lt; 5° and RTE &lt; 0.2 world units</strong>. These are demo thresholds, not a standardized benchmark. A finite run is not a universal ranking, and capped iterations are not time measurements. Real systems lack ground truth: use overlap, residuals, conditioning, motion consistency, and independent validation rather than interpreting a low objective as proof. The inline solvers and the regression tests in the website repository are the source for this reviewed version; the separate companion repository may differ.</p>
     <div class="card" style="margin-top:10px">
       <div class="controls" style="margin-bottom:8px">
         <button class="primary" id="benchRun">Benchmark 25 seeds</button>
@@ -447,17 +448,17 @@ input[type=range]{accent-color:var(--accent);width:140px}
         <span class="slider">status <b id="benchStat">not run yet</b></span>
       </div>
       <table class="cmp" style="margin:0">
-        <thead><tr><th>Solver</th><th>median RRE</th><th>median RTE</th><th>success &lt;5°</th><th>median iters</th></tr></thead>
-        <tbody id="benchBody"><tr><td colspan="5">press the button — some ten seconds of compute, live in this tab</td></tr></tbody>
+        <thead><tr><th>Solver</th><th>median RRE</th><th>median RTE</th><th>rotation &lt;5°</th><th>joint &lt;5° / &lt;0.2 u</th><th>median iters</th></tr></thead>
+        <tbody id="benchBody"><tr><td colspan="6">press the button — some ten seconds of compute, live in this tab</td></tr></tbody>
       </table>
     </div>
-    <p class="fignote"><strong>Things worth trying</strong> (each behavior below is what this demo actually measures across seeds, not a promise for every draw). The default setting stacks noise on 20% junk, and one Run usually sorts the families on sight: across 25 seeded scenes at the 45° start, point-to-point finishes under 5° of rotation error on 11, point-to-plane on 14, the soft assigner on 16 — when it lands it lands cleanly, median about 1°; when it loses, the junk has captured its mixture — and MMD on all 25. The ladder's controls read differently. <strong>GICP</strong> matches the soft family's sturdiness — 19 of 25, median 1.4° — its combined covariances discounting exactly the junk-against-wall votes that capture plain ICP (the paper's harsher 3-D benchmark, Figure&nbsp;4, is less kind to it). <strong>NDT</strong> lands only 6 of 25, and it is not the junk's fault but the rotation's: its basin ends near ±40°, and from a ±15° init it lands 21 of 25 with coarse-to-fine doing the rest; slide <em>init offset</em> to 3&nbsp;u instead and it dies outright — even a 2.4-cell coarse grid has finite reach. And <strong>RANSAC</strong> is the panel the sliders cannot touch: rotation and offset anywhere, identical answer — median ≈2.6°, rough but basin-safe, though on a few seeds it flips onto the room's near-symmetry, which is why a global stage's answer wants verification, not trust. That three-way split is the outro's production recipe drawn live: a global stage that ignores the init, local stages that polish inside its basin. The two tracking transplants then split the association question itself open. <strong>BP</strong> is the best pure upgrade on the board: the green panel's exact scaffold, but its exclusivity marginals hold 20 of 25 on the default against the soft assigner's 16, and 21 on <em>20% outliers</em> — junk finds it harder to share a match an honest point has already claimed. <strong>PMBM</strong> is the specialist: on the default it collapses (1 of 25 — hard one-to-one hypotheses amputate the long-range diffusion a cold 45° start needs, the locality that tracking's prediction step and gating normally supply), but flip to <em>striped density</em> and the hypothesis mixture is the only association rule left standing on the soft scaffold — 21 of 25 at median 0.16°, against zero for both the soft assigner and BP — because a duplicated point cannot vote twice inside a one-to-one global hypothesis, and BP's softer exclusivity-in-expectation turns out not to be enough. Association rules have regimes. Flip the setting to <em>clean</em> at the default 45° start and the four paper contestants land — hard correspondences are unbeatable when they are right. Switch to <em>striped density</em>: point-to-point <em>and</em> the soft assigner usually get captured by the dense bands — a duplicated point is another vote, whether the vote is hard or Gaussian-weighted — while point-to-plane slides along the walls and MMD's distributional view mostly shrugs (BP falls with the soft assigner here; PMBM stands, as above). On <em>20% outliers</em> the finishing order tends to follow the paper's Figure&nbsp;4: the hard-correspondence panels latch onto junk most readily (point-to-point most often across seeds, though on some draws point-to-plane is the casualty), soft assignment is sturdier, MMD degrades most gracefully. On <em>gradient density</em>, watch MMD's RTE instead of its RRE: the rotation is fine but the translation acquires a systematic bias, because with partial overlap the density-weighted feature mean of the source shifts relative to the target's — an honest limitation of mean-embedding objectives (the paper's benchmark uses fully overlapping supports, and Neural MMD-Reg learns per-point overlap weights precisely to cancel this). Finally push the init to ±60°: nearly everyone dies — amusingly, vanilla point-to-point holds the widest basin on clean data — because every panel but RANSAC's is a local method, which is exactly why the paper pairs MMD-Reg with coarse kernel scales or a learned initializer, and why real pipelines put a global stage first.</p>
+    <p class="fignote"><strong>Try this:</strong> benchmark one setting, change only the starting rotation, and benchmark again. Compare both error coordinates and the joint count. Then vary overlap-related sampling, noise, and outliers separately. Changes can reflect model mismatch, optimization, or random-feature approximation; the leaderboard alone cannot identify the cause. These particular implementations and fixed budgets do not establish an ordering of the published methods.</p>
   </div>
 
   <!-- ============ demo 2: the landscape ============ -->
   <div class="section">
     <p class="kicker">The wider field · the landscape</p>
-    <h2>Why smoothness is the whole argument</h2>
+    <h2>Objective smoothness is not a convergence guarantee</h2>
     <p>This heatmap is the objective itself, evaluated over candidate translations (rotation held at the truth): dark is low. <strong>Click anywhere to drop a start point</strong> and the matching optimizer runs — Levenberg–Marquardt on the MMD surface, translation-only gated ICP on the nearest-neighbor surface. Toggle between the two objectives and move the sliders: this is the difference the paper is built on, drawn as terrain.</p>
     <div class="card"><canvas id="cvLand" width="640" height="420" style="aspect-ratio:640/420;cursor:crosshair" aria-label="Objective landscape over translations; click to run the optimizer"></canvas></div>
     <div class="controls">
@@ -471,28 +472,28 @@ input[type=range]{accent-color:var(--accent);width:140px}
       <span>surface <b id="landStat">–</b></span>
       <span>optimizer path <b id="mmdPath">click to start</b></span>
     </div>
-    <p class="fignote"><strong>Things worth trying.</strong> At ℓ ≈ 1.2 the MMD bowl is wide and smooth — LM strolls in from anywhere on the map. Shrink ℓ to 0.3: the minimum sharpens (better final accuracy) but the basin narrows and side ripples appear — starts from far away now stall, which is exactly why the paper anneals ℓ instead of picking one value. Drop D to 4 and resample ω a few times: the surface visibly wobbles between draws — the surrogate is stochastic, and more features buy fidelity. Then switch to the <em>nearest-neighbor</em> objective: same scene, but the terrain is kinked and terraced — every crease is a set of correspondences flipping. A discrete assignment cannot be differentiated, and an optimizer on this surface inherits every plateau; smoothing it away is precisely what the soft-assignment family and MMD-Reg, in different ways, are for.</p>
+    <p class="fignote"><strong>Try this:</strong> vary $\ell$, reduce $D$, and resample the frequencies while keeping the data fixed. Look for changes in local minima, not a promise of a single broad bowl. The nearest-neighbor heatmap now uses the <strong>capped squared-distance objective</strong> $\frac1M\sum_i\min\{\min_j\|Tp_i-q_j\|^2,\tau^2\}$ with fixed denominator. The plotted translation-only gated ICP step is a descent step for that objective. A finite nearest-neighbor minimum is continuous and piecewise differentiable; it can have kinks at assignment switches. Hard associations do not remove all local gradients. Neither this surface nor smooth MMD is globally convex.</p>
   </div>
 
   <!-- ============ what separates them ============ -->
   <div class="section">
     <p class="kicker">The wider field · reading the race</p>
     <h2>What actually separates the families</h2>
-    <p><strong>ICP trusts its matches; that is its speed and its fragility.</strong> When data is clean and the start is close, hard nearest neighbors are the right answer and nothing beats their precision per unit of compute — on KITTI driving scans the paper honestly reports that multi-scale point-to-plane ICP remains ahead of MMD-Reg. But each point votes through its single match: duplicated points in over-sampled regions vote twice, outliers vote for garbage, and noise reshuffles who matches whom. In the paper's stress tests that is the whole story — ICP and GICP fail fastest as outliers grow (Figure&nbsp;4), and non-uniform density skews them systematically. Point-to-plane's normal-projected residual buys a faster, better-conditioned basin on structured scenes, not robustness.</p>
-    <p><strong>The probabilistic family buys robustness with model mass.</strong> Every pair contributes with a probability and the uniform bin absorbs the junk that captures the hard panels — the stress settings barely reach the green panel. The tax is the one the soft-family section priced: a quadratic E-step (in the MMD-Reg paper's measurements, CPD is <em>prohibitively slow beyond a few thousand points</em>), and escape routes that each buy their speed with machinery and hyperparameters. The green panel runs the naive E-step because at a few hundred points it can afford to; FilterReg exists because real clouds cannot.</p>
-    <p><strong>MMD-Reg removes the matches instead of softening them.</strong> No assignment exists anywhere in the objective — only two feature-mean vectors of fixed size $2D$, so the per-iteration cost is linear in points and near-constant on a GPU. Individual outliers dilute a mean rather than hijack a match, which the violet panel shows as graceful degradation. And the objective's smoothness is not a convenience but the point: it makes registration a differentiable layer. That is what Neural MMD-Reg exploits — a set transformer proposes an initialization and kernel scale, the LM solve refines it, and gradients flow through the solution itself, reaching 0.006° rotation error on ModelNet40 — roughly five times below the best prior learned method in the paper's Table&nbsp;4 and orders of magnitude below most earlier learned pipelines. (In that clean, unsupervised setting the network predicts only the initialization; the learned kernel scale and per-point overlap weights belong to the supervised partial-overlap variant.) The costs are equally plain: the surrogate is stochastic in $D$, the objective is non-convex (hence the ℓ-schedule or a learned initializer), and a fixed random-feature budget can blur very fine geometry that a converged point-to-plane ICP would nail.</p>
-    <p><strong>The newest exit removes the optimizer itself.</strong> <a href="https://arxiv.org/abs/2512.01850" target="_blank" rel="noopener">Register Any Point</a> (Pan et&nbsp;al., 2025 — the same Bonn lab as KISS-ICP) casts registration as <em>conditional generation</em> by flow matching: a transformer-parameterized velocity field, trained on 141k multi-view samples from 17 datasets across four continents, transports noisy points along near-straight paths to the registered scene, and ten Euler steps replace the whole descent — no initial guess and no basin, because nothing is being descended at test time. Rigidity is not baked into the model but enforced at inference: each integration step projects every view back onto its own $SE(3)$ orbit, several samples are drawn and the most rigid one kept, and the final per-view poses are read off with the Kabsch algorithm — rung one's closed form, reappearing as the last line of the field's newest method. One network, zero-shot across sensors and scene scales, edges the correspondence pipelines pairwise (95.6% registration recall on 3DMatch, past GeoTransformer and BUFFER-X) and runs away from them multi-view (13.7° mean rotation error on ScanNet scenes against 47.6° for the best matching-plus-pose-graph pipeline). Its immediate ancestor, <a href="https://arxiv.org/abs/2506.05282" target="_blank" rel="noopener">Rectified Point Flow</a> (NeurIPS 2025 spotlight, by an overlapping team), set the template months earlier — one conditional generative problem covering pairwise registration and shape assembly; RAP is that idea scaled, and the near-straight rectified paths are what make ten integration steps enough where diffusion-style samplers walk much longer. The price is the generative bargain, stated plainly: correspondence knowledge amortized into weights — a hundred thousand scenes of supervision standing in for the E-step nobody runs at inference. (A trained two-dimensional miniature of exactly this recipe runs in the finale below.)</p>
-    <p><strong>The families are converging on the same recipe from different directions.</strong> Multi-scale ICP anneals correspondence distances; the soft-assignment family lets its mixture width shrink — RPM by schedule, CPD by maximum likelihood; MMD-Reg anneals kernel scale. Everyone, it turns out, needs a coarse story before a fine one — the disagreement is about what should carry the alignment signal in between: matched points, weighted pairs, or distributions. Or, in the generative exit, none of the above: a learned flow that simply carries the points home.</p>
+    <p><strong>Hard association is a modeling choice.</strong> ICP can work very well with a suitable initialization and sufficient overlap. Normals and robust losses change its residual model; gating and subsampling change which data matter. None makes it immune to repeated structures or bad geometry. Point-to-plane may reduce tangential fitting motion, but can also introduce unobservable directions. Read the paper-specific comparisons as evidence under their protocols, not universal speed or robustness claims.</p>
+    <p><strong>Soft association models alternatives.</strong> A uniform component can reduce the influence of poorly explained observations when its assumptions and scale are suitable; it does not guarantee outlier rejection. Naive all-pairs evaluation is quadratic, but blocked accumulation and Gaussian filtering change the memory and computational costs. The green race panel is a heuristic, whereas the walkthrough separates actual CPD-style updates from a FilterReg-inspired sparse-grid approximation.</p>
+    <p><strong>MMD compares empirical distributions.</strong> With a fixed frequency count, evaluating source and target means costs $O((M+N)D)$; a fixed target mean can be cached. GPU parallelism can improve runtime, but does not make arbitrary-size computation constant-time. Outliers, density imbalance, and nonoverlap perturb the embedding and can shift the optimum. Learned initialization, scales, or overlap weights can help in the variants that use them, not guarantee removal of bias. Differentiating a selected optimum requires the regularity conditions stated above.</p>
+    <p><strong>Learned flow offers a different inference route.</strong> <a href="https://arxiv.org/abs/2512.01850">Register Any Point (RAP)</a> uses conditional flow matching to generate registered coordinates, with test-time rigidity enforcement and rigid pose readout. It does not require a supplied initial pose, but this is not a global-correctness or out-of-distribution guarantee. Its learned field, integration, and rigidity projections still perform inference and use runtime state. The small planar network below is an analogy, not RAP's transformer, official implementation, or benchmark. Its successes and failures cannot be attributed to RAP.</p>
+    <p><strong>Coarse-to-fine processing is useful, not universal.</strong> A distance gate selects pairs, a grid size controls representation, and Gaussian or kernel bandwidth controls interactions. These knobs are not interchangeable, and CPD's estimated variance is not a deterministic schedule. Compare what each knob changes before interpreting a wider-looking basin as a stronger guarantee.</p>
   </div>
 
   <!-- ============ one scene, three memories ============ -->
   <div class="section" id="memories">
-    <p class="kicker">The finale · one scene, three memories</p>
+    <p class="kicker">The finale · one scene, four inference representations</p>
     <h2>What each method keeps — step by step</h2>
-    <p>The ladder has been climbed, the race run, the terrain mapped. What remains is to put the three families' champions side by side and ask the bookkeeping question the whole note has been circling: between two sweeps, <strong>what does each method remember about "who matches whom"?</strong> CPD keeps every soft pair — the full $M\times N$ responsibility matrix. FilterReg compresses each row of that matrix before it is ever stored: one filtered target $\bar y_i$ and one confidence $\alpha_i$ per moving point. MMD-Reg refuses to keep correspondences at all — each cloud is averaged into a fixed-size feature signature, and all that survives is a single residual between the two signatures. <em>Every soft pair; one soft target per point; one residual for both clouds.</em> And the field's newest arrival answers by refusing the premise: a flow-matching network keeps <em>nothing</em> at run time — every correspondence it will ever use is amortized into its weights.</p>
-    <p>Below, each method walks its own loop <strong>stage by stage</strong> — press <em>next</em> or <em>auto</em> under a panel, or click any stage chip directly. CPD's eight beats: the problem, the mixture, the E-step web, then the closed-form M-step split into its three moves — center, rotate, move&nbsp;+&nbsp;scale — then the $\sigma^2$ tighten, then sweeps to convergence. FilterReg's four: density, filter, query, twist. MMD-Reg's four: encode, average, compare, optimize. The fourth panel is the generative exit run for real — a genuinely <em>trained</em> miniature of RAP's recipe (condition, flow, rigidify, read pose) whose velocity network learned this page's scene generator offline; the small print below says exactly what that means. The scene opens <strong>noisy with planted junk in both clouds</strong>; set the starting misalignment yourself with the initial-rotation and initial-shift sliders. And the scale switch stays the sharpest separator: CPD's "rigid" model is actually a similarity with a uniform scale $s$, so it recovers a 15% shrink exactly (watch its $s$ readout), while FilterReg and MMD-Reg are rotation-plus-translation by design and park with an honest size mismatch.</p>
+    <p>The walkthrough contrasts four kinds of intermediate state. Its CPD panel stores a full responsibility matrix for display; this is not a compulsory memory cost of CPD. The FilterReg-inspired panel computes soft targets and confidences through filtered moments. MMD retains feature means and a $2D$-entry residual, with no discrete assignments. The flow panel uses learned weights <em>and</em> evolving coordinates, signatures, and activations. The distinction is the representation used for inference, not whether runtime memory exists.</p>
+    <p>Use Next, Auto, or a stage chip to inspect each loop. CPD displays responsibilities, centering, rotation, translation/scale, and variance estimation. FilterReg-inspired processing displays density, filtering, querying, and a twist update. MMD displays encoding, averaging, comparison, and optimization. The fourth panel shows a learned-flow analogy. The scale switch deliberately makes the moving cloud 15% smaller. Similarity CPD can estimate the required inverse scale (ideally $1/0.85$), while the other two classical panels are constrained to rigid motion. This is a difference in the <em>enabled models</em>, not an inherent inability to run rigid CPD or extend another method to similarity.</p>
     <div class="controls">
-      <button id="memWalk" class="primary">▶ Walk all three</button>
+      <button id="memWalk" class="primary">▶ Walk all four</button>
       <button id="memReset">Reset</button>
       <select id="memScene" aria-label="Scene selector">
         <option value="clean">clean</option>
@@ -536,30 +537,22 @@ input[type=range]{accent-color:var(--accent);width:140px}
       </div>
     </div>
     <div class="legend"><span><span class="swatch" style="background:var(--fixed)"></span>fixed cloud</span><span><span class="swatch" style="background:var(--accent)"></span>moving cloud</span><span><span class="swatch" style="background:var(--violet)"></span>what the method keeps (pairs / targets)</span><span>bars = the two feature signatures</span><span><span class="swatch" style="background:#B8860B"></span>learned flow (trails)</span><span>halo = carries the Gaussians</span></div>
-    <p class="fignote"><strong>What to look for.</strong> Watch the counts in each caption: CPD carries a responsibility matrix of ~23&nbsp;000 entries between sweeps, FilterReg carries one target per moving point, MMD-Reg carries a single 96-number residual — the whole trichotomy in three integers. Watch the junk: CPD's uniform bin owns the planted points in the <em>fixed</em> cloud (its data), FilterReg's confidence gate $\alpha_i$ zeroes out the planted points in the <em>moving</em> cloud (<em>its</em> data — the mixture flip swaps which cloud is "data," so the same junk is handled from opposite sides), and MMD-Reg, which has no outlier bin at all, folds all of it into both signatures — its residual floors above zero and the fit drags a touch toward the junk, exactly the price its paper's neural variant pays learned per-point weights to remove. Crank the initial rotation past ±90° and watch all three fall into the same trap — a confident wrong basin; none of these objectives is global, and each paper says so. Honest small print: everything is planar; CPD runs its full similarity EM ($R$, $s$, $t$, closed-form $\sigma^2$), with the M-step's three closed-form moves shown as separate beats of one sweep; FilterReg runs the sparse-grid filter E-step with a coarse-to-fine σ schedule ending at its slider and one Gauss–Newton twist step per sweep; MMD-Reg runs 48 random frequencies, Levenberg–Marquardt, and an ℓ-schedule ending at its slider; both mixtures share a uniform outlier density of 1/area of the demo box. The fourth panel's velocity network is real, not scripted: a 15,458-parameter MLP (an $\hat x$-prediction parameterization of conditional flow matching, with fixed random-wave signatures of both clouds standing in for RAP's transformer tokens), trained offline for a few minutes of CPU on this page's own scene generator across every rotation, shift, noise and junk setting — and on nothing else. That is the amortization bargain made visible: on the families it trained on it lands within a degree or two of the truth from any start; flip <em>moving cloud 15% smaller</em> — a setting it never saw — and it falls apart while CPD's closed form shrugs. Its κ slider reproduces RAP's ablation (even two steps nearly suffice — rectified paths are nearly straight), and <em>rigidity forcing</em> is RAP's test-time trick: fit a pose to the predicted endpoint each step and keep the rigid version, which tightens the tail errors.</p>
-    <table class="cmp">
-      <thead><tr><th>Design choice</th><th>Rigid CPD</th><th>FilterReg</th><th>MMD-Reg</th><th>Flow matching (RAP-style)</th></tr></thead>
-      <tbody>
-        <tr><td><b>Representation</b></td><td>moving points are the GMM centroids</td><td>fixed observations are the GMM centroids</td><td>no mixture — both sets as empirical distributions in an RKHS</td><td>no run-time model at all — a trained point-wise velocity network</td></tr>
-        <tr><td><b>"Matching" output</b></td><td>full soft responsibility matrix $P$</td><td>one soft target $\bar y_i$ + confidence $\alpha_i$ per moving point</td><td>none pairwise; one global residual $r=\hat\mu_{T(X)}-\hat\mu_Y$</td><td>none — each point is transported; correspondence to its own start comes free</td></tr>
-        <tr><td><b>Pose update</b></td><td>EM M-step: weighted Procrustes — SVD for $R$, closed-form $s$, $t$</td><td>EM M-step: weighted residuals, $SE(3)$ twist, Gauss–Newton</td><td>direct nonlinear least squares, Levenberg–Marquardt</td><td>none during the flow; one Kabsch read-out at the end</td></tr>
-        <tr><td><b>Rigid model</b></td><td>similarity — includes uniform scale $s$</td><td>$SE(3)$: rotation + translation, no scale</td><td>$SE(3)$: rotation + translation, no scale</td><td>free per point — rigidity projected back at test time</td></tr>
-        <tr><td><b>Bandwidth knob</b></td><td>$\sigma^2$, updated in closed form each sweep</td><td>$\sigma$, usually fixed (updating optional)</td><td>kernel scale $\ell$, coarse-to-fine schedule</td><td>integration steps κ — straight paths keep it small</td></tr>
-        <tr><td><b>Computational route</b></td><td>all pairs; fast Gauss transform proposed</td><td>Gaussian filtering on a permutohedral lattice</td><td>random-feature means — $O((m{+}n)D)$ at fixed $D$</td><td>κ network passes, linear in points</td></tr>
-        <tr><td><b>Junk / partial overlap</b></td><td>explicit uniform outlier component</td><td>the same bin, plus per-point confidence weighting</td><td>none standalone; the neural variant predicts point weights</td><td>learned — trained to carry junk along; no explicit bin</td></tr>
-        <tr><td><b>As a differentiable layer</b></td><td>not the focus</td><td>not the focus</td><td>designed for it — gradients via the implicit function theorem</td><td>it <em>is</em> a network, end to end</td></tr>
-        <tr><td><b>Reach for it when…</b></td><td>you want the cleanest exact similarity update: compact code, moderate clouds, explicit scale</td><td>you need dense 3-D registration to run fast: large clouds, a reusable fixed cloud, point-to-plane</td><td>you want a scalable differentiable objective: very large clouds, GPU-friendly fixed-size features, learned pipelines — given a decent init</td><td>no initial guess exists, many views, cross-domain — and you can afford the training data</td></tr>
-      </tbody>
-    </table>
-    <p>That is the note's closing image. The speed ledger was priced in the soft-family section and the failure modes were drawn by the race; what the walkthrough adds is the part neither can show — that these are not four speeds of one idea but four different answers to what a correspondence <em>is</em>: a matrix, a target, a residual — or a trained network's weights. The ladder climbed from matches known to matches dissolved; the wider field asks a different question — how much memory of the matches your problem can afford — and every method on this page is an honest answer to it.</p>
+    <p class="fignote"><strong>What to look for.</strong> Compare where the outlier component enters: the fixed observations in CPD versus moving queries in the reversed mixture. The MMD demo has no outlier component; all points affect the means. Its 48 frequencies produce 96 residual entries. Implementation details: similarity CPD uses weighted closed-form updates; the FilterReg-inspired demo uses a <em>sparse Cartesian Gaussian grid, not the paper's permutohedral lattice</em>, with a bandwidth schedule and one Gauss–Newton step; MMD uses LM and a kernel schedule. The mixture demos use a constant clutter-density parameter $1/36\;\mathrm{u}^{-2}$, not an estimated true clutter distribution. The flow panel contains embedded MLP weights, but the deployed page supplies no training log or independently reproduced generalization study. Treat its behavior as a constrained teaching example, not evidence of accuracy from arbitrary starts, a RAP ablation, or a reliable unseen-scale failure claim. Auto stopping and iteration limits are not certificates of alignment.</p>
+    <table class="cmp"><thead><tr><th>Demo</th><th>Model and state</th><th>Update</th><th>Important limitation</th></tr></thead><tbody>
+<tr><td>Similarity CPD</td><td>Moving Gaussian components; responsibilities retained for display</td><td>Weighted similarity fit and variance estimation</td><td>Rigid CPD instead fixes scale to 1; full matrix storage is optional</td></tr>
+<tr><td>FilterReg-inspired</td><td>Fixed mixture; soft targets from a sparse Cartesian grid</td><td>One planar twist step and a bandwidth schedule</td><td>Not the paper's permutohedral implementation; analytic variance updates are possible in FilterReg</td></tr>
+<tr><td>MMD-Reg-inspired</td><td>48 frequencies, 96 features; empirical mean residual</td><td>LM with a kernel schedule</td><td>Nonconvex; unweighted nonoverlap and clutter affect the optimum</td></tr>
+<tr><td>Learned-flow toy</td><td>Embedded network, evolving coordinates, and feature signatures</td><td>Endpoint prediction, optional rigidity projection each step, final pose readout</td><td>Not RAP; the toy is not evidence about RAP's accuracy, scaling, or generalization</td></tr>
+</tbody></table>
+    <p>The bookkeeping examples reveal different representations: weighted pairs, filtered moments, distribution embeddings, and learned coordinate evolution. Their behavior also depends on residuals, overlap, constraints, approximation, and optimization. Memory alone does not determine robustness or accuracy.</p>
   </div>
 
   <div class="outro">
     <h2>How the rungs stack in a real system</h2>
-    <p>Production pipelines climb this ladder in reverse. A <strong>coarse global stage</strong> manufactures correspondences and cleans them — feature descriptors (FPFH on geometry, ORB or learned features on images) matched and verified by RANSAC, or a certifiable solver like TEASER++ when the outlier ratio is brutal — and, newest of all, a generative registration model like <a href="https://arxiv.org/abs/2512.01850" target="_blank" rel="noopener">RAP</a>, which needs no initial guess by construction. Its answer is rough but basin-safe. A <strong>fine local stage</strong> — ICP or one of its offspring — then polishes inside the right basin, where its local convergence is a feature, not a risk.</p>
-    <p>The fine stage's residuals are rung three and a half's: point-to-plane and GICP are the default polish in most lidar pipelines, while modern odometry such as KISS-ICP shows how far plain adaptive-threshold point-to-point still stretches. The alternation skeleton — guess correspondences, solve, repeat — survives every variant that keeps correspondences at all.</p>
-    <p>Rung four grew its own family tree. Magnusson's <strong>3D-NDT</strong> moved the cells to voxels, swapped the shifted grids for interpolation or neighbor-voxel lookup, and added the More–Thuente line search that production Newton solvers use. <strong>D2D-NDT</strong> (Stoyanov et&nbsp;al.) made the moving scan Gaussians too and matched distribution against distribution — GICP's move, gridded — so registration cost scales with cells, not points. And NDT earned its production stripes in <strong>localization</strong>: matching live lidar against a pre-built Gaussian map is how Autoware-style driving stacks (Akai et&nbsp;al.) hold lane-level position. If "represent the scene as a field of anisotropic Gaussians" sounds familiar, it should — <a href="/gaussian-splatting/">Gaussian splatting</a> makes the same representational bet for rendering that NDT made for registration, twenty years later.</p>
-    <p>Elsewhere on this site the same operations appear in context: the <a href="/vslam/">visual SLAM walkthrough</a> uses exactly rung one's closed form as its odometry front end (step 2's registration inset), and the <a href="/graph-slam/">graph SLAM notebook</a> shows what the back end does with the relative-pose factors that registration produces. The families raced above take it from here: the <a href="https://arxiv.org/abs/2606.27818" target="_blank" rel="noopener">MMD-Reg paper</a> and its <a href="https://github.com/csiro-robotics/mmd-reg" target="_blank" rel="noopener">JAX implementation</a> carry those objectives to SE(3), real LiDAR, and end-to-end training — and NDT's score is the sparse, gridded cousin of the mixture objectives among them. Every solver this note races is also readable outside it: the <a href="https://github.com/BaiLiping/frame-registration-demos" target="_blank" rel="noopener">frame-registration-demos repository</a> holds all nine as plain modules, the demo itself, and the benchmark runner.</p>
+    <p>A common global-registration pipeline first proposes a pose with features and RANSAC or another global estimator, then refines locally and verifies the result. Neither randomized proposals nor learned initialization are automatically basin-safe. Odometry may instead initialize from a motion prediction and skip global search. Certifiable solvers provide guarantees only under their stated model and certificate conditions. In all cases, acceptance needs more than an optimizer stopping flag.</p>
+    <p>Point-to-plane, GICP, point-to-point ICP, and NDT are possible local stages. <a href="https://arxiv.org/abs/2209.15397">KISS-ICP</a>, for example, uses point-to-point registration with adaptive correspondence thresholds; it should not be described as a point-to-plane method. Choose the residual using sensor characteristics, geometry, and computational constraints, then check that the observed directions constrain the pose.</p>
+    <p>NDT variants differ in dimension, cell association, interpolation, score, and optimizer. Point-to-distribution 3-D NDT and distribution-to-distribution NDT are not identical to this four-shifted-grid 2-D demo. Gaussian maps are also used for localization against a prior map. The resemblance to Gaussian splatting is representational: sharing Gaussian primitives does not imply the same objective, statistical interpretation, or rendering machinery.</p>
+    <p>For the next level, the <a href="/graph-slam/">graph SLAM notebook</a> explains how relative-pose constraints are combined across frames. A scan registration estimate is not automatically a well-calibrated pose factor: degeneracy and association uncertainty matter. See the primary references above for full algorithms, and the website's <code>tests/frame-registration.test.cjs</code> for reproducible numerical checks of the reviewed teaching solvers.</p>
   </div>
 </div>
 
@@ -783,7 +776,7 @@ function kabDraw(){
   for(const q of kab.target) dot(ctx, q, 4.2, FIXEDC);
   for(const p of moved) dot(ctx, p, 3.6, ACCENT);
   $('kabRms').textContent = rmsOf(kab.base, kab.target, kab.T).toFixed(3) + ' u';
-  // Expected converged RMS, not the per-axis σ: residuals are 2-D distances (factor √2) and the
+  // Expected stopped RMS, not the per-axis σ: residuals are 2-D distances (factor √2) and the
   // fit's 3 DOF absorb part of the noise, giving σ·√((2n−3)/n) for n points.
   const n = kab.base.length;
   $('kabFloor').textContent = (kab.setting === 'outliers' || kab.setting === 'combo')
@@ -981,7 +974,7 @@ const icp = {
   fixed: [], base: [],                     // reference scan and moving scan (untransformed)
   T: null, iter: 0, rms: null, hist: [],
   pairs: [],                               // latest correspondence guesses, as [movingIdx, fixedIdx]
-  timer: null, converged: false, setting: 'combo',
+  timer: null, stopped: false, setting: 'combo',
   gate: 2.6, defaultT: { th: 29 * Math.PI / 180, tx: 1.35, ty: 0.95 },
 };
 
@@ -1003,7 +996,7 @@ function icpGenerate(){
 function icpSetPose(T){
   clearInterval(icp.timer); icp.timer = null;
   icp.T = { th: T.th, tx: T.tx, ty: T.ty };
-  icp.iter = 0; icp.rms = null; icp.hist = []; icp.pairs = []; icp.converged = false;
+  icp.iter = 0; icp.rms = null; icp.hist = []; icp.pairs = []; icp.stopped = false;
   $('icpRun').textContent = 'Run ICP';
   $('icpStat').textContent = 'idle';
   syncSlider($('icpRot'), $('icpRotV'), icp.T.th);
@@ -1012,7 +1005,7 @@ function icpSetPose(T){
 // icpManualNudge(): invalidates iteration bookkeeping after the user moves the cloud by hand,
 // without resetting the pose itself. Takes nothing, returns nothing.
 function icpManualNudge(){
-  icp.iter = 0; icp.rms = null; icp.hist = []; icp.pairs = []; icp.converged = false;
+  icp.iter = 0; icp.rms = null; icp.hist = []; icp.pairs = []; icp.stopped = false;
   $('icpStat').textContent = 'idle';
 }
 
@@ -1045,9 +1038,9 @@ function icpIterate(){
   icp.rms = rmsOf(P, Q, F);
   icp.hist.push(icp.rms);
   if(icp.hist.length > 60) icp.hist.shift();
-  icp.converged = prev !== null && Math.abs(prev - icp.rms) < 1e-4;
+  icp.stopped = prev !== null && Math.abs(prev - icp.rms) < 1e-4;
   syncSlider($('icpRot'), $('icpRotV'), icp.T.th);
-  $('icpStat').textContent = icp.converged ? 'converged' : 'running';
+  $('icpStat').textContent = icp.stopped ? 'stopped' : 'running';
   return true;
 }
 
@@ -1063,17 +1056,17 @@ function icpRunToggle(){
   }
   if(icp.iter >= 80) icp.iter = 0;               // a capped run gets a fresh budget
   if(RM){
-    while(!icp.converged && icp.iter < 80){ if(!icpIterate()) break; }
-    if(!icp.converged && icp.iter >= 80) $('icpStat').textContent = 'iteration cap';
+    while(!icp.stopped && icp.iter < 80){ if(!icpIterate()) break; }
+    if(!icp.stopped && icp.iter >= 80) $('icpStat').textContent = 'iteration cap';
     return;
   }
   $('icpRun').textContent = 'Pause';
   icp.timer = setInterval(() => {
     const ok = icpIterate();
-    if(!ok || icp.converged || icp.iter >= 80){
+    if(!ok || icp.stopped || icp.iter >= 80){
       clearInterval(icp.timer); icp.timer = null;
       $('icpRun').textContent = 'Run ICP';
-      if(ok && !icp.converged) $('icpStat').textContent = 'iteration cap';
+      if(ok && !icp.stopped) $('icpStat').textContent = 'iteration cap';
     }
   }, 120);
 }
@@ -1120,7 +1113,7 @@ function icpDraw(){
 $('icpRun').addEventListener('click', icpRunToggle);
 $('icpStep').addEventListener('click', () => {
   if(icp.timer) return;
-  if(icpIterate() && !icp.converged) $('icpStat').textContent = 'stepped';
+  if(icpIterate() && !icp.stopped) $('icpStat').textContent = 'stepped';
 });
 $('icpReset').addEventListener('click', () => icpSetPose(icp.defaultT));
 $('icpSet').addEventListener('input', () => { icp.setting = $('icpSet').value; icpGenerate(); });
@@ -1253,13 +1246,13 @@ function kabschW(P, Q, W){
 // pairs, 'huber'/'tukey' keep every gated pair but weight it by an IRLS M-estimator, 'none' does
 // neither. Takes the reference scan, its normals, the moving scan's base-frame normals, the moving
 // scan, the pose, the mode, and the strategy;
-// returns {T, rms, n, step, converged} — rms is the plain point-to-point RMS of the matched pairs for
+// returns {T, rms, n, step, stopped} — rms is the plain point-to-point RMS of the matched pairs for
 // comparability, step the pose-change norm; callers should also stop when rms stalls, since flapping
 // nearest-neighbor assignments can sustain a small limit cycle that never trips the step test.
 function gicStep(fixed, normals, baseNormals, base, T, mode, kernel){
   const moved = base.map(p => applyT(T, p));
   const pairs = gicPairs(fixed, moved, 2.6, kernel === 'trim' || kernel === undefined);
-  if(pairs.length < 3) return { T: T, rms: null, n: pairs.length, step: 0, converged: true };
+  if(pairs.length < 3) return { T: T, rms: null, n: pairs.length, step: 0, stopped: true };
   let rms = 0;
   for(const g of pairs) rms += g.d * g.d;
   rms = Math.sqrt(rms / pairs.length);
@@ -1268,7 +1261,7 @@ function gicStep(fixed, normals, baseNormals, base, T, mode, kernel){
     const F = kabschW(pairs.map(g => moved[g.i]), pairs.map(g => fixed[g.j]), W);
     const Tn = composeT(F, T);
     const step = Math.hypot(F.tx, F.ty) + Math.abs(F.th);
-    return { T: Tn, rms: rms, n: pairs.length, step: step, converged: step < 1e-4 };
+    return { T: Tn, rms: rms, n: pairs.length, step: step, stopped: step < 1e-4 };
   }
   // Gauss–Newton on x = (θ, tx, ty): residual rows accumulated into normal equations H x = -g
   const EPS = 0.01, co = Math.cos(T.th), si = Math.sin(T.th);
@@ -1308,13 +1301,13 @@ function gicStep(fixed, normals, baseNormals, base, T, mode, kernel){
   let L = chol3(H, 0, 3);
   const base_ = 1e-9 + H[0][0] + H[1][1] + H[2][2];
   for(let k = 0; !L && k < 8; k++) L = chol3(H, base_ * Math.pow(10, k - 6), 3);
-  if(!L) return { T: T, rms: rms, n: pairs.length, step: 0, converged: true };
+  if(!L) return { T: T, rms: rms, n: pairs.length, step: 0, stopped: true };
   const x = cholSolve(L, g, 3);
   // cap the linearized step: the small-angle model is only trustworthy locally
   const sc = Math.min(1, 0.5 / Math.max(Math.abs(x[0]), 1e-12), 1.5 / Math.max(Math.hypot(x[1], x[2]), 1e-12));
   const Tn = composeT({ th: x[0] * sc, tx: x[1] * sc, ty: x[2] * sc }, T);
   const step = Math.hypot(x[0] * sc, x[1] * sc, x[2] * sc);
-  return { T: Tn, rms: rms, n: pairs.length, step: step, converged: step < 1e-4 };
+  return { T: Tn, rms: rms, n: pairs.length, step: step, stopped: step < 1e-4 };
 }
 
 /* ===== residual-family core (end) ===== */
@@ -1359,7 +1352,7 @@ function gicClearRun(){
 }
 
 // gicIterate(): one iteration of the selected residual, with the RMS-stall convergence rule the core
-// documents. Takes nothing; returns 'converged', 'lost', or 'stepped'.
+// documents. Takes nothing; returns 'stopped', 'lost', or 'stepped'.
 function gicIterate(){
   const res = gicStep(gic.fixed, gic.normals, gic.baseNormals, gic.base, gic.T, gic.mode, gic.kernel);
   gic.T = res.T;
@@ -1368,7 +1361,7 @@ function gicIterate(){
   gic.prevRms = gic.rms = res.rms;
   syncSlider($('gicRot'), $('gicRotV'), gic.T.th);
   if(res.n < 3) return 'lost';
-  if(res.converged || stalled) return 'converged';
+  if(res.stopped || stalled) return 'stopped';
   return 'stepped';
 }
 
@@ -1384,7 +1377,7 @@ function gicRunToggle(){
   if(RM){
     let out = 'stepped', n = 0;
     while(out === 'stepped' && ++n <= 80) out = gicIterate();
-    $('gicStat').textContent = out === 'lost' ? 'lost — no overlap' : out === 'converged' ? 'converged' : 'iteration cap';
+    $('gicStat').textContent = out === 'lost' ? 'lost — no overlap' : out === 'stopped' ? 'stopped' : 'iteration cap';
     return;
   }
   $('gicRun').textContent = 'Pause';
@@ -1394,7 +1387,7 @@ function gicRunToggle(){
     if(out === 'stepped' && gic.iter < 80) return;
     clearInterval(gic.timer); gic.timer = null;
     $('gicRun').textContent = 'Run';
-    $('gicStat').textContent = out === 'lost' ? 'lost — no overlap' : out === 'converged' ? 'converged' : 'iteration cap';
+    $('gicStat').textContent = out === 'lost' ? 'lost — no overlap' : out === 'stopped' ? 'stopped' : 'iteration cap';
   }, 120);
 }
 
@@ -1442,7 +1435,7 @@ $('gicRun').addEventListener('click', gicRunToggle);
 $('gicStep').addEventListener('click', () => {
   if(gic.timer) return;
   const out = gicIterate();
-  $('gicStat').textContent = out === 'lost' ? 'lost — no overlap' : out === 'converged' ? 'converged' : 'stepped';
+  $('gicStat').textContent = out === 'lost' ? 'lost — no overlap' : out === 'stopped' ? 'stopped' : 'stepped';
 });
 $('gicMode').addEventListener('input', () => {
   gic.mode = $('gicMode').value;
@@ -1509,10 +1502,9 @@ function covEig(a, b, c){
   return { l1: l1, l2: l2, v1: [vx / n, vy / n] };
 }
 
-// cellKey(ix, iy): packs integer cell coordinates into one Map key. Takes two cell indices,
-// returns an integer unique for |ix|, |iy| < 1024.
+// cellKey(ix, iy): joins integer cell coordinates into a collision-free string Map key.
 function cellKey(ix, iy){
-  return (ix + 1024) * 2048 + (iy + 1024);
+  return ix + ',' + iy;
 }
 
 // buildNDT(points, h, opts): the transform itself — bins points into square cells of side h and fits a
@@ -1689,14 +1681,14 @@ function cholSolve(L, b, k){
 // newtonStep(ndt, pts, T, dof): one damped Newton iteration on f = −score. Adds λI until the Hessian
 // (or its translation block, for dof = 2) is positive definite, caps the step, and backtracks until the
 // score improves. Takes an NDT model, scan points, the current pose, and dof ∈ {2, 3} (2 freezes φ);
-// returns {T, score, stepNorm, converged, contrib} — converged means no improving step existed.
+// returns {T, score, stepNorm, stopped, contrib} — stopped means no improving step existed.
 function newtonStep(ndt, pts, T, dof){
   const d = ndtDeriv(ndt, pts, T);
   if(d.contrib < 5)
-    return { T: T, score: -d.f, stepNorm: 0, converged: true, contrib: d.contrib };
+    return { T: T, score: -d.f, stepNorm: 0, stopped: true, contrib: d.contrib };
   const gn = Math.hypot(d.g[0], d.g[1], dof === 3 ? d.g[2] : 0);
   if(gn < 1e-8)
-    return { T: T, score: -d.f, stepNorm: 0, converged: true, contrib: d.contrib };
+    return { T: T, score: -d.f, stepNorm: 0, stopped: true, contrib: d.contrib };
   let lam = 0, L = chol3(d.H, 0, dof);
   const base = 1e-6 + Math.abs(d.H[0][0]) + Math.abs(d.H[1][1]) + Math.abs(d.H[2][2]);
   for(let k = 0; !L && k < 12; k++){
@@ -1704,7 +1696,7 @@ function newtonStep(ndt, pts, T, dof){
     L = chol3(d.H, lam, dof);
   }
   if(!L)
-    return { T: T, score: -d.f, stepNorm: 0, converged: true, contrib: d.contrib };
+    return { T: T, score: -d.f, stepNorm: 0, stopped: true, contrib: d.contrib };
   const step = cholSolve(L, d.g, dof);
   if(dof === 2) step.push(0);
   // cap the raw step (0.5 u, 0.2 rad): an uncapped Newton jump can leap into a better-scoring
@@ -1718,10 +1710,10 @@ function newtonStep(ndt, pts, T, dof){
     const sn = ndtScore(ndt, pts, Tn);
     if(sn > -d.f + 1e-12){
       return { T: Tn, score: sn, stepNorm: Math.hypot(step[0] * t, step[1] * t, step[2] * t),
-               converged: false, contrib: d.contrib };
+               stopped: false, contrib: d.contrib };
     }
   }
-  return { T: T, score: -d.f, stepNorm: 0, converged: true, contrib: d.contrib };
+  return { T: T, score: -d.f, stepNorm: 0, stopped: true, contrib: d.contrib };
 }
 
 // samplePolyline(V, spacing, phase, from, to, noise, r): walks a polyline and drops a point every
@@ -1906,7 +1898,7 @@ function fldDraw(){
   }
   // hovered cell outline + its points emphasized
   if(fld.hoverKey !== null && m.grids[g].has(fld.hoverKey)){
-    const ix = Math.floor(fld.hoverKey / 2048) - 1024, iy = fld.hoverKey % 2048 - 1024;
+    const [ix, iy] = fld.hoverKey.split(',').map(Number);
     const cx0 = m.ox + gx + ix * m.h, cy0 = m.oy + gy + iy * m.h;
     ctx.strokeStyle = INKC;
     ctx.lineWidth = 1.4;
@@ -2031,7 +2023,7 @@ function landRunFrom(tx, ty){
     const res = newtonStep(m, movScan, T, 2);
     T = res.T;
     land.path.push([T.tx, T.ty]);
-    if(res.converged || res.stepNorm < 1e-4) break;
+    if(res.stopped || res.stepNorm < 1e-4) break;
   }
   land.pathShown = RM ? land.path.length : 1;
   land.endScore = ndtScore(m, movScan, T);
@@ -2190,7 +2182,7 @@ function regManualNudge(){
 }
 
 // regIterate(h): one Newton iteration at cell size h, with score bookkeeping. Takes the cell size;
-// returns 'converged', 'lost', or 'stepped'.
+// returns 'stopped', 'lost', or 'stepped'.
 function regIterate(h){
   const m = regModel(h);
   const res = newtonStep(m, movScan, reg.T, 3);
@@ -2200,7 +2192,7 @@ function regIterate(h){
   if(reg.hist.length > 70) reg.hist.shift();
   syncSlider($('regRot'), $('regRotV'), reg.T.th);
   if(res.contrib < 5) return 'lost';
-  if(res.converged || res.stepNorm < 1e-4) return 'converged';
+  if(res.stopped || res.stepNorm < 1e-4) return 'stopped';
   return 'stepped';
 }
 
@@ -2220,14 +2212,14 @@ function regRunSchedule(phases, resume){
   if(!resume){ reg.iter = 0; reg.hist = []; }
   let inPhase = 0;
   if(RM){
-    let out = 'converged';
+    let out = 'stopped';
     for(const h of reg.phase){
       let n = 0;
       out = 'stepped';
       while(out === 'stepped' && ++n <= 40) out = regIterate(h);
       if(out === 'lost'){ reg.status = 'lost — off the map'; reg.phase = []; return; }
     }
-    reg.status = out === 'stepped' ? 'iteration cap' : 'converged';
+    reg.status = out === 'stepped' ? 'iteration cap' : 'stopped';
     reg.phase = [];
     return;
   }
@@ -2243,7 +2235,7 @@ function regRunSchedule(phases, resume){
     inPhase = 0;
     if(out === 'lost'){ reg.status = 'lost — off the map'; regStop(); return; }
     if(reg.phase.length === 0){
-      reg.status = out === 'converged' ? 'converged' : 'iteration cap';
+      reg.status = out === 'stopped' ? 'stopped' : 'iteration cap';
       regStop();
     }
   }, 110);
@@ -2321,7 +2313,7 @@ $('regC2F').addEventListener('click', () => {
 $('regStep').addEventListener('click', () => {
   if(reg.timer) return;
   const out = regIterate(regH());
-  reg.status = out === 'stepped' ? 'stepped' : out === 'lost' ? 'lost — off the map' : 'converged';
+  reg.status = out === 'stepped' ? 'stepped' : out === 'lost' ? 'lost — off the map' : 'stopped';
 });
 $('regReset').addEventListener('click', () => regSetPose(reg.defaultT));
 $('regRand').addEventListener('click', () => regSetPose({
@@ -2397,7 +2389,7 @@ const METHODS = [
   { key: 'gi', name: 'GICP',       abbr: 'GICP',   color: '#2F8F83' },
   { key: 'nd', name: 'NDT',        abbr: 'NDT',    color: '#5A6B7A' },
   { key: 'bp', name: 'BP assoc',   abbr: 'BP',     color: '#C2588C' },
-  { key: 'pm', name: 'PMBM assoc', abbr: 'PMBM',   color: '#7E8B3A' },
+  { key: 'pm', name: 'hypothesis toy', abbr: 'hyp. toy',   color: '#7E8B3A' },
 ];
 const RM = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
@@ -2584,7 +2576,7 @@ function makeICP(pointToPlane){
     M.T = { th: T0.th, tx: T0.tx, ty: T0.ty };
     M.prevRms = null; M.done = false;
   };
-  // step(): one gated ICP iteration. Takes nothing, returns true when converged/stuck.
+  // step(): one gated ICP iteration. Takes nothing, returns true when stopped/stuck.
   M.step = () => {
     if(M.done) return true;
     const moved = M.src.map(p => applyT(M.T, p));
@@ -2657,7 +2649,7 @@ function makeSoft(){
     M.sigma = 1.1; M.done = false; M.prev = null;
   };
   // step(): one EM iteration — E-step responsibilities with outlier bin, M-step weighted Kabsch,
-  // then anneal σ. Takes nothing, returns true when converged.
+  // then anneal σ. Takes nothing, returns true when stopped.
   M.step = () => {
     if(M.done) return true;
     const moved = M.src.map(p => applyT(M.T, p));
@@ -2711,7 +2703,7 @@ function makeMMD(){
     M.sampleFreqs();
   };
   // step(): one Levenberg–Marquardt iteration on F(θ) = ||μ̂_T(X) − μ̂_Y||²; advances the ℓ-schedule
-  // when a stage plateaus. Takes nothing, returns true when the final stage has converged.
+  // when a stage plateaus. Takes nothing, returns true when the final stage has stopped.
   M.step = () => {
     if(M.done) return true;
     const { r, J } = mmdResidJac(M.src, M.T, M.om, M.muY);
@@ -2808,10 +2800,9 @@ function covEig(a, b, c){
   return { l1: l1, l2: l2, v1: [vx / n, vy / n] };
 }
 
-// cellKey(ix, iy): packs integer cell coordinates into one Map key. Takes two cell indices,
-// returns an integer unique for |ix|, |iy| < 1024.
+// cellKey(ix, iy): joins integer cell coordinates into a collision-free string Map key.
 function cellKey(ix, iy){
-  return (ix + 1024) * 2048 + (iy + 1024);
+  return ix + ',' + iy;
 }
 
 // buildNDT(points, h, opts): the transform itself — bins points into square cells of side h and fits a
@@ -2988,14 +2979,14 @@ function cholSolve(L, b, k){
 // newtonStep(ndt, pts, T, dof): one damped Newton iteration on f = −score. Adds λI until the Hessian
 // (or its translation block, for dof = 2) is positive definite, caps the step, and backtracks until the
 // score improves. Takes an NDT model, scan points, the current pose, and dof ∈ {2, 3} (2 freezes φ);
-// returns {T, score, stepNorm, converged, contrib} — converged means no improving step existed.
+// returns {T, score, stepNorm, stopped, contrib} — stopped means no improving step existed.
 function newtonStep(ndt, pts, T, dof){
   const d = ndtDeriv(ndt, pts, T);
   if(d.contrib < 5)
-    return { T: T, score: -d.f, stepNorm: 0, converged: true, contrib: d.contrib };
+    return { T: T, score: -d.f, stepNorm: 0, stopped: true, contrib: d.contrib };
   const gn = Math.hypot(d.g[0], d.g[1], dof === 3 ? d.g[2] : 0);
   if(gn < 1e-8)
-    return { T: T, score: -d.f, stepNorm: 0, converged: true, contrib: d.contrib };
+    return { T: T, score: -d.f, stepNorm: 0, stopped: true, contrib: d.contrib };
   let lam = 0, L = chol3(d.H, 0, dof);
   const base = 1e-6 + Math.abs(d.H[0][0]) + Math.abs(d.H[1][1]) + Math.abs(d.H[2][2]);
   for(let k = 0; !L && k < 12; k++){
@@ -3003,7 +2994,7 @@ function newtonStep(ndt, pts, T, dof){
     L = chol3(d.H, lam, dof);
   }
   if(!L)
-    return { T: T, score: -d.f, stepNorm: 0, converged: true, contrib: d.contrib };
+    return { T: T, score: -d.f, stepNorm: 0, stopped: true, contrib: d.contrib };
   const step = cholSolve(L, d.g, dof);
   if(dof === 2) step.push(0);
   // cap the raw step (0.5 u, 0.2 rad): an uncapped Newton jump can leap into a better-scoring
@@ -3017,10 +3008,10 @@ function newtonStep(ndt, pts, T, dof){
     const sn = ndtScore(ndt, pts, Tn);
     if(sn > -d.f + 1e-12){
       return { T: Tn, score: sn, stepNorm: Math.hypot(step[0] * t, step[1] * t, step[2] * t),
-               converged: false, contrib: d.contrib };
+               stopped: false, contrib: d.contrib };
     }
   }
-  return { T: T, score: -d.f, stepNorm: 0, converged: true, contrib: d.contrib };
+  return { T: T, score: -d.f, stepNorm: 0, stopped: true, contrib: d.contrib };
 }
 
 // makeGICP(): builds the plane-to-plane GICP racer — gated NN pairs (no trimming, matching the ICP
@@ -3100,12 +3091,12 @@ function makeNDT(){
     M.stage = 0; M.done = false;
   };
   // step(): one damped Newton iteration; advances the schedule when a stage stalls. Takes nothing,
-  // returns true when the fine stage has converged.
+  // returns true when the fine stage has stopped.
   M.step = () => {
     if(M.done) return true;
     const res = newtonStep(M.models[M.stage], M.src, M.T, 3);
     M.T = { th: res.T.th, tx: res.T.tx, ty: res.T.ty };
-    if(res.converged || res.stepNorm < 1e-4){
+    if(res.stopped || res.stepNorm < 1e-4){
       if(M.stage < SCHED.length - 1) M.stage++;
       else M.done = true;
     }
@@ -3188,7 +3179,7 @@ function makeBP(){
     M.sigma = 1.1; M.done = false; M.prev = null;
   };
   // step(): one EM iteration — BP-marginal E-step, weighted-Kabsch M-step, σ anneal.
-  // Takes nothing, returns true when converged.
+  // Takes nothing, returns true when stopped.
   M.step = () => {
     if(M.done) return true;
     const moved = M.src.map(p => applyT(M.T, p));
@@ -3260,7 +3251,7 @@ function makePMBM(){
     M.r = mulberry32(((seed || 1) * 31 + 17) >>> 0);
   };
   // step(): one EM iteration — hypothesis-mixture E-step, weighted-Kabsch M-step, σ anneal.
-  // Takes nothing, returns true when converged.
+  // Takes nothing, returns true when stopped.
   M.step = () => {
     if(M.done) return true;
     const moved = M.src.map(p => applyT(M.T, p));
@@ -3558,6 +3549,7 @@ function benchRun(){
         '<td>' + median(runs.map(r => r.deg)).toFixed(2) + '°</td>' +
         '<td>' + median(runs.map(r => r.dist)).toFixed(3) + ' u</td>' +
         '<td>' + runs.filter(r => r.deg < 5).length + ' / ' + runs.length + '</td>' +
+        '<td>' + runs.filter(r => r.deg < 5 && r.dist < 0.2).length + ' / ' + runs.length + '</td>' +
         '<td>' + median(runs.map(r => r.it)) + '</td></tr>';
     }).join('');
     bench.filled = true;
@@ -3632,11 +3624,10 @@ function landObjective(tx, ty){
   }
   // gated nearest-neighbor cost — the ICP objective under its correspondence rule
   const T = { th: 0, tx: tx, ty: ty };
-  const ds = land.scene.source.map(p => nearest(applyT(T, p), land.scene.target).d)
-    .filter(d => d < GATE);
+  const ds = land.scene.source.map(p => nearest(applyT(T, p), land.scene.target).d);
   let s = 0;
-  for(const d of ds) s += d * d;
-  return ds.length ? s / ds.length : GATE * GATE;
+  for(const d of ds) s += Math.min(d * d, GATE * GATE);
+  return ds.length ? s / ds.length : Infinity;
 }
 
 // landRecompute(): re-evaluates the objective over the translation grid in cancellable chunks so the
@@ -3650,7 +3641,7 @@ function landRecompute(){
   land.grid = new Float64Array(N * N).fill(Infinity);
   land.gmin = Infinity; land.gmax = -Infinity;
   land.path = [];
-  $('landStat').textContent = (land.mode === 'mmd' ? 'MMD² (ℓ=' + landEll().toFixed(2) + ', D=' + landD() + ')' : 'gated NN cost');
+  $('landStat').textContent = (land.mode === 'mmd' ? 'MMD² (ℓ=' + landEll().toFixed(2) + ', D=' + landD() + ')' : 'capped NN cost');
   $('mmdPath').textContent = 'click to start';
   let iy = 0;
   // chunk(): fills a few grid rows, then yields; abandons itself if a newer recompute started.
@@ -4318,34 +4309,10 @@ function drawClouds(g,view,T){
 // fmtT: compact transform readout
 function fmtT(T,withS){return`θ <b>${(T.th*180/Math.PI).toFixed(1)}°</b>${withS?` · s <b>${T.s.toFixed(3)}</b>`:''} · t <b>(${T.tx.toFixed(2)}, ${T.ty.toFixed(2)})</b>`;}
 
-const CAP1=[
-  'Two unordered sets, correspondence genuinely unknown — plus planted junk. Orange must reach blue.',
-  'Each moving point becomes a Gaussian centroid (halos, width σ); one flat uniform bin of weight w stands ready to own the junk.',
-  'E-step: every blue point splits one unit of belief across all centroids and the bin — the violet web <b>is</b> the responsibility matrix P.',
-  'M-step ① center: responsibility-weighted centroids of both clouds (crosses); the closed form works relative to them.',
-  'M-step ② rotate: R from the weighted cross-covariance — the SVD step, exact in one shot.',
-  'M-step ③ move + scale: closed-form s and t land the cloud. CPD\'s rigid model is a similarity — watch s.',
-  'Tighten: σ² gets its own closed-form update — the halos shrink, the assignment sharpens. That was one full EM sweep.',
-  'Result: sweeps repeat until nothing moves.',
-];
-const CAP2=[
-  'The flip: the <b>fixed</b> cloud carries the Gaussians now (halos) — a density over space, built from points that never move.',
-  'Filter: splat the fixed cloud onto a sparse lattice and blur once — the density becomes a lookup table (faint cells), built once per σ.',
-  'Query: each moving point slices the lattice → one soft target ȳᵢ + confidence αᵢ (arrows fade with α) — a row of CPD\'s matrix, pre-compressed.',
-  'Twist: one Gauss–Newton step on (θ, t) per sweep; query + twist repeat, σ coarse-to-fine.',
-];
-const CAP4=[
-  'No solver here — a 15,458-parameter velocity network, trained offline on this page\'s own scene generator (every rotation, shift, noise and junk setting), reads both clouds as fixed-size wave signatures. The memory of "who matches whom" lives entirely in its weights.',
-  'Flow: κ Euler steps of the learned transport — each orange point streams along the network\'s predicted path toward its registered position. No pairs, no objective, no descent: generation, not optimization.',
-  'Rigidify: the free flow lands almost rigid, never exactly — fit a pose to the transported cloud (Kabsch) and keep the rigid version. The red whiskers are the non-rigidity being snapped away (tiny when rigidity forcing is on).',
-  'Read the pose: one closed-form Kabsch between the observed points and their transported copies — rung one, as the final line of the field\'s newest method.',
-];
-const CAP3=[
-  'Encode: no mixture, no pairs — every point is read by a fixed bank of random waves (one wave shown as the striped field).',
-  'Average: each cloud collapses into one fixed-size signature (bars) — 96 numbers per cloud, junk averaged in; there is no outlier bin.',
-  'Compare: subtract the two signatures — one residual vector (violet); its squared norm is MMD², the entire objective.',
-  'Optimize: Levenberg–Marquardt drives (θ, t) down the residual, ℓ coarse-to-fine — the bars slide into agreement.',
-];
+const CAP1=["Two unpaired clouds with planted outliers: source orange must align with target blue.", "Moving points carry Gaussian components. A clutter component competes with them for each fixed observation.", "E-step: each fixed point splits probability across moving centroids and clutter. The web shows inlier responsibilities.", "M-step: compute responsibility-weighted centroids for both clouds.", "M-step: solve the proper rotation from weighted cross-covariance.", "M-step: estimate translation and similarity scale. Rigid CPD instead fixes s = 1.", "Variance: estimate sigma squared from the weighted residuals. It need not decrease every sweep.", "Result: the loop stops at its tolerance or budget; compare the pose, not just the stopping flag."];
+const CAP2=["The fixed cloud carries the mixture; transformed moving points are its queries.", "Filter: accumulate a sparse Cartesian Gaussian grid, rebuilt when bandwidth changes. This is not a permutohedral lattice.", "Query: compute a soft target and confidence from filtered moments of the reversed mixture, not a row of the displayed CPD matrix.", "Twist: one local Gauss–Newton step per sweep with a bandwidth schedule. The FilterReg paper also permits optimized variance."];
+const CAP4=["Embedded 15,458-parameter MLP and cloud signatures: a planar learned-flow analogy, not the RAP transformer or its evaluation.", "Flow: evolving coordinates follow predicted endpoints over kappa steps. This still performs inference and uses runtime state.", "Rigidify: project predicted coordinates onto a rigid fit. Optional per-step projection changes the trajectory.", "Read the pose using paired original and transported points. Correct algebra does not certify the learned endpoint."];
+const CAP3=["Encode each point using a fixed bank of 48 random frequencies.", "Average into 96 sine/cosine features per cloud. Outliers remain in the mean; no clutter component is present.", "Compare feature means. The squared residual approximates Gaussian-kernel MMD squared; finite features need not identify a distribution uniquely.", "Optimize the nonconvex residual with LM and a kernel schedule. A small step is not proof of correct alignment."];
 
 // draw: renders all three panels, captions, chip states
 function draw(){
@@ -4386,7 +4353,7 @@ function draw(){
     let cap=`<b>${CHIPS[0][p.stage].slice(3)}</b> — ${CAP1[p.stage]}`;
     if(p.stage>=4)cap+=`<br>${fmtT(T,true)} · σ <b>${Math.sqrt(p.s2).toFixed(3)}</b>`;
     if(p.stage>=2)cap+=` · keeps <b>P: ${scene.Y.length}×${scene.X.length} ≈ ${Math.round(scene.Y.length*scene.X.length/1000)}k entries</b>`;
-    if(p.stage===7)cap+=` · iter <b>${p.it}</b>${p.done?' · <b style="color:var(--good)">converged</b>':''}`;
+    if(p.stage===7)cap+=` · iter <b>${p.it}</b>${p.done?' · <b style="color:var(--good)">stopped</b>':''}`;
     $('memStat1').innerHTML=cap;
   }
   // --- FilterReg ---
@@ -4420,7 +4387,7 @@ function draw(){
     drawClouds(g,view,p.T);
     let cap=`<b>${CHIPS[1][p.stage].slice(3)}</b> — ${CAP2[p.stage]}`;
     if(p.stage>=2)cap+=`<br>mean α <b>${p.meanA.toFixed(2)}</b> · keeps <b>${scene.Y.length} targets</b>`;
-    if(p.stage>=3)cap+=` · ${fmtT(p.T,false)} · iter <b>${p.it}</b>${p.done?' · <b style="color:var(--good)">converged</b>':''}`;
+    if(p.stage>=3)cap+=` · ${fmtT(p.T,false)} · iter <b>${p.it}</b>${p.done?' · <b style="color:var(--good)">stopped</b>':''}`;
     $('memStat2').innerHTML=cap;
   }
   // --- MMD ---
@@ -4467,8 +4434,8 @@ function draw(){
       p.curF=F;
     }
     let cap=`<b>${CHIPS[2][p.stage].slice(3)}</b> — ${CAP3[p.stage]}`;
-    if(p.stage>=1)cap+=`<br>MMD²×1000 <b>${((p.curF||0)*1000).toFixed(2)}</b> · keeps <b>none — one ${2*D_MMD}-number residual</b>`;
-    if(p.stage>=3)cap+=` · ${fmtT(p.T,false)} · ℓ <b>${p.ells[p.solStage].toFixed(2)}</b> · iter <b>${p.it}</b>${p.done?' · <b style="color:var(--good)">converged</b>':''}`;
+    if(p.stage>=1)cap+=`<br>MMD²×1000 <b>${((p.curF||0)*1000).toFixed(2)}</b> · keeps <b>a ${2*D_MMD}-number residual; no pair assignments</b>`;
+    if(p.stage>=3)cap+=` · ${fmtT(p.T,false)} · ℓ <b>${p.ells[p.solStage].toFixed(2)}</b> · iter <b>${p.it}</b>${p.done?' · <b style="color:var(--good)">stopped</b>':''}`;
     $('memStat3').innerHTML=cap;
   }
   // --- flow matching ---
@@ -4501,7 +4468,7 @@ function draw(){
     let cap=`<b>${CHIPS[3][p.stage].slice(3)}</b> — ${CAP4[p.stage]}`;
     if(p.stage===1)cap+=`<br>step <b>${p.k}/${p.kappa}</b>`;
     if(p.stage>=2&&p.T)cap+=`<br>θ <b>${(p.T.th*180/Math.PI).toFixed(1)}°</b> · t <b>(${p.T.tx.toFixed(2)}, ${p.T.ty.toFixed(2)})</b>`;
-    if(p.stage>=3)cap+=` · rot err <b>${p.rotErr.toFixed(1)}°</b> · trans err <b>${p.trErr.toFixed(2)}</b> · keeps <b>nothing — 15,458 weights</b> · <b style="color:var(--good)">done</b>`;
+    if(p.stage>=3)cap+=` · rot err <b>${p.rotErr.toFixed(1)}°</b> · trans err <b>${p.trErr.toFixed(2)}</b> · keeps <b>15,458 weights plus evolving coordinates and signatures</b> · <b style="color:var(--good)">done</b>`;
     $('memStat4').innerHTML=cap;
   }
   // chips active state
@@ -4544,7 +4511,7 @@ $('memWalk').addEventListener('click',()=>{
   auto=[true,true,true,true];
   ensureAuto();
 });
-$('memReset').addEventListener('click',()=>{seed++;auto=[false,false,false];rebuildAll();});
+$('memReset').addEventListener('click',()=>{seed++;auto=[false,false,false,false];rebuildAll();});
 $('memScene').addEventListener('change',rebuildAll);
 $('memScale').addEventListener('change',rebuildAll);
 for(const id of['memRot','memDx','memDy'])$(id).addEventListener('input',rebuildAll);
@@ -4557,5 +4524,6 @@ rebuildAll();
 })();
 </script>
 
+<!-- frame-registration-review: 2026-09-07-v1 -->
 </body>
 </html>

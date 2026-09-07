@@ -1,0 +1,85 @@
+name: Frame registration accuracy and quality
+on:
+  push:
+    branches: [main, fix/frame-registration-audit-2026-09-07]
+    paths:
+      - .github/workflows/frame-registration-quality.yml
+      - frame-registration/**
+      - frame-registration-slides/**
+      - scripts/frame-registration-*
+      - scripts/finalize-frame-registration.py
+      - tests/frame-registration*
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: frame-registration-${{ github.ref }}
+  cancel-in-progress: false
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          sparse-checkout: |
+            frame-registration
+            frame-registration-slides
+            assets
+            scripts
+            tests
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install rendering and browser dependencies
+        run: |
+          python -m pip install matplotlib==3.10.6 playwright==1.55.0
+          python -m playwright install --with-deps chromium
+      - name: Apply checked article and slide corrections
+        if: github.ref == 'refs/heads/fix/frame-registration-audit-2026-09-07'
+        run: |
+          python scripts/frame-registration-audit.py
+          python scripts/finalize-frame-registration.py
+      - name: Test deployed numerical implementations and source consistency
+        run: |
+          node --test tests/frame-registration.test.cjs
+          node --check frame-registration-slides/live/app.js
+          git diff --check
+      - name: Check migration idempotence
+        if: github.ref == 'refs/heads/fix/frame-registration-audit-2026-09-07'
+        run: |
+          sha256sum frame-registration/index.html frame-registration/REVIEW.md frame-registration-slides/index.html frame-registration-slides/live/app.js frame-registration-slides/live/index.html > /tmp/frame-before.sha
+          python scripts/frame-registration-audit.py
+          python scripts/finalize-frame-registration.py
+          sha256sum -c /tmp/frame-before.sha
+      - name: Exercise pages, benchmark, slides, and live controls in Chromium
+        run: python tests/frame-registration-browser.py
+      - name: Commit only the validated deployed lesson files
+        if: github.ref == 'refs/heads/fix/frame-registration-audit-2026-09-07'
+        env:
+          TARGET_BRANCH: ${{ github.ref_name }}
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add frame-registration/index.html frame-registration/REVIEW.md frame-registration-slides/index.html frame-registration-slides/live/app.js frame-registration-slides/live/index.html
+          if ! git diff --cached --quiet; then
+            git commit -m 'Apply verified frame-registration equations, explanations, slides, and demo fixes'
+            git push origin HEAD:"$TARGET_BRANCH"
+          fi
+          git log -1 --format='%H %s'
+      - name: Export audit evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: frame-registration-review
+          path: |
+            test-results/frame-registration/
+            frame-registration/
+            frame-registration-slides/
+            scripts/frame-registration-*
+            scripts/finalize-frame-registration.py
+            tests/frame-registration*
+          retention-days: 14

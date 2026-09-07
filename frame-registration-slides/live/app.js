@@ -56,10 +56,10 @@
     },
     ndt: {
       kicker: "DISTRIBUTION MATCHING",
-      title: "Navigate a likelihood surface",
-      body: "NDT replaces discrete target points with Gaussian cells. Registration becomes optimization over a smooth-ish score landscape.",
+      title: "Explore a point-to-cell score",
+      body: "Gaussian cells give a piecewise-smooth score. This demo uses translation-only direct search, not the article’s Newton solver.",
       heading: "NORMAL DISTRIBUTIONS TRANSFORM",
-      hint: "The bright ridges are high-likelihood translations at the selected rotation; click anywhere to move the pose."
+      hint: "The bright ridges are high-score translations at the selected rotation; click anywhere to move the pose."
     }
   };
 
@@ -433,9 +433,9 @@
     icp.done = change < 0.00008 || icp.iterations >= 35;
     var error = transformError(icp.T);
     if (icp.done && error.translation < 0.12 && error.angle < 1.8) {
-      setStatus("Converged inside the correct basin", false);
+      setStatus("Stopped: within the demo pose thresholds", false);
     } else if (icp.done) {
-      setStatus("Settled in a local minimum — reset and reposition", false);
+      setStatus("Stopped without meeting pose thresholds — try another start", false);
     } else {
       setStatus("Re-matched " + icp.pairs.length + " pairs, then refit", true);
     }
@@ -506,7 +506,7 @@
         if (mahal < 28) total += Math.exp(-0.5 * mahal);
       }
     });
-    return total / Math.max(1, scene.goodCount);
+    return total / Math.max(1, scene.source.length);
   }
 
   function rebuildLandscape() {
@@ -542,7 +542,7 @@
     ndt.score = ndtScore(ndt.T);
     rebuildLandscape();
     if (mode === "ndt") {
-      setStatus("Choose a start on the likelihood map", false);
+      setStatus("Choose a start on the score map", false);
       updateMetrics();
       render();
     }
@@ -572,9 +572,9 @@
     if (ndt.done) {
       var error = transformError(ndt.T);
       if (error.translation < 0.15) {
-        setStatus("Peak found near the correct translation", false);
+        setStatus("Stopped near the true translation; check rotation separately", false);
       } else {
-        setStatus("Local peak found — try another bright basin", false);
+        setStatus("Stopped away from truth — try another start", false);
       }
     } else {
       setStatus("Direct search climbed to score " + ndt.score.toFixed(2), true);
@@ -695,7 +695,7 @@
     hintEl.textContent = text.hint;
     if (mode === "ransac") setStatus("Ready — test the first batch", false);
     if (mode === "icp") setStatus("Drag the blue scan into the attraction basin", false);
-    if (mode === "ndt") setStatus("Choose a start on the likelihood map", false);
+    if (mode === "ndt") setStatus("Choose a start on the score map", false);
     updateMetrics();
     render();
   }
