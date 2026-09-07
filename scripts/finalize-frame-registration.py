@@ -26,6 +26,17 @@ s = replace_checked(s, "this page's solver code (repo)",
 s = replace_checked(s,
     '// cellKey(ix, iy): packs integer cell coordinates into one Map key. Takes two cell indices,\n// returns an integer unique for |ix|, |iy| < 1024.',
     '// cellKey(ix, iy): joins integer cell coordinates into a collision-free string Map key.', 2)
+s = replace_checked(s, 'Frame registration · the whole story, live',
+                    'Frame registration · models, objectives, and live examples')
+s = replace_checked(s, 'Rung four · correspondences dissolved',
+                    'Rung four · point-to-cell association')
+if 'id="demo-implementation-scope"' not in s:
+    body = '''<div class="scope-note" id="demo-implementation-scope"><strong>Scope of the implementations.</strong> The controls run planar solvers on synthetic clouds. Nearest-neighbor search is brute force; the article's NDT examples use hard Gaussian cells and damped Newton, whereas the separate slide lab uses translation-only direct search. The race's soft-target and hypothesis-mixture panels are heuristics, not complete CPD or PMBM implementations. The final walkthrough separately demonstrates similarity CPD, Cartesian-grid filtering inspired by FilterReg, random-feature MMD optimization, and a small learned-flow analogy. These examples do not reproduce the original papers' implementations, training, or evaluation datasets. Scene controls change noise, density, and outliers to illustrate model mismatch and optimization behavior. Compare pose errors under the same controls, rather than reading the browser race as a general ranking.</div>'''
+    s, n = re.subn(r'<div class="scope-note"><strong>Scope of the demos\.</strong>.*?</div>',
+                   lambda _: body, s, flags=re.S)
+    if n != 1: raise ValueError('Expected exactly one legacy implementation scope note')
+assert 'PMBM-flavored' not in s
+assert 'reproducing the paper\'s stress settings' not in s
 article.write_text(s)
 
 p = ROOT / 'frame-registration-slides/index.html'
@@ -53,4 +64,4 @@ s = replace_checked(s, 'Registration Using Gaussian Filter and Twist Parameteriz
 s = replace_checked(s, 'python scripts/frame-registration-audit.py\n',
                     'python scripts/frame-registration-audit.py\npython scripts/finalize-frame-registration.py\n') if 'python scripts/finalize-frame-registration.py' not in s else s
 p.write_text(s)
-print('Final captions, CPD equation layout, and FilterReg citation verified.')
+print('Final captions, implementation scope, CPD equation layout, and FilterReg citation verified.')
