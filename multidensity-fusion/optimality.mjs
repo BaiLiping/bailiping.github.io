@@ -54,7 +54,7 @@ const entries=[
   {
     after:'moments',id:'moments-optimality',title:'Moment matching is the best forward-KL Gaussian',
     subtitle:'An exact optimization within the Gaussian family; still an approximation to the full mixture.',
-    equation:raw`\arg\min_{m,\,P\succ0}\operatorname{KL}\!\left(q_A\Vert\mathcal N(m,P)\right)=\mathcal N(\mu_A,P_A)`,
+    equation:raw`(\mu_A,P_A)=\arg\min_{m,\,P\succ0}\operatorname{KL}\!\left(q_A\Vert\mathcal N(m,P)\right)`,
     leftTitle:'ONLY THE FIRST TWO MOMENTS ENTER',
     left:`Ignoring constants independent of m and P, the objective is${display(raw`\frac12\left[\log\det P+\operatorname{tr}(P^{-1}P_A)\right]`)}${display(raw`{}+\frac12(m-\mu_A)^{\mathsf T}P^{-1}(m-\mu_A)`)}`,
     rightTitle:'THE NONNEGATIVE OBJECTIVE GAP',
