@@ -32,7 +32,12 @@ try:
         page.wait_for_function('window.MathJax && typeof MathJax.tex2svgPromise === "function"')
         doc = json.loads(page.locator('#bento-doc').text_content())
         assert doc['docId'] == 'multidensity-fusion-bento'
-        assert len(doc['slides']) == 29
+        assert len(doc['slides']) == 40
+        assert doc['meta']['optimalityCompanionVersion'] == 1
+        live_map = json.loads(page.locator('#bento-inline-live-map').text_content())
+        assert len(live_map) == 6
+        for entry in live_map:
+            assert doc['slides'][entry['slideIndex']]['id'] == entry['slide']
         for i, slide in enumerate(doc['slides']):
             page.evaluate('(i) => location.hash = "#/" + i', i)
             current = page.locator(f'section.present .bento-slide[data-slide-id="{slide["id"]}"]')
