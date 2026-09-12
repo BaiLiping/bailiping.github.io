@@ -1,4 +1,6 @@
-import { deck, inlineLiveMap } from './bento-deck.mjs';
+import { deck as baseDeck, inlineLiveMap as baseLiveMap } from './bento-deck.mjs';
+import { withOptimality } from './optimality.mjs';
+const { deck, inlineLiveMap } = withOptimality(baseDeck, baseLiveMap);
 
 /** Reuse the exact engine shipped with the reference deck. Only the two
  * compressed runtime blocks are extracted; no reference slide, script,
