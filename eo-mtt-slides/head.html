@@ -1,0 +1,35 @@
+<!-- EO-MTT presentation styles and the shared dynamic LaTeX renderer. -->
+<link rel="stylesheet" href="./theme.css?v=20260918">
+<link rel="canonical" href="https://bailiping.com/eo-mtt-slides/">
+<script>
+window.MathJax = {
+  tex: { inlineMath: [['\\(', '\\)']], displayMath: [['\\[', '\\]']], processEscapes: true },
+  svg: { fontCache: 'local' },
+  options: { skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'] },
+  startup: { typeset: false, ready: () => {
+    MathJax.startup.defaultReady();
+    MathJax.startup.promise.then(() => window.dispatchEvent(new Event('mathjax-ready')));
+  } }
+};
+</script>
+<script defer src="https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/tex-svg-full.js"></script>
+<script defer src="../assets/mathjax-dynamic.js?v=2"></script>
+<script>
+// Bento also sanitizes classes in table cells. Restore the same math markers
+// used by the shared renderer, including its presentation and overview copies.
+(() => {
+  const restore = () => {
+    let changed = false;
+    document.querySelectorAll('.bento-cell-inner span:not(.math-tex)').forEach(node => {
+      const source = node.textContent.trim();
+      if (source.startsWith('\\(') && source.endsWith('\\)')) {
+        node.classList.add('math-tex', 'math-inline');
+        changed = true;
+      }
+    });
+    if (changed) window.typesetDynamicMath?.();
+  };
+  new MutationObserver(restore).observe(document.documentElement, { childList: true, subtree: true });
+  addEventListener('DOMContentLoaded', restore);
+})();
+</script>

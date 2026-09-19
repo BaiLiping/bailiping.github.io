@@ -1,0 +1,13 @@
+import test from 'node:test';import assert from 'node:assert/strict';
+import {normal,binomial,betaPdf,coin,integrate,gaussianUpdate} from './math.mjs';
+import {deck,inlineLiveMap} from './bento-deck.mjs';
+const near=(a,b,t=1e-8)=>assert.ok(Math.abs(a-b)<t,`${a} != ${b}`);
+test('binomial PMFs sum to one, including endpoint parameters',()=>{for(const n of [1,2,10,30])for(const t of [0,.2,.5,.8,1])near(Array.from({length:n+1},(_,k)=>binomial(n,k,t)).reduce((a,b)=>a+b,0),1);});
+test('binomial likelihood area is 1/(n+1), including all-heads/tails cases',()=>{for(const n of [1,2,10,30])for(const k of [0,Math.floor(n/2),n])near(integrate(t=>binomial(n,k,t),0,1,12000),1/(n+1),2e-8);});
+test('coin table and likelihood-ratio examples',()=>{near(binomial(2,2,.2),.04);near(binomial(2,2,.5),.25);near(binomial(2,2,.8),.64);near(binomial(10,7,.7)/binomial(10,7,.5),2.2769316864);});
+test('Beta priors and posteriors normalize on the UI parameter range',()=>{for(const [a,b]of [[1,1],[8,4],[17,13],[42,12],[12,42]])near(integrate(t=>betaPdf(t,a,b),0,1,12000),1,1e-7);});
+test('Bayes normalization reconstructs the Beta posterior',()=>{for(const [n,k,a,b]of [[10,7,1,1],[10,7,10,10],[30,0,12,12],[30,30,1,1]]){const c=coin(n,k,a,b),f=t=>binomial(n,k,t)*betaPdf(t,a,b),z=integrate(f,0,1,24000);for(const t of [.1,.4,.7])near(f(t)/z,betaPdf(t,c.alpha,c.beta),2e-5);}});
+test('Gaussian gain changes likelihood area but not sampling-density area',()=>{for(const b of [.5,1,2,3]){near(integrate(y=>normal(y,b,.7),b-7,b+7),1);near(integrate(t=>normal(1.5,b*t,.7),1.5/b-7/b,1.5/b+7/b),1/b);}});
+test('shared-prior Gaussian fusion counts the prior only once',()=>{const local=gaussianUpdate(0,1,2,1),correct=gaussianUpdate(local.mean,local.variance,2,1);near(correct.mean,4/3);near(correct.variance,1/3);near(1/(2/local.variance-1),correct.variance);});
+test('invalid numerical inputs are rejected',()=>{assert.throws(()=>normal(0,0,0));assert.throws(()=>binomial(10,11,.5));assert.throws(()=>betaPdf(.5,0,1));assert.throws(()=>coin(0,0));});
+test('deck structure, coordinates, named routes, and live-map indexes',()=>{assert.equal(deck.slides.length,25);assert.equal(inlineLiveMap.length,3);const ids=new Set(deck.slides.map(s=>s.id));assert.equal(ids.size,25);for(const s of deck.slides){assert.equal(new Set(s.elements.map(e=>e.id)).size,s.elements.length);for(const e of s.elements){assert.ok(e.x>=0&&e.y>=0&&e.x+e.w<=1280.01&&e.y+e.h<=720.01,`${s.id}/${e.id} outside canvas`);if(e.link&&!e.link.includes(':'))assert.ok(ids.has(e.link),e.link);}}for(const v of inlineLiveMap)assert.equal(deck.slides[v.slideIndex].id,v.slide);});
