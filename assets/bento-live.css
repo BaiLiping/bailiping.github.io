@@ -1,0 +1,27 @@
+iframe[data-bento-live] {
+  position: absolute;
+  z-index: 120;
+  display: block;
+  box-sizing: border-box;
+  border: 0;
+  border-radius: 10px;
+  background: #fff;
+  box-shadow: 0 12px 38px rgba(18, 24, 32, 0.16);
+}
+
+[data-bento-live-control] {
+  cursor: pointer;
+}
+
+[data-bento-live-control]:focus-visible {
+  outline: 4px solid #1769aa;
+  outline-offset: 5px;
+  box-shadow: 0 0 0 8px rgba(255, 255, 255, 0.92);
+}
+
+@media print {
+  iframe[data-bento-live],
+  #bento-print [data-el-id^="try-"][data-el-id*="-live-"] {
+    display: none !important;
+  }
+}

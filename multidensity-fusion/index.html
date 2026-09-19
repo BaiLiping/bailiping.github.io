@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="en"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="color-scheme" content="only light"><meta name="generator" content="bento-slides">
+<title>Multidensity Fusion | Bai Liping</title>
+<meta name="description" content="29 Bento slides and six interactive labs on Bayesian density fusion, covariance intersection, arithmetic and geometric pools, Wasserstein barycenters, Bernoulli and Poisson multi-object fusion.">
+<link rel="canonical" href="https://bailiping.com/multidensity-fusion/">
+<link rel="stylesheet" href="../assets/bento-inline-live.css?v=2">
+<link rel="icon" href="data:,">
+<!-- Same Bento/slides runtime as ../kalman-filter-derivations/; boot.mjs loads
+     only its compressed engine, never its slide content. No backend fork.
+     Bento/slides: MIT, copyright 2026 The Bento authors, https://bento.page.
+     Runtime includes reveal.js (MIT, Hakim El Hattab and contributors),
+     moveable/selecto and related Daybrush modules (MIT, Younkue Choi),
+     Fraunces (OFL 1.1, 2020 The Fraunces Project Authors), and
+     Instrument Sans (OFL 1.1, 2022 The Instrument Sans Project Authors).
+     Permission is hereby granted, free of charge, to any person obtaining a
+     copy of this software and associated documentation files (the Software),
+     to deal in the Software without restriction, including without limitation
+     the rights to use, copy, modify, merge, publish, distribute, sublicense,
+     and/or sell copies of the Software, and to permit persons to whom the
+     Software is furnished to do so, subject to the following conditions:
+     The above copyright notice and this permission notice shall be included
+     in all copies or substantial portions of the Software.
+     THE SOFTWARE IS PROVIDED AS IS, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+     IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+     FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL
+     THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR
+     OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE,
+     ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
+     OTHER DEALINGS IN THE SOFTWARE. -->
+<style>
+html,body{margin:0;background:#f7f5ef;color:#203129;font-family:Inter,system-ui,sans-serif}
+#loading{position:fixed;inset:0;z-index:10000;display:grid;place-content:center;padding:32px;background:#f7f5ef;text-align:center}
+#loading[hidden]{display:none}#loading h1{font:700 clamp(32px,6vw,64px)/1.05 Georgia,serif;margin:0 0 18px}#loading p{max-width:640px;line-height:1.6;margin:6px auto}#loading a{color:#2f6b4f}#loading button{font:inherit;border:1px solid #2f6b4f;background:#e7f0ea;border-radius:7px;padding:10px 18px;margin:12px;cursor:pointer}
+.math-tex{position:relative;white-space:nowrap}.math-inline{display:inline-block;vertical-align:-.14em;line-height:1}
+.math-display{display:flex;width:100%;height:100%;align-items:center;justify-content:center;line-height:1}
+.math-tex mjx-container{color:inherit!important;margin:0!important}.math-inline mjx-container{display:inline-block!important}
+.math-display mjx-container[display="true"]{display:block!important;width:100%;margin:0!important;text-align:center}
+.math-tex mjx-container[jax="SVG"]>svg{overflow:visible}.math-display mjx-container[jax="SVG"]>svg{max-width:100%;max-height:100%;width:auto;height:auto}
+mjx-assistive-mml{position:absolute!important;top:0!important;left:0!important;clip:rect(1px,1px,1px,1px)!important;clip-path:inset(50%)!important;padding:0!important;border:0!important;display:block!important;width:1px!important;height:1px!important;overflow:hidden!important;white-space:nowrap!important}
+@media(prefers-reduced-motion:reduce){.bento-slide *{animation:none!important;transition:none!important}}
+</style>
+<script>
+window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']],processEscapes:true},svg:{fontCache:'local'},options:{skipHtmlTags:['script','noscript','style','textarea','pre','code']},startup:{typeset:false,ready:()=>{MathJax.startup.defaultReady();MathJax.startup.promise.then(()=>window.dispatchEvent(new Event('mathjax-ready')));}}};
+</script>
+<script defer src="https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/tex-svg-full.js"></script>
+<script defer src="../assets/mathjax-dynamic.js?v=2"></script>
+</head><body>
+<div id="loading" role="status" aria-live="polite"><h1>Multidensity fusion</h1><p id="load-status">Loading the Bento deck…</p><p>Probability, shared information, and multi-object beliefs.</p><p><a href="./live/?demo=pooling">Open a live lab directly</a> · <a href="../">Back to Random thoughts</a></p><noscript><p>Enable JavaScript for the slide deck and experiments.</p></noscript></div>
+<div id="app"></div>
+<script type="application/bento+json" id="bento-doc">{}</script>
+<script type="application/json" id="bento-inline-live-map">[]</script>
+<script type="module" src="boot.mjs"></script>
+</body></html>

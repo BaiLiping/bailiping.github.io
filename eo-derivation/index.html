@@ -1,0 +1,937 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="icon" href="data:,">
+<title>Joint PDF factorization | Bai Liping</title>
+<meta name="description" content="Derivation note: factorization of the joint pdf for multi-object tracking in four scenarios and a GrBP derivation — point vs extended objects, known vs unknown number of objects, and preclustering followed by group association — ending in the factor graphs used by belief-propagation trackers.">
+<link rel="canonical" href="https://bailiping.com/eo-derivation/">
+<script>
+window.MathJax = {
+  tex: {
+    inlineMath: [['$', '$'], ['\\(', '\\)']],
+    displayMath: [['$$', '$$']],
+    macros: {
+      ub: ['\\underline{\\boldsymbol{#1}}', 1],
+      ob: ['\\overline{\\boldsymbol{#1}}', 1],
+      tb: ['\\tilde{\\boldsymbol{#1}}', 1]
+    }
+  },
+  options: { skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'] }
+};
+</script>
+<script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+<style>
+:root{
+  --bg:#eef0ea;
+  --panel:#fdfdfb;
+  --ink:#1b2320;
+  --mut:#5b665f;
+  --line:#d8dcd1;
+  --s1:#2456c8;
+  --s2:#0f766e;
+  --s3:#b7355c;
+  --s4:#6d4fc2;
+  --grbp:#a65a22;
+  --accent:#2f7d5b;
+  --serif:"STIX Two Text","Charter","Iowan Old Style",Georgia,"Times New Roman",serif;
+  --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  --mono:ui-monospace,"SF Mono",Menlo,Consolas,"Liberation Mono",monospace;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+@media (prefers-reduced-motion: reduce){html{scroll-behavior:auto}}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:15.5px;line-height:1.6}
+a{color:inherit}
+
+.bl-site-header{border-bottom:1px solid rgba(29,37,32,.12);background:rgba(255,255,255,.86);backdrop-filter:blur(12px);font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif}
+.bl-header-inner{width:min(960px,calc(100% - 32px));margin-inline:auto;display:flex;align-items:center;justify-content:space-between;min-height:64px;gap:16px}
+.bl-brand{display:inline-flex;align-items:center;gap:10px;font-weight:800;color:#1d2520;text-decoration:none}
+.bl-brand-mark{display:grid;place-items:center;width:32px;height:32px;border-radius:8px;background:#2f7d5b;color:#fff;font-weight:900}
+.bl-top-nav a{color:#215c43;font-weight:700;text-decoration:none}
+
+nav.toc{position:sticky;top:0;z-index:10;background:rgba(238,240,234,.92);backdrop-filter:blur(6px);border-bottom:1px solid var(--line)}
+nav.toc .in{max-width:980px;margin:0 auto;padding:9px 20px;display:flex;gap:6px;overflow-x:auto;white-space:nowrap}
+nav.toc a{font-size:12.5px;text-decoration:none;color:var(--mut);padding:4px 10px;border-radius:99px;border:1px solid transparent}
+nav.toc a:hover{border-color:var(--line);background:#fff;color:var(--ink)}
+nav.toc a .b{font-weight:700}
+nav.toc a.n1 .b{color:var(--s1)} nav.toc a.n2 .b{color:var(--s2)}
+nav.toc a.n3 .b{color:var(--s3)} nav.toc a.n4 .b{color:var(--s4)}
+
+.wrap{max-width:980px;margin:0 auto;padding:0 20px}
+header.hero{padding:50px 0 6px}
+.eyebrow{font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--mut)}
+h1{font-family:var(--serif);font-weight:600;font-size:clamp(27px,4.2vw,42px);line-height:1.14;margin:.35em 0 .35em;letter-spacing:-.01em}
+.sub{max-width:760px;color:var(--mut);font-size:16.5px}
+.accuracy{max-width:860px;border:1px solid var(--line);border-left:4px solid var(--accent);background:#fff;border-radius:0 9px 9px 0;padding:12px 15px;margin:18px 0 6px;color:var(--mut);font-size:13.5px}
+.accuracy strong{color:var(--ink)}
+
+section{padding:42px 0 4px;scroll-margin-top:58px}
+.shead{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap;margin-bottom:4px}
+.badge{font-family:var(--sans);font-weight:800;font-size:13px;color:#fff;border-radius:8px;padding:3px 9px;letter-spacing:.03em}
+.badge.b1{background:var(--s1)} .badge.b2{background:var(--s2)}
+.badge.b3{background:var(--s3)} .badge.b4{background:var(--s4)} .badge.b0{background:var(--ink)}
+h2{font-family:var(--serif);font-weight:600;font-size:clamp(21px,2.8vw,27px);margin:0;letter-spacing:-.005em}
+h3{font-family:var(--serif);font-weight:600;font-size:18.5px;margin:26px 0 8px}
+
+.prose{max-width:860px}
+.prose p{margin:.55em 0 .9em}
+.prose ul,.prose ol{margin:.4em 0 1em;padding-left:1.5em}
+.prose li{margin:.3em 0}
+
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:16px 20px;margin:14px 0}
+.panel .smallcap{font-size:11.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--mut);margin:0 0 8px;font-weight:700}
+.result{border-left:4px solid var(--accent);background:#f3f8f4}
+.result.r1{border-left-color:var(--s1)}
+.result.r2{border-left-color:var(--s2)}
+.result.r3{border-left-color:var(--s3)}
+.result.r4{border-left-color:var(--s4)}
+
+.note{font-size:13.5px;color:var(--mut);margin:8px 0}
+.aside{border:1px solid var(--line);border-left:3px solid var(--accent);background:#fff;border-radius:8px;padding:10px 14px;font-size:14px;margin:12px 0}
+
+figure{margin:18px 0}
+figure img{display:block;max-width:100%;height:auto;margin:0 auto;background:#fff;border:1px solid var(--line);border-radius:10px;padding:12px}
+figcaption{font-size:13px;color:var(--mut);text-align:center;margin-top:8px}
+
+details.scans{margin:16px 0 6px;border:1px dashed var(--line);border-radius:10px;background:#fbfbf8}
+details.scans summary{cursor:pointer;padding:10px 16px;font-size:13.5px;color:var(--mut);font-weight:600}
+details.scans summary:hover{color:var(--ink)}
+details.scans .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px;padding:6px 16px 16px}
+details.scans img{max-width:100%;height:auto;background:#fff;border:1px solid var(--line);border-radius:8px}
+
+mjx-container[display="true"]{overflow-x:auto;overflow-y:hidden;max-width:100%;padding:2px 0}
+
+.tablewrap{overflow-x:auto;margin:16px 0}
+table.cmp{width:100%;min-width:640px;border-collapse:collapse;font-size:14px;background:var(--panel)}
+table.cmp th,table.cmp td{border:1px solid var(--line);padding:9px 11px;vertical-align:top;text-align:left}
+table.cmp th{font-size:12px;text-transform:uppercase;letter-spacing:.07em;color:var(--mut);background:#f6f7f2}
+table.cmp td .c1{color:var(--s1);font-weight:700} table.cmp td .c2{color:var(--s2);font-weight:700}
+table.cmp td .c3{color:var(--s3);font-weight:700} table.cmp td .c4{color:var(--s4);font-weight:700}
+
+ol.refs{font-size:13.5px;color:var(--mut);padding-left:2.2em;line-height:1.6}
+ol.refs li{margin:.35em 0}
+ol.refs a{color:var(--accent);text-underline-offset:2px}
+footer.pagefoot{margin:52px 0 0;padding-top:18px;border-top:1px solid var(--line);font-size:12.5px;color:var(--mut)}
+nav.toc a.ngrbp .b, table.cmp td .cgrbp{color:var(--grbp);font-weight:700}
+.badge.bgrbp{background:var(--grbp)}
+.pc-pipeline{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:24px 0}
+.pc-pipeline span{flex:1;text-align:center;background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:16px 10px}
+.pc-pipeline b{color:var(--grbp)}
+.pc-source{font-size:13.5px;color:var(--mut)}
+#grbp-factor-graph{scroll-margin-top:58px}
+@media(max-width:650px){.pc-pipeline{flex-direction:column}.pc-pipeline span{width:100%}.pc-pipeline>b{transform:rotate(90deg)}}
+</style>
+</head>
+<body>
+
+<header class="bl-site-header">
+  <div class="bl-header-inner">
+    <a class="bl-brand" href="https://bailiping.com/" aria-label="Bai Liping home">
+      <span class="bl-brand-mark" aria-hidden="true">B</span>
+      <span>Bai Liping</span>
+    </a>
+    <nav class="bl-top-nav" aria-label="Primary">
+      <a href="../eo-derivation-slides/">Slides</a> · <a href="https://bailiping.com/">Home</a>
+    </nav>
+  </div>
+</header>
+
+<nav class="toc" aria-label="Sections">
+  <div class="in">
+    <a href="#technique"><span class="b">Technique</span></a>
+    <a class="n1" href="#s1"><span class="b">S1</span> point · known $n$</a>
+    <a class="n2" href="#s2"><span class="b">S2</span> point · unknown $n$</a>
+    <a class="n3" href="#s3"><span class="b">S3</span> extended · known $n$</a>
+    <a class="n4" href="#s4"><span class="b">S4</span> extended · unknown $n$</a>
+    <a class="ngrbp" href="#grbp"><span class="b">GrBP</span> precluster · associate</a>
+    <a href="#summary"><span class="b">Summary</span></a>
+    <a href="#next"><span class="b">Checks</span></a>
+  </div>
+</nav>
+
+<div class="wrap">
+
+<header class="hero">
+  <p class="eyebrow">Working note · derivation deck, July 10</p>
+  <h1>Joint PDF factorization</h1>
+  <p class="sub">
+    A common starting point for a belief-propagation tracker is a factorization of the joint pdf of
+    object states, measurements, and data-association variables. This note works through that
+    factorization in four raw-measurement scenarios: point objects with a known and constant
+    number of tracks, point objects with an unknown and varying number, and then the same two cases
+    for extended objects that generate multiple measurements each. Each scenario ends in a product of
+    local factors — the factor graph that message passing runs on. GrBP adds the manuscript appendix’s alternative: fix a preclustered partition, then infer group-to-target associations.
+  </p>
+  <p class="note">Converted from a set of (partly handwritten) derivation slides; the original scans
+    are included at the end of each section for cross-checking.</p>
+  <div class="accuracy"><strong>Model and notation boundary.</strong> These are model-specific densities: measurements are treated as ordered vectors while the observed count is conditioned on or retained explicitly, clutter and births are Poisson, object-generated measurement counts are Poisson, and the stated independence/uniform-assignment assumptions are essential. Proportionalities may drop only factors constant in the variables being inferred. The linked papers—not the handwritten scans—are the authority for the published algorithms.</div>
+</header>
+
+<!-- ============================================================ -->
+<section id="technique">
+  <div class="shead"><span class="badge b0">Approach</span><h2>Derivation technique</h2></div>
+  <div class="prose">
+    <p>The derivations share the same recipe; GrBP applies it after fixing the measurement groups:</p>
+    <ol>
+      <li><strong>Express the counts as functions of the association variables.</strong> The number of
+        clutter measurements $n_c$ and the number of new tracks $n_n$ are not independent unknowns —
+        they are deterministic functions of the association and existence variables in the chosen representation.</li>
+      <li><strong>Give the counts Poisson priors with known parameters.</strong> $f(n_c)$ and $f(n_n)$
+        are Poisson PMFs with means $\mu_c$ (clutter) and $\mu_n$ (new objects).</li>
+      <li><strong>Collect everything that depends only on $m$ into constants.</strong> Terms like
+        $\prod_{j=1}^{m} f_c(z_j)$ and $\mu_c^m e^{-\mu_c}/m!$ do not depend on the states or the
+        association, so they disappear under proportionality.</li>
+      <li><strong>Marginalize the auxiliary (mapped) association variables</strong> where a redundant
+        representation was introduced to make constraints local.</li>
+    </ol>
+    <p>The joint pdf is always structured the same way:</p>
+  </div>
+  <div class="panel">
+    $$
+    f(\text{states},\, Z,\, \text{association})
+    \;=\;
+    \underbrace{f(\text{states})}_{\text{prior (assumed given)}}
+    \;\times\;
+    \underbrace{f(\text{association}\mid\text{states})}_{\text{association given prior}}
+    \;\times\;
+    \underbrace{f(Z\mid \text{association},\,\text{states})}_{\text{measurements given both}}
+    $$
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<section id="s1">
+  <div class="shead"><span class="badge b1">Scenario 1</span><h2>Point objects, known and constant number</h2></div>
+
+  <div class="prose">
+    <h3>Setup</h3>
+    <ul>
+      <li>$m$ measurements, $n_t$ targets, both stacked into vectors:
+        $\ub{X} = [\boldsymbol{x}_1,\dots,\boldsymbol{x}_{n_t}]^{\mathsf T}$,
+        $\;Z = [\boldsymbol{z}_1,\dots,\boldsymbol{z}_m]^{\mathsf T}$.</li>
+      <li>Target-oriented association: each target picks a measurement or none,
+        $$a_i \in \{0\} \cup \{1,\dots,m\}, \qquad a_i = 0 \;\text{meaning “missed detection”.}$$</li>
+      <li>Consistency indicator (no two targets may claim the same nonzero measurement):
+        $$\psi(\boldsymbol{a}) = \begin{cases} 1, & a_i \neq a_j\ \text{whenever } i\neq j\ \text{and }a_i,a_j\neq0,\\ 0, & \text{otherwise.}\end{cases}$$</li>
+      <li>Detected set and clutter set, both functions of $\boldsymbol{a}$:
+        $$\mathcal{D} = \bigl\{ i \in \{1,\dots,n_t\} : a_i \neq 0 \bigr\},\qquad
+          \mathcal{C} = \bigl\{ i \in \{1,\dots,m\} : \nexists\, j \in \{1,\dots,n_t\} \text{ s.t. } i = a_j \bigr\},
+          \qquad n_c(\boldsymbol{a}) = |\mathcal{C}|.$$</li>
+    </ul>
+
+    <h3>Factorization</h3>
+    <p>Chain rule with the standard structure:</p>
+  </div>
+  <div class="panel">
+    $$
+    f(\ub{X}, Z, \boldsymbol{a}) \;=\;
+    \underbrace{f(\ub{X})}_{\text{prior}}\;
+    \underbrace{\psi(\boldsymbol{a})\, f(\boldsymbol{a}\mid\ub{X})}_{\text{association}}\;
+    \underbrace{f(Z\mid \boldsymbol{a}, \ub{X})}_{\text{measurements}}
+    $$
+  </div>
+  <div class="prose">
+    <p><strong>Prior.</strong> Targets are independent a priori:
+    $f(\ub{X}) = \prod_{i=1}^{n_t} f(\boldsymbol{x}_i)$.</p>
+    <p><strong>Measurement term.</strong> Measurements claimed by targets follow the measurement model;
+    the rest are clutter with density $f_c$. Multiplying and dividing by $f_c$ over the detected set turns
+    the clutter product into a constant over <em>all</em> $m$ measurements:</p>
+    $$
+    f(Z\mid \boldsymbol{a},\ub{X})
+    = \prod_{i\in\mathcal{D}} f(\boldsymbol{z}_{a_i}\mid\boldsymbol{x}_i) \prod_{j\in\mathcal{C}} f_c(\boldsymbol{z}_j)
+    = \Biggl[\prod_{i\in\mathcal{D}} \frac{f(\boldsymbol{z}_{a_i}\mid\boldsymbol{x}_i)}{f_c(\boldsymbol{z}_{a_i})}\Biggr]
+      \prod_{j=1}^{m} f_c(\boldsymbol{z}_j).
+    $$
+    <p><strong>Association term.</strong> Since $n_c(\boldsymbol{a})$ is a function of $\boldsymbol{a}$,
+    we can insert it for free and peel it off with the chain rule. The clutter count is Poisson with mean
+    $\mu_c$; given the counts, all consistent assignments are equally likely:</p>
+    $$
+    \psi(\boldsymbol{a})\,f(\boldsymbol{a}\mid\ub{X})
+    = \psi(\boldsymbol{a})\, f\bigl(\boldsymbol{a}, n_c(\boldsymbol{a})\mid\ub{X}\bigr)
+    = \psi(\boldsymbol{a})\, f\bigl(n_c(\boldsymbol{a})\bigr)\, f\bigl(\boldsymbol{a}\mid n_c(\boldsymbol{a}), \ub{X}\bigr)
+    $$
+    $$
+    = \psi(\boldsymbol{a})\;
+      \frac{\mu_c^{\,n_c(\boldsymbol{a})} e^{-\mu_c}}{n_c(\boldsymbol{a})!}\;
+      \frac{1}{{}_{m}P_{\,m-n_c(\boldsymbol{a})}}\;
+      \prod_{i\in\mathcal{D}} P_d(\boldsymbol{x}_i)
+      \prod_{i\notin\mathcal{D}} \bigl[1 - P_d(\boldsymbol{x}_i)\bigr].
+    $$
+    <div class="aside">
+      The permutation count ${}_{m}P_{\,m-n_c} = \frac{m!}{n_c!}$ is the number of ordered ways the
+      detected targets can claim distinct measurements — think of assigning sequentially:
+      $p(a_1{=}3) = \frac{1}{m}$, $p(a_2{=}5) = \frac{1}{m-1}$, …, so
+      $\frac{1}{{}_{m}P_{\,m-n_c}} = \frac{n_c!}{m!}$.
+    </div>
+    <p><strong>Combine and drop constants.</strong> Writing
+    $\mu_c^{\,n_c} = \mu_c^{\,m} \big/ \mu_c^{\,|\mathcal{D}|}$ pushes one factor $\mu_c$ into the
+    denominator of each detected target's likelihood ratio; the leftovers
+    $\frac{\mu_c^m e^{-\mu_c}}{m!} \prod_{j=1}^m f_c(\boldsymbol{z}_j)$ are constant in
+    $(\ub{X}, \boldsymbol{a})$:</p>
+    $$
+    f(\ub{X}, Z, \boldsymbol{a}) \;\propto\;
+    \psi(\boldsymbol{a})
+    \prod_{i\in\mathcal{D}} f(\boldsymbol{x}_i)\,
+      \frac{P_d(\boldsymbol{x}_i)\, f(\boldsymbol{z}_{a_i}\mid\boldsymbol{x}_i)}{\mu_c\, f_c(\boldsymbol{z}_{a_i})}
+    \prod_{i\notin\mathcal{D}} f(\boldsymbol{x}_i)\bigl(1 - P_d(\boldsymbol{x}_i)\bigr).
+    $$
+    <p><strong>Local likelihood factor.</strong> Define</p>
+    $$
+    g(\boldsymbol{x}_i, a_i; Z) =
+    \begin{cases}
+      \dfrac{P_d(\boldsymbol{x}_i)\, f(\boldsymbol{z}_{a_i}\mid \boldsymbol{x}_i)}{\mu_c\, f_c(\boldsymbol{z}_{a_i})}, & a_i \neq 0,\\[10px]
+      1 - P_d(\boldsymbol{x}_i), & a_i = 0.
+    \end{cases}
+    $$
+  </div>
+  <div class="panel result r1">
+    <p class="smallcap">Result — scenario 1</p>
+    $$
+    f(\ub{X}, Z, \boldsymbol{a}) \;\propto\;
+    \psi(\boldsymbol{a}) \prod_{i=1}^{n_t} f(\boldsymbol{x}_i)\, g(\boldsymbol{x}_i, a_i; Z)
+    $$
+  </div>
+  <figure>
+    <img src="assets/fg-point-known.png" alt="Factor graph for point-object tracking with a known number of targets: prior factors, state variables, likelihood factors g, association variables, and one global consistency factor Psi." width="720">
+    <figcaption>Factor graph: one chain per target, coupled only through the global consistency factor
+      $\boldsymbol{\Psi}(a_1,\dots,a_{n_t})$.</figcaption>
+  </figure>
+  <details class="scans">
+    <summary>Original handwritten pages (scenario 1)</summary>
+    <div class="grid">
+      <img src="assets/scan-s1-setup.png" alt="Handwritten setup for scenario 1" loading="lazy">
+      <img src="assets/scan-s1-factorize.png" alt="Handwritten factorization for scenario 1" loading="lazy">
+      <img src="assets/scan-s1-combine.png" alt="Handwritten combination step for scenario 1" loading="lazy">
+    </div>
+  </details>
+</section>
+
+<!-- ============================================================ -->
+<section id="s2">
+  <div class="shead"><span class="badge b2">Scenario 2</span><h2>Point objects, unknown and varying number</h2></div>
+
+  <div class="prose">
+    <h3>Setup</h3>
+    <p>Each object state is augmented with a Bernoulli existence variable,
+    $\boldsymbol{y} = [\boldsymbol{x}, r]^{\mathsf T}$, and every measurement is allowed to start a
+    <em>new potential object</em>:</p>
+    <ul>
+      <li>Legacy potential objects $\ub{Y} = [\ub{y}_1,\dots,\ub{y}_{n_t}]$ and new potential objects
+        $\ob{Y} = [\ob{y}_1,\dots,\ob{y}_m]$ — one per measurement, with existence indicator $\bar r_i$.</li>
+      <li>$Z = [\boldsymbol{z}_1,\dots,\boldsymbol{z}_m]^{\mathsf T}$; association $a_i$ and consistency
+        $\psi(\boldsymbol{a})$ exactly as in scenario 1.</li>
+      <li>New-object set, detected set, clutter set — all functions of $(\boldsymbol{a}, \bar{\boldsymbol r})$:
+        $$\mathcal{N} = \{ i \in \{1,\dots,m\} : \bar r_i = 1 \},\qquad n_n(\bar{\boldsymbol r}) = |\mathcal{N}|,$$
+        $$\mathcal{D} = \{ i : a_i \neq 0 \},\qquad
+          \mathcal{C} = \{ i \in \{1,\dots,m\} : (\nexists\, j \text{ s.t. } i = a_j)\ \land\ \bar r_i = 0 \},\qquad
+          n_c(\boldsymbol{a},\bar{\boldsymbol r}) = |\mathcal{C}|.$$</li>
+    </ul>
+
+    <h3>Factorization</h3>
+  </div>
+  <div class="panel">
+    $$
+    f(\ub{Y}, \ob{Y}, \boldsymbol{a}, Z) \;=\;
+    \underbrace{f(\ub{Y})}_{\text{prior}}\;
+    \underbrace{\psi(\boldsymbol{a})\, f(\boldsymbol{a}, \bar{\boldsymbol r}\mid \ub{Y})\,
+      f(\ob{X}\mid \boldsymbol{a}, \bar{\boldsymbol r}, \ub{Y})}_{\text{association + births}}\;
+    \underbrace{f(Z\mid \ub{Y}, \ob{Y}, \boldsymbol{a})}_{\text{measurements}}
+    $$
+  </div>
+  <div class="prose">
+    <p><strong>Prior.</strong> $f(\ub{Y}) = \prod_{i=1}^{n_t} f(\ub{y}_i)$.</p>
+    <p><strong>Measurement term.</strong> Three kinds of measurements now: claimed by a legacy target,
+    generated by a new object, or clutter. The same multiply-and-divide trick applies:</p>
+    $$
+    f(Z\mid\cdot)
+    = \prod_{i\in\mathcal{D}} f(\boldsymbol{z}_{a_i}\mid\ub{x}_i)
+      \prod_{j\in\mathcal{N}} f(\boldsymbol{z}_j\mid\bar{\boldsymbol x}_j)
+      \prod_{k\in\mathcal{C}} f_c(\boldsymbol{z}_k)
+    = \prod_{i\in\mathcal{D}} \frac{f(\boldsymbol{z}_{a_i}\mid\ub{x}_i)}{f_c(\boldsymbol{z}_{a_i})}
+      \prod_{j\in\mathcal{N}} \frac{f(\boldsymbol{z}_j\mid\bar{\boldsymbol x}_j)}{f_c(\boldsymbol{z}_j)}
+      \prod_{k=1}^{m} f_c(\boldsymbol{z}_k).
+    $$
+    <p><strong>New-object states.</strong> Conditioned on the existence pattern, non-existent new objects
+    take a dummy density $f_d$:
+    $f(\ob{X}\mid \bar{\boldsymbol r}) = \prod_{j\in\mathcal{N}} f_n(\bar{\boldsymbol x}_j)
+      \prod_{j\notin\mathcal{N}} f_d(\bar{\boldsymbol x}_j)$.</p>
+    <p><strong>Association term.</strong> Both counts are inserted as functions of the random variables and
+    peeled off; $n_c$ and $n_n$ get independent Poisson priors ($\mu_c$, $\mu_n$); given the counts, the
+    split of the $n_c + n_n$ unclaimed measurements into new objects vs clutter is uniform over
+    $\binom{n_c+n_n}{n_n}$ choices, and the assignment of detected targets to measurements is uniform over
+    ${}_{m}P_{\,m-n_c-n_n} = m!/(n_c+n_n)!$ ordered choices:</p>
+    $$
+    \psi(\boldsymbol{a})\, f(\bar{\boldsymbol r}, \boldsymbol{a}\mid\ub{Y})
+    = \psi(\boldsymbol{a})\, f\bigl(\bar{\boldsymbol r}, \boldsymbol{a}, n_c(\bar{\boldsymbol r},\boldsymbol{a}), n_n(\bar{\boldsymbol r})\mid\ub{Y}\bigr)
+    = \psi(\boldsymbol{a})\, f(n_c)\, f(n_n)\,
+      f(\bar{\boldsymbol r}\mid n_c, n_n, \ub{Y})\, f(\boldsymbol{a}\mid \bar{\boldsymbol r}, n_c, n_n, \ub{Y})
+    $$
+    $$
+    = \psi(\boldsymbol{a})\, f(n_c)\, f(n_n)\;
+      \frac{1}{\binom{n_c+n_n}{n_n}}\;
+      \frac{1}{{}_{m}P_{\,m-n_c-n_n}}\;
+      \prod_{i\in\mathcal{D}} \ub{r}_i P_d(\ub{x}_i)
+      \prod_{i\notin\mathcal{D}} \bigl(1 - \ub{r}_i P_d(\ub{x}_i)\bigr).
+    $$
+    <p><strong>Combine and drop constants.</strong> The binomial and permutation denominators merge into
+    $\frac{n_n!\, n_c!}{(n_c+n_n)!}\cdot\frac{(n_c+n_n)!}{m!} = \frac{n_n!\, n_c!}{m!}$, the Poisson
+    factorials cancel, and $\mu_c^{\,n_c} = \mu_c^m / \mu_c^{\,|\mathcal{D}| + n_n}$ distributes one
+    $\mu_c$ under every likelihood ratio:</p>
+    $$
+    f(\ub{Y}, \ob{Y}, \boldsymbol{a}, Z) \;\propto\;
+    \psi(\boldsymbol{a})
+    \prod_{i\in\mathcal{D}} f(\ub{y}_i)\,
+      \frac{\ub{r}_i P_d(\ub{x}_i)\, f(\boldsymbol{z}_{a_i}\mid\ub{x}_i)}{\mu_c\, f_c(\boldsymbol{z}_{a_i})}
+    \prod_{i\notin\mathcal{D}} f(\ub{y}_i)\bigl(1 - \ub{r}_i P_d(\ub{x}_i)\bigr)\;
+    \prod_{j\in\mathcal{N}} \frac{\mu_n f_n(\bar{\boldsymbol x}_j)\, f(\boldsymbol{z}_j\mid\bar{\boldsymbol x}_j)}{\mu_c\, f_c(\boldsymbol{z}_j)}
+    \prod_{j\notin\mathcal{N}} f_d(\bar{\boldsymbol x}_j).
+    $$
+    <p><strong>Local likelihood factors.</strong> For legacy potential objects
+    ($\ub{r}_i = 0$ means the object does not exist, so it cannot be detected):</p>
+    $$
+    \ub{g}(\ub{x}_i, \ub{r}_i, a_i; Z) =
+    \begin{cases}
+      \dfrac{P_d(\ub{x}_i)\, f(\boldsymbol{z}_{a_i}\mid\ub{x}_i)}{\mu_c\, f_c(\boldsymbol{z}_{a_i})},
+        & i \in \mathcal{D},\ \ub{r}_i = 1,\\[10px]
+      1 - P_d(\ub{x}_i), & i \notin \mathcal{D},\ \ub{r}_i = 1,\\[4px]
+      0, & i \in \mathcal{D},\ \ub{r}_i = 0,\\[4px]
+      1, & i \notin \mathcal{D},\ \ub{r}_i = 0.
+    \end{cases}
+    $$
+    <p>For new potential objects, let $\mathcal{T} = \{ i \in \{1,\dots,m\} : \exists\, j \text{ s.t. } a_j = i \}$
+    be the measurements already claimed by legacy targets — a claimed measurement cannot also start a
+    new object:</p>
+    $$
+    \bar{g}(\bar{\boldsymbol x}_i, \bar r_i, \boldsymbol{a}; \boldsymbol{z}_i) =
+    \begin{cases}
+      \dfrac{\mu_n f_n(\bar{\boldsymbol x}_i)\,f(\boldsymbol{z}_i\mid\bar{\boldsymbol x}_i)}{\mu_c\, f_c(\boldsymbol{z}_i)},
+        & i \notin \mathcal{T},\ \bar r_i = 1,\\[10px]
+      0, & i \in \mathcal{T},\ \bar r_i = 1,\\[4px]
+      f_d(\bar{\boldsymbol x}_i), & \bar r_i = 0.
+    \end{cases}
+    $$
+    <div class="aside">The birth factor must include both the Poisson birth intensity $\mu_n$ and the birth-state density $f_n$. Omitting them would make new-object evidence independent of the birth model.</div>
+  </div>
+  <div class="panel result r2">
+    <p class="smallcap">Result — scenario 2</p>
+    $$
+    f(\ub{Y}, \ob{Y}, \boldsymbol{a}, Z) \;\propto\;
+    \psi(\boldsymbol{a})
+    \prod_{i=1}^{n_t} f(\ub{y}_i)\, \ub{g}(\ub{y}_i, a_i; Z)
+    \prod_{j=1}^{m} \bar{g}(\ob{y}_j, \boldsymbol{a}; \boldsymbol{z}_j)
+    $$
+  </div>
+  <figure>
+    <img src="assets/fg-point-unknown.png" alt="Factor graph for point-object tracking with unknown number of targets: legacy chains plus one new-potential-object chain per measurement; new-object factors connect to all association variables." width="780">
+    <figcaption>Factor graph: legacy chains as before, plus one new-potential-object chain per measurement.
+      The $\bar g$ factors depend on the whole association vector $\boldsymbol{a}$ (colored edges), enforcing
+      that a claimed measurement cannot start a new track.</figcaption>
+  </figure>
+  <details class="scans">
+    <summary>Original handwritten pages (scenario 2)</summary>
+    <div class="grid">
+      <img src="assets/scan-s2-setup.png" alt="Handwritten setup for scenario 2" loading="lazy">
+      <img src="assets/scan-s2-factorize.png" alt="Handwritten factorization for scenario 2" loading="lazy">
+      <img src="assets/scan-s2-combine.png" alt="Handwritten combination step for scenario 2" loading="lazy">
+    </div>
+  </details>
+</section>
+
+<!-- ============================================================ -->
+<section id="s3">
+  <div class="shead"><span class="badge b3">Scenario 3</span><h2>Extended objects, known and constant number</h2></div>
+
+  <div class="prose">
+    <h3>Setup</h3>
+    <p>An extended object can generate <em>several</em> measurements per scan, so the association is now
+    <em>measurement-oriented</em>: each measurement points at its source. The state carries an extent,
+    $\boldsymbol{y} = [\boldsymbol{x}, \boldsymbol{e}]^{\mathsf T}$.</p>
+    <ul>
+      <li>$m$ measurements, $K$ objects: $Y = [\boldsymbol{y}_1,\dots,\boldsymbol{y}_K]^{\mathsf T}$,
+        $Z = [\boldsymbol{z}_1,\dots,\boldsymbol{z}_m]^{\mathsf T}$.</li>
+      <li>Association per measurement: $b_i \in \{1,\dots,K\} \cup \{0\}$, with $b_i = 0$ meaning clutter.
+        No consistency factor $\psi$ is needed — a measurement has exactly one source by construction.</li>
+      <li>Measurement cell of object $k$ and clutter set:
+        $$\mathcal{T}^k = \{ i \in \{1,\dots,m\} : b_i = k \},\qquad
+          \mathcal{C} = \{ i : b_i = 0 \},\qquad n_c(\boldsymbol{b}) = |\mathcal{C}|.$$</li>
+      <li>The number of measurements an object generates is Poisson with a state-dependent rate:
+        $$f\bigl(|\mathcal{T}^k|\bigr) = \frac{\mu_m(\boldsymbol{y}_k)^{|\mathcal{T}^k|}\, e^{-\mu_m(\boldsymbol{y}_k)}}{|\mathcal{T}^k|!}.$$</li>
+    </ul>
+    <div class="aside">This section uses the Poisson spatial measurement model in which a zero count is allowed directly. Models with a separate object-level detection probability $P_D$ require a different empty-cell term, such as $1-P_D+P_D e^{-\mu_m}$; that factor cannot simply be added after this derivation.</div>
+
+    <h3>Factorization</h3>
+  </div>
+  <div class="panel">
+    $$
+    f(Y, Z, \boldsymbol{b}) \;=\;
+    \underbrace{f(Y)}_{\text{prior}}\;
+    \underbrace{f(\boldsymbol{b}\mid Y)}_{\text{association}}\;
+    \underbrace{f(Z\mid \boldsymbol{b}, Y)}_{\text{measurements}}
+    $$
+  </div>
+  <div class="prose">
+    <p><strong>Prior.</strong> $f(Y) = \prod_{k=1}^{K} f(\boldsymbol{y}_k)$.</p>
+    <p><strong>Measurement term.</strong></p>
+    $$
+    f(Z\mid \boldsymbol{b}, Y)
+    = \prod_{k=1}^{K} \prod_{i\in\mathcal{T}^k} f(\boldsymbol{z}_i\mid\boldsymbol{y}_k)
+      \prod_{j\in\mathcal{C}} f_c(\boldsymbol{z}_j)
+    = \Biggl[\prod_{k=1}^{K} \prod_{i\in\mathcal{T}^k}
+        \frac{f(\boldsymbol{z}_i\mid\boldsymbol{y}_k)}{f_c(\boldsymbol{z}_i)}\Biggr]
+      \prod_{j=1}^{m} f_c(\boldsymbol{z}_j).
+    $$
+    <p><strong>Association term.</strong> Insert $n_c(\boldsymbol{b})$, then draw the cells one object at
+    a time: object $k$ chooses which $|\mathcal{T}^k|$ of the still-unassigned
+    $n_c + \sum_{k'=k}^{K}|\mathcal{T}^{k'}|$ measurements are its own, uniformly:</p>
+    $$
+    f(\boldsymbol{b}\mid Y)
+    = f\bigl(n_c(\boldsymbol{b})\bigr)\, f\bigl(\boldsymbol{b}\mid n_c(\boldsymbol{b}), Y\bigr)
+    = f\bigl(n_c(\boldsymbol{b})\bigr) \prod_{k=1}^{K}
+      \binom{n_c + \sum_{k'=k}^{K}|\mathcal{T}^{k'}|}{|\mathcal{T}^{k}|}^{-1}
+      f\bigl(|\mathcal{T}^k|\bigr).
+    $$
+    <p>The product of inverse binomials telescopes:</p>
+    $$
+    \prod_{k=1}^{K}
+      \frac{|\mathcal{T}^k|!\,\bigl(n_c + \sum_{k'=k+1}^{K}|\mathcal{T}^{k'}|\bigr)!}{\bigl(n_c + \sum_{k'=k}^{K}|\mathcal{T}^{k'}|\bigr)!}
+    = \frac{n_c(\boldsymbol{b})!\,\prod_{k=1}^{K} |\mathcal{T}^k|!}{m!},
+    $$
+    <p>so that</p>
+    $$
+    f(\boldsymbol{b}\mid Y)
+    = f\bigl(n_c(\boldsymbol{b})\bigr)\;
+      \frac{n_c(\boldsymbol{b})!\,\prod_{k=1}^{K}|\mathcal{T}^k|!}{m!}\;
+      \prod_{k=1}^{K} f\bigl(|\mathcal{T}^k|\bigr).
+    $$
+    <p><strong>Combine and drop constants.</strong> The cell-size factorials cancel against the Poisson
+    PMFs, $\mu_c^{\,n_c} = \mu_c^m \big/ \prod_k \mu_c^{|\mathcal{T}^k|}$ places one $\mu_c$ under each
+    per-measurement ratio, and $\frac{\mu_c^m e^{-\mu_c}}{m!}\prod_j f_c(\boldsymbol{z}_j)$ is constant:</p>
+    $$
+    f(Y, Z, \boldsymbol{b}) \;\propto\;
+    \prod_{k=1}^{K} f(\boldsymbol{y}_k)\, e^{-\mu_m(\boldsymbol{y}_k)}
+    \prod_{i\in\mathcal{T}^k}
+      \frac{\mu_m(\boldsymbol{y}_k)\, f(\boldsymbol{z}_i\mid\boldsymbol{y}_k)}{\mu_c\, f_c(\boldsymbol{z}_i)}.
+    $$
+    <p><strong>Local factors.</strong> Define the modified prior and the pairwise factors</p>
+    $$
+    g(\boldsymbol{y}_k) = f(\boldsymbol{y}_k)\, e^{-\mu_m(\boldsymbol{y}_k)},
+    \qquad
+    g_{ki}(\boldsymbol{y}_k, b_i; \boldsymbol{z}_i) =
+    \begin{cases}
+      \dfrac{\mu_m(\boldsymbol{y}_k)\, f(\boldsymbol{z}_i\mid\boldsymbol{y}_k)}{\mu_c\, f_c(\boldsymbol{z}_i)}, & b_i = k,\\[10px]
+      1, & b_i \neq k.
+    \end{cases}
+    $$
+  </div>
+  <div class="panel result r3">
+    <p class="smallcap">Result — scenario 3</p>
+    $$
+    f(Y, Z, \boldsymbol{b}) \;\propto\;
+    \prod_{k=1}^{K}\!\left[g(\boldsymbol{y}_k) \prod_{i=1}^{m} g_{ki}(\boldsymbol{y}_k, b_i; \boldsymbol{z}_i)\right]
+    $$
+  </div>
+  <figure>
+    <img src="assets/fg-eo-known.png" alt="Factor graph for extended-object tracking with known number of objects: each object state connects to m pairwise factors g_ki, each linked to the association variable b_i of one measurement." width="820">
+    <figcaption>Factor graph: every object–measurement pair gets its own factor
+      $g_{ki}(\boldsymbol{y}_k, b_i; \boldsymbol{z}_i)$; no global consistency factor is needed with
+      measurement-oriented association.</figcaption>
+  </figure>
+  <details class="scans">
+    <summary>Original handwritten pages (scenario 3)</summary>
+    <div class="grid">
+      <img src="assets/scan-s3-setup.png" alt="Handwritten setup for scenario 3" loading="lazy">
+      <img src="assets/scan-s3-factorize.png" alt="Handwritten factorization for scenario 3" loading="lazy">
+      <img src="assets/scan-s3-combine.png" alt="Handwritten combination step for scenario 3" loading="lazy">
+    </div>
+  </details>
+</section>
+
+<!-- ============================================================ -->
+<section id="s4">
+  <div class="shead"><span class="badge b4">Scenario 4</span><h2>Extended objects, unknown and varying number</h2></div>
+
+  <div class="prose">
+    <p>The hardest case, following the construction of Meyer &amp; Williams [3]: extended objects with
+    existence variables, measurement-oriented association, and new objects spawned from measurements.
+    The trick is to introduce a <em>redundant</em> set of auxiliary variables (the newly detected objects
+    and a mapping onto them), derive the joint in that over-complete representation where every
+    conditional is simple, and then marginalize the auxiliaries back out.</p>
+
+    <h3>Setup</h3>
+    <ul>
+      <li>$M$ measurements; augmented state $\boldsymbol{y} = [\boldsymbol{x}, \boldsymbol{e}, r]$
+        (kinematics, extent, existence).</li>
+      <li><strong>Legacy</strong> potential objects $\ub{y}_1,\dots,\ub{y}_{\underline K}$ ($\underline K$ of them);
+        <strong>new</strong> potential objects $\ob{y}_1,\dots,\ob{y}_M$ (one per measurement);
+        <strong>newly detected</strong> objects $\tb{y}_1,\dots,\tb{y}_{\overline K}$
+        ($\overline K$ of them — auxiliary, to be integrated out).</li>
+      <li>Mapping $\pi : \{1,\dots,M\} \to \{0,\dots,\overline K\}$:
+        $\pi(k) \in \{1,\dots,\overline K\}$ if new PO $\ob{y}_k$ corresponds to newly detected object
+        $\tb{y}_{\pi(k)}$, and $\pi(k)=0$ otherwise.</li>
+      <li>Two association vectors:
+        $$\boldsymbol{b} = [b_1,\dots,b_M]^{\mathsf T},\quad b_i \in \{0,1,\dots,\underline K + i\},
+        \qquad
+        \tb{b} = [\tilde b_1,\dots,\tilde b_M]^{\mathsf T},\quad \tilde b_i \in \{1,\dots,\underline K + \overline K\} \cup \{0\},$$
+        with $0$ meaning false alarm; and measurement lists $\ob{a} = [\bar a_1,\dots,\bar a_M]^{\mathsf T}$,
+        $\tb{a} = [\tilde a_1,\dots,\tilde a_{\overline K}]^{\mathsf T}$.</li>
+      <li><strong>Assumptions</strong> that make $\boldsymbol{b}$ well defined:
+        <ol>
+          <li>new PO $k \in \{1,\dots,M\}$ exists iff $b_k = \underline K + k$ (a new object is anchored
+            to the first measurement it generates);</li>
+          <li>new PO $k$ can only generate the remaining $M - k + 1$ measurements (including its own),
+            i.e. those with index $i \in \{k,\dots,M\}$.</li>
+        </ol></li>
+      <li><strong>Counts</strong>, all functions of the association: $l_{\mathrm{fa}}$ = number of false
+        alarms; $\boldsymbol{l} = [l_1,\dots,l_{\underline K + \overline K}]^{\mathsf T}$ = number of
+        measurements from each object, split as $\ub{l} = [l_1,\dots,l_{\underline K}]^{\mathsf T}$ (legacy) and
+        $\tb{l} = [l_{\underline K + 1},\dots,l_{\underline K + \overline K}]^{\mathsf T}$ (newly detected); and per
+        new PO
+        $$\bar l_k = \sum_{i=1}^{M} \delta\bigl(b_i - (\underline K + k)\bigr),\ k \in \{1,\dots,M\}
+        \qquad\Longrightarrow\qquad
+        \sum_{k=\underline K+1}^{\underline K + \overline K} l_k = \sum_{k=1}^{M} \bar l_k.$$</li>
+      <li>$\mathcal{D}_{\ub{y}}$ denotes the existing legacy objects ($\ub{r}_k = 1$) and
+        $\mathcal{D}_{\boldsymbol{b}}$ the new POs that exist ($b_k = \underline K + k$).</li>
+    </ul>
+
+    <h3>Step 1 — chain-rule expansion in the over-complete representation</h3>
+  </div>
+  <div class="panel">
+    $$
+    \begin{aligned}
+    f(\ob{y}, \tb{y}, \boldsymbol{b}, \tb{b}, \boldsymbol{\pi}, \boldsymbol{l}, \overline K, l_{\mathrm{fa}} \mid \ub{y})
+    ={}& f(\ob{y}, \boldsymbol{b} \mid \tb{b}, \boldsymbol{l}, \overline K, \tb{y}, l_{\mathrm{fa}}, \ub{y}, \boldsymbol{\pi})\,
+       p(\boldsymbol{\pi} \mid \tb{b}, \boldsymbol{l}, \overline K, \tb{y}, l_{\mathrm{fa}}, \ub{y})\,
+       p(\tb{b} \mid \boldsymbol{l}, \overline K, \tb{y}, l_{\mathrm{fa}}, \ub{y})\\[2px]
+       &\times f(\boldsymbol{l}, \overline K, \tb{y} \mid l_{\mathrm{fa}}, \ub{y})\, p(l_{\mathrm{fa}} \mid \ub{y})\\[6px]
+    ={}& f(\ob{y}, \boldsymbol{b} \mid \tb{b}, \tb{y}, \boldsymbol{\pi})\,
+       p(\boldsymbol{\pi} \mid \tb{b})\,
+       p(\tb{b} \mid \boldsymbol{l}, l_{\mathrm{fa}})\,
+       p(\boldsymbol{l} \mid \overline K, \tb{y}, \ub{y})\,
+       f(\tb{y} \mid \overline K)\, p(\overline K)\, p(l_{\mathrm{fa}}),
+    \end{aligned}
+    $$
+  </div>
+  <div class="prose">
+    <p>where the second line drops every variable that each conditional does not actually depend on.
+    Each factor now has a simple closed form.</p>
+
+    <p><strong>Measurement counts.</strong> A newly detected object was detected, so its count is a
+    <em>zero-truncated</em> Poisson; existing legacy objects have ordinary Poisson counts; non-existing
+    legacy objects generate nothing ($p(\boldsymbol{l}\mid\cdot)$ factorizes as
+    $p(\tb{l}\mid \overline K, \tb{y})\, p(\ub{l}\mid \ub{y})$):</p>
+    $$
+    p(\boldsymbol{l} \mid \overline K, \tb{y}, \ub{y}) =
+    \Biggl(\prod_{k=1}^{\overline K}
+      \frac{\mu_m(\tb{x}_k, \tb{e}_k)^{\tilde l_k}}{\tilde l_k!}\,
+      \frac{e^{-\mu_m(\tb{x}_k, \tb{e}_k)}}{1 - e^{-\mu_m(\tb{x}_k, \tb{e}_k)}}\Biggr)
+    \Biggl(\prod_{k\in\mathcal{D}_{\ub{y}}}
+      \frac{\mu_m(\ub{x}_k, \ub{e}_k)^{l_k}}{l_k!}\, e^{-\mu_m(\ub{x}_k, \ub{e}_k)}\Biggr)
+    \prod_{k\notin\mathcal{D}_{\ub{y}}} \delta(l_k).
+    $$
+    <p><strong>Association given counts.</strong> Uniform over all assignments consistent with the cell
+    sizes; the telescoping-binomial identity from scenario 3 gives</p>
+    $$
+    p(\tb{b} \mid \boldsymbol{l}, l_{\mathrm{fa}}) =
+    \frac{l_{\mathrm{fa}}!\,\Bigl(\prod_{k=1}^{\underline K + \overline K} l_k!\Bigr)}
+         {\Bigl(l_{\mathrm{fa}} + \sum_{k=1}^{\underline K + \overline K} l_k\Bigr)!}\,,
+    \qquad\text{via}\qquad
+    \prod_{k=1}^{\underline K+\overline K}\binom{l_{\mathrm{fa}} + \sum_{k'=k}^{\underline K+\overline K} l_{k'}}{l_k}
+    = \frac{\bigl(l_{\mathrm{fa}} + \sum_{k=1}^{\underline K+\overline K} l_k\bigr)!}
+           {l_{\mathrm{fa}}!\,\bigl(\prod_{k=1}^{\underline K+\overline K} l_k!\bigr)}\,.
+    $$
+    <p><strong>Mapping.</strong> Given $\tb{b}$, the mapping is deterministic:
+    $p(\boldsymbol{\pi} \mid \tb{b}) = \delta(\boldsymbol{\pi} - \boldsymbol{\pi}_{\tb{b}})$.</p>
+    <p><strong>New POs given the mapping.</strong> A new PO that is mapped copies the state and
+    measurement list of its newly detected object; an unmapped one does not exist:</p>
+    $$
+    f(\ob{y}, \boldsymbol{b} \mid \tb{b}, \tb{y}, \boldsymbol{\pi}) =
+    \Biggl(\prod_{\substack{k=1\\ \pi(k) \gt 0}}^{M}
+      \bar r_k\, \delta\bigl(\ob{y}_k - \tb{y}_{\pi(k)}\bigr)\, \delta\bigl(\ob{a}_k - \tb{a}_{\pi(k)}\bigr)\Biggr)
+    \prod_{\substack{k=1\\ \pi(k)=0}}^{M}
+      f_d(\ob{x}_k, \ob{e}_k)\,(1 - \bar r_k)\, \delta\bigl(\lVert\ob{a}_k\rVert_1\bigr).
+    $$
+    <p><strong>Priors.</strong></p>
+    $$
+    p(l_{\mathrm{fa}}) = \frac{\mu_{\mathrm{fa}}^{\,l_{\mathrm{fa}}}}{l_{\mathrm{fa}}!}\, e^{-\mu_{\mathrm{fa}}},
+    \qquad
+    f(\tb{y} \mid \overline K) = \prod_{k=1}^{\overline K} \tilde r_k\, f_n(\tb{x}_k, \tb{e}_k),
+    \qquad
+    p(\overline K) = \frac{\mu_n^{\,\overline K}}{\overline K!}\, e^{-\mu_n}.
+    $$
+
+    <h3>Step 2 — marginalize the newly detected states $\tb{y}$</h3>
+    <p>Substituting all factors and integrating $\tb{y}$ out — the delta functions
+    $\delta(\ob{y}_k - \tb{y}_{\pi(k)})$ simply transfer each newly detected state onto its new PO:</p>
+    $$
+    f(\ob{y}, \boldsymbol{b}, \tb{b}, \boldsymbol{\pi}, \overline K, l_{\mathrm{fa}} \mid \ub{y})
+    = \int f(\ob{y}, \tb{y}, \boldsymbol{b}, \tb{b}, \boldsymbol{\pi}, \overline K, l_{\mathrm{fa}} \mid \ub{y})\,
+      \mathrm{d}\tb{y}
+    = f(\ob{y}, \boldsymbol{b}, \tb{b} \mid \overline K, \ub{y}, l_{\mathrm{fa}}, \boldsymbol{\pi})\,
+      p(\boldsymbol{\pi}\mid\tb{b})\, p(\overline K)\, p(l_{\mathrm{fa}})
+    $$
+    <p>with</p>
+    $$
+    \begin{aligned}
+    f(\ob{y}, \boldsymbol{b}, \tb{b} \mid \overline K, \ub{y}, l_{\mathrm{fa}}, \boldsymbol{\pi})
+    ={}& \Biggl(\prod_{\substack{k=1\\ \pi(k) \gt 0}}^{M}
+        \bar r_k\, \frac{\mu_m(\ob{x}_k, \ob{e}_k)^{\tilde l_{\pi(k)}}}{\tilde l_{\pi(k)}!}\,
+        \frac{e^{-\mu_m(\ob{x}_k, \ob{e}_k)}}{1 - e^{-\mu_m(\ob{x}_k, \ob{e}_k)}}\,
+        f_n(\ob{x}_k, \ob{e}_k)\, \delta\bigl(\ob{a}_k - \tb{a}_{\pi(k)}\bigr)\Biggr)\\[2px]
+      &\times \Biggl(\prod_{k\in\mathcal{D}_{\ub{y}}}
+        \frac{\mu_m(\ub{x}_k, \ub{e}_k)^{l_k}}{l_k!}\, e^{-\mu_m(\ub{x}_k, \ub{e}_k)}\Biggr)
+        \Biggl(\prod_{k\notin\mathcal{D}_{\ub{y}}} \delta(l_k)\Biggr)
+        \Biggl(\prod_{\substack{k=1\\ \pi(k)=0}}^{M} f_d(\ob{x}_k, \ob{e}_k)(1 - \bar r_k)\,
+          \delta\bigl(\lVert\ob{a}_k\rVert_1\bigr)\Biggr)\\[2px]
+      &\times \frac{l_{\mathrm{fa}}!\,\Bigl(\prod_{k=1}^{\underline K + \overline K} l_k!\Bigr)}
+        {\Bigl(l_{\mathrm{fa}} + \sum_{k=1}^{\underline K + \overline K} l_k\Bigr)!}\,.
+    \end{aligned}
+    $$
+
+    <h3>Step 3 — sum out the auxiliary association $\tb{b}$ (and $\boldsymbol{\pi}$)</h3>
+    <p>$\boldsymbol{\pi}$ collapses by the delta $p(\boldsymbol{\pi}\mid\tb{b}) = \delta(\boldsymbol{\pi} - \boldsymbol{\pi}_{\tb{b}})$,
+    leaving a sum over $\tb{b}$:</p>
+    $$
+    f(\ob{y}, \boldsymbol{b}, \overline K, l_{\mathrm{fa}} \mid \ub{y})
+    = p(\overline K)\, p(l_{\mathrm{fa}})
+      \sum_{\tb{b}} f\bigl(\ob{y}, \boldsymbol{b}, \tb{b} \mid \overline K, \ub{y}, l_{\mathrm{fa}}, \boldsymbol{\pi}_{\tb{b}}\bigr).
+    $$
+    <p>Every relabeling of the $\overline K$ newly detected objects produces the same
+    $(\ob{y}, \boldsymbol{b})$, so the sum contributes a factor $\overline K!$ and converts
+    $\tilde l_{\pi(k)} \to \bar l_k$, $\mathcal{T}$-indexed products into $\mathcal{D}_{\boldsymbol{b}}$-indexed
+    ones:</p>
+    $$
+    \begin{aligned}
+    f(\ob{y}, \boldsymbol{b}, \overline K, l_{\mathrm{fa}} \mid \ub{y})
+    ={}& p(\overline K)\, p(l_{\mathrm{fa}})\,
+      \frac{\overline K!\; l_{\mathrm{fa}}!\,\Bigl(\prod_{k=1}^{\underline K} l_k!\Bigr)\Bigl(\prod_{k=1}^{M} \bar l_k!\Bigr)}
+           {\Bigl(l_{\mathrm{fa}} + \sum_{k=1}^{\underline K} l_k + \sum_{k'=1}^{M} \bar l_{k'}\Bigr)!}
+      \Biggl(\prod_{k\in\mathcal{D}_{\ub{y}}}
+        \frac{\mu_m(\ub{x}_k, \ub{e}_k)^{l_k}}{l_k!}\, e^{-\mu_m(\ub{x}_k, \ub{e}_k)}\Biggr)
+      \Biggl(\prod_{k\notin\mathcal{D}_{\ub{y}}} \delta(l_k)\Biggr)\\[2px]
+      &\times \Biggl(\prod_{k\in\mathcal{D}_{\boldsymbol{b}}}
+        \bar r_k\, \frac{\mu_m(\ob{x}_k, \ob{e}_k)^{\bar l_k}}{\bar l_k!}\,
+        \frac{e^{-\mu_m(\ob{x}_k, \ob{e}_k)}}{1 - e^{-\mu_m(\ob{x}_k, \ob{e}_k)}}\,
+        f_n(\ob{x}_k, \ob{e}_k)\Biggr)
+      \prod_{k\notin\mathcal{D}_{\boldsymbol{b}}} f_d(\ob{x}_k, \ob{e}_k)(1 - \bar r_k)\, \delta(\bar l_k).
+    \end{aligned}
+    $$
+    <p>Substituting the Poisson priors $p(\overline K)$ and $p(l_{\mathrm{fa}})$ — their factorials
+    $\overline K!$ and $l_{\mathrm{fa}}!$ cancel exactly, $|\mathcal{D}_{\boldsymbol{b}}| = \overline K$
+    and $l_{\mathrm{fa}} = M - \sum_k l_k - \sum_{k'} \bar l_{k'}$ — gives the conditional prior over new POs, associations, and the measurement count. The measurement values $Z$ have not yet entered:</p>
+  </div>
+  <div class="panel result r4">
+    <p class="smallcap">Conditional-prior result — scenario 4</p>
+    $$
+    \begin{aligned}
+    f(\ob{y}, \boldsymbol{b}, M \mid \ub{y})
+    ={}& \Biggl(\prod_{k\in\mathcal{D}_{\boldsymbol{b}}}
+      \bar r_k\, f_n(\ob{x}_k, \ob{e}_k)\, \mu_m(\ob{x}_k, \ob{e}_k)^{\bar l_k}\,
+      \frac{e^{-\mu_m(\ob{x}_k, \ob{e}_k)}}{1 - e^{-\mu_m(\ob{x}_k, \ob{e}_k)}}\Biggr)
+      \Biggl(\prod_{k\notin\mathcal{D}_{\boldsymbol{b}}} (1 - \bar r_k)\, f_d(\ob{x}_k, \ob{e}_k)\, \delta(\bar l_k)\Biggr)\\[2px]
+    &\times \Biggl(\prod_{k\in\mathcal{D}_{\ub{y}}}
+      \mu_m(\ub{x}_k, \ub{e}_k)^{l_k}\, e^{-\mu_m(\ub{x}_k, \ub{e}_k)}\Biggr)
+      \Biggl(\prod_{k\notin\mathcal{D}_{\ub{y}}} \delta(\ub{l}_k)\Biggr)\,
+      \frac{\mu_n^{\,|\mathcal{D}_{\boldsymbol{b}}|}\;
+            \mu_{\mathrm{fa}}^{\,\bigl(M - \sum_{k=1}^{\underline K} l_k - \sum_{k'=1}^{M} \bar l_{k'}\bigr)}\;
+            e^{-(\mu_n + \mu_{\mathrm{fa}})}}{M!}\,.
+    \end{aligned}
+    $$
+  </div>
+  <div class="prose">
+    <h3>BP-ready potentials</h3>
+    <p>Distributing the counts over per-measurement factors (each power
+    $\mu_m^{\bar l_k}$ or $\mu_m^{l_k}$ becomes one $\mu_m$ per associated measurement, paired with the
+    likelihood ratio) turns the joint into the standard node/edge potentials of the extended-object BP
+    factor graph:</p>
+    $$
+    \bar q(\ob{y}) =
+    \begin{cases}
+      \mu_n\, f_n(\ob{x}, \ob{e})\,
+        \dfrac{e^{-\mu_m(\ob{x}, \ob{e})}}{1 - e^{-\mu_m(\ob{x}, \ob{e})}}, & \bar r = 1,\\[10px]
+      f_d(\ob{x}, \ob{e}), & \bar r = 0,
+    \end{cases}
+    \qquad\qquad
+    \underline q(\ub{y}) =
+    \begin{cases}
+      f^{-}(\ub{y})\, e^{-\mu_m(\ub{x}, \ub{e})}, & \ub{r} = 1,\\[6px]
+      f^{-}(\ub{y}), & \ub{r} = 0,
+    \end{cases}
+    $$
+    <p class="note">Here $f^{-}(\ub y)$ is the predicted augmented-state density, including existence mass and the chosen dummy density when $\ub r=0$. In the multi-scan paper, $\underline q$ is the corresponding pseudo-transition factor, not merely a scalar 1 in the non-existing branch.</p>
+    <p>with pairwise factors for legacy objects ($k \in \{1,\dots,\underline K\}$, measurement $i$):</p>
+    $$
+    \underline g_{ki}(\ub{y}_k, b_i; \boldsymbol{z}_i) =
+    \begin{cases}
+      \dfrac{\mu_m(\ub{x}_k, \ub{e}_k)\, f(\boldsymbol{z}_i \mid \ub{x}_k, \ub{e}_k)}{f_{\mathrm{fa}}(\boldsymbol{z}_i)\,\mu_{\mathrm{fa}}},
+        & b_i = k,\ \ub{r}_k = 1,\\[10px]
+      1, & b_i \neq k,\ \ub{r}_k = 1,\\[4px]
+      1 - \delta(b_i - k), & \ub{r}_k = 0,
+    \end{cases}
+    $$
+    <p>and for new potential objects ($k \in \{1,\dots,M\}$):</p>
+    $$
+    \bar g_{k}(\ob{y}_k, b_k; \boldsymbol{z}_k) =
+    \begin{cases}
+      \dfrac{\mu_m(\ob{x}_k, \ob{e}_k)\, f(\boldsymbol{z}_k \mid \ob{x}_k, \ob{e}_k)}{f_{\mathrm{fa}}(\boldsymbol{z}_k)\,\mu_{\mathrm{fa}}},
+        & b_k = \underline K + k,\ \bar r_k = 1,\\[10px]
+      0, & b_k \neq \underline K + k,\ \bar r_k = 1,\\[4px]
+      1 - \delta\bigl(b_k - (\underline K + k)\bigr), & \bar r_k = 0.
+    \end{cases}
+    $$
+    <p>For every later measurement $i\in\{k+1,\dots,M\}$, the same new PO also needs a pairwise factor</p>
+    $$
+    \bar h_{ki}(\ob{y}_k,b_i;\boldsymbol z_i)=
+    \begin{cases}
+      \dfrac{\mu_m(\ob{x}_k,\ob{e}_k)f(\boldsymbol z_i\mid\ob{x}_k,\ob{e}_k)}
+      {\mu_{\mathrm{fa}}f_{\mathrm{fa}}(\boldsymbol z_i)}, & b_i=\underline K+k,\ \bar r_k=1,\\[10px]
+      1, & b_i\neq\underline K+k,\ \bar r_k=1,\\[4px]
+      1-\delta\bigl(b_i-(\underline K+k)\bigr), & \bar r_k=0.
+    \end{cases}
+    $$
+    <p>Thus the single-scan, measurement-conditioned factorization has the structure</p>
+    <div class="panel result r4">
+    $$
+    f(\ub y,\ob y,\boldsymbol b\mid Z)\propto
+    \prod_{k=1}^{\underline K}\!\left[\underline q(\ub y_k)\prod_{i=1}^{M}\underline g_{ki}(\ub y_k,b_i;\boldsymbol z_i)\right]
+    \prod_{k=1}^{M}\!\left[\bar q(\ob y_k)\bar g_k(\ob y_k,b_k;\boldsymbol z_k)
+      \prod_{i=k+1}^{M}\bar h_{ki}(\ob y_k,b_i;\boldsymbol z_i)\right].
+    $$
+    </div>
+    <div class="aside">The anchor factor $\bar g_k$ alone is not enough for an extended object: $\bar h_{ki}$ is what lets the newly detected object anchored at measurement $k$ explain additional, later-indexed measurements.</div>
+  </div>
+  <figure>
+    <img src="assets/fg-eo-unknown.png" alt="Factor graph for extended-object tracking with unknown number of objects: legacy and new potential-object chains, pairwise factors h and g-bar, association variables b, with BP messages alpha, beta, gamma, nu annotated in red." width="640">
+    <figcaption>Factor graph with the BP messages annotated: prediction factors
+      $\underline q$, birth factors $\bar q$, and the pairwise likelihood factors
+      $h_k$ / $\bar g_k$ connecting states to the measurement-oriented association variables $b_i$.</figcaption>
+  </figure>
+  <details class="scans">
+    <summary>Original handwritten pages (scenario 4)</summary>
+    <div class="grid">
+      <img src="assets/scan-s4-setup.png" alt="Handwritten setup for scenario 4" loading="lazy">
+      <img src="assets/scan-s4-assumptions.png" alt="Handwritten assumptions for scenario 4" loading="lazy">
+      <img src="assets/scan-s4-counts.png" alt="Handwritten count definitions for scenario 4" loading="lazy">
+      <img src="assets/scan-s4-factorize.png" alt="Handwritten factorization sketch for scenario 4" loading="lazy">
+      <img src="assets/scan-s4-potentials.png" alt="Handwritten BP potentials for scenario 4" loading="lazy">
+    </div>
+  </details>
+</section>
+
+<!-- ============================================================ -->
+<section id="grbp">
+  <div class="shead"><span class="badge bgrbp">GrBP</span><h2>Derivation for GrBP</h2></div>
+  <p class="note">Appendix I · Eqs. (A.1)–(A.9) · <a href="../eo-derivation-slides/#grbp-preclustering">Open these slides →</a></p>
+  <div class="prose"><p>Appendix I of <a href="source/appendix-I-original.tex" target="_blank" rel="noopener">EO_Writing_Long_Version</a> adds an alternative for extended objects with an unknown count: <strong>precluster the detections, then associate whole groups</strong>. The time index is omitted, as in the source.</p><div class="pc-pipeline"><span>Raw measurements<br>$\boldsymbol Z$</span><b aria-hidden="true">→</b><span>Preclustering<br>$\mathcal P=\mathcal C(\boldsymbol Z)$</span><b aria-hidden="true">→</b><span>Fixed groups<br>$\boldsymbol Z^G$</span><b aria-hidden="true">→</b><span>Data association<br>$\boldsymbol a,\boldsymbol b$</span></div><div class="aside">Source boundary: the partition is treated as given side information. The appendix does not model the probability that the clustering algorithm produces it. Its Poisson clutter-group count and conditional group-independence assumptions define an <strong>approximate conditional model</strong>, not an exact generative law for the raw measurements.</div><h3>A. Notation and setup · Appendix I.A</h3><div class="panel" data-equation="pc_setup">$$\boldsymbol Z^G=\{\boldsymbol Z^1,\ldots,\boldsymbol Z^{n^g}\},\qquad m=\sum_{j=1}^{n^g}|\boldsymbol Z^j|.$$</div><p>There are $n^t$ legacy components and $n^g$ newborn components, <strong>one newborn candidate per group</strong>, rather than one per raw detection. Each state contains kinematics $\boldsymbol x$, extent $\boldsymbol E$, and existence $r$. A fixed grouping can contain many groups. The one-group special case is $n^g=1$, not $m=1$.</p><div class="panel" data-equation="pc_prior">$$f(\underline{\boldsymbol Y})=\prod_{p=1}^{n^t}f(\underline{\boldsymbol y}^{p}),\qquad \underline{\boldsymbol y}^{p}=(\underline s^p,\underline r^p),\quad s=(\boldsymbol x,\boldsymbol E).$$</div><p>This is Eq. (A.1), <code>eq:pt_legacy_prior</code>, with the display shorthand $s=(\boldsymbol x,\boldsymbol E)$. The source assumes a product previous posterior and independent transitions to obtain the predicted product prior.</p><div class="panel" data-equation="pc_choices">$$a^p\in\{0,\ldots,n^g\},\qquad b^j\in\{0,\ldots,n^t\},\qquad a^p=j\ \Longleftrightarrow\ b^j=p.$$</div><p>$a^p=j$ means legacy target $p$ generates the whole group $j$. The variable $b^j=p$ records the same event from the group side. Crucially, $b^j=0$ means <em>not generated by a legacy target</em>, so the group may be clutter or a newly detected target.</p><div class="panel" data-equation="pc_psi">$$\begin{aligned}\boldsymbol\psi(\boldsymbol a,\boldsymbol b)&=\prod_{p=1}^{n^t}\prod_{j=1}^{n^g}\Psi_{p,j}(a^p,b^j),\\ \Psi_{p,j}(a,b)&=\mathbf1[(a=j)\Longleftrightarrow(b=p)].\end{aligned}$$</div><p>Each target generates at most one group and each group contains measurements from only one source. The pairwise indicators enforce exclusive legacy associations. The newborn factor below additionally rules out a newborn in a group already claimed by a legacy target. On these feasible hypotheses, define the three count sets as in the appendix:</p><div class="panel" data-equation="pc_sets">$$\begin{aligned}\mathbb D&=\{p:a^p\ne0\},\qquad\mathbb N=\{j:\overline r^j=1\},\\\mathbb C&=\{1,\ldots,n^g\}\setminus\bigl(\{a^p:p\in\mathbb D\}\cup\mathbb N\bigr),\\ n^d&=|\mathbb D|,\quad n^n=|\mathbb N|,\quad n^c=n^g-n^d-n^n.\end{aligned}$$</div><h3>B. Joint PDF and factorization · Eq. (A.2)</h3><div class="panel" data-equation="pc_chain">$$\begin{aligned}f(\underline{\boldsymbol Y},\overline{\boldsymbol Y},\boldsymbol a,\boldsymbol b,\boldsymbol Z^G)={}&f(\underline{\boldsymbol Y})\,\boldsymbol\psi(\boldsymbol a,\boldsymbol b)\\&\times f(\boldsymbol a,\boldsymbol b,\overline{\boldsymbol Y}\mid\underline{\boldsymbol Y})\\&\times f(\boldsymbol Z^G\mid\underline{\boldsymbol Y},\overline{\boldsymbol Y},\boldsymbol a,\boldsymbol b).\end{aligned}$$</div><p>As in the source footnote, dependence on the fixed partition $\mathcal P=\mathcal C(\boldsymbol Z)$ is suppressed. The appendix first writes this chain-rule structure, then approximates the association and group-likelihood contributions. The following display shorthands $B$, $L_{\mathrm L}$, $L_{\mathrm N}$, $F_c$, and $R_j$ distinguish terms that share the symbol $f$ in the source. They do not change its factors.</p><h3>B.1. Count models and factorial cancellation · Eqs. (A.3)–(A.4)</h3><div class="panel" data-equation="pc_poisson">$$f(n^c)\approx\frac{\mu_g^{n^c}e^{-\mu_g}}{n^c!},\qquad f(n^n)=\frac{\mu_n^{n^n}e^{-\mu_n}}{n^n!}.$$</div><p>$\mu_g$ is the mean number of <strong>clutter groups after preclustering</strong>. It is not generally the raw clutter-detection mean $\mu_c$. The parameter $\mu_n$ is the mean number of <strong>detected newborns</strong>. No undetected-intensity substitution is made in this variant.</p><p>Conditioned on the counts, the source uses a uniform choice of newborn groups among the unclaimed groups and a uniform ordered assignment of detected legacy targets:</p><div class="panel" data-equation="pc_cancel">$$\begin{aligned}\binom{n^c+n^n}{n^n}^{-1}&=\frac{n^c!n^n!}{(n^c+n^n)!},\\\frac1{{}_{n^g}P_{n^d}}&=\frac{(n^c+n^n)!}{n^g!},\\\text{product}&=\frac{n^c!n^n!}{n^g!}.\end{aligned}$$</div><p>The product cancels the $n^c!$ and $n^n!$ in the Poisson terms. The remaining denominator is $n^g!$, not $m!$. The newborn state-density contribution is</p><div class="panel" data-equation="pc_birthstates">$$B(\overline{\mathcal X}\mid\overline{\boldsymbol r})=\prod_{j\in\mathbb N}f_n(\overline s^j)\prod_{j\notin\mathbb N}f_d(\overline s^j),\qquad\int f_d(s)\,ds=1.$$</div><p>With those factors, the appendix’s intermediate association expression is</p><div class="panel" data-equation="pc_allocation">$$\begin{aligned}f(\boldsymbol a,\boldsymbol b,\overline{\boldsymbol Y}\mid\underline{\boldsymbol Y})\approx{}&\frac{\mu_g^{n^c}e^{-\mu_g}\mu_n^{n^n}e^{-\mu_n}}{n^g!}\,B(\overline{\mathcal X}\mid\overline{\boldsymbol r})\\ &\times\prod_{p\in\mathbb D}\underline r^p\\ &\times\prod_{p\notin\mathbb D}\left[1-\underline r^p\left(1-e^{-\mu_m(\underline s^p)}\right)\right].\end{aligned}$$</div><div class="aside"><strong>Interpretation of the source’s split.</strong> Eq. (A.4) places only $\underline r^p$ in a detected legacy branch. Its nonempty Poisson mass is carried by the following group likelihood. Read the two contributions jointly. This intermediate expression should not be implemented as an independently normalized association PMF and then multiplied by another detection probability.</div><h3>B.2. Group likelihoods · Eq. (A.5)</h3><div class="panel" data-equation="pc_likelihood">$$\begin{aligned}f(\boldsymbol Z^G\mid\underline{\boldsymbol Y},\overline{\boldsymbol Y},\boldsymbol a,\boldsymbol b)={}&\prod_{p\in\mathbb D}L_{\mathrm L}(\boldsymbol Z^{a^p}\mid\underline s^p)\\&\times\prod_{j\in\mathbb N}L_{\mathrm N}(\boldsymbol Z^j\mid\overline s^j)\prod_{c\in\mathbb C}F_c(\boldsymbol Z^c).\end{aligned}$$</div><div class="panel" data-equation="pc_Llegacy">$$L_{\mathrm L}(\boldsymbol Z^j\mid s)=e^{-\mu_m(s)}\prod_{\boldsymbol z\in\boldsymbol Z^j}\mu_m(s)f(\boldsymbol z\mid s).$$</div><div class="panel" data-equation="pc_Lnew">$$L_{\mathrm N}(\boldsymbol Z^j\mid s)=\frac{L_{\mathrm L}(\boldsymbol Z^j\mid s)}{1-e^{-\mu_m(s)}},\qquad\boldsymbol Z^j\ne\varnothing.$$</div><div class="panel" data-equation="pc_Fclutter">$$F_c(\boldsymbol Z^j)=\prod_{\boldsymbol z\in\boldsymbol Z^j}f_c(\boldsymbol z),\qquad\prod_{j=1}^{n^g}F_c(\boldsymbol Z^j)=\prod_{i=1}^{m}f_c(\boldsymbol z^i).$$</div><p>A legacy group carries one $e^{-\mu_m(s)}$ for the entire group. A newborn is already detected by assumption, so the appendix uses the zero-truncated factor $1/[1-e^{-\mu_m(s)}]$. The clutter group is represented by the product of its spatial clutter densities. These are the appendix’s conventions, not a substituted raw-PPP clutter intensity per point.</p><h3>B.3. Separate the constant · Eq. (A.6)</h3><div class="panel" data-equation="pc_mu_redistribute">$$\mu_g^{n^c}=\mu_g^{n^g}\prod_{p\in\mathbb D}\mu_g^{-1}\prod_{j\in\mathbb N}\mu_g^{-1}.$$</div><div class="panel" data-equation="pc_C">$$C(\mu_g,\mu_n,\boldsymbol Z^G)=\frac{\mu_g^{n^g}e^{-\mu_g}e^{-\mu_n}}{n^g!}\prod_{i=1}^{m}f_c(\boldsymbol z^i).$$</div><p>For fixed observations and fixed model parameters, $C$ is independent of the target states, existence variables, and associations. It may therefore be removed when normalizing that scan’s posterior. It is not removable without reconsideration when comparing partition hypotheses or estimating $\mu_g$ or $\mu_n$.</p><h3>B.4. Legacy local factor · Eq. (A.7)</h3><div class="panel" data-equation="pc_R">$$R_j(s)=\prod_{\boldsymbol z\in\boldsymbol Z^j}\frac{\mu_m(s)f(\boldsymbol z\mid s)}{f_c(\boldsymbol z)}.$$</div><div class="panel" data-equation="pc_legacy">$$\underline l((s,r),a;\boldsymbol Z^G)=\begin{cases}\dfrac{e^{-\mu_m(s)}}{\mu_g}R_a(s),&a\ne0,\ r=1,\\ e^{-\mu_m(s)},&a=0,\ r=1,\\ 1,&a=0,\ r=0,\\ 0,&a\ne0,\ r=0.\end{cases}$$</div><p>Expanding $R_a(s)$ gives exactly <code>eq:legacy_l_function</code>. The group contributes <strong>one</strong> $1/\mu_g$, regardless of its size. A null assignment for an existing target has weight $e^{-\mu_m(s)}$. A nonexistent target has weight one only for a null assignment and cannot explain a group.</p><h3>B.5. Newborn local factor · Eq. (A.8)</h3><div class="panel" data-equation="pc_new">$$\overline l((s,r),b;\boldsymbol Z^j)=\begin{cases}\dfrac{\mu_n f_n(s)e^{-\mu_m(s)}}{\mu_g[1-e^{-\mu_m(s)}]}R_j(s),&b=0,\ r=1,\\0,&b\ne0,\ r=1,\\ f_d(s),&r=0.\end{cases}$$</div><p>Expanding $R_j(s)$ gives <code>eq:new_l_function</code>. Both $\mu_n f_n(s)$ and the zero-truncation denominator remain inside the birth factor. A claimed group forces this newborn component to have $r=0$. The dummy branch $f_d$ integrates to one.</p><h3>B.6. Final approximate joint PDF · Eq. (A.9)</h3><div class="panel" data-equation="pc_final">$$\begin{aligned}f(\underline{\boldsymbol Y},\overline{\boldsymbol Y},\boldsymbol a,\boldsymbol b,\boldsymbol Z^G)\approx{}&C\,\boldsymbol\psi(\boldsymbol a,\boldsymbol b)\\ &\times\prod_{p=1}^{n^t}\left[f(\underline{\boldsymbol y}^p)\underline l(\underline{\boldsymbol y}^p,a^p;\boldsymbol Z^G)\right]\\&\times\prod_{j=1}^{n^g}\overline l(\overline{\boldsymbol y}^j,b^j;\boldsymbol Z^j).\end{aligned}$$</div><p>This is <code>eq:final_joint_pdf_local_factors</code>, retaining the source’s $\approx$. For an observed grouped scan, normalize the product on the right to obtain the posterior of the chosen approximate conditional model. The unknown number of represented targets is inferred through all legacy and newborn existence indicators, not set equal to $n^g$.</p><h3>What this variant assumes, and what it does not cover</h3><p>The appendix excludes clustering splits and cross-target merges. BP resolves the remaining group-to-target ambiguity but cannot undo those preprocessing errors. The appendix does not specify a clustering algorithm or a calibration rule for the induced clutter-group count. The selected clustering method supplies the partition before association begins.</p><p>The likelihood-ratio form requires $\mu_g>0$ and $f_c(\boldsymbol z)>0$ at the observed points. The zero-truncated newborn expression is evaluated on states with positive detection probability. Its factors are retained as an approximate observed-group model, not presented as a proof of normalization over arbitrary group sizes.</p><h3 id="grbp-factor-graph">Factor graph for GrBP</h3>
+<figure>
+  <img src="assets/fg-grbp.svg" width="1348" height="403" alt="GrBP factor graph: predicted legacy priors connect to legacy states, likelihoods, and target association variables; the consistency factor couples target and group associations; each group has a newborn likelihood and state. Blue paths indicate prediction between scans.">
+  <figcaption>The manuscript’s TikZ factor graph for Eq. (A.9), with the time index $k$ shown. Circles are variables, boxes are factors, and blue paths indicate prediction between scans. The count labels are aligned with this derivation: $n^t$ legacy components and $n^g$ measurement groups.</figcaption>
+</figure>
+<p>The central box abbreviates $\boldsymbol\psi(\boldsymbol a_k,\boldsymbol b_k)=\prod_{p=1}^{n^t}\prod_{j=1}^{n^g}\Psi_{p,j}(a_k^p,b_k^j)$. Each legacy state has its predicted prior and local likelihood factor. Each group has a newborn state and local likelihood factor; the newborn density is already included in that factor. The observation-only constant $C$ is omitted from the graph.</p>
+<p class="note"><a href="../eo-derivation-slides/#grbp-graph">View the factor-graph slide →</a> · <a href="source/graph-drawing-original.tex">Original TikZ source</a></p>
+<p class="pc-source">Source: <a href="source/appendix-I-original.tex">unaltered Appendix I LaTeX excerpt</a>. See the <a href="source/grbp-provenance.md">equation-label and source-line map</a>.</p></div>
+</section>
+
+<!-- ============================================================ -->
+<section id="summary">
+  <div class="shead"><span class="badge b0">Summary</span><h2>The factorizations side by side</h2></div>
+  <div class="tablewrap">
+  <table class="cmp">
+    <thead>
+      <tr><th>Scenario</th><th>Association</th><th>Extra variables</th><th>Factorized joint (up to constants)</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="c1">S1</span> point, known $n$</td>
+        <td>target-oriented $a_i$, consistency $\psi(\boldsymbol{a})$</td>
+        <td>—</td>
+        <td>$\psi(\boldsymbol{a}) \prod_i f(\boldsymbol{x}_i)\, g(\boldsymbol{x}_i, a_i; Z)$</td>
+      </tr>
+      <tr>
+        <td><span class="c2">S2</span> point, unknown $n$</td>
+        <td>target-oriented $a_i$, consistency $\psi(\boldsymbol{a})$</td>
+        <td>existence $r$; one new PO per measurement</td>
+        <td>$\psi(\boldsymbol{a}) \prod_i f(\ub{y}_i)\,\ub{g}(\ub{y}_i, a_i; Z) \prod_j \bar g(\ob{y}_j, \boldsymbol{a}; \boldsymbol{z}_j)$</td>
+      </tr>
+      <tr>
+        <td><span class="c3">S3</span> extended, known $n$</td>
+        <td>measurement-oriented $b_i$ (no $\psi$ needed)</td>
+        <td>Poisson measurement rate $\mu_m(\boldsymbol{y})$</td>
+        <td>$\prod_k g(\boldsymbol{y}_k) \prod_i g_{ki}(\boldsymbol{y}_k, b_i; \boldsymbol{z}_i)$</td>
+      </tr>
+      <tr>
+        <td><span class="c4">S4</span> extended, unknown $n$</td>
+        <td>measurement-oriented $b_i$</td>
+        <td>existence $r$; auxiliary $\tb{y}, \tb{b}, \boldsymbol{\pi}$ marginalized out</td>
+        <td>$\prod_k \underline q(\ub y_k)\prod_i\underline g_{ki}\;\cdot\;\prod_k\bar q(\ob y_k)\bar g_k\prod_{i>k}\bar h_{ki}$</td>
+      </tr>
+      <tr>
+        <td><span class="cgrbp">GrBP</span> extended, preclustered</td>
+        <td>target-to-group $a^p$ and group-to-legacy $b^j$</td>
+        <td>fixed partition; existence; one newborn candidate per group</td>
+        <td>$C\,\boldsymbol\psi(\boldsymbol a,\boldsymbol b)\prod_p[f(\underline{\boldsymbol y}^p)\underline l_p]\prod_j\overline l_j$ (approximate joint model)</td>
+      </tr>
+    </tbody>
+  </table>
+  </div>
+  <div class="prose">
+    <p>Two axes of difficulty, two tools. Unknown object number is handled by augmenting states with
+    existence variables and letting each measurement propose a new object. Extended objects are handled
+    by flipping the association direction (measurement-oriented) and giving each object a Poisson
+    measurement count — at the cost, in S4, of a detour through an over-complete representation
+    that is marginalized back out. GrBP instead fixes a preclustered partition and applies exclusive group-to-target association under the appendix’s approximate clutter-group model.</p>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<section id="next">
+  <div class="shead"><span class="badge b0">Checks</span><h2>Before implementing these graphs</h2></div>
+  <div class="prose">
+    <ul>
+      <li>Choose whether the observed data are an ordered vector or a finite set and keep the corresponding combinatorial constants consistent.</li>
+      <li>Verify normalization on tiny cases by summing every association and integrating the state variables numerically.</li>
+      <li>Keep the birth intensity and birth-state density inside every new-object factor; test that changing either changes birth evidence.</li>
+      <li>For S4, enforce $b_i\leq\underline K+i$ and include the $\bar h_{ki}$ factors for later measurements; otherwise a new extended object can generate only its anchor measurement.</li>
+      <li>For GrBP, keep one $1/\mu_g$ per target-generated group and retain the detected-newborn zero-truncation factor. Check sensitivity to clustering splits and merges separately from association.</li>
+      <li>Compare SPA marginals with exhaustive inference on small scans before using loopy message passing at scale.</li>
+    </ul>
+  </div>
+
+  <h3 style="font-family:var(--serif);font-weight:600;font-size:18.5px;margin:26px 0 8px">References</h3>
+  <ol class="refs">
+    <li><a href="https://doi.org/10.1109/JPROC.2018.2789427" target="_blank" rel="noopener">F. Meyer, T. Kropfreiter, J. L. Williams, R. Lau, F. Hlawatsch, P. Braca, and M. Z. Win,
+      “Message passing algorithms for scalable multitarget tracking,”</a> <i>Proceedings of the IEEE</i>,
+      vol. 106, no. 2, 2018. (Scenarios 1–2.)</li>
+    <li><a href="https://arxiv.org/abs/1604.00970" target="_blank" rel="noopener">K. Granström, M. Baum, and S. Reuter, “Extended object tracking: Introduction, overview and
+      applications,”</a> <i>Journal of Advances in Information Fusion</i>, vol. 12, no. 2, 2017.
+      (Scenario 3 measurement model.)</li>
+    <li><a href="https://arxiv.org/abs/2103.11279" target="_blank" rel="noopener">F. Meyer and J. L. Williams, “Scalable detection and tracking of geometric extended objects,”</a>
+      <i>IEEE Transactions on Signal Processing</i>, vol. 69, 2021. (Scenario 4 construction, supplementary derivation, and
+      factor graph.)</li>
+    <li><a href="source/appendix-I-original.tex" target="_blank" rel="noopener">EO_Writing_Long_Version, Appendix I, “Derivation of the Approximate Joint PDF”</a>, revision d0a380a. (GrBP, Eqs. (A.1)–(A.9).)</li>
+  </ol>
+</section>
+
+<footer class="pagefoot">
+  Converted from the July 10 derivation deck (20 slides, partly handwritten). Handwriting was transcribed
+  by best effort; when it conflicts with a linked primary source, the primary source is authoritative. GrBP was added from the manuscript’s Appendix I on September 18, 2026.
+</footer>
+
+</div>
+
+<script>
+// Keep the new figure anchor aligned after math, fonts, and images finish layout.
+addEventListener('load', async () => {
+  if (location.hash !== '#grbp-factor-graph') return;
+  await MathJax.startup.promise;
+  await document.fonts.ready;
+  requestAnimationFrame(() => {
+    if (location.hash === '#grbp-factor-graph') {
+      document.getElementById('grbp-factor-graph').scrollIntoView({behavior:'instant'});
+    }
+  });
+}, {once:true});
+</script>
+</body>
+</html>

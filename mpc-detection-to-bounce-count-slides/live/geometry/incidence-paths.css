@@ -1,0 +1,23 @@
+.incidence-paths .ip-stage{display:grid;grid-template-rows:minmax(0,1fr) 34px 48px;gap:7px;min-width:0;min-height:0;background:#fff}
+.incidence-paths .ip-stage svg{width:100%;height:100%;min-height:0;touch-action:none}
+.incidence-paths .ip-steps,.incidence-paths .ip-measurements{display:flex;gap:5px}
+.incidence-paths .ip-steps button,.incidence-paths .ip-measurements button{flex:1;min-width:0;min-height:30px;padding:5px;border:1px solid #d7dee5;border-radius:4px;background:#fff;color:#51606e;font:600 12px/1.2 var(--sans);cursor:pointer}
+.incidence-paths button[aria-pressed="true"]{background:#e3f2ef;border-color:#0e8f7e;color:#086b5d}
+.incidence-paths .ip-stage p{margin:0;padding:0 8px;font:12px/1.45 var(--sans);color:#51606e}
+.incidence-paths .ctl label:not(:first-child){margin-top:8px}
+.incidence-paths input[id$="-aod"]{accent-color:#1874b8}
+.incidence-paths input[id$="-aoa"]{accent-color:#0e8f7e}
+.incidence-paths .ip-result{padding:8px 10px;border:1px solid #b9dbd4;border-radius:5px;background:#e3f2ef;color:#0a6b5e;font:11px/1.4 var(--sans)}
+.incidence-paths .ip-result strong{display:block;margin-bottom:3px;font-size:13px}
+.incidence-paths .ip-result.is-warning{background:#fff6e9;border-color:#ead4b6;color:#89520e}
+.incidence-paths .rail label.ck{font-size:11px}
+.incidence-paths .ip-fixed-data{padding:8px 10px;background:#f4f6f8;border:1px solid #d7dee5;border-radius:4px;font:11px/1.55 var(--sans)}
+.incidence-paths .ip-fixed-data strong{display:block;font-size:11px;margin-bottom:3px}
+.incidence-paths .ip-fixed-data table{width:100%;margin:0;border-collapse:collapse;text-align:left;font:11px/1.5 var(--sans);table-layout:auto}
+.incidence-paths .ip-fixed-data th,.incidence-paths .ip-fixed-data td{padding:2px 3px;border:0;background:transparent;font:inherit;white-space:nowrap;letter-spacing:0;text-transform:none}
+.incidence-paths .ip-fixed-data th{font-weight:400;color:#51606e}
+html.mpc-live-region .incidence-paths .ctl label{font-size:11px}
+html.mpc-live-region .incidence-paths button.reset{min-height:30px;font-size:11px}
+html.mpc-live-region .incidence-paths .hint{display:none}
+html:not(.mpc-live-region) .incidence-paths .ip-stage{min-height:420px}
+@media(max-width:760px){.incidence-paths .ip-stage{min-height:350px;grid-template-rows:minmax(220px,1fr) auto auto}.incidence-paths .ip-stage p{padding-bottom:8px}.incidence-paths .ip-steps{flex-wrap:wrap}.incidence-paths .ip-steps button{flex-basis:30%}}

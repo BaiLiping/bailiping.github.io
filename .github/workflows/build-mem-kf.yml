@@ -1,0 +1,75 @@
+name: Build and validate MEM-KF Bento lesson
+on:
+  push:
+    branches: [add/mem-kf-bento]
+    paths:
+      - mem-kf/**
+      - .github/workflows/build-mem-kf.yml
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: mem-kf-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.ref_name }}
+          fetch-depth: 1
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Build native Bento pages and check numerical models
+        run: |
+          mkdir -p mem-kf-qa
+          node --check mem-kf/model.mjs
+          node --check mem-kf/bento-deck.mjs
+          node mem-kf/build.mjs
+          node --test mem-kf/test.mjs | tee mem-kf-qa/math-tests.txt
+          git diff --check
+      - name: Install isolated browser test dependencies
+        run: |
+          npm install --prefix /tmp/mem-kf-browser --no-save playwright@1.55.0
+          /tmp/mem-kf-browser/node_modules/.bin/playwright install --with-deps chromium
+          curl -fL --retry 3 https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/tex-svg-full.js -o /tmp/mem-kf-mathjax.js
+      - name: Check every slide, live control, print snapshot, and mobile lab
+        env:
+          NODE_PATH: /tmp/mem-kf-browser/node_modules
+          MATHJAX_BUNDLE: /tmp/mem-kf-mathjax.js
+        run: node mem-kf/browser.cjs
+      - name: Check deterministic generation
+        run: |
+          sha256sum mem-kf/index.html mem-kf/study.html mem-kf/figures/*.svg index.html > /tmp/mem-kf-before.sha
+          node mem-kf/build.mjs
+          sha256sum mem-kf/index.html mem-kf/study.html mem-kf/figures/*.svg index.html > /tmp/mem-kf-after.sha
+          cmp /tmp/mem-kf-before.sha /tmp/mem-kf-after.sha
+          git diff --check
+      - name: Commit only validated generated output
+        env:
+          TARGET_BRANCH: ${{ github.ref_name }}
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add mem-kf/index.html mem-kf/study.html mem-kf/README.md mem-kf/figures index.html
+          if ! git diff --cached --quiet; then
+            git commit -m 'Build validated 28-slide MEM-KF lesson and four numerical labs'
+            git push origin HEAD:"$TARGET_BRANCH"
+          fi
+      - name: Package scoped preview and diagnostics
+        if: always()
+        run: |
+          mkdir -p mem-kf-qa/site/assets
+          cp -R mem-kf mem-kf-qa/site/
+          cp assets/bento-inline-* assets/mathjax-dynamic.js mem-kf-qa/site/assets/
+          cp index.html mem-kf-qa/site/index.html
+          if [ -f /tmp/mem-kf-mathjax.js ]; then cp /tmp/mem-kf-mathjax.js mem-kf-qa/site/mathjax.js; fi
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: mem-kf-bento-qa
+          path: mem-kf-qa/
+          retention-days: 7
