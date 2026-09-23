@@ -12,7 +12,8 @@ GitHub Pages site for `bailiping.com`.
 - For topics with both slides and an article, the homepage lists the deck. Companion articles appear on each deck's
   final **Extensions** slide, with an **Extensions** shortcut throughout the deck.
   Article headers link back to their slides; site navigation uses the same tab.
-- **Work** lists point-target handover, extended-target tracking, and density fusion.
+- **Work** lists point-target handover, extended-target handover, extended-target tracking,
+  density fusion, and joint-PDF derivations.
 - **SLAM** includes the Visual SLAM and Graph SLAM notes as extensions.
 - Companion mappings and appendix layouts live in `assets/deck-extensions.mjs`.
   Run `node scripts/install-deck-extensions.mjs` after editing a static deck.
@@ -24,6 +25,12 @@ GitHub Pages site for `bailiping.com`.
 - `/eo-mtt/` is an interactive note on partition uncertainty in extended-object multi-target tracking.
 - `/frame-registration-slides/` is the interactive Bento slide deck for frame-registration methods, with live RANSAC, ICP, and NDT labs.
 - `/target-handover-slides/` is the interactive Bento slide deck for point-target handover, with a decision-rule lab using the Figure 3 trajectories, links to the IEEE paper, and the project page as an extension.
+- `/et-handover/` is the public Extended-Target Handover presentation, with 17 slides,
+  two live demos, and links to its supporting presentations and GrBP derivation.
+  Legacy `/eo-handover-slides/` URLs redirect here.
+- `/eo-derivation/` and `/eo-derivation-slides/` contain the public joint-PDF and GrBP
+  derivations, their 50-slide companion, source figures, and PDF. Links in the
+  handover presentation and derivations navigate in the current tab.
 - `/bp-vs-pmbm-slides/` is the interactive Bento slide deck for normalized data association, with live shared-weight, BP, and joint-hypothesis labs.
 - `/eo-mtt-slides/` is the interactive Bento slide deck for extended-object partition uncertainty, with live candidate-partition, hypothesis-management, and inference labs.
 - `/gaussian-splatting/` is the original interactive Gaussian Splatting and GS-SLAM note.

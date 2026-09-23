@@ -1,0 +1,21 @@
+:root { --accent: #087f68; --ink: #16273e; }
+html { scroll-behavior: smooth; }
+.materials-nav { display:flex; flex-wrap:wrap; gap:10px; margin:24px 0; }
+.materials-nav a { color:#2766b1; padding:8px 14px; background:#edf3f8; border-radius:6px; text-decoration:none; }
+.diagram-material { margin:28px 0; border:1px solid #d8e1e9; border-radius:12px; padding:26px; background:white; }
+.diagram-material h3 { margin:0 0 8px; color:#16273e; font-size:23px; }
+.diagram-material img { width:100%; max-height:590px; object-fit:contain; display:block; margin:22px auto; }
+.diagram-material figcaption { max-width:850px; line-height:1.65; color:#596d80; }
+.diagram-links { display:flex; gap:16px; margin-top:12px; font-size:13px; }
+.diagram-links a { color:#2766b1; }
+.variant-table { overflow-x:auto; margin:24px 0; }
+.variant-table td { vertical-align:top; }
+.source-note { padding:18px 22px; border-left:3px solid #087f68; background:#eff7f5; font-size:14px; }
+.math-tex { position:relative; }
+.math-inline { display:inline-block; vertical-align:-.14em; line-height:1; }
+.math-display { display:flex; width:100%; align-items:center; justify-content:center; line-height:1; }
+.math-tex mjx-container { color:inherit!important; margin:0!important; }
+.math-display mjx-container[jax="SVG"]>svg { max-width:100%; height:auto; }
+mjx-assistive-mml { position:absolute!important; clip:rect(1px,1px,1px,1px)!important; clip-path:inset(50%)!important; width:1px!important; height:1px!important; overflow:hidden!important; white-space:nowrap!important; }
+@media(max-width:650px) { .diagram-material{padding:16px;margin:20px 0}.formula{font-size:16px!important;overflow-x:auto}.radio-row{flex-wrap:wrap}.hero h1{font-size:36px}.variant-table{font-size:13px} }
+@media print { .diagram-material{break-inside:avoid}.materials-nav,.diagram-links{display:none} }

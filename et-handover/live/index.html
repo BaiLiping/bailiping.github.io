@@ -1,0 +1,185 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Extended-Target Handover · Interactive demonstrations</title>
+  <link rel="icon" href="data:,">
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="../assets/materials.css">
+  <script src="../assets/math-config.js"></script>
+  <script defer src="../assets/vendor/mathjax-3.2.2-tex-svg-full.js"></script>
+  <script defer src="../assets/mathjax-dynamic.js"></script>
+</head>
+<body>
+  <main>
+    <header class="hero">
+      <a href="../">← Extended-Target Handover</a>
+      <h1>Interactive demonstrations</h1>
+      <p class="lede">Explore the handover trigger and the owner–shadow protocol.</p>
+    </header>
+<section id="toy" aria-labelledby="toy-title">
+        <h2 id="toy-title">The toy example, animated</h2>
+        <p class="section-sub">
+          One target crosses three base stations: it appears in <b style="color:#1c5cab">A</b>,
+          brushes through <b style="color:#a53e13">B</b>, and leaves through
+          <b style="color:#0f7250">C</b> — based on the schematic in the paper's appendix.
+          Press play, or drag the timeline; click any numbered event to jump to it.
+        </p>
+
+        <div class="panel">
+          <div class="toy-controls" role="group" aria-label="Simulation controls">
+            <button id="btn-play" class="primary" aria-label="Play or pause">▶ Play</button>
+            <button id="btn-prev" title="Previous event" aria-label="Jump to previous event">⇤ Event</button>
+            <button id="btn-next" title="Next event" aria-label="Jump to next event">Event ⇥</button>
+            <button id="btn-back1" title="Back one frame" aria-label="Step back one frame">−1</button>
+            <button id="btn-fwd1" title="Forward one frame" aria-label="Step forward one frame">+1</button>
+            <div class="grow">
+              <input id="scrub" type="range" min="0" max="359" value="0" step="1" aria-label="Timeline scrubber">
+              <span id="frame-label" class="mono" style="font-size:12px;color:var(--muted);min-width:64px">frame 0</span>
+            </div>
+            <div class="radio-row" role="radiogroup" aria-label="Handover variant">
+              <label><input type="radio" name="variant" value="H" checked>Prior only</label>
+              <label><input type="radio" name="variant" value="HM">+ Measurements</label>
+              <label><input type="radio" name="variant" value="HL">+ Likelihoods</label>
+              <label><input type="radio" name="variant" value="HP">+ Posteriors</label>
+            </div>
+          </div>
+
+          <div class="toy-grid">
+            <div class="toy-scene" id="toy-scene"></div>
+            <aside class="toy-side">
+              <div class="side-block">
+                <h4>Track label (owner, UID)</h4>
+                <div class="owner-chip">
+                  <span class="swatch" id="owner-swatch" style="background:var(--bs-a)"></span>
+                  <span class="label" id="owner-label">—</span>
+                  <span class="who" id="owner-who">no track yet</span>
+                </div>
+                <div style="font-size:12.5px;color:var(--muted);margin-top:6px">
+                  existence <span id="exist-val" class="mono">0.00</span>
+                </div>
+              </div>
+              <div class="side-block">
+                <h4>Shadow holders</h4>
+                <div class="shadow-chips" id="shadow-chips"><span class="none">none</span></div>
+              </div>
+              <div class="side-block">
+                <h4>Expected detections <span style="text-transform:none"><span class="math-tex math-inline">\(\mu=\rho A_\kappa\delta\)</span></span></h4>
+                <div id="mu-meters"></div>
+              </div>
+              <div class="side-block">
+                <h4>Handover scores <span class="math-tex math-inline">\(\Lambda\)</span> (threshold 2)</h4>
+                <div id="lambda-meters"></div>
+              </div>
+              <div class="side-block">
+                <h4>Communication so far</h4>
+                <div class="stat-tiles">
+                  <div class="stat-tile"><div class="lab">event packets</div><div class="num" id="stat-evt">0</div></div>
+                  <div class="stat-tile"><div class="lab">per-frame msgs</div><div class="num" id="stat-flow">0</div></div>
+                  <div class="stat-tile wide"><div class="lab">total payload</div><div class="num" id="stat-total">0 B</div></div>
+                </div>
+              </div>
+              <div class="side-block">
+                <h4>Events</h4>
+                <ol class="event-log" id="event-log"></ol>
+              </div>
+            </aside>
+          </div>
+
+          <div class="scene-legend" id="scene-legend"></div>
+
+          <details class="table-view">
+            <summary>Table view — the six events</summary>
+            <table id="event-table">
+              <thead>
+                <tr><th>#</th><th>Event</th><th>What is sent</th><th class="num">Payload</th></tr>
+              </thead>
+              <tbody></tbody>
+            </table>
+            <p class="fnote">
+              With “+ Measurements”, “+ Likelihoods”, or “+ Posteriors”, the co-observation frames between the events
+              additionally carry the per-frame stream counted in the panel above. Payload sizes follow
+              the paper's byte accounting: 196 B per prior, likelihood, or posterior packet, 16 B per measurement;
+              the toy additionally shows illustrative 24 B control messages, which the paper’s reported payload totals exclude.
+            </p>
+          </details>
+        </div>
+
+        <h3 style="margin-top:26px">What to watch for</h3>
+        <p>
+          <b>① Birth.</b> The target first becomes visible to A. A creates the track, assigns local
+          UID 3, and becomes its <em>owner</em> — the label is <span class="mono">(A, 3)</span>.
+          <b>② and ③ Prior handover.</b> As the predicted track approaches B's (then C's) region, the
+          handover score <span class="math-tex math-inline">\(\Lambda\)</span> crosses the threshold and A sends that neighbor <em>one</em> prior packet.
+          The receiver starts a <em>shadow track</em> — A keeps the original; nothing is relinquished.
+          <b>④ Shadow pruning.</b> The target leaves B, so B quietly drops its shadow copy and tells
+          the owner. No ownership ceremony is needed — B was only a shadow holder.
+          <b>⑤ Ownership transfer.</b> When A itself loses sight, ownership moves to the
+          best-scoring shadow holder via a two-message handshake. A retains authority until the acknowledgment arrives. C issues a fresh local UID, and the
+          label changes from <span class="mono">(A, 3)</span> to <span class="mono">(C, 7)</span>.
+          <b>⑥ Exit.</b> C prunes the track when the target leaves the network.
+        </p>
+        <p class="fnote">
+          The four variants share the event protocol. H sends no further evidence. HM sends the selected non-null group to the owner; HL sends a likelihood message; HP sends a full local posterior. HM, HL, and HP return fused posteriors. The toy illustrates traffic and labels, not a numerical implementation of GrBP or its fusion rules.
+        </p>
+        <p class="fnote">
+          The deterministic measurement dots illustrate the detection
+          model <span class="math-tex math-inline">\(\mu=\rho A_\kappa\delta\)</span>, so they thicken near a station and thin at FOV
+          boundaries. The dashed ghost ellipse that appears ahead of the target marks the
+          <em>predicted</em> pose — the density the receiver's shadow prior is initialized from,
+          which is why it reaches the border before the target does.
+        </p>
+      </section>
+<section aria-labelledby="score-title">
+        <h2 id="score-title">The trigger: a handover score you can drag</h2>
+        <p class="section-sub">
+          When should the owner speak up? The paper gates every handover on one quantity — the number
+          of detections the <em>receiving</em> station would be expected to make of this track:
+        </p>
+        <div class="formula"><span class="math-tex math-display">\[\Lambda_{t\to r}=\mathbf 1\{p_t\ge p_{\rm th}\}\int\mu_{m,r}(\bm x,\bm E)f_t(\bm x,\bm E)\,d\bm x\,d\bm E\]</span></div>
+        <p class="section-sub">
+          The score uses the expected detection count: <span class="math-tex math-inline">\(\Lambda\)</span> is the mean count that the
+          <em>receiving</em> station would see, averaged over the predicted density and gated on
+          track confidence. Drag the target below and watch the three factors — the score only
+          clears the threshold when the object is both confident and genuinely entering the
+          receiver's view.
+        </p>
+
+        <div class="panel" id="handover-score-demo">
+          <div class="widget-grid">
+            <div id="score-scene"></div>
+            <div>
+              <div class="score-readout" id="score-readout">
+                <div class="row"><span>range to receiver</span><b id="sr-range">—</b></div>
+                <div class="row"><span>scatter density <span class="math-tex math-inline">\(\rho(\bm x)\propto 1/r\)</span></span><b id="sr-rho">—</b></div>
+                <div class="row"><span>extent footprint <span class="math-tex math-inline">\(A_\kappa(\bm E)\)</span></span><b id="sr-area">—</b></div>
+                <div class="row"><span>visible fraction <span class="math-tex math-inline">\(\delta\)</span></span><b id="sr-vis">—</b></div>
+                <div class="row"><span>score <span class="math-tex math-inline">\(\Lambda\approx\mu=\rho A_\kappa\delta\)</span></span><b id="sr-lambda">—</b></div>
+              </div>
+              <div class="meter-row" style="grid-template-columns: 1fr 44px; margin-top:14px">
+                <div class="meter-track" style="height:14px">
+                  <div class="meter-fill" id="sr-meter" style="background:var(--accent)"></div>
+                  <div class="meter-th" id="sr-th"></div>
+                </div>
+                <span class="val" id="sr-meter-val">0.0</span>
+              </div>
+              <div class="score-verdict no" id="sr-verdict">below threshold — stay silent</div>
+              <div class="slider-row">
+                <span>extent size</span>
+                <input id="sr-extent" type="range" min="0.55" max="1.7" value="1" step="0.01" aria-label="Extent size">
+              </div>
+              <p class="fnote" style="margin-top:14px">
+                This widget evaluates the count at one predicted pose with the existence gate on; it approximates the paper’s density integral. The actual protocol uses a threshold and hysteresis. A prior can arrive before detections; a fixed one-step lead is not guaranteed.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+  </main>
+  <script src="demo.js"></script>
+  <script src="embed-page.js"></script>
+  <script src="inline-frame.js"></script>
+  <link rel="stylesheet" href="embed.css">
+</body>
+</html>

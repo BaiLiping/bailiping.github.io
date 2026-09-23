@@ -1,0 +1,12 @@
+{
+  "name": "et-handover-diagrams",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Rebuild the private handover factor graphs",
+  "scripts": {
+    "build": "node build-graphs.cjs"
+  },
+  "dependencies": {
+    "mathjax-full": "3.2.1"
+  }
+}
