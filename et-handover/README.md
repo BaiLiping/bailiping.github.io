@@ -49,6 +49,8 @@ region. Inactive deck demos unload; Page Up / Page Down return navigation to Ben
   `assets/manuscript-figure-1.png`. The central unit depicts the coordinated baseline.
 - The cover link **extention of point-target handover** opens the matching
   point-target presentation in the same tab.
+- The cover's **Paper · arXiv:2609.25737** link opens
+  <https://arxiv.org/abs/2609.25737> in the same tab.
 - Slide 2, **Scalability is core design objective for DISAC**, links to the Extended-Target
   Tracking and Density Fusion presentations through two full-box links that
   open in the same tab. Use the browser Back button to return from these public decks. Their hover and keyboard-focus styles live in `slides.css`;

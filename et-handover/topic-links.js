@@ -1,7 +1,7 @@
 (() => {
   'use strict';
 
-  // Bento strips anchors from rich text. Restore the authored site-local
+  // Bento strips anchors from rich text. Restore the authored page and paper
   // links in each presentation, overview, and print copy without changing it.
   const doc = JSON.parse(document.getElementById('bento-doc').textContent);
   const topics = doc.slides.flatMap(slide => slide.elements
@@ -15,7 +15,7 @@
         href: source.getAttribute('href'), label: source.firstElementChild.textContent,
         className: source.className
       };
-    })).filter(topic => new URL(topic.href, location.href).origin === location.origin);
+    })).filter(topic => ['http:', 'https:'].includes(new URL(topic.href, location.href).protocol));
 
   function syncLinks() {
     for (const topic of topics) {

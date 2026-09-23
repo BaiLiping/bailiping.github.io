@@ -41,7 +41,7 @@ html = html.replace(pattern, (_, open, close) => open + json(doc) + close)
     <link rel="stylesheet" href="./inline-live.css" />
     <!-- eo-host-start -->
     <link rel="stylesheet" href="./slides.css">
-    <script defer src="./topic-links.js?v=20260923-public"></script>
+    <script defer src="./topic-links.js?v=20260923-paper"></script>
     <link rel="stylesheet" href="./assets/materials.css">
     <style>.companion-demo-stage{border:0!important;border-radius:0!important;box-shadow:none!important;background:#fff!important}.companion-demo-stage:before{content:none!important}.math-display{height:100%}.math-display mjx-container[jax="SVG"]>svg{max-height:100%}</style>
     <script src="./assets/math-config.js"></script>
