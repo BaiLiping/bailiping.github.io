@@ -61,8 +61,12 @@ region. Inactive deck demos unload; Page Up / Page Down return navigation to Ben
   until acknowledgment arrives; then BS C owns `(C, 7)`. The original sidebar
   and normal playback speed remain.
 - Slide 15 introduces the seven-base-station environment using the supplied
-  `centralized_animation (2).gif`, copied unchanged to
-  `assets/simulation-environment.gif`. Native slide elements replace the static
+  `centralized_animation (2).gif`. The presentation copy at
+  `assets/simulation-environment.gif` is rendered from the same archived
+  `mc_0088` results with the in-plot legend removed. The nine legend entries
+  sit beneath **Simulation environment**, with symbols from the original
+  plotting code in `assets/simulation-legend-symbols.svg` and native slide text.
+  Native slide elements replace the static
   animation heading with **GrBP Tracking / mc_0088**, preserving the
   animated frame counter and 10-second playback. Results follow on slide 16.
 - These are explanatory demonstrations, not a numerical implementation of GrBP
