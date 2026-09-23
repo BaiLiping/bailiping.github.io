@@ -12,8 +12,10 @@ GitHub Pages site for `bailiping.com`.
 - For topics with both slides and an article, the homepage lists the deck. Companion articles appear on each deck's
   final **Extensions** slide, with an **Extensions** shortcut throughout the deck.
   Article headers link back to their slides; site navigation uses the same tab.
-- **Work** lists point-target handover, extended-target handover, extended-target tracking,
-  density fusion, and joint-PDF derivations.
+- **Work** lists Extended-Target Handover. Its supporting pages—point-target handover,
+  extended-target tracking, density fusion, BP vs PMBM, and the joint-PDF derivations—
+  remain public and are reached through the handover presentation's links. They do
+  not have separate homepage entries.
 - **SLAM** includes the Visual SLAM and Graph SLAM notes as extensions.
 - Companion mappings and appendix layouts live in `assets/deck-extensions.mjs`.
   Run `node scripts/install-deck-extensions.mjs` after editing a static deck.
