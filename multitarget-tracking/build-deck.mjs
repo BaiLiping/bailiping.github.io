@@ -1,5 +1,7 @@
 import fs from 'node:fs';
+import {prepareAnimations} from './prepare-animations.mjs';
 import {buildSlides,theme} from './deck.mjs';
+prepareAnimations();
 const source=fs.readFileSync(new URL('../et-handover/index.html',import.meta.url),'utf8');
 // A classic script needs no same-origin sandbox permission. Keep the pure model
 // as an ES module for source-level checks, and bundle its exports for the viewer.

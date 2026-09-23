@@ -17,5 +17,5 @@ export const groups=[
 ];
 export function figure(index){return figures.find(f=>f.index===index)}
 export const esc=s=>String(s).replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;');
-export const figureUrl=index=>'./assets/'+figure(index).file;
+export const figureUrl=index=>{const file=figure(index).file;return './assets/'+(file.endsWith('.gif')?'playback/'+file.replace('.gif','-2x.gif'):file)};
 export const noteUrl=index=>sources.notion+'#'+figure(index).blockId.replaceAll('-','');
