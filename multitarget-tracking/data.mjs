@@ -1,5 +1,5 @@
 import fs from 'node:fs';
-export const sources={notion:'https://www.notion.so/2270d664735d8183bd8bc130601992e2',repo:'https://github.com/BaiLiping/RFS_Filters',evaluation:'https://github.com/nutonomy/nuscenes-devkit/blob/master/python-sdk/nuscenes/eval/tracking/README.md'};
+export const sources={repo:'https://github.com/BaiLiping/RFS_Filters',evaluation:'https://github.com/nutonomy/nuscenes-devkit/blob/master/python-sdk/nuscenes/eval/tracking/README.md'};
 export const figures=JSON.parse(fs.readFileSync(new URL('./assets/figures.json',import.meta.url),'utf8'));
 const log=fs.readFileSync(new URL('./assets/validation-results.txt',import.meta.url),'utf8');
 const classNames={bicycle:'Bicycle',bus:'Bus',car:'Car',motorcy:'Motorcycle',pedestr:'Pedestrian',trailer:'Trailer',truck:'Truck'};
@@ -18,4 +18,4 @@ export const groups=[
 export function figure(index){return figures.find(f=>f.index===index)}
 export const esc=s=>String(s).replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;');
 export const figureUrl=index=>{const file=figure(index).file;return './assets/'+(file.endsWith('.gif')?'playback/'+file.replace('.gif','-2x.gif'):file)};
-export const noteUrl=index=>sources.notion+'#'+figure(index).blockId.replaceAll('-','');
+export const figureDetailUrl=index=>'./#figure-'+index;
