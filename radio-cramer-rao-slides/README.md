@@ -2,17 +2,16 @@
 
 Public presentation: <https://bailiping.com/radio-cramer-rao-slides/>.
 
-Updated September 24, 2026: **40 slides and seven live experiments**, including physical coded pilots and known-channel timing bounds.
+Updated September 24, 2026: **37 slides and six live experiments**, including physical coded pilots and the unknown channel and clock.
 
 - [Coded-pilot calculator](https://bailiping.com/radio-cramer-rao-slides/project/?lab=coded)
-- [Known channel and receiver clock](https://bailiping.com/radio-cramer-rao-slides/project/?lab=known)
 - [Orthogonal-pilot reference calculator](https://bailiping.com/radio-cramer-rao-slides/live/?lab=calculator)
 - [Fisher information](https://bailiping.com/radio-cramer-rao-slides/live/?lab=fisher)
 - [Bandwidth and observation time](https://bailiping.com/radio-cramer-rao-slides/live/?lab=bandwidth)
 - [3D array geometry](https://bailiping.com/radio-cramer-rao-slides/live/?lab=geometry)
 - [Two-path gain separability](https://bailiping.com/radio-cramer-rao-slides/live/?lab=multipath)
 
-This companion to **Radio Measurements → Radio Map** derives local bounds for delay, two arrival angles, two departure angles, effective path attenuation, and reference phase. The cover links directly to both new experiments. The slide IDs `project-setup` and `known-channel` are stable entry points.
+This companion to **Radio Measurements → Radio Map** derives local bounds for delay, two arrival angles, two departure angles, effective path attenuation, and reference phase. The cover links directly to the coded-pilot experiment and the unknown-channel section. The slide IDs `project-setup` and `unknown-channel` are stable entry points.
 
 ## Physical coded-pilot model
 
@@ -30,24 +29,17 @@ The browser's deterministic QPSK generator supplies **illustrative pilots**. It 
 
 With 50 symbols, the pilot rank is at most 50. Full arbitrary per-tone CSI recovery needs row rank 384, while structured angle/delay estimation depends on the rank of the much smaller real parameter Jacobian. The new calculator therefore supports `L < Nt`. A single repeated spatial excitation cannot identify AoD jointly with a free complex gain.
 
-## Known-channel interpretation
+## Unknown channel and receiver clock
 
-The slides and second new experiment distinguish:
+The receiver knows the pilots `X`, the tone grid, the array calibration and the noise variance. It does not know the channel. Every path's delay, AoA, AoD, attenuation and phase, the receiver clock bias `b`, and the number of paths are unknown. The simulator's true channel only sets the point where the deterministic CRB is evaluated. It is never an estimator input.
 
-1. **Simulator truth:** evaluate a CRB at the true channel while the estimator receives noisy I/Q and known pilots.
-2. **Exact geometric channel:** the receiver knows `H^g`, but may still need to estimate clock bias and an optional common receiver phase.
-3. **Exact effective channel:** identifiable functions of `Htilde` have no receiver-noise uncertainty, while delay/clock or path-decomposition ambiguities can remain.
-4. **Noisy CSI:** retain its error covariance in the likelihood. It is not exact channel knowledge.
+With an unknown multipath channel the clock factor multiplies every path:
 
-For known `H^g`, let `w_k = ||H_k^g X||_F²`. The clock information with a known phase reference is
+$$\mathbf M_k=\sum_\ell\alpha_\ell e^{-j2\pi f_k(\tau^{\mathrm g}_\ell+b)}\mathbf a_r(\mathbf q_{r,\ell})\mathbf a_t(\mathbf q_{t,\ell})^H\mathbf X,\qquad\partial_b\mathbf M_k=\sum_\ell\partial_{\tau^{\mathrm g}_\ell}\mathbf M_k.$$
 
-$$J_{bb}=\frac{8\pi^2}{\sigma^2}\sum_k w_k f_k^2.$$
+Shifting `b` by `delta` and every geometric delay by `-delta` leaves the data unchanged, so the channel-level parameters are the apparent delays `tau_a = tau_g + b`. Delay differences are clock-free. The clock is separated at the geometry level, where every apparent delay equals a path length over `c` plus the same `b`. Line of sight alone leaves a range/clock trade along the AoD ray. Adding one single-bounce path with an unknown incidence point adds five measurements and three unknowns, and for generic geometry the geometric FIM becomes full rank.
 
-An unknown common receiver phase changes this to
-
-$$J_{b,\mathrm{eff}}=\frac{8\pi^2}{\sigma^2}\sum_k w_k(f_k-\bar f_w)^2,$$
-
-where `fbar_w` is the power-weighted mean frequency. These use baseband offsets, consistent with the stated clock model. The known-channel demo varies an illustrative received-energy spectrum at fixed aggregate SNR and shows both bounds. Its delay/clock controls demonstrate the invariant apparent delay `tau_a = tau_g + b`, a separate identifiability question from the known-geometric-template timing experiment.
+An earlier revision of this deck treated the channel `H^g` as known to the receiver and derived a clock bound from it. That premise does not hold for this system and was removed.
 
 ## Orthogonal reference model
 
@@ -63,7 +55,7 @@ The multipath lab has a narrower model: two known delays and unknown complex gai
 
 `bento-deck.mjs` contains the slide text, equations, references, and layout. `build.mjs` uses the existing public radio-geometry deck's licensed Bento runtime and its local MathJax distribution. Generated `index.html`, `deck.json`, and `live-demos.json` should be committed with the source.
 
-The orthogonal reference application is in `live/`, with the `RadioCRB` engine. The coded-pilot and known-channel application is in `project/`, with the `RadioProjectCRB` engine. Both `model.js` files are usable from Node via CommonJS. The applications use local scripts and have no runtime network dependencies for their calculations.
+The orthogonal reference application is in `live/`, with the `RadioCRB` engine. The coded-pilot application is in `project/`, with the `RadioProjectCRB` engine. Both `model.js` files are usable from Node via CommonJS. The applications use local scripts and have no runtime network dependencies for their calculations.
 
 ```sh
 node radio-cramer-rao-slides/build.mjs

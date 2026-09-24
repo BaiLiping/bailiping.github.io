@@ -120,7 +120,7 @@
    "id": "overview",
    "background": "#F4F6F8",
    "transition": "none",
-   "notes": "A public educational companion to radio multipath geometry. The coded-pilot section follows the physical I/Q observation design with one fixed transmit code matrix across tones. Its representative isolated channel and seeded demonstration pilots do not constitute a saved Sionna scene evaluation. The known-channel section separates simulator truth, exact geometric channel, exact effective channel and noisy CSI. Five reference labs retain the explicitly labeled orthogonal baseline and two-path gain illustration.\n\nSources: Optimal and Robust Waveform Design for MIMO-OFDM Channel Sensing: A Cramér-Rao Bound Perspective — https://arxiv.org/abs/2301.10689\nPosition and Orientation Estimation through Millimeter-Wave MIMO in 5G Systems — https://arxiv.org/abs/1702.01605\nRadio Measurements → Radio Map — https://bailiping.com/mpc-detection-to-bounce-count-slides/",
+   "notes": "A public educational companion to radio multipath geometry. The coded-pilot section follows the physical I/Q observation design with one fixed transmit code matrix across tones. Its representative isolated channel and seeded demonstration pilots do not constitute a saved Sionna scene evaluation. The unknown-channel section states what the receiver knows, shows why the clock bias cannot be separated from the path delays at the channel level, and how geometry separates it. Five reference labs retain the explicitly labeled orthogonal baseline and two-path gain illustration.\n\nSources: Optimal and Robust Waveform Design for MIMO-OFDM Channel Sensing: A Cramér-Rao Bound Perspective — https://arxiv.org/abs/2301.10689\nPosition and Orientation Estimation through Millimeter-Wave MIMO in 5G Systems — https://arxiv.org/abs/1702.01605\nRadio Measurements → Radio Map — https://bailiping.com/mpc-detection-to-bounce-count-slides/",
    "elements": [
     {
      "id": "section",
@@ -220,7 +220,7 @@
      "h": 118,
      "rotation": 0,
      "opacity": 1,
-     "html": "Known pilots. Known channel?\u003cbr>\u003cspan style=\"color:#0A6B5E\">Different information, different bounds.\u003c/span>",
+     "html": "Known pilots. Unknown channel.\u003cbr>\u003cspan style=\"color:#0A6B5E\">What can noisy I/Q reveal?\u003c/span>",
      "fontFamily": "Georgia, 'Times New Roman', serif",
      "fontSize": 44,
      "fontWeight": 700,
@@ -238,7 +238,7 @@
      "h": 62,
      "rotation": 0,
      "opacity": 1,
-     "html": "Calculate delay, AoA, AoD and path gain with coded pilots. Explore what remains unknown when the propagation channel is given.",
+     "html": "Bound delay, AoA, AoD and path gain from 384-port coded pilots. The channel and the receiver clock are estimated, never given.",
      "fontFamily": "Arial, Helvetica, sans-serif",
      "fontSize": 22,
      "fontWeight": 400,
@@ -256,7 +256,7 @@
      "h": 22,
      "rotation": 0,
      "opacity": 1,
-     "html": "UPDATED 24 SEPTEMBER 2026 · 384-PORT CODED PILOTS + KNOWN-CHANNEL DEMO",
+     "html": "UPDATED 24 SEPTEMBER 2026 · 384-PORT CODED PILOTS · UNKNOWN CHANNEL AND CLOCK",
      "fontFamily": "Menlo, Consolas, monospace",
      "fontSize": 12,
      "fontWeight": 700,
@@ -323,7 +323,7 @@
      "h": 76,
      "rotation": 0,
      "opacity": 1,
-     "html": "02\u003cbr>\u003cb>Known channel\u003c/b>",
+     "html": "02\u003cbr>\u003cb>Unknown channel\u003c/b>",
      "fontFamily": "Arial, Helvetica, sans-serif",
      "fontSize": 20,
      "fontWeight": 400,
@@ -331,7 +331,7 @@
      "align": "left",
      "valign": "top",
      "lineHeight": 1.35,
-     "link": "known-channel-live"
+     "link": "unknown-channel"
     },
     {
      "id": "tile-2",
@@ -466,7 +466,7 @@
      "h": 16,
      "rotation": 0,
      "opacity": 1,
-     "html": "01 / 40",
+     "html": "01 / 37",
      "fontFamily": "Menlo, Consolas, monospace",
      "fontSize": 11,
      "fontWeight": 400,
@@ -665,7 +665,7 @@
      "h": 364,
      "rotation": 0,
      "opacity": 1,
-     "html": "A delay bound of \u003cb>0.03 ns\u003c/b> is a lower bound on standard deviation at the assumed true channel.\u003cbr>\u003cbr>It describes one local solution. Detection failures, ambiguous solutions, bias, and model mismatch can make actual errors much larger.",
+     "html": "A delay bound of \u003cb>0.03 ns\u003c/b> is a lower bound on standard deviation, evaluated at the true channel. The estimator does not know that channel.\u003cbr>\u003cbr>It describes one local solution. Detection failures, ambiguous solutions, bias, and model mismatch can make actual errors much larger.",
      "fontFamily": "Arial, Helvetica, sans-serif",
      "fontSize": 20,
      "fontWeight": 400,
@@ -720,7 +720,7 @@
      "h": 16,
      "rotation": 0,
      "opacity": 1,
-     "html": "02 / 40",
+     "html": "02 / 37",
      "fontFamily": "Menlo, Consolas, monospace",
      "fontSize": 11,
      "fontWeight": 400,
@@ -1000,7 +1000,7 @@
      "h": 16,
      "rotation": 0,
      "opacity": 1,
-     "html": "03 / 40",
+     "html": "03 / 37",
      "fontFamily": "Menlo, Consolas, monospace",
      "fontSize": 11,
      "fontWeight": 400,
@@ -1254,7 +1254,7 @@
      "h": 16,
      "rotation": 0,
      "opacity": 1,
-     "html": "04 / 40",
+     "html": "04 / 37",
      "fontFamily": "Menlo, Consolas, monospace",
      "fontSize": 11,
      "fontWeight": 400,
@@ -1559,7 +1559,7 @@
      "h": 16,
      "rotation": 0,
      "opacity": 1,
-     "html": "05 / 40",
+     "html": "05 / 37",
      "fontFamily": "Menlo, Consolas, monospace",
      "fontSize": 11,
      "fontWeight": 400,
@@ -1813,7 +1813,7 @@
      "h": 16,
      "rotation": 0,
      "opacity": 1,
-     "html": "06 / 40",
+     "html": "06 / 37",
      "fontFamily": "Menlo, Consolas, monospace",
      "fontSize": 11,
      "fontWeight": 400,
@@ -2031,7 +2031,7 @@
      "h": 16,
      "rotation": 0,
      "opacity": 1,
-     "html": "07 / 40",
+     "html": "07 / 37",
      "fontFamily": "Menlo, Consolas, monospace",
      "fontSize": 11,
      "fontWeight": 400,
@@ -2062,10 +2062,10 @@
    ]
   },
   {
-   "id": "known-channel",
+   "id": "unknown-channel",
    "background": "#F4F6F8",
    "transition": "none",
-   "notes": "A fixed unknown parameter is routinely known to the simulation or evaluator when calculating the deterministic CRB. It remains unknown to the estimator. Exact noiseless channel input changes the statistical experiment: use identifiability analysis or the vanishing-noise limit, rather than substituting a zero covariance into the ordinary inverse. Full effective channel knowledge does not necessarily separate geometric delay from clock bias or uniquely determine a multipath decomposition. A noisy estimate is not exact channel knowledge.\n\nSources: Optimal and Robust Waveform Design for MIMO-OFDM Channel Sensing: A Cramér-Rao Bound Perspective — https://arxiv.org/abs/2301.10689\nChannel estimation: unified view of optimal performance and pilot sequences — https://arxiv.org/abs/2002.04481\nRadio SLAM system model: physical phase-coded I/Q and receiver timing bias — https://github.com/BaiLiping/radio-SLAM-system-model",
+   "notes": "The deterministic CRB is a function of the true parameters, so a simulator evaluates it at the path it generated. The estimator never receives that path: it receives Y and X and must estimate delay, both angle pairs, attenuation and phase of every path, with the clock bias entering through each apparent delay. The coded-pilot lab evaluates this unknown-channel CRB at one representative path. The number of paths is a detection and model-order question outside the CRB.\n\nSources: Radio SLAM system model: physical phase-coded I/Q and receiver timing bias — https://github.com/BaiLiping/radio-SLAM-system-model\nOptimal and Robust Waveform Design for MIMO-OFDM Channel Sensing: A Cramér-Rao Bound Perspective — https://arxiv.org/abs/2301.10689\nChannel estimation: unified view of optimal performance and pilot sequences — https://arxiv.org/abs/2002.04481",
    "elements": [
     {
      "id": "section",
@@ -2076,7 +2076,7 @@
      "h": 22,
      "rotation": 0,
      "opacity": 1,
-     "html": "KNOWN CHANNEL",
+     "html": "UNKNOWN CHANNEL",
      "fontFamily": "Menlo, Consolas, monospace",
      "fontSize": 12,
      "fontWeight": 700,
@@ -2129,7 +2129,7 @@
      "h": 52,
      "rotation": 0,
      "opacity": 1,
-     "html": "Known to whom, and known in what form?",
+     "html": "The receiver knows its pilots, not the channel",
      "fontFamily": "Georgia, 'Times New Roman', serif",
      "fontSize": 38,
      "fontWeight": 700,
@@ -2147,7 +2147,7 @@
      "h": 35,
      "rotation": 0,
      "opacity": 1,
-     "html": "The information supplied to the estimator determines which uncertainty remains.",
+     "html": "It sees noisy I/Q and the X it transmitted. Every propagation parameter must be estimated.",
      "fontFamily": "Arial, Helvetica, sans-serif",
      "fontSize": 17,
      "fontWeight": 400,
@@ -2162,84 +2162,110 @@
      "x": 96,
      "y": 194,
      "w": 1088,
-     "h": 428,
+     "h": 432,
      "rotation": 0,
      "opacity": 1,
      "header": true,
      "columns": [
       {
-       "w": 1.18
+       "w": 1.45
       },
       {
-       "w": 1.05
+       "w": 0.95
       },
       {
-       "w": 1.8
+       "w": 1.9
       }
      ],
      "rows": [
       {
        "cells": [
         {
-         "html": "Available information"
+         "html": "Quantity"
         },
         {
-         "html": "Estimator input"
+         "html": "Known to the estimator?"
         },
         {
-         "html": "Meaning for the bound"
+         "html": "Role in the bound"
         }
        ]
       },
       {
        "cells": [
         {
-         "html": "Simulator knows the truth"
+         "html": "Pilots \u003cspan class=\"math-tex math-inline\">\\(\\mathbf X\\)\u003c/span>, tone grid \u003cspan class=\"math-tex math-inline\">\\(f_k\\)\u003c/span>, carrier"
         },
         {
-         "html": "Noisy Y, known X"
+         "html": "Yes"
         },
         {
-         "html": "Evaluate a nonzero CRB at that true channel."
+         "html": "Transmitted by design. They shape every derivative."
         }
        ]
       },
       {
        "cells": [
         {
-         "html": "Exact geometric Hᵍ"
+         "html": "Array geometry, calibration, noise variance σ²"
         },
         {
-         "html": "Hᵍ, X, noisy Y"
+         "html": "Yes (assumed)"
         },
         {
-         "html": "Clock bias and an optional receiver phase can remain unknown."
+         "html": "Steering vectors and noise weighting."
         }
        ]
       },
       {
        "cells": [
         {
-         "html": "Exact effective H̃"
+         "html": "Per path: \u003cspan class=\"math-tex math-inline\">\\(\\tau^{\\mathrm a}_\\ell\\)\u003c/span>, AoA, AoD, \u003cspan class=\"math-tex math-inline\">\\(\\ell_\\ell\\)\u003c/span>, \u003cspan class=\"math-tex math-inline\">\\(\\phi_\\ell\\)\u003c/span>"
         },
         {
-         "html": "Noiseless H̃"
+         "html": "No"
         },
         {
-         "html": "Identifiable functions have no receiver-noise uncertainty. Ambiguities may remain."
+         "html": "Estimated jointly. The CRB bounds these."
         }
        ]
       },
       {
        "cells": [
         {
-         "html": "Noisy channel estimate Ĥ"
+         "html": "Receiver clock bias \u003cspan class=\"math-tex math-inline\">\\(b\\)\u003c/span>"
         },
         {
-         "html": "Ĥ and its uncertainty"
+         "html": "No"
         },
         {
-         "html": "Keep its error covariance in the likelihood."
+         "html": "Enters only through \u003cspan class=\"math-tex math-inline\">\\(\\tau^{\\mathrm a}_\\ell=\\tau^{\\mathrm g}_\\ell+b\\)\u003c/span>."
+        }
+       ]
+      },
+      {
+       "cells": [
+        {
+         "html": "Number of paths P"
+        },
+        {
+         "html": "No"
+        },
+        {
+         "html": "Detection and model order. The CRB is conditional on P."
+        }
+       ]
+      },
+      {
+       "cells": [
+        {
+         "html": "True parameter values"
+        },
+        {
+         "html": "Only to the simulator"
+        },
+        {
+         "html": "The point where the CRB is evaluated. Never an estimator input."
         }
        ]
       }
@@ -2252,7 +2278,7 @@
       "borderWidth": 1,
       "cellPadX": 15,
       "cellPadY": 10,
-      "fontSize": 19,
+      "fontSize": 18,
       "color": "#16222E",
       "fontFamily": "Arial, Helvetica, sans-serif",
       "radius": 10
@@ -2267,7 +2293,7 @@
      "h": 22,
      "rotation": 0,
      "opacity": 1,
-     "html": "\u003ca href=\"https://arxiv.org/abs/2301.10689\" target=\"_blank\" rel=\"noopener\">Li et al. (2023)\u003c/a> · \u003ca href=\"https://arxiv.org/abs/2002.04481\" target=\"_blank\" rel=\"noopener\">Le Magoarou & Paquelet (2020)\u003c/a> · \u003ca href=\"https://github.com/BaiLiping/radio-SLAM-system-model\" target=\"_blank\" rel=\"noopener\">Radio SLAM system model\u003c/a>",
+     "html": "\u003ca href=\"https://github.com/BaiLiping/radio-SLAM-system-model\" target=\"_blank\" rel=\"noopener\">Radio SLAM system model\u003c/a> · \u003ca href=\"https://arxiv.org/abs/2301.10689\" target=\"_blank\" rel=\"noopener\">Li et al. (2023)\u003c/a> · \u003ca href=\"https://arxiv.org/abs/2002.04481\" target=\"_blank\" rel=\"noopener\">Le Magoarou & Paquelet (2020)\u003c/a>",
      "fontFamily": "Arial, Helvetica, sans-serif",
      "fontSize": 11,
      "fontWeight": 400,
@@ -2304,7 +2330,7 @@
      "h": 16,
      "rotation": 0,
      "opacity": 1,
-     "html": "08 / 40",
+     "html": "08 / 37",
      "fontFamily": "Menlo, Consolas, monospace",
      "fontSize": 11,
      "fontWeight": 400,
@@ -2316,10 +2342,10 @@
    ]
   },
   {
-   "id": "known-channel-clock",
+   "id": "unknown-clock",
    "background": "#F4F6F8",
    "transition": "none",
-   "notes": "Holding known H^g fixed, the derivative follows directly from the timing factor in the physical model. Its squared Frobenius norm gives the scalar Gaussian FIM. Frequencies are baseband offsets f_k, not fc+f_k: this experiment cancels the clock bias common carrier rotation. Propagation carrier phase remains in the known H^g exactly once. The bound is conditional on that known template and can be more optimistic than joint channel-and-clock estimation.\n\nSources: Optimal and Robust Waveform Design for MIMO-OFDM Channel Sensing: A Cramér-Rao Bound Perspective — https://arxiv.org/abs/2301.10689\nRadio SLAM system model: physical phase-coded I/Q and receiver timing bias — https://github.com/BaiLiping/radio-SLAM-system-model",
+   "notes": "The clock factor exp(-j2pi f_k b) multiplies the whole received tone, so its derivative equals the sum of all geometric-delay derivatives. With free path gains and free geometric delays, the Fisher matrix in (tau_g, b) has the null vector (-delta, ..., -delta, +delta). Reparameterizing to apparent delays removes the null direction, which is why the coded-pilot lab reports apparent delay. Free complex gains also absorb any common phase. A delay prior or a clock reference would be additional information and must be written into the model.\n\nSources: Radio SLAM system model: physical phase-coded I/Q and receiver timing bias — https://github.com/BaiLiping/radio-SLAM-system-model\nOptimal and Robust Waveform Design for MIMO-OFDM Channel Sensing: A Cramér-Rao Bound Perspective — https://arxiv.org/abs/2301.10689",
    "elements": [
     {
      "id": "section",
@@ -2330,7 +2356,7 @@
      "h": 22,
      "rotation": 0,
      "opacity": 1,
-     "html": "KNOWN GEOMETRIC CHANNEL",
+     "html": "UNKNOWN CHANNEL",
      "fontFamily": "Menlo, Consolas, monospace",
      "fontSize": 12,
      "fontWeight": 700,
@@ -2383,7 +2409,7 @@
      "h": 52,
      "rotation": 0,
      "opacity": 1,
-     "html": "Known propagation can leave an unknown clock",
+     "html": "The clock bias hides in every apparent delay",
      "fontFamily": "Georgia, 'Times New Roman', serif",
      "fontSize": 38,
      "fontWeight": 700,
@@ -2401,7 +2427,7 @@
      "h": 35,
      "rotation": 0,
      "opacity": 1,
-     "html": "The geometric channel provides a template with an absolute delay reference.",
+     "html": "One acquisition cannot separate b from the unknown path delays.",
      "fontFamily": "Arial, Helvetica, sans-serif",
      "fontSize": 17,
      "fontWeight": 400,
@@ -2411,261 +2437,7 @@
      "lineHeight": 1.35
     },
     {
-     "id": "left-box",
-     "type": "shape",
-     "shape": "rect",
-     "x": 96,
-     "y": 195,
-     "w": 532,
-     "h": 443,
-     "fill": "#E8F2FA",
-     "stroke": "#D7DEE5",
-     "strokeWidth": 1,
-     "radius": 10,
-     "rotation": 0,
-     "opacity": 1
-    },
-    {
-     "id": "left-label",
-     "type": "text",
-     "x": 118,
-     "y": 213,
-     "w": 488,
-     "h": 24,
-     "rotation": 0,
-     "opacity": 1,
-     "html": "MEAN AND CLOCK DERIVATIVE",
-     "fontFamily": "Menlo, Consolas, monospace",
-     "fontSize": 12,
-     "fontWeight": 700,
-     "color": "#1874B8",
-     "align": "left",
-     "valign": "top",
-     "lineHeight": 1.35
-    },
-    {
-     "id": "left-body",
-     "type": "text",
-     "x": 118,
-     "y": 256,
-     "w": 488,
-     "h": 364,
-     "rotation": 0,
-     "opacity": 1,
-     "html": "\u003cspan class=\"math-tex math-display\">\\[\\mathbf A_k=\\mathbf H_k^{\\mathrm g}\\mathbf X\\]\u003c/span>\u003cspan class=\"math-tex math-display\">\\[\\mathbf M_k=e^{-j2\\pi f_kb}\\mathbf A_k\\]\u003c/span>\u003cspan class=\"math-tex math-display\">\\[\\partial_b\\mathbf M_k=-j2\\pi f_k\\mathbf M_k\\]\u003c/span>The receiver compares this template with noisy received samples.",
-     "fontFamily": "Arial, Helvetica, sans-serif",
-     "fontSize": 25,
-     "fontWeight": 400,
-     "color": "#16222E",
-     "align": "left",
-     "valign": "top",
-     "lineHeight": 1.35
-    },
-    {
-     "id": "right-box",
-     "type": "shape",
-     "shape": "rect",
-     "x": 652,
-     "y": 195,
-     "w": 532,
-     "h": 443,
-     "fill": "#FFFFFF",
-     "stroke": "#D7DEE5",
-     "strokeWidth": 1,
-     "radius": 10,
-     "rotation": 0,
-     "opacity": 1
-    },
-    {
-     "id": "right-label",
-     "type": "text",
-     "x": 674,
-     "y": 213,
-     "w": 488,
-     "h": 24,
-     "rotation": 0,
-     "opacity": 1,
-     "html": "CLOCK INFORMATION",
-     "fontFamily": "Menlo, Consolas, monospace",
-     "fontSize": 12,
-     "fontWeight": 700,
-     "color": "#0A6B5E",
-     "align": "left",
-     "valign": "top",
-     "lineHeight": 1.35
-    },
-    {
-     "id": "right-body",
-     "type": "text",
-     "x": 674,
-     "y": 256,
-     "w": 488,
-     "h": 364,
-     "rotation": 0,
-     "opacity": 1,
-     "html": "\u003cspan class=\"math-tex math-display\">\\[w_k=\\|\\mathbf A_k\\|_F^2\\]\u003c/span>\u003cspan class=\"math-tex math-display\">\\[J_{bb}=\\frac{8\\pi^2}{\\sigma^2}\\sum_k f_k^2w_k\\]\u003c/span>\u003cspan class=\"math-tex math-display\">\\[\\sigma_{b,\\mathrm{LB}}=J_{bb}^{-1/2}\\]\u003c/span>This form assumes the complex phase reference is also known.",
-     "fontFamily": "Arial, Helvetica, sans-serif",
-     "fontSize": 24,
-     "fontWeight": 400,
-     "color": "#16222E",
-     "align": "left",
-     "valign": "top",
-     "lineHeight": 1.35
-    },
-    {
-     "id": "sources",
-     "type": "text",
-     "x": 96,
-     "y": 676,
-     "w": 920,
-     "h": 22,
-     "rotation": 0,
-     "opacity": 1,
-     "html": "\u003ca href=\"https://arxiv.org/abs/2301.10689\" target=\"_blank\" rel=\"noopener\">Li et al. (2023)\u003c/a> · \u003ca href=\"https://github.com/BaiLiping/radio-SLAM-system-model\" target=\"_blank\" rel=\"noopener\">Radio SLAM system model\u003c/a>",
-     "fontFamily": "Arial, Helvetica, sans-serif",
-     "fontSize": 11,
-     "fontWeight": 400,
-     "color": "#51606E",
-     "align": "left",
-     "valign": "top",
-     "lineHeight": 1.35
-    },
-    {
-     "id": "contents",
-     "type": "text",
-     "x": 1034,
-     "y": 677,
-     "w": 150,
-     "h": 20,
-     "rotation": 0,
-     "opacity": 1,
-     "html": "CONTENTS ↗",
-     "fontFamily": "Menlo, Consolas, monospace",
-     "fontSize": 11,
-     "fontWeight": 400,
-     "color": "#1874B8",
-     "align": "right",
-     "valign": "top",
-     "lineHeight": 1.35,
-     "link": "overview"
-    },
-    {
-     "id": "slide-number",
-     "type": "text",
-     "x": 970,
-     "y": 656,
-     "w": 214,
-     "h": 16,
-     "rotation": 0,
-     "opacity": 1,
-     "html": "09 / 40",
-     "fontFamily": "Menlo, Consolas, monospace",
-     "fontSize": 11,
-     "fontWeight": 400,
-     "color": "#51606E",
-     "align": "right",
-     "valign": "top",
-     "lineHeight": 1.35
-    }
-   ]
-  },
-  {
-   "id": "known-channel-phase",
-   "background": "#F4F6F8",
-   "transition": "none",
-   "notes": "This is the Schur complement of the two-parameter b,psi Fisher matrix. The weighted frequency mean need not vanish even on an arithmetically centered grid. Under a flat energy spectrum, K=3300, B=400MHz and aggregate Gamma=1000 give beta=115.470MHz and a clock standard-deviation lower bound of 30.82ps. Those are illustrative energy assumptions, not a numerical result from a saved RT run. A single nonzero tone with unknown phase cannot identify clock delay.\n\nSources: Optimal and Robust Waveform Design for MIMO-OFDM Channel Sensing: A Cramér-Rao Bound Perspective — https://arxiv.org/abs/2301.10689\nPosition and Orientation Estimation through Millimeter-Wave MIMO in 5G Systems — https://arxiv.org/abs/1702.01605",
-   "elements": [
-    {
-     "id": "section",
-     "type": "text",
-     "x": 96,
-     "y": 28,
-     "w": 780,
-     "h": 22,
-     "rotation": 0,
-     "opacity": 1,
-     "html": "KNOWN GEOMETRIC CHANNEL",
-     "fontFamily": "Menlo, Consolas, monospace",
-     "fontSize": 12,
-     "fontWeight": 700,
-     "color": "#D76809",
-     "align": "left",
-     "valign": "top",
-     "lineHeight": 1.35,
-     "letterSpacing": 1
-    },
-    {
-     "id": "home",
-     "type": "text",
-     "x": 930,
-     "y": 28,
-     "w": 254,
-     "h": 22,
-     "rotation": 0,
-     "opacity": 1,
-     "html": "RADIO SLAM · ESTIMATION",
-     "fontFamily": "Menlo, Consolas, monospace",
-     "fontSize": 11,
-     "fontWeight": 400,
-     "color": "#51606E",
-     "align": "right",
-     "valign": "top",
-     "lineHeight": 1.35,
-     "link": "https://bailiping.com/"
-    },
-    {
-     "id": "rule",
-     "type": "shape",
-     "shape": "rect",
-     "x": 96,
-     "y": 66,
-     "w": 1088,
-     "h": 1,
-     "fill": "#D7DEE5",
-     "stroke": "#D7DEE5",
-     "strokeWidth": 1,
-     "radius": 10,
-     "rotation": 0,
-     "opacity": 1
-    },
-    {
-     "id": "heading",
-     "type": "text",
-     "x": 96,
-     "y": 86,
-     "w": 1088,
-     "h": 52,
-     "rotation": 0,
-     "opacity": 1,
-     "html": "Receiver phase changes the clock bound",
-     "fontFamily": "Georgia, 'Times New Roman', serif",
-     "fontSize": 38,
-     "fontWeight": 700,
-     "color": "#16222E",
-     "align": "left",
-     "valign": "top",
-     "lineHeight": 1.1
-    },
-    {
-     "id": "subtitle",
-     "type": "text",
-     "x": 96,
-     "y": 142,
-     "w": 1088,
-     "h": 35,
-     "rotation": 0,
-     "opacity": 1,
-     "html": "An unknown common phase \u003cspan class=\"math-tex math-inline\">\\(\\psi\\)\u003c/span> is estimated jointly with the clock bias \u003cspan class=\"math-tex math-inline\">\\(b\\)\u003c/span>.",
-     "fontFamily": "Arial, Helvetica, sans-serif",
-     "fontSize": 17,
-     "fontWeight": 400,
-     "color": "#51606E",
-     "align": "left",
-     "valign": "top",
-     "lineHeight": 1.35
-    },
-    {
-     "id": "phase-schur-box",
+     "id": "multipath-mean-box",
      "type": "shape",
      "shape": "rect",
      "x": 96,
@@ -2680,7 +2452,7 @@
      "opacity": 1
     },
     {
-     "id": "phase-schur-label",
+     "id": "multipath-mean-label",
      "type": "text",
      "x": 118,
      "y": 208,
@@ -2688,7 +2460,7 @@
      "h": 24,
      "rotation": 0,
      "opacity": 1,
-     "html": "INFORMATION AFTER ELIMINATING THE COMMON PHASE",
+     "html": "THE UNKNOWN MULTIPATH MEAN",
      "fontFamily": "Menlo, Consolas, monospace",
      "fontSize": 12,
      "fontWeight": 700,
@@ -2698,7 +2470,7 @@
      "lineHeight": 1.35
     },
     {
-     "id": "phase-schur-body",
+     "id": "multipath-mean-body",
      "type": "text",
      "x": 118,
      "y": 251,
@@ -2706,7 +2478,7 @@
      "h": 99,
      "rotation": 0,
      "opacity": 1,
-     "html": "\u003cspan class=\"math-tex math-display\">\\[J_{b,\\mathrm{eff}}=\\frac{8\\pi^2}{\\sigma^2}\\sum_k w_k(f_k-\\bar f_w)^2,\\qquad\\bar f_w=\\frac{\\sum_kw_k f_k}{\\sum_kw_k}\\]\u003c/span>",
+     "html": "\u003cspan class=\"math-tex math-display\">\\[\\mathbf M_k=\\sum_{\\ell=1}^{P}\\alpha_\\ell\\,e^{-j2\\pi f_k(\\tau^{\\mathrm g}_\\ell+b)}\\,\\mathbf a_r(\\mathbf q_{r,\\ell})\\,\\mathbf a_t(\\mathbf q_{t,\\ell})^H\\mathbf X\\]\u003c/span>",
      "fontFamily": "Arial, Helvetica, sans-serif",
      "fontSize": 23,
      "fontWeight": 400,
@@ -2716,7 +2488,7 @@
      "lineHeight": 1.35
     },
     {
-     "id": "weighted-spread-box",
+     "id": "gauge-box",
      "type": "shape",
      "shape": "rect",
      "x": 96,
@@ -2731,7 +2503,7 @@
      "opacity": 1
     },
     {
-     "id": "weighted-spread-label",
+     "id": "gauge-label",
      "type": "text",
      "x": 118,
      "y": 409,
@@ -2739,7 +2511,7 @@
      "h": 24,
      "rotation": 0,
      "opacity": 1,
-     "html": "ENERGY AND FREQUENCY SPREAD",
+     "html": "A DIRECTION THE DATA CANNOT SEE",
      "fontFamily": "Menlo, Consolas, monospace",
      "fontSize": 12,
      "fontWeight": 700,
@@ -2749,7 +2521,7 @@
      "lineHeight": 1.35
     },
     {
-     "id": "weighted-spread-body",
+     "id": "gauge-body",
      "type": "text",
      "x": 118,
      "y": 452,
@@ -2757,9 +2529,9 @@
      "h": 169,
      "rotation": 0,
      "opacity": 1,
-     "html": "\u003cspan class=\"math-tex math-display\">\\[\\Gamma=\\frac{\\sum_kw_k}{\\sigma^2}\\]\u003c/span>\u003cspan class=\"math-tex math-display\">\\[\\beta^2=\\frac{\\sum_kw_k(f_k-\\bar f_w)^2}{\\sum_kw_k}\\]\u003c/span>",
+     "html": "\u003cspan class=\"math-tex math-display\">\\[\\partial_b\\mathbf M_k=\\sum_{\\ell}\\partial_{\\tau^{\\mathrm g}_\\ell}\\mathbf M_k\\]\u003c/span>Move b by δ and every \u003cspan class=\"math-tex math-inline\">\\(\\tau^{\\mathrm g}_\\ell\\)\u003c/span> by −δ. No \u003cspan class=\"math-tex math-inline\">\\(\\mathbf M_k\\)\u003c/span> changes, so J is singular in that direction.",
      "fontFamily": "Arial, Helvetica, sans-serif",
-     "fontSize": 22,
+     "fontSize": 21,
      "fontWeight": 400,
      "color": "#16222E",
      "align": "left",
@@ -2767,7 +2539,7 @@
      "lineHeight": 1.35
     },
     {
-     "id": "clock-bound-box",
+     "id": "apparent-box",
      "type": "shape",
      "shape": "rect",
      "x": 652,
@@ -2782,7 +2554,7 @@
      "opacity": 1
     },
     {
-     "id": "clock-bound-label",
+     "id": "apparent-label",
      "type": "text",
      "x": 674,
      "y": 409,
@@ -2790,7 +2562,7 @@
      "h": 24,
      "rotation": 0,
      "opacity": 1,
-     "html": "CLOCK STANDARD-DEVIATION BOUND",
+     "html": "WHAT THE CHANNEL DETERMINES",
      "fontFamily": "Menlo, Consolas, monospace",
      "fontSize": 12,
      "fontWeight": 700,
@@ -2800,7 +2572,7 @@
      "lineHeight": 1.35
     },
     {
-     "id": "clock-bound-body",
+     "id": "apparent-body",
      "type": "text",
      "x": 674,
      "y": 452,
@@ -2808,9 +2580,9 @@
      "h": 169,
      "rotation": 0,
      "opacity": 1,
-     "html": "\u003cspan class=\"math-tex math-display\">\\[\\sigma_{b,\\mathrm{LB}}=\\frac{1}{2\\pi \\beta\\sqrt{2\\Gamma}}\\]\u003c/span>At fixed energy, concentrating the received signal in a narrow part of the band raises the timing bound.",
+     "html": "\u003cspan class=\"math-tex math-display\">\\[\\tau^{\\mathrm a}_\\ell=\\tau^{\\mathrm g}_\\ell+b\\]\u003c/span>Apparent delays, AoA, AoD and gains are the channel parameters.\u003cbr>\u003cbr>Differences \u003cspan class=\"math-tex math-inline\">\\(\\tau^{\\mathrm a}_\\ell-\\tau^{\\mathrm a}_1\\)\u003c/span> are clock-free.",
      "fontFamily": "Arial, Helvetica, sans-serif",
-     "fontSize": 22,
+     "fontSize": 21,
      "fontWeight": 400,
      "color": "#16222E",
      "align": "left",
@@ -2826,7 +2598,7 @@
      "h": 22,
      "rotation": 0,
      "opacity": 1,
-     "html": "\u003ca href=\"https://arxiv.org/abs/2301.10689\" target=\"_blank\" rel=\"noopener\">Li et al. (2023)\u003c/a> · \u003ca href=\"https://arxiv.org/abs/1702.01605\" target=\"_blank\" rel=\"noopener\">Shahmansoori et al. (2018)\u003c/a>",
+     "html": "\u003ca href=\"https://github.com/BaiLiping/radio-SLAM-system-model\" target=\"_blank\" rel=\"noopener\">Radio SLAM system model\u003c/a> · \u003ca href=\"https://arxiv.org/abs/2301.10689\" target=\"_blank\" rel=\"noopener\">Li et al. (2023)\u003c/a>",
      "fontFamily": "Arial, Helvetica, sans-serif",
      "fontSize": 11,
      "fontWeight": 400,
@@ -2863,7 +2635,7 @@
      "h": 16,
      "rotation": 0,
      "opacity": 1,
-     "html": "10 / 40",
+     "html": "09 / 37",
      "fontFamily": "Menlo, Consolas, monospace",
      "fontSize": 11,
      "fontWeight": 400,
@@ -2875,10 +2647,10 @@
    ]
   },
   {
-   "id": "known-channel-lab",
+   "id": "clock-geometry",
    "background": "#F4F6F8",
    "transition": "none",
-   "notes": "Knowing effective Htilde differs from knowing the geometric template H^g. Exact Htilde alone does not establish an absolute geometric delay origin if clock bias is free. The interactive controls show the invariant sum. For the oracle clock bound, H^g and its delay origin are instead given, so b can be identifiable locally. Uniform tones retain the usual global delay ambiguity period 1/Deltaf.\n\nSources: Radio SLAM system model: physical phase-coded I/Q and receiver timing bias — https://github.com/BaiLiping/radio-SLAM-system-model\nOptimal and Robust Waveform Design for MIMO-OFDM Channel Sensing: A Cramér-Rao Bound Perspective — https://arxiv.org/abs/2301.10689\nPosition and Orientation Estimation through Millimeter-Wave MIMO in 5G Systems — https://arxiv.org/abs/1702.01605",
+   "notes": "In 3D the UE has 3 position, 3 orientation and 1 clock unknowns. The LoS path gives 5 measurements. With one single-bounce path: the two AoDs fix the rays from the BS to the UE and to v; the LoS AoA fixes UE orientation up to roll about the LoS axis; the bounce AoA fixes that roll and the ratio of the two ray lengths; the delay difference sets the scale. Then b equals tau_1^a minus range over c. Counting is necessary, not sufficient: degenerate placements, such as v on the BS-UE line, lose rank. The bound on b comes from inverting the geometric FIM after mapping every path to the common unknowns, as on the radio SLAM slide.\n\nSources: Position and Orientation Estimation through Millimeter-Wave MIMO in 5G Systems — https://arxiv.org/abs/1702.01605\nRadio SLAM system model: physical phase-coded I/Q and receiver timing bias — https://github.com/BaiLiping/radio-SLAM-system-model",
    "elements": [
     {
      "id": "section",
@@ -2889,7 +2661,7 @@
      "h": 22,
      "rotation": 0,
      "opacity": 1,
-     "html": "KNOWN CHANNEL EXPERIMENT",
+     "html": "UNKNOWN CHANNEL",
      "fontFamily": "Menlo, Consolas, monospace",
      "fontSize": 12,
      "fontWeight": 700,
@@ -2942,7 +2714,7 @@
      "h": 52,
      "rotation": 0,
      "opacity": 1,
-     "html": "What does exact channel knowledge remove?",
+     "html": "Geometry, not the channel, separates the clock",
      "fontFamily": "Georgia, 'Times New Roman', serif",
      "fontSize": 38,
      "fontWeight": 700,
@@ -2960,7 +2732,7 @@
      "h": 35,
      "rotation": 0,
      "opacity": 1,
-     "html": "The next lab separates a timing benchmark from geometric identifiability.",
+     "html": "Every apparent delay shares one b. The paths tie it to the unknown UE pose and map.",
      "fontFamily": "Arial, Helvetica, sans-serif",
      "fontSize": 17,
      "fontWeight": 400,
@@ -2993,7 +2765,7 @@
      "h": 24,
      "rotation": 0,
      "opacity": 1,
-     "html": "THE KNOWN-TEMPLATE EXPERIMENT",
+     "html": "LINE OF SIGHT ALONE",
      "fontFamily": "Menlo, Consolas, monospace",
      "fontSize": 12,
      "fontWeight": 700,
@@ -3011,9 +2783,9 @@
      "h": 364,
      "rotation": 0,
      "opacity": 1,
-     "html": "Change aggregate SNR and where the received energy falls in the band.\u003cbr>\u003cbr>Compare a known phase reference with an unknown common phase.\u003cbr>\u003cbr>The displayed clock bound uses the actual weighted second moment or its centered variance.",
+     "html": "\u003cspan class=\"math-tex math-display\">\\[c\\,\\tau^{\\mathrm a}_1=\\|\\mathbf x-\\mathbf p_{\\mathrm{BS}}\\|+c\\,b\\]\u003c/span>UE unknowns: 3 position, 3 orientation, 1 clock. LoS supplies 5 measurements.\u003cbr>\u003cbr>AoD fixes the ray from the known BS. Along that ray, a longer range and an earlier clock give the same \u003cspan class=\"math-tex math-inline\">\\(\\tau^{\\mathrm a}_1\\)\u003c/span>.\u003cbr>\u003cbr>\u003cb>b is not identifiable.\u003c/b>",
      "fontFamily": "Arial, Helvetica, sans-serif",
-     "fontSize": 22,
+     "fontSize": 21,
      "fontWeight": 400,
      "color": "#16222E",
      "align": "left",
@@ -3044,7 +2816,7 @@
      "h": 24,
      "rotation": 0,
      "opacity": 1,
-     "html": "THE DELAY–CLOCK AMBIGUITY",
+     "html": "ADD ONE SINGLE-BOUNCE PATH",
      "fontFamily": "Menlo, Consolas, monospace",
      "fontSize": 12,
      "fontWeight": 700,
@@ -3062,9 +2834,9 @@
      "h": 364,
      "rotation": 0,
      "opacity": 1,
-     "html": "\u003cspan class=\"math-tex math-display\">\\[\\tau_\\ell^{\\mathrm a}=\\tau_\\ell^{\\mathrm g}+b\\]\u003c/span>\u003cspan class=\"math-tex math-display\">\\[(\\tau_\\ell^{\\mathrm g}+\\delta)+(b-\\delta)=\\tau_\\ell^{\\mathrm a}\\]\u003c/span>With free path gains and no geometric constraint, changing both terms this way preserves the effective channel.",
+     "html": "\u003cspan class=\"math-tex math-display\">\\[c\\,\\tau^{\\mathrm a}_2=\\|\\mathbf v-\\mathbf p_{\\mathrm{BS}}\\|+\\|\\mathbf x-\\mathbf v\\|+c\\,b\\]\u003c/span>The incidence point v is unknown: 5 new measurements, 3 new unknowns. Now 10 and 10.\u003cbr>\u003cbr>The bounce AoA fixes the UE roll and the ratio of ray lengths. The delay difference sets the scale.\u003cbr>\u003cbr>For generic geometry \u003cspan class=\"math-tex math-inline\">\\(\\mathbf H^T\\mathbf J_\\eta\\mathbf H\\)\u003c/span> becomes full rank and b has a finite bound.",
      "fontFamily": "Arial, Helvetica, sans-serif",
-     "fontSize": 23,
+     "fontSize": 21,
      "fontWeight": 400,
      "color": "#16222E",
      "align": "left",
@@ -3080,7 +2852,7 @@
      "h": 22,
      "rotation": 0,
      "opacity": 1,
-     "html": "\u003ca href=\"https://github.com/BaiLiping/radio-SLAM-system-model\" target=\"_blank\" rel=\"noopener\">Radio SLAM system model\u003c/a> · \u003ca href=\"https://arxiv.org/abs/2301.10689\" target=\"_blank\" rel=\"noopener\">Li et al. (2023)\u003c/a> · \u003ca href=\"https://arxiv.org/abs/1702.01605\" target=\"_blank\" rel=\"noopener\">Shahmansoori et al. (2018)\u003c/a>",
+     "html": "\u003ca href=\"https://arxiv.org/abs/1702.01605\" target=\"_blank\" rel=\"noopener\">Shahmansoori et al. (2018)\u003c/a> · \u003ca href=\"https://github.com/BaiLiping/radio-SLAM-system-model\" target=\"_blank\" rel=\"noopener\">Radio SLAM system model\u003c/a>",
      "fontFamily": "Arial, Helvetica, sans-serif",
      "fontSize": 11,
      "fontWeight": 400,
@@ -3117,7 +2889,7 @@
      "h": 16,
      "rotation": 0,
      "opacity": 1,
-     "html": "11 / 40",
+     "html": "10 / 37",
      "fontFamily": "Menlo, Consolas, monospace",
      "fontSize": 11,
      "fontWeight": 400,
@@ -3125,243 +2897,6 @@
      "align": "right",
      "valign": "top",
      "lineHeight": 1.35
-    }
-   ]
-  },
-  {
-   "id": "known-channel-live",
-   "background": "#F4F6F8",
-   "transition": "none",
-   "notes": "The interactive panel evaluates the stated statistical model. Every displayed bound is a square root of a marginal CRB. Inspect four meanings of known channel. Compare the clock bound with known and unknown receiver phase.  Move received energy across the band while holding aggregate SNR fixed. The weighted spectrum explains the change in the bound.  Vary geometric delay and clock bias at fixed apparent delay to see an ambiguity that exact effective-channel knowledge cannot remove.\n\nSources: Optimal and Robust Waveform Design for MIMO-OFDM Channel Sensing: A Cramér-Rao Bound Perspective — https://arxiv.org/abs/2301.10689",
-   "elements": [
-    {
-     "id": "section",
-     "type": "text",
-     "x": 96,
-     "y": 28,
-     "w": 780,
-     "h": 22,
-     "rotation": 0,
-     "opacity": 1,
-     "html": "INTERACTIVE EXPERIMENT",
-     "fontFamily": "Menlo, Consolas, monospace",
-     "fontSize": 12,
-     "fontWeight": 700,
-     "color": "#D76809",
-     "align": "left",
-     "valign": "top",
-     "lineHeight": 1.35,
-     "letterSpacing": 1
-    },
-    {
-     "id": "home",
-     "type": "text",
-     "x": 930,
-     "y": 28,
-     "w": 254,
-     "h": 22,
-     "rotation": 0,
-     "opacity": 1,
-     "html": "RADIO SLAM · ESTIMATION",
-     "fontFamily": "Menlo, Consolas, monospace",
-     "fontSize": 11,
-     "fontWeight": 400,
-     "color": "#51606E",
-     "align": "right",
-     "valign": "top",
-     "lineHeight": 1.35,
-     "link": "https://bailiping.com/"
-    },
-    {
-     "id": "rule",
-     "type": "shape",
-     "shape": "rect",
-     "x": 96,
-     "y": 66,
-     "w": 1088,
-     "h": 1,
-     "fill": "#D7DEE5",
-     "stroke": "#D7DEE5",
-     "strokeWidth": 1,
-     "radius": 10,
-     "rotation": 0,
-     "opacity": 1
-    },
-    {
-     "id": "heading",
-     "type": "text",
-     "x": 96,
-     "y": 86,
-     "w": 1088,
-     "h": 52,
-     "rotation": 0,
-     "opacity": 1,
-     "html": "Known channel and clock uncertainty",
-     "fontFamily": "Georgia, 'Times New Roman', serif",
-     "fontSize": 38,
-     "fontWeight": 700,
-     "color": "#16222E",
-     "align": "left",
-     "valign": "top",
-     "lineHeight": 1.1
-    },
-    {
-     "id": "subtitle",
-     "type": "text",
-     "x": 96,
-     "y": 142,
-     "w": 1088,
-     "h": 35,
-     "rotation": 0,
-     "opacity": 1,
-     "html": "Change the information assumption and the received frequency spectrum.",
-     "fontFamily": "Arial, Helvetica, sans-serif",
-     "fontSize": 17,
-     "fontWeight": 400,
-     "color": "#51606E",
-     "align": "left",
-     "valign": "top",
-     "lineHeight": 1.35
-    },
-    {
-     "id": "print-fallback-box",
-     "type": "shape",
-     "shape": "rect",
-     "x": 72,
-     "y": 180,
-     "w": 1136,
-     "h": 475,
-     "fill": "#E8F2FA",
-     "stroke": "#D7DEE5",
-     "strokeWidth": 1,
-     "radius": 10,
-     "rotation": 0,
-     "opacity": 1
-    },
-    {
-     "id": "print-fallback-label",
-     "type": "text",
-     "x": 94,
-     "y": 198,
-     "w": 1092,
-     "h": 24,
-     "rotation": 0,
-     "opacity": 1,
-     "html": "INTERACTIVE LAB",
-     "fontFamily": "Menlo, Consolas, monospace",
-     "fontSize": 12,
-     "fontWeight": 700,
-     "color": "#1874B8",
-     "align": "left",
-     "valign": "top",
-     "lineHeight": 1.35
-    },
-    {
-     "id": "print-fallback-body",
-     "type": "text",
-     "x": 94,
-     "y": 241,
-     "w": 1092,
-     "h": 396,
-     "rotation": 0,
-     "opacity": 1,
-     "html": "Inspect four meanings of known channel. Compare the clock bound with known and unknown receiver phase.\u003cbr>\u003cbr>Move received energy across the band while holding aggregate SNR fixed. The weighted spectrum explains the change in the bound.\u003cbr>\u003cbr>Vary geometric delay and clock bias at fixed apparent delay to see an ambiguity that exact effective-channel knowledge cannot remove.",
-     "fontFamily": "Arial, Helvetica, sans-serif",
-     "fontSize": 23,
-     "fontWeight": 400,
-     "color": "#16222E",
-     "align": "left",
-     "valign": "top",
-     "lineHeight": 1.35
-    },
-    {
-     "id": "live-demo-mount",
-     "type": "shape",
-     "shape": "rect",
-     "x": 72,
-     "y": 180,
-     "w": 1136,
-     "h": 475,
-     "fill": "transparent",
-     "stroke": "transparent",
-     "strokeWidth": 1,
-     "radius": 10,
-     "rotation": 0,
-     "opacity": 0
-    },
-    {
-     "id": "sources",
-     "type": "text",
-     "x": 96,
-     "y": 676,
-     "w": 920,
-     "h": 22,
-     "rotation": 0,
-     "opacity": 1,
-     "html": "\u003ca href=\"https://arxiv.org/abs/2301.10689\" target=\"_blank\" rel=\"noopener\">Li et al. (2023)\u003c/a>",
-     "fontFamily": "Arial, Helvetica, sans-serif",
-     "fontSize": 11,
-     "fontWeight": 400,
-     "color": "#51606E",
-     "align": "left",
-     "valign": "top",
-     "lineHeight": 1.35
-    },
-    {
-     "id": "contents",
-     "type": "text",
-     "x": 1034,
-     "y": 677,
-     "w": 150,
-     "h": 20,
-     "rotation": 0,
-     "opacity": 1,
-     "html": "CONTENTS ↗",
-     "fontFamily": "Menlo, Consolas, monospace",
-     "fontSize": 11,
-     "fontWeight": 400,
-     "color": "#1874B8",
-     "align": "right",
-     "valign": "top",
-     "lineHeight": 1.35,
-     "link": "overview"
-    },
-    {
-     "id": "slide-number",
-     "type": "text",
-     "x": 970,
-     "y": 656,
-     "w": 214,
-     "h": 16,
-     "rotation": 0,
-     "opacity": 1,
-     "html": "12 / 40",
-     "fontFamily": "Menlo, Consolas, monospace",
-     "fontSize": 11,
-     "fontWeight": 400,
-     "color": "#51606E",
-     "align": "right",
-     "valign": "top",
-     "lineHeight": 1.35
-    },
-    {
-     "id": "open-lab",
-     "type": "text",
-     "x": 760,
-     "y": 657,
-     "w": 240,
-     "h": 18,
-     "rotation": 0,
-     "opacity": 1,
-     "html": "OPEN FULL-SIZE LAB ↗",
-     "fontFamily": "Menlo, Consolas, monospace",
-     "fontSize": 11,
-     "fontWeight": 400,
-     "color": "#1874B8",
-     "align": "left",
-     "valign": "top",
-     "lineHeight": 1.35,
-     "link": "https://bailiping.com/radio-cramer-rao-slides/project/?lab=known"
     }
    ]
   },
@@ -3659,7 +3194,7 @@
      "h": 16,
      "rotation": 0,
      "opacity": 1,
-     "html": "13 / 40",
+     "html": "11 / 37",
      "fontFamily": "Menlo, Consolas, monospace",
      "fontSize": 11,
      "fontWeight": 400,
@@ -3913,7 +3448,7 @@
      "h": 16,
      "rotation": 0,
      "opacity": 1,
-     "html": "14 / 40",
+     "html": "12 / 37",
      "fontFamily": "Menlo, Consolas, monospace",
      "fontSize": 11,
      "fontWeight": 400,
@@ -4167,7 +3702,7 @@
      "h": 16,
      "rotation": 0,
      "opacity": 1,
-     "html": "15 / 40",
+     "html": "13 / 37",
      "fontFamily": "Menlo, Consolas, monospace",
      "fontSize": 11,
      "fontWeight": 400,
@@ -4421,7 +3956,7 @@
      "h": 16,
      "rotation": 0,
      "opacity": 1,
-     "html": "16 / 40",
+     "html": "14 / 37",
      "fontFamily": "Menlo, Consolas, monospace",
      "fontSize": 11,
      "fontWeight": 400,
@@ -4675,7 +4210,7 @@
      "h": 16,
      "rotation": 0,
      "opacity": 1,
-     "html": "17 / 40",
+     "html": "15 / 37",
      "fontFamily": "Menlo, Consolas, monospace",
      "fontSize": 11,
      "fontWeight": 400,
@@ -4893,7 +4428,7 @@
      "h": 16,
      "rotation": 0,
      "opacity": 1,
-     "html": "18 / 40",
+     "html": "16 / 37",
      "fontFamily": "Menlo, Consolas, monospace",
      "fontSize": 11,
      "fontWeight": 400,
@@ -5166,7 +4701,7 @@
      "h": 16,
      "rotation": 0,
      "opacity": 1,
-     "html": "19 / 40",
+     "html": "17 / 37",
      "fontFamily": "Menlo, Consolas, monospace",
      "fontSize": 11,
      "fontWeight": 400,
@@ -5433,7 +4968,7 @@
      "h": 16,
      "rotation": 0,
      "opacity": 1,
-     "html": "20 / 40",
+     "html": "18 / 37",
      "fontFamily": "Menlo, Consolas, monospace",
      "fontSize": 11,
      "fontWeight": 400,
@@ -5687,7 +5222,7 @@
      "h": 16,
      "rotation": 0,
      "opacity": 1,
-     "html": "21 / 40",
+     "html": "19 / 37",
      "fontFamily": "Menlo, Consolas, monospace",
      "fontSize": 11,
      "fontWeight": 400,
@@ -5905,7 +5440,7 @@
      "h": 16,
      "rotation": 0,
      "opacity": 1,
-     "html": "22 / 40",
+     "html": "20 / 37",
      "fontFamily": "Menlo, Consolas, monospace",
      "fontSize": 11,
      "fontWeight": 400,
@@ -6178,7 +5713,7 @@
      "h": 16,
      "rotation": 0,
      "opacity": 1,
-     "html": "23 / 40",
+     "html": "21 / 37",
      "fontFamily": "Menlo, Consolas, monospace",
      "fontSize": 11,
      "fontWeight": 400,
@@ -6410,7 +5945,7 @@
      "h": 24,
      "rotation": 0,
      "opacity": 1,
-     "html": "TOTAL PROPAGATION PATH LENGTH",
+     "html": "APPARENT PATH LENGTH",
      "fontFamily": "Menlo, Consolas, monospace",
      "fontSize": 12,
      "fontWeight": 700,
@@ -6428,7 +5963,7 @@
      "h": 162,
      "rotation": 0,
      "opacity": 1,
-     "html": "\u003cspan class=\"math-tex math-display\">\\[\\sigma_{s,\\rm LB}=c\\sigma_{\\tau,\\rm LB}=9.24\\,\\mathrm{mm}\\]\u003c/span>For a communication path, s includes every segment. Monostatic radial range uses cτ/2.",
+     "html": "\u003cspan class=\"math-tex math-display\">\\[c\\,\\sigma_{\\tau,\\rm LB}=9.24\\,\\mathrm{mm}\\]\u003c/span>This bounds \u003cspan class=\"math-tex math-inline\">\\(c\\,\\tau^{\\mathrm a}\\)\u003c/span>, which still contains \u003cspan class=\"math-tex math-inline\">\\(c\\,b\\)\u003c/span>. It becomes a path-length bound only after geometry resolves the clock.",
      "fontFamily": "Arial, Helvetica, sans-serif",
      "fontSize": 22,
      "fontWeight": 400,
@@ -6483,7 +6018,7 @@
      "h": 16,
      "rotation": 0,
      "opacity": 1,
-     "html": "24 / 40",
+     "html": "22 / 37",
      "fontFamily": "Menlo, Consolas, monospace",
      "fontSize": 11,
      "fontWeight": 400,
@@ -6737,7 +6272,7 @@
      "h": 16,
      "rotation": 0,
      "opacity": 1,
-     "html": "25 / 40",
+     "html": "23 / 37",
      "fontFamily": "Menlo, Consolas, monospace",
      "fontSize": 11,
      "fontWeight": 400,
@@ -6955,7 +6490,7 @@
      "h": 16,
      "rotation": 0,
      "opacity": 1,
-     "html": "26 / 40",
+     "html": "24 / 37",
      "fontFamily": "Menlo, Consolas, monospace",
      "fontSize": 11,
      "fontWeight": 400,
@@ -7228,7 +6763,7 @@
      "h": 16,
      "rotation": 0,
      "opacity": 1,
-     "html": "27 / 40",
+     "html": "25 / 37",
      "fontFamily": "Menlo, Consolas, monospace",
      "fontSize": 11,
      "fontWeight": 400,
@@ -7482,7 +7017,7 @@
      "h": 16,
      "rotation": 0,
      "opacity": 1,
-     "html": "28 / 40",
+     "html": "26 / 37",
      "fontFamily": "Menlo, Consolas, monospace",
      "fontSize": 11,
      "fontWeight": 400,
@@ -7700,7 +7235,7 @@
      "h": 16,
      "rotation": 0,
      "opacity": 1,
-     "html": "29 / 40",
+     "html": "27 / 37",
      "fontFamily": "Menlo, Consolas, monospace",
      "fontSize": 11,
      "fontWeight": 400,
@@ -8004,7 +7539,7 @@
      "h": 16,
      "rotation": 0,
      "opacity": 1,
-     "html": "30 / 40",
+     "html": "28 / 37",
      "fontFamily": "Menlo, Consolas, monospace",
      "fontSize": 11,
      "fontWeight": 400,
@@ -8258,7 +7793,7 @@
      "h": 16,
      "rotation": 0,
      "opacity": 1,
-     "html": "31 / 40",
+     "html": "29 / 37",
      "fontFamily": "Menlo, Consolas, monospace",
      "fontSize": 11,
      "fontWeight": 400,
@@ -8538,7 +8073,7 @@
      "h": 16,
      "rotation": 0,
      "opacity": 1,
-     "html": "32 / 40",
+     "html": "30 / 37",
      "fontFamily": "Menlo, Consolas, monospace",
      "fontSize": 11,
      "fontWeight": 400,
@@ -8792,7 +8327,7 @@
      "h": 16,
      "rotation": 0,
      "opacity": 1,
-     "html": "33 / 40",
+     "html": "31 / 37",
      "fontFamily": "Menlo, Consolas, monospace",
      "fontSize": 11,
      "fontWeight": 400,
@@ -9010,7 +8545,7 @@
      "h": 16,
      "rotation": 0,
      "opacity": 1,
-     "html": "34 / 40",
+     "html": "32 / 37",
      "fontFamily": "Menlo, Consolas, monospace",
      "fontSize": 11,
      "fontWeight": 400,
@@ -9283,261 +8818,7 @@
      "h": 16,
      "rotation": 0,
      "opacity": 1,
-     "html": "35 / 40",
-     "fontFamily": "Menlo, Consolas, monospace",
-     "fontSize": 11,
-     "fontWeight": 400,
-     "color": "#51606E",
-     "align": "right",
-     "valign": "top",
-     "lineHeight": 1.35
-    }
-   ]
-  },
-  {
-   "id": "clock",
-   "background": "#F4F6F8",
-   "transition": "none",
-   "notes": "This is direct identifiability analysis of the stated likelihood. Clock offset is in seconds and s total path length in meters. Several arbitrary free path lengths plus a common bias remain underdetermined unless geometry or other constraints help. A timing prior is additional information and must be included explicitly. The c*sigma_tau conversion is conditional on known clock bias.\n\nSources: Position and Orientation Estimation through Millimeter-Wave MIMO in 5G Systems — https://arxiv.org/abs/1702.01605\nOptimal and Robust Waveform Design for MIMO-OFDM Channel Sensing: A Cramér-Rao Bound Perspective — https://arxiv.org/abs/2301.10689",
-   "elements": [
-    {
-     "id": "section",
-     "type": "text",
-     "x": 96,
-     "y": 28,
-     "w": 780,
-     "h": 22,
-     "rotation": 0,
-     "opacity": 1,
-     "html": "11 · TIMING AND CALIBRATION",
-     "fontFamily": "Menlo, Consolas, monospace",
-     "fontSize": 12,
-     "fontWeight": 700,
-     "color": "#D76809",
-     "align": "left",
-     "valign": "top",
-     "lineHeight": 1.35,
-     "letterSpacing": 1
-    },
-    {
-     "id": "home",
-     "type": "text",
-     "x": 930,
-     "y": 28,
-     "w": 254,
-     "h": 22,
-     "rotation": 0,
-     "opacity": 1,
-     "html": "RADIO SLAM · ESTIMATION",
-     "fontFamily": "Menlo, Consolas, monospace",
-     "fontSize": 11,
-     "fontWeight": 400,
-     "color": "#51606E",
-     "align": "right",
-     "valign": "top",
-     "lineHeight": 1.35,
-     "link": "https://bailiping.com/"
-    },
-    {
-     "id": "rule",
-     "type": "shape",
-     "shape": "rect",
-     "x": 96,
-     "y": 66,
-     "w": 1088,
-     "h": 1,
-     "fill": "#D7DEE5",
-     "stroke": "#D7DEE5",
-     "strokeWidth": 1,
-     "radius": 10,
-     "rotation": 0,
-     "opacity": 1
-    },
-    {
-     "id": "heading",
-     "type": "text",
-     "x": 96,
-     "y": 86,
-     "w": 1088,
-     "h": 52,
-     "rotation": 0,
-     "opacity": 1,
-     "html": "Clock offset shares the delay signature",
-     "fontFamily": "Georgia, 'Times New Roman', serif",
-     "fontSize": 38,
-     "fontWeight": 700,
-     "color": "#16222E",
-     "align": "left",
-     "valign": "top",
-     "lineHeight": 1.1
-    },
-    {
-     "id": "subtitle",
-     "type": "text",
-     "x": 96,
-     "y": 142,
-     "w": 1088,
-     "h": 35,
-     "rotation": 0,
-     "opacity": 1,
-     "html": "A precise apparent delay does not guarantee precise geometric range.",
-     "fontFamily": "Arial, Helvetica, sans-serif",
-     "fontSize": 17,
-     "fontWeight": 400,
-     "color": "#51606E",
-     "align": "left",
-     "valign": "top",
-     "lineHeight": 1.35
-    },
-    {
-     "id": "left-box",
-     "type": "shape",
-     "shape": "rect",
-     "x": 96,
-     "y": 195,
-     "w": 532,
-     "h": 443,
-     "fill": "#E8F2FA",
-     "stroke": "#D7DEE5",
-     "strokeWidth": 1,
-     "radius": 10,
-     "rotation": 0,
-     "opacity": 1
-    },
-    {
-     "id": "left-label",
-     "type": "text",
-     "x": 118,
-     "y": 213,
-     "w": 488,
-     "h": 24,
-     "rotation": 0,
-     "opacity": 1,
-     "html": "APPARENT DELAY",
-     "fontFamily": "Menlo, Consolas, monospace",
-     "fontSize": 12,
-     "fontWeight": 700,
-     "color": "#1874B8",
-     "align": "left",
-     "valign": "top",
-     "lineHeight": 1.35
-    },
-    {
-     "id": "left-body",
-     "type": "text",
-     "x": 118,
-     "y": 256,
-     "w": 488,
-     "h": 364,
-     "rotation": 0,
-     "opacity": 1,
-     "html": "\u003cspan class=\"math-tex math-display\">\\[\\tau_{\\rm obs}=\\frac{s}{c}+b\\]\u003c/span>\u003cspan class=\"math-tex math-display\">\\[\\partial_s\\boldsymbol\\mu=\\frac1c\\partial_\\tau\\boldsymbol\\mu,\\quad\\partial_b\\boldsymbol\\mu=\\partial_\\tau\\boldsymbol\\mu\\]\u003c/span>The two derivative columns are proportional.",
-     "fontFamily": "Arial, Helvetica, sans-serif",
-     "fontSize": 21,
-     "fontWeight": 400,
-     "color": "#16222E",
-     "align": "left",
-     "valign": "top",
-     "lineHeight": 1.35
-    },
-    {
-     "id": "right-box",
-     "type": "shape",
-     "shape": "rect",
-     "x": 652,
-     "y": 195,
-     "w": 532,
-     "h": 443,
-     "fill": "#FFFFFF",
-     "stroke": "#D7DEE5",
-     "strokeWidth": 1,
-     "radius": 10,
-     "rotation": 0,
-     "opacity": 1
-    },
-    {
-     "id": "right-label",
-     "type": "text",
-     "x": 674,
-     "y": 213,
-     "w": 488,
-     "h": 24,
-     "rotation": 0,
-     "opacity": 1,
-     "html": "CONSEQUENCE",
-     "fontFamily": "Menlo, Consolas, monospace",
-     "fontSize": 12,
-     "fontWeight": 700,
-     "color": "#0A6B5E",
-     "align": "left",
-     "valign": "top",
-     "lineHeight": 1.35
-    },
-    {
-     "id": "right-body",
-     "type": "text",
-     "x": 674,
-     "y": 256,
-     "w": 488,
-     "h": 364,
-     "rotation": 0,
-     "opacity": 1,
-     "html": "With one unconstrained path and a free clock offset, s and b cannot be separated.\u003cbr>\u003cbr>The calculator bounds apparent delay. Converting it to geometric path length assumes synchronization or an independently constrained clock.\u003cbr>\u003cbr>Additional BSs need their geometry and clock relations in the model.",
-     "fontFamily": "Arial, Helvetica, sans-serif",
-     "fontSize": 20,
-     "fontWeight": 400,
-     "color": "#16222E",
-     "align": "left",
-     "valign": "top",
-     "lineHeight": 1.35
-    },
-    {
-     "id": "sources",
-     "type": "text",
-     "x": 96,
-     "y": 676,
-     "w": 920,
-     "h": 22,
-     "rotation": 0,
-     "opacity": 1,
-     "html": "\u003ca href=\"https://arxiv.org/abs/1702.01605\" target=\"_blank\" rel=\"noopener\">Shahmansoori et al. (2018)\u003c/a> · \u003ca href=\"https://arxiv.org/abs/2301.10689\" target=\"_blank\" rel=\"noopener\">Li et al. (2023)\u003c/a>",
-     "fontFamily": "Arial, Helvetica, sans-serif",
-     "fontSize": 11,
-     "fontWeight": 400,
-     "color": "#51606E",
-     "align": "left",
-     "valign": "top",
-     "lineHeight": 1.35
-    },
-    {
-     "id": "contents",
-     "type": "text",
-     "x": 1034,
-     "y": 677,
-     "w": 150,
-     "h": 20,
-     "rotation": 0,
-     "opacity": 1,
-     "html": "CONTENTS ↗",
-     "fontFamily": "Menlo, Consolas, monospace",
-     "fontSize": 11,
-     "fontWeight": 400,
-     "color": "#1874B8",
-     "align": "right",
-     "valign": "top",
-     "lineHeight": 1.35,
-     "link": "overview"
-    },
-    {
-     "id": "slide-number",
-     "type": "text",
-     "x": 970,
-     "y": 656,
-     "w": 214,
-     "h": 16,
-     "rotation": 0,
-     "opacity": 1,
-     "html": "36 / 40",
+     "html": "33 / 37",
      "fontFamily": "Menlo, Consolas, monospace",
      "fontSize": 11,
      "fontWeight": 400,
@@ -9736,7 +9017,7 @@
      "h": 364,
      "rotation": 0,
      "opacity": 1,
-     "html": "AoA constrains the last segment. AoD constrains the first segment. Delay constrains total length.\u003cbr>\u003cbr>Sum independent link information after mapping every link to common unknowns.\u003cbr>\u003cbr>Eliminate nuisance variables and fix the coordinate gauge before reading pose bounds.",
+     "html": "AoA constrains the last segment. AoD constrains the first segment. Delay constrains total length plus c b.\u003cbr>\u003cbr>Sum independent link information after mapping every link to common unknowns.\u003cbr>\u003cbr>Eliminate nuisance variables and fix the coordinate gauge before reading pose bounds.",
      "fontFamily": "Arial, Helvetica, sans-serif",
      "fontSize": 20,
      "fontWeight": 400,
@@ -9791,7 +9072,7 @@
      "h": 16,
      "rotation": 0,
      "opacity": 1,
-     "html": "37 / 40",
+     "html": "34 / 37",
      "fontFamily": "Menlo, Consolas, monospace",
      "fontSize": 11,
      "fontWeight": 400,
@@ -10045,7 +9326,7 @@
      "h": 16,
      "rotation": 0,
      "opacity": 1,
-     "html": "38 / 40",
+     "html": "35 / 37",
      "fontFamily": "Menlo, Consolas, monospace",
      "fontSize": 11,
      "fontWeight": 400,
@@ -10401,7 +9682,7 @@
      "h": 16,
      "rotation": 0,
      "opacity": 1,
-     "html": "39 / 40",
+     "html": "36 / 37",
      "fontFamily": "Menlo, Consolas, monospace",
      "fontSize": 11,
      "fontWeight": 400,
@@ -10567,7 +9848,7 @@
      "h": 70,
      "rotation": 0,
      "opacity": 1,
-     "html": "\u003cb>Model:\u003c/b> One isolated static path, known pilots, white noise, calibrated amplitudes and arrays. Unknown complex gain is included. The two-path lab explicitly holds delays known.",
+     "html": "\u003cb>Model:\u003c/b> Known pilots and an unknown channel. One isolated static path with unknown delay, angles and complex gain. White noise, calibrated arrays. The two-path lab explicitly holds delays known.",
      "fontFamily": "Arial, Helvetica, sans-serif",
      "fontSize": 19,
      "fontWeight": 400,
@@ -10622,7 +9903,7 @@
      "h": 16,
      "rotation": 0,
      "opacity": 1,
-     "html": "40 / 40",
+     "html": "37 / 37",
      "fontFamily": "Menlo, Consolas, monospace",
      "fontSize": 11,
      "fontWeight": 400,
@@ -10691,8 +9972,8 @@
     <script defer src="../assets/mathjax-dynamic.js"></script>
 
       <link rel="canonical" href="https://bailiping.com/radio-cramer-rao-slides/">
-    <meta name="description" content="40 interactive Bento slides and 7 live experiments explaining radio Cramér–Rao bounds, 384-port coded pilots, known channels, receiver clock bias, AoA, AoD and path gain.">
-<meta name="radio-crb-revision" content="2026-09-24-coded-pilots-known-channel">
+    <meta name="description" content="37 interactive Bento slides and 6 live experiments explaining radio Cramér–Rao bounds, 384-port coded pilots, unknown channels, receiver clock bias, AoA, AoD and path gain.">
+<meta name="radio-crb-revision" content="2026-09-24-coded-pilots-unknown-channel">
 <style id="radio-crb-layout">
 .bento-slide .math-display{height:auto!important;min-height:0;margin:.6em 0;line-height:1.1}
 .bento-slide .math-display:first-child{margin-top:.1em}
@@ -10701,7 +9982,7 @@
 .bento-slide .bento-text-inner{overflow:visible;text-rendering:optimizeLegibility}
 .bento-slide a:focus-visible{outline:3px solid #1874B8;outline-offset:3px}
 </style>
-<script>(()=>{const routes={"overview":0,"meaning":1,"setup":2,"project-setup":3,"project-fim":4,"project-codes":5,"project-live":6,"known-channel":7,"known-channel-clock":8,"known-channel-phase":9,"known-channel-lab":10,"known-channel-live":11,"signal":12,"pilots":13,"snr":14,"noise-budget":15,"calculator":16,"calculator-live":17,"fisher-likelihood":18,"derivatives":19,"fisher":20,"fisher-live":21,"delay":22,"worked-delay":23,"bandwidth":24,"bandwidth-live":25,"array-model":26,"geometry":27,"geometry-live":28,"angle-example":29,"gain":30,"scaling":31,"multipath":32,"multipath-live":33,"ambiguity":34,"clock":35,"slam":36,"extensions":37,"formula-sheet":38,"references":39};function route(){let r;try{r=decodeURIComponent(location.hash.replace(/^#\/?/,''));}catch{return;}if(Object.hasOwn(routes,r))history.replaceState(null,'',location.pathname+location.search+'#/'+routes[r]);}addEventListener('hashchange',route);route();})();</script>
+<script>(()=>{const routes={"overview":0,"meaning":1,"setup":2,"project-setup":3,"project-fim":4,"project-codes":5,"project-live":6,"unknown-channel":7,"unknown-clock":8,"clock-geometry":9,"signal":10,"pilots":11,"snr":12,"noise-budget":13,"calculator":14,"calculator-live":15,"fisher-likelihood":16,"derivatives":17,"fisher":18,"fisher-live":19,"delay":20,"worked-delay":21,"bandwidth":22,"bandwidth-live":23,"array-model":24,"geometry":25,"geometry-live":26,"angle-example":27,"gain":28,"scaling":29,"multipath":30,"multipath-live":31,"ambiguity":32,"slam":33,"extensions":34,"formula-sheet":35,"references":36};function route(){let r;try{r=decodeURIComponent(location.hash.replace(/^#\/?/,''));}catch{return;}if(Object.hasOwn(routes,r))history.replaceState(null,'',location.pathname+location.search+'#/'+routes[r]);}addEventListener('hashchange',route);route();})();</script>
 </head>
   <body>
     <div id="bento-splash" aria-hidden="true">
@@ -10768,26 +10049,6 @@
   "slideIndex": 6
  },
  {
-  "slide": "known-channel-live",
-  "introSlide": "known-channel-lab",
-  "inline": true,
-  "layout": "region",
-  "bounds": {
-   "x": 72,
-   "y": 180,
-   "width": 1136,
-   "height": 475
-  },
-  "src": "./project/?lab=known&embed=1",
-  "source": "./project/?lab=known",
-  "title": "Known channel and clock uncertainty",
-  "sandbox": "allow-scripts allow-same-origin allow-top-navigation-by-user-activation",
-  "hideSource": true,
-  "readyMessage": true,
-  "unloadWhenHidden": true,
-  "slideIndex": 11
- },
- {
   "slide": "calculator-live",
   "introSlide": "calculator",
   "inline": true,
@@ -10805,7 +10066,7 @@
   "hideSource": true,
   "readyMessage": true,
   "unloadWhenHidden": true,
-  "slideIndex": 17
+  "slideIndex": 15
  },
  {
   "slide": "fisher-live",
@@ -10825,7 +10086,7 @@
   "hideSource": true,
   "readyMessage": true,
   "unloadWhenHidden": true,
-  "slideIndex": 21
+  "slideIndex": 19
  },
  {
   "slide": "bandwidth-live",
@@ -10845,7 +10106,7 @@
   "hideSource": true,
   "readyMessage": true,
   "unloadWhenHidden": true,
-  "slideIndex": 25
+  "slideIndex": 23
  },
  {
   "slide": "geometry-live",
@@ -10865,7 +10126,7 @@
   "hideSource": true,
   "readyMessage": true,
   "unloadWhenHidden": true,
-  "slideIndex": 28
+  "slideIndex": 26
  },
  {
   "slide": "multipath-live",
@@ -10885,7 +10146,7 @@
   "hideSource": true,
   "readyMessage": true,
   "unloadWhenHidden": true,
-  "slideIndex": 33
+  "slideIndex": 31
  }
 ]
     </script>

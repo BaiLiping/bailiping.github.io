@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="color-scheme" content="light">
-  <title>Coded pilots &amp; known-channel bounds | Bai Liping</title>
+  <title>Coded-Pilot Bounds | Bai Liping</title>
   <link rel="icon" href="data:,">
   <link rel="stylesheet" href="styles.css">
 </head>
@@ -12,16 +12,13 @@
   <main aria-label="Radio project Cramér–Rao bound laboratory">
     <nav class="lab-nav project-nav" aria-label="Laboratory views">
       <a class="home-link" href="../" target="_top">← Slides</a>
-      <div class="lab-tabs" role="tablist" aria-label="Experiment">
-        <button role="tab" id="tab-coded" data-lab="coded" aria-controls="results">Coded project pilots</button>
-        <button role="tab" id="tab-known" data-lab="known" aria-controls="results">What does “known channel” mean?</button>
-      </div>
+      <div class="lab-tabs"><span class="lab-title">Coded pilots · unknown channel</span></div>
       <a class="old-labs" href="../live/?lab=calculator">Ideal orthogonal labs ↗</a>
       <button id="reset" class="reset">Reset</button>
     </nav>
     <div class="lab-layout">
       <aside id="controls" class="controls" aria-label="Experiment controls"></aside>
-      <section id="results" class="results" role="tabpanel" aria-live="polite"></section>
+      <section id="results" class="results" aria-label="Bounds for the coded observation" aria-live="polite"></section>
     </div>
   </main>
   <noscript>These interactive calculations require JavaScript. The accompanying slides explain their models and assumptions.</noscript>

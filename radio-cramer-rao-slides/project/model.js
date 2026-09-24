@@ -12,10 +12,8 @@
  * [tau ns, RX az deg, RX el deg, TX az deg, TX el deg, loss dB, phase rad].
  * Nuisance cross terms are retained. Rank(X)<T does not itself imply that
  * this structured seven-parameter channel is unidentifiable.
- *
- * The clock template is separately illustrative: energy weights summarize a
- * known geometric Hg[k]X. Frequencies are BASEBAND f[k], never fc+f[k]. Its
- * phase-known oracle assumes known reference phase in this baseband model.
+ * The channel is unknown to the estimator: all seven parameters are estimated
+ * from Y and X. The chosen path only sets where the CRB is evaluated.
  */
 (function (root, factory) {
   "use strict";
@@ -232,9 +230,6 @@
     put(5, 5, ALOSS * ALOSS * m.E); put(6, 6, m.E);
     for (var a = 0; a < 2; a++) for (var b = 0; b < 2; b++) J[1 + a][1 + b] = 2 * gamma * rx.derivativeMoment[a][b];
     var inverse = invertEstimable(J, [0, 1, 2, 3, 4, 5, 6]);
-    var knownPhase = invertEstimable(J, [0, 1, 2, 3, 4, 5]);
-    var oracle = invertEstimable(J, [0, 1, 2, 3, 4]);
-    knownPhase.bounds.phaseRad = 0; oracle.bounds.lossDb = 0; oracle.bounds.phaseRad = 0;
     var correlation = J.map(function (row, i) { return row.map(function (value, j) {
       return J[i][i] > 0 && J[j][j] > 0 ? Math.max(-1, Math.min(1, value / Math.sqrt(J[i][i] * J[j][j]))) : NaN;
     }); });
@@ -256,56 +251,13 @@
       pilot: { seed: p.pilotSeed >>> 0, rank: m.rank, rankUpperBound: Math.min(nt, L),
         energyFactor: m.energyFactor, construction: "One illustrative xorshift32 QPSK X[T,S], reused on every tone; not the saved NumPy X." },
       fim: J, correlation: correlation, covariance: inverse.covariance, parameters: parameters,
-      bounds: inverse.bounds, boundsKnownPhase: knownPhase.bounds, boundsKnownGainPhase: oracle.bounds,
+      bounds: inverse.bounds,
       rank: inverse.rank, eigenvaluesScaled: inverse.eigenvalues,
       rangeEquivalentM: C * inverse.bounds.tauNs * 1e-9,
       notes: ["Apparent delay equals geometric delay plus receiver clock offset. A single path alone does not separate those two contributions.",
         "Static coherent isolated path, frequency-flat unknown complex gain, calibrated array patterns and orientation.",
-        "CRBs are local lower bounds and do not imply detection, unique global ambiguity resolution, or a full RT-scene bound.",
-        "Known-phase comparisons refer to baseband reference phase, not absolute RF carrier-phase synchronization."] };
+        "CRBs are local lower bounds and do not imply detection, unique global ambiguity resolution, or a full RT-scene bound."] };
   }
-  function clock(raw) {
-    var p = Object.assign({ tones: 3300, bandwidthMHz: 400, snrDb: 30,
-      spectralTilt: 0, occupiedFraction: 1, spectralCenter: 0, unknownPhase: true }, raw || {});
-    var errors = [];
-    ["tones", "bandwidthMHz", "snrDb", "spectralTilt", "occupiedFraction", "spectralCenter"].forEach(function (k) {
-      p[k] = Number(p[k]); if (!Number.isFinite(p[k])) errors.push(k + " must be finite.");
-    });
-    if (!Number.isSafeInteger(p.tones) || p.tones < 1) errors.push("tones must be a positive integer.");
-    if (p.tones > 32768) errors.push("This interactive spectrum is limited to 32,768 tones to keep the browser responsive. This is a display/computation limit, not a physical restriction.");
-    if (!(p.bandwidthMHz > 0)) errors.push("bandwidthMHz must be positive.");
-    if (!(p.occupiedFraction > 0 && p.occupiedFraction <= 1)) errors.push("occupiedFraction must be in (0,1].");
-    if (Math.abs(p.spectralCenter) > 1) errors.push("spectralCenter must be in [-1,1].");
-    if (Math.abs(p.spectralTilt) > 30) errors.push("spectralTilt must be in [-30,30].");
-    if (!Number.isFinite(p.bandwidthMHz * 1e6) || !Number.isFinite(Math.pow(10, p.snrDb / 10)) || !(Math.pow(10, p.snrDb / 10) > 0)) errors.push("The requested bandwidth or energy scale is outside the numerical range.");
-    if (errors.length) return { valid: false, errors: errors, inputs: p };
-    var grid = uniformGrid(p.tones, p.bandwidthMHz * 1e6), K = p.tones;
-    var n = Math.max(1, Math.round(K * p.occupiedFraction));
-    var start = Math.floor(K / 2) - Math.floor(n / 2) + Math.round(p.spectralCenter * (K - n) / 2);
-    start = Math.max(0, Math.min(K - n, start));
-    var weights = [], sum = 0;
-    for (var k = 0; k < K; k++) {
-      var x = n === 1 ? 0 : 2 * (k - start) / (n - 1) - 1;
-      var w = k >= start && k < start + n ? Math.exp(p.spectralTilt * x) : 0;
-      weights.push({ frequencyHz: (k - Math.floor(K / 2)) * grid.spacingHz, weight: w }); sum += w;
-    }
-    var mean = 0, second = 0;
-    weights.forEach(function (p) { p.weight /= sum; mean += p.weight * p.frequencyHz; second += p.weight * p.frequencyHz * p.frequencyHz; });
-    var variance = weights.reduce(function (s, p) { return s + p.weight * Math.pow(p.frequencyHz - mean, 2); }, 0);
-    if (n === 1) variance = 0;
-    var gamma = Math.pow(10, p.snrDb / 10), factor = 8 * Math.PI * Math.PI * gamma * 1e-18;
-    var known = second > 0 ? 1 / Math.sqrt(factor * second) : Infinity;
-    var unknown = variance > 0 ? 1 / Math.sqrt(factor * variance) : Infinity;
-    grid.activeTones = n; grid.activeSpanHz = (n - 1) * grid.spacingHz;
-    return { valid: true, errors: [], inputs: p, grid: grid, signal: { gamma: gamma, snrTotalDb: p.snrDb },
-      weights: weights, meanFrequencyHz: mean, secondMomentHz2: second, varianceHz2: variance,
-      betaHz: Math.sqrt(variance), rmsFrequencyHz: Math.sqrt(second),
-      bounds: { knownPhaseNs: known, unknownPhaseNs: unknown }, selectedBoundNs: p.unknownPhase ? unknown : known,
-      fim: [[factor * second, -4 * Math.PI * gamma * mean * 1e-9], [-4 * Math.PI * gamma * mean * 1e-9, 2 * gamma]],
-      notes: ["Illustrative tone energies of a known geometric channel and its pilot, normalized to fixed aggregate Gamma.",
-        "f_k are baseband offsets. Carrier frequency is not substituted into this clock-delay information.",
-        "Unknown geometric delay and clock delay enter only through their sum unless additional information separates them."] };
-  }
-  return Object.freeze({ defaults: defaults, compute: compute, clock: clock,
+  return Object.freeze({ defaults: defaults, compute: compute,
     constants: Object.freeze({ speedOfLight: C, degreesToRadians: DEG, thermalDbmHz: -174 }) });
 });

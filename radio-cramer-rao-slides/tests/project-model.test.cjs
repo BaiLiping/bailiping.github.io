@@ -101,9 +101,6 @@ for (let i = 0; i < 7; i++) for (let j = 0; j < 7; j++) {
 // despite the coded TX angle/gain correlations and noncentered even-K grid.
 near(r.bounds.tauNs, 1e9 / (2 * Math.PI * r.grid.betaHz * Math.sqrt(2 * r.signal.gamma)));
 near(defaults.bounds.tauNs, 1e9 / (2 * Math.PI * defaults.grid.betaHz * Math.sqrt(2 * defaults.signal.gamma)));
-assert.ok(r.boundsKnownPhase.tauNs <= r.bounds.tauNs * (1 + 1e-10));
-assert.ok(r.boundsKnownGainPhase.txAzDeg <= r.bounds.txAzDeg * (1 + 1e-10));
-assert.ok(r.boundsKnownGainPhase.txElDeg <= r.bounds.txElDeg * (1 + 1e-10));
 near(defaults.signal.gamma, 32 * 3300 * 50 * defaults.pilot.energyFactor *
   (10 ** ((55 - 30 - 130) / 10)) / (10 ** ((-174 + 9 - 30) / 10) * 400e6));
 
@@ -158,32 +155,4 @@ assert.equal(tooLarge.valid, false);
 assert.ok(tooLarge.errors.some(e => e.includes("browser work limit")));
 assert.equal(M.compute({ rxY: 100000000 }).valid, false);
 
-const clock = M.clock();
-assert.equal(clock.valid, true);
-near(clock.weights.reduce((sum, p) => sum + p.weight, 0), 1);
-near(clock.meanFrequencyHz, -(400e6 / 3300) / 2, 1e-8);
-near(clock.bounds.unknownPhaseNs, 0.030820223618144973);
-near(clock.fim[0][0] - clock.fim[0][1] ** 2 / clock.fim[1][1],
-  1 / clock.bounds.unknownPhaseNs ** 2);
-const two = M.clock({ tones: 2 });
-near(two.bounds.unknownPhaseNs / two.bounds.knownPhaseNs, Math.sqrt(2));
-const tilted = M.clock({ spectralTilt: 3 });
-assert.ok(tilted.meanFrequencyHz > 0);
-assert.ok(tilted.bounds.unknownPhaseNs > tilted.bounds.knownPhaseNs);
-near(tilted.fim[0][0] - tilted.fim[0][1] ** 2 / tilted.fim[1][1],
-  1 / tilted.bounds.unknownPhaseNs ** 2);
-const narrow = M.clock({ occupiedFraction: 0.5 });
-assert.equal(narrow.grid.activeTones, 1650);
-assert.ok(narrow.betaHz < clock.betaHz);
-assert.ok(narrow.bounds.unknownPhaseNs > clock.bounds.unknownPhaseNs);
-const oneNonzeroTone = M.clock({ tones: 8, occupiedFraction: 0.125, spectralCenter: 1 });
-assert.equal(oneNonzeroTone.bounds.unknownPhaseNs, Infinity);
-assert.ok(Number.isFinite(oneNonzeroTone.bounds.knownPhaseNs));
-const oneZeroTone = M.clock({ tones: 1 });
-assert.equal(oneZeroTone.bounds.unknownPhaseNs, Infinity);
-assert.equal(oneZeroTone.bounds.knownPhaseNs, Infinity);
-assert.equal(M.clock({ occupiedFraction: 0 }).valid, false);
-assert.equal(M.clock({ tones: 100000000 }).valid, false);
-assert.equal(M.clock({ snrDb: 4000 }).valid, false);
-
-console.log("Project CRB verified: fixed physical QPSK X, independent raw-IQ finite-difference FIM, marginal nuisance elimination, pilot/channel rank distinction, power/noise normalization, and weighted clock bounds.");
+console.log("Project CRB verified: fixed physical QPSK X, independent raw-IQ finite-difference FIM, marginal nuisance elimination, pilot/channel rank distinction, and power/noise normalization.");
