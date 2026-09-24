@@ -5,7 +5,7 @@
   let rerun = false
 
   function restoreBentoMathClasses() {
-    document.querySelectorAll('.bento-text-inner span:not(.math-tex)').forEach(node => {
+    document.querySelectorAll('.bento-text-inner span:not(.math-tex), .bento-cell-inner span:not(.math-tex)').forEach(node => {
       const source = node.textContent.trim()
       if (source.startsWith('\\(') && source.endsWith('\\)')) {
         node.classList.add('math-tex', 'math-inline')

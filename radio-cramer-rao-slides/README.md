@@ -18,7 +18,9 @@ This companion to **Radio Measurements → Radio Map** derives local bounds for 
 
 The configured observation design follows the [radio SLAM system model](https://github.com/BaiLiping/radio-SLAM-system-model):
 
-$$Y_k=e^{-j2\pi f_k\beta}H_k^{\mathrm g}X+W_k.$$
+$$Y_k=e^{-j2\pi f_kb}H_k^{\mathrm g}X+W_k.$$
+
+The system model writes the receiver clock bias as `beta`. The deck and labs write it as `b`, because `beta` denotes the RMS frequency spread in the delay bounds.
 
 The default dimensions are 384 TX ports, 32 RX ports, 50 symbols, and 3300 active tones over 400 MHz at 27.2 GHz. The arrays use half-wavelength spacing with 24 horizontal and 16 vertical TX elements, and eight horizontal and four vertical RX elements. One known QPSK matrix `X` is reused on every tone. Physical pilot entries have magnitude `sqrt(P / (Nt K))`. The noise density is `10^((-174 + NF - 30)/10)` W/Hz, and the complex sample variance is this density times `B/K`. At NF = 9 dB the default variance is `3.8330638305071264e-15` W. Noise is not divided by symbol count or pilot power.
 
@@ -39,13 +41,13 @@ The slides and second new experiment distinguish:
 
 For known `H^g`, let `w_k = ||H_k^g X||_F²`. The clock information with a known phase reference is
 
-$$J_{\beta\beta}=\frac{8\pi^2}{\sigma^2}\sum_k w_k f_k^2.$$
+$$J_{bb}=\frac{8\pi^2}{\sigma^2}\sum_k w_k f_k^2.$$
 
 An unknown common receiver phase changes this to
 
-$$J_{\beta,\mathrm{eff}}=\frac{8\pi^2}{\sigma^2}\sum_k w_k(f_k-\bar f_w)^2,$$
+$$J_{b,\mathrm{eff}}=\frac{8\pi^2}{\sigma^2}\sum_k w_k(f_k-\bar f_w)^2,$$
 
-where `fbar_w` is the power-weighted mean frequency. These use baseband offsets, consistent with the stated clock model. The known-channel demo varies an illustrative received-energy spectrum at fixed aggregate SNR and shows both bounds. Its delay/clock controls demonstrate the invariant apparent delay `tau_a = tau_g + beta`, a separate identifiability question from the known-geometric-template timing experiment.
+where `fbar_w` is the power-weighted mean frequency. These use baseband offsets, consistent with the stated clock model. The known-channel demo varies an illustrative received-energy spectrum at fixed aggregate SNR and shows both bounds. Its delay/clock controls demonstrate the invariant apparent delay `tau_a = tau_g + b`, a separate identifiability question from the known-geometric-template timing experiment.
 
 ## Orthogonal reference model
 

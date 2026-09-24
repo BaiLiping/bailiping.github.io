@@ -25,6 +25,7 @@ html=html.replace(/(<script type="application\/bento\+json" id="bento-doc">\s*)[
 html=html.replace(/(<script type="application\/json" id="bento-inline-live-map">\s*)[\s\S]*?(\s*<\/script>)/,(_,a,b)=>a+safe(inlineLiveMap)+b);
 html=html.replace(/<title>[\s\S]*?<\/title>/,'<title>Cramér–Rao Bounds for Radio Measurements | Bai Liping</title>');
 html=html.replace(/<link rel="canonical"[^>]*>/,'<link rel="canonical" href="https://bailiping.com/radio-cramer-rao-slides/">');
+html=html.replace(/<meta name="description"[^>]*>\s*/,'');
 html=html.replace('./assets/vendor/mathjax-3.2.2-tex-svg-full.js','../mpc-detection-to-bounce-count-slides/assets/vendor/mathjax-3.2.2-tex-svg-full.js');
 const routes=Object.fromEntries(deck.slides.map((s,i)=>[s.id,i]));
 html=html.replace('</head>',`<meta name="description" content="${deck.slides.length} interactive Bento slides and ${inlineLiveMap.length} live experiments explaining radio Cramér–Rao bounds, 384-port coded pilots, known channels, receiver clock bias, AoA, AoD and path gain.">

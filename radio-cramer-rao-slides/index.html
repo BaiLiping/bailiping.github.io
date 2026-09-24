@@ -1015,7 +1015,7 @@
    "id": "project-setup",
    "background": "#F4F6F8",
    "transition": "none",
-   "notes": "The system model calls the symbol count S and tone count N. This deck uses L and K for the same quantities. The configured matrices have 384 TX and 32 RX ports on one BS and one UE. No spatial scene, trajectory, or saved RT realization is embedded in this teaching demo. The frequency grid includes DC and is not exactly centered for even K. The fixed physical code matrix is reused at every bin.\n\nSources: Radio SLAM system model: physical phase-coded I/Q and receiver timing bias — https://github.com/BaiLiping/radio-SLAM-system-model\nOptimal and Robust Waveform Design for MIMO-OFDM Channel Sensing: A Cramér-Rao Bound Perspective — https://arxiv.org/abs/2301.10689",
+   "notes": "The system model calls the symbol count S and tone count N. This deck uses L and K for the same quantities, and b for the clock bias written beta there. The configured matrices have 384 TX and 32 RX ports on one BS and one UE. No spatial scene, trajectory, or saved RT realization is embedded in this teaching demo. The frequency grid includes DC and is not exactly centered for even K. The fixed physical code matrix is reused at every bin.\n\nSources: Radio SLAM system model: physical phase-coded I/Q and receiver timing bias — https://github.com/BaiLiping/radio-SLAM-system-model\nOptimal and Robust Waveform Design for MIMO-OFDM Channel Sensing: A Cramér-Rao Bound Perspective — https://arxiv.org/abs/2301.10689",
    "elements": [
     {
      "id": "section",
@@ -1148,7 +1148,7 @@
      "h": 364,
      "rotation": 0,
      "opacity": 1,
-     "html": "\u003cspan class=\"math-tex math-display\">\\[\\mathbf Y_k=\\widetilde{\\mathbf H}_k\\mathbf X+\\mathbf W_k\\]\u003c/span>\u003cspan class=\"math-tex math-display\">\\[\\widetilde{\\mathbf H}_k=e^{-j2\\pi f_k\\beta}\\mathbf H_k^{\\mathrm g}\\]\u003c/span>\u003cspan class=\"math-tex math-display\">\\[\\mathbf X\\in\\mathbb C^{384\\times50},\\quad\\mathbf Y_k\\in\\mathbb C^{32\\times50}\\]\u003c/span>The same X is reused on every tone. β is clock bias in seconds.",
+     "html": "\u003cspan class=\"math-tex math-display\">\\[\\mathbf Y_k=\\widetilde{\\mathbf H}_k\\mathbf X+\\mathbf W_k\\]\u003c/span>\u003cspan class=\"math-tex math-display\">\\[\\widetilde{\\mathbf H}_k=e^{-j2\\pi f_kb}\\mathbf H_k^{\\mathrm g}\\]\u003c/span>\u003cspan class=\"math-tex math-display\">\\[\\mathbf X\\in\\mathbb C^{384\\times50},\\quad\\mathbf Y_k\\in\\mathbb C^{32\\times50}\\]\u003c/span>The same X is reused on every tone. \u003cspan class=\"math-tex math-inline\">\\(b\\)\u003c/span> is the receiver clock bias in seconds.",
      "fontFamily": "Arial, Helvetica, sans-serif",
      "fontSize": 23,
      "fontWeight": 400,
@@ -1199,7 +1199,7 @@
      "h": 364,
      "rotation": 0,
      "opacity": 1,
-     "html": "\u003cb>BS:\u003c/b> 16 × 24 antenna ports.\u003cbr>\u003cb>UE:\u003c/b> 4 × 8 antenna ports.\u003cbr>\u003cbr>\u003cb>50 symbols, 3300 tones, 400 MHz.\u003c/b>\u003cbr>Carrier: 27.2 GHz. Spacing: λ/2.\u003cbr>\u003cbr>\u003cspan class=\"math-tex math-display\">\\[f_k=(k-\\lfloor K/2\\rfloor)B/K\\]\u003c/span>The tensor contains 5,280,000 complex observations per acquisition.",
+     "html": "\u003cb>BS:\u003c/b> 24 horizontal × 16 vertical ports.\u003cbr>\u003cb>UE:\u003c/b> 8 horizontal × 4 vertical ports.\u003cbr>\u003cbr>\u003cb>50 symbols, 3300 tones, 400 MHz.\u003c/b>\u003cbr>Carrier: 27.2 GHz. Spacing: λ/2.\u003cbr>\u003cbr>\u003cspan class=\"math-tex math-display\">\\[f_k=(k-\\lfloor K/2\\rfloor)B/K\\]\u003c/span>The tensor contains 5,280,000 complex observations per acquisition.",
      "fontFamily": "Arial, Helvetica, sans-serif",
      "fontSize": 21,
      "fontWeight": 400,
@@ -1269,7 +1269,7 @@
    "id": "project-fim",
    "background": "#F4F6F8",
    "transition": "none",
-   "notes": "For any real parameter eta_i, partial_i M_k = exp(-j2pi f_k beta)[partial_i H^g_k - j2pi f_k H^g_k partial_i beta] X. A fixed covariance sigma²I gives J=2/sigma² Re(D^H D). The rank relevant for local parameter identifiability is the realified stacked derivative matrix. A pseudoinverse of XX^H recovers only the excited transmit subspace. Free path gains and geometric delays plus an unconstrained common clock create a gauge that transmit diversity alone cannot remove.\n\nSources: Radio SLAM system model: physical phase-coded I/Q and receiver timing bias — https://github.com/BaiLiping/radio-SLAM-system-model\nOptimal and Robust Waveform Design for MIMO-OFDM Channel Sensing: A Cramér-Rao Bound Perspective — https://arxiv.org/abs/2301.10689\nChannel estimation: unified view of optimal performance and pilot sequences — https://arxiv.org/abs/2002.04481",
+   "notes": "For any real parameter eta_i, partial_i M_k = exp(-j2pi f_k b)[partial_i H^g_k - j2pi f_k H^g_k partial_i b] X. A fixed covariance sigma²I gives J=2/sigma² Re(D^H D). The rank relevant for local parameter identifiability is the realified stacked derivative matrix. A pseudoinverse of XX^H recovers only the excited transmit subspace. Free path gains and geometric delays plus an unconstrained common clock create a gauge that transmit diversity alone cannot remove.\n\nSources: Radio SLAM system model: physical phase-coded I/Q and receiver timing bias — https://github.com/BaiLiping/radio-SLAM-system-model\nOptimal and Robust Waveform Design for MIMO-OFDM Channel Sensing: A Cramér-Rao Bound Perspective — https://arxiv.org/abs/2301.10689\nChannel estimation: unified view of optimal performance and pilot sequences — https://arxiv.org/abs/2002.04481",
    "elements": [
     {
      "id": "section",
@@ -1402,7 +1402,7 @@
      "h": 132,
      "rotation": 0,
      "opacity": 1,
-     "html": "\u003cspan class=\"math-tex math-display\">\\[\\mathbf M_k=e^{-j2\\pi f_k\\beta}\\mathbf H_k^{\\mathrm g}(\\boldsymbol\\eta)\\mathbf X\\]\u003c/span>\u003cspan class=\"math-tex math-display\">\\[J_{ij}=\\frac{2}{\\sigma^2}\\operatorname{Re}\\sum_k\\operatorname{tr}\\!\\left[(\\partial_i\\mathbf M_k)^H(\\partial_j\\mathbf M_k)\\right]\\]\u003c/span>",
+     "html": "\u003cspan class=\"math-tex math-display\">\\[\\mathbf M_k=e^{-j2\\pi f_kb}\\mathbf H_k^{\\mathrm g}(\\boldsymbol\\eta)\\mathbf X\\]\u003c/span>\u003cspan class=\"math-tex math-display\">\\[J_{ij}=\\frac{2}{\\sigma^2}\\operatorname{Re}\\sum_k\\operatorname{tr}\\!\\left[(\\partial_i\\mathbf M_k)^H(\\partial_j\\mathbf M_k)\\right]\\]\u003c/span>",
      "fontFamily": "Arial, Helvetica, sans-serif",
      "fontSize": 23,
      "fontWeight": 400,
@@ -1707,7 +1707,7 @@
      "h": 364,
      "rotation": 0,
      "opacity": 1,
-     "html": "\u003cspan class=\"math-tex math-display\">\\[X_{ps}=\\sqrt{\\frac{P}{N_tK}}\\,C_{ps}\\]\u003c/span>\u003cspan class=\"math-tex math-display\">\\[C_{ps}\\in\\{1,j,-1,-j\\}\\]\u003c/span>\u003cspan class=\"math-tex math-display\">\\[\\sigma^2=10^{(-174+\\mathrm{NF}-30)/10}\\Delta f\\]\u003c/span>At P = 55 dBm and NF = 9 dB:\u003cbr>σ² = 3.8331 × 10⁻¹⁵ W per complex sample.",
+     "html": "\u003cspan class=\"math-tex math-display\">\\[X_{ps}=\\sqrt{\\frac{P}{N_tK}}\\,C_{ps}\\]\u003c/span>\u003cspan class=\"math-tex math-display\">\\[C_{ps}\\in\\{1,j,-1,-j\\}\\]\u003c/span>\u003cspan class=\"math-tex math-display\">\\[\\sigma^2=10^{(-174+\\mathrm{NF}-30)/10}\\Delta f\\]\u003c/span>At NF = 9 dB, independent of P:\u003cbr>σ² = 3.8331 × 10⁻¹⁵ W per complex sample.",
      "fontFamily": "Arial, Helvetica, sans-serif",
      "fontSize": 22,
      "fontWeight": 400,
@@ -2452,7 +2452,7 @@
      "h": 364,
      "rotation": 0,
      "opacity": 1,
-     "html": "\u003cspan class=\"math-tex math-display\">\\[\\mathbf A_k=\\mathbf H_k^{\\mathrm g}\\mathbf X\\]\u003c/span>\u003cspan class=\"math-tex math-display\">\\[\\mathbf M_k=e^{-j2\\pi f_k\\beta}\\mathbf A_k\\]\u003c/span>\u003cspan class=\"math-tex math-display\">\\[\\partial_\\beta\\mathbf M_k=-j2\\pi f_k\\mathbf M_k\\]\u003c/span>The receiver compares this template with noisy received samples.",
+     "html": "\u003cspan class=\"math-tex math-display\">\\[\\mathbf A_k=\\mathbf H_k^{\\mathrm g}\\mathbf X\\]\u003c/span>\u003cspan class=\"math-tex math-display\">\\[\\mathbf M_k=e^{-j2\\pi f_kb}\\mathbf A_k\\]\u003c/span>\u003cspan class=\"math-tex math-display\">\\[\\partial_b\\mathbf M_k=-j2\\pi f_k\\mathbf M_k\\]\u003c/span>The receiver compares this template with noisy received samples.",
      "fontFamily": "Arial, Helvetica, sans-serif",
      "fontSize": 25,
      "fontWeight": 400,
@@ -2503,7 +2503,7 @@
      "h": 364,
      "rotation": 0,
      "opacity": 1,
-     "html": "\u003cspan class=\"math-tex math-display\">\\[w_k=\\|\\mathbf A_k\\|_F^2\\]\u003c/span>\u003cspan class=\"math-tex math-display\">\\[J_{\\beta\\beta}=\\frac{8\\pi^2}{\\sigma^2}\\sum_k f_k^2w_k\\]\u003c/span>\u003cspan class=\"math-tex math-display\">\\[\\sigma_{\\beta,\\mathrm{LB}}=J_{\\beta\\beta}^{-1/2}\\]\u003c/span>This form assumes the complex phase reference is also known.",
+     "html": "\u003cspan class=\"math-tex math-display\">\\[w_k=\\|\\mathbf A_k\\|_F^2\\]\u003c/span>\u003cspan class=\"math-tex math-display\">\\[J_{bb}=\\frac{8\\pi^2}{\\sigma^2}\\sum_k f_k^2w_k\\]\u003c/span>\u003cspan class=\"math-tex math-display\">\\[\\sigma_{b,\\mathrm{LB}}=J_{bb}^{-1/2}\\]\u003c/span>This form assumes the complex phase reference is also known.",
      "fontFamily": "Arial, Helvetica, sans-serif",
      "fontSize": 24,
      "fontWeight": 400,
@@ -2573,7 +2573,7 @@
    "id": "known-channel-phase",
    "background": "#F4F6F8",
    "transition": "none",
-   "notes": "This is the Schur complement of the two-parameter beta,psi Fisher matrix. The weighted frequency mean need not vanish even on an arithmetically centered grid. Under a flat energy spectrum, K=3300, B=400MHz and aggregate Gamma=1000 give B_eff=115.470MHz and a clock standard-deviation lower bound of 30.82ps. Those are illustrative energy assumptions, not a numerical result from a saved RT run. A single nonzero tone with unknown phase cannot identify clock delay.\n\nSources: Optimal and Robust Waveform Design for MIMO-OFDM Channel Sensing: A Cramér-Rao Bound Perspective — https://arxiv.org/abs/2301.10689\nPosition and Orientation Estimation through Millimeter-Wave MIMO in 5G Systems — https://arxiv.org/abs/1702.01605",
+   "notes": "This is the Schur complement of the two-parameter b,psi Fisher matrix. The weighted frequency mean need not vanish even on an arithmetically centered grid. Under a flat energy spectrum, K=3300, B=400MHz and aggregate Gamma=1000 give beta=115.470MHz and a clock standard-deviation lower bound of 30.82ps. Those are illustrative energy assumptions, not a numerical result from a saved RT run. A single nonzero tone with unknown phase cannot identify clock delay.\n\nSources: Optimal and Robust Waveform Design for MIMO-OFDM Channel Sensing: A Cramér-Rao Bound Perspective — https://arxiv.org/abs/2301.10689\nPosition and Orientation Estimation through Millimeter-Wave MIMO in 5G Systems — https://arxiv.org/abs/1702.01605",
    "elements": [
     {
      "id": "section",
@@ -2655,7 +2655,7 @@
      "h": 35,
      "rotation": 0,
      "opacity": 1,
-     "html": "An unknown common phase ψ is estimated jointly with the clock bias β.",
+     "html": "An unknown common phase \u003cspan class=\"math-tex math-inline\">\\(\\psi\\)\u003c/span> is estimated jointly with the clock bias \u003cspan class=\"math-tex math-inline\">\\(b\\)\u003c/span>.",
      "fontFamily": "Arial, Helvetica, sans-serif",
      "fontSize": 17,
      "fontWeight": 400,
@@ -2706,7 +2706,7 @@
      "h": 99,
      "rotation": 0,
      "opacity": 1,
-     "html": "\u003cspan class=\"math-tex math-display\">\\[J_{\\beta,\\mathrm{eff}}=\\frac{8\\pi^2}{\\sigma^2}\\sum_k w_k(f_k-\\bar f_w)^2,\\qquad\\bar f_w=\\frac{\\sum_kw_k f_k}{\\sum_kw_k}\\]\u003c/span>",
+     "html": "\u003cspan class=\"math-tex math-display\">\\[J_{b,\\mathrm{eff}}=\\frac{8\\pi^2}{\\sigma^2}\\sum_k w_k(f_k-\\bar f_w)^2,\\qquad\\bar f_w=\\frac{\\sum_kw_k f_k}{\\sum_kw_k}\\]\u003c/span>",
      "fontFamily": "Arial, Helvetica, sans-serif",
      "fontSize": 23,
      "fontWeight": 400,
@@ -2757,7 +2757,7 @@
      "h": 169,
      "rotation": 0,
      "opacity": 1,
-     "html": "\u003cspan class=\"math-tex math-display\">\\[\\Gamma=\\frac{\\sum_kw_k}{\\sigma^2}\\]\u003c/span>\u003cspan class=\"math-tex math-display\">\\[B_{\\mathrm{eff}}^2=\\frac{\\sum_kw_k(f_k-\\bar f_w)^2}{\\sum_kw_k}\\]\u003c/span>",
+     "html": "\u003cspan class=\"math-tex math-display\">\\[\\Gamma=\\frac{\\sum_kw_k}{\\sigma^2}\\]\u003c/span>\u003cspan class=\"math-tex math-display\">\\[\\beta^2=\\frac{\\sum_kw_k(f_k-\\bar f_w)^2}{\\sum_kw_k}\\]\u003c/span>",
      "fontFamily": "Arial, Helvetica, sans-serif",
      "fontSize": 22,
      "fontWeight": 400,
@@ -2808,7 +2808,7 @@
      "h": 169,
      "rotation": 0,
      "opacity": 1,
-     "html": "\u003cspan class=\"math-tex math-display\">\\[\\sigma_{\\beta,\\mathrm{LB}}=\\frac{1}{2\\pi B_{\\mathrm{eff}}\\sqrt{2\\Gamma}}\\]\u003c/span>At fixed energy, concentrating the received signal in a narrow part of the band raises the timing bound.",
+     "html": "\u003cspan class=\"math-tex math-display\">\\[\\sigma_{b,\\mathrm{LB}}=\\frac{1}{2\\pi \\beta\\sqrt{2\\Gamma}}\\]\u003c/span>At fixed energy, concentrating the received signal in a narrow part of the band raises the timing bound.",
      "fontFamily": "Arial, Helvetica, sans-serif",
      "fontSize": 22,
      "fontWeight": 400,
@@ -2878,7 +2878,7 @@
    "id": "known-channel-lab",
    "background": "#F4F6F8",
    "transition": "none",
-   "notes": "Knowing effective Htilde differs from knowing the geometric template H^g. Exact Htilde alone does not establish an absolute geometric delay origin if clock bias is free. The interactive controls show the invariant sum. For the oracle clock bound, H^g and its delay origin are instead given, so beta can be identifiable locally. Uniform tones retain the usual global delay ambiguity period 1/Deltaf.\n\nSources: Radio SLAM system model: physical phase-coded I/Q and receiver timing bias — https://github.com/BaiLiping/radio-SLAM-system-model\nOptimal and Robust Waveform Design for MIMO-OFDM Channel Sensing: A Cramér-Rao Bound Perspective — https://arxiv.org/abs/2301.10689\nPosition and Orientation Estimation through Millimeter-Wave MIMO in 5G Systems — https://arxiv.org/abs/1702.01605",
+   "notes": "Knowing effective Htilde differs from knowing the geometric template H^g. Exact Htilde alone does not establish an absolute geometric delay origin if clock bias is free. The interactive controls show the invariant sum. For the oracle clock bound, H^g and its delay origin are instead given, so b can be identifiable locally. Uniform tones retain the usual global delay ambiguity period 1/Deltaf.\n\nSources: Radio SLAM system model: physical phase-coded I/Q and receiver timing bias — https://github.com/BaiLiping/radio-SLAM-system-model\nOptimal and Robust Waveform Design for MIMO-OFDM Channel Sensing: A Cramér-Rao Bound Perspective — https://arxiv.org/abs/2301.10689\nPosition and Orientation Estimation through Millimeter-Wave MIMO in 5G Systems — https://arxiv.org/abs/1702.01605",
    "elements": [
     {
      "id": "section",
@@ -3062,7 +3062,7 @@
      "h": 364,
      "rotation": 0,
      "opacity": 1,
-     "html": "\u003cspan class=\"math-tex math-display\">\\[\\tau_\\ell^{\\mathrm a}=\\tau_\\ell^{\\mathrm g}+\\beta\\]\u003c/span>\u003cspan class=\"math-tex math-display\">\\[(\\tau_\\ell^{\\mathrm g}+\\delta)+(\\beta-\\delta)=\\tau_\\ell^{\\mathrm a}\\]\u003c/span>With free path gains and no geometric constraint, changing both terms this way preserves the effective channel.",
+     "html": "\u003cspan class=\"math-tex math-display\">\\[\\tau_\\ell^{\\mathrm a}=\\tau_\\ell^{\\mathrm g}+b\\]\u003c/span>\u003cspan class=\"math-tex math-display\">\\[(\\tau_\\ell^{\\mathrm g}+\\delta)+(b-\\delta)=\\tau_\\ell^{\\mathrm a}\\]\u003c/span>With free path gains and no geometric constraint, changing both terms this way preserves the effective channel.",
      "fontFamily": "Arial, Helvetica, sans-serif",
      "fontSize": 23,
      "fontWeight": 400,
@@ -5336,7 +5336,7 @@
       {
        "cells": [
         {
-         "html": "Path phase φ"
+         "html": "Path phase \u003cspan class=\"math-tex math-inline\">\\(\\phi\\)\u003c/span>"
         },
         {
          "html": "\u003cspan class=\"math-tex math-inline\">\\(\\partial_\\phi\\mu=j\\mu\\)\u003c/span>"
@@ -10691,8 +10691,7 @@
     <script defer src="../assets/mathjax-dynamic.js"></script>
 
       <link rel="canonical" href="https://bailiping.com/radio-cramer-rao-slides/">
-    <meta name="description" content="Interactive radio geometry: delay, arrival and departure angles, virtual anchors, incidence points, and joint pose–map ambiguity.">
-  <meta name="description" content="40 interactive Bento slides and 7 live experiments explaining radio Cramér–Rao bounds, 384-port coded pilots, known channels, receiver clock bias, AoA, AoD and path gain.">
+    <meta name="description" content="40 interactive Bento slides and 7 live experiments explaining radio Cramér–Rao bounds, 384-port coded pilots, known channels, receiver clock bias, AoA, AoD and path gain.">
 <meta name="radio-crb-revision" content="2026-09-24-coded-pilots-known-channel">
 <style id="radio-crb-layout">
 .bento-slide .math-display{height:auto!important;min-height:0;margin:.6em 0;line-height:1.1}
