@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light">
+  <title>Radio measurement bounds laboratory | Bai Liping</title>
+  <link rel="icon" href="data:,">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <main id="laboratory" aria-label="Interactive Cramér–Rao bound laboratory">
+    <nav class="lab-nav" aria-label="Laboratory views">
+      <a class="home-link" href="../" target="_top" title="Return to the slide deck">CRB <span>LAB</span></a>
+      <div class="lab-tabs" role="tablist" aria-label="Experiment">
+        <button role="tab" data-lab="calculator">Calculator</button>
+        <button role="tab" data-lab="geometry">Array geometry</button>
+        <button role="tab" data-lab="fisher">Fisher matrix</button>
+        <button role="tab" data-lab="bandwidth">Bandwidth &amp; tones</button>
+        <button role="tab" data-lab="multipath">Two-path overlap</button>
+      </div>
+      <button id="reset" class="reset" title="Reset all inputs to the baseline">Reset</button>
+    </nav>
+    <div class="lab-layout">
+      <aside class="controls" aria-label="Radio setup">
+        <div class="control-heading"><h1>Your radio setup</h1><span class="one-link">1 BS → 1 UE</span></div>
+        <label class="preset-label" for="preset">Start with a setup</label>
+        <select id="preset" aria-label="Choose a preset">
+          <option value="baseline">8 × 8 BS · 4 × 4 UE</option>
+          <option value="large">24 × 16 BS · 4 × 4 UE (384 TX ports)</option>
+          <option value="ula">Linear arrays · joint-angle degeneracy</option>
+          <option value="broadside">Planar arrays · both at broadside</option>
+        </select>
+        <form id="setup" autocomplete="off">
+          <fieldset><legend>Antenna elements</legend>
+            <div class="input-grid">
+              <label>BS along y <input name="txY" type="number" min="1" max="64" step="1"></label>
+              <label>BS along z <input name="txZ" type="number" min="1" max="64" step="1"></label>
+              <label>UE along y <input name="rxY" type="number" min="1" max="64" step="1"></label>
+              <label>UE along z <input name="rxZ" type="number" min="1" max="64" step="1"></label>
+            </div>
+            <p class="control-hint" id="antenna-count"></p>
+          </fieldset>
+          <fieldset><legend>Sounding &amp; frequency grid</legend>
+            <div class="input-grid">
+              <label>Symbols L <input name="symbols" type="number" min="1" max="4096" step="1"></label>
+              <label>Subcarriers K <input name="tones" type="number" min="1" max="65536" step="1"></label>
+            </div>
+            <label class="wide-label">Specify the grid by
+              <select name="gridMode"><option value="bandwidth">Nominal bandwidth B</option><option value="spacing">Subcarrier spacing Δf</option></select>
+            </label>
+            <div class="input-grid">
+              <label>B [MHz] <input name="bandwidthMHz" type="number" min="0.001" max="5000" step="any"></label>
+              <label>Δf [kHz] <input name="spacingKHz" type="number" min="0.001" max="2000" step="any"></label>
+            </div>
+            <p class="control-hint">B = K Δf. Tones are centered around f<sub>c</sub>.</p>
+          </fieldset>
+          <fieldset><legend>Energy &amp; noise</legend>
+            <label class="wide-label">SNR convention
+              <select name="mode"><option value="total">Fix aggregate SNR Γ</option><option value="perTone">Fix SNR per RX / tone / symbol</option><option value="link">Compute from power, loss &amp; noise</option></select>
+            </label>
+            <label class="wide-label" id="snr-field"><span id="snr-label">Aggregate SNR Γ [dB]</span><input name="snrDb" type="number" min="-100" max="150" step="1"></label>
+            <div id="link-fields" class="input-grid" hidden>
+              <label>BS power [dBm] <input name="txPowerDbm" type="number" min="-50" max="80" step="1"></label>
+              <label>Effective path loss [dB] <input name="lossDb" type="number" min="0" max="240" step="1"></label>
+              <label>UE noise figure [dB] <input name="nfDb" type="number" min="0" max="30" step="0.5"></label>
+            </div>
+            <p class="control-hint" id="energy-hint"></p>
+          </fieldset>
+          <details id="advanced"><summary>Angles, carrier &amp; element spacing</summary>
+            <fieldset><legend>Local array-frame angles</legend>
+              <div class="input-grid">
+                <label>AoD azimuth [°] <input name="txAz" type="number" min="-89.9" max="89.9" step="1"></label>
+                <label>AoD elevation [°] <input name="txEl" type="number" min="-89.9" max="89.9" step="1"></label>
+                <label>AoA azimuth [°] <input name="rxAz" type="number" min="-89.9" max="89.9" step="1"></label>
+                <label>AoA elevation [°] <input name="rxEl" type="number" min="-89.9" max="89.9" step="1"></label>
+              </div>
+              <p class="control-hint">Arrays lie in yz. Broadside is +x. Azimuth turns from +x toward +y.</p>
+            </fieldset>
+            <fieldset><legend>Wavelength &amp; aperture</legend>
+              <label class="wide-label">Carrier f<sub>c</sub> [GHz]<input name="fcGHz" type="number" min="0.01" max="300" step="0.1"></label>
+              <label class="wide-label">Element spacing convention<select name="spacingMode"><option value="wavelength">Fix spacing / wavelength</option><option value="physical">Fix physical spacing</option></select></label>
+              <div class="input-grid">
+                <label>d / λ <input name="dLambda" type="number" min="0.001" max="5" step="0.05"></label>
+                <label>d [mm] <input name="spacingMm" type="number" min="0.001" max="1000" step="0.1"></label>
+              </div>
+            </fieldset>
+          </details>
+        </form>
+        <p class="assumption-note">One far-field path · balanced orthogonal pilots · known noise variance · unknown complex path gain. Bounds are local and conditional on this model.</p>
+      </aside>
+      <section id="results" class="results" role="tabpanel" aria-live="polite" aria-atomic="false"></section>
+    </div>
+  </main>
+  <noscript>This laboratory requires JavaScript. The accompanying slides explain the calculation and its assumptions.</noscript>
+  <script src="model.js"></script>
+  <script src="app.js"></script>
+  <script src="../../assets/bento-inline-frame.js"></script>
+</body>
+</html>
