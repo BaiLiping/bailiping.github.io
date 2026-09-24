@@ -27,7 +27,8 @@ html=html.replace(/<title>[\s\S]*?<\/title>/,'<title>Cramér–Rao Bounds for Ra
 html=html.replace(/<link rel="canonical"[^>]*>/,'<link rel="canonical" href="https://bailiping.com/radio-cramer-rao-slides/">');
 html=html.replace('./assets/vendor/mathjax-3.2.2-tex-svg-full.js','../mpc-detection-to-bounce-count-slides/assets/vendor/mathjax-3.2.2-tex-svg-full.js');
 const routes=Object.fromEntries(deck.slides.map((s,i)=>[s.id,i]));
-html=html.replace('</head>',`<meta name="description" content="${deck.slides.length} interactive Bento slides explaining Fisher information and Cramér–Rao bounds for radio delay, AoA, AoD and path gain, with five live MIMO–OFDM experiments.">
+html=html.replace('</head>',`<meta name="description" content="${deck.slides.length} interactive Bento slides and ${inlineLiveMap.length} live experiments explaining radio Cramér–Rao bounds, 384-port coded pilots, known channels, receiver clock bias, AoA, AoD and path gain.">
+<meta name="radio-crb-revision" content="2026-09-24-coded-pilots-known-channel">
 <style id="radio-crb-layout">
 .bento-slide .math-display{height:auto!important;min-height:0;margin:.6em 0;line-height:1.1}
 .bento-slide .math-display:first-child{margin-top:.1em}

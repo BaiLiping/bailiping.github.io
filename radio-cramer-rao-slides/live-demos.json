@@ -1,5 +1,45 @@
 [
   {
+    "slide": "project-live",
+    "introSlide": "project-codes",
+    "inline": true,
+    "layout": "region",
+    "bounds": {
+      "x": 72,
+      "y": 180,
+      "width": 1136,
+      "height": 475
+    },
+    "src": "./project/?lab=coded&embed=1",
+    "source": "./project/?lab=coded",
+    "title": "Coded pilots and measurement bounds",
+    "sandbox": "allow-scripts allow-same-origin allow-top-navigation-by-user-activation",
+    "hideSource": true,
+    "readyMessage": true,
+    "unloadWhenHidden": true,
+    "slideIndex": 6
+  },
+  {
+    "slide": "known-channel-live",
+    "introSlide": "known-channel-lab",
+    "inline": true,
+    "layout": "region",
+    "bounds": {
+      "x": 72,
+      "y": 180,
+      "width": 1136,
+      "height": 475
+    },
+    "src": "./project/?lab=known&embed=1",
+    "source": "./project/?lab=known",
+    "title": "Known channel and clock uncertainty",
+    "sandbox": "allow-scripts allow-same-origin allow-top-navigation-by-user-activation",
+    "hideSource": true,
+    "readyMessage": true,
+    "unloadWhenHidden": true,
+    "slideIndex": 11
+  },
+  {
     "slide": "calculator-live",
     "introSlide": "calculator",
     "inline": true,
@@ -17,7 +57,7 @@
     "hideSource": true,
     "readyMessage": true,
     "unloadWhenHidden": true,
-    "slideIndex": 8
+    "slideIndex": 17
   },
   {
     "slide": "fisher-live",
@@ -37,7 +77,7 @@
     "hideSource": true,
     "readyMessage": true,
     "unloadWhenHidden": true,
-    "slideIndex": 12
+    "slideIndex": 21
   },
   {
     "slide": "bandwidth-live",
@@ -57,7 +97,7 @@
     "hideSource": true,
     "readyMessage": true,
     "unloadWhenHidden": true,
-    "slideIndex": 16
+    "slideIndex": 25
   },
   {
     "slide": "geometry-live",
@@ -77,7 +117,7 @@
     "hideSource": true,
     "readyMessage": true,
     "unloadWhenHidden": true,
-    "slideIndex": 19
+    "slideIndex": 28
   },
   {
     "slide": "multipath-live",
@@ -97,6 +137,6 @@
     "hideSource": true,
     "readyMessage": true,
     "unloadWhenHidden": true,
-    "slideIndex": 24
+    "slideIndex": 33
   }
 ]
