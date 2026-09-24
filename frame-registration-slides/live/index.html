@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="color-scheme" content="only light">
-  <meta name="theme-color" content="#fbf8f1">
+  <meta name="theme-color" content="#f7f5ef">
   <title>Frame Registration Lab · Bai Liping</title>
   <meta name="description" content="A hands-on, dependency-free lab for RANSAC, ICP, and the NDT score landscape.">
   <link rel="stylesheet" href="styles.css">
@@ -106,7 +106,7 @@
           <p class="status" id="status" role="status" aria-live="polite"><i></i> Ready — test the first batch</p>
         </div>
         <canvas id="registration-canvas" width="900" height="500" tabindex="0" aria-label="Interactive point-cloud registration plot. Use the controls for the selected method.">
-          This interactive plot needs canvas support. The red target is fixed while each method estimates a transform for the blue source scan.
+          This interactive plot needs canvas support. The rust target is fixed while each method estimates a transform for the blue source scan.
         </canvas>
         <p class="canvas-hint" id="canvas-hint">Pair segments show the latest proposal; the outlined pose is the best so far.</p>
       </section>
@@ -123,7 +123,7 @@
     <main class="fallback">
       <p class="eyebrow">FRAME REGISTRATION · LIVE LAB</p>
       <h1>Three ways to align a scan</h1>
-      <p>This page becomes interactive when JavaScript is enabled. The red cloud is the fixed map and the blue cloud is the moving scan.</p>
+      <p>This page becomes interactive when JavaScript is enabled. The rust cloud is the fixed map and the blue cloud is the moving scan.</p>
       <div class="fallback-grid">
         <section><h2>RANSAC</h2><p>Samples compatible pairs, scores their consensus, and keeps the strongest rigid pose.</p></section>
         <section><h2>ICP</h2><p>Alternates nearest-neighbour matching with a closed-form least-squares rigid fit.</p></section>

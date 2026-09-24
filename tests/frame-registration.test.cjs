@@ -114,7 +114,8 @@ test('Article and slide document explicitly carry the corrected model boundaries
  const ids=doc.slides.map(s=>s.id);assert.equal(new Set(ids).size,21);
  const text=JSON.stringify(doc);
  assert.ok(text.includes('variance update is not lost'));assert.ok(text.includes('nonsingular pose Hessian'));assert.ok(text.toLowerCase().includes('translation-only direct search'));
- for(const s of doc.slides){assert.equal(new Set(s.elements.map(e=>e.id)).size,s.elements.length);for(const e of s.elements)if(e.type==='image')assert.ok(e.src.startsWith('data:image/png;base64,'));}
+ for(const s of doc.slides){assert.equal(new Set(s.elements.map(e=>e.id)).size,s.elements.length);for(const e of s.elements)if(e.type==='image')assert.ok(e.src.startsWith('data:image/png;base64,')||fs.existsSync(path.join(root,'frame-registration-slides',e.src)),e.src);}
+ assert.ok(!/\\\(|\\\[/.test(JSON.stringify(doc.slides.flatMap(s=>s.elements.filter(e=>e.type==='table')))),'Bento table cells are not typeset; keep LaTeX out of them');
 });
 test('NDT analytic gradient and Hessian match finite differences inside fixed cells',()=>{
  const pts=[[.1,.2],[.3,.7],[.8,.15],[1.1,.9],[.6,1.2],[1.2,.4]];

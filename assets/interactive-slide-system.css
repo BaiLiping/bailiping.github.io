@@ -16,8 +16,12 @@ body[data-interactive-slides] {
 }
 
 body[data-interactive-slides="frame-registration"] {
-  --interactive-accent: #8a2d1c;
-  --interactive-accent-soft: #f8e8e2;
+  --interactive-paper: #fffefb;
+  --interactive-ink: #203129;
+  --interactive-muted: #66756e;
+  --interactive-rule: #d8ded7;
+  --interactive-accent: #2f6b4f;
+  --interactive-accent-soft: #e7f0ea;
 }
 
 body[data-interactive-slides="target-handover"] {
@@ -210,7 +214,7 @@ html.is-bento-embedded body[data-interactive-slides="frame-registration"] .metri
 }
 
 html.is-bento-embedded body[data-interactive-slides="frame-registration"] .metrics dd {
-  font-size: 14px;
+  font-size: 13px;
 }
 
 @media (max-width: 800px) {

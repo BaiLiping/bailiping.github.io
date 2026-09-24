@@ -5,16 +5,16 @@
   var DEG = 180 / Math.PI;
   var WORLD = { xmin: -6.4, xmax: 6.4, ymin: -3.9, ymax: 3.9 };
   var COLORS = {
-    paper: "#f8f4eb",
-    grid: "#ddd6ca",
-    ink: "#20232b",
-    muted: "#756f65",
-    accent: "#8a2d1c",
-    coral: "#ff9e8a",
-    source: "#486a9a",
-    sourceSoft: "#9bb2cf",
-    success: "#39705a",
-    truth: "#857d71"
+    paper: "#fbfaf6",
+    grid: "#e1e5de",
+    ink: "#203129",
+    muted: "#66756e",
+    accent: "#a94f2a",
+    coral: "#d9a58c",
+    source: "#496e87",
+    sourceSoft: "#a9bfce",
+    success: "#2f6b4f",
+    truth: "#7d8781"
   };
   var truth = { th: rad(14), tx: 1.15, ty: -0.65 };
 
@@ -55,7 +55,7 @@
       hint: "Drag to translate · Shift-drag to rotate · Focus the canvas and use arrows to nudge."
     },
     ndt: {
-      kicker: "DISTRIBUTION MATCHING",
+      kicker: "POINT-TO-CELL SCORE",
       title: "Explore a point-to-cell score",
       body: "Gaussian cells give a piecewise-smooth score. This demo uses translation-only direct search, not the article’s Newton solver.",
       heading: "NORMAL DISTRIBUTIONS TRANSFORM",
@@ -764,7 +764,7 @@
       ctx.stroke();
     }
     var origin = worldToScreen([0, 0], plot);
-    ctx.strokeStyle = "rgba(32,35,43,.23)";
+    ctx.strokeStyle = "rgba(32,49,41,.23)";
     ctx.beginPath();
     ctx.moveTo(origin[0] - 5, origin[1]);
     ctx.lineTo(origin[0] + 5, origin[1]);
@@ -791,7 +791,7 @@
     var topLeft = worldToScreen([xmin - 0.12, ymax + 0.12], plot);
     var bottomRight = worldToScreen([xmax + 0.12, ymin - 0.12], plot);
     ctx.save();
-    ctx.strokeStyle = "rgba(117,111,101,.48)";
+    ctx.strokeStyle = "rgba(102,117,110,.48)";
     ctx.lineWidth = 1;
     ctx.setLineDash([5, 5]);
     ctx.strokeRect(topLeft[0], topLeft[1], bottomRight[0] - topLeft[0], bottomRight[1] - topLeft[1]);
@@ -807,7 +807,7 @@
       var s = worldToScreen(p, plot);
       ctx.beginPath();
       ctx.arc(s[0], s[1], 2.7, 0, TAU);
-      ctx.fillStyle = "rgba(138,45,28,.82)";
+      ctx.fillStyle = "rgba(169,79,42,.82)";
       ctx.fill();
     });
     scene.source.forEach(function (item) {
@@ -816,11 +816,11 @@
       ctx.beginPath();
       ctx.arc(s[0], s[1], item.outlier ? 2.2 : 2.8, 0, TAU);
       if (item.outlier) {
-        ctx.strokeStyle = "rgba(72,106,154,.58)";
+        ctx.strokeStyle = "rgba(73,110,135,.58)";
         ctx.lineWidth = 1.2;
         ctx.stroke();
       } else {
-        ctx.fillStyle = "rgba(72,106,154,.82)";
+        ctx.fillStyle = "rgba(73,110,135,.82)";
         ctx.fill();
       }
     });
@@ -857,7 +857,7 @@
       var p = worldToScreen(applyT(ransac.T, scene.source[match.source].p), plot);
       ctx.beginPath();
       ctx.arc(p[0], p[1], 4.6, 0, TAU);
-      ctx.strokeStyle = "rgba(57,112,90,.82)";
+      ctx.strokeStyle = "rgba(47,107,79,.82)";
       ctx.lineWidth = 1.4;
       ctx.stroke();
     });
@@ -868,12 +868,12 @@
       var targetB = worldToScreen(ransac.lastProposal.target[1], plot);
       ctx.lineWidth = 3;
       ctx.lineCap = "round";
-      ctx.strokeStyle = "rgba(72,106,154,.72)";
+      ctx.strokeStyle = "rgba(73,110,135,.72)";
       ctx.beginPath();
       ctx.moveTo(sourceA[0], sourceA[1]);
       ctx.lineTo(sourceB[0], sourceB[1]);
       ctx.stroke();
-      ctx.strokeStyle = "rgba(138,45,28,.72)";
+      ctx.strokeStyle = "rgba(169,79,42,.72)";
       ctx.beginPath();
       ctx.moveTo(targetA[0], targetA[1]);
       ctx.lineTo(targetB[0], targetB[1]);
@@ -888,7 +888,7 @@
     ctx.beginPath();
     ctx.rect(plot.x, plot.y, plot.w, plot.h);
     ctx.clip();
-    ctx.strokeStyle = "rgba(72,106,154,.19)";
+    ctx.strokeStyle = "rgba(73,110,135,.19)";
     ctx.lineWidth = 1;
     var skip = Math.max(1, Math.ceil(icp.pairs.length / 38));
     for (var i = 0; i < icp.pairs.length; i += skip) {
@@ -954,7 +954,7 @@
         ctx.fillRect(heat.x + col * cellW, heat.y + row * cellH, cellW + 0.55, cellH + 0.55);
       }
     }
-    ctx.strokeStyle = "rgba(32,35,43,.25)";
+    ctx.strokeStyle = "rgba(32,49,41,.25)";
     ctx.lineWidth = 1;
     ctx.strokeRect(heat.x, heat.y, heat.w, heat.h);
 
