@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="color-scheme" content="light">
+  <title>Snapshot Radio SLAM · 3D Equation Lab | Bai Liping</title>
+  <meta name="description" content="A live 3D experiment for the conditional position and clock solve in Shen et al., arXiv 2607.04847v2, with a matrix inspector and orientation search.">
+  <link rel="stylesheet" href="./styles.css">
+  <script>if(new URLSearchParams(location.search).get('embed')==='1')document.documentElement.classList.add('embedded');</script>
+</head>
+<body>
+  <header class="site-header">
+    <div><a href="../" target="_top">← Presentation</a><span class="eyebrow">SNAPSHOT RADIO SLAM / EQUATION LAB</span></div>
+    <a href="https://arxiv.org/html/2607.04847v2#S3.E18" target="_top">Paper Eq. (18) ↗</a>
+  </header>
+  <div class="page-title"><h1>Pose, paths, and one shared clock</h1><p>Rotate the receiver candidate, inspect the equations, and solve the position and clock block.</p></div>
+  <nav class="tabs" aria-label="Lab views">
+    <button type="button" data-view="geometry" aria-pressed="true">01 · 3D geometry</button>
+    <button type="button" data-view="linear" aria-pressed="false">02 · Linear system</button>
+    <button type="button" data-view="orientation" aria-pressed="false">03 · Orientation search</button>
+    <a class="expand" href="./" target="_top">Open full lab ↗</a>
+  </nav>
+  <main>
+    <section class="metrics" aria-label="Conditional solution" aria-live="polite">
+      <div><span>Estimated UE position · m</span><strong id="position">Loading…</strong></div>
+      <div class="clock"><span>Estimated clock · ns</span><strong id="clock-estimate">—</strong></div>
+      <div><span>Coarse residual RMS · m</span><strong id="residual">—</strong></div>
+      <div><span>Linear rank / unknowns</span><strong id="rank">—</strong></div>
+    </section>
+    <div class="workspace">
+      <aside class="controls" aria-label="Experiment controls">
+        <h2>Candidate orientation</h2>
+        <p class="small">Every change solves position and clock again.</p>
+        <label class="slider" for="yaw">Yaw <output id="yaw-value">15°</output><input id="yaw" type="range" min="-180" max="180" step="1" value="15"></label>
+        <label class="slider" for="pitch">Pitch <output id="pitch-value">0°</output><input id="pitch" type="range" min="-90" max="90" step="1" value="0"></label>
+        <label class="slider" for="roll">Roll <output id="roll-value">0°</output><input id="roll" type="range" min="-180" max="180" step="1" value="0"></label>
+        <div class="actions"><button id="true-orientation" type="button">True orientation (test)</button><button id="reset" type="button">Reset</button></div>
+        <p class="small" id="orientation-note">Candidate R = Rz(yaw) Ry(pitch) Rx(roll).</p>
+        <h2>Synthetic observations</h2>
+        <label class="slider" for="source-clock">Scene clock <output id="source-clock-value">10 ns</output><input id="source-clock" type="range" min="-10" max="30" step="1" value="10"></label>
+        <label class="slider" for="noise">Measurement noise <output id="noise-value">0</output><input id="noise" type="range" min="0" max="2" step="0.1" value="0"></label>
+        <p class="small" id="noise-description">Deterministic noise realization.</p>
+        <h2>Paths used in the solve</h2>
+        <div id="path-controls" class="path-controls"></div>
+        <div class="actions"><button id="inliers" type="button">LoS + single bounces</button><button id="los-only" type="button">LoS only</button></div>
+        <p class="small">Path labels are known only for this teaching scene. Manual selection does not run Algorithm 1.</p>
+      </aside>
+      <section id="geometry-panel" class="view-panel" aria-label="3D geometry">
+        <div class="panel-toolbar"><p>Physical scene and conditional estimate</p><button id="reset-camera" type="button">Reset view</button></div>
+        <div class="scene-wrap"><canvas id="scene" tabindex="0" aria-label="3D radio path scene. Drag to orbit, use the wheel to zoom, or focus and press arrow keys."></canvas></div>
+        <div class="legend"><span class="blue">■ BS</span><span class="teal">● Single bounce</span><span class="orange">● UE estimate</span><span class="gray">○ UE truth</span><span class="purple">┄ Double bounce</span></div>
+        <p class="caption">Drag to orbit · scroll to zoom. Dashed arrival rays use the candidate orientation. Scene truth supplies observations and error checks only.</p>
+      </section>
+      <section id="linear-panel" class="view-panel" aria-label="Linear system" hidden>
+        <div class="steps" role="group" aria-label="Equation solving steps">
+          <button data-step="directions" aria-pressed="false">1 · Directions</button>
+          <button data-step="stack" aria-pressed="true">2 · Stack A</button>
+          <button data-step="svd" aria-pressed="false">3 · Solve</button>
+          <button data-step="residuals" aria-pressed="false">4 · Check</button>
+        </div>
+        <div id="matrix-content" class="matrix-content"></div>
+      </section>
+      <section id="orientation-panel" class="view-panel" aria-label="Orientation search" hidden>
+        <div class="panel-toolbar"><p>Fit position and clock at every yaw</p><span id="scan-context"></span></div>
+        <div class="plot-wrap"><canvas id="cost-plot" tabindex="0" aria-label="Profiled residual cost versus candidate yaw. Click a point to use that yaw."></canvas></div>
+        <div class="search-actions"><button id="apply-yaw" class="primary" type="button">Use best scanned yaw</button><button id="refine" type="button">Refine on SO(3)</button></div>
+        <p id="search-status" class="caption" aria-live="polite">The yaw scan holds pitch and roll at their current values.</p>
+        <div id="iteration-trace" class="iteration-trace"></div>
+      </section>
+    </div>
+    <p id="solve-status" class="solve-status" role="status">Loading the local numerical model…</p>
+    <section class="details-section">
+      <h2>What the numerical solve does</h2>
+      <div class="explanation-grid">
+        <article><h3>A shared offset in every path</h3><p>For path <i>i</i>, the measured pseudorange is <b>ρᵢ = cτᵢ = Lᵢ + B</b>, where <b>B = cb</b>. One nanosecond adds 0.299792458 metres to every pseudorange. Changing the scene clock regenerates the measurements. The estimator receives those measurements, not the clock setting.</p><p><a href="https://arxiv.org/html/2607.04847v2#S2.E2">Paper Eqs. (2)–(3)</a></p></article>
+        <article><h3>The paper's clock sign</h3><p>The paper stacks <b>[Mᵢ, −(vᵢ−uᵢ)] [t; −cb]</b>. This lab uses the equivalent positive-clock convention <b>[Mᵢ, vᵢ−uᵢ] [t; B]</b>. Both equal <b>ρᵢ(vᵢ−uᵢ)</b>. The SVD returns all four unknowns jointly.</p><p><a href="https://arxiv.org/html/2607.04847v2#S3.E18">Paper Eqs. (14)–(18), (23)–(24)</a></p></article>
+        <article><h3>Orientation stays nonlinear</h3><p>Rotating the receiver changes vᵢ and Mᵢ. The scan recomputes the linear solution at each yaw. The local refinement applies the left SO(3) update from Eqs. (25)–(27). This lab's yaw scan is a slice through orientation space. The paper also uses twist–swing initialization.</p><p><a href="https://arxiv.org/html/2607.04847v2#S3.E25">Paper Eqs. (19), (25)–(30)</a></p></article>
+        <article><h3>Scope of this experiment</h3><p>This is an independent teaching implementation of the coarse equations. It starts from extracted angle-delay observations. The browser lab does not run the paper's exhaustive subset selection, final physical IRLS, or QAIC model comparison. Those stages are explained in the presentation. The double-bounce path deliberately violates the single-bounce model.</p><p><a href="../">Presentation and complete method</a></p></article>
+      </div>
+      <details open><summary>Measured snapshot and synthetic reference</summary><p id="truth-summary" class="small"></p><div id="measurement-table" class="table-scroll"></div></details>
+    </section>
+  </main>
+  <footer class="site-footer">Shen et al. · <a href="https://arxiv.org/abs/2607.04847v2">arXiv:2607.04847v2</a> · Independent educational implementation · <a href="https://github.com/BaiLiping/bailiping.github.io/tree/main/snapshot-radio-slam">Editable source</a></footer>
+  <script type="module" src="./app.mjs"></script>
+  <script src="../../assets/bento-inline-frame.js"></script>
+</body>
+</html>

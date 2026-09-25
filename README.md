@@ -4,6 +4,8 @@ GitHub Pages site for `bailiping.com`.
 
 ## Structure
 
+- `/snapshot-radio-slam/` is a 25-slide Bento reading of Shen et al., arXiv:2607.04847v2, with three embedded views of a 3D equation lab. It explains the conditional position/clock pseudoinverse, nonlinear orientation search, robust consensus, physical refinement, and QAIC. The live lab exposes its measured snapshot, actual stacked matrix, SVD modes, and local SO(3) updates. It is listed under Random thoughts.
+
 - `/message-passing-tracking/` is an interactive Bento walkthrough of Figure 4 in Meyer et al. (2018), following prediction, association messages, and target existence updates. It is listed under Random thoughts.
 
 - `/factor-graphs/` is an interactive Bento reading of *Factor Graphs and the Sum-Product Algorithm*, with the paper's five-step example, a message inspector, and a factor-sum workbench. It is listed under Random thoughts.
