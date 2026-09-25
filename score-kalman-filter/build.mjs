@@ -32,10 +32,26 @@ html=html.replace(/<link rel="canonical"[^>]*>/,'<link rel="canonical" href="htt
 html=html.replace(/<meta name="description"[^>]*>\s*/,'');
 html=html.replace('./assets/vendor/mathjax-3.2.2-tex-svg-full.js','../mpc-detection-to-bounce-count-slides/assets/vendor/mathjax-3.2.2-tex-svg-full.js');
 const routes=Object.fromEntries(deck.slides.map((s,i)=>[s.id,i]));
+// The bundled Bento runtime routes data-link values only to slide IDs.
+// Restore ordinary navigation for the deck's explicit external URLs.
+const externalLinksScript=`(()=>{
+ const external=el=>{const url=el?.dataset.link;return url&&/^https?:\\/\\//i.test(url)?url:null;};
+ const decorate=()=>document.querySelectorAll('[data-link]').forEach(el=>{if(external(el)){el.setAttribute('role','link');el.setAttribute('tabindex','0');}});
+ document.addEventListener('click',event=>{
+  const el=event.target.closest?.('[data-link]');const url=external(el);if(!url)return;
+  event.preventDefault();event.stopPropagation();
+  if(event.ctrlKey||event.metaKey||event.shiftKey)window.open(url,'_blank','noopener');else location.assign(url);
+ },true);
+ document.addEventListener('keydown',event=>{if(event.key==='Enter'&&external(event.target)){event.preventDefault();event.target.click();}},true);
+ new MutationObserver(decorate).observe(document.documentElement,{childList:true,subtree:true});
+ decorate();
+})();`;
 const equationCSS=`.bento-slide .math-display{height:auto!important;min-height:0;margin:.48em 0;line-height:1.08}.bento-slide .math-display:first-child{margin-top:.1em}.bento-slide .math-display:last-child{margin-bottom:.1em}.bento-slide .bento-text-inner{overflow:visible;text-rendering:optimizeLegibility}.bento-slide p{margin:.5em 0}.bento-slide p:first-child{margin-top:0}.bento-slide p:last-child{margin-bottom:0}.bento-slide .math-inline{white-space:normal}.lesson-table{width:100%;border-collapse:collapse;line-height:1.25;font-size:.94em}.lesson-table th,.lesson-table td{text-align:left;padding:.42em .5em;border-bottom:1px solid #D6DEDC;font-variant-numeric:tabular-nums}.lesson-table th{color:#16736E;font-weight:700;background:#E4F0ED}.lesson-table tr:last-child td{border-bottom:0}.bento-slide a:focus-visible{outline:3px solid #16736E;outline-offset:3px}`;
 html=html.replace('</head>',`<meta name="description" content="34 Bento slides and three interactive equation labs on The Score Kalman Filter: score matching, Stein closure, polynomial likelihood updates, Kalman specialization and benchmark limitations.">
-<meta name="score-kalman-revision" content="2026-09-25-v1">
+<meta name="score-kalman-revision" content="2026-09-25-v3">
 <style id="score-kalman-layout">${equationCSS}</style>
+<style>.bento-slide [data-link][role="link"]{cursor:pointer}.bento-slide [data-link][role="link"]:focus-visible{outline:3px solid #16736E;outline-offset:3px}</style>
+<script id="score-kalman-external-links">${externalLinksScript}</script>
 <script>(()=>{const routes=${JSON.stringify(routes)};function route(){let r;try{r=decodeURIComponent(location.hash.replace(/^#\\/?/,''));}catch{return;}if(Object.hasOwn(routes,r))history.replaceState(null,'',location.pathname+location.search+'#/'+routes[r]);}addEventListener('hashchange',route);route();})();</script>
 </head>`);
 writeFileSync(resolve(here,'index.html'),html);

@@ -9876,8 +9876,21 @@
 
       <link rel="canonical" href="https://bailiping.com/score-kalman-filter/">
     <meta name="description" content="34 Bento slides and three interactive equation labs on The Score Kalman Filter: score matching, Stein closure, polynomial likelihood updates, Kalman specialization and benchmark limitations.">
-<meta name="score-kalman-revision" content="2026-09-25-v1">
+<meta name="score-kalman-revision" content="2026-09-25-v3">
 <style id="score-kalman-layout">.bento-slide .math-display{height:auto!important;min-height:0;margin:.48em 0;line-height:1.08}.bento-slide .math-display:first-child{margin-top:.1em}.bento-slide .math-display:last-child{margin-bottom:.1em}.bento-slide .bento-text-inner{overflow:visible;text-rendering:optimizeLegibility}.bento-slide p{margin:.5em 0}.bento-slide p:first-child{margin-top:0}.bento-slide p:last-child{margin-bottom:0}.bento-slide .math-inline{white-space:normal}.lesson-table{width:100%;border-collapse:collapse;line-height:1.25;font-size:.94em}.lesson-table th,.lesson-table td{text-align:left;padding:.42em .5em;border-bottom:1px solid #D6DEDC;font-variant-numeric:tabular-nums}.lesson-table th{color:#16736E;font-weight:700;background:#E4F0ED}.lesson-table tr:last-child td{border-bottom:0}.bento-slide a:focus-visible{outline:3px solid #16736E;outline-offset:3px}</style>
+<style>.bento-slide [data-link][role="link"]{cursor:pointer}.bento-slide [data-link][role="link"]:focus-visible{outline:3px solid #16736E;outline-offset:3px}</style>
+<script id="score-kalman-external-links">(()=>{
+ const external=el=>{const url=el?.dataset.link;return url&&/^https?:\/\//i.test(url)?url:null;};
+ const decorate=()=>document.querySelectorAll('[data-link]').forEach(el=>{if(external(el)){el.setAttribute('role','link');el.setAttribute('tabindex','0');}});
+ document.addEventListener('click',event=>{
+  const el=event.target.closest?.('[data-link]');const url=external(el);if(!url)return;
+  event.preventDefault();event.stopPropagation();
+  if(event.ctrlKey||event.metaKey||event.shiftKey)window.open(url,'_blank','noopener');else location.assign(url);
+ },true);
+ document.addEventListener('keydown',event=>{if(event.key==='Enter'&&external(event.target)){event.preventDefault();event.target.click();}},true);
+ new MutationObserver(decorate).observe(document.documentElement,{childList:true,subtree:true});
+ decorate();
+})();</script>
 <script>(()=>{const routes={"overview":0,"relation-mem":1,"state-and-input":2,"polynomial-belief":3,"score":4,"moment-prediction":5,"moment-budget":6,"score-objective":7,"score-system":8,"quartic-matrix":9,"score-live":10,"recovery-theorem":11,"closure-problem":12,"stein-identity":13,"quartic-closure":14,"closure-live":15,"multivariate-closure":16,"bayes-score":17,"scalar-update":18,"update-live":19,"posterior-recovery":20,"gaussian-case":21,"gaussian-numbers":22,"algorithm":23,"curved-density":24,"prediction-evidence":25,"reported-rmse":26,"reported-time":27,"complexity":28,"numerical-limits":29,"reading-checks":30,"radio-slam":31,"equation-map":32,"references":33};function route(){let r;try{r=decodeURIComponent(location.hash.replace(/^#\/?/,''));}catch{return;}if(Object.hasOwn(routes,r))history.replaceState(null,'',location.pathname+location.search+'#/'+routes[r]);}addEventListener('hashchange',route);route();})();</script>
 </head>
   <body>
