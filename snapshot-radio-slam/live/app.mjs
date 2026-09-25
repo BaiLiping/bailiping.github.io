@@ -40,7 +40,7 @@ function update(){
     $('residual').textContent=result.state?sci(result.rmsResidual):'—';
     $('rank').textContent=result.rank+' / 4';
     renderPathControls();
-    const paths=generated.paths.map(p=>({...p,kind:p.id==='los'?'los':p.id.startsWith('single')?'single':'double'}));
+    const paths=generated.paths.map(p=>({...p,label:label(p.id),kind:p.id==='los'?'los':p.id.startsWith('single')?'single':'double'}));
     const allBlocks=stackSystem(generated.snapshot,R).blocks;
     updateScene({bsPosition:generated.snapshot.bsPosition,truePosition:generated.truth.position,estimatedPosition:result.state?.position,
       trueRotation:generated.truth.rotation,candidateRotation:R,paths,selectedIds:settings.selected,highlightId:highlighted,showTruth:true,

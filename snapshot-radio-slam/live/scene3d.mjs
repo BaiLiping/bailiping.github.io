@@ -84,7 +84,7 @@ export class Scene3D {
     this.camera = {
       azimuth: -0.95,
       elevation: 0.57,
-      zoom: 1,
+      zoom: 0.65,
       reset: () => this.resetView(),
     };
     this.savedTouchAction = canvas.style.touchAction;
@@ -131,7 +131,7 @@ export class Scene3D {
   resetView() {
     this.camera.azimuth = -0.95;
     this.camera.elevation = 0.57;
-    this.camera.zoom = 1;
+    this.camera.zoom = 0.65;
     this._cameraChanged();
   }
 
@@ -396,7 +396,7 @@ export class Scene3D {
       }
       for (let i = 1; i < points.length - 1; i += 1) {
         marker(points[i], { color, fill: '#FFFFFF', alpha, radius: highlighted ? 5.6 : 4.4, strokeWidth: 1.8 });
-        if (highlighted) label(points[i], `IP ${path.id}${points.length > 3 ? `.${i}` : ''}`, color, 9, -10, 1);
+        if (highlighted) label(points[i], `${path.label || path.id}${points.length > 3 ? ` · point ${i}` : ' · scatterer'}`, color, 9, -10, 1);
       }
     }
 

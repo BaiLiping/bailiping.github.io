@@ -2,8 +2,9 @@
 const C={bg:'#F4F6F8',ink:'#16222E',muted:'#51606E',line:'#D7DEE5',blue:'#1874B8',teal:'#0A6B5E',orange:'#D76809',paper:'#FFFFFF',cool:'#E8F2FA',mint:'#E3F2EF',warm:'#FCEBDA'};
 const serif="Georgia, 'Times New Roman', serif",sans='Arial, Helvetica, sans-serif',mono='Menlo, Consolas, monospace';
 const R=String.raw;
-const M=s=>`<span class="math-tex math-display">\\[${s}\\]</span>`;
-const I=s=>`<span class="math-tex math-inline">\\(${s}\\)</span>`;
+const escapeMath=s=>s.replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;');
+const M=s=>`<span class="math-tex math-display">\\[${escapeMath(s)}\\]</span>`;
+const I=s=>`<span class="math-tex math-inline">\\(${escapeMath(s)}\\)</span>`;
 const PAPER='https://arxiv.org/html/2607.04847v2';
 export const references={
  paper:{short:'Shen et al. · arXiv:2607.04847v2',title:'Amplitude-Independent Robust Snapshot 6-D Radio SLAM via a Unified Angle-Delay Formulation',url:PAPER},
@@ -145,7 +146,7 @@ two('qaic','07 · choose a path interpretation','QAIC compares the refined candi
 two('limits','08 · scope and limitations','What this method does with double-bounce paths','In this paper, multi-bounce paths are outliers to reject.',
  'THE MODELED INLIERS','LoS: one straight segment.<br><br>Single bounce: two segments meeting at one unknown point.<br><br>Double bounce generally needs two interaction points and three segment lengths. It does not satisfy this single-scatterer model.',
  'WHAT TO CHECK IN A REPLICATION','Retain failed trials and report them.<br><br>Inspect rank, conditioning and physical feasibility.<br><br>State orientation initialization and numerical choices.<br><br>Local convergence and a low residual do not guarantee the correct global solution.',
- 'This is a different paper from the Tampere–Chalmers work that explicitly exploits selected double-bounce paths. arXiv:2607.04847v2 robustly rejects paths inconsistent with LoS or one-bounce geometry. Its Appendix B synthetic multi-bounce outliers use random angles and skew-normal delays rather than ray-traced double-bounce scenes. No claim is made that its residual classifies every physical path’s bounce count correctly. A replication should expose missing seeds, unspecified feasibility thresholds and numerical conventions, and should report unconditional performance rather than dropping failed solves. The three embedded labs teach selected stages and do not constitute the entire algorithm.',[cite('Model scope · Section II-A','S2.SS1'),cite('Synthetic outliers · Appendix B','A2'),cite('Full algorithm · Sections III-B/C','S3.SS2')],[22,22]);
+ 'arXiv:2607.04847v2 robustly rejects paths inconsistent with LoS or one-bounce geometry. Its Appendix B synthetic multi-bounce outliers use random angles and skew-normal delays rather than ray-traced double-bounce scenes. No claim is made that its residual classifies every physical path’s bounce count correctly. A replication should expose missing seeds, unspecified feasibility thresholds and numerical conventions, and should report unconditional performance rather than dropping failed solves. The three embedded labs teach selected stages and do not constitute the entire algorithm.',[cite('Model scope · Section II-A','S2.SS1'),cite('Synthetic outliers · Appendix B','A2'),cite('Full algorithm · Sections III-B/C','S3.SS2')],[22,22]);
 
 add('extensions','09 · continue exploring','Extensions and source material','Use the full-size labs to inspect the numerical steps.',[
  ...panel('full-labs',96,191,1088,137,'INTERACTIVE EXPERIMENTS','<a href="https://bailiping.com/snapshot-radio-slam/live/"><b>Open the complete snapshot estimation laboratory ↗</b></a><br>Geometry, the conditional matrix/SVD solve and orientation refinement.',{fill:C.mint,size:23,accent:C.teal}),
