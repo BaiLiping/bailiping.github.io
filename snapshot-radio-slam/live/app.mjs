@@ -1,5 +1,5 @@
 import {C, makeSnapshot, rotationFromEulerDegrees, conditionalSolve, stackSystem, yawSweep, refineOrientation, feasibilityMask, degrees, norm, sub} from './math.mjs';
-import {Scene3D} from './scene3d.mjs';
+import {Scene3D} from './scene3d.mjs?v=20260925-2';
 
 const $=id=>document.getElementById(id), params=new URLSearchParams(location.search);
 const validViews=['geometry','linear','orientation'];
