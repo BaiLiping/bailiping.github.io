@@ -48,7 +48,7 @@ const excluded=new Set(['section','home','rule','heading','subtitle','sources','
 const sections=deck.slides.map((s,i)=>{
  const lab=inlineLiveMap.find(l=>l.slide===s.id);
  const items=s.elements.filter(e=>!excluded.has(e.id)&&(e.type==='text'||e.type==='image'));
- const body=items.map(e=>e.type==='image'?`<figure><img src="${esc(e.src)}" alt="${esc(e.alt)}"></figure>`:e.id.endsWith('-label')?`<h3>${e.html}</h3>`:`<div class="lesson-copy">${e.html}</div>`).join('');
+ const body=items.map(e=>{const content=e.link?`<a href="${esc(e.link.includes(':')?e.link:'#'+e.link)}">${e.html}</a>`:e.html;return e.type==='image'?`<figure><img src="${esc(e.src)}" alt="${esc(e.alt)}"></figure>`:e.id.endsWith('-label')?`<h3>${content}</h3>`:`<div class="lesson-copy">${content}</div>`;}).join('');
  const [notes,refs]=s.notes.split('\n\nSources:\n');
  const sources=refs.split('\n').map(line=>{const split=line.lastIndexOf(' — ');return `<a href="${esc(line.slice(split+3))}">${esc(line.slice(0,split))}</a>`;}).join(' · ');
  return `<article id="${s.id}"><p class="chapter">${String(i+1).padStart(2,'0')} / ${deck.slides.length}</p><h2>${esc(s.lessonTitle)}</h2><p class="intro">${esc(s.lessonSubtitle)}</p><div class="slide-content">${body}</div>${lab?`<p><a class="lab-link" href="${esc(lab.source)}">Open this interactive laboratory</a></p>`:''}<section class="notes"><h3>Explanation</h3><p>${esc(notes)}</p></section><p class="source">${sources}</p><a class="back" href="./#/${i}">Open slide ${i+1}</a></article>`;

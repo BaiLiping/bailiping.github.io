@@ -19,8 +19,8 @@ function add(id,section,title,subtitle,elements,notes,sources=[cite('Paper')]){
  text('home',971,29,237,25,'RANDOM THOUGHTS',{fontSize:12,fontFamily:mono,align:'right',color:C.muted,link:'https://bailiping.com/'}),
  box('rule',72,66,1136,1,C.line),text('heading',72,84,1136,54,title,{fontFamily:serif,fontSize:38,fontWeight:700,lineHeight:1.12}),
  text('subtitle',72,143,1136,34,subtitle,{fontSize:18,color:C.muted}),...elements,
- text('sources',72,676,850,29,sources.map(s=>`<a href="${s.url}" target="_blank" rel="noopener">${s.label}</a>`).join(' · '),{fontSize:12,color:C.muted}),
- text('read',931,679,155,20,'READ NOTES',{fontSize:12,fontFamily:mono,color:C.teal,link:'./study.html#'+id,align:'right'}),
+ text('sources',72,676,850,29,sources[0].label,{fontSize:12,color:C.muted,link:sources[0].url}),
+ text('read',931,679,155,20,'READ NOTES',{fontSize:12,fontFamily:mono,color:C.teal,link:'https://bailiping.com/score-kalman-filter/study.html#'+id,align:'right'}),
  text('contents',1090,679,118,20,'CONTENTS',{fontSize:12,fontFamily:mono,color:C.teal,link:'overview',align:'right'})]});
 }
 function pair(id,section,title,subtitle,l,L,r,U,notes,sources,size=[22,22]){add(id,section,title,subtitle,[...panel('left',72,193,550,448,l,L,{size:size[0]}),...panel('right',646,193,562,448,r,U,{fill:C.paper,size:size[1]})],notes,sources);}
@@ -151,12 +151,12 @@ pair('prediction-evidence','10 · evidence','Prediction and filtering are separa
 
 add('reported-rmse','10 · reported filtering results','Lower RMSE on the tested oscillator systems','Table A1 values. SKF entries are mean ± standard deviation over 10 seeds.',[
  ...panel('results',72,193,1136,304,'RMSE OVER 25 STEPS',table(['State n','SKF','EKF','UKF','EnKF','PF (500k)'],[['4','0.0103 ± 0.0040','0.0676','0.0725','0.0762','0.0727'],['8','0.0181 ± 0.0112','0.0713','0.0775','0.0806','0.0747'],['12','0.0029 ± 0.0017','0.0708','0.0731','0.0768','0.0741'],['20','0.0039 ± 0.0050','0.0734','0.0752','0.0806','0.0761']]),{size:24,fill:C.paper}),
- ...panel('interpret',72,518,1136,123,'INTERPRETATION','The error drop at n = 12 coincides with a change of closure. It is not evidence that adding state dimensions makes filtering easier.',{size:22})
+ ...panel('interpret',72,510,1136,131,'INTERPRETATION','The error drop at n = 12 coincides with a change of closure. It is not evidence that adding state dimensions makes filtering easier.',{size:22})
 ],'These are values reported by the authors, not measurements from the browser demonstrations. The table reproduces selected coupled-oscillator rows from Table A1. The baselines’ standard deviations are omitted in this compact comparison, as in A1, and are supplied in Table A2. The paper uses r=3 in these sweeps, centered coordinates and a change to active closure at n=12. Results establish performance on this specific synthetic benchmark and implementation. They do not establish a general accuracy ranking over all nonlinear filters or robotics tasks.',[cite('Table A1','A10.T1'),cite('Table A2','A10.T2')]);
 
 add('reported-time','10 · reported computational cost','Accuracy comes with substantial runtime','Seconds for the full 25-step filter on one CPU, as reported in Table A1.',[
  ...panel('times',72,193,1136,304,'FILTER RUNTIME · SECONDS',table(['State n','SKF','EKF','UKF','EnKF','PF (500k)'],[['4','1','< 0.1','< 0.1','1.2','110'],['8','14','< 0.1','0.1','2.9','291'],['12','195','0.02','0.21','4.0','385'],['20','2079','0.03','0.57','6.5','646']]),{size:24,fill:C.paper}),
- ...panel('time-meaning',72,518,1136,123,'SCOPE OF THE SPEED CLAIM','Removing high-dimensional quadrature helps the architecture scale. It does not make SKF uniformly faster than the Gaussian or particle baselines.',{size:22})
+ ...panel('time-meaning',72,510,1136,131,'SCOPE OF THE SPEED CLAIM','Removing high-dimensional quadrature helps the architecture scale. It does not make SKF uniformly faster than the Gaussian or particle baselines.',{size:22})
 ],'Timings are the paper’s full-run values for 25 steps on an Intel i9-11900H CPU using NumPy/SciPy. In particular, 2079 seconds at n=20 means roughly 83 seconds per filter step if divided evenly. The table does not report real-time performance for that setting. SKF is faster than the reported 500,000-particle filter at n=10, but slower at n=20. MEM-KF is not run as a comparable nonlinear closed-hierarchy baseline in these oscillator rows, so no direct measured speedup against MEM-KF should be inferred from them.',[cite('Table A1 and its footnotes','A10.T1')]);
 
 pair('complexity','11 · scaling','Linear algebra still has a combinatorial budget','Fixing polynomial order avoids grid quadrature, but dimensions remain expensive.',
@@ -184,12 +184,18 @@ add('equation-map','13 · reference map','The equations behind each operation','
 ],'The key distinction is between three uses of linear algebra: score fitting from given moments, supplying missing higher moments from lower moments and a fixed score, and recovering a new posterior moment vector from updated coefficients. The first has an explicit quadratic objective. The second is a model-based closure. The third is underdetermined if restricted to exact low-degree rows and is approximated in the paper. Their mathematical and numerical guarantees are therefore different.',[cite('Sections 2–6','S2'),cite('Appendix D','A4')]);
 
 add('references','13 · continue reading','Paper, related lessons and live equations','All equation numbers in this deck refer to arXiv:2605.16644v1.',[
- ...panel('paper-ref',72,193,1136,183,'PRIMARY SOURCE',P('<b>K. Iwasaki, A. Bloch, T. Lee and M. Ghaffari</b><br>The Score Kalman Filter. arXiv:2605.16644v1, 15 May 2026.')+P(`<a href="${PAPER}">Read the full HTML paper</a> · <a href="https://arxiv.org/pdf/2605.16644v1">Open the PDF</a>`),{size:23,fill:C.paper}),
- ...panel('related',72,398,550,243,'RELATED RANDOM THOUGHTS',P('<a href="https://bailiping.com/mem-kf/">Max Entropy Moment Kalman Filter</a>')+P('<a href="https://bailiping.com/kalman-filter-derivations/">One Filter, Many Derivations</a>')+P('<a href="./study.html">Read this lesson with expanded notes</a>'),{size:23}),
- ...panel('labs',646,398,562,243,'INTERACTIVE EQUATIONS',P('<a href="./live/?lab=score">Score matching matrix</a>')+P('<a href="./live/?lab=closure">Stein moment closure</a>')+P('<a href="./live/?lab=update">One measurement update</a>'),{size:23,fill:C.paper})
+ ...panel('paper-ref',72,193,1136,183,'PRIMARY SOURCE',P('<b>K. Iwasaki, A. Bloch, T. Lee and M. Ghaffari</b><br>The Score Kalman Filter. arXiv:2605.16644v1, 15 May 2026.'),{size:23,fill:C.paper}),
+ text('paper-html',94,329,380,34,'Read the full HTML paper',{fontSize:23,color:C.teal,link:PAPER}),
+ text('paper-pdf',500,329,300,34,'Open the PDF',{fontSize:23,color:C.teal,link:'https://arxiv.org/pdf/2605.16644v1'}),
+ ...panel('related',72,398,550,243,'RELATED RANDOM THOUGHTS','',{size:23}),
+ text('related-mem',94,455,506,38,'Max Entropy Moment Kalman Filter',{fontSize:23,color:C.teal,link:'https://bailiping.com/mem-kf/'}),
+ text('related-kf',94,509,506,38,'One Filter, Many Derivations',{fontSize:23,color:C.teal,link:'https://bailiping.com/kalman-filter-derivations/'}),
+ text('related-notes',94,563,506,38,'Read this lesson with expanded notes',{fontSize:23,color:C.teal,link:'https://bailiping.com/score-kalman-filter/study.html'}),
+ ...panel('labs',646,398,562,243,'INTERACTIVE EQUATIONS','',{size:23,fill:C.paper}),
+ ...[['score','Score matching matrix'],['closure','Stein moment closure'],['update','One measurement update']].map(([lab,title],i)=>text('lab-link-'+lab,668,455+i*54,518,38,title,{fontSize:23,color:C.teal,link:'https://bailiping.com/score-kalman-filter/live/?lab='+lab}))
 ],'This is an independent educational reading of the cited paper. The paper is available under CC BY 4.0. Slide explanations and scalar examples are original teaching material. Reported benchmark numbers are attributed to the paper’s Table A1. The linked labs use quadrature for synthetic input/reference data and plotted densities, and use algebra for the score fit, selected closure equations and coefficient update. The full benchmark implementation and the paper’s truncated posterior-recovery and optional refinement loops are outside the laboratory scope.',[cite('Primary paper'),link('CC BY 4.0','https://creativecommons.org/licenses/by/4.0/')]);
 
 slides.forEach((s,i)=>s.elements.push(text('number',998,650,210,21,`${String(i+1).padStart(2,'0')} / ${slides.length}`,{fontSize:12,fontFamily:mono,color:C.muted,align:'right'})));
-for(const l of labs){l.slideIndex=slides.findIndex(s=>s.id===l.slide);slides[l.slideIndex].elements.push(text('open-lab',750,653,220,18,'OPEN FULL LAB',{fontSize:12,color:C.teal,align:'right',link:l.source}));}
+for(const l of labs){l.slideIndex=slides.findIndex(s=>s.id===l.slide);slides[l.slideIndex].elements.push(text('open-lab',750,653,220,18,'OPEN FULL LAB',{fontSize:12,color:C.teal,align:'right',link:'https://bailiping.com/score-kalman-filter/'+l.source.replace(/^\.\//,'')}));}
 export const deck={format:'bento/slides',version:1,docId:'score-kalman-filter',title:'The Score Kalman Filter',readonly:true,meta:{author:'Bai Liping',subject:'Polynomial score matching, Stein moment closure and nonlinear Bayesian filtering',company:'bailiping.com',source:'https://bailiping.com/score-kalman-filter/'},size:{width:1280,height:720},theme:{background:C.bg,color:C.ink,accent:C.teal,fontFamily:serif},slides};
 export const inlineLiveMap=labs;
