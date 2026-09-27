@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="only light">
+  <meta name="theme-color" content="#f7f5ef">
+  <title>Sampling Lab · Bai Liping</title>
+  <meta name="description" content="Seven seeded Monte Carlo samplers running live: Gibbs, Metropolis–Hastings, HMC, slice, rejection, importance sampling and a particle filter.">
+  <link rel="icon" href="data:,">
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="../../assets/interactive-slide-system.css">
+  <script src="../../assets/interactive-slide-system.js"></script>
+  <script src="../model.js" defer></script>
+  <script src="app.js" defer></script>
+  <script src="../../assets/bento-inline-frame.js" defer></script>
+</head>
+<body data-bento-live-app data-interactive-slides="sampling">
+  <main class="demo-shell interactive-slide-shell" id="demo">
+    <header class="masthead interactive-slide-header">
+      <div class="interactive-slide-heading">
+        <p class="eyebrow">SAMPLING · LIVE LAB</p>
+        <h1 id="lab-title">See how samplers think.</h1>
+      </div>
+      <div class="interactive-slide-actions">
+        <span class="interactive-slide-chip" title="Every sampler is seeded, so Reset reproduces the same run.">Seeded samplers</span>
+        <a class="back-link interactive-slide-back" id="back-link" href="../">
+          <span aria-hidden="true">←</span>&nbsp;Back to slides
+        </a>
+      </div>
+    </header>
+
+    <nav class="method-tabs interactive-slide-tabs" aria-label="Sampler">
+      <a href="?demo=gibbs" data-demo="gibbs"><span>01</span>Gibbs</a>
+      <a href="?demo=mh" data-demo="mh"><span>02</span>Metropolis–Hastings</a>
+      <a href="?demo=hmc" data-demo="hmc"><span>03</span>HMC</a>
+      <a href="?demo=slice" data-demo="slice"><span>04</span>Slice</a>
+      <a href="?demo=rejection" data-demo="rejection"><span>05</span>Rejection</a>
+      <a href="?demo=importance" data-demo="importance"><span>06</span>Importance</a>
+      <a href="?demo=smc" data-demo="smc"><span>07</span>Particle filter</a>
+    </nav>
+
+    <div class="lab-grid interactive-slide-body">
+      <section class="stage-card interactive-slide-stage interactive-slide-panel" aria-labelledby="stage-heading">
+        <div class="stage-bar">
+          <h2 id="stage-heading">Target</h2>
+          <p class="status" id="status" role="status" aria-live="polite"></p>
+        </div>
+        <div class="canvas-wrap">
+          <canvas id="stage" role="img" aria-label="Sampler plot"></canvas>
+        </div>
+      </section>
+
+      <aside class="control-rail interactive-slide-controls interactive-slide-panel" aria-label="Experiment controls">
+        <div class="method-copy">
+          <p class="method-kicker" id="kicker"></p>
+          <h2 id="method-title"></h2>
+          <p id="method-copy"></p>
+        </div>
+        <div class="controls" id="controls"></div>
+        <div class="button-row">
+          <button class="button primary" id="step" type="button">Step</button>
+          <button class="button" id="auto" type="button" aria-pressed="false">Auto</button>
+          <button class="button" id="reset" type="button" title="Reset to the seeded start">Reset</button>
+          <button class="button" id="reseed" type="button" title="Draw a new random seed">New seed</button>
+        </div>
+        <dl class="metrics" id="metrics" aria-label="Current result"></dl>
+        <div class="legend" id="legend" aria-label="Plot legend"></div>
+      </aside>
+    </div>
+
+    <footer class="demo-footer interactive-slide-footer">
+      <p>Everything drawn is computed by the sampler in <code>../model.js</code>; nothing is animated separately.</p>
+      <p>Inside the slides: Page Up / Page Down navigate, <kbd>Esc</kbd> returns focus.</p>
+    </footer>
+  </main>
+
+  <noscript>
+    <style>.demo-shell{display:none!important}</style>
+    <main class="fallback">
+      <p class="eyebrow">SAMPLING · LIVE LAB</p>
+      <h1>Seven samplers, live</h1>
+      <p>This lab runs Gibbs, Metropolis–Hastings, HMC and slice sampling on a correlated Gaussian, rejection and importance sampling on a two-bump mixture, and a bootstrap particle filter on a linear-Gaussian tracking model. It needs JavaScript; the slides show a static view of every experiment.</p>
+      <p><a href="../">← Back to slides</a></p>
+    </main>
+  </noscript>
+</body>
+</html>

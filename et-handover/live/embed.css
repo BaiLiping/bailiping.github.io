@@ -1,0 +1,43 @@
+/* Only the demo content is mounted inside a Bento slide. */
+html[data-slide-embed="true"] [data-slide-embed-target="true"] {
+  padding:12px 18px!important; background:white!important;
+}
+html[data-slide-embed="true"] #toy > h2,
+html[data-slide-embed="true"] #toy > h3,
+html[data-slide-embed="true"] #toy > p,
+html[data-slide-embed="true"] #toy .table-view { display:none!important; }
+html[data-slide-embed="true"] #toy .panel { padding:0; border:0; box-shadow:none; background:#fff; }
+html[data-slide-embed="true"] .toy-controls { padding:0 0 10px; gap:6px; flex-wrap:nowrap; }
+html[data-slide-embed="true"] .toy-controls button { padding:5px 8px; min-height:32px; font-size:12px; }
+html[data-slide-embed="true"] .radio-row { gap:8px; font-size:11px; flex-wrap:wrap; max-width:300px; }
+html[data-slide-embed="true"] .toy-controls .grow { min-width:160px; }
+html[data-slide-embed="true"] .radio-row label { padding:5px 7px; font-size:11px; }
+html[data-slide-embed="true"] .toy-grid { grid-template-columns:minmax(0,1fr) 465px; gap:18px; height:328px; }
+html[data-slide-embed="true"] .toy-scene { min-height:0; height:328px; }
+html[data-slide-embed="true"] .toy-scene svg { height:100%; width:100%; }
+html[data-slide-embed="true"] .toy-side { display:grid; grid-template-columns:1fr 1fr; align-content:start; gap:10px 18px; padding:10px; border:0; background:#f2f6fa; border-radius:8px; }
+html[data-slide-embed="true"] .toy-side .side-block { padding:0; margin:0; border:0; }
+html[data-slide-embed="true"] .toy-side .side-block:nth-child(5) { grid-column:1/-1; }
+html[data-slide-embed="true"] .toy-side .side-block:last-child { display:none; }
+html[data-slide-embed="true"] .toy-side h4 { margin-bottom:7px; font-size:11px; }
+html[data-slide-embed="true"] .owner-chip .label { font-size:20px; }
+html[data-slide-embed="true"] .owner-chip .who { font-size:11px; }
+html[data-slide-embed="true"] .stat-tiles { grid-template-columns:1fr 1fr 1fr; }
+html[data-slide-embed="true"] .stat-tile.wide { grid-column:auto; }
+html[data-slide-embed="true"] .stat-tile .num { font-size:15px; }
+html[data-slide-embed="true"] .scene-legend { font-size:10px; padding:7px 0 0; gap:8px 14px; }
+html[data-slide-embed="true"] #handover-score-demo .widget-grid { grid-template-columns:minmax(0,1fr) 375px; gap:28px; height:100%; align-items:center; }
+html[data-slide-embed="true"] #score-scene svg { max-height:420px; width:100%; }
+html[data-slide-embed="true"] .score-readout { font-size:13px; }
+html[data-slide-embed="true"] #handover-score-demo .fnote { font-size:12px; line-height:1.45; }
+@media(max-width:700px) {
+  html[data-slide-embed="true"] .toy-controls { flex-wrap:wrap; }
+  html[data-slide-embed="true"] .toy-grid,
+  html[data-slide-embed="true"] #handover-score-demo .widget-grid { grid-template-columns:1fr; height:auto; }
+  html[data-slide-embed="true"] .toy-side { grid-template-columns:1fr 1fr; }
+}
+
+/* Keep labels intact and honor model-driven SVG visibility in slide mode. */
+html[data-slide-embed="true"] .owner-chip .label { white-space:nowrap; flex:none; }
+html[data-slide-embed="true"] #toy [visibility="hidden"],
+html[data-slide-embed="true"] #toy [visibility="hidden"] * { visibility:hidden!important; }

@@ -1,0 +1,656 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="An interactive communication-basics lab showing how continuous-delay channel paths become discrete complex channel taps, with a field-level inventory of the radio-SLAM experiment data.">
+  <title>CIR → channel taps | Bai Liping</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <a class="skip-link" href="#lab">Skip to the interactive lab</a>
+
+  <header class="hero">
+    <nav class="topbar" aria-label="Page navigation">
+      <a class="brand" href="/" aria-label="Bai Liping home">
+        <span class="brand-mark" aria-hidden="true">
+          <i></i><i></i><i></i><i></i>
+        </span>
+        <span>Bai Liping</span>
+      </a>
+      <div class="topbar-links">
+        <a href="#symbols">Symbols</a>
+        <a href="#lab">Explorer</a>
+        <a href="#method">Method</a>
+        <a href="#slam-data">Experiment data</a>
+        <a href="#code">Sionna code</a>
+      </div>
+      <div class="status-pill" id="modelStatus" role="status">
+        <span></span>
+        Checking model
+      </div>
+    </nav>
+
+    <div class="hero-grid" id="top">
+      <div class="hero-copy">
+        <p class="eyebrow">COMMUNICATION BASICS · SIONNA RT 2.0.1</p>
+        <h1>From individual ray paths<br>to a channel you can filter with.</h1>
+        <p class="hero-lede">
+          <code>Paths.cir()</code> keeps every arrival separate. <code>Paths.taps()</code>
+          projects those arrivals onto a bandwidth-defined delay grid and sums them.
+          Change the paths below and watch that projection happen.
+        </p>
+        <div class="hero-actions">
+          <a class="button button-primary" href="#lab">Open the signal lab</a>
+          <a class="button button-ghost" href="#method">See the derivation</a>
+        </div>
+      </div>
+
+      <div class="hero-equation" aria-label="CIR to taps equation">
+        <div class="equation-kicker">THE WHOLE TRANSFORMATION</div>
+        <div class="equation-main">
+          <span>h</span><sub>n,ℓ</sub>
+          <b>=</b>
+          <span class="sum">Σ</span><sub>i</sub>
+          <span>a</span><sup>b</sup><sub>i</sub><span>(t</span><sub>n</sub><span>)</span>
+          <span class="sinc">sinc</span><span>(ℓ − Wτ</span><sub>i</sub><span>)</span>
+        </div>
+        <div class="equation-legend">
+          <span><i class="legend-path"></i> continuous path <em>i</em></span>
+          <span><i class="legend-grid"></i> discrete tap <em>ℓ</em></span>
+          <span><i class="legend-band"></i> bandwidth <em>W</em></span>
+        </div>
+      </div>
+    </div>
+
+    <div class="hero-stats" aria-label="Key ideas">
+      <div><strong>1/W</strong><span>seconds between adjacent taps</span></div>
+      <div><strong>continuous τ</strong><span>CIR delay axis</span></div>
+      <div><strong>complex sum</strong><span>paths combine in taps</span></div>
+      <div><strong>many → one</strong><span>inverse is not unique</span></div>
+    </div>
+  </header>
+
+  <main>
+    <section class="notation-section" id="symbols">
+      <div class="notation-heading">
+        <div>
+          <p class="eyebrow dark">SYMBOLS · UNPACKED</p>
+          <h2>How to read the equation</h2>
+        </div>
+        <p>
+          A path arrives at a continuous delay <em>τ</em><sub>i</sub>. A receiver
+          with bandwidth <em>W</em> represents it on integer tap locations
+          <em>ℓ</em>. The sinc term tells us how much of path <em>i</em> lands in
+          each tap, and the complex contributions are then added.
+        </p>
+      </div>
+
+      <aside class="notation-scope">
+        <strong>Important experiment boundary</strong>
+        <p>
+          This browser model generates its own small, synthetic one-link example; it never loads the project experiment files. The “Project · 1 GHz” button only sets <em>W</em>. The experiment exporter did not call <code>Paths.cir()</code> or <code>Paths.taps()</code>, so it did not save a CIR tensor or a channel-tap vector.
+        </p>
+      </aside>
+
+      <div class="notation-equation" aria-label="Channel tap equation with finite path sum">
+        <span>h</span><sub>n,ℓ</sub>
+        <b>=</b>
+        <span class="bounded-sum"><span>Σ</span><sup>M−1</sup><sub>i=0</sub></span>
+        <span>a</span><sup>b</sup><sub>i</sub><span>(t</span><sub>n</sub><span>)</span>
+        <span class="sinc">sinc</span><span>(ℓ − Wτ</span><sub>i</sub><span>)</span>
+      </div>
+
+      <aside class="tap-definition" aria-label="Definition of a channel tap">
+        <strong>Tap = complex coefficient</strong>
+        <p>
+          A tap is one channel value <em>h</em><sub>n,ℓ</sub>; it is not itself
+          <em>1/W</em>. The delay coordinates of two adjacent taps are
+          <em>1/W</em> seconds apart.
+        </p>
+        <code>W = 1 GHz → 1 ns between taps</code>
+      </aside>
+
+      <dl class="notation-grid">
+        <div class="symbol-card featured-symbol">
+          <dt><em>W</em></dt>
+          <dd><strong>Channel bandwidth, in hertz.</strong> It sets the spacing between adjacent taps: <span>Δτ = 1/W</span>. The tap is the complex coefficient; <span>1/W</span> is the interval between taps. <em>W</em> is not the carrier frequency <em>f</em><sub>c</sub> or channel-time sampling frequency <em>F</em><sub>s</sub>.</dd>
+        </div>
+        <div class="symbol-card">
+          <dt><em>i, M</em></dt>
+          <dd><strong>Path index and path count.</strong> The sum includes paths <span>i = 0, …, M − 1</span>. The explorer calls them P1, P2, and so on.</dd>
+        </div>
+        <div class="symbol-card">
+          <dt><em>τ</em><sub>i</sub></dt>
+          <dd><strong>Continuous delay of path <em>i</em>, in seconds.</strong> The page displays nanoseconds. Delay normalization shifts the earliest path to zero for each TX/RX link.</dd>
+        </div>
+        <div class="symbol-card">
+          <dt><em>a</em><sup>b</sup><sub>i</sub>(<em>t</em><sub>n</sub>)</dt>
+          <dd><strong>Dimensionless complex linear-amplitude coefficient of path <em>i</em> for one element pair.</strong> <span>|a<sup>b</sup><sub>i</sub>|</span> is amplitude, <span>|a<sup>b</sup><sub>i</sub>|²</span> is power gain, and its angle is phase. Superscript <em>b</em> means baseband—not power.</dd>
+        </div>
+        <div class="symbol-card">
+          <dt><em>n, t</em><sub>n</sub><em>, F</em><sub>s</sub></dt>
+          <dd><strong>Channel-time sample index, time, and sample rate.</strong> <span>t<sub>n</sub> = n/F<sub>s</sub></span>. This <em>n</em> is not the UE route-frame index.</dd>
+        </div>
+        <div class="symbol-card">
+          <dt><em>ℓ</em></dt>
+          <dd><strong>Integer delay-tap index.</strong> Its delay coordinate is <span>ℓ/W</span> relative to the selected delay origin; <em>ℓ</em> may be negative if the chosen tap range includes it.</dd>
+        </div>
+        <div class="symbol-card">
+          <dt><em>h</em><sub>n,ℓ</sub></dt>
+          <dd><strong>Complex channel tap.</strong> It is the vector sum of every path contribution at time sample <em>n</em> and tap <em>ℓ</em>.</dd>
+        </div>
+        <div class="symbol-card">
+          <dt>sinc(<em>x</em>)</dt>
+          <dd><strong>Normalized sinc function.</strong> Here <span>sinc(x) = sin(πx)/(πx)</span>, with <span>sinc(0) = 1</span>.</dd>
+        </div>
+        <div class="symbol-card">
+          <dt>Σ</dt>
+          <dd><strong>Complex vector sum over paths.</strong> Real and imaginary parts add, so paths can reinforce or cancel. It is not a sum of powers.</dd>
+        </div>
+      </dl>
+
+      <div class="notation-details-row">
+        <details class="notation-details">
+          <summary>API names, settings, and tensor axes <span>+</span></summary>
+          <div class="notation-details-body">
+            <div>
+              <h3>Returned names</h3>
+              <p><code>a_cir</code> and <code>tau</code> are the per-path baseband coefficients and delays returned by <code>cir()</code>; together they represent the path-resolved CIR. <code>h</code> is the tap tensor returned by <code>taps()</code>.</p>
+            </div>
+            <div>
+              <h3>Time and delay settings</h3>
+              <p><code>sampling_frequency</code> is <em>F</em><sub>s</sub>, the Doppler/time sampling rate—not <em>W</em>. <code>num_time_steps</code> chooses the number of <em>n</em> samples. <code>bandwidth</code>, <code>l_min</code>, and <code>l_max</code> define the tap grid.</p>
+            </div>
+            <div>
+              <h3>Normalization</h3>
+              <p><code>normalize_delays</code> removes each link’s earliest delay. <code>normalize</code> scales each link so its average total energy, summed over taps, is one. <code>out_type</code> selects the returned array framework.</p>
+            </div>
+            <div>
+              <h3>Axes</h3>
+              <p><code>rx</code>/<code>tx</code> are receiver/transmitter device axes—a receiver/transmitter pair defines one link. <code>rx_ant</code>/<code>tx_ant</code> are array elements; <code>path</code>, <code>time</code>, and <code>tap</code> are the <em>i</em>, <em>n</em>, and <em>ℓ</em> axes.</p>
+            </div>
+            <div>
+              <h3>Doppler and imaginary unit</h3>
+              <p><em>f</em><sub>D,i</sub> is path <em>i</em>’s Doppler shift in hertz and rotates it through <code>exp(j2πf<sub>D,i</sub>t)</code>. <em>j</em> is the imaginary unit, <span>j² = −1</span>; <em>i</em> is reserved for the path index.</p>
+            </div>
+            <div>
+              <h3>Explorer helper</h3>
+              <p><em>g</em><sub>i</sub>[<em>ℓ</em>] is the real projection weight <code>sinc(ℓ − Wτ<sub>i</sub>)</code>, used by the explorer to show one path’s footprint on the tap grid.</p>
+            </div>
+          </div>
+        </details>
+
+        <details class="notation-details">
+          <summary>Experiment acronyms and field symbols <span>+</span></summary>
+          <div class="notation-details-body">
+            <div>
+              <h3>Radio roles</h3>
+              <p><strong>BS</strong> is the fixed base station and <strong>UE</strong> is the moving user equipment. <strong>LOS</strong> means line of sight.</p>
+            </div>
+            <div>
+              <h3>Angles</h3>
+              <p><strong>AoD</strong>/<strong>AoA</strong> mean angle of departure/arrival. Raw Sionna fields <code>theta_*</code> and <code>phi_*</code> are zenith and azimuth angles, respectively.</p>
+            </div>
+            <div>
+              <h3>Detection</h3>
+              <p><em>P</em><sub>D</sub> is the simulated probability of detecting a true propagation path. It is unrelated to path labels P1, P2, … in the explorer. <em>σ</em> denotes a noise standard deviation.</p>
+            </div>
+            <div>
+              <h3>Geometry and gain</h3>
+              <p><code>x, y, z</code> are world-frame metres in truth and provenance fields; the current estimator-facing measurement does not contain Cartesian coordinates. <code>path_length_m</code> is total delay × <em>c</em>, and azimuth/elevation are world-axis-aligned AoA at the UE. For true detections, <code>amplitude_db</code> starts from array-summed path power gain and receives additive dB noise; clutter receives a synthetic uniform dB value. It has no phase and is not <span>20 log<sub>10</sub>|a<sup>b</sup><sub>i</sub>|</span>. “CSI” in a raw filename means path-aligned coefficient matrices here—not a sampled frequency-grid CSI tensor.</p>
+            </div>
+          </div>
+        </details>
+      </div>
+    </section>
+
+    <section class="section-intro" id="lab">
+      <div>
+        <p class="eyebrow dark">LIVE MODEL</p>
+        <h2>Build a CIR. Then sample what the radio can resolve.</h2>
+      </div>
+      <p>
+        Each colored impulse is one synthetic path. Bandwidth determines the delay
+        grid spacing and nominal delay resolution; phase determines whether paths reinforce or cancel after they
+        land in the same tap.
+      </p>
+    </section>
+
+    <section class="lab-shell" aria-label="Interactive CIR to taps explorer">
+      <aside class="control-panel" aria-label="Model controls">
+        <div class="control-heading">
+          <div>
+            <p class="panel-kicker">INPUTS</p>
+            <h3>Signal controls</h3>
+          </div>
+          <button class="icon-button" id="resetButton" type="button" title="Reset the example" aria-label="Reset example">
+            ↺
+          </button>
+        </div>
+
+        <div class="global-control">
+          <div class="control-label-row">
+            <label for="bandwidth">Bandwidth <em>W</em></label>
+            <output id="bandwidthValue" for="bandwidth">200 MHz</output>
+          </div>
+          <input id="bandwidth" type="range" min="50" max="1000" step="10" value="200">
+          <div class="range-ends"><span>50 MHz</span><span>1 GHz</span></div>
+          <div class="preset-row" aria-label="Bandwidth presets">
+            <button type="button" data-bandwidth="100">100 MHz</button>
+            <button type="button" data-bandwidth="200">200 MHz</button>
+            <button type="button" data-bandwidth="1000">Project config · 1 GHz</button>
+          </div>
+        </div>
+
+        <div class="global-control time-control">
+          <div class="control-label-row">
+            <label for="time">Channel time <em>t</em></label>
+            <output id="timeValue" for="time">0.0 ms</output>
+          </div>
+          <div class="time-row">
+            <button class="play-button" id="playButton" type="button" aria-label="Play Doppler evolution" aria-pressed="false">
+              <span class="play-icon" aria-hidden="true"></span>
+            </button>
+            <input id="time" type="range" min="0" max="50" step="0.1" value="0">
+          </div>
+          <p class="control-help">Doppler rotates each complex path coefficient over time.</p>
+        </div>
+
+        <label class="toggle-row">
+          <span>
+            <strong>Normalize delays</strong>
+            <small>This single-link model shifts its earliest path to τ = 0; Sionna applies the shift separately per TX/RX link.</small>
+          </span>
+          <input id="normalizeDelays" type="checkbox" checked>
+          <i aria-hidden="true"></i>
+        </label>
+
+        <div class="path-section-heading">
+          <div>
+            <p class="panel-kicker">CIR COMPONENTS</p>
+            <h3>Propagation paths</h3>
+          </div>
+          <span id="pathCountBadge">3 paths</span>
+        </div>
+
+        <div id="pathList" class="path-list" aria-live="polite"></div>
+
+        <button class="add-path-button" id="addPathButton" type="button">
+          <span>＋</span> Add another path
+        </button>
+      </aside>
+
+      <div class="workspace">
+        <div class="pipeline-strip" aria-label="Transformation stages">
+          <div class="pipeline-step active">
+            <span>01</span>
+            <div><strong>Paths.cir()</strong><small>continuous delays</small></div>
+          </div>
+          <i aria-hidden="true">→</i>
+          <div class="pipeline-step">
+            <span>02</span>
+            <div><strong>sinc projection</strong><small>band-limit to W</small></div>
+          </div>
+          <i aria-hidden="true">→</i>
+          <div class="pipeline-step">
+            <span>03</span>
+            <div><strong>Paths.taps()</strong><small>discrete delay bins</small></div>
+          </div>
+        </div>
+
+        <article class="plot-card cir-card">
+          <div class="plot-heading">
+            <div>
+              <p class="plot-kicker">STAGE 01 · CONTINUOUS DELAY</p>
+              <h3>The CIR keeps paths separate</h3>
+              <p>Drag an impulse, or use the controls. The arrow inside each marker shows complex phase.</p>
+            </div>
+            <div class="plot-metric">
+              <span>earliest arrival</span>
+              <strong id="earliestDelay">0.00 ns</strong>
+            </div>
+          </div>
+          <svg id="cirPlot" class="plot" viewBox="0 0 900 300" role="img" aria-label="Continuous channel impulse response plot"></svg>
+        </article>
+
+        <article class="plot-card kernel-card">
+          <div class="plot-heading compact">
+            <div>
+              <p class="plot-kicker">STAGE 02 · BAND-LIMITED PROJECTION</p>
+              <h3>One sinc kernel per path</h3>
+              <p>The dots are the weights applied at each discrete tap location.</p>
+            </div>
+            <div class="path-selector" id="pathSelector" aria-label="Select a path kernel"></div>
+          </div>
+          <div class="formula-ribbon">
+            <span id="kernelPathName">P1</span>
+            <code>g<sub>i</sub>[ℓ] = sinc(ℓ − Wτ<sub>i</sub>)</code>
+            <strong id="fractionalTap">center = tap 0.00</strong>
+          </div>
+          <svg id="kernelPlot" class="plot kernel-plot" viewBox="0 0 900 250" role="img" aria-label="Sinc projection kernel plot"></svg>
+        </article>
+
+        <article class="plot-card taps-card">
+          <div class="plot-heading">
+            <div>
+              <p class="plot-kicker">STAGE 03 · DISCRETE CHANNEL</p>
+              <h3>Paths combine into channel taps</h3>
+              <p>Select a tap to inspect the complex contribution from every path.</p>
+            </div>
+            <div class="tap-metrics">
+              <div><span>tap spacing</span><strong id="tapSpacing">5.00 ns</strong></div>
+              <div><span>tap count</span><strong id="tapCount">—</strong></div>
+            </div>
+          </div>
+          <svg id="tapsPlot" class="plot" viewBox="0 0 900 310" role="img" aria-label="Discrete channel taps plot"></svg>
+        </article>
+
+        <article class="inspection-card" aria-live="polite">
+          <div class="inspection-summary">
+            <p class="plot-kicker">COMPLEX SUM AT THE SELECTED TAP</p>
+            <div class="selected-tap-title">
+              <h3 id="selectedTapTitle">Tap ℓ = 0</h3>
+              <span id="selectedTapDelay">delay 0.00 ns</span>
+            </div>
+            <div class="complex-readout">
+              <div><span>magnitude</span><strong id="selectedMagnitude">—</strong></div>
+              <div><span>phase</span><strong id="selectedPhase">—</strong></div>
+              <div><span>complex value</span><strong id="selectedComplex">—</strong></div>
+            </div>
+          </div>
+          <div class="contribution-panel">
+            <p class="scroll-cue">Swipe horizontally to inspect every contribution <span aria-hidden="true">→</span></p>
+            <div class="contribution-header">
+              <span>path</span><span>sinc weight</span><span>complex contribution</span>
+            </div>
+            <div id="contributionList"></div>
+            <div class="sum-rule"><span></span><strong>Σ</strong><em>vector sum, not a power sum</em></div>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <section class="method-section" id="method">
+      <div class="method-heading">
+        <p class="eyebrow dark">HOW TO GET ONE FROM THE OTHER</p>
+        <h2>CIR → taps is a projection.<br>Taps → individual paths is an estimation problem.</h2>
+      </div>
+
+      <div class="method-grid">
+        <article class="method-card forward-card">
+          <div class="method-number">01</div>
+          <p class="method-tag">FORWARD · DETERMINISTIC</p>
+          <h3>Continuous CIR to taps</h3>
+          <ol>
+            <li><span>Choose bandwidth <em>W</em>.</span><small>This fixes tap spacing—and nominal delay resolution—at Δτ = 1/W.</small></li>
+            <li><span>Evaluate a sinc at every tap.</span><small>Each off-grid path spreads across neighboring bins.</small></li>
+            <li><span>Sum complex contributions.</span><small>Magnitude and phase decide reinforcement or cancellation.</small></li>
+          </ol>
+          <div class="method-verdict success"><i>✓</i><span>Deterministic for a selected path-resolved CIR, time samples, W, tap range, and normalization.</span></div>
+        </article>
+
+        <article class="method-card reverse-card">
+          <div class="method-number">02</div>
+          <p class="method-tag">REVERSE · GENERALLY NON-UNIQUE</p>
+          <h3>Taps back to individual paths</h3>
+          <ol>
+            <li><span>A tap may contain several paths.</span><small>The path identity was removed by the sum.</small></li>
+            <li><span>Finite bandwidth blurred the delays.</span><small>Sub-tap delays appear only through the sinc pattern.</small></li>
+            <li><span>Recovery needs assumptions.</span><small>SAGE or sparse super-resolution estimates a likely CIR.</small></li>
+          </ol>
+          <div class="method-verdict warning"><i>!</i><span>Unique recovery needs additional assumptions and sufficient observations; a finite tap vector generally does not preserve path identity.</span></div>
+        </article>
+      </div>
+
+      <div class="resolution-demo">
+        <div>
+          <p class="panel-kicker">THE BANDWIDTH LEVER</p>
+          <h3>More bandwidth gives a finer delay grid.</h3>
+          <p>The experiment configuration records <em>W</em> = 1 GHz. If taps are later computed at that bandwidth, adjacent tap indices are 1 ns apart—equivalent to about 30 cm of one-way propagation-path difference (or 15 cm of monostatic radar range).</p>
+        </div>
+        <div class="resolution-scale" aria-label="Delay resolution examples">
+          <div><span style="--width: 100%"></span><strong>100 MHz</strong><em>10 ns · 3.00 m</em></div>
+          <div><span style="--width: 50%"></span><strong>200 MHz</strong><em>5 ns · 1.50 m</em></div>
+          <div><span style="--width: 10%"></span><strong>1 GHz</strong><em>1 ns · 0.30 m</em></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="slam-data-section" id="slam-data">
+      <div class="slam-data-heading">
+        <div>
+          <p class="eyebrow dark">RADIO-SLAM EXPERIMENT</p>
+          <h2>What was actually stored?</h2>
+        </div>
+        <p>
+          This was a reproducible Sionna RT simulation, not a physical-radio
+          capture. “Stored directly,” “derived,” and “simulated downstream” are
+          separated below because they are different data boundaries. The list
+          follows the serializer fields in the current source checkout; bulk
+          generated artifacts live outside this website repository.
+        </p>
+      </div>
+
+      <div class="experiment-facts" aria-label="Experiment setup">
+        <div><span>source</span><strong>synthetic radio</strong></div>
+        <div><span>configured carrier bands</span><strong>6.75 and 16.95 GHz</strong></div>
+        <div><span>configured bandwidth</span><strong>1 GHz</strong></div>
+        <div class="fact-alert"><span>saved CIR / taps</span><strong>neither</strong></div>
+      </div>
+
+      <div class="inventory-legend" aria-label="Data status legend">
+        <span class="status-badge status-input">fixed input</span>
+        <span class="status-badge status-direct">stored directly</span>
+        <span class="status-badge status-derived">derived / repackaged</span>
+        <span class="status-badge status-simulated">simulated downstream</span>
+        <span class="status-badge status-none">not stored</span>
+      </div>
+
+      <div class="slam-data-grid" aria-label="Complete radio-SLAM data inventory">
+        <article class="slam-data-card input-data-card">
+          <div class="data-stage"><span>01</span><em class="status-input">FIXED INPUT · NOT AN OBSERVATION</em></div>
+          <h3>Scene, route, radio metadata, and solver configuration</h3>
+          <p>These configure or document the run and make it reproducible.</p>
+          <ul>
+            <li>3-D scene meshes, Mitsuba/Sionna scene, object names, and radio materials</li>
+            <li>fixed BS position and the named, ordered UE route</li>
+            <li>weather, trajectory type, frame count, nominal speed, seed, and scene variant; derived timing is stored in summaries</li>
+            <li>carrier, materials, BS 8 × 8 / UE 4 × 4 arrays, and antenna pattern/polarization configure the ray-tracing solve</li>
+            <li>bandwidth, horn HPBW, and BS power are recorded radio metadata/downstream assumptions; exported path gains exclude transmit power</li>
+            <li>LOS/reflection/diffuse/refraction/diffraction flags, depth policy, path samples, and path cap</li>
+          </ul>
+        </article>
+
+        <article class="slam-data-card direct-data-card">
+          <div class="data-stage"><span>02</span><em class="status-direct">STORED DIRECTLY · FRAME JSON</em></div>
+          <h3>Solver output and path geometry for every frame</h3>
+          <p>The JSON preserves run context plus one structured record for each valid propagation path.</p>
+          <ul>
+            <li>frame index/count, timestamp, route, weather, scene, variant, seed, band, frequency, and radio/solver configuration</li>
+            <li>BS position; UE position and velocity; valid/dropped/window-involved path counts; CSI filename and format</li>
+            <li>per path: RX/TX/path indices, <code>delay_s</code>, <code>doppler_hz</code>, and departure/arrival <code>theta</code> (zenith) and <code>phi</code> (azimuth)</li>
+            <li>per path: linear and dB gain summed over the antenna array</li>
+            <li>per interaction: depth, type/code, object ID/name, material, primitive ID, and world-frame <code>vertex_xyz_m</code></li>
+            <li>object and interaction-code maps, including specular, diffuse, refraction, and diffraction codes</li>
+          </ul>
+        </article>
+
+        <article class="slam-data-card coefficient-data-card">
+          <div class="data-stage"><span>03</span><em class="status-direct">STORED DIRECTLY · PATH COEFFICIENT NPZ</em></div>
+          <h3>Complex MIMO coefficient matrix for each path</h3>
+          <p>Each frame’s sidecar contains one array named <code>a</code>, aligned with the JSON path order.</p>
+          <ul>
+            <li><code>a</code>: <code>complex64 [P, 16, 64]</code> for <em>P</em> paths, 16 UE elements, and 64 BS elements</li>
+            <li><code>a[i]</code> is the full per-element matrix aligned with JSON list entry <code>paths[i]</code>; the stored <code>path_index</code> is a separate source ID and need not equal <em>i</em></li>
+            <li>a blackout frame keeps shape <code>[0, 16, 64]</code></li>
+            <li><code>Σ |a[i]|²</code> over antenna elements matches that list entry’s stored linear path gain</li>
+            <li>raw <code>a</code> is Sionna <code>Paths.a</code>, the passband path coefficient—not <em>a</em><sup>b</sup><sub>i</sub>(<em>t</em><sub>n</sub>) above or <code>amplitude_db</code>; <code>cir()</code> applies carrier-delay phase and optional Doppler evolution, adding a time axis</li>
+            <li><strong>Despite the “CSI” filename, this is not a sampled CIR, tap vector, OFDM grid, or frequency-grid channel response.</strong></li>
+          </ul>
+        </article>
+
+        <article class="slam-data-card direct-data-card">
+          <div class="data-stage"><span>04</span><em class="status-direct">STORED DIRECTLY · SUMMARIES + KINEMATIC REPEAT</em></div>
+          <h3>Run manifest, frame index, timing, and motion context</h3>
+          <p>Summary files bind individual frames into a reproducible run. The kinematic tree is a separate solve that writes the same JSON + coefficient schema; both raw-v3 and kinematic records include timestamps, UE velocity, and Doppler.</p>
+          <ul>
+            <li>scene, route, trajectory/weather, carrier/radio, BS position, solver options, and output filenames</li>
+            <li>per-frame seed, UE position/velocity, timestamp, path count, and file reference</li>
+            <li>time origin, frame interval/rate, nominal speed, route length, closed-route flag, and Doppler model/source</li>
+            <li>operational manifest: run status, arguments, interpreter, timestamps, job ID, artifact directories, and preservation hashes</li>
+          </ul>
+        </article>
+
+        <article class="slam-data-card derived-data-card">
+          <div class="data-stage"><span>05</span><em class="status-derived">DERIVED / REPACKAGED · LAMBDA COMPACT NPZ</em></div>
+          <h3>Phase-center paths plus geometry and provenance</h3>
+          <p>This export reshapes the raw path records for LAMBDA-style processing; it is not a new sensor measurement.</p>
+          <ul>
+            <li><code>a_real</code>/<code>a_imag</code> phase-center scalar coefficient; <code>tau</code>; four Sionna angles; Doppler; gain; path index and interaction count</li>
+            <li>padded interaction codes, vertices, object IDs, and primitive IDs for each path</li>
+            <li>TX/UE position, UE velocity, TX/RX rotations, and array shapes</li>
+            <li>frame/time, carrier, weather, trajectory type, source files/schema, phase-center/reference-element model, Doppler source, and interaction-code map</li>
+            <li>source reference coefficient retained for reconstruction checks; the original 16 × 64 matrices remain in the raw sidecars</li>
+          </ul>
+        </article>
+
+        <article class="slam-data-card truth-data-card">
+          <div class="data-stage"><span>06</span><em class="status-derived">DERIVED · EVALUATION TRUTH</em></div>
+          <h3>World-frame BS, UE trajectory, and reflection map</h3>
+          <p>Selected ray geometry is flattened into Parquet tables used to generate measurements and score results.</p>
+          <ul>
+            <li>frame rows: <code>kind, x, y, z, amplitude_db, material, path_index, depth_index, interaction_type, path_bounce_count</code></li>
+            <li>one BS row, one true UE row, and retained specular/diffuse reflection-point rows</li>
+            <li>per-path truth tables add total delay-derived length, the pose-independent prefix length, the final bounce vertex, LOS state, bounce count, and gain</li>
+            <li>separate true trajectory: <code>frame_index, x, y, z</code></li>
+            <li>summary: coordinate frame, storage schema, LOS counts/gain availability, reflection/material counts, dropped-zero-gain counts, and source files</li>
+          </ul>
+        </article>
+
+        <article class="slam-data-card measurement-data-card">
+          <div class="data-stage"><span>07</span><em class="status-simulated">SIMULATED DOWNSTREAM · SLAM MEASUREMENTS</em></div>
+          <h3>Noisy UE-relative radio-path detections</h3>
+          <p>Monte Carlo generation samples a per-trial UE trajectory deviation, adds measurement noise, drops detections, adds clutter, and shuffles every frame. The nominal ray-traced reflection locations, visibility/LOS state, and baseline gains remain fixed across trials.</p>
+          <ul>
+            <li>measurement fields: <code>path_length_m, azimuth_rad, elevation_rad, amplitude_db</code>; path length is the total bistatic BS→bounce(s)→UE length from delay × <em>c</em>, and AoA points toward the last bounce</li>
+            <li>stored provenance fields, withheld from estimators: <code>is_clutter, is_bs, source_path_index, source_bounce_count, bounce_x, bounce_y, bounce_z</code></li>
+            <li>per-trial true UE trajectory plus band/trial summaries, seeds, counts, noise, clutter, and motion policies</li>
+            <li>current generator defaults: <em>P</em><sub>D</sub> = 0.8; σ<sub>path length</sub> = 0.30 m; σ<sub>angle</sub> = 0.5°; σ<sub>amplitude</sub> = 1 dB; detections below −135 dB after noise are removed</li>
+            <li>current clutter defaults: Poisson mean 50, 200 m radius, absolute <em>z</em> ceiling 40 m, and −135 to −115 dB; these are source defaults, not a claim about every archived run</li>
+            <li>the current source defaults to one trial with base seed <code>20260703</code>; archived run counts must be read from that run’s summary</li>
+          </ul>
+        </article>
+
+        <article class="slam-data-card missing-data-card">
+          <div class="data-stage"><span>08</span><em class="status-none">NOT STORED</em></div>
+          <h3>Representations and sensor streams not stored</h3>
+          <p>The saved path ingredients can support later derivation, but the following are absent as experiment artifacts.</p>
+          <ul>
+            <li>no saved <code>Paths.cir()</code> return tensor; delays and path coefficients exist separately in the raw exports</li>
+            <li>no saved <code>Paths.taps()</code> tensor <code>h[n, ℓ]</code></li>
+            <li>no sampled RF/IQ or baseband waveform, OFDM resource grid, or frequency-grid CFR/CSI tensor</li>
+            <li>no camera/RGB, depth, LiDAR, or IMU observations</li>
+          </ul>
+        </article>
+      </div>
+
+      <aside class="estimator-boundary">
+        <div>
+          <p class="panel-kicker">ESTIMATOR BOUNDARY</p>
+          <h3>What SLAM sees—and what it does not</h3>
+        </div>
+        <p>
+          The shared fairness reader passes only an <code>N × 3</code> array of
+          <code>path_length_m, azimuth_rad, elevation_rad</code> plus the aligned
+          amplitude vector. The frame-0 UE position and BS world position are
+          declared known inputs. No Cartesian detection is handed to a method;
+          any bounce point must be inferred from the radio geometry at a proposed
+          pose. All later trajectory truth, BS/clutter labels, true bounce
+          coordinates, provenance, materials, and LOS flags are withheld.
+        </p>
+      </aside>
+
+      <details class="derived-products">
+        <summary>Downstream products derived from the stored data <span>+</span></summary>
+        <div>
+          <p><strong>Visualizations:</strong> point-cloud renders, channel/PDP/CFR plots, GIFs, and diagnostic figures. Plotting code may synthesize a frequency response in memory, but does not save it as collected CSI.</p>
+          <p><strong>SAGE branch:</strong> synthesizes a wideband observation <em>Y</em> in memory from saved coefficients and delays, then estimates path delay, AoA/AoD, complex amplitude, class, triangulated point, gates, and reliability. <em>Y</em> is not a stored raw artifact.</p>
+          <p><strong>SLAM outputs:</strong> estimated trajectories/maps, method diagnostics, PLY conversions, scores, and comparison reports. These are results—not sensor observations.</p>
+        </div>
+      </details>
+
+      <p class="artifact-note">
+        Audit scope: the current checkout contains the serializers and schemas,
+        but not the bulk generated frame artifacts, so this inventory describes
+        what the code writes rather than claiming realized frame or trial counts.
+        Large generated datasets are routed outside the website and Git history.
+      </p>
+    </section>
+
+    <section class="code-section" id="code">
+      <div class="code-copy">
+        <p class="eyebrow">SIONNA RT 2.0.1</p>
+        <h2>How CIR and taps can be derived later</h2>
+        <p>
+          <code>cir()</code> returns per-path complex coefficients and delays.
+          <code>taps()</code> calls that CIR internally, applies the sinc projection,
+          and removes the path axis by summing it.
+          The formula and signatures follow the official
+          <a href="https://nvlabs.github.io/sionna/rt/api/paths.html" target="_blank" rel="noopener">Sionna RT 2.0.1 Paths documentation</a>.
+        </p>
+        <p class="code-boundary"><strong>Illustrative API example:</strong> these calls explain the transformation, but they were not run by the project collection exporter.</p>
+        <div class="shape-list">
+          <div><span>CIR coefficient return shape · not stored</span><code>[rx, rx_ant, tx, tx_ant, path, time]</code></div>
+          <div><span>Tap return shape · not stored</span><code>[rx, rx_ant, tx, tx_ant, time, tap]</code></div>
+        </div>
+      </div>
+
+      <div class="code-window">
+        <div class="code-titlebar">
+          <div><i></i><i></i><i></i></div>
+          <span>sionna_cir_to_taps.py</span>
+          <button id="copyCodeButton" type="button">Copy</button>
+        </div>
+        <pre><code id="codeSample"><span class="code-comment"># Individual paths with continuous delays</span>
+a_cir, tau = paths.cir(
+    sampling_frequency=1_000,
+    num_time_steps=64,
+    normalize_delays=True,
+    out_type="numpy",
+)
+
+<span class="code-comment"># The same paths projected to a 1 GHz delay grid</span>
+h = paths.taps(
+    bandwidth=1e9,         <span class="code-comment"># Δτ = 1 ns</span>
+    l_min=0,
+    l_max=200,
+    sampling_frequency=1_000,
+    num_time_steps=64,
+    normalize=False,
+    normalize_delays=True,
+    out_type="numpy",
+)</code></pre>
+      </div>
+    </section>
+
+    <section class="takeaway-section">
+      <p class="eyebrow dark">THE SHORT VERSION</p>
+      <blockquote>
+        CIR says <em>which paths arrived, when, and with what complex weight.</em><br>
+        Taps say <em>what a bandwidth-limited discrete receiver sees.</em><br>
+        The experiment saved <em>the path-resolved ingredients—not either derived output.</em>
+      </blockquote>
+      <a href="#lab">Experiment again <span>↑</span></a>
+    </section>
+  </main>
+
+  <footer>
+    <span><a href="/">Bai Liping</a> · Communication Basics</span>
+    <span>Dependency-free · runs entirely in your browser</span>
+  </footer>
+
+  <div class="tooltip" id="tooltip" role="tooltip" hidden></div>
+  <script src="app.js" defer></script>
+</body>
+</html>

@@ -1,0 +1,25 @@
+/* Match the white, navy, and teal EO handover presentation. */
+body[data-interactive-slides="target-handover"] {
+  --interactive-outer: #ffffff;
+  --interactive-paper: #ffffff;
+  --interactive-panel: #ffffff;
+  --interactive-ink: #16273e;
+  --interactive-muted: #596d80;
+  --interactive-rule: #d8e1e9;
+  --interactive-accent: #087f68;
+  --interactive-accent-soft: #edf7f3;
+  --interactive-serif: Arial, Helvetica, sans-serif;
+  --interactive-sans: Arial, Helvetica, sans-serif;
+  --interactive-shadow: none;
+  background: #ffffff;
+}
+
+.app-header,
+.scene-card,
+.control-card {
+  background: #ffffff;
+  border-color: #d8e1e9;
+  box-shadow: none;
+}
+
+.plot-background { fill: #f2f6fa; }

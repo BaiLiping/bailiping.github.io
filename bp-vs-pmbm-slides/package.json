@@ -1,0 +1,12 @@
+{
+  "name": "bp-pmbm-slides-build",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Build the public BP and PMBM presentation independently",
+  "scripts": {
+    "build": "node build-deck.mjs"
+  },
+  "dependencies": {
+    "mathjax-full": "3.2.1"
+  }
+}
