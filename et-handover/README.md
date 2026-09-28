@@ -1,4 +1,4 @@
-# Scalable Extended-Target Handover
+# Scalable Extended-Target Handover in Distributed Integrated Sensing and Communication
 
 Public presentation at <https://bailiping.com/et-handover/>.
 The 22 regular Bento slides include two introduction/live pairs,
@@ -50,7 +50,7 @@ then checks controls, navigation away during loading, revisits, and print previe
 
 ## Preserved presentation details
 
-- The cover uses the title **Scalable Extended-Target Handover**,
+- The cover uses the title **Scalable Extended-Target Handover in Distributed Integrated Sensing and Communication**,
   and the same white background and dark text as the rest of the deck. Its
   centered Figure 1 is copied unchanged from
   `Drawings/Target Handover.png` at writing revision `7d88f02` to

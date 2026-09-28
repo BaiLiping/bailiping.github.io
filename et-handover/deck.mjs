@@ -1,6 +1,7 @@
 // EO-specific authoring source. The local builder preserves the Bento runtime.
 const C = { paper:'#ffffff', ink:'#16273e', muted:'#596d80', rule:'#d8e1e9', wash:'#f2f6fa', green:'#087f68', blue:'#2766b1', orange:'#b96815', purple:'#7854a3', red:'#c62828' };
 const FONT = 'Arial, Helvetica, sans-serif';
+const TITLE = 'Scalable Extended-Target Handover in Distributed Integrated Sensing and Communication';
 const tex = (s, block=false) => `<span class="math-tex math-${block?'display':'inline'}">${block?'\\[':'\\('}${s}${block?'\\]':'\\)'}</span>`;
 const eq = s => tex(s,true);
 const T = (id,x,y,w,h,html,size=24,color=C.ink,weight=400) => ({id,type:'text',x,y,w,h,html,fontSize:size,fontFamily:FONT,fontWeight:weight,color,align:'left',valign:'top',lineHeight:1.25,rotation:0,opacity:1});
@@ -39,11 +40,11 @@ function build() {
   const slides = [];
   slides.push({id:'s-cover',background:C.paper,transition:'none',notes:'Introduce grouped-measurement belief propagation (GrBP). This talk separates the local method, its processing schedule, and track-level handover. Figure 1 is reproduced unchanged from the manuscript: gray discs denote sensing fields of view, blue is the target trajectory, black dots are incidence points, and red highlights handover. The central unit depicts the coordinated baseline.',elements:[
     T('eyebrow',72,35,1136,24,'DISTRIBUTED ISAC / EXTENDED-TARGET TRACKING',13,C.green,700),
-    T('cover-title',72,79,1136,76,'Scalable Extended-Target Handover',52,C.ink,700),
-    T('point-target-reference',72,151,640,26,'<a class="cover-reference" href="/target-handover-slides/"><span>extention of point-target handover</span><span aria-hidden="true"> →</span></a>',17,C.green,600),
-    {...T('paper-reference',752,151,456,26,'<a class="cover-reference" href="https://arxiv.org/abs/2609.25737"><span>Paper · arXiv:2609.25737</span><span aria-hidden="true"> →</span></a>',17,C.green,600),align:'right'},
-    R('rule',72,185,1136,1,C.rule),
-    I('manuscript-figure-1','./assets/manuscript-figure-1.png',220,200,840,458,'Figure 1: extended-target handover in a DISAC network, with overlapping sensing regions, a target trajectory, and a red handover arrow.'),
+    T('cover-title',72,70,1136,108,TITLE,42,C.ink,700),
+    T('point-target-reference',72,194,640,26,'<a class="cover-reference" href="/target-handover-slides/"><span>extention of point-target handover</span><span aria-hidden="true"> →</span></a>',17,C.green,600),
+    {...T('paper-reference',752,194,456,26,'<a class="cover-reference" href="https://arxiv.org/abs/2609.25737"><span>Paper · arXiv:2609.25737</span><span aria-hidden="true"> →</span></a>',17,C.green,600),align:'right'},
+    R('rule',72,228,1136,1,C.rule),
+    I('manuscript-figure-1','./assets/manuscript-figure-1.png',220,244,840,414,'Figure 1: extended-target handover in a DISAC network, with overlapping sensing regions, a target trajectory, and a red handover arrow.'),
     T('author',72,682,420,18,'Current manuscript companion',13,C.muted),
     T('figure-caption',590,682,618,18,'Fig. 1 · Extended-target handover in a DISAC network.',13,C.muted)
   ]});
@@ -159,8 +160,8 @@ function build() {
 }
 export default {
   target:'et-handover/index.html',docId:'eo-handover-grbp-2026-09',
-  title:'Scalable Extended-Target Handover',subject:'GrBP processing architectures and owner-centered handover',
-  description:'Paper-aligned GrBP diagrams, four handover variants, and interactive examples.',
+  title:TITLE,subject:'GrBP processing architectures and owner-centered handover',
+  description:'Scalable extended-target handover in distributed integrated sensing and communication (ISAC): GrBP diagrams, four handover variants, and interactive examples.',
   footer:'GrBP · Extended-target handover',ink:C.ink,paper:C.paper,accent:C.green,
   fontFamily:FONT,build
 };
