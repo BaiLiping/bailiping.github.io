@@ -1,14 +1,18 @@
 # Scalable Extended-Target Handover in Distributed Integrated Sensing and Communication
 
 Public presentation at <https://bailiping.com/et-handover/>.
-The 25 regular Bento slides include two introduction/live pairs,
+The 26 regular Bento slides include two introduction/live pairs,
 GrBP processing diagrams, the factorization and likelihood functions on page 3,
 a simulation-environment animation, results, and
-seven failure-analysis slides immediately before the conclusion, including the
-Clustering Error Type I pages with the legacy-track existence-belief update and
-a numerical table for zero through five retained detections. Type I means
+eight failure-analysis slides immediately before the conclusion, including the
+Clustering Error page with the legacy-track existence-belief update and a
+Clustering Error Type I page with a numerical table for zero through five
+retained detections. Type I means
 fewer elements in the estimated cluster than in the true cluster; the true size
 of five is highlighted, and zero is treated as the missed-detection case.
+The following Clustering Error Type II page adds zero through three farther
+clutter points to the five true detections and compares group sizes five through
+eight using a fixed smaller per-measurement likelihood ratio for clutter.
 The previous `/eo-handover-slides/` and `/eo-handover-slides/live/` URLs redirect
 here, preserving query parameters and slide bookmarks.
 

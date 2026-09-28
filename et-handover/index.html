@@ -4730,7 +4730,7 @@
    "id": "s-failure-clustering-error",
    "background": "#ffffff",
    "transition": "none",
-   "notes": "Clustering Error Type I means that the estimated cluster contains fewer elements than the true cluster. This page gives the existence-probability update for legacy tracks only. The legacy component index is p; x and E are the kinematic and extent integration variables. Time and base-station indices are suppressed, as is conditioning on past measurements and the fixed current partition. Alpha is the predicted normalized augmented-state density, so its r=1 integral is the predicted existence probability. Gamma is the likelihood-factor-to-state message after BP association. The normalized state belief is proportional to alpha times gamma. Integrating its r=1 branch gives the displayed existence belief; the denominator sums both existence branches and integrates over x and E, including the normalized dummy-state representation for r=0. The tilde marks a BP belief approximating the posterior, not an exact marginal of the full multi-target model. The message m from a^p to the legacy local factor contains the association information from the consistency subgraph and is not a posterior association probability. Summing the product of that incoming message and the legacy factor over all group assignments produces gamma; this avoids feeding a posterior association probability back into the likelihood and counting local evidence twice. For r=0, only a=0 contributes, so gamma(x,E,0)=m(0), independent of x and E. For r=1, the null-assignment term includes exp(-mu_m(x,E)) and each non-null term uses the explicit grouped legacy factor on the factorization slide. A Type I clustering error leaves fewer elements in the target cluster, changing its group factor and potentially the BP association messages. It can reduce support for an existing track, but no monotonic decrease is claimed for every Type I error. The scope is existing legacy tracks, with no newborn update or birth intensity. The normalization and marginalization follow the legacy belief calculation in Meyer et al., Message Passing Algorithms for Scalable Multitarget Tracking, Sec. IX-A5–6, with extent included in the augmented state.",
+   "notes": "Clustering error: existence-probability update for legacy tracks only. The legacy component index is p; x and E are the kinematic and extent integration variables. Time and base-station indices are suppressed, as is conditioning on past measurements and the fixed current partition. Alpha is the predicted normalized augmented-state density, so its r=1 integral is the predicted existence probability. Gamma is the likelihood-factor-to-state message after BP association. The normalized state belief is proportional to alpha times gamma. Integrating its r=1 branch gives the displayed existence belief; the denominator sums both existence branches and integrates over x and E, including the normalized dummy-state representation for r=0. The tilde marks a BP belief approximating the posterior, not an exact marginal of the full multi-target model. The message m from a^p to the legacy local factor contains the association information from the consistency subgraph and is not a posterior association probability. Summing the product of that incoming message and the legacy factor over all group assignments produces gamma; this avoids feeding a posterior association probability back into the likelihood and counting local evidence twice. For r=0, only a=0 contributes, so gamma(x,E,0)=m(0), independent of x and E. For r=1, the null-assignment term includes exp(-mu_m(x,E)) and each non-null term uses the explicit grouped legacy factor on the factorization slide. A clustering split or merge changes these group factors and the BP association messages. It can reduce support for an existing track, but no monotonic decrease is claimed for every clustering error. The scope is existing legacy tracks, with no newborn update or birth intensity. The normalization and marginalization follow the legacy belief calculation in Meyer et al., Message Passing Algorithms for Scalable Multitarget Tracking, Sec. IX-A5–6, with extent included in the augmented state.",
    "elements": [
     {
      "id": "kicker",
@@ -4757,7 +4757,7 @@
      "y": 73,
      "w": 1136,
      "h": 85,
-     "html": "Clustering Error Type I",
+     "html": "Clustering Error",
      "fontSize": 36,
      "fontFamily": "Arial, Helvetica, sans-serif",
      "fontWeight": 700,
@@ -4915,24 +4915,6 @@
      "h": 29,
      "html": "\u003cspan class=\"math-tex math-inline\">\\(m_{a^p\\to\\underline l^p}(a)\\)\u003c/span>: incoming BP association message. Time and BS indices are suppressed.",
      "fontSize": 17,
-     "fontFamily": "Arial, Helvetica, sans-serif",
-     "fontWeight": 400,
-     "color": "#596d80",
-     "align": "left",
-     "valign": "top",
-     "lineHeight": 1.25,
-     "rotation": 0,
-     "opacity": 1
-    },
-    {
-     "id": "clustering-existence-effect",
-     "type": "text",
-     "x": 92,
-     "y": 645,
-     "w": 1096,
-     "h": 29,
-     "html": "Type I error: the estimated cluster contains fewer elements than the true cluster.",
-     "fontSize": 18,
      "fontFamily": "Arial, Helvetica, sans-serif",
      "fontWeight": 400,
      "color": "#596d80",
@@ -5328,6 +5310,384 @@
      "fontFamily": "Arial, Helvetica, sans-serif",
      "fontWeight": 400,
      "color": "#596d80",
+     "align": "left",
+     "valign": "top",
+     "lineHeight": 1.25,
+     "rotation": 0,
+     "opacity": 1
+    },
+    {
+     "id": "footer",
+     "type": "text",
+     "x": 72,
+     "y": 682,
+     "w": 960,
+     "h": 18,
+     "html": "GrBP · Extended-target handover",
+     "fontSize": 11,
+     "fontFamily": "Arial, Helvetica, sans-serif",
+     "fontWeight": 400,
+     "color": "#596d80",
+     "align": "left",
+     "valign": "top",
+     "lineHeight": 1.25,
+     "rotation": 0,
+     "opacity": 1
+    },
+    {
+     "id": "page",
+     "type": "text",
+     "x": 1110,
+     "y": 682,
+     "w": 98,
+     "h": 18,
+     "html": "{{page:2}} / {{pages:2}}",
+     "fontSize": 11,
+     "fontFamily": "Arial, Helvetica, sans-serif",
+     "fontWeight": 400,
+     "color": "#596d80",
+     "align": "left",
+     "valign": "top",
+     "lineHeight": 1.25,
+     "rotation": 0,
+     "opacity": 1
+    }
+   ]
+  },
+  {
+   "id": "s-failure-clustering-type-ii",
+   "background": "#ffffff",
+   "transition": "none",
+   "notes": "Controlled numerical example of Clustering Error Type II for one legacy track. Type II means that clutter is included in the target cluster. Retain all five true detections in every row and add zero, one, two, or three clutter points, giving group sizes five, six, seven, and eight. The group of five with no clutter is the truth and is highlighted. Condition on the same fixed kinematic state x and extent E, equivalently a point prediction given existence. Keep the predicted existence probability at 0.9, expected target detection count mu_m(x,E) at 5, mean clutter-group count mu_g at 1, and incoming unnormalized BP messages m(0)=m(1)=1 in all rows. There is one nonempty candidate group plus the null assignment. These BP messages are not posterior association probabilities. Use the same uniform clutter spatial density at all measurement locations. Each true detection has f(z|x,E)/f_c(z)=1. Each included clutter point is farther from the predicted target and is assigned the smaller fixed ratio 0.02, so its target-generated spatial likelihood is 50 times smaller than that of a true detection under the uniform clutter density. This ratio is an illustrative assumption, not a value computed from a specified distance or data. Each of the five true detections contributes the rate-weighted factor 5; each clutter point contributes 5 times 0.02, or 0.1. Thus the assigned-group contribution is exp(-5) times 5^5 times 0.1^(group size minus five), while the null contribution remains exp(-5). Their sum is gamma(x,E,1); gamma(x,E,0)=1. The predicted mean target detection count remains five, even when clutter raises the supplied group size to six, seven, or eight. The legacy existence update is 0.9 gamma1/(0.1+0.9 gamma1). For group sizes five through eight, the existence probabilities are respectively 0.994752457710, 0.950027778204, 0.661669424425, and 0.200093609744, displayed as 99.48, 95.00, 66.17, and 20.01 percent. This example decreases because every added clutter point has a rate-weighted likelihood ratio below one; merely having a lower spatial likelihood than a true detection would not by itself guarantee a decrease. The local grouped factor evaluates the supplied group as one target-generated group in the assigned hypothesis, so low-likelihood clutter can weaken the support for the legacy track. The true versus clutter labels are used to explain the controlled example, not supplied as labels to the filter. Other candidate groups and changes to BP messages are held out of this example. There is no newborn update or simulated-data claim.",
+   "elements": [
+    {
+     "id": "kicker",
+     "type": "text",
+     "x": 72,
+     "y": 35,
+     "w": 1080,
+     "h": 22,
+     "html": "14 / FAILURE ANALYSIS · NUMERICAL EXAMPLE",
+     "fontSize": 12,
+     "fontFamily": "Arial, Helvetica, sans-serif",
+     "fontWeight": 700,
+     "color": "#087f68",
+     "align": "left",
+     "valign": "top",
+     "lineHeight": 1.25,
+     "rotation": 0,
+     "opacity": 1
+    },
+    {
+     "id": "title",
+     "type": "text",
+     "x": 72,
+     "y": 73,
+     "w": 1136,
+     "h": 85,
+     "html": "Clustering Error Type II",
+     "fontSize": 36,
+     "fontFamily": "Arial, Helvetica, sans-serif",
+     "fontWeight": 700,
+     "color": "#16273e",
+     "align": "left",
+     "valign": "top",
+     "lineHeight": 1.25,
+     "rotation": 0,
+     "opacity": 1
+    },
+    {
+     "id": "rule",
+     "type": "shape",
+     "shape": "rect",
+     "x": 72,
+     "y": 165,
+     "w": 1136,
+     "h": 1,
+     "fill": "#d8e1e9",
+     "stroke": "none",
+     "strokeWidth": 0,
+     "radius": 0,
+     "rotation": 0,
+     "opacity": 1
+    },
+    {
+     "id": "clustering-ii-assumptions",
+     "type": "text",
+     "x": 92,
+     "y": 181,
+     "w": 1096,
+     "h": 64,
+     "html": "\u003cspan class=\"math-tex math-display\">\\[P^{-}(\\underline r^p=1)=0.9,\\qquad\\mu_m(\\bm x,\\bm E)=5,\\qquad\\mu_g=1\\]\u003c/span>",
+     "fontSize": 23,
+     "fontFamily": "Arial, Helvetica, sans-serif",
+     "fontWeight": 400,
+     "color": "#16273e",
+     "align": "left",
+     "valign": "top",
+     "lineHeight": 1.25,
+     "rotation": 0,
+     "opacity": 1
+    },
+    {
+     "id": "clustering-ii-definition",
+     "type": "text",
+     "x": 92,
+     "y": 252,
+     "w": 1096,
+     "h": 28,
+     "html": "Type II: clutter is included with all 5 true detections. Fix \u003cspan class=\"math-tex math-inline\">\\((\\bm x,\\bm E)\\)\u003c/span>; use uniform clutter density.",
+     "fontSize": 17,
+     "fontFamily": "Arial, Helvetica, sans-serif",
+     "fontWeight": 400,
+     "color": "#596d80",
+     "align": "left",
+     "valign": "top",
+     "lineHeight": 1.25,
+     "rotation": 0,
+     "opacity": 1
+    },
+    {
+     "id": "clustering-ii-messages",
+     "type": "text",
+     "x": 92,
+     "y": 291,
+     "w": 1096,
+     "h": 32,
+     "html": "One candidate group plus null. Fixed BP messages: \u003cspan class=\"math-tex math-inline\">\\(m_{a^p\\to\\underline l^p}(0)=m_{a^p\\to\\underline l^p}(1)=1.\\)\u003c/span>",
+     "fontSize": 17,
+     "fontFamily": "Arial, Helvetica, sans-serif",
+     "fontWeight": 400,
+     "color": "#596d80",
+     "align": "left",
+     "valign": "top",
+     "lineHeight": 1.25,
+     "rotation": 0,
+     "opacity": 1
+    },
+    {
+     "id": "clustering-ii-ratio-heading",
+     "type": "text",
+     "x": 92,
+     "y": 335,
+     "w": 552,
+     "h": 28,
+     "html": "Per-measurement likelihood ratio",
+     "fontSize": 21,
+     "fontFamily": "Arial, Helvetica, sans-serif",
+     "fontWeight": 700,
+     "color": "#087f68",
+     "align": "left",
+     "valign": "top",
+     "lineHeight": 1.25,
+     "rotation": 0,
+     "opacity": 1
+    },
+    {
+     "id": "clustering-ii-ratios",
+     "type": "text",
+     "x": 80,
+     "y": 369,
+     "w": 568,
+     "h": 90,
+     "html": "\u003cspan class=\"math-tex math-display\">\\[\\frac{f(\\bm z\\mid\\bm x,\\bm E)}{f_c(\\bm z)}=\\begin{cases}1,&\\text{true detection},\\\\[4pt]0.02,&\\text{farther clutter}.\\end{cases}\\]\u003c/span>",
+     "fontSize": 22,
+     "fontFamily": "Arial, Helvetica, sans-serif",
+     "fontWeight": 400,
+     "color": "#16273e",
+     "align": "left",
+     "valign": "top",
+     "lineHeight": 1.25,
+     "rotation": 0,
+     "opacity": 1
+    },
+    {
+     "id": "clustering-ii-update-heading",
+     "type": "text",
+     "x": 92,
+     "y": 479,
+     "w": 552,
+     "h": 28,
+     "html": "Legacy-track existence update",
+     "fontSize": 21,
+     "fontFamily": "Arial, Helvetica, sans-serif",
+     "fontWeight": 700,
+     "color": "#087f68",
+     "align": "left",
+     "valign": "top",
+     "lineHeight": 1.25,
+     "rotation": 0,
+     "opacity": 1
+    },
+    {
+     "id": "clustering-ii-update",
+     "type": "text",
+     "x": 80,
+     "y": 516,
+     "w": 568,
+     "h": 78,
+     "html": "\u003cspan class=\"math-tex math-display\">\\[\\widetilde P(\\underline r^p=1)=\\frac{0.9\\,\\gamma^{p}(\\bm x,\\bm E,1)}{0.1+0.9\\,\\gamma^{p}(\\bm x,\\bm E,1)}\\]\u003c/span>",
+     "fontSize": 22,
+     "fontFamily": "Arial, Helvetica, sans-serif",
+     "fontWeight": 400,
+     "color": "#16273e",
+     "align": "left",
+     "valign": "top",
+     "lineHeight": 1.25,
+     "rotation": 0,
+     "opacity": 1
+    },
+    {
+     "id": "clustering-ii-table",
+     "type": "table",
+     "x": 674,
+     "y": 335,
+     "w": 534,
+     "h": 238,
+     "rotation": 0,
+     "opacity": 1,
+     "header": true,
+     "columns": [
+      {
+       "w": 1.1
+      },
+      {
+       "w": 0.8
+      },
+      {
+       "w": 1.2
+      }
+     ],
+     "rows": [
+      {
+       "cells": [
+        {
+         "html": "Group size"
+        },
+        {
+         "html": "Clutter",
+         "align": "center"
+        },
+        {
+         "html": "Posterior",
+         "align": "right"
+        }
+       ]
+      },
+      {
+       "cells": [
+        {
+         "html": "5 · truth",
+         "bg": "#087f68",
+         "color": "#ffffff",
+         "bold": true
+        },
+        {
+         "html": "0",
+         "align": "center",
+         "bg": "#087f68",
+         "color": "#ffffff",
+         "bold": true
+        },
+        {
+         "html": "99.48%",
+         "align": "right",
+         "bg": "#087f68",
+         "color": "#ffffff",
+         "bold": true
+        }
+       ]
+      },
+      {
+       "cells": [
+        {
+         "html": "6"
+        },
+        {
+         "html": "1",
+         "align": "center"
+        },
+        {
+         "html": "95.00%",
+         "align": "right"
+        }
+       ]
+      },
+      {
+       "cells": [
+        {
+         "html": "7"
+        },
+        {
+         "html": "2",
+         "align": "center"
+        },
+        {
+         "html": "66.17%",
+         "align": "right"
+        }
+       ]
+      },
+      {
+       "cells": [
+        {
+         "html": "8"
+        },
+        {
+         "html": "3",
+         "align": "center"
+        },
+        {
+         "html": "20.01%",
+         "align": "right"
+        }
+       ]
+      }
+     ],
+     "style": {
+      "headerBg": "#f2f6fa",
+      "headerColor": "#16273e",
+      "zebra": "#f8fafc",
+      "borderColor": "#d8e1e9",
+      "borderWidth": 1,
+      "cellPadX": 18,
+      "cellPadY": 7,
+      "fontSize": 21,
+      "color": "#16273e",
+      "fontFamily": "Arial, Helvetica, sans-serif",
+      "radius": 6
+     }
+    },
+    {
+     "id": "clustering-ii-clutter-factor",
+     "type": "text",
+     "x": 686,
+     "y": 590,
+     "w": 522,
+     "h": 28,
+     "html": "Each added clutter point contributes \u003cspan class=\"math-tex math-inline\">\\(5\\times0.02=0.1.\\)\u003c/span>",
+     "fontSize": 17,
+     "fontFamily": "Arial, Helvetica, sans-serif",
+     "fontWeight": 400,
+     "color": "#596d80",
+     "align": "left",
+     "valign": "top",
+     "lineHeight": 1.25,
+     "rotation": 0,
+     "opacity": 1
+    },
+    {
+     "id": "clustering-ii-evidence",
+     "type": "text",
+     "x": 92,
+     "y": 622,
+     "w": 1096,
+     "h": 45,
+     "html": "\u003cspan class=\"math-tex math-display\">\\[\\gamma^{p}(\\bm x,\\bm E,1)=e^{-5}\\bigl(1+5^{5}\\,0.1^{|\\bm Z^1|-5}\\bigr),\\qquad\\gamma^{p}(\\bm x,\\bm E,0)=1\\]\u003c/span>",
+     "fontSize": 22,
+     "fontFamily": "Arial, Helvetica, sans-serif",
+     "fontWeight": 400,
+     "color": "#16273e",
      "align": "left",
      "valign": "top",
      "lineHeight": 1.25,
