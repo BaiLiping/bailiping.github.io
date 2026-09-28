@@ -4984,7 +4984,7 @@
    "id": "s-failure-clustering-example",
    "background": "#ffffff",
    "transition": "none",
-   "notes": "Controlled numerical example for one legacy track, following the preceding existence-belief update. The true measurement group contains five detections. Compare a complete supplied group of five with an incomplete supplied group retaining only two of those five; this is a comparison of group cardinality, not of the number of targets or the number of groups. Condition on one fixed kinematic state x and extent E, equivalently a point prediction given existence. Hold the predicted existence probability at 0.9, the expected detection count mu_m(x,E) at 5, and the mean clutter-group count mu_g at 1 in both cases. For every included point, the spatial density ratio f(z|x,E)/f_c(z) is 1, so each point contributes the rate-weighted ratio 5. There is one candidate group and the null assignment. Hold the unnormalized incoming BP messages for a=0 and a=1 at 1 in both cases; these are messages, not posterior association probabilities. The existing branch sums the null-assignment contribution exp(-5) and the assigned-group contribution exp(-5) times 5 raised to the group size. Thus gamma(x,E,1)=exp(-5)(1+5^|Z^1|); the absent branch permits only a=0 and has gamma(x,E,0)=1. Keeping the null assignment is essential: conditioning on a non-null assignment would instead force existence. Substitution into the legacy existence update gives 0.9 gamma1/(0.1+0.9 gamma1). For five detections, gamma1=21.062822319141 and the posterior is 0.994752457710, displayed as 99.48 percent. For two detections, gamma1=0.175186621976 and the posterior is 0.611903629439, displayed as 61.19 percent. The predicted count parameter is never replaced by the observed count two. The three excluded detections are not supplied to this legacy candidate in the incomplete-group case; no additional candidate group is introduced. This isolates group-size loss with fixed association messages. A full BP rerun with other split groups or competing tracks can also change the incoming messages and need not reproduce these numbers. The numerical assumptions are illustrative, with no newborn update or simulated-data claim.",
+   "notes": "Controlled numerical example for one legacy track, following the preceding existence-belief update. The true measurement group contains five detections. The table compares retaining zero through five of those detections; five is explicitly labeled truth and highlighted. These are numbers of detections retained in the target group, not numbers of targets or groups. Condition on one fixed kinematic state x and extent E, equivalently a point prediction given existence. Hold the predicted existence probability at 0.9, the expected detection count mu_m(x,E) at 5, and the mean clutter-group count mu_g at 1 for every row. For every included point, the spatial density ratio f(z|x,E)/f_c(z) is 1, so each point contributes the rate-weighted ratio 5. For a positive retained count, there is one candidate group and the null assignment. Hold the unnormalized incoming BP messages for a=0 and, when present, a=1 at 1; these are messages, not posterior association probabilities. The existing branch sums the null-assignment contribution exp(-5) and the assigned-group contribution exp(-5) times 5 raised to the group size. Thus gamma(x,E,1)=exp(-5)(1+5^|Z^1|) for one through five detections. Zero retained detections means there is no nonempty candidate group, so only a=0 is possible and gamma(x,E,1)=exp(-5). Do not substitute zero into the nonempty-group formula: adding an assigned empty group would duplicate the null hypothesis. The absent branch permits only a=0 and has gamma(x,E,0)=1 for all rows. Keeping the null assignment is essential: conditioning on a non-null assignment would instead force existence. Substitution into the legacy existence update gives 0.9 gamma1/(0.1+0.9 gamma1). The posterior probabilities for retained counts zero through five are respectively 0.057174381426, 0.266781074113, 0.611903629439, 0.884270402211, 0.974333698575, and 0.994752457710, displayed as 5.72, 26.68, 61.19, 88.43, 97.43, and 99.48 percent. The predicted count parameter remains five in every row. Any excluded detections are not supplied to this legacy candidate; no additional group is introduced. This isolates group-size loss with fixed association messages. A full BP rerun with other split groups or competing tracks can also change the incoming messages and need not reproduce these numbers. The numerical assumptions are illustrative, with no newborn update or simulated-data claim.",
    "elements": [
     {
      "id": "kicker",
@@ -5011,7 +5011,7 @@
      "y": 73,
      "w": 1136,
      "h": 85,
-     "html": "Clustering Error: 5 detections versus 2",
+     "html": "Clustering Error: 0–5 retained detections",
      "fontSize": 36,
      "fontFamily": "Arial, Helvetica, sans-serif",
      "fontWeight": 700,
@@ -5062,7 +5062,7 @@
      "y": 252,
      "w": 1096,
      "h": 28,
-     "html": "One fixed \u003cspan class=\"math-tex math-inline\">\\((\\bm x,\\bm E)\\)\u003c/span>. One candidate group plus the null assignment. Same likelihood ratio for every detection.",
+     "html": "One fixed \u003cspan class=\"math-tex math-inline\">\\((\\bm x,\\bm E)\\)\u003c/span>. The expected count stays at 5; only the number of retained detections changes.",
      "fontSize": 17,
      "fontFamily": "Arial, Helvetica, sans-serif",
      "fontWeight": 400,
@@ -5080,8 +5080,62 @@
      "y": 291,
      "w": 1096,
      "h": 32,
-     "html": "Same BP messages in both cases: \u003cspan class=\"math-tex math-inline\">\\(m_{a^p\\to\\underline l^p}(0)=m_{a^p\\to\\underline l^p}(1)=1.\\)\u003c/span>",
-     "fontSize": 18,
+     "html": "Fixed BP messages: \u003cspan class=\"math-tex math-inline\">\\(m_{a^p\\to\\underline l^p}(0)=1\\)\u003c/span>, and \u003cspan class=\"math-tex math-inline\">\\(m_{a^p\\to\\underline l^p}(1)=1\\)\u003c/span> when a group exists.",
+     "fontSize": 17,
+     "fontFamily": "Arial, Helvetica, sans-serif",
+     "fontWeight": 400,
+     "color": "#596d80",
+     "align": "left",
+     "valign": "top",
+     "lineHeight": 1.25,
+     "rotation": 0,
+     "opacity": 1
+    },
+    {
+     "id": "clustering-example-update-heading",
+     "type": "text",
+     "x": 92,
+     "y": 335,
+     "w": 552,
+     "h": 28,
+     "html": "Legacy-track existence update",
+     "fontSize": 21,
+     "fontFamily": "Arial, Helvetica, sans-serif",
+     "fontWeight": 700,
+     "color": "#087f68",
+     "align": "left",
+     "valign": "top",
+     "lineHeight": 1.25,
+     "rotation": 0,
+     "opacity": 1
+    },
+    {
+     "id": "clustering-example-update",
+     "type": "text",
+     "x": 80,
+     "y": 373,
+     "w": 568,
+     "h": 76,
+     "html": "\u003cspan class=\"math-tex math-display\">\\[\\widetilde P(\\underline r^p=1)=\\frac{0.9\\,\\gamma^{p}(\\bm x,\\bm E,1)}{0.1+0.9\\,\\gamma^{p}(\\bm x,\\bm E,1)}\\]\u003c/span>",
+     "fontSize": 22,
+     "fontFamily": "Arial, Helvetica, sans-serif",
+     "fontWeight": 400,
+     "color": "#16273e",
+     "align": "left",
+     "valign": "top",
+     "lineHeight": 1.25,
+     "rotation": 0,
+     "opacity": 1
+    },
+    {
+     "id": "clustering-example-nonempty-label",
+     "type": "text",
+     "x": 92,
+     "y": 470,
+     "w": 552,
+     "h": 24,
+     "html": "1–5 detections · one candidate group",
+     "fontSize": 17,
      "fontFamily": "Arial, Helvetica, sans-serif",
      "fontWeight": 400,
      "color": "#596d80",
@@ -5094,222 +5148,183 @@
     {
      "id": "clustering-example-evidence",
      "type": "text",
+     "x": 80,
+     "y": 498,
+     "w": 568,
+     "h": 42,
+     "html": "\u003cspan class=\"math-tex math-display\">\\[\\gamma^{p}(\\bm x,\\bm E,1)=e^{-5}\\bigl(1+5^{|\\bm Z^1|}\\bigr)\\]\u003c/span>",
+     "fontSize": 22,
+     "fontFamily": "Arial, Helvetica, sans-serif",
+     "fontWeight": 400,
+     "color": "#16273e",
+     "align": "left",
+     "valign": "top",
+     "lineHeight": 1.25,
+     "rotation": 0,
+     "opacity": 1
+    },
+    {
+     "id": "clustering-example-zero-label",
+     "type": "text",
      "x": 92,
+     "y": 558,
+     "w": 552,
+     "h": 24,
+     "html": "0 detections · null assignment only",
+     "fontSize": 17,
+     "fontFamily": "Arial, Helvetica, sans-serif",
+     "fontWeight": 400,
+     "color": "#596d80",
+     "align": "left",
+     "valign": "top",
+     "lineHeight": 1.25,
+     "rotation": 0,
+     "opacity": 1
+    },
+    {
+     "id": "clustering-example-zero-evidence",
+     "type": "text",
+     "x": 80,
+     "y": 586,
+     "w": 568,
+     "h": 42,
+     "html": "\u003cspan class=\"math-tex math-display\">\\[\\gamma^{p}(\\bm x,\\bm E,1)=e^{-5}\\]\u003c/span>",
+     "fontSize": 22,
+     "fontFamily": "Arial, Helvetica, sans-serif",
+     "fontWeight": 400,
+     "color": "#16273e",
+     "align": "left",
+     "valign": "top",
+     "lineHeight": 1.25,
+     "rotation": 0,
+     "opacity": 1
+    },
+    {
+     "id": "clustering-example-table",
+     "type": "table",
+     "x": 674,
      "y": 335,
-     "w": 1096,
-     "h": 55,
-     "html": "\u003cspan class=\"math-tex math-display\">\\[\\gamma^{p}(\\bm x,\\bm E,1)=e^{-5}\\bigl(1+5^{|\\bm Z^1|}\\bigr),\\qquad\\gamma^{p}(\\bm x,\\bm E,0)=1\\]\u003c/span>",
-     "fontSize": 23,
-     "fontFamily": "Arial, Helvetica, sans-serif",
-     "fontWeight": 400,
-     "color": "#16273e",
-     "align": "left",
-     "valign": "top",
-     "lineHeight": 1.25,
+     "w": 534,
+     "h": 294,
      "rotation": 0,
-     "opacity": 1
-    },
-    {
-     "id": "clustering-example-update",
-     "type": "text",
-     "x": 92,
-     "y": 385,
-     "w": 1096,
-     "h": 86,
-     "html": "\u003cspan class=\"math-tex math-display\">\\[\\widetilde P(\\underline r^p=1)=\\frac{0.9\\,e^{-5}\\bigl(1+5^{|\\bm Z^1|}\\bigr)}{0.1+0.9\\,e^{-5}\\bigl(1+5^{|\\bm Z^1|}\\bigr)}\\]\u003c/span>",
-     "fontSize": 24,
-     "fontFamily": "Arial, Helvetica, sans-serif",
-     "fontWeight": 400,
-     "color": "#16273e",
-     "align": "left",
-     "valign": "top",
-     "lineHeight": 1.25,
-     "rotation": 0,
-     "opacity": 1
-    },
-    {
-     "id": "complete-group-background",
-     "type": "shape",
-     "shape": "rect",
-     "x": 72,
-     "y": 482,
-     "w": 544,
-     "h": 150,
-     "fill": "#f2f6fa",
-     "stroke": "none",
-     "strokeWidth": 0,
-     "radius": 6,
-     "rotation": 0,
-     "opacity": 1
-    },
-    {
-     "id": "partial-group-background",
-     "type": "shape",
-     "shape": "rect",
-     "x": 664,
-     "y": 482,
-     "w": 544,
-     "h": 150,
-     "fill": "#f2f6fa",
-     "stroke": "none",
-     "strokeWidth": 0,
-     "radius": 6,
-     "rotation": 0,
-     "opacity": 1
-    },
-    {
-     "id": "complete-group-heading",
-     "type": "text",
-     "x": 96,
-     "y": 494,
-     "w": 496,
-     "h": 31,
-     "html": "All 5 detections retained",
-     "fontSize": 23,
-     "fontFamily": "Arial, Helvetica, sans-serif",
-     "fontWeight": 700,
-     "color": "#087f68",
-     "align": "left",
-     "valign": "top",
-     "lineHeight": 1.25,
-     "rotation": 0,
-     "opacity": 1
-    },
-    {
-     "id": "partial-group-heading",
-     "type": "text",
-     "x": 688,
-     "y": 494,
-     "w": 496,
-     "h": 31,
-     "html": "Only 2 of the 5 retained",
-     "fontSize": 23,
-     "fontFamily": "Arial, Helvetica, sans-serif",
-     "fontWeight": 700,
-     "color": "#b96815",
-     "align": "left",
-     "valign": "top",
-     "lineHeight": 1.25,
-     "rotation": 0,
-     "opacity": 1
-    },
-    {
-     "id": "complete-group-evidence",
-     "type": "text",
-     "x": 96,
-     "y": 532,
-     "w": 496,
-     "h": 30,
-     "html": "\u003cspan class=\"math-tex math-inline\">\\(\\gamma^{p}(\\bm x,\\bm E,1)=21.0628\\)\u003c/span>",
-     "fontSize": 19,
-     "fontFamily": "Arial, Helvetica, sans-serif",
-     "fontWeight": 400,
-     "color": "#596d80",
-     "align": "left",
-     "valign": "top",
-     "lineHeight": 1.25,
-     "rotation": 0,
-     "opacity": 1
-    },
-    {
-     "id": "partial-group-evidence",
-     "type": "text",
-     "x": 688,
-     "y": 532,
-     "w": 496,
-     "h": 30,
-     "html": "\u003cspan class=\"math-tex math-inline\">\\(\\gamma^{p}(\\bm x,\\bm E,1)=0.175187\\)\u003c/span>",
-     "fontSize": 19,
-     "fontFamily": "Arial, Helvetica, sans-serif",
-     "fontWeight": 400,
-     "color": "#596d80",
-     "align": "left",
-     "valign": "top",
-     "lineHeight": 1.25,
-     "rotation": 0,
-     "opacity": 1
-    },
-    {
-     "id": "complete-group-probability",
-     "type": "text",
-     "x": 96,
-     "y": 571,
-     "w": 245,
-     "h": 54,
-     "html": "99.48%",
-     "fontSize": 40,
-     "fontFamily": "Arial, Helvetica, sans-serif",
-     "fontWeight": 700,
-     "color": "#087f68",
-     "align": "left",
-     "valign": "top",
-     "lineHeight": 1.25,
-     "rotation": 0,
-     "opacity": 1
-    },
-    {
-     "id": "partial-group-probability",
-     "type": "text",
-     "x": 688,
-     "y": 571,
-     "w": 245,
-     "h": 54,
-     "html": "61.19%",
-     "fontSize": 40,
-     "fontFamily": "Arial, Helvetica, sans-serif",
-     "fontWeight": 700,
-     "color": "#b96815",
-     "align": "left",
-     "valign": "top",
-     "lineHeight": 1.25,
-     "rotation": 0,
-     "opacity": 1
-    },
-    {
-     "id": "complete-group-probability-label",
-     "type": "text",
-     "x": 338,
-     "y": 586,
-     "w": 254,
-     "h": 28,
-     "html": "posterior existence",
-     "fontSize": 18,
-     "fontFamily": "Arial, Helvetica, sans-serif",
-     "fontWeight": 400,
-     "color": "#596d80",
-     "align": "left",
-     "valign": "top",
-     "lineHeight": 1.25,
-     "rotation": 0,
-     "opacity": 1
-    },
-    {
-     "id": "partial-group-probability-label",
-     "type": "text",
-     "x": 930,
-     "y": 586,
-     "w": 254,
-     "h": 28,
-     "html": "posterior existence",
-     "fontSize": 18,
-     "fontFamily": "Arial, Helvetica, sans-serif",
-     "fontWeight": 400,
-     "color": "#596d80",
-     "align": "left",
-     "valign": "top",
-     "lineHeight": 1.25,
-     "rotation": 0,
-     "opacity": 1
+     "opacity": 1,
+     "header": true,
+     "columns": [
+      {
+       "w": 1.1
+      },
+      {
+       "w": 1
+      }
+     ],
+     "rows": [
+      {
+       "cells": [
+        {
+         "html": "Retained detections"
+        },
+        {
+         "html": "Posterior existence",
+         "align": "right"
+        }
+       ]
+      },
+      {
+       "cells": [
+        {
+         "html": "0"
+        },
+        {
+         "html": "5.72%",
+         "align": "right"
+        }
+       ]
+      },
+      {
+       "cells": [
+        {
+         "html": "1"
+        },
+        {
+         "html": "26.68%",
+         "align": "right"
+        }
+       ]
+      },
+      {
+       "cells": [
+        {
+         "html": "2"
+        },
+        {
+         "html": "61.19%",
+         "align": "right"
+        }
+       ]
+      },
+      {
+       "cells": [
+        {
+         "html": "3"
+        },
+        {
+         "html": "88.43%",
+         "align": "right"
+        }
+       ]
+      },
+      {
+       "cells": [
+        {
+         "html": "4"
+        },
+        {
+         "html": "97.43%",
+         "align": "right"
+        }
+       ]
+      },
+      {
+       "cells": [
+        {
+         "html": "5 · truth",
+         "bg": "#087f68",
+         "color": "#ffffff",
+         "bold": true
+        },
+        {
+         "html": "99.48%",
+         "align": "right",
+         "bg": "#087f68",
+         "color": "#ffffff",
+         "bold": true
+        }
+       ]
+      }
+     ],
+     "style": {
+      "headerBg": "#f2f6fa",
+      "headerColor": "#16273e",
+      "zebra": "#f8fafc",
+      "borderColor": "#d8e1e9",
+      "borderWidth": 1,
+      "cellPadX": 18,
+      "cellPadY": 6,
+      "fontSize": 21,
+      "color": "#16273e",
+      "fontFamily": "Arial, Helvetica, sans-serif",
+      "radius": 6
+     }
     },
     {
      "id": "clustering-example-takeaway",
      "type": "text",
      "x": 92,
-     "y": 646,
+     "y": 647,
      "w": 1096,
      "h": 28,
-     "html": "Only the group size changes. The expected count stays at 5 in both updates.",
-     "fontSize": 19,
+     "html": "The absence-branch message is \u003cspan class=\"math-tex math-inline\">\\(\\gamma^{p}(\\bm x,\\bm E,0)=1\\)\u003c/span> for every row. The true cluster contains 5 detections.",
+     "fontSize": 17,
      "fontFamily": "Arial, Helvetica, sans-serif",
      "fontWeight": 400,
      "color": "#596d80",

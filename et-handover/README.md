@@ -6,7 +6,8 @@ GrBP processing diagrams, the factorization and likelihood functions on page 3,
 a simulation-environment animation, results, and
 seven failure-analysis slides immediately before the conclusion, including the
 Clustering Error page with the legacy-track existence-belief update and a
-numerical comparison of five retained detections versus two.
+numerical table for zero through five retained detections, with the true size
+of five highlighted and zero treated as the missed-detection case.
 The previous `/eo-handover-slides/` and `/eo-handover-slides/live/` URLs redirect
 here, preserving query parameters and slide bookmarks.
 
