@@ -1,8 +1,9 @@
 # Scalable Extended-Target Handover in Distributed Integrated Sensing and Communication
 
 Public presentation at <https://bailiping.com/et-handover/>.
-The 22 regular Bento slides include two introduction/live pairs,
-GrBP processing diagrams, a simulation-environment animation, results, and
+The 23 regular Bento slides include two introduction/live pairs,
+GrBP processing diagrams, the factorization and likelihood functions on page 4,
+a simulation-environment animation, results, and
 five failure-analysis slides immediately before the conclusion.
 The previous `/eo-handover-slides/` and `/eo-handover-slides/live/` URLs redirect
 here, preserving query parameters and slide bookmarks.

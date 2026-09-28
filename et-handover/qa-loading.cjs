@@ -41,6 +41,11 @@ async function waitForDemo(page, target) {
   });
   const report = [];
   try {
+    const deckHtml = await (await fetch(base + '/et-handover/')).text();
+    const deckJson = deckHtml.match(/<script type="application\/bento\+json" id="bento-doc">\s*([\s\S]*?)\s*<\/script>/);
+    assert.ok(deckJson, 'The deck document is present');
+    const scoreIndex = JSON.parse(deckJson[1]).slides.findIndex(slide => slide.id === 's-score-live');
+    assert.ok(scoreIndex >= 0, 'The trigger demo is present');
     for (const width of [1440, 390]) {
       for (const asset of ['embed-page.css', 'embed.css', 'demo.js']) {
         const context = await browser.newContext({ viewport: { width, height: 900 } });
@@ -57,7 +62,7 @@ async function waitForDemo(page, target) {
           await route.continue();
         });
         try {
-          await page.goto(base + '/et-handover/#/11', { waitUntil: 'domcontentloaded' });
+          await page.goto(base + '/et-handover/#/' + scoreIndex, { waitUntil: 'domcontentloaded' });
           await waitForSlide(page, 's-score-live');
           await page.locator(activeSlide + ' img[src*="score-fallback"]').evaluate(img => img.decode());
           await page.waitForTimeout(500);
@@ -111,7 +116,7 @@ async function waitForDemo(page, target) {
           const toy = await waitForDemo(page, '#toy');
           const before = await toy.locator('#frame-label').textContent();
           await toy.locator('#btn-next').click();
-          assert.notEqual(await toy.locator('#frame-label').textContent(), before, 'Slide 14 controls still work');
+          assert.notEqual(await toy.locator('#frame-label').textContent(), before, 'Protocol demo controls still work');
           await toy.locator('#btn-next').press('PageUp');
           await waitForSlide(page, 's-protocol');
           await page.keyboard.press('ArrowLeft');
