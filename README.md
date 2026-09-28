@@ -2,6 +2,31 @@
 
 GitHub Pages site for `bailiping.com`.
 
+## Search discovery
+
+`robots.txt` permits crawling and advertises the site-wide `sitemap.xml`.
+The homepage links to `/site-map/`, a static directory of all public pages with
+ordinary same-tab links, including companion articles, demos, and study notes.
+
+After adding, removing, renaming, or changing the title or description of a page,
+stage new HTML files with Git and regenerate both discovery files:
+
+```sh
+python3 scripts/build-search-index.py
+python3 scripts/build-search-index.py --check
+```
+
+The generator uses tracked HTML in this public repository. It excludes redirects,
+HTML fragments, verification files, support directories, pages marked `noindex`,
+and aliases whose canonical URL points elsewhere. It does not read private
+repositories. The Search discovery workflow checks that the generated files
+remain current when public HTML changes.
+
+The Google verification file at `/google1add1f3ff1d21ef7.html` must remain unchanged.
+After verifying `https://bailiping.com/` in Google Search Console, submit
+`https://bailiping.com/sitemap.xml` in **Sitemaps**. Submission helps discovery;
+Google decides which pages to index and when.
+
 ## Structure
 
 - `/snapshot-radio-slam/` is a 25-slide Bento reading of Shen et al., arXiv:2607.04847v2, with three embedded views of a 3D equation lab. It explains the conditional position/clock pseudoinverse, nonlinear orientation search, robust consensus, physical refinement, and QAIC. The live lab exposes its measured snapshot, actual stacked matrix, SVD modes, and local SO(3) updates. It is listed under Random thoughts.
