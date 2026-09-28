@@ -161,6 +161,8 @@ function build() {
     Object.assign(s.elements.find(e=>e.id==='rule'),{y:139});
     slides.push(s);
   });
+  slides.push(slide('failure-clustering-error','14 / Failure analysis','Clustering Error',[],
+    'Failure analysis: clustering error.'));
   slides.push(slide('takeaways','15 / What to remember','Keep the method, schedule, and protocol distinct.',[
     ...[['GrBP is the local method.','A fixed group partition feeds belief-propagation association.'],['CS and CP schedule evidence differently.','Sequential updates reuse updated beliefs; parallel fusion counts the prior once.'],['Handover preserves local track continuity.','H sends priors. HM / HL / HP add evidence and fused posterior returns.']].flatMap(([h,b],i)=>[
       T('end-num'+i,80,230+i*132,56,46,''+(i+1),34,C.green,700),T('end-head'+i,165,231+i*132,1000,46,h,29,C.ink,700),T('end-copy'+i,165,289+i*132,1000,52,b,22,C.muted)
