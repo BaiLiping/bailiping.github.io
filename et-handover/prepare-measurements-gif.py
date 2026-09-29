@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
-"""Plot the recorded mc_0088 measurements used by the simulation slide.
+"""Plot only BS1's recorded mc_0088 measurements used by the simulation slide.
 
 This is offline plotting only. It neither invokes a filter nor generates data.
-Only BS positions, the configured FoV radius, and range/bearing pairs reach
+Only BS1's position, the configured FoV radius, and its range/bearing pairs reach
 the renderer. Target detections and clutter use the same unlabelled marker.
 """
 
@@ -28,6 +28,7 @@ TRIAL = "mc_0088"
 FRAME_COUNT = 100
 DURATION_MS = 100
 BS_KEYS = [f"bs{i}" for i in range(7)]
+SELECTED_BS = "bs1"
 GREEN = "#087f68"
 GRAY = "#596d80"
 
@@ -37,7 +38,7 @@ def sha256(path: Path) -> str:
 
 
 def load_measurements(repo: Path) -> tuple[np.ndarray, float, list, dict]:
-    """Require all 100 original frames; return geometry and unlabelled points."""
+    """Require all 100 original frames; return only BS1 and its observations."""
     if not (repo / "npz_data_io.py").is_file():
         raise FileNotFoundError(f"Expected EO_Target_Handover checkout: {repo}")
     sys.path.insert(0, str(repo))
@@ -45,12 +46,13 @@ def load_measurements(repo: Path) -> tuple[np.ndarray, float, list, dict]:
 
     config_path = repo / "Config/config.json"
     config = json.loads(config_path.read_text())
-    positions = np.asarray(config["sensor_positions"], dtype=float)[:, :2]
+    all_positions = np.asarray(config["sensor_positions"], dtype=float)[:, :2]
     radius = float(config["measurement_range"])
-    if positions.shape != (7, 2) or not np.isfinite(positions).all():
+    if all_positions.shape != (7, 2) or not np.isfinite(all_positions).all():
         raise ValueError("Expected seven finite BS positions")
     if not np.isfinite(radius) or radius <= 0:
         raise ValueError("Expected a positive finite FoV radius")
+    positions = all_positions[[BS_KEYS.index(SELECTED_BS)]]
 
     frames = []
     records = []
@@ -66,7 +68,7 @@ def load_measurements(repo: Path) -> tuple[np.ndarray, float, list, dict]:
             raise ValueError(f"Expected all seven BS blocks: {path}")
         points = []
         counts = {}
-        for key, position in zip(BS_KEYS, positions):
+        for key, position in zip([SELECTED_BS], positions):
             if not np.array_equal(data["bs"][key]["position"], position):
                 raise ValueError(f"BS geometry changed: {path}, {key}")
             block = data["measurements"][key]
@@ -97,14 +99,15 @@ def load_measurements(repo: Path) -> tuple[np.ndarray, float, list, dict]:
         ).strip(),
         "config": {"source": "Config/config.json", "sha256": sha256(config_path)},
         "trial": TRIAL,
+        "selected_bs": SELECTED_BS,
         "source_frame_range_inclusive": [0, 99],
         "frame_count": FRAME_COUNT,
         "frame_duration_ms": DURATION_MS,
         "loop": 0,
-        "bs_positions_m": dict(zip(BS_KEYS, positions.tolist())),
+        "bs_positions_m": dict(zip([SELECTED_BS], positions.tolist())),
         "fov_radius_m": radius,
         "coordinate_conversion": "x = BS_x + range*cos(bearing*pi/180); y = BS_y + range*sin(bearing*pi/180)",
-        "display": "All detections including clutter, one identical marker; only the current frame; no truth, trajectories, associations, extents, or estimates.",
+        "display": "Only BS1 and its FoV; only BS1 detections including clutter, one identical marker; only the current frame; no other BS measurements, truth, trajectories, associations, extents, or estimates.",
         "frames": records,
     }
     return positions, radius, frames, provenance
@@ -131,7 +134,7 @@ def render(positions: np.ndarray, radius: float, frames: list, folder: Path) -> 
     ax.grid(color="#e5eaf0", linewidth=0.7)
     for spine in ax.spines.values():
         spine.set_color("#a9b7c5")
-    for key, (x, y) in zip(BS_KEYS, positions):
+    for key, (x, y) in zip([SELECTED_BS], positions):
         ax.add_patch(Circle((x, y), radius, fill=False, edgecolor=GREEN,
                             linestyle="--", linewidth=1.3, alpha=0.55, zorder=2))
         ax.scatter([x], [y], color=GREEN, marker="p", s=120, zorder=4)

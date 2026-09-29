@@ -104,15 +104,18 @@ then checks controls, navigation away during loading, revisits, and print previe
 Page 19, **what it looks like to they eyes**, follows the results on page 18.
 It shows the same trial as the simulation animation on page 17: `mc_0088`,
 input frames 0–99 from `EO_Target_Handover/Data/mc_0088/frames_data/`.
-The plot contains seven BSs, their 120 m circular FoV boundaries, and the
-current frame's detections. Target detections and clutter share one marker;
+The plot is zoomed to BS1 (`bs1`, at x = 150 m, y = 0 m), its 120 m circular
+FoV boundary, and only measurements recorded by BS1 in the current frame.
+Measurements from other BSs are excluded even within the overlapping FoV.
+BS1 target detections and clutter share one marker;
 there are no truth labels, trajectories, accumulated detections, or estimates.
 The 1200 × 1200 GIF loops at 10 fps for 10 seconds. The slide includes a direct
 GIF link and a three-item legend.
 
 `prepare-measurements-gif.py` reads the recorded schema-v2 measurements without
-running a filter or generating data. It validates all 100 frames and the BS
-geometry, replaces the scatter coordinates each frame, and encodes a fixed
+running a filter or generating data. It selects only the `bs1` measurement
+block, validates all 100 frames and BS1's geometry, replaces the scatter
+coordinates each frame, and encodes a fixed
 canvas with one global palette. It requires NumPy, Matplotlib, Pillow, and
 FFmpeg. Input hashes, per-BS observation counts, geometry, and the output hash
 are recorded in `assets/measurements-only-provenance.json`.
