@@ -2,7 +2,7 @@ import {readFileSync,writeFileSync} from 'node:fs';
 import {dirname,resolve} from 'node:path';
 import {fileURLToPath} from 'node:url';
 import assert from 'node:assert/strict';
-import {deck,inlineLiveMap} from './bento-deck.mjs';
+import {deck,inlineLiveMap} from './analog-deck.mjs';
 const here=dirname(fileURLToPath(import.meta.url));
 const safe=x=>JSON.stringify(x,null,1).replaceAll('<','\\u003c');
 const ids=deck.slides.map(s=>s.id);
@@ -28,8 +28,8 @@ html=html.replace(/<link rel="canonical"[^>]*>/,'<link rel="canonical" href="htt
 html=html.replace(/<meta name="description"[^>]*>\s*/,'');
 html=html.replace('./assets/vendor/mathjax-3.2.2-tex-svg-full.js','../mpc-detection-to-bounce-count-slides/assets/vendor/mathjax-3.2.2-tex-svg-full.js');
 const routes=Object.fromEntries(deck.slides.map((s,i)=>[s.id,i]));
-html=html.replace('</head>',`<meta name="description" content="${deck.slides.length} interactive Bento slides and ${inlineLiveMap.length} live experiments explaining radio Cramér–Rao bounds, 384-port coded pilots, unknown channels, receiver clock bias, AoA, AoD and path gain.">
-<meta name="radio-crb-revision" content="2026-09-24-coded-pilots-unknown-channel">
+html=html.replace('</head>',`<meta name="description" content="${deck.slides.length} interactive Bento slides and ${inlineLiveMap.length} live experiments explaining radio Cramér–Rao bounds, analog BS/UE beam sweeping, 100 by 32 beams and one pilot symbol per pair, unknown channels, receiver clock bias, AoA, AoD and path gain.">
+<meta name="radio-crb-revision" content="2026-09-29-analog-beam-sweep">
 <style id="radio-crb-layout">
 .bento-slide .math-display{height:auto!important;min-height:0;margin:.6em 0;line-height:1.1}
 .bento-slide .math-display:first-child{margin-top:.1em}
