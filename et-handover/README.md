@@ -4,7 +4,8 @@ Public presentation at <https://bailiping.com/et-handover/>.
 The 27 regular Bento slides include two introduction/live pairs,
 GrBP processing diagrams, the factorization and likelihood functions on page 3,
 an “Intuitive Intepretation” page 4 with the assigned-existing legacy likelihood
-beside the PDA likelihood ratio from equation (38) of Bar-Shalom, Daum, and Huang (2009),
+beside the PDA likelihood ratio from equation (38) of “The Probabilistic Data
+Association Filter” by Bar-Shalom, Daum, and Huang (2009),
 a simulation-environment animation, results, and
 eight failure-analysis slides immediately before the conclusion, including the
 Clustering Error page with the legacy-track existence-belief update and a
