@@ -147,6 +147,20 @@ function build() {
     ...results.flatMap(([m,g,k,col],i)=>[T('m'+i,92,245+i*48,238,33,m,22,col,700),T('g'+i,347,245+i*48,135,33,g.toFixed(2),22),R('bar'+i,519,249+i*48,k/468*525,19,col,2),T('kb'+i,1060,245+i*48,110,32,''+k,22,C.ink)]),
     T('results-caption',92,604,1096,62,'7 BSs · 100 trials · first 100 frames. GOSPA: mean across all BSs. Payload: rounded KB (bytes / 1024); headers excluded.',18,C.muted)
   ],'Source: current manuscript per_bs_results_summary.tex and handover_counting_summary.tex. The rounded table shows CS 2.02/468 KB, CP 1.99/468, D 3.50/0, H 2.80/32, HM 2.79/161, HL 2.65/343 and HP 2.59/344. H uses 6.9% of coordinated payload from unrounded source data; dividing displayed rounded KB values gives only an approximate ratio. HP is best among non-oracle handover methods. Oracle and individual-measurement ETT comparisons are omitted here, not renamed as GrBP.'));
+  const measurements = slide('measurements-only','12 / Measurements','what it looks like to they eyes',[
+    I('measurements-animation','./assets/measurements-only.gif',36,30,630,630,'100-frame animation of mc_0088: seven base stations, circular FoV boundaries, and current-frame detections including clutter, all with the same marker'),
+    I('measurements-legend-symbols','./assets/measurements-legend-symbols.svg',724,275,48,150,'Green pentagon: base station; dashed green line: FoV boundary; gray cross: detection'),
+    ...['Base station','FoV boundary','Detection'].map((label,i)=>
+      T('measurements-legend-label-'+i,790,291+i*50,398,30,label,23,C.ink)
+    ),
+    T('measurements-caption',724,464,464,66,'All detections, including clutter.<br>One frame at a time.',20,C.muted),
+    T('measurements-source',724,594,464,28,'mc_0088 · 100 frames · 10 fps',16,C.muted),
+    T('measurements-download',724,631,464,28,'<a class="cover-reference" href="./assets/measurements-only.gif"><span>Download GIF</span><span aria-hidden="true"> →</span></a>',17,C.green,600)
+  ],'The first 100 recorded input frames (frame_0000 through frame_0099) of Data/mc_0088 in EO_Target_Handover, the same measurement source used by the simulation-environment slide. Display seven BS locations and circular FoV boundaries with radius 120 m. Convert every recorded range/bearing measurement to global Cartesian coordinates using its BS position, including all target detections and clutter. All observations share the same gray cross marker, without revealing source identity or grouping. Replace the measurements at each frame: no accumulated detections, trajectories, target centers, extents, covariances, associations, or estimates are displayed. The GIF loops all 100 frames at 10 fps, with a one-based display counter. Input hashes, per-frame counts and geometry are recorded in assets/measurements-only-provenance.json; regenerate using prepare-measurements-gif.py.');
+  Object.assign(measurements.elements.find(e=>e.id==='kicker'),{x:724,y:73,w:464});
+  Object.assign(measurements.elements.find(e=>e.id==='title'),{x:724,y:112,w:464,h:110});
+  Object.assign(measurements.elements.find(e=>e.id==='rule'),{x:724,y:242,w:464});
+  slides.push(measurements);
   slides.push(slide('failure-extent-expansion','13 / Failure analysis','Extent Expansion',[
     T('extent-case-1',80,182,548,24,'MC_0002 · BS5',15,C.muted,600),
     T('extent-case-2',664,182,548,24,'MC_0008 · BS6',15,C.muted,600),

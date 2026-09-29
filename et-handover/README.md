@@ -1,13 +1,13 @@
 # Scalable Extended-Target Handover in Distributed Integrated Sensing and Communication
 
 Public presentation at <https://bailiping.com/et-handover/>.
-The 27 regular Bento slides include two introduction/live pairs,
+The 28 regular Bento slides include two introduction/live pairs,
 GrBP processing diagrams, the factorization and likelihood functions on page 3,
 an “Intuitive Intepretation” page 4 with the assigned-existing legacy likelihood
 beside the PDA likelihood ratio from equation (38) of “The Probabilistic Data
 Association Filter” by Bar-Shalom, Daum, and Huang (2009), with matching colored
 boxes around the per-measurement prefactors, target likelihoods, and clutter terms,
-a simulation-environment animation, results, and
+a simulation-environment animation, results, a measurements-only animation, and
 eight failure-analysis slides immediately before the conclusion, including the
 Clustering Error page with the legacy-track existence-belief update and a
 Clustering Error Type I page with a numerical table for zero through five
@@ -77,11 +77,11 @@ then checks controls, navigation away during loading, revisits, and print previe
   open in the same tab. Use the browser Back button to return from these public decks. Their hover and keyboard-focus styles live in `slides.css`;
   `topic-links.js` restores the authored page links after Bento renders.
   A **Belief-Propagation MTT** link below **Solution: GrBP** opens <https://bailiping.com/bp-vs-pmbm-slides/>.
-- Slide 14 marks the target leaving BS A's field of view. The transfer arrow is
+- Slide 16 marks the target leaving BS A's field of view. The transfer arrow is
   highlighted only during the request and acknowledgment. BS A owns `(A, 3)`
   until acknowledgment arrives; then BS C owns `(C, 7)`. The original sidebar
   and normal playback speed remain.
-- Slide 15 introduces the seven-base-station environment using the supplied
+- Slide 17 introduces the seven-base-station environment using the supplied
   `centralized_animation (2).gif`. The presentation copy at
   `assets/simulation-environment.gif` is rendered from the same archived
   `mc_0088` results with the in-plot legend removed. The nine legend entries
@@ -89,7 +89,7 @@ then checks controls, navigation away during loading, revisits, and print previe
   plotting code in `assets/simulation-legend-symbols.svg` and native slide text.
   Native slide elements replace the static
   animation heading with **GrBP Tracking / mc_0088**, preserving the
-  animated frame counter and 10-second playback. Results follow on slide 16.
+  animated frame counter and 10-second playback. Results follow on slide 18.
 - These are explanatory demonstrations, not a numerical implementation of GrBP
   inference. Diagram and benchmark content follows the current
   *Scalable Extended-Target Handover in Distributed Integrated Sensing and
@@ -99,11 +99,35 @@ then checks controls, navigation away during loading, revisits, and print previe
 - Slide 3 links to **Derivation for GrBP** at <../eo-derivation/#grbp>, with
   the corresponding offline slide deck.
 
+## Measurements-only animation
+
+Page 19, **what it looks like to they eyes**, follows the results on page 18.
+It shows the same trial as the simulation animation on page 17: `mc_0088`,
+input frames 0–99 from `EO_Target_Handover/Data/mc_0088/frames_data/`.
+The plot contains seven BSs, their 120 m circular FoV boundaries, and the
+current frame's detections. Target detections and clutter share one marker;
+there are no truth labels, trajectories, accumulated detections, or estimates.
+The 1200 × 1200 GIF loops at 10 fps for 10 seconds. The slide includes a direct
+GIF link and a three-item legend.
+
+`prepare-measurements-gif.py` reads the recorded schema-v2 measurements without
+running a filter or generating data. It validates all 100 frames and the BS
+geometry, replaces the scatter coordinates each frame, and encodes a fixed
+canvas with one global palette. It requires NumPy, Matplotlib, Pillow, and
+FFmpeg. Input hashes, per-BS observation counts, geometry, and the output hash
+are recorded in `assets/measurements-only-provenance.json`.
+
+```sh
+python3 et-handover/prepare-measurements-gif.py /path/to/EO_Target_Handover
+node et-handover/build.mjs
+node et-handover/validate.mjs
+```
+
 ## Failure-analysis animations
 
-Slides 17 and 18 are **Extent Expansion** (the animations on pages 11 and 12
+Slides 20 and 21 are **Extent Expansion** (the animations on pages 11 and 12
 of `Sep 11.pptx`, side by side) and **Multiple Initiation** (page 13).
-The conclusion is slide 22. The animations keep their original 60, 61, and
+The conclusion is slide 28. The animations keep their original 60, 61, and
 62 frames, 100 ms frame delays, and infinite looping.
 
 The original plots shifted horizontally by 39, 42, and 33 pixels across their
@@ -125,7 +149,7 @@ node et-handover/validate.mjs
 
 ## Underlying Multimodal distribution
 
-Slides 19–21 share the requested title **Underlying Multimodal distribution**
+Slides 22–24 share the requested title **Underlying Multimodal distribution**
 and use the pictures from slides 6–8 of `Oct 2.pptx`, in that order. Each
 picture has its own slide, with both panels enlarged beneath the heading.
 The examples are BS5 at frame 182/200, BS5 at frame 91/200, and BS3 at
@@ -150,7 +174,7 @@ node et-handover/validate.mjs
 
 ## Multi-target factor graphs
 
-Slides 3, 5, 6, and 7 share the expanded graph authored in
+Slides 5, 7, 8, and 9 share the expanded graph authored in
 `drawings/build-graphs.cjs`. Each local update shows the first and last legacy
 chains and the first and last group/newborn chains, with ellipses between them.
 The shared consistency factor couples every target and group association.
