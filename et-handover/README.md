@@ -3,11 +3,7 @@
 Public presentation at <https://bailiping.com/et-handover/>.
 The 27 regular Bento slides include two introduction/live pairs,
 GrBP processing diagrams, the factorization and likelihood functions on page 3,
-an “Intuitive Intepretation” page 4 reserved for later content, with footnote
-links to Bar-Shalom, Daum, and Huang's “The Probabilistic Data Association Filter”
-(2009) at `papers/358CSM.pdf` and Fortmann, Bar-Shalom, and Scheffe's “Sonar Tracking
-of Multiple Targets Using Joint Probabilistic Data Association” (1983) at
-`papers/55JOE.pdf`,
+a title-only “Intuitive Intepretation” page 4 reserved for later content,
 a simulation-environment animation, results, and
 eight failure-analysis slides immediately before the conclusion, including the
 Clustering Error page with the legacy-track existence-belief update and a
