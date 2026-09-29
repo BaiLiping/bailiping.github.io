@@ -744,7 +744,7 @@
    "id": "s-intuitive-interpretation",
    "background": "#ffffff",
    "transition": "none",
-   "notes": "The left equation repeats only the first branch of the legacy likelihood factor on the preceding slide: an existing target (r=1) assigned to a nonempty measurement group (a>0). The exponential count term and inverse clutter-group mean appear once, outside the product over group measurements. The right equation is equation (38) on printed page 90 (PDF page 9) of The Probabilistic Data Association Filter by Yaakov Bar-Shalom, Fred Daum, and Jim Huang (2009). Its notation is preserved: calligraphic L_i(k), Gaussian density N evaluated at z_i(k) with predicted mean z-hat(k|k-1) and innovation covariance S(k), detection probability P_D, and clutter spatial density lambda. P_D is placed before the Gaussian density in the numerator, an algebraically identical reordering. This likelihood ratio is distinct from the normalized association probability in equation (37).",
+   "notes": "The left equation repeats only the first branch of the legacy likelihood factor on the preceding slide: an existing target (r=1) assigned to a nonempty measurement group (a>0). The exponential count term and inverse clutter-group mean appear once, outside the product over group measurements. The right equation is equation (38) on printed page 90 (PDF page 9) of The Probabilistic Data Association Filter by Yaakov Bar-Shalom, Fred Daum, and Jim Huang (2009). Its notation is preserved: calligraphic L_i(k), Gaussian density N evaluated at z_i(k) with predicted mean z-hat(k|k-1) and innovation covariance S(k), detection probability P_D, and clutter spatial density lambda. P_D is placed before the Gaussian density in the numerator, an algebraically identical reordering. This likelihood ratio is distinct from the normalized association probability in equation (37). Matching colored boxes compare the per-measurement prefactors mu_m and P_D (orange), target-generated measurement densities f and N (blue), and clutter terms f_c and lambda (purple). The colors indicate corresponding roles: mu_m is a mean count, P_D is a probability, f_c is a spatial pdf, and lambda is a spatial clutter intensity.",
    "elements": [
     {
      "id": "kicker",
@@ -891,7 +891,7 @@
      "y": 364,
      "w": 544,
      "h": 150,
-     "html": "\u003cspan class=\"math-tex math-display\">\\[\\underline l(\\bm y,a;\\bm Z^G)=\\dfrac{e^{-\\mu_m(\\bm x,\\bm E)}}{\\mu_g}\\prod_{\\bm z\\in\\bm Z^a}\\!\\dfrac{\\mu_m(\\bm x,\\bm E)f(\\bm z\\mid\\bm x,\\bm E)}{f_c(\\bm z)}\\]\u003c/span>",
+     "html": "\u003cspan class=\"math-tex math-display\">\\[\\underline l(\\bm y,a;\\bm Z^G)=\\dfrac{e^{-\\mu_m(\\bm x,\\bm E)}}{\\mu_g}\\prod_{\\bm z\\in\\bm Z^a}\\!\\dfrac{\\bbox[2px,border:2px solid #b96815]{\\mu_m(\\bm x,\\bm E)}\\,\\bbox[2px,border:2px solid #2766b1]{f(\\bm z\\mid\\bm x,\\bm E)}}{\\bbox[2px,border:2px solid #7854a3]{f_c(\\bm z)}}\\]\u003c/span>",
      "fontSize": 24,
      "fontFamily": "Arial, Helvetica, sans-serif",
      "fontWeight": 400,
@@ -909,7 +909,7 @@
      "y": 364,
      "w": 546,
      "h": 150,
-     "html": "\u003cspan class=\"math-tex math-display\">\\[\\mathcal L_i(k)\\triangleq\\dfrac{P_D\\,\\mathcal N\\!\\left[z_i(k);\\hat z(k\\mid k-1),S(k)\\right]}{\\lambda}\\]\u003c/span>",
+     "html": "\u003cspan class=\"math-tex math-display\">\\[\\mathcal L_i(k)\\triangleq\\dfrac{\\bbox[2px,border:2px solid #b96815]{P_D}\\,\\bbox[2px,border:2px solid #2766b1]{\\mathcal N\\!\\left[z_i(k);\\hat z(k\\mid k-1),S(k)\\right]}}{\\bbox[2px,border:2px solid #7854a3]{\\lambda}}\\]\u003c/span>",
      "fontSize": 24,
      "fontFamily": "Arial, Helvetica, sans-serif",
      "fontWeight": 400,
