@@ -2,77 +2,83 @@
 
 Public presentation: <https://bailiping.com/radio-cramer-rao-slides/>.
 
-Updated September 24, 2026: **37 slides and six live experiments**, including physical coded pilots and the unknown channel and clock.
+Updated September 29, 2026: **40 slides and six embedded experiments**. The active acquisition is now analog beam sweeping at both the BS and UE, with one OFDM pilot symbol per tested beam pair.
 
-- [Coded-pilot calculator](https://bailiping.com/radio-cramer-rao-slides/project/?lab=coded)
-- [Orthogonal-pilot reference calculator](https://bailiping.com/radio-cramer-rao-slides/live/?lab=calculator)
-- [Fisher information](https://bailiping.com/radio-cramer-rao-slides/live/?lab=fisher)
-- [Bandwidth and observation time](https://bailiping.com/radio-cramer-rao-slides/live/?lab=bandwidth)
-- [3D array geometry](https://bailiping.com/radio-cramer-rao-slides/live/?lab=geometry)
-- [Two-path gain separability](https://bailiping.com/radio-cramer-rao-slides/live/?lab=multipath)
+- [Current analog beam-sweep calculator](https://bailiping.com/radio-cramer-rao-slides/analog/)
+- [Acquisition setup](https://bailiping.com/radio-cramer-rao-slides/#project-setup)
+- [Reference papers](https://bailiping.com/radio-cramer-rao-slides/#references)
+- [Orthogonal-training reference calculator](https://bailiping.com/radio-cramer-rao-slides/live/?lab=calculator)
+- [Historical coded-pilot calculator](https://bailiping.com/radio-cramer-rao-slides/project/?lab=coded)
 
-This companion to **Radio Measurements → Radio Map** derives local bounds for delay, two arrival angles, two departure angles, effective path attenuation, and reference phase. The cover links directly to the coded-pilot experiment and the unknown-channel section. The slide IDs `project-setup` and `unknown-channel` are stable entry points.
+## Current analog acquisition
 
-## Physical coded-pilot model
+The BS codebook is 10 by 10 (100 beams); the UE codebook is 8 by 4 (32 beams). The model assumes one active RF stream at each end and one OFDM pilot symbol at each tested pair. An exhaustive Cartesian sweep therefore comprises 3,200 sequential symbols, not one symbol for the entire sweep. Each pair and tone yields one complex scalar after analog combining:
 
-The configured observation design follows the [radio SLAM system model](https://github.com/BaiLiping/radio-SLAM-system-model):
+$$y_{mnk}=s_k\mathbf w_n^H\widetilde{\mathbf H}_k\mathbf v_m+z_{mnk}.$$
 
-$$Y_k=e^{-j2\pi f_kb}H_k^{\mathrm g}X+W_k.$$
+For one isolated path,
 
-The system model writes the receiver clock bias as `beta`. The deck and labs write it as `b`, because `beta` denotes the RMS frequency spread in the delay bounds.
+$$\mu_{mnk}=s_k\alpha e^{-j2\pi f_k\tau^{\rm a}}(\mathbf w_n^H\mathbf a_r)(\mathbf a_t^H\mathbf v_m),\qquad \tau^{\rm a}=\tau^{\rm g}+b.$$
 
-The default dimensions are 384 TX ports, 32 RX ports, 50 symbols, and 3300 active tones over 400 MHz at 27.2 GHz. The arrays use half-wavelength spacing with 24 horizontal and 16 vertical TX elements, and eight horizontal and four vertical RX elements. One known QPSK matrix `X` is reused on every tone. Physical pilot entries have magnitude `sqrt(P / (Nt K))`. The noise density is `10^((-174 + NF - 30)/10)` W/Hz, and the complex sample variance is this density times `B/K`. At NF = 9 dB the default variance is `3.8330638305071264e-15` W. Noise is not divided by symbol count or pilot power.
+The calculator estimates apparent delay, two arrival angles, two departure angles, effective attenuation and reference phase jointly. Unknown gain/phase coupling is retained. It forms the full seven-by-seven Fisher matrix from the scalar observation derivatives:
 
-The calculator uses a representative isolated static far-field path with calibrated effective attenuation. It computes the full seven-parameter Fisher matrix from the derivatives of `H_k X`, including the coded-pilot gain/phase cross terms. The parameter units are ns, degrees, degrees, degrees, degrees, dB, and radians. Its per-coordinate marginal bounds account for nuisance coupling and local unobservable directions.
+$$J_{ij}=2\operatorname{Re}\sum_{(m,n)\in\mathcal S}\sum_k\frac{(\partial_i\mu_{mnk})^*(\partial_j\mu_{mnk})}{\sigma^2}.$$
 
-The browser's deterministic QPSK generator supplies **illustrative pilots**. It does not reproduce a saved NumPy pilot matrix or a campus RT channel realization. Consequently, the displayed values are conditional examples for this observation design. A bound for an actual acquisition requires its saved `X`, path realization, and physical parameter derivatives. The effective path attenuation includes calibrated propagation and element effects once. No extra element gain or RT steering factor should be multiplied into already complete exported coefficients.
+The tone and spatial factors are accumulated using exact frequency moments, equivalent to summing all raw samples. Marginal bounds use a rank-aware normalized eigendecomposition. A coordinate with a component in the null space is reported as unidentifiable, never as a pseudoinverse zero.
 
-With 50 symbols, the pilot rank is at most 50. Full arbitrary per-tone CSI recovery needs row rank 384, while structured angle/delay estimation depends on the rank of the much smaller real parameter Jacobian. The new calculator therefore supports `L < Nt`. A single repeated spatial excitation cannot identify AoD jointly with a free complex gain.
+One fixed beam pair generally cannot separate the four angles from a freely unknown complex gain in this narrowband-array model. One symbol at each of many different beam pairs can retain sufficient spatial diversity. The relevant rank is the realified structured-parameter Jacobian, not a requirement for 384 independent symbols per pair.
 
-## Unknown channel and receiver clock
+## Retained parameters and explicit assumptions
 
-The receiver knows the pilots `X`, the tone grid, the array calibration and the noise variance. It does not know the channel. Every path's delay, AoA, AoD, attenuation and phase, the receiver clock bias `b`, and the number of paths are unknown. The simulator's true channel only sets the point where the deterministic CRB is evaluated. It is never an estimator input.
+Beam counts are **not antenna counts**. The previous physical arrays are retained: 24 horizontal by 16 vertical BS elements and 8 horizontal by 4 vertical UE elements, at half-wavelength spacing. The retained OFDM configuration is 27.2 GHz carrier, 3,300 contiguous active tones and 400 MHz grid bandwidth. With delta-f = B/K, one useful symbol is 8.25 microseconds; a full sweep is 26.4 milliseconds and 10,560,000 complex samples. CP, switching time and scheduling gaps are additional.
 
-With an unknown multipath channel the clock factor multiplies every path:
+The actual measured beam weights and angular coverage have not been supplied. The browser uses **illustrative ideal unit-norm phase-shifter beams**, uniformly spaced in azimuth from -60 to 60 degrees and elevation from -30 to 30 degrees at both ends. Coverage, physical arrays, beam-grid counts and path directions are independent inputs. Defaults of 30 dBm transmit power, 9 dB noise figure and 120 dB effective attenuation are teaching inputs, not measured hardware performance.
 
-$$\mathbf M_k=\sum_\ell\alpha_\ell e^{-j2\pi f_k(\tau^{\mathrm g}_\ell+b)}\mathbf a_r(\mathbf q_{r,\ell})\mathbf a_t(\mathbf q_{t,\ell})^H\mathbf X,\qquad\partial_b\mathbf M_k=\sum_\ell\partial_{\tau^{\mathrm g}_\ell}\mathbf M_k.$$
+The path is isolated, static and far field. The sweep retains complex I/Q and assumes a common complex path gain with stable or compensated phase across pairs. Narrowband array steering at the carrier excludes beam squint. Motion requires actual timestamps and appropriate Doppler/channel evolution; phase drift and switching calibration may require nuisance parameters. Power-only beam measurements require a different likelihood. No channel coherence guarantee follows from the sweep duration.
 
-Shifting `b` by `delta` and every geometric delay by `-delta` leaves the data unchanged, so the channel-level parameters are the apparent delays `tau_a = tau_g + b`. Delay differences are clock-free. The clock is separated at the geometry level, where every apparent delay equals a path length over `c` plus the same `b`. Line of sight alone leaves a range/clock trade along the AoD ray. Adding one single-bounce path with an unknown incidence point adds five measurements and three unknowns, and for generic geometry the geometric FIM becomes full rank.
+The full schedule can be compared with one fixed pair, a BS-only sweep, or a UE-only sweep. Partial-sweep examples freeze a strongest beam at the true evaluation point. They do not simulate adaptive beam selection or charge its search overhead.
 
-An earlier revision of this deck treated the channel `H^g` as known to the receiver and derived a clock bound from it. That premise does not hold for this system and was removed.
+The analog weights have unit norm and array steering entries have unit magnitude. Pilot power per tone is P/K. For spatially white pre-combining noise, the combined complex variance is sigma-squared = N0 delta-f, with N0 = 10^((-174 + NF - 30)/10) W/Hz. At the default tone grid and NF=9 dB, sigma-squared is 3.8330638305071264e-15 W. Do not divide this by 32 beams or 3,200 pairs, and do not multiply antenna gains into responses that already include them. Increasing beam density at fixed power increases both duration and transmitted energy; it is not a fixed-energy comparison.
 
-## Orthogonal reference model
+## Unknown channel and clock
 
-The five original labs use one static, isolated far-field path, calibrated arrays, narrowband array steering, flat contiguous pilot tones, white circular complex Gaussian noise, and balanced orthogonal transmit training. `Nt` and `Nr` count antenna elements at one BS and one UE. This time-code design requires `L >= Nt`. This is a requirement of that training scheme, not a universal symbol-count requirement for parametric channel estimation.
+Pilots, beam weights, schedule, calibration and assumed noise are known. The propagation channel is not known to the estimator. True parameters only specify the operating point at which the deterministic CRB is evaluated. The isolated-path calculation is conditional on one path; an unknown number of paths is a separate model-order problem.
 
-The total information SNR is `Gamma = Nr K L rho`, where `rho` averages over the transmit code and is the SNR per receiver, tone, and symbol. Transmit energy is shared among `Nt` elements, so no extra `Nt` multiplier appears. The three conventions are fixed aggregate SNR, fixed average per-tone SNR, and a physical power/noise link budget. Grid bandwidth is `B = K deltaF`. Useful duration `L / deltaF` excludes CP and scheduling gaps.
+Beam sweeping does not remove the clock gauge. Adding delta to b and subtracting delta from every geometric delay leaves the observation unchanged. Channel-level delay bounds are on apparent delay; path-delay differences are clock-free. Geometry, timing references or explicit priors provide additional constraints.
 
-The implementation retains the full azimuth/elevation information blocks and inverts them jointly. It marks singular directions instead of reporting pseudoinverse zeros as finite CRBs. Complex noise variance means `E|n|² = sigma²`, with `sigma²/2` in each real quadrature. Delay refers to apparent propagation delay unless clock offset has been constrained. Per-path attenuation is an effective calibrated channel-gain parameter, not separately an intrinsic wall-loss parameter.
+A local CRB is an optimistic estimation benchmark, not a detection probability, ambiguity probability, expected hardware error or automatically calibrated SLAM covariance. A full unknown-multipath bound must retain cross-path derivatives and nuisance coupling.
 
-The multipath lab has a narrower model: two known delays and unknown complex gains with identical spatial signatures. Its gain-variance inflation is `1/(1-|chi|²)`, where `chi` is normalized frequency-signature correlation. It is not a joint unknown-delay/angle multipath bound.
+## Reference and historical models
 
-## Editable source and build
+The five original embedded labs in `live/` remain explicitly identified in the deck as reference models. Their balanced orthogonal transmit training and per-antenna receive observations are **not** the analog acquisition. In particular, their L >= Nt time-code condition, aggregate-SNR normalization and array-covariance angular closed forms must not be substituted for the actual swept-beam FIM.
 
-`bento-deck.mjs` contains the slide text, equations, references, and layout. `build.mjs` uses the existing public radio-geometry deck's licensed Bento runtime and its local MathJax distribution. Generated `index.html`, `deck.json`, and `live-demos.json` should be committed with the source.
+The two-path reference lab has known delays and unknown complex gains with identical spatial signatures; it is not a joint unknown-delay/angle multipath bound. The previous 384-port, 50-symbol QPSK calculator in `project/` remains accessible as a historical model and links to the current analog calculator.
 
-The orthogonal reference application is in `live/`, with the `RadioCRB` engine. The coded-pilot application is in `project/`, with the `RadioProjectCRB` engine. Both `model.js` files are usable from Node via CommonJS. The applications use local scripts and have no runtime network dependencies for their calculations.
+## Editable source, build and tests
+
+`analog-deck.mjs` is the active acquisition revision. It imports the preserved `bento-deck.mjs` reference derivations, replaces the current setup and equations, labels reference-only sections and installs native clickable Bento paper links. `build.mjs` builds the existing licensed Bento presentation using the neighboring public radio-geometry deck and its local MathJax. Stable entry IDs include `project-setup`, `project-live`, `unknown-channel` and `references`.
+
+The current mathematical engine is `analog/model.js` (browser and CommonJS). The interface is `analog/index.html`; exported JSON includes codebook directions, actual tested pair indices, assumptions, parameter units and the full FIM.
 
 ```sh
-node radio-cramer-rao-slides/build.mjs
 node radio-cramer-rao-slides/tests/model.test.cjs
 node radio-cramer-rao-slides/tests/project-model.test.cjs
-python3 -m http.server 8767 --bind 127.0.0.1
+node radio-cramer-rao-slides/tests/analog-model.test.cjs
+node radio-cramer-rao-slides/build.mjs
+python3 -m http.server 8765 --bind 127.0.0.1
+# In another shell, with Playwright and Chromium installed:
+python3 radio-cramer-rao-slides/tests/analog-browser.py
 ```
 
-The reference test constructs complex raw-I/Q derivatives for DFT-coded transmit pilots and compares the entire Fisher matrix with the analytical engine. The project test compares the coded-pilot matrix with independent raw-I/Q finite differences and checks physical normalization, nuisance elimination, and singular configurations. Visual checks cover the changed Bento slides and both new labs at desktop, embedded and mobile sizes.
+The analog numerical regression compares all FIM entries with independent raw-I/Q finite differences and checks power scaling, normalization, joint inversion and singular configurations. Browser tests check changed-slide layout, math rendering, native paper links, the sandboxed embedded calculator, keyboard navigation and mobile controls. `.github/workflows/build-radio-crb.yml` builds and tests these sources and commits only generated deck assets.
 
-Arrow keys navigate slides. Page Up / Page Down also navigate from inside a live lab. Escape returns focus to the presentation. The standalone lab supports narrower screens. Live panels preserve inputs for the browser session, and inactive iframes unload.
+## Reference papers — direct links
 
-## Primary sources
+- F. Sohrabi and W. Yu, *Hybrid Analog and Digital Beamforming for mmWave OFDM Large-Scale Antenna Arrays*, 2017. <https://arxiv.org/abs/1711.08408>. Used for the analog/hybrid OFDM architecture, not a CRB result or its known-CSI optimization premise.
+- X. Li, V. C. Andrei, U. J. Mönich and H. Boche, *Optimal and Robust Waveform Design for MIMO-OFDM Channel Sensing: A Cramér-Rao Bound Perspective*, 2023. <https://arxiv.org/abs/2301.10689>.
+- A. Shahmansoori et al., *Position and Orientation Estimation through Millimeter Wave MIMO in 5G Systems*, IEEE TWC, 2018. <https://arxiv.org/abs/1702.01605>.
+- L. Le Magoarou and S. Paquelet, *Channel estimation: unified view of optimal performance and pilot sequences*, 2020. <https://arxiv.org/abs/2002.04481>.
 
-- X. Li et al., *Optimal and Robust Waveform Design for MIMO-OFDM Channel Sensing: A Cramér-Rao Bound Perspective*, 2023. <https://arxiv.org/abs/2301.10689>
-- A. Shahmansoori et al., *Position and Orientation Estimation through Millimeter-Wave MIMO in 5G Systems*, IEEE TWC, 2018. <https://arxiv.org/abs/1702.01605>
-- L. Le Magoarou and S. Paquelet, *Channel Estimation: Unified View of Optimal Performance and Pilot Sequences*, IEEE TSP, 2020. <https://arxiv.org/abs/2002.04481>
-- P. Poshala, Rushil KK, and R. Gupta, *Signal Chain Noise Figure Analysis*, Texas Instruments SLAA652, October 2014. <https://www.ti.com/lit/pdf/slaa652>
+Supporting manufacturer technical note, not a research paper: Texas Instruments, *Signal Chain Noise Figure Analysis*, SLAA652. <https://www.ti.com/lit/pdf/slaa652>.
 
-Closed forms and numeric examples are derived for the explicit model above. A local CRB is an optimistic estimation benchmark. It does not specify detection probability, bounce count, ambiguity probability, or automatically supply a calibrated covariance for a SLAM estimator.
+The 100-by-32 sweep is the configured experiment; it is not attributed to a reference paper. Slide-footer references and the reference-slide paper titles/URLs use native Bento links, so the renderer does not strip their navigation.
