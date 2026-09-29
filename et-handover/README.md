@@ -1,13 +1,13 @@
 # Scalable Extended-Target Handover in Distributed Integrated Sensing and Communication
 
 Public presentation at <https://bailiping.com/et-handover/>.
-The 28 regular Bento slides include two introduction/live pairs,
+The 27 regular Bento slides include two introduction/live pairs,
 GrBP processing diagrams, the factorization and likelihood functions on page 3,
 an “Intuitive Intepretation” page 4 with the assigned-existing legacy likelihood
 beside the PDA likelihood ratio from equation (38) of “The Probabilistic Data
 Association Filter” by Bar-Shalom, Daum, and Huang (2009), with matching colored
 boxes around the per-measurement prefactors, target likelihoods, and clutter terms,
-a simulation-environment animation, results, a measurements-only animation, and
+a simulation-environment animation, results, and
 eight failure-analysis slides immediately before the conclusion, including the
 Clustering Error page with the legacy-track existence-belief update and a
 Clustering Error Type I page with a numerical table for zero through five
@@ -99,38 +99,11 @@ then checks controls, navigation away during loading, revisits, and print previe
 - Slide 3 links to **Derivation for GrBP** at <../eo-derivation/#grbp>, with
   the corresponding offline slide deck.
 
-## Measurements-only animation
-
-Page 19, **what it looks like to they eyes**, follows the results on page 18.
-It shows the same trial as the simulation animation on page 17: `mc_0088`,
-input frames 0–99 from `EO_Target_Handover/Data/mc_0088/frames_data/`.
-The plot is zoomed to BS1 (`bs1`, at x = 150 m, y = 0 m), its 120 m circular
-FoV boundary, and only measurements recorded by BS1 in the current frame.
-Measurements from other BSs are excluded even within the overlapping FoV.
-BS1 target detections and clutter share one marker;
-there are no truth labels, trajectories, accumulated detections, or estimates.
-The 1200 × 1200 GIF loops at 10 fps for 10 seconds. The slide includes a direct
-GIF link and a three-item legend.
-
-`prepare-measurements-gif.py` reads the recorded schema-v2 measurements without
-running a filter or generating data. It selects only the `bs1` measurement
-block, validates all 100 frames and BS1's geometry, replaces the scatter
-coordinates each frame, and encodes a fixed
-canvas with one global palette. It requires NumPy, Matplotlib, Pillow, and
-FFmpeg. Input hashes, per-BS observation counts, geometry, and the output hash
-are recorded in `assets/measurements-only-provenance.json`.
-
-```sh
-python3 et-handover/prepare-measurements-gif.py /path/to/EO_Target_Handover
-node et-handover/build.mjs
-node et-handover/validate.mjs
-```
-
 ## Failure-analysis animations
 
-Slides 20 and 21 are **Extent Expansion** (the animations on pages 11 and 12
+Slides 19 and 20 are **Extent Expansion** (the animations on pages 11 and 12
 of `Sep 11.pptx`, side by side) and **Multiple Initiation** (page 13).
-The conclusion is slide 28. The animations keep their original 60, 61, and
+The conclusion is slide 27. The animations keep their original 60, 61, and
 62 frames, 100 ms frame delays, and infinite looping.
 
 The original plots shifted horizontally by 39, 42, and 33 pixels across their
@@ -152,7 +125,7 @@ node et-handover/validate.mjs
 
 ## Underlying Multimodal distribution
 
-Slides 22–24 share the requested title **Underlying Multimodal distribution**
+Slides 21–23 share the requested title **Underlying Multimodal distribution**
 and use the pictures from slides 6–8 of `Oct 2.pptx`, in that order. Each
 picture has its own slide, with both panels enlarged beneath the heading.
 The examples are BS5 at frame 182/200, BS5 at frame 91/200, and BS3 at
