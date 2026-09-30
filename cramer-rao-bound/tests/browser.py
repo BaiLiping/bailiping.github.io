@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Browser regression tests. Requires Python playwright + an installed Chromium.
+"""Full-guide regression tests. Requires Python playwright + an installed Chromium.
 Set CHROMIUM_EXECUTABLE to use a system browser; otherwise uses Playwright's browser.
 Tests load the self-contained document with set_content, so no server is needed.
 """
@@ -27,7 +27,8 @@ with sync_playwright() as p:
     errors=[];requests=[]
     page.on('pageerror',lambda e:errors.append(str(e)))
     page.on('request',lambda r:requests.append(r.url))
-    page.set_content((ROOT/'index.html').read_text());page.wait_for_function('window.CRBDeck')
+    page.set_content((ROOT/'guide/index.html').read_text());page.wait_for_function('window.CRBDeck')
+    page.locator('#read-mode').click()
     state=lambda:page.evaluate('CRBDeck.state()')
     go=lambda slug:page.evaluate('(s)=>CRBDeck.go(s)',slug)
     def slide_fit(label):
@@ -102,7 +103,7 @@ with sync_playwright() as p:
     # Responsive reading layout on a narrow phone.
     phone=browser.new_page(viewport={'width':390,'height':844},device_scale_factor=1)
     phone.on('pageerror',lambda e:errors.append(str(e)))
-    phone.set_content((ROOT/'index.html').read_text());phone.wait_for_function('window.CRBDeck')
+    phone.set_content((ROOT/'guide/index.html').read_text());phone.wait_for_function('window.CRBDeck')
     check(phone.locator('body').evaluate("e=>e.classList.contains('reading')"),'mobile starts reading view')
     width=phone.evaluate('({view:innerWidth,scroll:document.documentElement.scrollWidth})')
     check(width['scroll']<=width['view']+2,f'mobile horizontal overflow: {width}')

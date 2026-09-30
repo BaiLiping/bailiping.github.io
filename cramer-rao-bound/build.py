@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
-"""Build the offline HTML from local sources. Python standard library only."""
+"""Build the self-contained companion guide and compact labs, then the Bento deck."""
 from pathlib import Path
-import json, re, html
+import json, re, html, subprocess, sys
 ROOT=Path(__file__).resolve().parent
 SRC=ROOT/'src'
 SOURCES={
@@ -34,10 +34,26 @@ def main():
 <dialog id="overview-dialog"><div class="toc-header"><h3>Slide overview</h3><button id="toc-close" aria-label="Close overview">×</button></div><div class="toc-grid" id="toc-grid"></div></dialog>
 <noscript><p style="padding:20px">Enable JavaScript for navigation and interactive labs. The static PDF is an alternative.</p><style>.slide{display:flex}.stage-wrap,.stage{height:auto;display:block}.stage{transform:none}.toolbar,.nav{display:none}</style></noscript>
 <script type="application/json" id="slide-meta">'''+meta+'''</script><script>'''+(SRC/'math.js').read_text()+'''</script><script>'''+(SRC/'app.js').read_text()+'''</script></body></html>'''
-    (ROOT/'index.html').write_text(out)
+    # The complete reading guide retains the original explanations and experiments.
+    guide_css=(SRC/'guide.css').read_text()
+    out=out.replace('</style>',guide_css+'</style>',1)
+    out=out.replace('<body>','<body data-mode="guide">',1)
+    out=out.replace('href="https://bailiping.com/cramer-rao-bound/"','href="https://bailiping.com/cramer-rao-bound/guide/"',1)
+    out=out.replace('<title>Cramér–Rao Bound: Precision Has a Floor | Bai Liping</title>','<title>Cramér–Rao Bound · Interactive Guide | Bai Liping</title>',1)
+    out=out.replace('<a class="brand" href="https://bailiping.com/">BLP</a>','<a class="brand" href="../index.html">← Slides</a>',1)
+    (ROOT/'guide').mkdir(exist_ok=True)
+    (ROOT/'guide/index.html').write_text(out)
+    labs=[s for s in deck if s['id'].endswith('-lab')]
+    tabs=''.join(f'<button data-lab="{s["id"]}" type="button">{html.escape(label)}</button>' for s,label in zip(labs,['Sampling','Bias','Geometry']))
+    panels=''.join(f'<article data-lab-panel="{s["id"]}" hidden><h1>{html.escape(s["title"])}</h1><p class="lab-intro">{html.escape(s["subtitle"])}</p>{s["body"]}</article>' for s in labs)
+    live='<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Cramér–Rao Bound · Interactive Labs</title><meta name="description" content="Three interactive Cramér–Rao experiments: Gaussian sampling, estimator bias, and sensor geometry."><link rel="canonical" href="https://bailiping.com/cramer-rao-bound/live/"><style>'+(SRC/'style.css').read_text()+guide_css+(SRC/'lab.css').read_text()+'</style></head><body data-mode="lab"><header class="lab-nav"><a href="../index.html">← Slides</a><nav aria-label="Choose an experiment">'+tabs+'</nav><a href="../guide/index.html">Full guide →</a></header><main class="lab-main">'+panels+'</main><script>'+(SRC/'math.js').read_text()+'</script><script>'+(SRC/'app.js').read_text()+'</script></body></html>'
+    (ROOT/'live').mkdir(exist_ok=True)
+    (ROOT/'live/index.html').write_text(live)
     notes='# Cramér–Rao Bound — presenter notes\n\n23 slides · three live labs · approximately 30–40 minutes.\n\n'
     for i,s in enumerate(deck):
         notes+=f'## {i+1:02d}. {s["title"]}\n\n{s["subtitle"]}\n\n{s["notes"]}\n\n'
     (ROOT/'presenter-notes.md').write_text(notes)
-    print(f'Built {ROOT/"index.html"}: {len(deck)} slides, {len(out):,} characters')
+    print(f'Built companion guide ({len(deck)} sections) and {len(labs)} compact labs')
+    if '--guide-only' not in sys.argv:
+        subprocess.run(['node',str(ROOT/'build.mjs')],check=True)
 if __name__=='__main__':main()

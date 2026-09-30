@@ -1,11 +1,10 @@
 #!/usr/bin/env python3
 """Export static PDF and screenshot-based PowerPoint with presenter notes.
-Requires playwright and python-pptx. Set CHROMIUM_EXECUTABLE for a system browser.
-The HTML is the interactive master; these exports preserve only default lab states.
+Requires Node Playwright and python-pptx. Set CHROMIUM_EXECUTABLE for a system browser.
+The HTML is the interactive master; static lab explanations remain in every export.
 """
-import argparse, json, os, shutil, tempfile
+import argparse, json, os, shutil, tempfile, subprocess
 from pathlib import Path
-from playwright.sync_api import sync_playwright
 from pptx import Presentation
 from pptx.util import Inches
 ROOT=Path(__file__).resolve().parents[1]
@@ -16,22 +15,10 @@ def main():
     parser.add_argument('--screenshots',type=Path,help='Optional persistent slide PNG directory')
     args=parser.parse_args();args.output.mkdir(parents=True,exist_ok=True)
     deck=json.loads((ROOT/'src/deck.json').read_text())
-    html=(ROOT/'index.html').read_text()
-    with tempfile.TemporaryDirectory() as temp, sync_playwright() as p:
+    with tempfile.TemporaryDirectory() as temp:
         screenshots=args.screenshots or Path(temp);screenshots.mkdir(parents=True,exist_ok=True)
-        options={'headless':True,'args':['--no-sandbox']}
-        if os.environ.get('CHROMIUM_EXECUTABLE'):options['executable_path']=os.environ['CHROMIUM_EXECUTABLE']
-        browser=p.chromium.launch(**options)
-        page=browser.new_page(viewport={'width':1310,'height':844},device_scale_factor=2)
-        errors=[];page.on('pageerror',lambda e:errors.append(str(e)))
-        page.set_content(html);page.wait_for_function('window.CRBDeck')
-        # A PDF uses vector SVG and selectable HTML text. Chromium honors the 16:9 print stylesheet.
-        page.pdf(path=str(args.output/'Cramer-Rao-Bound.pdf'),print_background=True,prefer_css_page_size=True)
-        for i in range(len(deck)):
-            page.evaluate('(i)=>CRBDeck.go(i,false)',i)
-            page.locator('.slide.active').screenshot(path=str(screenshots/f'slide-{i+1:02d}.png'))
-        browser.close()
-        if errors:raise RuntimeError('\n'.join(errors))
+        subprocess.run(['node',str(ROOT/'tools/export.cjs'),'--output',str(args.output),'--screenshots',str(screenshots)],check=True)
+        rendered=json.loads((args.output/'bento-slides.json').read_text())
         presentation=Presentation();presentation.slide_width=Inches(13.333333);presentation.slide_height=Inches(7.5)
         presentation.core_properties.title='Cramér–Rao Bound: Precision Has a Floor'
         presentation.core_properties.subject='23 slides with three companion interactive labs'
@@ -48,13 +35,15 @@ def main():
             slide.shapes.add_picture(str(screenshots/f'slide-{i+1:02d}.png'),0,0,width=presentation.slide_width,height=presentation.slide_height)
             description=slide.shapes[0]._element.xpath('.//p:cNvPr')[0]
             description.set('descr',f'Slide {i+1}: {item["title"]}. {item["subtitle"]}. See speaker notes and the HTML master for the full content.')
-            note=f'{i+1:02d}. {item["title"]}\n\n{item["subtitle"]}\n\n{item["notes"]}\n\n'
+            note=f'{i+1:02d}. {item["title"]}\n\n{item["subtitle"]}\n\n{rendered[i]["notes"]}\n\n'
             if item['id'].endswith('-lab'):
-                note+='LIVE LAB: Open Cramer-Rao-Bound.html in a browser, then choose this lab from Overview. This PowerPoint is a static snapshot; the controls in the image do not respond.\n\n'
+                note+='LIVE LAB: Open Cramer-Rao-Bound.html in a browser and choose TRY LIVE on this slide. This PowerPoint is a static snapshot.\n\n'
             note+='Sources\n'+'\n'.join(sources[key] for key in item['sources'])
             slide.notes_slide.notes_text_frame.text=note
         presentation.save(args.output/'Cramer-Rao-Bound.pptx')
     shutil.copyfile(ROOT/'index.html',args.output/'Cramer-Rao-Bound.html')
+    for name in ['live','guide']:
+        shutil.copytree(ROOT/name,args.output/name,dirs_exist_ok=True)
     print(f'Exported HTML, PDF and PowerPoint to {args.output}')
 
 if __name__=='__main__':main()

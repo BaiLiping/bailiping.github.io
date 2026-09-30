@@ -1,0 +1,8 @@
+html,body{height:auto;min-height:100%;background:#fff}
+[hidden]{display:none!important}.lab-nav{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:14px 24px;border-bottom:1px solid var(--line);font-size:14px}
+.lab-nav nav{display:flex;gap:8px}.lab-nav button[aria-pressed=true]{background:var(--teal);color:white;border-color:var(--teal)}
+.lab-main{max-width:1200px;margin:auto;padding:22px}.lab-main h1{font-size:28px;margin:0 0 10px}.lab-intro{font-size:16px;color:var(--muted);margin-bottom:22px}
+.lab{grid-template-columns:minmax(0,1fr) 305px;height:auto;align-items:start}.lab .card{overflow:visible}.lab .plot-card{min-height:430px}.lab .control-card{height:auto}
+.embedded .lab-nav,.embedded h1,.embedded .lab-intro{display:none}.embedded .lab-main{padding:18px}
+.lab-main .card{background:#f8fafc}.lab-main .plot-card{background:white}.metric strong{font-size:24px}
+@media(max-width:700px){.lab-main,.embedded .lab-main{padding:12px}.lab{grid-template-columns:minmax(0,1fr);gap:14px}.lab-nav{padding:12px;flex-wrap:wrap}.lab-nav nav{order:3;width:100%}.lab-nav nav button{flex:1}.lab .plot-card{min-height:0}.lab .control-card{padding:20px}.geom-chart{height:260px}.lab-chart{height:240px}.metrics{gap:6px}.metric{padding:7px}.metric strong{font-size:20px}.lab .control .labelrow{font-size:15px}.lab input[type=range]{height:28px}.lab button{min-height:38px}.lab .lab-note{font-size:13px!important}.mini-matrix{font-size:12px!important}.legend{gap:10px}}

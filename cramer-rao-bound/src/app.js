@@ -3,11 +3,11 @@
   'use strict';
   const M = window.CRBMath;
   const $ = id => document.getElementById(id);
-  const C = {ink:'#202b33',muted:'#66737d',line:'#d8dee2',teal:'#2d7a70',tealsoft:'#e3f0ed',blue:'#39708c',bluesoft:'#e5eff4',rust:'#a95736',rustsoft:'#f5e8e1',paper:'#f8f6f1'};
+  const C = {ink:'#16273e',muted:'#596d80',line:'#d8e1e9',teal:'#087f68',tealsoft:'#edf7f3',blue:'#2766b1',bluesoft:'#edf3fa',rust:'#b96815',rustsoft:'#fff4e7',paper:'#ffffff'};
   const esc = s => String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
   const fmt = (x,d=3) => !Number.isFinite(x) ? '∞' : x !== 0 && Math.abs(x) < 0.001 ? x.toExponential(2) : x.toFixed(d);
   const svg = (w,h,b) => `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${w} ${h}" aria-hidden="true">${b}</svg>`;
-  const txt=(x,y,s,opts={})=>`<text x="${x}" y="${y}" fill="${opts.color||C.muted}" font-family="${opts.serif?'Georgia,serif':'Inter,Segoe UI,sans-serif'}" font-size="${opts.size||14}" text-anchor="${opts.anchor||'start'}"${opts.weight?' font-weight="'+opts.weight+'"':''}>${esc(s)}</text>`;
+  const txt=(x,y,s,opts={})=>`<text x="${x}" y="${y}" fill="${opts.color||C.muted}" font-family="Arial,Helvetica,sans-serif" font-size="${opts.size||14}" text-anchor="${opts.anchor||'start'}"${opts.weight?' font-weight="'+opts.weight+'"':''}>${esc(s)}</text>`;
   const line=(x1,y1,x2,y2,color=C.line,width=1,dash='')=>`<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="${color}" stroke-width="${width}"${dash?' stroke-dasharray="'+dash+'"':''}/>`;
   const circle=(x,y,r,color,stroke='none',w=1)=>`<circle cx="${x}" cy="${y}" r="${r}" fill="${color}" stroke="${stroke}" stroke-width="${w}"/>`;
   const path=(pts,color,width=2,fill='none',dash='')=>`<path d="${pts.map((p,i)=>(i?'L':'M')+p[0].toFixed(2)+','+p[1].toFixed(2)).join(' ')}" stroke="${color}" stroke-width="${width}" fill="${fill}"${dash?' stroke-dasharray="'+dash+'"':''} stroke-linejoin="round"/>`;
@@ -211,10 +211,30 @@
   $('geometry-chart').addEventListener('pointermove',e=>{if(!dragging)return;const plotSVG=$('geometry-chart').querySelector('svg');const matrix=plotSVG.getScreenCTM();if(!matrix)return;const local=new DOMPoint(e.clientX,e.clientY).matrixTransform(matrix.inverse());const x=local.x,y=local.y;const p=selectedPoint();p[0]=Math.max(-5.5,Math.min(5.5,(x-380)/40));p[1]=Math.max(-3.5,Math.min(3.5,(180-y)/40));renderGeom();});
   ['pointerup','pointercancel','lostpointercapture'].forEach(ev=>$('geometry-chart').addEventListener(ev,()=>dragging=false));
   $('geometry-chart').addEventListener('keydown',e=>{const hit=e.target.closest('[data-point]');if(!hit||!e.key.startsWith('Arrow'))return;geom.selected=+hit.dataset.point;const p=selectedPoint();const d=e.shiftKey?.5:.1;if(e.key==='ArrowLeft')p[0]-=d;if(e.key==='ArrowRight')p[0]+=d;if(e.key==='ArrowUp')p[1]+=d;if(e.key==='ArrowDown')p[1]-=d;p[0]=Math.max(-5.5,Math.min(5.5,p[0]));p[1]=Math.max(-3.5,Math.min(3.5,p[1]));e.preventDefault();e.stopPropagation();renderGeom();$('geometry-chart').querySelector(`[data-point="${geom.selected}"]`).focus();});
-  // ----- Presentation shell -----
+  const state=()=>({mc:{n:mc.n,sigma:mc.sigma,seed:mc.seed,estimator:mc.estimator,...M.statistics(mc.values,mc.mu)},bias:{...bias,...M.shrinkage(bias.alpha,bias.mu,2,16)},geometry:{anchors:geom.anchors.map(p=>p.slice()),target:geom.target.slice(),sigma:geom.sigma,unknownBias:geom.unknownBias,...geom.result}});
+  // Compact labs use only the three experiment panels, without the full guide.
+  if(document.body.dataset.mode==='lab'){
+    const params=new URLSearchParams(location.search);
+    const embedded=params.get('embed')==='1';
+    document.body.classList.toggle('embedded',embedded);
+    const names=['gaussian-lab','bias-lab','geometry-lab'];
+    let active=names.includes(params.get('lab'))?params.get('lab'):'gaussian-lab';
+    function show(name){
+      active=names.includes(name)?name:'gaussian-lab';
+      document.querySelectorAll('[data-lab-panel]').forEach(el=>{el.hidden=el.dataset.labPanel!==active;});
+      document.querySelectorAll('[data-lab]').forEach(el=>el.setAttribute('aria-pressed',String(el.dataset.lab===active)));
+    }
+    document.querySelectorAll('[data-lab]').forEach(button=>button.addEventListener('click',()=>show(button.dataset.lab)));
+    replayMC();renderBias();renderGeom();show(active);
+    window.CRBDeck={go:show,state:()=>({current:active,...state()})};
+    addEventListener('keydown',event=>{if(embedded&&event.key==='Escape'){event.preventDefault();parent.postMessage({type:'crb-back'},location.protocol==='file:'?'*':location.origin);}});
+    parent.postMessage({type:'crb-ready'},location.protocol==='file:'?'*':location.origin);
+    return;
+  }
+  // ----- Full interactive guide -----
   const slides=Array.from(document.querySelectorAll('.slide'));
   const meta=JSON.parse($('slide-meta').textContent);
-  let current=0,reading=matchMedia('(max-width:700px)').matches;
+  let current=0,reading=document.body.dataset.mode==='guide'||matchMedia('(max-width:700px)').matches;
   document.body.classList.toggle('reading',reading);
   function fit(){if(reading)return;const r=document.querySelector('.stage-wrap').getBoundingClientRect();const scale=Math.min((r.width-30)/1280,(r.height-20)/720,1.35);$('stage').style.transform=`scale(${Math.max(.1,scale)})`;}
   function go(i,updateHash=true){

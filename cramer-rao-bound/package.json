@@ -2,11 +2,14 @@
   "name": "cramer-rao-bound-slides",
   "version": "1.0.0",
   "private": true,
-  "description": "Optional equation renderer for an offline Cramer-Rao Bound slide deck",
+  "description": "Bento Cramer-Rao presentation, interactive guide, and compact labs",
   "scripts": {
     "build": "python3 build.py",
     "formulas": "node tools/render-formulas.cjs",
-    "test": "node tests/numerics.cjs"
+    "test": "node tests/numerics.cjs",
+    "test:browser": "node tests/bento.cjs",
+    "figures": "node tools/capture-figures.cjs",
+    "export": "node tools/export.cjs"
   },
-  "devDependencies": {"mathjax-full": "3.2.2"}
+  "devDependencies": {"mathjax-full": "3.2.2", "playwright": "1.57.0"}
 }

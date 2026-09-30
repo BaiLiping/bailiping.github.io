@@ -1,19 +1,28 @@
 # Cramér–Rao Bound — Precision Has a Floor
 
-An offline-capable, 23-slide presentation with three interactive labs and presenter notes. Public route: https://bailiping.com/cramer-rao-bound/ . This introductory deck is separate from the existing `/radio-cramer-rao-slides/` presentation.
+A native 23-slide Bento presentation with three compact interactive labs, a complete reading guide, and presenter notes. Public route: https://bailiping.com/cramer-rao-bound/ . This introductory deck is separate from the existing `/radio-cramer-rao-slides/` presentation.
 
 ## Open and present
 
-Open `index.html` in a browser, including directly from the filesystem. No runtime libraries, external fonts, analytics, or network requests are required. Equations are embedded SVG. Links to references and related site pages navigate in the same tab.
+The public route uses the same Bento runtime, typography, slide canvas, and
+navigation as the site's technical presentations. Use arrow keys to advance;
+Escape opens Bento's overview. Existing semantic links such as `#geometry-lab`
+continue to select their corresponding slide.
 
-Use the arrow keys, Home/End, or the navigation buttons to change slides. O opens the overview, N toggles presenter notes, and F enters fullscreen. Read view exposes the whole deck and is the default on phones. Print produces static slides.
+Normal slides contain the full explanation and static vector figures. **TRY
+LIVE** opens only the selected compact experiment in a modal. Back, Escape,
+and dialog close share one cleanup path: the iframe is removed and keyboard
+focus returns to the originating control. Labs load only when requested.
 
-Direct lab routes:
-- `#gaussian-lab`: independent Gaussian datasets, the efficient sample mean versus discarding measurements, a seeded Monte Carlo histogram, exact variance, and the unbiased CRB.
-- `#bias-lab`: fixed-factor shrinkage toward zero, with exact variance, squared bias, and MSE. At zero shrinkage factor the distribution is correctly represented as a point mass.
-- `#geometry-lab`: draggable anchors and target, information eigenvalues, a local covariance-bound ellipse, and optional Schur elimination of an unknown common range offset. Coordinate sliders and keyboard controls provide alternatives to dragging.
+The [interactive guide](./guide/) provides the complete original explanations,
+references, and working experiments in a responsive reading view. The
+[standalone labs](./live/) contain Gaussian sampling, shrinkage bias, and sensor
+geometry. Both link back to the presentation in the same tab.
 
-The PDF and PowerPoint are static snapshots. The PowerPoint includes presenter notes; its slide controls are images, not interactive controls. The HTML is the interactive master.
+The deck, guide, and labs use local code and embedded SVG equations, without
+remote fonts or runtime libraries. The source package works from the filesystem,
+including its compact labs. PDF and PowerPoint are static snapshots; the
+PowerPoint includes presenter notes. The HTML is the interactive master.
 
 ## Published downloads
 
@@ -24,45 +33,85 @@ The PDF and PowerPoint are static snapshots. The PowerPoint includes presenter n
 
 ## Build and test
 
-From the repository root, rebuilding the cached, self-contained HTML requires only Python:
+From the repository root:
 
 ```sh
 python3 cramer-rao-bound/build.py
 node cramer-rao-bound/tests/numerics.cjs
+node et-handover/validate.mjs cramer-rao-bound/index.html
 ```
 
-After editing `src/formulas.json`, regenerate the SVG cache first:
+`build.py` regenerates the guide and compact labs, then invokes `build.mjs` to
+produce the native Bento document and an independent static print layout.
+`deck.mjs` authors native text, shapes, vector charts, equations, and links.
+The checked-in Bento runtime matches the site's technical decks and is preserved
+verbatim in `index.html`; the standalone package can rebuild from that shell.
+
+Install optional figure, browser-QA, and export tools:
 
 ```sh
 npm install --prefix cramer-rao-bound --ignore-scripts
+npx --prefix cramer-rao-bound playwright install chromium
+```
+
+After editing equations or plotted models, regenerate their cached assets:
+
+```sh
 node cramer-rao-bound/tools/render-formulas.cjs
+python3 cramer-rao-bound/build.py --guide-only
+node cramer-rao-bound/tools/capture-figures.cjs
 python3 cramer-rao-bound/build.py
 ```
 
-The optional build dependency is pinned to `mathjax-full` 3.2.2. It is not loaded by the published page. Do not commit `node_modules` or any font files.
+The 11 static vector figures come from the same calculations as the live labs;
+`assets/lab-states.json` records their default numerical state.
 
-Browser regression tests exercise all 23 slides, layout overflow, seeded resets, controls, singular and coincidence cases, dragging, keyboard navigation, notes, and phone reading view:
+Run a local HTTP server from the repository root on port 8772, then:
 
 ```sh
-python -m pip install playwright==1.57.0 python-pptx==1.0.2
-python -m playwright install --with-deps chromium
-python cramer-rao-bound/tests/browser.py
+node cramer-rao-bound/tests/bento.cjs
+```
+
+`CRB_BASE_URL` overrides the served route. `CHROMIUM_EXECUTABLE` optionally selects
+a system browser; `PLAYWRIGHT_MODULE` optionally selects a local Node Playwright
+installation. Integration checks cover all 23 slides, image/formula loading,
+desktop/mobile overflow, numerical controls, pointer/keyboard geometry changes,
+lazy loading, Back/Escape, focus return, teardown during delayed loading, legacy
+hashes, and offline file access. The numerical suite contains 348 assertions.
+The earlier full-guide regressions remain in `tests/browser.py` (Python Playwright).
+
+Export the actual Bento slides and static print layout:
+
+```sh
+node cramer-rao-bound/tools/export.cjs
+python -m pip install python-pptx==1.0.2
 python cramer-rao-bound/tools/export.py
 ```
 
-`CHROMIUM_EXECUTABLE` optionally selects a system browser. Exports go to the ignored `exports/` directory. Copy the PDF and PPTX to this directory when publishing. The source package excludes dependencies, fonts, and temporary export files.
+The Python exporter invokes the Node exporter and adds a PowerPoint with notes.
+Exports go to the ignored `exports/` directory. Inspect the real 23-page PDF,
+then copy the PDF and PPTX into this directory before publication. Run
+`python3 cramer-rao-bound/tools/package.py` to rebuild the source ZIP without
+dependencies, caches, temporary exports, or the ZIP itself.
 
-After staging new or modified public HTML, regenerate site discovery:
+After staging new public routes, refresh discovery:
 
 ```sh
-git add cramer-rao-bound/index.html
+git add cramer-rao-bound/index.html cramer-rao-bound/guide/index.html cramer-rao-bound/live/index.html
 python3 scripts/build-search-index.py
 python3 scripts/build-search-index.py --check
 ```
 
 ## Source layout
 
-`src/deck.json` contains slide text, HTML fragments, references, and presenter notes. `src/formulas.json` holds editable TeX; `src/formula-svg.json` is its generated SVG cache. `src/math.js` contains the pure numerical models; `src/app.js` contains presentation behavior and SVG demos. `src/style.css` defines desktop, mobile, and print layouts. The deck uses its own lightweight offline renderer and does not change the site's shared Bento runtime.
+- `deck.mjs`, `build.mjs`, `deck.js`, and `deck.css`: native Bento content,
+  static print generation, accessible lab lifecycle, and presentation styling.
+- `src/deck.json`: the full guide text, primary references, and presenter notes.
+- `src/formulas.json` and `src/formula-svg.json`: editable TeX and cached SVG.
+- `src/math.js`: unchanged, independently tested numerical models.
+- `src/app.js`, `src/style.css`, `src/guide.css`, and `src/lab.css`: interactive
+  guide and compact lab rendering.
+- `assets/`: generated vector figures and their recorded default lab state.
 
 ## Statistical interpretation
 
