@@ -1,0 +1,55 @@
+name: Verify published Cramer-Rao URLs
+
+on:
+  push:
+    branches: ['publish/cramer-rao-bound-20260930']
+    paths: ['.github/workflows/check-cramer-rao-live.yml']
+
+permissions:
+  contents: read
+
+jobs:
+  public-urls:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Check the deployed deck, navigation, and downloads
+        run: |
+          python3 - <<'PY'
+          import hashlib, io, re, time, urllib.request, zipfile
+          base='https://bailiping.com'
+          expected='1591a3fd7b191196f4c62f683d24a5f02938d02f9c9ea61606561182688c577f'
+          def fetch(path):
+              request=urllib.request.Request(base+path+'?publish=a46a7c4',headers={'User-Agent':'bailiping-publication-verification','Cache-Control':'no-cache'})
+              with urllib.request.urlopen(request,timeout=30) as response:
+                  assert response.status==200, response.status
+                  data=response.read()
+                  print(path,response.status,len(data),response.headers.get('Content-Type'),flush=True)
+                  return data
+          for attempt in range(12):
+              try:
+                  html=fetch('/cramer-rao-bound/')
+                  assert hashlib.sha256(html).hexdigest()==expected, 'The latest HTML has not reached the public URL yet'
+                  home=fetch('/').decode()
+                  assert 'href="/cramer-rao-bound/"' in home
+                  assert '/cramer-rao-bound/' in fetch('/sitemap.xml').decode()
+                  assert '/cramer-rao-bound/' in fetch('/site-map/').decode()
+                  break
+              except Exception as error:
+                  print('Waiting for deployment:',error,flush=True)
+                  if attempt==11: raise
+                  time.sleep(10)
+          for name,signature in [('Cramer-Rao-Bound.pdf',b'%PDF'),('Cramer-Rao-Bound.pptx',b'PK'),('Cramer-Rao-Bound-site-package.zip',b'PK')]:
+              data=fetch('/cramer-rao-bound/'+name)
+              assert data.startswith(signature),name
+              if name.endswith('.pptx'):
+                  with zipfile.ZipFile(io.BytesIO(data)) as archive:
+                      assert len([p for p in archive.namelist() if re.fullmatch(r'ppt/slides/slide\d+\.xml',p)])==23
+              if name.endswith('-site-package.zip'):
+                  with zipfile.ZipFile(io.BytesIO(data)) as archive:
+                      assert 'cramer-rao-bound/index.html' in archive.namelist()
+                      assert not any(p.lower().endswith(('.ttf','.otf','.woff','.woff2')) for p in archive.namelist())
+          notes=fetch('/cramer-rao-bound/presenter-notes.md').decode()
+          assert notes.count('\n## ')==23
+          print('PUBLIC VERIFICATION PASSED: exact HTML, homepage entry, discovery files, PDF, 23-slide PPTX, source ZIP, and 23 presenter notes.',flush=True)
+          PY
