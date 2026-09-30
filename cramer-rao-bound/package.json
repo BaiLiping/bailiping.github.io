@@ -1,0 +1,12 @@
+{
+  "name": "cramer-rao-bound-slides",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Optional equation renderer for an offline Cramer-Rao Bound slide deck",
+  "scripts": {
+    "build": "python3 build.py",
+    "formulas": "node tools/render-formulas.cjs",
+    "test": "node tests/numerics.cjs"
+  },
+  "devDependencies": {"mathjax-full": "3.2.2"}
+}
