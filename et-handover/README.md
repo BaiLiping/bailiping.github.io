@@ -82,14 +82,14 @@ then checks controls, navigation away during loading, revisits, and print previe
   until acknowledgment arrives; then BS C owns `(C, 7)`. The original sidebar
   and normal playback speed remain.
 - Slide 17 introduces the seven-base-station environment using the supplied
-  `centralized_animation (2).gif`. The presentation copy at
-  `assets/simulation-environment.gif` is rendered from the same archived
-  `mc_0088` results with the in-plot legend removed. The nine legend entries
-  sit beneath **Simulation environment**, with symbols from the original
-  plotting code in `assets/simulation-legend-symbols.svg` and native slide text.
-  Native slide elements replace the static
-  animation heading with **GrBP Tracking / mc_0088**, preserving the
-  animated frame counter and 10-second playback. Results follow on slide 18.
+  `centralized_sequential_mc_0095.gif`. The presentation copy at
+  `assets/simulation-environment.gif` is byte-for-byte identical to the supplied
+  file: centralized sequential (CS), trial `mc_0095`, with its original title,
+  frame counter, and embedded legend. All 100 frames, 100 ms frame delays, and
+  infinite looping are preserved, for a 10-second loop. The old heading overlay
+  and separate legend have been removed. Results follow on slide 18.
+  **Code & visualizations** links to
+  <https://github.com/BaiLiping/EO_Target_Handover> in the same tab.
 - These are explanatory demonstrations, not a numerical implementation of GrBP
   inference. Diagram and benchmark content follows the current
   *Scalable Extended-Target Handover in Distributed Integrated Sensing and
