@@ -129,9 +129,7 @@ function build() {
   const environment = slide('simulation-environment','11 / Simulation environment','Simulation environment',[
     I('simulation-animation','./assets/simulation-environment.gif?v=20260930-mc0095',24,12,660,660,'Centralized sequential (CS) tracking trial mc_0095 across seven base stations and their overlapping sensing regions, with the original frame counter and legend for base stations, clutter, target returns, truth, estimate history, extent, and position uncertainty'),
     T('environment-source',724,246,464,34,'Centralized sequential (CS)',23,C.ink,700),
-    T('environment-trial',724,287,464,30,'Trial mc_0095 · 7 base stations',19,C.muted),
-    T('environment-links-heading',724,359,464,30,'Code &amp; visualizations',21,C.ink,700),
-    T('environment-repository',724,403,484,56,'<a class="cover-reference" href="https://github.com/BaiLiping/EO_Target_Handover"><span>https://github.com/BaiLiping/EO_Target_Handover</span><span aria-hidden="true"> →</span></a>',17,C.green,600)
+    T('environment-trial',724,287,464,30,'Trial mc_0095 · 7 base stations',19,C.muted)
   ],'Simulation-environment introduction using the exact user-supplied centralized_sequential_mc_0095.gif. Centralized sequential (CS), trial mc_0095, is shown across seven base stations. The original title, frame counter, and embedded legend are preserved. The legend identifies base stations, clutter, target returns colored by truth, truth, estimate history, 95% extents, and 95% position uncertainty. All 100 source frames, 100 ms frame delays, and infinite looping are preserved, for a 10-second loop. Introduce the overlapping surveillance regions before advancing to the aggregate results.');
   Object.assign(environment.elements.find(e=>e.id==='kicker'),{x:724,y:73,w:464});
   Object.assign(environment.elements.find(e=>e.id==='title'),{x:724,y:112,w:464,h:92});
