@@ -1,0 +1,111 @@
+name: Prepare Cramer-Rao Bound publication
+
+on:
+  push:
+    branches: ['publish/cramer-rao-bound-20260930']
+    paths:
+      - 'cramer-rao-bound/**'
+      - '.github/workflows/publish-cramer-rao-bound.yml'
+
+permissions:
+  contents: write
+
+concurrency:
+  group: prepare-cramer-rao-bound-publication
+  cancel-in-progress: true
+
+jobs:
+  prepare:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: publish/cramer-rao-bound-20260930
+          fetch-depth: 1
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Build the exact supplied HTML
+        run: |
+          npm install --prefix cramer-rao-bound --ignore-scripts --no-audit --no-fund
+          node cramer-rao-bound/tools/render-formulas.cjs
+          python3 cramer-rao-bound/build.py
+          echo '1591a3fd7b191196f4c62f683d24a5f02938d02f9c9ea61606561182688c577f  cramer-rao-bound/index.html' | sha256sum --check
+          node cramer-rao-bound/tests/numerics.cjs
+      - name: Install browser and export dependencies
+        run: |
+          python -m pip install playwright==1.57.0 python-pptx==1.0.2 pypdf==5.9.0
+          python -m playwright install --with-deps chromium
+      - name: Exercise all demos and layouts
+        run: python cramer-rao-bound/tests/browser.py
+      - name: Export static downloads
+        run: |
+          python cramer-rao-bound/tools/export.py --screenshots "$RUNNER_TEMP/crb-slides"
+          cp cramer-rao-bound/exports/Cramer-Rao-Bound.pdf cramer-rao-bound/
+          cp cramer-rao-bound/exports/Cramer-Rao-Bound.pptx cramer-rao-bound/
+          python - <<'PY'
+          from pathlib import Path
+          from pypdf import PdfReader
+          from pptx import Presentation
+          root=Path('cramer-rao-bound')
+          assert len(PdfReader(root/'Cramer-Rao-Bound.pdf').pages)==23
+          assert len(Presentation(root/'Cramer-Rao-Bound.pptx').slides)==23
+          print('Both static exports contain 23 slides.')
+          PY
+      - name: Integrate homepage, documentation, and source download
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import zipfile
+          homepage=Path('index.html')
+          text=homepage.read_text()
+          anchor='          <a class="page-link" href="/radio-cramer-rao-slides/">'
+          entry='          <a class="page-link" href="/cramer-rao-bound/">\n            <strong>Cramér–Rao Bound · Precision Has a Floor</strong>\n          </a>\n'
+          if 'href="/cramer-rao-bound/"' not in text:
+              assert text.count(anchor)==1, 'Homepage insertion point changed'
+              homepage.write_text(text.replace(anchor,entry+anchor,1))
+          readme=Path('README.md')
+          text=readme.read_text()
+          entry='- `/cramer-rao-bound/` is a 23-slide offline-capable presentation on the Cramér–Rao Bound, with live Gaussian-sampling, bias–variance, and localization-geometry labs, presenter notes, PDF and PowerPoint downloads. It is listed under Random thoughts and is separate from the radio-measurements CRB deck. Build and test commands are in `cramer-rao-bound/README.md`.\n\n'
+          if '`/cramer-rao-bound/`' not in text:
+              assert text.count('## Structure\n')==1, 'README insertion point changed'
+              readme.write_text(text.replace('## Structure\n','## Structure\n\n'+entry,1))
+          root=Path('cramer-rao-bound')
+          files=[root/x for x in ['.gitignore','README.md','build.py','package.json','package-lock.json','index.html','presenter-notes.md']]
+          for folder in ['src','tests','tools']:
+              files.extend(p for p in (root/folder).rglob('*') if p.is_file() and '__pycache__' not in p.parts)
+          with zipfile.ZipFile(root/'Cramer-Rao-Bound-site-package.zip','w',zipfile.ZIP_DEFLATED) as archive:
+              for path in sorted(files):
+                  if path.exists(): archive.write(path,path.as_posix())
+          print('Homepage entry, README, and source download prepared.')
+          PY
+          git add cramer-rao-bound index.html README.md
+          python3 scripts/build-search-index.py
+          python3 scripts/build-search-index.py --check
+          git add sitemap.xml site-map/index.html
+      - name: Preserve verification artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: cramer-rao-bound-publication
+          path: |
+            cramer-rao-bound/index.html
+            cramer-rao-bound/presenter-notes.md
+            cramer-rao-bound/Cramer-Rao-Bound.pdf
+            cramer-rao-bound/Cramer-Rao-Bound.pptx
+            cramer-rao-bound/Cramer-Rao-Bound-site-package.zip
+            ${{ runner.temp }}/crb-slides/
+          retention-days: 7
+      - name: Commit only the verified publication files
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git diff --cached --stat
+          if ! git diff --cached --quiet; then
+            git commit -m 'Build and verify Cramer-Rao Bound deck and downloads'
+            git push origin HEAD:publish/cramer-rao-bound-20260930
+          fi
