@@ -131,12 +131,28 @@ export function updateLiveMap(map, doc, previous) {
   });
 }
 
+export function syncLiveMounts(doc, previous) {
+  const box = element => element && [element.x, element.y, element.w, element.h];
+  const sameBox = (a,b) => a && b && equal(box(a),box(b));
+  for (const slide of doc.slides) {
+    const old = previous.slides.find(s => s.id === slide.id);
+    const fallback = slide.elements.find(e => e.id === 'fallback');
+    const marker = slide.elements.find(e => e.id === 'live-demo-mount');
+    const oldFallback = old?.elements.find(e => e.id === 'fallback');
+    const oldMarker = old?.elements.find(e => e.id === 'live-demo-mount');
+    if (sameBox(oldFallback,oldMarker) && sameBox(marker,oldMarker) && fallback && !sameBox(fallback,oldFallback)) {
+      for (const key of ['x','y','w','h']) marker[key] = fallback[key];
+    }
+  }
+}
+
 export function createManifest(current, previousManifest, editorBaseline, edited) {
   const base = previousManifest ? applyChanges(current, reverseChanges(previousManifest.changes), {strict: false}) : clone(current);
   const result = applyChanges(current, changesBetween(editorBaseline, edited), {strict: false});
   result.readonly = true;
   result.docId = current.docId;
   delete result.collab;
+  syncLiveMounts(result, current);
   validateDocument(result, current);
   return {manifest: {version: 1, documentId: current.docId, changes: changesBetween(base, result)}, doc: result};
 }

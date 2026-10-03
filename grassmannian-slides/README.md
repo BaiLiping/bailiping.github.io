@@ -10,6 +10,10 @@ without editing its compressed code. It generates the presentation, `deck.json`,
 and a separate static print layout. Original SVG illustrations come from
 `../grassmannian/figures.mjs`.
 
+Open this deck from the local [visual editor](../authoring/README.md). Saved
+changes in `authoring.json` survive rebuilding and are included in the static
+print layout and `deck.json`. Regenerate the PDF after changing slide content.
+
 ```sh
 node grassmannian/figures.mjs
 node --test grassmannian/tests/*.test.mjs

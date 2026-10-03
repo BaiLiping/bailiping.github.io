@@ -6,5 +6,6 @@ body[data-bailiping-editor] #app{height:calc(100vh - 56px)!important}
 body[data-bailiping-editor] .companion-demo-stage,body[data-bailiping-editor] .companion-demo-source{display:none!important}
 body[data-bailiping-editor] .bento-present-overlay .companion-demo-stage{display:block!important}
 body[data-bailiping-editor] .bento-present-overlay{z-index:10000!important}
+body[data-bailiping-editor] #deck-shortcuts{display:none}
 @media(max-width:1050px){#authoring-status{max-width:25vw}#authoring-bar{gap:6px;padding:0 10px}#authoring-bar button{padding:7px 8px}#authoring-bar .secondary{display:none}}
 @media print{#authoring-bar,#authoring-help{display:none!important}body[data-bailiping-editor]{padding:0!important;height:auto;overflow:visible}}

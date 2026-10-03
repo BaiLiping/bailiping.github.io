@@ -10,7 +10,7 @@ import {readDocument} from '../scripts/authoring-build.mjs';
 const {chromium}=await import(process.env.BAILIPING_PLAYWRIGHT_MODULE||'playwright');
 const root=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'..');
 const temp=fs.mkdtempSync(path.join(os.tmpdir(),'bailiping-editor-browser-'));
-for(const directory of ['assets','authoring','scripts','et-handover','radar-slam','kalman-filter-derivations','likelihood-vs-density','multidensity-fusion'])fs.cpSync(path.join(root,directory),path.join(temp,directory),{recursive:true});
+for(const directory of ['assets','authoring','scripts','et-handover','radar-slam','kalman-filter-derivations','likelihood-vs-density','multidensity-fusion','grassmannian-slides','grassmannian','mpc-detection-to-bounce-count-slides'])fs.cpSync(path.join(root,directory),path.join(temp,directory),{recursive:true});
 const server=createAuthoringServer({root:temp});await new Promise(resolve=>server.listen(0,'127.0.0.1',resolve));
 const origin='http://127.0.0.1:'+server.address().port;
 const browser=await chromium.launch({channel:'chrome',headless:true});
@@ -20,7 +20,7 @@ const ready=async slug=>{await page.goto(origin+'/'+slug+'/?edit=1');await page.
 const file=path.join(temp,'et-handover/index.html');
 try{
   await page.goto(origin+'/__authoring/');await page.locator('.card').first().waitFor();
-  assert.equal(await page.locator('.card').count(),5);
+  assert.equal(await page.locator('.card').count(),7);
   await ready('et-handover');
   const original=readDocument(fs.readFileSync(file,'utf8'));
   const title=original.slides[0].elements.find(e=>e.type==='text'&&e.fontSize>=32);
@@ -83,7 +83,7 @@ try{
   await page.keyboard.press('Escape');
   console.log('The editor’s Slideshow mounts the interactive lab.');
 
-  for(const slug of ['radar-slam','likelihood-vs-density','multidensity-fusion']){
+  for(const slug of ['radar-slam','likelihood-vs-density','multidensity-fusion','grassmannian-slides']){
     await ready(slug);
     assert.ok(await page.locator('.ed-canvas-wrap .bento-slide').count());
     assert.ok(await page.locator('[oai-annotation-metadata]').count());

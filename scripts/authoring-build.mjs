@@ -1,7 +1,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import {fileURLToPath} from 'node:url';
-import {applyChanges, validateDocument, updateLiveMap} from '../assets/authoring-model.mjs';
+import {applyChanges, validateDocument, updateLiveMap, syncLiveMounts} from '../assets/authoring-model.mjs';
 
 export const docPattern = /(<script\b[^>]*\bid=["']bento-doc["'][^>]*>)([\s\S]*?)(<\/script>)/;
 export const safeJSON = value => JSON.stringify(value, null, 1).replaceAll('<', '\\u003c');
@@ -22,18 +22,7 @@ export function renderDocument(html, doc, previous = readDocument(html)) {
   validateDocument(doc, previous);
   doc = structuredClone(doc);
   // Moving a lab's visible fallback should move its live mount as well.
-  const geometry = element => element && [element.x, element.y, element.w, element.h];
-  const sameBox = (a,b) => a && b && JSON.stringify(geometry(a)) === JSON.stringify(geometry(b));
-  for (const slide of doc.slides) {
-    const old = previous.slides.find(s => s.id === slide.id);
-    const fallback = slide.elements.find(e => e.id === 'fallback');
-    const marker = slide.elements.find(e => e.id === 'live-demo-mount');
-    const oldFallback = old?.elements.find(e => e.id === 'fallback');
-    const oldMarker = old?.elements.find(e => e.id === 'live-demo-mount');
-    if (sameBox(oldFallback,oldMarker) && sameBox(marker,oldMarker) && fallback && !sameBox(fallback,oldFallback)) {
-      for (const key of ['x','y','w','h']) marker[key] = fallback[key];
-    }
-  }
+  syncLiveMounts(doc, previous);
   for (const [index, slide] of doc.slides.entries()) {
     for (const element of slide.elements) {
       if (element.id === 'slide-number' && /^\d+\s*\/\s*\d+$/.test(element.html || '')) {

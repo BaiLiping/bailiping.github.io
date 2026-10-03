@@ -82,6 +82,14 @@ test('moving a lab fallback also updates its marker and live frame bounds',()=>{
   const result=renderDocument(html,edited,source);
   assert.equal(readDocument(result).slides[1].elements.find(e=>e.id==='live-demo-mount').x,90);
   assert.equal(JSON.parse(result.match(/id="bento-inline-live-map">([\s\S]*?)<\/script>/)[1])[0].bounds.x,90);
+  const first=createManifest(source,null,source,edited);
+  const again=copy(first.doc);again.slides[1].elements.find(e=>e.id==='fallback').x=100;
+  const second=createManifest(first.doc,first.manifest,first.doc,again);
+  const rebuilt=applyChanges(source,second.manifest.changes);
+  assert.equal(rebuilt.slides[1].elements.find(e=>e.id==='live-demo-mount').x,100);
+  const manual=copy(second.doc);manual.slides[1].elements.find(e=>e.id==='live-demo-mount').x=120;
+  const third=createManifest(second.doc,second.manifest,second.doc,manual);
+  assert.equal(applyChanges(source,third.manifest.changes).slides[1].elements.find(e=>e.id==='live-demo-mount').x,120);
 });
 test('existing multi-lab sequences remain editable and can move as a group',()=>{
   const source=base();source.slides.splice(2,0,slide('second-live'));
