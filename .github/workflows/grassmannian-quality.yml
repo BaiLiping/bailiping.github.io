@@ -1,0 +1,35 @@
+name: Grassmannian geometry and association
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'grassmannian/**'
+      - 'grassmannian-slides/**'
+      - '.github/workflows/grassmannian-quality.yml'
+  pull_request:
+    paths:
+      - 'grassmannian/**'
+      - 'grassmannian-slides/**'
+      - '.github/workflows/grassmannian-quality.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Verify the mathematical models
+        run: node --test grassmannian/tests/*.test.mjs
+      - name: Rebuild original figures and presentation
+        run: |
+          node grassmannian/figures.mjs
+          node grassmannian-slides/build.mjs
+          git diff --exit-code -- grassmannian/figures grassmannian-slides/index.html grassmannian-slides/print.html grassmannian-slides/deck.json
