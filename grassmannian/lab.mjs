@@ -4,6 +4,8 @@ import * as V from './visuals.mjs';
 const $=id=>document.getElementById(id),params=new URLSearchParams(location.search);
 const lab=['basis','angles','geodesic','pca','association'].includes(params.get('lab'))?params.get('lab'):'basis';
 document.body.dataset.lab=lab;
+const inSlides=params.get('embed')==='slides';
+document.body.dataset.embed=params.get('embed')||'';
 const state={phi:45,tilt:28,a:25,b:60,spin:0,theta:65,t:.4,flip:false,lambda:4,angle:55,translation:7,noise:0,rho:3,epsilon:.16,sigma:.05,mode:'shifted',clutter:true};
 let view={yaw:.6,pitch:.5},timer=0,run=false,pca=M.pcaData(),Q=M.initialPcaBasis(),history=[M.pcaScore(Q,pca.C)],iterations=0,result;
 const title={basis:'One plane. Many bases.',angles:'Measure the difference between subspaces.',geodesic:'Move along a shortest path.',pca:'Learn a plane from a point cloud.',association:'Match lines and planes without a pose guess.'};
@@ -92,9 +94,20 @@ $('scene').addEventListener('pointermove',e=>{if(!drag)return;view.yaw=drag[2]+(
 $('scene').addEventListener('pointerup',()=>drag=null);
 $('scene').addEventListener('pointercancel',()=>drag=null);
 $('scene').addEventListener('keydown',e=>{if(lab==='angles')return;if(['ArrowLeft','ArrowRight','ArrowUp','ArrowDown','r','R'].includes(e.key)){e.preventDefault();e.stopPropagation();if(e.key.toLowerCase()==='r')view={yaw:.6,pitch:.5};else if(e.key==='ArrowLeft')view.yaw-=.1;else if(e.key==='ArrowRight')view.yaw+=.1;else view.pitch=M.clamp(view.pitch+(e.key==='ArrowUp'?.1:-.1),-1.2,1.2);draw();}});
-document.addEventListener('keydown',e=>{if(e.key==='Escape'&&window.parent!==window){e.preventDefault();window.parent.postMessage({type:'grassmann-close'},location.origin);}});
-window.addEventListener('message',e=>{if(e.origin===location.origin&&e.source===parent&&e.data?.type==='grassmann-pause'){stop();draw();}});
+function navigate(direction){parent.postMessage({type:'bento-inline-nav',direction},location.origin);}
+if(inSlides){
+ const nav=document.createElement('nav');nav.className='lab-page-nav';nav.setAttribute('aria-label','Slide navigation');
+ for(const [label,direction]of [['← Previous page',-1],['Next page →',1]]){const b=document.createElement('button');b.textContent=label;b.addEventListener('click',()=>navigate(direction));nav.append(b);}
+ document.body.append(nav);
+}
+document.addEventListener('keydown',e=>{
+ if(!inSlides||e.defaultPrevented)return;
+ if(e.key==='Escape'){e.preventDefault();parent.postMessage({type:'bento-inline-focus'},location.origin);}
+ else if(e.key==='PageUp'||e.key==='PageDown'){e.preventDefault();navigate(e.key==='PageUp'?-1:1);}
+ else if(['ArrowLeft','ArrowRight'].includes(e.key)&&!e.target.closest('input,select,button,a,summary,canvas')){e.preventDefault();navigate(e.key==='ArrowLeft'?-1:1);}
+});
+window.addEventListener('message',e=>{if(e.origin===location.origin&&e.source===parent&&['grassmann-pause','bento-live-pause'].includes(e.data?.type)){stop();draw();}});
 document.addEventListener('visibilitychange',()=>{if(document.hidden){stop();draw();}});
 window.addEventListener('pagehide',stop);
 new ResizeObserver(()=>draw()).observe($('scene'));
-draw();parent.postMessage({type:'grassmann-ready',lab},location.origin);
+draw();parent.postMessage({type:inSlides?'bento-inline-ready':'grassmann-ready',lab},location.origin);

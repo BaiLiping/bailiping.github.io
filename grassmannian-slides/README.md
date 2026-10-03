@@ -18,9 +18,13 @@ python3 -m http.server 8767 --bind 127.0.0.1
 ```
 
 Five shared labs: basis invariance, principal angles, geodesic interpolation,
-PCA, and affine line/plane data association. Each TRY LIVE control opens a lazy
-dialog; Back and Escape remove the frame and restore focus. Mobile labs scroll
-vertically. The normal slides include static examples and source notes.
+PCA, and affine line/plane data association. Each experiment is a dedicated slide
+immediately after its explanation, giving 34 sequential slides. The existing
+`bento-inline-live` bridge loads only the active experiment and unloads it when
+the slide changes. Page Up / Page Down navigate from a lab; Escape returns focus
+to the presentation. On phones, experiment pages fill the viewport, with readable
+controls, vertical scrolling, and Previous / Next page buttons. Every slide has a
+static illustration and result for print and offline reading.
 `print.html` exports at 1280 × 720 CSS pixels per page. Wait for local MathJax
 typesetting before generating the PDF and verify its page count against the deck.
 
