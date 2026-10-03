@@ -11,9 +11,9 @@ const R=(id,x,y,w,h,fill=C.wash,radius=8)=>({id,type:'shape',shape:'rect',x,y,w,
 const image=(id,svg,x,y,w,h,alt)=>({id,type:'image',src:'data:image/svg+xml;base64,'+Buffer.from(svg).toString('base64'),x,y,w,h,alt,fit:'contain',rotation:0,opacity:1});
 const F=(name,x,y,w,h)=>image(name,formulas[name].replace(/style="[^"]*"/,'style="color:#16273e"'),x,y,w,h,tex[name]);
 const G=(name,x,y,w,h,alt)=>image(name,fs.readFileSync(new URL(`assets/${name}.svg`,root),'utf8'),x,y,w,h,alt);
-const link=(label,href,live=false)=>`<a class="${live?'try-live':'deck-link'}" href="${href}"><span>${label}</span><span aria-hidden="true"> →</span></a>`;
-const L=(id,x,y,w,label,href,live=false)=>T(id,x,y,w,44,link(label,href,live),20,C.green,600);
-const live=(lab,x=804,y=578,w=380)=>L('try-live',x,y,w,'TRY LIVE',`./live/index.html?lab=${lab}`,true);
+const link=(label,href)=>`<a class="deck-link" href="${href}"><span>${label}</span><span aria-hidden="true"> →</span></a>`;
+const L=(id,x,y,w,label,href)=>T(id,x,y,w,44,link(label,href),20,C.green,600);
+const interactiveNote=()=>T('interactive-note',804,588,380,44,'Interactive controls in the HTML slides.',18,C.green,600);
 const H=(id,x,y,w,text,color=C.green)=>T(id,x,y,w,34,text,24,color,700);
 const B=(id,x,y,w,text,size=22)=>T(id,x,y,w,100,text,size,C.muted);
 const SOURCES={S1:'https://web.stanford.edu/class/archive/stats/stats200/stats200.1172/Lecture15.pdf',S2:'https://arxiv.org/abs/1705.01064',S3:'https://arxiv.org/abs/1006.0888',S4:'https://web.stanford.edu/class/archive/stats/stats200/stats200.1172/Lecture14.pdf'};
@@ -82,7 +82,7 @@ export function build(){
   H('experiment',805,255,380,'Change the experiment'),
   B('sampling',807,309,376,'Independent Gaussian datasets.<br>n = 16 · σ = 2 · μ = 1<br>2,000 trials · seed 42',21),
   B('sampling-prompt',807,433,376,'Increase n, change noise, or discard all but one observation. Compare the estimator with the same full-data bound.',21),
-  live('gaussian-lab'),T('sampling-note',89,646,1095,22,'A finite simulated variance can fall below the CRB through Monte Carlo fluctuation.',16,C.muted)
+  interactiveNote(),T('sampling-note',89,646,1095,22,'A finite simulated variance can fall below the CRB through Monte Carlo fluctuation.',16,C.muted)
  ]));
  s.push(slide('scaling',[
   G('scaling',79,251,557,360,'Log-scale curves: variance bound 4/n and standard-deviation bound 2/sqrt(n).'),
@@ -98,7 +98,7 @@ export function build(){
   G('bias-chart',79,258,685,247,'Exact distributions of the unbiased sample mean and shrinkage estimator, at alpha = 0.55 and true mean = 0.35.'),G('bias-bars',96,536,648,95,'Exact variance, squared bias, total MSE, and the unbiased CRB for the default shrinkage example.'),
   H('shrink-title',806,254,378,'Shrink toward zero'),T('shrink-model',808,307,374,43,'Tα = α X̄',31,C.green,700),
   T('shrink-baseline',808,369,374,110,'α = 0.55 · μ = 0.35<br>Variance = 0.0756<br>Squared bias = 0.0248<br>MSE = 0.1004',21,C.muted),
-  B('shrink-prompt',808,494,374,'Move μ away from zero.<br>Does the MSE advantage remain?',20),live('bias-lab'),
+  B('shrink-prompt',808,494,374,'Move μ away from zero.<br>Does the MSE advantage remain?',20),interactiveNote(),
   T('shrink-note',92,646,1096,22,'The unbiased CRB is 0.25. A biased estimator can have a smaller pointwise MSE.',16,C.muted)
  ]));
  s.push(slide('efficiency',[
@@ -125,13 +125,13 @@ export function build(){
   G('geometry-chart',76,252,690,350,'Four surrounding anchors and a true target, with the unit-Mahalanobis covariance-bound ellipse.'),
   T('geometry-baseline',96,616,660,43,'Default: σ = 0.60 m · PEB = 0.625 m',23,C.green,700),
   H('geometry-try',804,254,386,'Reshape the information'),B('geometry-copy',807,311,376,'Move an anchor or the target.<br>Compare Surround, Cluster, and Collinear.',23),
-  B('geometry-offset',807,429,376,'Then estimate an unknown common range offset. Watch the equivalent position information decrease.',21),live('geometry-lab'),
+  B('geometry-offset',807,429,376,'Then estimate an unknown common range offset. Watch the equivalent position information decrease.',21),interactiveNote(),
   T('ellipse-note',806,641,380,25,'The ellipse is not a confidence region.',16,C.muted)
  ]));
  s.push(slide('nuisance',[
   R('schur-card',72,243,570,397),H('partition',104,270,504,'Partition the information'),F('m34',103,327,506,99),F('m35',105,487,503,79),T('inverse-note',104,591,506,34,'The position block of J⁻¹ is Jₑ⁻¹.',22,C.green,700),
   H('coupling',705,253,483,'Some effects imitate each other.'),B('coupling-copy',709,309,477,'An unknown offset can explain changes in range that would otherwise constrain position.',23),F('m36',815,429,258,54),
-  T('coupling-note',708,509,478,49,'No loss when b = 0. Clustered lines of sight can lose much more.',20,C.muted),live('geometry-lab',706,589,468)
+  T('coupling-note',708,509,478,49,'No loss when b = 0. Clustered lines of sight can lose much more.',20,C.muted),L('geometry-lab-link',706,589,468,'Explore the geometry lab','#/16')
  ]));
  s.push(slide('regularity',[
   H('uniform-title',92,245,518,'Xi ∼ Uniform(0, θ)'),F('m37',90,302,539,69),F('m38',110,408,494,55),F('m39',158,500,399,60),T('support-note',102,599,518,49,'The moving boundary invalidates the regular score identity.',21,C.orange,600),

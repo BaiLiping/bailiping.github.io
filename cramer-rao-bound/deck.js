@@ -1,58 +1,95 @@
 (() => {
   'use strict';
   const doc=JSON.parse(document.getElementById('bento-doc').textContent);
-  const topics=doc.slides.flatMap(slide=>slide.elements.filter(e=>e.type==='text'&&/class="(?:deck-link|try-live)"/.test(e.html)).map(e=>{
+  const topics=doc.slides.flatMap(slide=>slide.elements.filter(e=>e.type==='text'&&/class="deck-link"/.test(e.html)).map(e=>{
     const template=document.createElement('template');template.innerHTML=e.html;
     const source=template.content.querySelector('a');
-    return {slide:slide.id,element:e.id,href:source.getAttribute('href'),label:source.firstElementChild.textContent,live:source.classList.contains('try-live')};
+    return {slide:slide.id,element:e.id,href:source.getAttribute('href'),label:source.firstElementChild.textContent};
   }));
-  const dialog=document.getElementById('crb-dialog'),mount=document.getElementById('demo-frame'),loading=document.getElementById('demo-loading');
-  let returnFocus=null,frame=null,loadTimer=null;
-  function cleanup(){
-    clearTimeout(loadTimer);if(frame){frame.src='about:blank';frame.remove();frame=null;}mount.replaceChildren();
-    document.documentElement.classList.remove('demo-open');
-    const trigger=returnFocus;returnFocus=null;trigger?.focus({preventScroll:true});
+  const labs=doc.slides.flatMap((slide,index)=>slide.id.endsWith('-lab')?[{slide,index,lab:slide.id.slice(2)}]:[]);
+  const narrow=matchMedia('(max-width:700px)');
+  const staticExport=new URLSearchParams(location.search).has('static');
+  let active=null,queued=false;
+  function focusDeck(){
+    const reveal=document.querySelector('.bento-present-overlay .reveal');
+    if(reveal){reveal.tabIndex=-1;reveal.focus({preventScroll:true});}
   }
-  function close(){if(dialog.open)dialog.close();cleanup();}
-  function open(topic,trigger){
-    returnFocus=trigger;
-    const url=new URL(topic.href,location.href);url.searchParams.set('embed','1');
-    document.getElementById('demo-full').href=topic.href;
-    document.getElementById('crb-dialog-title').textContent=({'gaussian-lab':'Sampling · reach the precision floor','bias-lab':'Bias · shrinkage and MSE','geometry-lab':'Geometry · reshape the bound'})[url.searchParams.get('lab')]||'Cramér–Rao interactive lab';
-    loading.textContent='Loading the experiment…';loading.hidden=false;
-    frame=document.createElement('iframe');frame.title='Interactive Cramér–Rao experiment';frame.style.visibility='hidden';
+  function cleanup(){
+    if(!active)return;
+    const focused=active.host.contains(document.activeElement);
+    clearTimeout(active.timer);active.host.remove();active=null;
+    if(focused)focusDeck();
+  }
+  function navigate(direction){
+    if(!active)return;
+    location.hash='#/'+Math.max(0,Math.min(doc.slides.length-1,active.entry.index+direction));
+    focusDeck();
+  }
+  function overview(){
+    focusDeck();
+    // Bento reserves Escape for leaving presentation mode; O opens its overview.
+    document.dispatchEvent(new KeyboardEvent('keydown',{key:'o',code:'KeyO',keyCode:79,which:79,bubbles:true}));
+  }
+  function mount(entry,root){
+    const host=document.createElement('div');host.className='crb-inline-lab';
+    host.setAttribute('role','region');host.setAttribute('aria-label','Interactive experiment');
+    const header=document.createElement('header');header.className='crb-lab-heading';
+    for(const [id,tag] of [['kicker','p'],['title','h1'],['subtitle','p']]){
+      const node=document.createElement(tag);node.textContent=entry.slide.elements.find(e=>e.id===id).html;
+      node.className='crb-lab-'+id;header.append(node);
+    }
+    const content=document.createElement('div');content.className='crb-lab-content';
+    const loading=document.createElement('div');loading.className='crb-lab-loading';
+    const status=document.createElement('p');status.setAttribute('role','status');status.textContent='Loading the experiment…';
+    const retry=document.createElement('button');retry.type='button';retry.textContent='Retry';retry.hidden=true;
+    retry.addEventListener('click',()=>{cleanup();schedule();});loading.append(status,retry);
+    const frame=document.createElement('iframe');frame.className='crb-lab-frame';
+    frame.title=entry.slide.elements.find(e=>e.id==='title').html;frame.hidden=true;
     frame.setAttribute('sandbox','allow-scripts allow-same-origin');
-    dialog.showModal();document.documentElement.classList.add('demo-open');
-    mount.replaceChildren(frame);frame.src=url.href;
-    document.getElementById('demo-back').focus();
-    loadTimer=setTimeout(()=>{loading.textContent='The lab is taking longer to load. You can return to the slides or open the full lab above.';},12000);
+    content.append(loading,frame);
+    const footer=document.createElement('nav');footer.className='crb-lab-navigation';footer.setAttribute('aria-label','Slide navigation');
+    for(const [label,action] of [['← Previous',()=>navigate(-1)],['Overview',overview],['Next →',()=>navigate(1)]]){
+      const button=document.createElement('button');button.type='button';button.textContent=label;button.addEventListener('click',action);footer.append(button);
+    }
+    const counter=document.createElement('span');counter.textContent=`${entry.index+1} / ${doc.slides.length}`;footer.append(counter);
+    host.append(header,content,footer);
+    if(narrow.matches){host.classList.add('crb-mobile-lab');root.closest('.bento-present-overlay').append(host);}
+    else root.append(host);
+    active={entry,root,host,frame,loading,narrow:narrow.matches,timer:setTimeout(()=>{
+      status.textContent='The experiment is taking longer to load.';retry.hidden=false;
+    },12000)};
+    const url=new URL('./live/index.html',location.href);url.searchParams.set('lab',entry.lab);url.searchParams.set('embed','slide');frame.src=url.href;
   }
   function sync(){
+    queued=false;
     for(const topic of topics){
       const selector=`.bento-slide[data-slide-id="${CSS.escape(topic.slide)}"] [data-el-id="${CSS.escape(topic.element)}"] .bento-text-inner`;
       for(const inner of document.querySelectorAll(selector)){
         if(inner.querySelector('a[href]'))continue;
-        const a=document.createElement('a');a.className=topic.live?'try-live':'deck-link';a.href=topic.href;a.target='_self';
+        const a=document.createElement('a');a.className='deck-link';a.href=topic.href;a.target='_self';
         const label=document.createElement('span');label.textContent=topic.label;
         const arrow=document.createElement('span');arrow.className='reference-arrow';arrow.setAttribute('aria-hidden','true');arrow.textContent='→';a.append(label,arrow);
-        if(topic.live){a.setAttribute('aria-haspopup','dialog');a.setAttribute('aria-controls','crb-dialog');}
-        a.addEventListener('click',event=>{event.stopPropagation();if(topic.live&&!event.ctrlKey&&!event.metaKey&&!event.shiftKey&&!event.altKey){event.preventDefault();open(topic,a);}});
-        a.addEventListener('keydown',event=>{if(['Enter',' '].includes(event.key)){event.stopPropagation();if(event.key===' '&&topic.live){event.preventDefault();open(topic,a);}}});
+        a.addEventListener('click',event=>event.stopPropagation());
+        a.addEventListener('keydown',event=>{if(event.key==='Enter')event.stopPropagation();});
         inner.replaceChildren(a);
       }
     }
+    const root=document.querySelector('.bento-present-overlay .reveal:not(.overview) section.present .bento-slide');
+    const entry=staticExport?null:labs.find(item=>item.slide.id===root?.dataset.slideId);
+    if(active&&(active.root!==root||!entry||active.narrow!==narrow.matches))cleanup();
+    if(entry&&!active)mount(entry,root);
   }
-  new MutationObserver(sync).observe(document.body,{childList:true,subtree:true});sync();
-  document.getElementById('demo-back').addEventListener('click',close);
-  dialog.addEventListener('close',()=>{if(!dialog.open)cleanup();});
-  dialog.addEventListener('cancel',event=>{event.preventDefault();close();});
+  function schedule(){if(!queued){queued=true;queueMicrotask(sync);}}
+  new MutationObserver(schedule).observe(document.body,{childList:true,subtree:true,attributes:true,attributeFilter:['class']});
+  narrow.addEventListener('change',schedule);
   window.addEventListener('message',event=>{
     const sameOrigin=event.origin===location.origin||(location.protocol==='file:'&&event.origin==='null');
-    if(!sameOrigin||event.source!==frame?.contentWindow||!dialog.open)return;
-    if(event.data?.type==='crb-ready'){clearTimeout(loadTimer);loading.hidden=true;frame.style.visibility='visible';}
-    if(event.data?.type==='crb-back')close();
+    if(!sameOrigin||event.source!==active?.frame.contentWindow)return;
+    if(event.data?.type==='crb-ready'){clearTimeout(active.timer);active.loading.hidden=true;active.frame.hidden=false;}
+    if(event.data?.type==='crb-nav'&&[-1,1].includes(event.data.direction))navigate(event.data.direction);
+    if(event.data?.type==='crb-overview')overview();
   });
-  // Keep the parent presentation still while using controls in its modal.
-  window.addEventListener('keydown',event=>{if(!dialog.open)return;event.stopImmediatePropagation();if(event.key==='Escape'){event.preventDefault();close();}},true);
-  window.addEventListener('pagehide',()=>{clearTimeout(loadTimer);if(frame)frame.remove();});
+  window.addEventListener('pagehide',cleanup);
+  window.addEventListener('pageshow',schedule);
+  sync();
 })();

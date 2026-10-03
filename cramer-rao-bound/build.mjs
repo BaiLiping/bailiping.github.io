@@ -32,7 +32,6 @@ html=html.replace(pattern,(_,a,b)=>a+JSON.stringify(doc,null,1).replaceAll('<','
  .replace(/<title>[\s\S]*?<\/title>/,`<title>${config.title}</title>`)
  .replace('</head>',`<!-- crb-host-start --><script>${normalize}</script><meta name="description" content="${escape(config.description)}"><link rel="canonical" href="https://bailiping.com/cramer-rao-bound/"><style>${fs.readFileSync(path.join(here,'deck.css'),'utf8')}</style><!-- crb-host-end --></head>`)
  .replace('</body>',`<!-- crb-body-start --><div id="crb-print" aria-hidden="true">${printSlides}</div>
- <dialog id="crb-dialog" aria-labelledby="crb-dialog-title"><div class="demo-toolbar"><button type="button" id="demo-back">← Back to slides</button><h2 id="crb-dialog-title">Cramér–Rao interactive lab</h2><a id="demo-full" href="./live/">Open full lab →</a></div><p id="demo-loading" role="status">Loading the experiment…</p><div id="demo-frame"></div></dialog>
  <script>${fs.readFileSync(path.join(here,'deck.js'),'utf8')}</script><!-- crb-body-end --></body>`);
 fs.writeFileSync(path.join(here,'index.html'),html);
 console.log(`${config.title}: ${doc.slides.length} native Bento slides, three compact labs, complete static print layout.`);

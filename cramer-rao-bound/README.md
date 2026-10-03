@@ -6,13 +6,17 @@ A native 23-slide Bento presentation with three compact interactive labs, a comp
 
 The public route uses the same Bento runtime, typography, slide canvas, and
 navigation as the site's technical presentations. Use arrow keys to advance;
-Escape opens Bento's overview. Existing semantic links such as `#geometry-lab`
+O opens Bento's overview. Existing semantic links such as `#geometry-lab`
 continue to select their corresponding slide.
 
-Normal slides contain the full explanation and static vector figures. **TRY
-LIVE** opens only the selected compact experiment in a modal. Back, Escape,
-and dialog close share one cleanup path: the iframe is removed and keyboard
-focus returns to the originating control. Labs load only when requested.
+The sampling, bias, and geometry experiments are interactive directly on slides
+9, 12, and 17. Their controls load automatically when the slide becomes active;
+leaving the slide removes the experiment. There is no separate launch button or
+modal. On phones, these slides use a readable, scrollable layout with Previous,
+Next, and Overview controls. Arrow keys navigate from a plot; focused sliders
+and geometry points keep their own arrow-key controls. Escape from a lab opens
+the overview.
+Normal slides and print/export copies retain the complete static explanations.
 
 The [interactive guide](./guide/) provides the complete original explanations,
 references, and working experiments in a responsive reading view. The
@@ -76,8 +80,9 @@ node cramer-rao-bound/tests/bento.cjs
 a system browser; `PLAYWRIGHT_MODULE` optionally selects a local Node Playwright
 installation. Integration checks cover all 23 slides, image/formula loading,
 desktop/mobile overflow, numerical controls, pointer/keyboard geometry changes,
-lazy loading, Back/Escape, focus return, teardown during delayed loading, legacy
-hashes, and offline file access. The numerical suite contains 348 assertions.
+automatic loading on active slides, keyboard and mobile navigation, overview,
+teardown during delayed loading, static exports, legacy hashes, and offline file
+access. The numerical suite contains 348 assertions.
 The earlier full-guide regressions remain in `tests/browser.py` (Python Playwright).
 
 Export the actual Bento slides and static print layout:
@@ -105,7 +110,7 @@ python3 scripts/build-search-index.py --check
 ## Source layout
 
 - `deck.mjs`, `build.mjs`, `deck.js`, and `deck.css`: native Bento content,
-  static print generation, accessible lab lifecycle, and presentation styling.
+  static print generation, inline lab lifecycle, and presentation styling.
 - `src/deck.json`: the full guide text, primary references, and presenter notes.
 - `src/formulas.json` and `src/formula-svg.json`: editable TeX and cached SVG.
 - `src/math.js`: unchanged, independently tested numerical models.

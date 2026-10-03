@@ -37,7 +37,7 @@ def main():
             description.set('descr',f'Slide {i+1}: {item["title"]}. {item["subtitle"]}. See speaker notes and the HTML master for the full content.')
             note=f'{i+1:02d}. {item["title"]}\n\n{item["subtitle"]}\n\n{rendered[i]["notes"]}\n\n'
             if item['id'].endswith('-lab'):
-                note+='LIVE LAB: Open Cramer-Rao-Bound.html in a browser and choose TRY LIVE on this slide. This PowerPoint is a static snapshot.\n\n'
+                note+='LIVE LAB: Open Cramer-Rao-Bound.html in a browser. The interactive controls load directly on this slide. This PowerPoint is a static snapshot.\n\n'
             note+='Sources\n'+'\n'.join(sources[key] for key in item['sources'])
             slide.notes_slide.notes_text_frame.text=note
         presentation.save(args.output/'Cramer-Rao-Bound.pptx')

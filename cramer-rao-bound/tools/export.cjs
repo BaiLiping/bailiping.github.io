@@ -13,7 +13,8 @@ const screenshots=value('--screenshots',path.join(output,'slides'));
  const browser=await chromium.launch({headless:true,...(process.env.CHROMIUM_EXECUTABLE?{executablePath:process.env.CHROMIUM_EXECUTABLE}:{})});
  try {
   const page=await browser.newPage({viewport:{width:1280,height:720},deviceScaleFactor:2});
-  await page.goto(pathToFileURL(path.join(root,'index.html')).href);
+  const source=pathToFileURL(path.join(root,'index.html'));source.searchParams.set('static','1');
+  await page.goto(source.href);
   await page.waitForFunction(()=>window.bento?.doc);
   await page.locator('img').evaluateAll(images=>Promise.all(images.map(im=>im.decode())));
   await page.pdf({path:path.join(output,'Cramer-Rao-Bound.pdf'),printBackground:true,preferCSSPageSize:true});

@@ -215,8 +215,10 @@
   // Compact labs use only the three experiment panels, without the full guide.
   if(document.body.dataset.mode==='lab'){
     const params=new URLSearchParams(location.search);
-    const embedded=params.get('embed')==='1';
+    const inline=params.get('embed')==='slide';
+    const embedded=params.get('embed')==='1'||inline;
     document.body.classList.toggle('embedded',embedded);
+    document.body.classList.toggle('inline-slide',inline);
     const names=['gaussian-lab','bias-lab','geometry-lab'];
     let active=names.includes(params.get('lab'))?params.get('lab'):'gaussian-lab';
     function show(name){
@@ -227,7 +229,14 @@
     document.querySelectorAll('[data-lab]').forEach(button=>button.addEventListener('click',()=>show(button.dataset.lab)));
     replayMC();renderBias();renderGeom();show(active);
     window.CRBDeck={go:show,state:()=>({current:active,...state()})};
-    addEventListener('keydown',event=>{if(embedded&&event.key==='Escape'){event.preventDefault();parent.postMessage({type:'crb-back'},location.protocol==='file:'?'*':location.origin);}});
+    addEventListener('keydown',event=>{
+      if(!embedded)return;
+      const send=data=>parent.postMessage(data,location.protocol==='file:'?'*':location.origin);
+      if(event.key==='Escape'){event.preventDefault();send({type:inline?'crb-overview':'crb-back'});}
+      if(!inline||event.target.closest('input,select,textarea,button,[data-point]')||event.ctrlKey||event.metaKey||event.altKey)return;
+      const direction=['ArrowLeft','PageUp'].includes(event.key)?-1:['ArrowRight','PageDown'].includes(event.key)?1:0;
+      if(direction){event.preventDefault();send({type:'crb-nav',direction});}
+    });
     parent.postMessage({type:'crb-ready'},location.protocol==='file:'?'*':location.origin);
     return;
   }
