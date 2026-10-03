@@ -1,3 +1,4 @@
+import {withAuthoring} from '../scripts/authoring-build.mjs';
 import {readFile,writeFile} from 'node:fs/promises';
 import {fileURLToPath} from 'node:url';
 import {dirname,resolve} from 'node:path';
@@ -68,6 +69,6 @@ html=html.replace('</body>', '<script src="print.js"></script></body>');
 const staticSlides=deck.slides.map((s,i)=>`<article class="static-page"><span>${i+1} / ${deck.slides.length}</span>${s.elements.filter(e=>e.type==='text'&&!e.id.startsWith('chrome')&&e.id!=='slide-number').map(e=>e.id==='heading'?`<h1>${e.html}</h1>`:`<div>${e.html}</div>`).join('')}${s.elements.filter(e=>e.id==='fallback').map(e=>`<img alt="Computed initial experiment state" src="${e.src}">`).join('')}</article>`).join('');
 html=html.replace('<body>','<body><noscript><style>.static-page{padding:30px;max-width:1100px;margin:20px auto;background:#fff;color:#203129;font:18px/1.5 system-ui}.static-page img{width:100%}.static-page>div{margin:12px 0}</style>'+staticSlides+'</noscript>');
 html=html.replace(/[ \t]+$/gm,'');
-await writeFile(resolve(here,'index.html'),html);
+await writeFile(resolve(here,'index.html'),withAuthoring(html, import.meta.url));
 console.log(`Built ${deck.slides.length} radar SLAM slides and ${inlineLiveMap.length} live laboratories (${html.length} characters).`);
 console.log('Slide routes: '+deck.slides.map(s=>s.id).join(', '));

@@ -1,3 +1,4 @@
+import {withAuthoring} from '../scripts/authoring-build.mjs';
 import fs from 'node:fs';
 import path from 'node:path';
 import {fileURLToPath} from 'node:url';
@@ -44,5 +45,5 @@ html=html.replace(block,(_,open,close)=>open+JSON.stringify(doc,null,1).replaceA
       <p id="demo-loading" role="status">Loading the association lab…</p><div id="demo-frame"></div>
     </dialog>
   </body>`);
-fs.writeFileSync(path.join(here,'index.html'),html);
+fs.writeFileSync(path.join(here,'index.html'),withAuthoring(html, import.meta.url));
 console.log(`${config.title}: ${doc.slides.length} slides; two lazy interactive entry points.`);

@@ -1,3 +1,4 @@
+import {withAuthoring} from '../scripts/authoring-build.mjs';
 // Authoring source. Rebuild content and local figures; preserve the checked-in Bento runtime.
 import fs from 'node:fs';
 import Model from '../bp-vs-pmbm/association-model.js';
@@ -120,4 +121,4 @@ html=html.replace(/(<script type="application\/bento\+json" id="bento-doc">\s*)[
 <script defer src="./assets/mathjax-3.2.2-tex-svg-full.js"></script>
 <script defer src="../assets/mathjax-dynamic.js"></script>
 <!-- bp-host-end --></head>`);
-fs.writeFileSync(path,html);console.log(`Built ${slides.length} slides with ${demos.length} introduction/live pairs.`);
+fs.writeFileSync(path,withAuthoring(html, import.meta.url));console.log(`Built ${slides.length} slides with ${demos.length} introduction/live pairs.`);

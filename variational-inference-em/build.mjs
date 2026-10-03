@@ -1,3 +1,4 @@
+import {withAuthoring} from '../scripts/authoring-build.mjs';
 import {readFile,writeFile} from 'node:fs/promises';
 import {fileURLToPath} from 'node:url';
 import {dirname,resolve} from 'node:path';
@@ -62,6 +63,6 @@ const tableMathBridge=String.raw`<script>
 </script>`;
 html=html.replace('</body>',tableMathBridge+'\n</body>');
 if(!html.includes('tex-svg-full.js')||!html.includes('mathjax-dynamic.js')||!html.includes('bento-inline-live.js'))throw new Error('Required shared runtime missing');
-await writeFile(resolve(here,'index.html'),html);
+await writeFile(resolve(here,'index.html'),withAuthoring(html, import.meta.url));
 console.log(`Built ${deck.slides.length} VI/EM slides and ${inlineLiveMap.length} live experiments (${html.length} characters).`);
 console.log('Slide routes: '+deck.slides.map(s=>s.id).join(', '));

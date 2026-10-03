@@ -2,6 +2,10 @@
 
 A separate 25-slide teaching deck in **Random thoughts**, with three deterministic interactive experiments. It uses the site's existing Bento runtime and visual language; it does not replace or modify the multidensity-fusion deck.
 
+Open this presentation through **Bailiping Editor.command** for visual editing.
+Run `node likelihood-vs-density/build.mjs` after source changes; the build
+preserves `authoring.json`. See [the authoring guide](../authoring/README.md).
+
 ## Learning path
 
 - Probability mass versus continuous density; probability is a sum or an area, not generally a density height.
@@ -24,14 +28,15 @@ Plots use their own labeled vertical scales and show actual heights, not unit-pe
 ## Files and dependencies
 
 - `bento-deck.mjs`: slide content, notes, primary source links, and three inline-live map entries.
-- `boot.mjs`: serializes the deck, resolves named routes, and loads only the compressed runtime blocks from `../kalman-filter-derivations/index.html`.
-- `index.html`: shared MathJax and inline-live styles. MathJax is pinned to 3.2.2 on jsDelivr, following the existing deck.
+- `build.mjs`: packages the slide document and unchanged shared Bento engine, then applies saved visual edits. `boot.mjs` is the previous browser-build entry point.
+- `index.html`: generated presentation, including the shared engine, MathJax, and inline-live styles. MathJax is pinned to 3.2.2 on jsDelivr.
+- `fallback/`: initial-state lab screenshots for the editor and static presentation.
 - `math.mjs`: numerical kernels without external dependencies.
 - `live/`: responsive standalone/embedded experiments.
 - `test.mjs`: mathematical and document-structure regression tests.
 - `test-browser.py`: full-checkout HTTP/Bento integration regression.
 
-The website version requires the repository's existing `assets/bento-inline-live.js`, `assets/bento-inline-live.css`, `assets/mathjax-dynamic.js`, and Kalman deck runtime. Serve the **repository root**, not this folder in isolation. Named routes such as `#likelihood`, `#bayes`, and `#fusion` are supported.
+The website version requires the repository's shared assets. Serve the **repository root**, not this folder in isolation. The Kalman deck supplies the unchanged engine at build time. Named routes such as `#likelihood`, `#bayes`, and `#fusion` are supported. The lab sandbox includes same-origin access because its ES modules import local numerical modules.
 
 ## Validation
 

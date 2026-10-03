@@ -1,3 +1,4 @@
+import {withAuthoring} from '../scripts/authoring-build.mjs';
 import { readFileSync, writeFileSync } from 'node:fs'
 import { dirname, join } from 'node:path'
 import { fileURLToPath } from 'node:url'
@@ -695,5 +696,5 @@ html = html.replace(
 )
 html = html.replaceAll('../assets/bento-live.css', '../assets/bento-inline-live.css')
 html = html.replaceAll('../assets/bento-live.js', '../assets/bento-inline-live.js')
-writeFileSync(outputPath, html)
+writeFileSync(outputPath, withAuthoring(html, import.meta.url))
 console.log(`Wrote ${outputPath} with ${slides.length} regular slides and ${inlineLiveMap.length} inline demos.`)

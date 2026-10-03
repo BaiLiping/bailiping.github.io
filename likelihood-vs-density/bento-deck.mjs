@@ -32,7 +32,8 @@ function eq(id,section,title,sub,tex,lTitle,lBody,rTitle,rBody,sources=[],notes=
 }
 function lab(id,title,sub,demo){
  add(id,'live experiment',title,sub,[R('lab-bg',72,185,1136,450)],['mle','bayes'],'Deterministic illustration. No statistical calibration claim. The controls change a model or an observed data summary; no data are randomly resampled. Open live/?demo='+demo+' directly.');
- live.push({slide:id,slideIndex:slides.length-1,inline:true,layout:'region',bounds:{x:74,y:186,width:1132,height:448},src:'./live/?demo='+demo+'&embed=region',source:'./live/?demo='+demo,title,hideSource:true,readyMessage:true,unloadWhenHidden:false});
+ slides.at(-1).elements.push({id:'fallback',type:'image',x:74,y:186,w:1132,h:448,src:'./fallback/'+demo+'.png',fit:'contain'},{id:'live-demo-mount',type:'shape',shape:'rect',x:74,y:186,w:1132,h:448,fill:'transparent',stroke:'transparent',strokeWidth:0,opacity:0});
+ live.push({slide:id,introSlide:slides.at(-2).id,slideIndex:slides.length-1,inline:true,layout:'region',bounds:{x:74,y:186,width:1132,height:448},sandbox:'allow-scripts allow-same-origin',src:'./live/?demo='+demo+'&embed=region',source:'./live/?demo='+demo,title,hideSource:true,readyMessage:true,unloadWhenHidden:false});
 }
 add('overview','a probability primer','Likelihood & Density','One formula. Two directions. A third object—the posterior—requires a prior.',[
  T('hero',75,211,1080,155,'Same formula.<br>Different question.',63,{fontFamily:serif,fontWeight:700,lineHeight:1.05}),

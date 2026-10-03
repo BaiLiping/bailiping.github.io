@@ -1,3 +1,4 @@
+import {withAuthoring} from '../scripts/authoring-build.mjs';
 import {readFileSync,writeFileSync} from 'node:fs';
 import {dirname,resolve} from 'node:path';
 import {fileURLToPath} from 'node:url';
@@ -40,7 +41,7 @@ html=html.replace('</head>',`<meta name="description" content="${deck.slides.len
 </style>
 <script>(()=>{const routes=${JSON.stringify(routes)};function route(){let r;try{r=decodeURIComponent(location.hash.replace(/^#\\/?/,''));}catch{return;}if(Object.hasOwn(routes,r))history.replaceState(null,'',location.pathname+location.search+'#/'+routes[r]);}addEventListener('hashchange',route);route();})();</script>
 </head>`);
-writeFileSync(resolve(here,'index.html'),html);
+writeFileSync(resolve(here,'index.html'),withAuthoring(html, import.meta.url));
 writeFileSync(resolve(here,'deck.json'),JSON.stringify(deck,null,2)+'\n');
 writeFileSync(resolve(here,'live-demos.json'),JSON.stringify(inlineLiveMap,null,2)+'\n');
 console.log(`Built ${deck.slides.length} slides and ${inlineLiveMap.length} live labs.`);

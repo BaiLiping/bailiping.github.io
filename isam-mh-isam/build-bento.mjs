@@ -1,3 +1,4 @@
+import {withAuthoring} from '../scripts/authoring-build.mjs';
 import {readFile,writeFile} from 'node:fs/promises';
 import {fileURLToPath} from 'node:url';
 import {dirname,resolve} from 'node:path';
@@ -61,6 +62,6 @@ html=html.replace('</head>',`<style id="isam-math-layout">
 </style>\n</head>`);
 if(!html.includes('tex-svg-full.js')||!html.includes('mathjax-dynamic.js')||!html.includes('bento-inline-live.js'))throw new Error('Required shared runtime missing');
 
-await writeFile(resolve(here,'index.html'),html);
+await writeFile(resolve(here,'index.html'),withAuthoring(html, import.meta.url));
 console.log(`Built ${deck.slides.length} iSAM slides and ${inlineLiveMap.length} live laboratories (${html.length} characters).`);
 console.log('Slide routes: '+deck.slides.map(s=>s.id).join(', '));

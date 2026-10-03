@@ -1,3 +1,4 @@
+import {withAuthoring} from '../scripts/authoring-build.mjs';
 // Rebuild the authored content while retaining the checked-in Bento runtime.
 import fs from 'node:fs';
 import path from 'node:path';
@@ -52,5 +53,5 @@ html = html.replace(pattern, (_, open, close) => open + json(doc) + close)
     <script type="application/json" id="companion-demo-map">\n${json(demos)}\n</script>
     <script src="./inline-live.js?v=20260927-loading"></script>
   </body>`);
-fs.writeFileSync(target, html);
+fs.writeFileSync(target, withAuthoring(html, import.meta.url));
 console.log(`${config.title}: ${slides.length} slides, ${demos.length} live demos`);

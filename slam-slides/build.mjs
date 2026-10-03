@@ -1,3 +1,4 @@
+import {withAuthoring} from '../scripts/authoring-build.mjs';
 import { readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
@@ -688,5 +689,5 @@ const output = withDoc
   .replace(/\s*<script type="application\/json" id="bento-inline-live-map">[\s\S]*?<\/script>/g, "")
   .replace(/\s*<script[^>]+bento-inline-live\.js[^>]*><\/script>/g, "");
 
-await writeFile(outputPath, output, "utf8");
+await writeFile(outputPath, withAuthoring(output, import.meta.url), "utf8");
 console.log(`Wrote ${outputPath}`);

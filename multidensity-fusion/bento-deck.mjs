@@ -53,7 +53,8 @@ function eqSlide(id,section,title,subtitle,equations,leftTitle,leftBody,rightTit
 function lab(id,title,subtitle,demo,sources){
   add(id,'live experiment',title,subtitle,[rect('live-placeholder',72,181,1136,455)],sources,
     `Deterministic teaching experiment. Open live/?demo=${demo} for a standalone responsive view. All formulas are implemented in math.mjs and covered by test.mjs. These are not empirical benchmarks or a full tracking system.`);
-  live.push({slide:id,slideIndex:slides.length-1,inline:true,layout:'region',bounds:{x:74,y:181,width:1132,height:457},src:`./live/?demo=${demo}&embed=region`,source:`./live/?demo=${demo}`,title,hideSource:true,readyMessage:true,unloadWhenHidden:false});
+  slides.at(-1).elements.push({id:'fallback',type:'image',x:74,y:181,w:1132,h:457,src:`./fallback/${demo}.png`,fit:'contain'},{id:'live-demo-mount',type:'shape',shape:'rect',x:74,y:181,w:1132,h:457,fill:'transparent',stroke:'transparent',strokeWidth:0,opacity:0});
+  live.push({slide:id,introSlide:slides.at(-2).id,slideIndex:slides.length-1,inline:true,layout:'region',bounds:{x:74,y:181,width:1132,height:457},sandbox:'allow-scripts allow-same-origin',src:`./live/?demo=${demo}&embed=region`,source:`./live/?demo=${demo}`,title,hideSource:true,readyMessage:true,unloadWhenHidden:false});
 }
 const live=[];
 

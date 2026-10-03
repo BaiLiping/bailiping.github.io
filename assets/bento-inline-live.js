@@ -28,6 +28,11 @@
 
   function findSlide(slideId) {
     const selector = selectorFor(slideId);
+    // The authoring canvas and thumbnails use static fallbacks. Mount a lab
+    // only in Slideshow, so a thumbnail cannot claim its iframe first.
+    if (document.body.hasAttribute('data-bailiping-editor')) {
+      return document.querySelector(`.bento-present-overlay ${selector}`);
+    }
     return document.querySelector(`.bento-present-overlay ${selector}`) ||
       document.querySelector(selector);
   }

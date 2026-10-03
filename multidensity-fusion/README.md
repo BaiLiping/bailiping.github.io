@@ -1,19 +1,27 @@
 # Multidensity Fusion
 
 A 29-slide Bento deck with six deterministic live labs, listed under Work.
-Each slide links back to all topics.
+Each slide links back to all topics. Open **Bailiping Editor.command** for visual
+editing; source rebuilds preserve `authoring.json`. See
+[the authoring guide](../authoring/README.md).
 
 ## Files and editing
 
 - `bento-deck.mjs`: readable slide content, layout helpers, equations, source references, speaker notes, and inline lab map. Edit this file directly; no generated JSON to maintain.
-- `index.html`: metadata, MathJax configuration, accessibility/loading fallback, and Bento document containers.
-- `boot.mjs`: installs this deck's document and loads **the exact compressed Bento engine already shipped in `../kalman-filter-derivations/index.html`**. It extracts only `bento-rt-css` and `bento-rt`; it does not import that deck's content or run its other scripts. This intentionally reuses the backend rather than copying or forking it. The reference URL and these two block IDs must remain available.
+- `index.html`: generated presentation with its document and unchanged embedded Bento engine.
+- `build.mjs`: packages the document and the exact engine shipped in `../kalman-filter-derivations/index.html`, then applies saved visual edits. It extracts only `bento-rt-css` and `bento-rt`, preserving the runtime and its license. `boot.mjs` is the previous browser-build entry point.
+- `fallback/`: initial-state screenshots used while editing and when a live frame is unavailable.
 - `math.mjs`: pure numerical functions, separate from interface code.
 - `live/`: responsive standalone experiments, also embedded by the existing `assets/bento-inline-live.js` host.
 - `test.mjs`: deterministic numerical, edge-case, and document-structure tests.
 - `test-browser.py`: end-to-end Chromium checks, including the real shared runtime, iframe navigation, six labs, and desktop/mobile screenshots.
 
-No build step, npm dependencies, server backend, API keys, or new deployment workflow is required. A read-only, path-scoped GitHub Actions workflow runs the numerical and browser checks when this deck or its shared dependencies change. GitHub Pages serves the files as it does the other decks. The first deck load fetches the existing reference HTML to reuse its runtime. MathJax uses the same pinned CDN version and dynamic-typesetting helper as the reference deck. Direct labs do not require MathJax or Bento.
+Run `node multidensity-fusion/build.mjs` after changing source. No npm
+dependencies, API keys, or new deployment service are required. GitHub Pages
+serves the generated files; the editor saves locally. MathJax uses the pinned
+CDN version and shared typesetting helper. Direct labs do not require MathJax
+or Bento. The lab sandbox includes same-origin access because its ES modules
+import local numerical modules.
 
 ## Local checks
 

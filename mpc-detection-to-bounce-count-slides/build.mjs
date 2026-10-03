@@ -1,3 +1,4 @@
+import {withAuthoring} from '../scripts/authoring-build.mjs';
 // Rebuild the selected public slides while preserving the bundled Bento runtime.
 import assert from 'node:assert/strict';
 import { readFileSync, writeFileSync, existsSync } from 'node:fs';
@@ -51,5 +52,5 @@ for (const [type, id, data] of [
   assert.ok(pattern.test(html), `Missing ${id} in the runtime shell`);
   html = html.replace(pattern, (_, open, close) => open + serialize(data) + close);
 }
-writeFileSync(join(here, 'index.html'), html);
+writeFileSync(join(here, 'index.html'), withAuthoring(html, import.meta.url));
 console.log(`Radio Measurements → Radio Map: ${doc.slides.length} slides, ${demos.length} live demos`);

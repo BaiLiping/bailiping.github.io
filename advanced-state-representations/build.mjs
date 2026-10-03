@@ -1,3 +1,4 @@
+import {withAuthoring} from '../scripts/authoring-build.mjs';
 import { readFile, writeFile, mkdir } from 'node:fs/promises';
 import { fileURLToPath } from 'node:url';
 import { dirname, resolve } from 'node:path';
@@ -40,7 +41,7 @@ const styles=`<style id="asr-math-layout">
 if(/<style id="asr-math-layout">[\s\S]*?<\/style>/.test(html))html=html.replace(/<style id="asr-math-layout">[\s\S]*?<\/style>/,styles);else html=html.replace('</head>',styles+'\n</head>');
 for(const token of ['tex-svg-full.js','mathjax-dynamic.js','bento-inline-live.js'])if(!html.includes(token))throw Error('Runtime missing '+token);
 await mkdir(resolve(here,'figures'),{recursive:true});for(const demo of Object.keys(Figures.defaults))await writeFile(resolve(here,'figures',demo+'.svg'),Figures.render(demo).svg);
-await writeFile(resolve(here,'index.html'),html);
+await writeFile(resolve(here,'index.html'),withAuthoring(html, import.meta.url));
 const studySections=sourceDeck.slides.map((s,index)=>{
  const body=s.elements.filter(e=>!['eyebrow','heading','subtitle'].includes(e.id)&&!e.id.startsWith('footer-')&&e.type==='text').map(e=>`<div class="piece ${e.id.endsWith('-label')?'label':''}">${e.html}</div>`).join('\n');
  const image=s.elements.find(e=>e.id==='model-figure');

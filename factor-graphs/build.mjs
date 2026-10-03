@@ -1,3 +1,4 @@
+import {withAuthoring} from '../scripts/authoring-build.mjs';
 import {readFileSync,writeFileSync} from 'node:fs';
 import {fileURLToPath} from 'node:url';
 import {createRequire} from 'node:module';
@@ -36,7 +37,7 @@ html=html.replace('</body>',`<div id="bento-print">${printPages}</div>\n</body>`
 // Keep every compressed Bento runtime byte from the existing deck.
 const template=readFileSync(new URL('../variational-inference-em/index.html',import.meta.url),'utf8');
 for(const id of ['bento-rt','bento-rt-css']){const re=new RegExp(`<script[^>]*id="${id}"[^>]*>([\\s\\S]*?)<\\/script>`);if(html.match(re)?.[1]!==template.match(re)?.[1])throw new Error('Runtime changed: '+id);}
-writeFileSync(here+'index.html',html);
+writeFileSync(here+'index.html',withAuthoring(html, import.meta.url));
 // A normal-flow reading/print page retains complete static content if a lab fails.
 globalThis.FactorBP=BP;
 const escape=s=>s.replaceAll('&','&amp;').replaceAll('"','&quot;').replaceAll('<','&lt;');

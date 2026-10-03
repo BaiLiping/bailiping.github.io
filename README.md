@@ -2,6 +2,15 @@
 
 GitHub Pages site for `bailiping.com`.
 
+## Edit presentations visually
+
+Open **Bailiping Editor.command** on the Mac desktop, or run
+`scripts/start-authoring.command`. Choose a presentation, edit it in Bento, and
+use **Save changes** (Command-S). Visual edits are kept in each deck's
+`authoring.json` and survive generator rebuilds. Use **Copy feedback** to bring
+comments back to Codex for review and publication. See
+[the authoring guide](authoring/README.md) for preview, backup, and recovery.
+
 ## Search discovery
 
 `robots.txt` permits crawling and advertises the site-wide `sitemap.xml`.

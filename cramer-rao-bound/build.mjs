@@ -1,9 +1,10 @@
+import {withAuthoring, authoringDocument} from '../scripts/authoring-build.mjs';
 import fs from 'node:fs';
 import path from 'node:path';
 import {fileURLToPath} from 'node:url';
 import config from './deck.mjs';
 const here=path.dirname(fileURLToPath(import.meta.url));
-const doc={format:'bento/slides',version:1,docId:config.docId,title:config.title,readonly:true,meta:{subject:config.description},size:{width:1280,height:720},theme:{background:config.paper,color:config.ink,accent:config.green,fontFamily:config.fontFamily},slides:config.build()};
+const doc=authoringDocument({format:'bento/slides',version:1,docId:config.docId,title:config.title,readonly:true,meta:{subject:config.description},size:{width:1280,height:720},theme:{background:config.paper,color:config.ink,accent:config.green,fontFamily:config.fontFamily},slides:config.build()}, import.meta.url);
 const escape=s=>String(s).replaceAll('&','&amp;').replaceAll('"','&quot;').replaceAll('<','&lt;');
 const printSlides=doc.slides.map((slide,index)=>`<section class="crb-print-slide" aria-label="Slide ${index+1}">${slide.elements.map(e=>{
  const bounds=`position:absolute;left:${e.x}px;top:${e.y}px;width:${e.w}px;height:${e.h}px;`;
@@ -33,5 +34,5 @@ html=html.replace(pattern,(_,a,b)=>a+JSON.stringify(doc,null,1).replaceAll('<','
  .replace('</head>',`<!-- crb-host-start --><script>${normalize}</script><meta name="description" content="${escape(config.description)}"><link rel="canonical" href="https://bailiping.com/cramer-rao-bound/"><style>${fs.readFileSync(path.join(here,'deck.css'),'utf8')}</style><!-- crb-host-end --></head>`)
  .replace('</body>',`<!-- crb-body-start --><div id="crb-print" aria-hidden="true">${printSlides}</div>
  <script>${fs.readFileSync(path.join(here,'deck.js'),'utf8')}</script><!-- crb-body-end --></body>`);
-fs.writeFileSync(path.join(here,'index.html'),html);
+fs.writeFileSync(path.join(here,'index.html'),withAuthoring(html, import.meta.url));
 console.log(`${config.title}: ${doc.slides.length} native Bento slides, three compact labs, complete static print layout.`);

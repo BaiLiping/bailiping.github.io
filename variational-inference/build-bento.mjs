@@ -1,3 +1,4 @@
+import {withAuthoring} from '../scripts/authoring-build.mjs';
 import { readFile, writeFile } from 'node:fs/promises';
 import { fileURLToPath } from 'node:url';
 import { dirname, resolve } from 'node:path';
@@ -127,6 +128,6 @@ if (deck.slides.some(slide => slide.elements.some(element => element.type === 't
   throw new Error('Hand-built sup/sub math found; use LaTeX helpers instead');
 }
 
-await writeFile(outputPath, html);
+await writeFile(outputPath, withAuthoring(html, import.meta.url));
 console.log(`Built ${outputPath}`);
 console.log(`${deck.slides.length} regular Bento slides; ${inlineLiveMap.length} inline live region`);
