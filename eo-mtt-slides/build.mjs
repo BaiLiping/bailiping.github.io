@@ -3,6 +3,7 @@ import { readFileSync, writeFileSync } from 'node:fs'
 import { dirname, join } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import extentModel from './live/extent-model.js'
+import extentView from './live/extent-view.js'
 import { applyDeckExtensions, installExtensionAssets } from '../assets/deck-extensions.mjs'
 
 const here = dirname(fileURLToPath(import.meta.url))
@@ -228,38 +229,36 @@ slides.push(slide(
     shape('scope-extent', 700, 292, 202, 94, C.blueSoft, { shape: 'ellipse', stroke: C.blue, strokeWidth: 2 }),
     ...[[742, 326], [782, 302], [820, 337], [850, 312], [876, 345]].map(([x, y], index) => shape(`scope-em${index}`, x, y, 18, 18, C.blue, { shape: 'ellipse', stroke: '#FFFFFF', strokeWidth: 2 })),
     text('scope-extended-copy', 646, 398, 512, 110, 'One object can generate <b>several detections</b>.<br>Which detections form a cell becomes uncertain.', 22, { lineHeight: 1.45 }),
-    text('scope-boundary', 96, 580, 1088, 56, '<b>Scope boundary:</b> the teaching points are detections from geometric extended objects—not point targets, and not a complete kinematic/extent filter.', 17, { color: C.muted, align: 'center' })
+    text('scope-boundary', 96, 580, 1088, 56, 'Each scan supplies a set of detections. Next: use that set to estimate an object’s motion and spatial extent.', 17, { color: C.muted, align: 'center' })
   ]
 ))
+
+const extentExample = extentModel.simulate({}, 8)
+writeFileSync(join(here, 'live', 'extent-fallback.svg'), extentView.sceneSVG(extentExample, { width: 720, height: 390 }))
 
 slides.push(slide(
   's-extent-live',
   'EXTENDED TARGET · LIVE EXPERIMENT',
-  'Change target extent. Watch the posterior move.',
-  'A scalar center update conditional on known extent and association. Eight independent returns follow z_i = x + e_i + v_i, with Gaussian spatial offsets of standard deviation sigma_e and independent Gaussian sensor noise of standard deviation sigma_r. Their centroid has variance (sigma_e squared + sigma_r squared) / 8. Increase the extent while holding the prior, centroid, and sensor noise fixed: the likelihood broadens, gain decreases, and the posterior center becomes less certain. The slider specifies extent; this demo does not infer extent or solve multi-object association. Spatial measurement model: Granstrom, Baum and Reuter, arXiv:1604.00970, Eq. (14). Escape returns focus to the deck; Page Up and Page Down navigate.',
+  'Track the object’s motion and its spatial extent.',
+  'A moving two-dimensional elliptical extended object produces independent measurement sources uniformly across its area, plus additive Gaussian sensor noise. The unknown state includes position and velocity and a positive-definite geometric extent matrix X. A factorized Gaussian/inverse-Wishart random-matrix filter predicts motion and extent uncertainty, then updates motion from the measurement centroid and extent from the scatter and centroid residual. It uses the Feldmann et al. approximate update and forgetting prediction in Tables IV and IX of Granstrom, Baum and Reuter, arXiv:1604.00970, with symmetric positive-definite matrix square roots. The measurement likelihood approximates the uniform ellipse by a Gaussian with covariance X/4 + R; E[X] = V/(nu - 6) in the paper’s convention for d=2. Length and width are full physical axes, not standard deviations. All truth sliders affect only data generation, never the filter prior or update. The initial extent prior is a 7 m circle for every setting. This synthetic example tracks one object with known association and a fixed number of returns per scan; it is not a multi-object association benchmark. The solid green outline is estimated physical extent; the small dotted ellipse is a Gaussian 95 percent center-uncertainty region. Escape returns focus to Bento; Page Up and Page Down navigate.',
   [
-    text('extent-prompt', 96, 134, 1088, 32, 'The same Gaussian fusion experiment, now with multiple returns and a target-extent slider.', 17, { color: C.muted }),
-    card('extent-model-card', 96, 180, 528, 380),
-    text('extent-model-label', 120, 204, 480, 22, 'ONE OBJECT · EIGHT INDEPENDENT RETURNS', 12, { color: C.teal, fontFamily: MONO, fontWeight: 700 }),
-    text('extent-model-equation', 120, 250, 480, 70, display(raw`z_i=x+e_i+v_i,\quad i=1,\ldots,8`), 22, { align: 'center' }),
-    text('extent-model-distributions', 120, 329, 480, 64, display(raw`e_i\sim\mathcal N(0,\sigma_e^2),\quad v_i\sim\mathcal N(0,\sigma_r^2)`), 20, { align: 'center' }),
-    text('extent-centroid-equation', 120, 405, 480, 66, display(raw`\bar z\mid x\sim\mathcal N\!\left(x,\frac{\sigma_e^2+\sigma_r^2}{8}\right)`), 23, { align: 'center' }),
-    text('extent-model-scope', 120, 491, 480, 50, 'Known Gaussian extent; one assigned cloud.<br>The unknown is the object center x.', 17, { color: C.muted, align: 'center' }),
-    card('extent-update-card', 646, 180, 538, 380, { fill: C.tealSoft }),
-    text('extent-update-label', 670, 204, 490, 22, 'CONDITIONAL CENTER UPDATE', 12, { color: C.teal, fontFamily: MONO, fontWeight: 700 }),
-    text('extent-update-formula', 670, 250, 490, 85, display(raw`K=\frac{P^-}{P^-+R_c},\quad R_c=\frac{\sigma_e^2+\sigma_r^2}{8}`), 23, { align: 'center' }),
-    text('extent-posterior-formula', 670, 347, 490, 64, display(raw`m^+=m^-+K(\bar z-m^-),\quad P^+=(1-K)P^-`), 19, { align: 'center' }),
+    text('extent-prompt', 96, 134, 1088, 32, 'Detections across a moving body reveal its center, velocity, size, and orientation.', 17, { color: C.muted }),
+    { id: 'extent-static-scene', type: 'image', x: 96, y: 180, w: 688, h: 380, src: './live/extent-fallback.svg', alt: 'Scan 8: noisy detections across a true elliptical body, predicted and updated physical extent, and a separate center-uncertainty region.', fit: 'contain', rotation: 0, opacity: 1 },
+    card('extent-model-card', 804, 180, 380, 380, { fill: C.tealSoft }),
+    text('extent-model-label', 828, 200, 332, 30, 'AFTER 8 SCANS · 20 RETURNS / SCAN', 11, { color: C.teal, fontFamily: MONO, fontWeight: 700 }),
     ...(() => {
-      const p = extentModel.posterior()
+      const p = extentExample.frame
       return [
-        text('extent-defaults', 670, 429, 490, 53, `Default: m⁻ = −1.2 · σp = 1.35 · z̄ = 2.1<br>σr = 0.75 · σe = 1.5 · Rc = ${p.centroidVar.toFixed(4)}`, 17, { color: C.muted, lineHeight: 1.5 }),
-        text('extent-default-posterior', 670, 499, 490, 40, `<b>K = ${p.gain.toFixed(4)} · m⁺ = ${p.postMean.toFixed(4)} · σ⁺ = ${p.postSigma.toFixed(4)}</b>`, 18, { color: C.teal })
+        text('extent-static-estimate', 828, 242, 332, 140, `<b>True → estimated body</b><br>Length: 10 → ${p.estimate.length.toFixed(2)} m<br>Width: 4 → ${p.estimate.width.toFixed(2)} m<br>Angle: 35° → ${p.estimate.angle.toFixed(1)}°<br>Center error: ${p.errors.center.toFixed(2)} m`, 18, { lineHeight: 1.5 }),
+        text('extent-state-scope', 828, 398, 332, 54, 'The filter receives detections and sensor noise; the true shape is hidden from it.', 17, { color: C.muted }),
+        text('extent-state-formula', 828, 470, 332, 56, display(raw`\hat X=\frac{V}{\nu-6},\quad d=2`), 23, { align: 'center' })
       ]
     })(),
-    text('extent-fallback-takeaway', 96, 585, 1088, 50, '<b>At a fixed return count:</b> larger extent → broader likelihood → lower gain and a wider center posterior.', 20, { align: 'center', color: C.teal }),
+    text('extent-model-equation', 96, 572, 1088, 42, display(raw`p(z_i\mid x,X)\approx\mathcal N(z_i;Hx,\tfrac14 X+R),\quad p(x,X\mid Z)\approx\mathcal N(x;m,P)\,\mathcal{IW}_2(X;\nu,V)`), 19, { align: 'center' }),
+    text('extent-fallback-takeaway', 96, 620, 1088, 28, 'Centroid → motion update. Cloud scatter → extent update. Physical size and center uncertainty are distinct.', 16, { align: 'center', color: C.teal }),
     inlineMount()
   ],
-  { cite: 'Gaussian spatial measurement model: Granström, Baum & Reuter · arXiv:1604.00970, Eq. (14)', transition: 'none' }
+  { cite: 'Random-matrix EOT: Feldmann et al. update · Granström, Baum & Reuter, arXiv:1604.00970, Eq. (14), Tables IV & IX', transition: 'none' }
 ))
 
 slides.push(slide(
@@ -673,9 +672,9 @@ const inlineLiveMap = [
     inline: true,
     layout: 'region',
     bounds: INLINE_BOUNDS,
-    src: './live/extent.html?embed=region&v=20261004',
+    src: './live/extent.html?embed=region&v=20261004-rmm',
     source: './live/extent.html',
-    title: 'Extended-target extent and Gaussian center update',
+    title: 'Extended-target tracking: learn position, velocity, and physical extent',
     sandbox: 'allow-scripts allow-top-navigation-by-user-activation',
     hideSource: true,
     readyMessage: true,
