@@ -4,6 +4,8 @@ import { dirname, join } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import extentModel from './live/extent-model.js'
 import extentView from './live/extent-view.js'
+import twoReturnModel from './live/two-return-model.js'
+import twoReturnView from './live/two-return-view.js'
 import { applyDeckExtensions, installExtensionAssets } from '../assets/deck-extensions.mjs'
 
 const here = dirname(fileURLToPath(import.meta.url))
@@ -259,6 +261,24 @@ slides.push(slide(
     inlineMount()
   ],
   { cite: 'Random-matrix EOT: Feldmann et al. update · Granström, Baum & Reuter, arXiv:1604.00970, Eq. (14), Tables IV & IX', transition: 'none' }
+))
+
+const twoReturnExample = twoReturnModel.example()
+writeFileSync(join(here, 'live', 'two-return-fallback.svg'), twoReturnView.overviewSVG(twoReturnExample))
+
+slides.push(slide(
+  's-two-return-live',
+  'JOINT CENTER + EXTENT · LIVE EXPERIMENT',
+  'Two detections on the same side of the target.',
+  'This additional experiment follows the prior/likelihood/posterior visualization on page 4 of Kalman Filter Derivations. It estimates center c and full extent L jointly for a finite one-dimensional body [c-L/2,c+L/2]. Each associated detection has an independent unknown uniform source u_i on that interval and additive independent Gaussian sensor noise. Marginalizing each source gives ell_i(c,L)=[Phi((z_i-c+L/2)/sigma)-Phi((z_i-c-L/2)/sigma)]/L. The joint posterior is proportional to the Gaussian center prior, lognormal length prior, and both individual likelihoods. Numerical quadrature in (c,log L) retains center-size dependence. The orange center curve integrates the length prior; the orange length curve integrates the center prior. Both likelihood curves are scaled for display. Default true center is zero, true length is 6 m, and the selected observations are 0.75 and 2.55 m, both in the right half. The body controls change these illustrative observations, never supply the true state or known source fractions to the estimator. The source-side choice is also hidden from inference. Size prior median is independently adjustable; its log standard deviation is 0.5. Two returns leave substantial uncertainty, displayed as marginal 95 percent credible intervals and an optional joint-density view. This is a single-scan, single-target finite-segment model grounded in the source convolution of Granstrom, Baum and Reuter, arXiv:1604.00970, Eq. (6). It complements the 2D sequential random-matrix filter on the preceding slide.',
+  [
+    text('two-return-prompt', 96, 134, 1088, 32, 'Use both returns to infer the center and physical size. The true extent is hidden from the estimator.', 17, { color: C.muted }),
+    { id: 'two-return-static-scene', type: 'image', x: 96, y: 180, w: 1088, h: 385, src: './live/two-return-fallback.svg', alt: 'Two detections at 0.75 and 2.55 metres on the right half of a 6-metre target. Prior, marginalized likelihood, and joint-posterior marginals for center and extent.', fit: 'contain', rotation: 0, opacity: 1 },
+    text('two-return-equation', 96, 568, 1088, 56, display(raw`p(c,L\mid z_1,z_2)\propto p(c)p(L)\ell_1(c,L)\ell_2(c,L),\quad \ell_i=\frac{\Phi((z_i-c+L/2)/\sigma)-\Phi((z_i-c-L/2)/\sigma)}{L}`), 16, { align: 'center' }),
+    text('two-return-fallback-takeaway', 96, 632, 1088, 20, 'Default: c* = 0 m, L* = 6 m. Both returns are right of the center; their separation does not reveal the whole extent.', 14, { color: C.teal, align: 'center' }),
+    inlineMount()
+  ],
+  { cite: 'Finite-body source convolution: Granström, Baum & Reuter, arXiv:1604.00970, Eq. (6) · Joint numerical Bayes update', transition: 'none' }
 ))
 
 slides.push(slide(
@@ -675,6 +695,21 @@ const inlineLiveMap = [
     src: './live/extent.html?embed=region&v=20261004-rmm',
     source: './live/extent.html',
     title: 'Extended-target tracking: learn position, velocity, and physical extent',
+    sandbox: 'allow-scripts allow-top-navigation-by-user-activation',
+    hideSource: true,
+    readyMessage: true,
+    unloadWhenHidden: true
+  },
+  {
+    introSlide: 's-extent-live',
+    slide: 's-two-return-live',
+    slideIndex: slides.findIndex(entry => entry.id === 's-two-return-live'),
+    inline: true,
+    layout: 'region',
+    bounds: INLINE_BOUNDS,
+    src: './live/two-return.html?embed=region&v=20261004-joint',
+    source: './live/two-return.html',
+    title: 'Two same-side detections: infer center and extent jointly',
     sandbox: 'allow-scripts allow-top-navigation-by-user-activation',
     hideSource: true,
     readyMessage: true,

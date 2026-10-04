@@ -1,6 +1,19 @@
 <!-- EO-MTT presentation styles and the shared dynamic LaTeX renderer. -->
-<link rel="stylesheet" href="./theme.css?v=20261004">
+<link rel="stylesheet" href="./theme.css?v=20261004-joint">
 <link rel="canonical" href="https://bailiping.com/eo-mtt-slides/">
+<script>
+// The read-only Bento runtime automatically requests fullscreen. In print
+// mode the browser's fullscreen rules clamp the overlay to one viewport;
+// exiting afterwards also closes the presentation. Suppress only that request
+// on the dedicated print route, before the runtime opens its overlay.
+if (new URLSearchParams(location.search).has('print-pdf')) {
+  const requestFullscreen = Element.prototype.requestFullscreen;
+  if (requestFullscreen) Element.prototype.requestFullscreen = function (...args) {
+    if (this.classList.contains('bento-present-overlay')) return Promise.resolve();
+    return requestFullscreen.apply(this, args);
+  };
+}
+</script>
 <script>
 window.MathJax = {
   tex: { inlineMath: [['\\(', '\\)']], displayMath: [['\\[', '\\]']], processEscapes: true },
