@@ -61,38 +61,45 @@ interaction. Its static layout also supports an ordinary screen preview.
 
 ## Two same-side returns: slide 4
 
-Slide 4 (`s-two-return-live`, `#/3`) adds a second experiment after the 2D
-tracker. It follows the prior/likelihood/posterior curves on page 4 of
-`kalman-filter-derivations/`, while **jointly estimating center and extent**.
-The standalone lab is `live/two-return.html`.
+Slide 4 (`s-two-return-live`, `#/3`) follows the prior/likelihood/posterior
+visualization on page 4 of `kalman-filter-derivations/`. Its main experiment is
+**changing true extent with fixed priors**, while jointly estimating center and
+extent. The standalone lab is `live/two-return.html`.
 
-A finite 1D body occupies `[c − L/2, c + L/2]`. Each detection has its own
+The single prominent slider changes true full size from 1 to 8 m. Small/large
+presets select 2 and 8 m. The two chosen observations stay in the right half:
+`z1 = 0.125 L*`, `z2 = 0.425 L*`. True center remains 0 m and sensor standard
+deviation remains 0.3 m. These are controlled illustrative measurement sets,
+not random playback. Each update restarts from the same priors; dragging does
+not accumulate observations. Truth, source fractions and source side are not
+passed to inference.
+
+A finite 1D body occupies `[c − L/2, c + L/2]`. Each detection has an independent
 latent source `u_i ~ Uniform[-L/2,L/2]` and independent Gaussian sensor noise.
-Integrating the source out gives the exact single-detection likelihood
+Integrating the source out gives the single-detection likelihood
 `[Phi((z_i−c+L/2)/sigma) − Phi((z_i−c−L/2)/sigma)] / L`.
 This is a segment specialization of the spatial-source convolution in
 [Granström, Baum & Reuter, Eq. (6)](https://arxiv.org/abs/1604.00970).
 
-The Gaussian center prior and lognormal length prior are initially independent.
-The likelihood product creates a joint posterior; midpoint quadrature in
-`(c, log L)` retains that dependence. The length-density conversion includes
-the `1/L` Jacobian. Integration bounds include distant length tails for
-conflicting priors and observations. The two plotted posteriors are marginals
-of this joint result, with equal-tailed 95% credible intervals. Each orange
-curve integrates the other variable's **prior** and is scaled for display;
-it is not a plug-in likelihood evaluated at an estimated size or center.
-The optional joint view displays the coupled posterior directly.
+Fixed priors: center `N(0, 1.2²)` m; length lognormal with median 4 m and log
+standard deviation 0.5. Numerical quadrature in `(c, log L)` retains dependence
+in the full joint posterior. The length-density conversion includes the `1/L`
+Jacobian. Integration bounds retain distant tails when observations disagree
+with the priors. Both center and extent are estimated at every slider position;
+the Center/Extent buttons only switch the plotted marginal.
 
-The illustrated pair is deliberately chosen at 25% and 85% of one half of
-the body: default observations `0.75, 2.55 m`, true center `0 m`, full extent
-`6 m`. Both detections stay on the selected side and within the body as its
-center and extent change. They are chosen observations, not random playback;
-the noise control changes uncertainty without resampling them. The estimator
-receives only observations, sensor noise, and independently controlled priors.
-It does not receive true center, true size, source positions, or source-side
-information. Two returns can leave a broad set of plausible centers and sizes.
+Each orange curve integrates the other variable using its **prior**. It is
+normalized to unit area over the fixed visible interval for comparing curve
+shapes; it is not a posterior or a plug-in likelihood at an estimated size.
+This display scaling never affects inference. Prior and posterior curves keep
+their density values. Horizontal and vertical scales remain fixed across all
+true sizes, and the prior is evaluated on an invariant plotting grid so it
+stays visually identical. The body sketch also uses a fixed metre scale.
+Posterior means, standard deviations and equal-tailed 95% intervals update
+with the observations. Two same-side detections do not identify the full body.
 
-Numerical logic and SVG views are separate in `two-return-model.js` and
-`two-return-view.js`. The build generates `two-return-fallback.svg` from the
-same numerical result. Run both suites with
+`two-return-model.js` contains inference; `two-return-view.js` supplies the
+shared SVG views. The generated `two-return-fallback.svg` compares the 2 m
+and 8 m examples, with center and extent curves for each and matched axes.
+Run the numerical and comparison checks with
 `node --test eo-mtt-slides/tests/*.test.cjs`.

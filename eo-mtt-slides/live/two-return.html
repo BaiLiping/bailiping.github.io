@@ -5,53 +5,53 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="color-scheme" content="light">
   <meta name="robots" content="noindex">
-  <title>Two same-side detections: center and extent | Bai Liping</title>
-  <meta name="description" content="Joint Bayesian inference of an extended target's center and size from two detections on the same side. Compare prior, likelihood and posterior densities.">
+  <title>True extent → likelihood → posterior | Bai Liping</title>
+  <meta name="description" content="Change an extended target's true size and watch the likelihood and posterior move against fixed priors. Two same-side detections jointly update center and extent.">
   <link rel="stylesheet" href="extent.css?v=20261004-rmm">
-  <link rel="stylesheet" href="two-return.css?v=20261004-joint">
+  <link rel="stylesheet" href="two-return.css?v=20261005-extent-curves">
   <script>if (new URLSearchParams(location.search).has('embed')) document.documentElement.classList.add('embedded');</script>
   <script src="two-return-model.js?v=20261004-joint" defer></script>
-  <script src="two-return-view.js?v=20261004-joint" defer></script>
-  <script src="two-return.js?v=20261004-joint" defer></script>
+  <script src="two-return-view.js?v=20261005-extent-curves" defer></script>
+  <script src="two-return.js?v=20261005-extent-curves" defer></script>
   <script src="../../assets/bento-inline-frame.js" defer></script>
 </head>
 <body data-bento-live-app>
   <main class="extent-lab two-return-lab">
-    <aside class="controls" aria-label="Inference and example controls">
-      <p class="eyebrow">1D EXTENDED TARGET · TWO RETURNS</p>
-      <h1>Prior × likelihood</h1>
-      <p class="intro">Both detections lie on one side of the body. Infer its center and extent together.</p>
-      <div class="control-stack">
-        <div class="control"><div class="control-head"><label for="prior-mean">Center prior mean</label><output id="prior-mean-out" for="prior-mean">0 m</output></div><input id="prior-mean" type="range" min="-3" max="3" step="0.1" value="0"></div>
-        <div class="control"><div class="control-head"><label for="prior-sigma">Center prior σ</label><output id="prior-sigma-out" for="prior-sigma">1.2 m</output></div><input id="prior-sigma" type="range" min="0.3" max="2.5" step="0.05" value="1.2"></div>
-        <div class="control"><div class="control-head"><label for="extent-median">Extent prior median</label><output id="extent-median-out" for="extent-median">4 m</output></div><input id="extent-median" type="range" min="1" max="8" step="0.1" value="4"></div>
-        <div class="control extent-control"><div class="control-head"><label for="target-extent">True target extent L*</label><output id="target-extent-out" for="target-extent">6 m</output></div><input id="target-extent" type="range" min="1" max="8" step="0.1" value="6"></div>
-        <div class="control extent-control"><div class="control-head"><label for="target-center">True target center c*</label><output id="target-center-out" for="target-center">0 m</output></div><input id="target-center" type="range" min="-3" max="3" step="0.1" value="0"></div>
-        <div class="control"><div class="control-head"><label for="sensor-noise">Sensor noise σ</label><output id="sensor-noise-out" for="sensor-noise">0.3 m</output></div><input id="sensor-noise" type="range" min="0.1" max="1" step="0.05" value="0.3"></div>
-      </div>
-      <div class="actions"><button id="reset" type="button">Reset</button><button id="flip-side" type="button">Move pair left</button></div>
-      <p class="prior-description">Extent prior: lognormal, log σ = 0.5.<br>Purple controls move the body and observations.</p>
+    <aside class="controls" aria-label="True extent experiment">
+      <p class="eyebrow">CHANGE THE REAL OBJECT</p>
+      <h1>True extent → Bayes</h1>
+      <p class="intro">Drag the size. The two detections move; the likelihood and posterior change.</p>
+      <div class="control extent-control"><div class="control-head"><label for="target-extent">True extent L*</label><output id="target-extent-out" for="target-extent">6 m</output></div><input id="target-extent" type="range" min="1" max="8" step="0.1" value="6"><div class="range-labels"><span>1 m</span><span>8 m</span></div></div>
+      <div class="actions"><button id="small-extent" type="button">Small · 2 m</button><button id="large-extent" type="button">Large · 8 m</button><button id="reset" type="button">Reset</button></div>
+      <div id="body-scene" class="body-scene"></div>
+      <p id="observations" class="observations"></p>
+      <p class="fixed-settings">True center: 0 m · sensor σ: 0.3 m<br>Two returns stay in the right half of the body.</p>
+      <p class="prior-description"><strong>The prior stays fixed.</strong><br>Each size starts from the same prior, so you can compare the update.</p>
       <details>
-        <summary>Model &amp; what the filter knows</summary>
+        <summary>Model &amp; fixed priors</summary>
         <p>A finite 1D target occupies [c − L/2, c + L/2]. Each return has its own unknown source uᵢ, uniform over [−L/2, L/2], plus independent Gaussian noise: zᵢ = c + uᵢ + vᵢ.</p>
-        <p>The center prior is Gaussian. The extent prior is lognormal with adjustable median and fixed log standard deviation 0.5. The initial priors are independent; the joint posterior generally couples center and size.</p>
-        <p>The two displayed observations are deliberately placed 25% and 85% of the way along the selected half of the body. Changing sensor noise changes the likelihood, not those observations. This is a chosen measurement set, not random playback.</p>
-        <p>The estimator receives the two observations, noise level, and priors. It does not receive the true center, true extent, source positions, or which side produced the detections. Two returns need not identify the full body.</p>
-        <p>For each possible (c,L), integrate out the two source positions and multiply their likelihoods. Numerical quadrature in (c, log L) gives the joint posterior and its two marginals. The orange curve integrates the other variable's prior and is scaled to fit; it is not an additional observation.</p>
-        <p>Spatial-source convolution: <a href="https://arxiv.org/abs/1604.00970" target="_top">Granström, Baum &amp; Reuter, Eq. (6)</a>, specialized here to a segment. One target, one scan, two associated returns.</p>
+        <p>Fixed priors: c ∼ N(0, 1.2²) m; L is lognormal with median 4 m and log standard deviation 0.5. Sensor standard deviation is 0.3 m.</p>
+        <p>The chosen observations are at 25% and 85% of the right half: z₁ = 0.125 L*, z₂ = 0.425 L*. Changing true extent changes this measurement set. These are illustrative observations, not random playback. In real data, individual returns vary.</p>
+        <p>The estimator receives only the two observations, noise level, and fixed priors. It does not receive true extent, true center, source fractions, or the known side. Both center and size are inferred together from p(c,L | z₁,z₂) ∝ p(c)p(L)ℓ₁(c,L)ℓ₂(c,L).</p>
+        <p>The orange center likelihood integrates out extent using its prior; the orange extent likelihood integrates out center using its prior. For comparing curve shapes, each orange curve is normalized to unit area over the displayed interval. The posterior is normalized over its full numerical domain. The axes stay fixed as the slider moves.</p>
+        <p>All updates start from the same prior. Dragging the slider does not accumulate detections. Two returns leave considerable uncertainty about the full body.</p>
+        <p>Spatial-source convolution: <a href="https://arxiv.org/abs/1604.00970" target="_top">Granström, Baum &amp; Reuter, Eq. (6)</a>, specialized to a segment. One target, one scan, two associated returns.</p>
       </details>
       <a class="back-link" href="../#/3" target="_top">← Back to slide 4</a>
     </aside>
-    <section class="stage" aria-label="Joint center and extent inference">
-      <header class="stage-bar"><strong>PRIOR × TWO-RETURN LIKELIHOOD → POSTERIOR</strong><button id="toggle-joint" type="button" aria-pressed="false">Joint view</button></header>
-      <div id="body-scene" class="body-scene"></div>
-      <div class="density-legend" aria-label="Curve legend"><span class="prior">― Prior</span><span class="likelihood">┄ Likelihood (scaled)</span><span class="posterior">━ Posterior</span><span class="truth">┊ Truth</span></div>
-      <div id="density-panels" class="density-panels"><div id="center-density"></div><div id="extent-density"></div></div>
-      <div id="joint-density" class="joint-density" hidden></div>
+    <section class="stage" aria-label="Prior, likelihood and posterior curves">
+      <header class="stage-bar"><strong>PRIOR × LIKELIHOOD → POSTERIOR</strong><div class="density-switch" role="group" aria-label="Quantity to inspect"><button id="show-center" type="button" aria-pressed="true">Center c</button><button id="show-extent" type="button" aria-pressed="false">Extent L</button></div></header>
+      <div class="density-legend" aria-label="Curve legend"><span class="prior">― Prior · fixed</span><span class="likelihood">┄ Likelihood · scaled</span><span class="posterior">━ Posterior</span><span class="truth">┊ Truth</span></div>
+      <div id="density-chart" class="density-chart"></div>
+      <div class="density-metrics">
+        <div class="density-metric prior"><span>PRIOR · FIXED</span><output id="prior-summary"></output></div>
+        <div class="density-metric likelihood"><span>LIKELIHOOD · TWO RETURNS</span><output id="likelihood-summary"></output></div>
+        <div class="density-metric posterior"><span>POSTERIOR · UPDATED</span><output id="posterior-summary"></output></div>
+      </div>
       <p class="takeaway" id="takeaway" aria-live="polite"></p>
-      <p class="scope">Both center and size are inferred. Orange curves integrate out the other variable using its prior. 95% intervals describe posterior uncertainty.</p>
+      <p class="scope">Center and extent are estimated jointly. Orange integrates the other variable’s prior and has unit area over the shown interval. Axes are fixed.</p>
     </section>
   </main>
-  <noscript><p class="noscript">This experiment infers a target's center and extent from two detections. The printable slide includes the model and a computed example. Enable JavaScript for the sliders.</p></noscript>
+  <noscript><p class="noscript">Change true extent to compare prior, likelihood and posterior. The printable slide compares a 2 m and an 8 m body with the same priors. Enable JavaScript for the slider.</p></noscript>
 </body>
 </html>
