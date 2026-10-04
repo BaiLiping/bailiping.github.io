@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light">
+  <meta name="robots" content="noindex">
+  <title>Extended-target extent and center update | Bai Liping</title>
+  <meta name="description" content="Change target extent, sensor noise, and the prior to explore the Gaussian center update from eight extended-target returns.">
+  <link rel="stylesheet" href="extent.css?v=20261004">
+  <script>if (new URLSearchParams(location.search).has('embed')) document.documentElement.classList.add('embedded');</script>
+  <script src="extent-model.js?v=20261004" defer></script>
+  <script src="extent.js?v=20261004" defer></script>
+  <script src="../../assets/bento-inline-frame.js" defer></script>
+</head>
+<body data-bento-live-app>
+  <main class="extent-lab">
+    <aside class="controls" aria-label="Extended-target parameters">
+      <p class="eyebrow">EXTENDED TARGET · CENTER UPDATE</p>
+      <h1>Prior × cloud likelihood</h1>
+      <p class="intro">Move the center and change its uncertainty. Increase extent to spread the returns.</p>
+      <div class="control-stack">
+        <div class="control"><div class="control-head"><label for="prior-mean">Prior mean <i>m</i><sup>−</sup></label><output id="prior-mean-out" for="prior-mean">−1.2</output></div><input id="prior-mean" type="range" min="-4" max="4" step="0.1" value="-1.2"></div>
+        <div class="control"><div class="control-head"><label for="prior-sigma">Prior standard deviation <i>σ</i><sub>p</sub></label><output id="prior-sigma-out" for="prior-sigma">1.35</output></div><input id="prior-sigma" type="range" min="0.2" max="3" step="0.05" value="1.35"></div>
+        <div class="control"><div class="control-head"><label for="measurement">Measurement centroid <i>z̄</i></label><output id="measurement-out" for="measurement">2.1</output></div><input id="measurement" type="range" min="-4" max="4" step="0.1" value="2.1"></div>
+        <div class="control"><div class="control-head"><label for="measurement-sigma">Sensor standard deviation <i>σ</i><sub>r</sub></label><output id="measurement-sigma-out" for="measurement-sigma">0.75</output></div><input id="measurement-sigma" type="range" min="0.2" max="3" step="0.05" value="0.75"></div>
+        <div class="control extent-control"><div class="control-head"><label for="target-extent">Target extent <i>σ</i><sub>e</sub></label><output id="target-extent-out" for="target-extent">1.5</output></div><input id="target-extent" type="range" min="0" max="3" step="0.05" value="1.5" aria-describedby="extent-definition"></div>
+      </div>
+      <div class="actions"><button id="reset" type="button">Reset</button><button id="zero-extent" type="button">Zero extent</button></div>
+      <p class="scope" id="extent-definition">Extent = Gaussian spatial standard deviation. Known extent; 8 returns assigned to one object.</p>
+      <details><summary>Model &amp; source</summary><p><i>zᵢ = x + eᵢ + vᵢ</i>, with independent zero-mean Gaussian extent offsets and sensor errors. The return count is fixed at 8. This is one scalar center update, conditional on extent and association.</p><p>The dots are a fixed illustrative cloud centered on <i>z̄</i>. The extent band is also centered there for display; the true center is unknown.</p><p><a href="https://arxiv.org/abs/1604.00970" target="_top">Granström, Baum &amp; Reuter, Eq. (14)</a>: the demo uses a 1D Gaussian source model, with its spatial variance represented by <i>σ</i><sub>e</sub><sup>2</sup>.</p></details>
+      <a class="back-link" href="../#/2" target="_top">← Back to the slides</a>
+    </aside>
+    <section class="stage" aria-label="Center posterior and measurement cloud">
+      <header class="stage-bar"><strong>PRIOR × LIKELIHOOD → POSTERIOR</strong><span class="count">8 returns · 1 object</span></header>
+      <div class="workbench">
+        <div class="visuals">
+          <div class="density-card">
+            <div class="legend"><span class="prior">— prior</span><span class="likelihood">– – centroid likelihood</span><span class="posterior">━ posterior</span></div>
+            <svg id="density-plot" viewBox="0 0 560 270" role="img" aria-labelledby="density-title density-description"><title id="density-title">Center density update</title><desc id="density-description">Prior, centroid likelihood, and posterior densities.</desc><g id="density-drawing"></g></svg>
+          </div>
+          <div class="cloud-card"><div class="cloud-heading"><strong>MEASUREMENT CLOUD</strong><span>dots: illustrative returns</span></div><svg id="cloud-plot" viewBox="0 0 560 92" role="img" aria-label="Eight illustrative returns and a band showing plus or minus one extent standard deviation about the centroid"><g id="cloud-drawing"></g></svg></div>
+        </div>
+        <aside class="metrics" aria-label="Posterior values">
+          <div class="metric accent"><span class="metric-label">Kalman gain</span><output id="gain">—</output><p><i>K = P</i><sup>−</sup><i> / (P</i><sup>−</sup><i> + R</i><sub>c</sub><i>)</i></p></div>
+          <div class="metric"><span class="metric-label">Center posterior</span><output id="posterior">—</output><p><i>m</i><sup>+</sup><i> = m</i><sup>−</sup><i> + K(z̄ − m</i><sup>−</sup><i>)</i></p></div>
+          <div class="metric"><span class="metric-label">Centroid variance</span><output id="centroid-variance">—</output><p><i>R</i><sub>c</sub><i> = (σ</i><sub>e</sub><sup>2</sup><i> + σ</i><sub>r</sub><sup>2</sup><i>) / 8</i></p></div>
+          <div class="metric"><span class="metric-label">Per-return variance</span><output id="return-variance">—</output><p>Extent variance + sensor variance</p></div>
+        </aside>
+      </div>
+      <p id="takeaway" class="takeaway" aria-live="polite">For a fixed count, larger extent makes the centroid less precise.</p>
+    </section>
+  </main>
+  <noscript><p class="noscript">For 8 independent returns, centroid variance is (extent variance + sensor variance) / 8. Enable JavaScript to explore the update.</p></noscript>
+</body>
+</html>

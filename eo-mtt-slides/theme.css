@@ -16,3 +16,18 @@ mjx-assistive-mml {
 @media (prefers-reduced-motion: reduce) {
   .bento-slide * { animation: none !important; transition: none !important; }
 }
+/* Reveal prepares the static fallback slides at ?print-pdf. Bento's overlay
+   otherwise stays hidden in print, yielding an empty PDF. */
+@media print {
+  html.print-pdf, html.print-pdf body {
+    height: auto !important;
+    overflow: visible !important;
+  }
+  html.print-pdf .bento-present-overlay {
+    display: block !important;
+    position: static !important;
+    width: 1280px !important;
+    height: auto !important;
+  }
+  html.print-pdf .bento-present-overlay .reveal { overflow: visible !important; }
+}

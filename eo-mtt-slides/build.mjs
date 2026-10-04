@@ -2,6 +2,8 @@ import {withAuthoring} from '../scripts/authoring-build.mjs';
 import { readFileSync, writeFileSync } from 'node:fs'
 import { dirname, join } from 'node:path'
 import { fileURLToPath } from 'node:url'
+import extentModel from './live/extent-model.js'
+import { applyDeckExtensions, installExtensionAssets } from '../assets/deck-extensions.mjs'
 
 const here = dirname(fileURLToPath(import.meta.url))
 const templatePath = join(here, '..', 'target-handover-slides', 'index.html')
@@ -228,6 +230,36 @@ slides.push(slide(
     text('scope-extended-copy', 646, 398, 512, 110, 'One object can generate <b>several detections</b>.<br>Which detections form a cell becomes uncertain.', 22, { lineHeight: 1.45 }),
     text('scope-boundary', 96, 580, 1088, 56, '<b>Scope boundary:</b> the teaching points are detections from geometric extended objects—not point targets, and not a complete kinematic/extent filter.', 17, { color: C.muted, align: 'center' })
   ]
+))
+
+slides.push(slide(
+  's-extent-live',
+  'EXTENDED TARGET · LIVE EXPERIMENT',
+  'Change target extent. Watch the posterior move.',
+  'A scalar center update conditional on known extent and association. Eight independent returns follow z_i = x + e_i + v_i, with Gaussian spatial offsets of standard deviation sigma_e and independent Gaussian sensor noise of standard deviation sigma_r. Their centroid has variance (sigma_e squared + sigma_r squared) / 8. Increase the extent while holding the prior, centroid, and sensor noise fixed: the likelihood broadens, gain decreases, and the posterior center becomes less certain. The slider specifies extent; this demo does not infer extent or solve multi-object association. Spatial measurement model: Granstrom, Baum and Reuter, arXiv:1604.00970, Eq. (14). Escape returns focus to the deck; Page Up and Page Down navigate.',
+  [
+    text('extent-prompt', 96, 134, 1088, 32, 'The same Gaussian fusion experiment, now with multiple returns and a target-extent slider.', 17, { color: C.muted }),
+    card('extent-model-card', 96, 180, 528, 380),
+    text('extent-model-label', 120, 204, 480, 22, 'ONE OBJECT · EIGHT INDEPENDENT RETURNS', 12, { color: C.teal, fontFamily: MONO, fontWeight: 700 }),
+    text('extent-model-equation', 120, 250, 480, 70, display(raw`z_i=x+e_i+v_i,\quad i=1,\ldots,8`), 22, { align: 'center' }),
+    text('extent-model-distributions', 120, 329, 480, 64, display(raw`e_i\sim\mathcal N(0,\sigma_e^2),\quad v_i\sim\mathcal N(0,\sigma_r^2)`), 20, { align: 'center' }),
+    text('extent-centroid-equation', 120, 405, 480, 66, display(raw`\bar z\mid x\sim\mathcal N\!\left(x,\frac{\sigma_e^2+\sigma_r^2}{8}\right)`), 23, { align: 'center' }),
+    text('extent-model-scope', 120, 491, 480, 50, 'Known Gaussian extent; one assigned cloud.<br>The unknown is the object center x.', 17, { color: C.muted, align: 'center' }),
+    card('extent-update-card', 646, 180, 538, 380, { fill: C.tealSoft }),
+    text('extent-update-label', 670, 204, 490, 22, 'CONDITIONAL CENTER UPDATE', 12, { color: C.teal, fontFamily: MONO, fontWeight: 700 }),
+    text('extent-update-formula', 670, 250, 490, 85, display(raw`K=\frac{P^-}{P^-+R_c},\quad R_c=\frac{\sigma_e^2+\sigma_r^2}{8}`), 23, { align: 'center' }),
+    text('extent-posterior-formula', 670, 347, 490, 64, display(raw`m^+=m^-+K(\bar z-m^-),\quad P^+=(1-K)P^-`), 19, { align: 'center' }),
+    ...(() => {
+      const p = extentModel.posterior()
+      return [
+        text('extent-defaults', 670, 429, 490, 53, `Default: m⁻ = −1.2 · σp = 1.35 · z̄ = 2.1<br>σr = 0.75 · σe = 1.5 · Rc = ${p.centroidVar.toFixed(4)}`, 17, { color: C.muted, lineHeight: 1.5 }),
+        text('extent-default-posterior', 670, 499, 490, 40, `<b>K = ${p.gain.toFixed(4)} · m⁺ = ${p.postMean.toFixed(4)} · σ⁺ = ${p.postSigma.toFixed(4)}</b>`, 18, { color: C.teal })
+      ]
+    })(),
+    text('extent-fallback-takeaway', 96, 585, 1088, 50, '<b>At a fixed return count:</b> larger extent → broader likelihood → lower gain and a wider center posterior.', 20, { align: 'center', color: C.teal }),
+    inlineMount()
+  ],
+  { cite: 'Gaussian spatial measurement model: Granström, Baum & Reuter · arXiv:1604.00970, Eq. (14)', transition: 'none' }
 ))
 
 slides.push(slide(
@@ -635,6 +667,21 @@ const deck = {
 
 const inlineLiveMap = [
   {
+    introSlide: 's-scope',
+    slide: 's-extent-live',
+    slideIndex: slides.findIndex(entry => entry.id === 's-extent-live'),
+    inline: true,
+    layout: 'region',
+    bounds: INLINE_BOUNDS,
+    src: './live/extent.html?embed=region&v=20261004',
+    source: './live/extent.html',
+    title: 'Extended-target extent and Gaussian center update',
+    sandbox: 'allow-scripts allow-top-navigation-by-user-activation',
+    hideSource: true,
+    readyMessage: true,
+    unloadWhenHidden: true
+  },
+  {
     introSlide: 's-candidate-mechanism',
     slide: 's-candidate-blindspot',
     slideIndex: slides.findIndex(entry => entry.id === 's-candidate-blindspot'),
@@ -681,9 +728,12 @@ const inlineLiveMap = [
   }
 ]
 
-const escapedDeck = JSON.stringify(deck, null, 1).replaceAll('<', '\\u003c')
+const escapedDeck = JSON.stringify(applyDeckExtensions(deck, 'eo-mtt-slides'), null, 1).replaceAll('<', '\\u003c')
 const configText = JSON.stringify(inlineLiveMap, null, 2)
 let html = readFileSync(templatePath, 'utf8')
+// The runtime template has its own topic-specific assets; keep this deck scoped.
+html = html.replace(/\s*<link[^>]*href="\.\/slides\.css"[^>]*>/g, '')
+html = html.replace(/\s*<script[^>]*src="\.\/paper-links\.js"[^>]*><\/script>/g, '')
 html = html.replace(/<title>.*?<\/title>/, '<title>Partition uncertainty in extended-object multi-target tracking | Slides</title>')
 html = html.replace('</head>', `${readFileSync(join(here, 'head.html'), 'utf8')}\n</head>`)
 html = html.replace(
@@ -696,5 +746,5 @@ html = html.replace(
 )
 html = html.replaceAll('../assets/bento-live.css', '../assets/bento-inline-live.css')
 html = html.replaceAll('../assets/bento-live.js', '../assets/bento-inline-live.js')
-writeFileSync(outputPath, withAuthoring(html, import.meta.url))
+writeFileSync(outputPath, withAuthoring(installExtensionAssets(html), import.meta.url))
 console.log(`Wrote ${outputPath} with ${slides.length} regular slides and ${inlineLiveMap.length} inline demos.`)
