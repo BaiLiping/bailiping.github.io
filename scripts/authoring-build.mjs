@@ -61,6 +61,12 @@ export function withAuthoring(html, builderURL) {
     if (manifest.documentId !== source.docId) throw new Error('Saved edits belong to a different document: ' + directory);
     html = renderDocument(html, applyChanges(source, manifest.changes), source);
   }
+  return withSiteAssets(html);
+}
+
+// Every deck shares the feedback hook and the site typography/presentation frame.
+export function withSiteAssets(html) {
+  if (!html.includes('href="../assets/deck-theme.css"')) html = html.replace('</head>', '<link rel="stylesheet" href="../assets/deck-theme.css">\n</head>');
   if (!html.includes('src="../assets/slide-annotations.js"')) html = html.replace('</body>', '<script src="../assets/slide-annotations.js"></script>\n</body>');
   return html;
 }

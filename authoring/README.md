@@ -51,9 +51,16 @@ commit its source, saved edits, and generated HTML together. Resolve reported
 conflicts by reconciling the intended source and saved value. Do not bypass the
 helper or delete edits just to get a green build.
 
+The same helper links `assets/deck-theme.css`, the shared deck typography and
+presentation frame: self-hosted Source Serif 4 replaces Georgia, IBM Plex Mono
+replaces every monospace stack (most readers lack `SFMono-Regular`, so
+eyebrows and footers used to fall back to Courier), rounded panels get a soft
+shadow, and the slide sits on a warm surround instead of black letterboxing.
+Change the look of every deck there rather than in individual generators.
+
 New Bento builders need the same helper call. Run
-`node scripts/install-authoring.mjs` to add annotation context to an existing
-static deck without rebuilding its content. Non-Bento articles and the
+`node scripts/install-authoring.mjs` to add annotation context and the deck
+theme to an existing static deck without rebuilding its content. Non-Bento articles and the
 homepage remain code-authored; browser feedback still works on those pages.
 
 ## Validation and recovery

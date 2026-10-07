@@ -56,6 +56,7 @@ Google decides which pages to index and when.
   remain public and are reached through the handover presentation's links. They do
   not have separate homepage entries.
 - **SLAM** includes the Visual SLAM and Graph SLAM notes as extensions.
+- Every Bento deck links `assets/deck-theme.css` (shared fonts, panel shadow, presentation frame) through `withAuthoring`; see [the authoring guide](authoring/README.md).
 - Companion mappings and appendix layouts live in `assets/deck-extensions.mjs`.
   Run `node scripts/install-deck-extensions.mjs` after editing a static deck.
   The BP vs PMBM builder and the Density Fusion source apply the helper directly.
