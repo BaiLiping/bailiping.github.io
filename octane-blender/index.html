@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Calculate how much of two gasoline octane grades to add to existing fuel to reach a target average octane and tank volume.">
+<link rel="canonical" href="https://bailiping.com/octane-blender/">
+<meta name="color-scheme" content="light">
+<title>Octane Blend Calculator | Bai Liping</title>
+<style>
+:root{color-scheme:light;--bg:#f7f5ef;--card:#fff;--ink:#1d2520;--muted:#647067;--line:#dbe4dc;--accent:#2f7d5b;--accent-dark:#215c43;--soft:#eaf2eb}
+*{box-sizing:border-box}body{margin:0;background:linear-gradient(135deg,#fffaf0,#ebf4eb 55%,#e8eff4);color:var(--ink);font:16px/1.55 Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif}
+header{background:#ffffffdc;border-bottom:1px solid var(--line)}header nav,main{width:min(860px,calc(100% - 32px));margin:auto}header nav{padding:18px 0}a{color:var(--accent-dark)}main{padding:34px 0 64px}h1{font-size:clamp(2rem,5vw,3rem);line-height:1.12;margin:10px 0}h2{font-size:1.15rem;margin:0 0 16px}.intro,.muted{color:var(--muted)}.panel{background:#fff;border:1px solid var(--line);border-radius:12px;padding:24px;margin:20px 0;box-shadow:0 10px 28px #1c2a220b}.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}.field{display:grid;gap:6px}.field label{font-weight:700;font-size:.92rem}.field input{width:100%;min-width:0;padding:11px 12px;border:1px solid #b9c8bd;border-radius:7px;font:inherit;background:#fff;color:var(--ink)}.field input:focus{outline:3px solid #2f7d5b40;border-color:var(--accent)}.unit{font-size:.8rem;color:var(--muted)}button{border:0;border-radius:7px;padding:12px 18px;background:var(--accent);color:white;font:inherit;font-weight:750;cursor:pointer;margin-top:18px}button:hover{background:var(--accent-dark)}.results{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:18px}.result{background:var(--soft);border-radius:9px;padding:16px}.result span{display:block;color:var(--muted);font-size:.9rem}.result strong{display:block;font-size:clamp(1.5rem,4vw,2.1rem);font-variant-numeric:tabular-nums}.status{padding:12px 14px;border-radius:8px;background:#f4f1e8;margin-top:16px}.status.error{background:#fff0eb;color:#7b2f1d}.formula{overflow-wrap:anywhere;font-family:ui-monospace,SFMono-Regular,Consolas,monospace;font-size:.9rem}.foot{font-size:.9rem;color:var(--muted)}@media(max-width:560px){.grid,.results{grid-template-columns:1fr}.panel{padding:18px}}
+</style>
+</head>
+<body>
+<header><nav><a href="/">← Bai Liping</a> · <a href="/#group-random-thoughts">Random thoughts</a></nav></header>
+<main>
+<p class="muted">RANDOM THOUGHTS · PRACTICAL CALCULATOR</p>
+<h1>Octane Blend Calculator</h1>
+<p class="intro">Enter the fuel currently in the tank, the tank capacity, your target octane, and the two pump grades available. The calculator estimates how many gallons of each grade to add.</p>
+<section class="panel" aria-labelledby="inputs-title">
+<h2 id="inputs-title">Fuel and target</h2>
+<div class="grid">
+<div class="field"><label for="capacity">Tank capacity</label><input id="capacity" type="number" min="0.01" step="0.01" value="22.1"><span class="unit">US gallons</span></div>
+<div class="field"><label for="currentGallons">Fuel currently in tank</label><input id="currentGallons" type="number" min="0" step="0.01" value="6.83"><span class="unit">US gallons</span></div>
+<div class="field"><label for="currentOctane">Current fuel octane</label><input id="currentOctane" type="number" min="1" step="0.1" value="94"><span class="unit">US pump octane (AKI)</span></div>
+<div class="field"><label for="target">Target final octane</label><input id="target" type="number" min="1" step="0.1" value="94"><span class="unit">US pump octane (AKI)</span></div>
+<div class="field"><label for="gradeA">First fuel grade (add first)</label><input id="gradeA" type="number" min="1" step="0.1" value="100"><span class="unit">Octane rating</span></div>
+<div class="field"><label for="gradeB">Second fuel grade</label><input id="gradeB" type="number" min="1" step="0.1" value="91"><span class="unit">Octane rating</span></div>
+</div>
+<button id="calculate" type="button">Calculate blend</button>
+<div id="message" class="status" role="status" aria-live="polite">Ready to calculate.</div>
+<div class="results" aria-live="polite">
+<div class="result"><span>First fuel to add</span><strong id="amountA">—</strong><span id="labelA">100 octane</span></div>
+<div class="result"><span>Second fuel to add</span><strong id="amountB">—</strong><span id="labelB">91 octane</span></div>
+<div class="result"><span>Total fuel to add</span><strong id="amountAdd">—</strong><span>US gallons</span></div>
+<div class="result"><span>Estimated final blend</span><strong id="finalOctane">—</strong><span>Octane (AKI)</span></div>
+</div>
+</section>
+<section class="panel">
+<h2>Calculation method</h2>
+<p>The calculation uses a volume-weighted octane estimate. The existing fuel contributes to the final target, and the two added grades are solved together to fill the tank.</p>
+<p class="formula">Target octane × final volume = current octane × current volume + grade A × A gallons + grade B × B gallons</p>
+<p class="foot">Important: This is an approximate blending calculation. Actual fuel octane blending can be non-linear, pump ratings and fuel formulations vary, and the result is only as accurate as the entered fuel volume and octane ratings. Follow the vehicle manufacturer’s fuel requirements. Do not use this estimate to justify fuel below the required minimum.</p>
+</section>
+</main>
+<script>
+(() => {
+const ids = ['capacity','currentGallons','currentOctane','target','gradeA','gradeB'];
+const el = Object.fromEntries(ids.map(id => [id, document.getElementById(id)]));
+const fmt = n => n.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
+function calculate(){
+ const [capacity,currentGallons,currentOctane,target,gradeA,gradeB] = ids.map(id => Number(el[id].value));
+ const message=document.getElementById('message');
+ const set=(id,value)=>document.getElementById(id).textContent=value;
+ if(ids.some(id=>el[id].value.trim()==='') || [capacity,currentGallons,currentOctane,target,gradeA,gradeB].some(n=>!Number.isFinite(n)) || capacity<=0 || currentGallons<0 || currentGallons>capacity || [currentOctane,target,gradeA,gradeB].some(n=>n<=0)){
+  message.className='status error';message.textContent='Enter valid positive ratings and a current fuel volume between zero and tank capacity.';return;
+ }
+ if(gradeA===gradeB){message.className='status error';message.textContent='The two added fuel grades must have different octane ratings.';return;}
+ const space=capacity-currentGallons;
+ const need=target*capacity-currentOctane*currentGallons;
+ const amountA=(need-gradeB*space)/(gradeA-gradeB);
+ const amountB=space-amountA;
+ set('labelA',fmt(gradeA)+' octane');set('labelB',fmt(gradeB)+' octane');
+ if(space<1e-9){
+  set('amountA','0.00 gal');set('amountB','0.00 gal');set('amountAdd','0.00 gal');set('finalOctane',fmt(currentOctane));
+  message.className='status';message.textContent=Math.abs(currentOctane-target)<0.05?'Tank is already full and at the target octane.':'Tank is full; there is no space to add fuel. Adjust the existing fuel or target.';return;
+ }
+ if(amountA < -1e-8 || amountB < -1e-8 || amountA > space+1e-8 || amountB > space+1e-8){
+  set('amountA','—');set('amountB','—');set('amountAdd',fmt(space)+' gal');set('finalOctane','—');
+  message.className='status error';message.textContent='This target cannot be reached by filling the remaining space with these two grades. Choose grades that bracket the required blend, or change the target.';return;
+ }
+ const a=Math.max(0,amountA), b=Math.max(0,amountB);
+ const final=(currentOctane*currentGallons+gradeA*a+gradeB*b)/capacity;
+ set('amountA',fmt(a)+' gal');set('amountB',fmt(b)+' gal');set('amountAdd',fmt(space)+' gal');set('finalOctane',fmt(final));
+ message.className='status';message.textContent='Estimated quantities to fill the tank. Add the first grade, then the second; verify actual fill volume at the pump.';
+}
+document.getElementById('calculate').addEventListener('click',calculate);
+ids.forEach(id=>el[id].addEventListener('input',calculate));
+calculate();
+})();
+</script>
+</body>
+</html>
