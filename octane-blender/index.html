@@ -5,80 +5,103 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="description" content="Calculate how much of two gasoline octane grades to add to existing fuel to reach a target average octane and tank volume.">
 <link rel="canonical" href="https://bailiping.com/octane-blender/">
-<meta name="color-scheme" content="light">
+<meta name="theme-color" content="#193c2e">
 <title>Octane Blend Calculator | Bai Liping</title>
+<link rel="icon" href="data:,">
 <style>
-:root{color-scheme:light;--bg:#f7f5ef;--card:#fff;--ink:#1d2520;--muted:#647067;--line:#dbe4dc;--accent:#2f7d5b;--accent-dark:#215c43;--soft:#eaf2eb}
-*{box-sizing:border-box}body{margin:0;background:linear-gradient(135deg,#fffaf0,#ebf4eb 55%,#e8eff4);color:var(--ink);font:16px/1.55 Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif}
-header{background:#ffffffdc;border-bottom:1px solid var(--line)}header nav,main{width:min(860px,calc(100% - 32px));margin:auto}header nav{padding:18px 0}a{color:var(--accent-dark)}main{padding:34px 0 64px}h1{font-size:clamp(2rem,5vw,3rem);line-height:1.12;margin:10px 0}h2{font-size:1.15rem;margin:0 0 16px}.intro,.muted{color:var(--muted)}.panel{background:#fff;border:1px solid var(--line);border-radius:12px;padding:24px;margin:20px 0;box-shadow:0 10px 28px #1c2a220b}.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}.field{display:grid;gap:6px}.field label{font-weight:700;font-size:.92rem}.field input{width:100%;min-width:0;padding:11px 12px;border:1px solid #b9c8bd;border-radius:7px;font:inherit;background:#fff;color:var(--ink)}.field input:focus{outline:3px solid #2f7d5b40;border-color:var(--accent)}.unit{font-size:.8rem;color:var(--muted)}button{border:0;border-radius:7px;padding:12px 18px;background:var(--accent);color:white;font:inherit;font-weight:750;cursor:pointer;margin-top:18px}button:hover{background:var(--accent-dark)}.results{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:18px}.result{background:var(--soft);border-radius:9px;padding:16px}.result span{display:block;color:var(--muted);font-size:.9rem}.result strong{display:block;font-size:clamp(1.5rem,4vw,2.1rem);font-variant-numeric:tabular-nums}.status{padding:12px 14px;border-radius:8px;background:#f4f1e8;margin-top:16px}.status.error{background:#fff0eb;color:#7b2f1d}.formula{overflow-wrap:anywhere;font-family:ui-monospace,SFMono-Regular,Consolas,monospace;font-size:.9rem}.foot{font-size:.9rem;color:var(--muted)}@media(max-width:560px){.grid,.results{grid-template-columns:1fr}.panel{padding:18px}}
+:root{color-scheme:light;--ink:#1d2520;--muted:#626d65;--line:#dbe4dc;--green:#2f7d5b;--forest:#193c2e;font:16px/1.5 Inter,system-ui,-apple-system,"Segoe UI",sans-serif}*{box-sizing:border-box}body{margin:0;background:#f7f5ef;color:var(--ink);-webkit-font-smoothing:antialiased}a{color:var(--green);text-underline-offset:4px}header{background:white;border-bottom:1px solid var(--line)}nav,main{width:min(1040px,calc(100% - 40px));margin:auto}nav{height:68px;display:flex;align-items:center;justify-content:space-between}nav a{text-decoration:none;font-size:14px;font-weight:650}.brand{background:var(--green);color:white;padding:7px 11px;border-radius:7px;letter-spacing:.05em}main{padding:40px 0}h1{font-size:clamp(30px,4.5vw,46px);letter-spacing:-.045em;line-height:1.12;margin:0 0 12px}h2{font-size:19px;margin:0;letter-spacing:-.02em}.intro{color:var(--muted);margin:0 0 28px;font-size:17px}.layout{display:grid;grid-template-columns:1.12fr 1fr;gap:24px;align-items:start}.form{background:white;border:1px solid var(--line);border-radius:16px;padding:26px}.heading{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:20px}button,input,select{font:inherit}button{cursor:pointer}.reset{border:0;background:none;color:var(--green);font-size:13px;font-weight:650;padding:10px 0 10px 12px}label{display:block;font-size:13px;font-weight:650;margin-bottom:7px}input,select{width:100%;min-width:0;min-height:49px;padding:11px 12px;border:1px solid #bdcbbf;border-radius:8px;background:white;color:var(--ink)}input:focus,select:focus{outline:2px solid var(--green);outline-offset:2px}a:focus-visible,button:focus-visible,summary:focus-visible{outline:3px solid var(--green);outline-offset:4px}.small{font-size:12px;color:var(--muted);margin:8px 0}.capacity{display:flex;justify-content:space-between;gap:12px;padding:12px 0 18px;margin-bottom:18px;border-bottom:1px solid var(--line);font-size:13px}.row{display:grid;grid-template-columns:1fr 1fr;gap:16px}.number{position:relative}.number input{font-size:30px;font-weight:650;font-variant-numeric:tabular-nums;letter-spacing:-.02em;padding:12px 58px 12px 13px;appearance:textfield;-moz-appearance:textfield}.number input::-webkit-inner-spin-button,.number input::-webkit-outer-spin-button{appearance:none;margin:0}.unit{position:absolute;right:13px;top:50%;transform:translateY(-50%);font-size:12px;color:var(--muted);pointer-events:none}.conversion{font-size:12px;color:var(--muted);margin:12px 0 20px;min-height:18px}.target{display:flex;justify-content:space-between;align-items:center;gap:15px;background:#edf4ee;padding:15px;border-radius:10px}.target label{margin:0}.target .small{margin:3px 0 0}.target .number{width:120px;flex:none}.target input{font-size:26px;padding-right:43px}.settings{margin-top:20px;border-top:1px solid var(--line);padding-top:15px}summary{font-size:14px;font-weight:650;cursor:pointer;min-height:34px}.settings summary span{display:block;font-size:12px;font-weight:400;color:var(--muted);margin:3px 0 0 16px}.grades{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-top:16px}.grades label{font-size:12px}.plan{background:var(--forest);color:white;border-radius:16px;padding:26px;box-shadow:0 10px 25px #193c2e12}.plan .heading{margin-bottom:7px}.plan .heading span{font-size:12px;color:#c3d9cb}.step{padding:18px 0 22px;border-bottom:1px solid #ffffff28}.step-label{font-size:14px;color:#d8e7df;display:flex;gap:10px;align-items:center}.step-label b{display:inline-grid;place-items:center;border:1px solid #8cae9a;border-radius:50%;width:24px;height:24px;font-size:11px;font-weight:500}.quantity{display:flex;align-items:baseline;gap:10px;margin-top:5px}.quantity strong{font-size:clamp(48px,6vw,66px);letter-spacing:-.045em;line-height:1.12;font-weight:600;font-variant-numeric:tabular-nums}.quantity span{font-size:14px;color:#c3d9cb}.facts{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:20px 0}.facts dt{font-size:12px;color:#c3d9cb}.facts dd{font-size:22px;margin:4px 0 0;font-weight:600;font-variant-numeric:tabular-nums}.plan-note{font-size:12px;color:#cbddd1;line-height:1.6;margin:16px 0 0}.alert{background:#fff1db;color:#634019;padding:13px;border-radius:8px;font-size:14px;margin:16px 0 0}.bar{height:8px;display:flex;border-radius:5px;overflow:hidden;background:#ffffff20;gap:2px}.bar i{display:block}.bar i:nth-child(1){background:#90a39b}.bar i:nth-child(2){background:#b4e2bd}.bar i:nth-child(3){background:#5ba984}.legend{display:flex;justify-content:space-between;gap:8px;font-size:11px;color:#cbddd1;margin-top:8px}.notice{font-size:12px;color:var(--muted);line-height:1.7;margin:22px 0}.notice strong{color:var(--ink)}.method{border-top:1px solid var(--line);padding-top:20px;font-size:13px;color:var(--muted)}.method summary{color:var(--ink)}.equation{font-family:ui-monospace,Consolas,monospace;overflow-wrap:anywhere;background:white;border:1px solid var(--line);padding:14px;border-radius:8px}.sources{display:flex;flex-wrap:wrap;gap:10px 20px;margin:16px 0}footer{margin-top:24px;padding-top:18px;border-top:1px solid var(--line);font-size:12px;color:var(--muted);display:flex;justify-content:space-between;gap:12px}[hidden]{display:none!important}.sr-only{position:absolute;width:1px;height:1px;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap}noscript{display:block;padding:16px;background:#fff1db;margin-bottom:20px}@media(max-width:740px){nav,main{width:calc(100% - 32px)}main{padding-top:27px}.intro{font-size:15px;margin-bottom:22px}.layout{grid-template-columns:1fr;gap:18px}.form,.plan{padding:21px}.quantity strong{font-size:60px}footer{flex-direction:column}}@media(max-width:360px){.form,.plan{padding:17px}.row{gap:10px}.number input{font-size:26px}.target .number{width:108px}.grades{gap:7px}.grades input{padding:10px 7px}}
 </style>
 </head>
 <body>
-<header><nav><a href="/">← Bai Liping</a> · <a href="/#group-random-thoughts">Random thoughts</a></nav></header>
+<header><nav aria-label="Site navigation"><a class="brand" href="/" aria-label="Bai Liping home">BLP</a><a href="/#group-tools">Back to Tools</a></nav></header>
 <main>
-<p class="muted">RANDOM THOUGHTS · PRACTICAL CALCULATOR</p>
-<h1>Octane Blend Calculator</h1>
-<p class="intro">Enter the fuel currently in the tank, the tank capacity, your target octane, and the two pump grades available. The calculator estimates how many gallons of each grade to add.</p>
-<section class="panel" aria-labelledby="inputs-title">
-<h2 id="inputs-title">Fuel and target</h2>
-<div class="grid">
-<div class="field"><label for="capacity">Tank capacity</label><input id="capacity" type="number" min="0.01" step="0.01" value="22.1"><span class="unit">US gallons</span></div>
-<div class="field"><label for="currentGallons">Fuel currently in tank</label><input id="currentGallons" type="number" min="0" step="0.01" value="6.83"><span class="unit">US gallons</span></div>
-<div class="field"><label for="currentOctane">Current fuel octane</label><input id="currentOctane" type="number" min="1" step="0.1" value="94"><span class="unit">US pump octane (AKI)</span></div>
-<div class="field"><label for="target">Target final octane</label><input id="target" type="number" min="1" step="0.1" value="94"><span class="unit">US pump octane (AKI)</span></div>
-<div class="field"><label for="gradeA">First fuel grade (add first)</label><input id="gradeA" type="number" min="1" step="0.1" value="100"><span class="unit">Octane rating</span></div>
-<div class="field"><label for="gradeB">Second fuel grade</label><input id="gradeB" type="number" min="1" step="0.1" value="91"><span class="unit">Octane rating</span></div>
+<h1>Octane blend calculator</h1>
+<p class="intro">Choose your car, enter the range left, and get a fill plan for your target octane.</p>
+<noscript>Enable JavaScript to calculate fuel quantities.</noscript>
+<div class="layout">
+<form id="form" class="form" novalidate autocomplete="off" aria-labelledby="form-title">
+<div class="heading"><h2 id="form-title">Your next fill</h2><button class="reset" type="reset">Reset defaults</button></div>
+<label for="vehicle">Vehicle</label>
+<select id="vehicle" aria-describedby="vehicle-note"><option value="gt3" selected>Porsche 911 GT3 (992.2)</option><option value="civic">Honda Civic Type R</option><option value="raptor">Ford F-150 Raptor R</option><option value="crv">Honda CR-V (2003)</option><option value="mr2">Toyota MR2 (first generation)</option></select>
+<p id="vehicle-note" class="small">2025 · Extended-range tank</p>
+<div class="capacity"><span>Tank capacity · fixed by vehicle</span><strong id="capacity">22.1 U.S. gal</strong></div>
+<div class="row"><div><label for="range">Remaining range</label><div class="number"><input id="range" type="number" min="0" step="any" inputmode="decimal" value="123" required aria-describedby="conversion"><span class="unit">miles</span></div></div><div><label for="mpg">Average MPG</label><div class="number"><input id="mpg" type="number" min="0.1" step="any" inputmode="decimal" value="18.0" required aria-describedby="conversion"><span class="unit">MPG</span></div></div></div>
+<p class="conversion" id="conversion">Fuel remaining = range ÷ average MPG.</p>
+<div class="target"><div><label for="target">Target octane</label><p class="small">For the whole tank</p></div><div class="number"><input id="target" type="number" min="1" max="150" step="any" inputmode="decimal" value="94" required><span class="unit">AKI</span></div></div>
+<details class="settings"><summary>Fuel settings<span id="settings-summary">94 in tank · 100 + 91 at the pump</span></summary><div class="grades"><div><label for="current">In-tank octane</label><input id="current" type="number" min="1" max="150" step="any" inputmode="decimal" value="94" required></div><div><label for="first">First pump</label><input id="first" type="number" min="1" max="150" step="any" inputmode="decimal" value="100" required></div><div><label for="second">Second pump</label><input id="second" type="number" min="1" max="150" step="any" inputmode="decimal" value="91" required></div></div><p class="small">All octane ratings must use the same U.S. pump scale, AKI. Use compatible unleaded gasoline.</p></details>
+</form>
+<section class="plan" aria-labelledby="plan-title"><div class="heading"><h2 id="plan-title">At the pump</h2><span id="state">Estimated fill</span></div><div id="alert" class="alert" hidden></div>
+<div class="step"><div class="step-label"><b aria-hidden="true">1</b><span><span id="first-grade">100</span> octane · add first</span></div><div class="quantity"><strong id="first-amount">—</strong><span>U.S. gal</span></div></div>
+<div class="step"><div class="step-label"><b aria-hidden="true">2</b><span><span id="second-grade">91</span> octane · add second</span></div><div class="quantity"><strong id="second-amount">—</strong><span>U.S. gal</span></div></div>
+<dl class="facts"><div><dt>Total to add</dt><dd><span id="total">—</span> gal</dd></div><div><dt>Estimated final octane</dt><dd>≈ <span id="final">—</span> AKI</dd></div></dl>
+<div id="composition" hidden><div class="bar" aria-hidden="true"><i id="bar-existing"></i><i id="bar-first"></i><i id="bar-second"></i></div><div class="legend"><span>In tank</span><span>First pump</span><span>Second pump</span></div></div>
+<p class="plan-note" id="plan-note">Quantities update as you enter your numbers.</p><p class="sr-only" id="live" role="status" aria-live="polite" aria-atomic="true"></p></section>
 </div>
-<button id="calculate" type="button">Calculate blend</button>
-<div id="message" class="status" role="status" aria-live="polite">Ready to calculate.</div>
-<div class="results" aria-live="polite">
-<div class="result"><span>First fuel to add</span><strong id="amountA">—</strong><span id="labelA">100 octane</span></div>
-<div class="result"><span>Second fuel to add</span><strong id="amountB">—</strong><span id="labelB">91 octane</span></div>
-<div class="result"><span>Total fuel to add</span><strong id="amountAdd">—</strong><span>US gallons</span></div>
-<div class="result"><span>Estimated final blend</span><strong id="finalOctane">—</strong><span>Octane (AKI)</span></div>
-</div>
-</section>
-<section class="panel">
-<h2>Calculation method</h2>
-<p>The calculation uses a volume-weighted octane estimate. The existing fuel contributes to the final target, and the two added grades are solved together to fill the tank.</p>
-<p class="formula">Target octane × final volume = current octane × current volume + grade A × A gallons + grade B × B gallons</p>
-<p class="foot">Important: This is an approximate blending calculation. Actual fuel octane blending can be non-linear, pump ratings and fuel formulations vary, and the result is only as accurate as the entered fuel volume and octane ratings. Follow the vehicle manufacturer’s fuel requirements. Do not use this estimate to justify fuel below the required minimum.</p>
-</section>
+<p class="notice"><strong>Estimate, not a fuel measurement.</strong> Range ÷ MPG does not precisely account for reserves or changing driving conditions. Quantities are rounded to 0.01 U.S. gallon. Stop at the pump’s automatic shutoff; do not force in the calculated volume.</p>
+<details class="method"><summary>How it works &amp; vehicle specifications</summary><p>MPG defaults to your supplied <strong>18.0</strong> for every vehicle, not a factory rating. Enter the selected car’s observed average. The initial 123-mile range is an example from the earlier calculation, not a live reading.</p><p class="equation">Remaining gallons = remaining miles ÷ MPG<br>Refill gallons = capacity − remaining gallons<br>First-pump gallons = (target × capacity − current octane × remaining gallons − second grade × refill gallons) ÷ (first grade − second grade)<br>Second-pump gallons = refill gallons − first-pump gallons</p><p>The volume-weighted octane calculation includes fuel already in the tank. Real octane blending can be nonlinear, and the estimate does not certify fuel quality or suitability. Always follow the vehicle manufacturer’s fuel requirements.</p><p>Nominal presets: 2025 GT3 992.2 extended-range tank, 22.1 U.S. gal; 2025 U.S. Civic Type R, 12.4 U.S. gal; 2025 U.S. F-150 Raptor R, 36.0 U.S. gal; 2003 Honda CR-V, 15.3 U.S. gal. First-generation MR2 capacity is intentionally unset. Confirm the preset matches your model year and tank configuration.</p><div class="sources"><a href="https://www.hondainfocenter.com/2025/Civic-Type-R/Feature-Guide/EPA-Fuel-Economy-Ratings/">Honda Type R specifications</a><a href="https://hondanews.ca/en-CA/releases/release-4fade6c61d0220ec4eba0c87161775ed-2003-cr-v-specifications">2003 CR-V specifications</a><a href="https://www.sunoco.com/fuel-facts/post/blending-fuels-to-get-the-right-mix">Sunoco blending guidance</a></div></details>
+<footer><span>All quantities in U.S. gallons · Octane in AKI</span><a href="/#group-tools">Back to Tools</a></footer>
 </main>
 <script>
 (() => {
-const ids = ['capacity','currentGallons','currentOctane','target','gradeA','gradeB'];
-const el = Object.fromEntries(ids.map(id => [id, document.getElementById(id)]));
-const fmt = n => n.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
-function calculate(){
- const [capacity,currentGallons,currentOctane,target,gradeA,gradeB] = ids.map(id => Number(el[id].value));
- const message=document.getElementById('message');
- const set=(id,value)=>document.getElementById(id).textContent=value;
- if(ids.some(id=>el[id].value.trim()==='') || [capacity,currentGallons,currentOctane,target,gradeA,gradeB].some(n=>!Number.isFinite(n)) || capacity<=0 || currentGallons<0 || currentGallons>capacity || [currentOctane,target,gradeA,gradeB].some(n=>n<=0)){
-  message.className='status error';message.textContent='Enter valid positive ratings and a current fuel volume between zero and tank capacity.';return;
- }
- if(gradeA===gradeB){message.className='status error';message.textContent='The two added fuel grades must have different octane ratings.';return;}
- const space=capacity-currentGallons;
- const need=target*capacity-currentOctane*currentGallons;
- const amountA=(need-gradeB*space)/(gradeA-gradeB);
- const amountB=space-amountA;
- set('labelA',fmt(gradeA)+' octane');set('labelB',fmt(gradeB)+' octane');
- if(space<1e-9){
-  set('amountA','0.00 gal');set('amountB','0.00 gal');set('amountAdd','0.00 gal');set('finalOctane',fmt(currentOctane));
-  message.className='status';message.textContent=Math.abs(currentOctane-target)<0.05?'Tank is already full and at the target octane.':'Tank is full; there is no space to add fuel. Adjust the existing fuel or target.';return;
- }
- if(amountA < -1e-8 || amountB < -1e-8 || amountA > space+1e-8 || amountB > space+1e-8){
-  set('amountA','—');set('amountB','—');set('amountAdd',fmt(space)+' gal');set('finalOctane','—');
-  message.className='status error';message.textContent='This target cannot be reached by filling the remaining space with these two grades. Choose grades that bracket the required blend, or change the target.';return;
- }
- const a=Math.max(0,amountA), b=Math.max(0,amountB);
- const final=(currentOctane*currentGallons+gradeA*a+gradeB*b)/capacity;
- set('amountA',fmt(a)+' gal');set('amountB',fmt(b)+' gal');set('amountAdd',fmt(space)+' gal');set('finalOctane',fmt(final));
- message.className='status';message.textContent='Estimated quantities to fill the tank. Add the first grade, then the second; verify actual fill volume at the pump.';
-}
-document.getElementById('calculate').addEventListener('click',calculate);
-ids.forEach(id=>el[id].addEventListener('input',calculate));
-calculate();
+  'use strict';
+  // MR2 deliberately has no tank size until the owner supplies it.
+  const cars = Object.freeze({gt3:{capacity:22.1,note:'2025 · Extended-range tank'},civic:{capacity:12.4,note:'2025 U.S. specification · Civic Type R (FL5)'},raptor:{capacity:36,note:'2025 U.S. specification · F-150 Raptor R'},crv:{capacity:15.3,note:'2003 · Honda CR-V'},mr2:{capacity:null,note:'First generation · Tank capacity awaiting confirmation'}});
+  const ids = ['range','mpg','target','current','first','second'];
+  const get = id => document.getElementById(id);
+  const put = (id,text) => { get(id).textContent=text; };
+  const fmt = n => n.toFixed(2);
+  const EPS = 1e-8;
+  let announcement;
+  function announce(text){clearTimeout(announcement);announcement=setTimeout(()=>put('live',text),250);}
+  function render(){
+    const car = cars[get('vehicle').value];
+    // Clear old results first so errors never leave a stale fill plan on screen.
+    ['first-amount','second-amount','total','final'].forEach(id=>put(id,'—'));
+    get('composition').hidden=true;get('alert').hidden=true;
+    put('state','Check inputs');put('plan-note','');
+    put('conversion','Fuel remaining = range ÷ average MPG.');
+    const fail = message => {put('alert',message);get('alert').hidden=false;announce(message);};
+    if(!car){fail('Choose a vehicle.');return;}
+    put('vehicle-note',car.note);
+    put('capacity',car.capacity===null?'':car.capacity.toFixed(1)+' U.S. gal');
+    put('first-grade',get('first').value || '—');put('second-grade',get('second').value || '—');
+    put('settings-summary',(get('current').value || '—')+' in tank · '+(get('first').value || '—')+' + '+(get('second').value || '—')+' at the pump');
+    if(car.capacity===null){put('state','Tank size needed');fail('MR2 tank capacity is intentionally blank. Fill amounts will be available after its tank size is confirmed.');return;}
+    const values=ids.map(id=>get(id).value.trim()===''?NaN:Number(get(id).value));
+    ids.forEach((id,i)=>get(id).setAttribute('aria-invalid',String(!Number.isFinite(values[i]) || (i===0?values[i]<0:values[i]<=0) || (i>1&&values[i]>150))));
+    if(values.some(n=>!Number.isFinite(n))){fail('Complete all fields with valid numbers. Fuel octanes are under Fuel settings.');return;}
+    const [range,mpg,target,current,first,second]=values;
+    if(range<0 || mpg<=0){fail('Range must be zero or greater, and MPG must be greater than zero.');return;}
+    if([target,current,first,second].some(n=>n<=0 || n>150)){fail('Enter octane ratings between 0 and 150 (greater than zero), all using AKI.');return;}
+    const capacity=car.capacity, remaining=range/mpg;
+    if(!Number.isFinite(remaining) || remaining>capacity+EPS){fail('These range and MPG values imply more fuel than the tank holds. Check both inputs.');return;}
+    const refill=Math.max(0,capacity-remaining);
+    put('conversion',range+' miles ÷ '+mpg+' MPG ≈ '+fmt(remaining)+' gal remaining.');
+    if(refill<EPS){
+      put('total','0.00');put('final',fmt(current));
+      if(Math.abs(current-target)>EPS){fail('The tank is already full, so adding fuel cannot reach this target.');return;}
+      put('first-amount','0.00');put('second-amount','0.00');put('state','Already full');put('plan-note','No fuel needed. The existing octane matches your target.');announce('Tank full at target. No fuel to add.');return;
+    }
+    const low=(remaining*current+refill*Math.min(first,second))/capacity;
+    const high=(remaining*current+refill*Math.max(first,second))/capacity;
+    if(target<low-EPS || target>high+EPS){fail('Target not reachable with this refill. These grades can produce approximately '+fmt(low)+'–'+fmt(high)+' AKI for the whole tank. Change the target or fuel grades.');return;}
+    let a;
+    if(Math.abs(first-second)<EPS){a=refill;}else{a=(target*capacity-current*remaining-second*refill)/(first-second);}
+    if(!Number.isFinite(a) || a< -EPS || a>refill+EPS){fail('This combination cannot produce a valid full-tank blend. Check the fuel grades and target.');return;}
+    a=Math.max(0,Math.min(refill,a));const b=refill-a;
+    const final=(current*remaining+first*a+second*b)/capacity;
+    put('first-amount',fmt(a));put('second-amount',fmt(b));put('total',fmt(refill));put('final',fmt(final));put('state','Estimated fill');
+    put('plan-note','Based on '+fmt(remaining)+' gal already in your '+capacity.toFixed(1)+'-gal tank. Quantities are approximate; follow the pump’s automatic shutoff.');
+    get('composition').hidden=false;
+    [['bar-existing',remaining],['bar-first',a],['bar-second',b]].forEach(([id,volume])=>{get(id).style.width=(100*volume/capacity)+'%';});
+    announce('Add '+fmt(a)+' gallons of '+first+' octane first, then '+fmt(b)+' gallons of '+second+' octane. Estimated final octane '+fmt(final)+'.');
+  }
+  get('form').addEventListener('input',render);
+  get('vehicle').addEventListener('change',render);
+  get('form').addEventListener('submit',event=>{event.preventDefault();render();});
+  get('form').addEventListener('reset',()=>setTimeout(render,0));
+  // Start every fresh page load at the owner's requested GT3 and 18.0 MPG defaults.
+  get('form').reset();render();
 })();
 </script>
 </body>
