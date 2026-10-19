@@ -9,44 +9,287 @@
 <title>Octane Blend Calculator | Bai Liping</title>
 <link rel="icon" href="data:,">
 <style>
-:root{color-scheme:light;--ink:#1d2520;--muted:#626d65;--line:#dbe4dc;--green:#2f7d5b;--forest:#193c2e;font:16px/1.5 Inter,system-ui,-apple-system,"Segoe UI",sans-serif}*{box-sizing:border-box}body{margin:0;background:#f7f5ef;color:var(--ink);-webkit-font-smoothing:antialiased}a{color:var(--green);text-underline-offset:4px}header{background:white;border-bottom:1px solid var(--line)}nav,main{width:min(1040px,calc(100% - 40px));margin:auto}nav{height:68px;display:flex;align-items:center;justify-content:space-between}nav a{text-decoration:none;font-size:14px;font-weight:650}.brand{background:var(--green);color:white;padding:7px 11px;border-radius:7px;letter-spacing:.05em}main{padding:40px 0}h1{font-size:clamp(30px,4.5vw,46px);letter-spacing:-.045em;line-height:1.12;margin:0 0 12px}h2{font-size:19px;margin:0;letter-spacing:-.02em}.intro{color:var(--muted);margin:0 0 28px;font-size:17px}.layout{display:grid;grid-template-columns:1.12fr 1fr;gap:24px;align-items:start}.form{background:white;border:1px solid var(--line);border-radius:16px;padding:26px}.heading{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:20px}button,input,select{font:inherit}button{cursor:pointer}.reset{border:0;background:none;color:var(--green);font-size:13px;font-weight:650;padding:10px 0 10px 12px}label{display:block;font-size:13px;font-weight:650;margin-bottom:7px}input,select{width:100%;min-width:0;min-height:49px;padding:11px 12px;border:1px solid #bdcbbf;border-radius:8px;background:white;color:var(--ink)}input:focus,select:focus{outline:2px solid var(--green);outline-offset:2px}a:focus-visible,button:focus-visible,summary:focus-visible{outline:3px solid var(--green);outline-offset:4px}.small{font-size:12px;color:var(--muted);margin:8px 0}.capacity{display:flex;justify-content:space-between;gap:12px;padding:12px 0 18px;margin-bottom:18px;border-bottom:1px solid var(--line);font-size:13px}.row{display:grid;grid-template-columns:1fr 1fr;gap:16px}.number{position:relative}.number input{font-size:30px;font-weight:650;font-variant-numeric:tabular-nums;letter-spacing:-.02em;padding:12px 58px 12px 13px;appearance:textfield;-moz-appearance:textfield}.number input::-webkit-inner-spin-button,.number input::-webkit-outer-spin-button{appearance:none;margin:0}.unit{position:absolute;right:13px;top:50%;transform:translateY(-50%);font-size:12px;color:var(--muted);pointer-events:none}.conversion{font-size:12px;color:var(--muted);margin:12px 0 20px;min-height:18px}.target{display:flex;justify-content:space-between;align-items:center;gap:15px;background:#edf4ee;padding:15px;border-radius:10px}.target label{margin:0}.target .small{margin:3px 0 0}.target .number{width:120px;flex:none}.target input{font-size:26px;padding-right:43px}.settings{margin-top:20px;border-top:1px solid var(--line);padding-top:15px}summary{font-size:14px;font-weight:650;cursor:pointer;min-height:34px}.settings summary span{display:block;font-size:12px;font-weight:400;color:var(--muted);margin:3px 0 0 16px}.grades{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-top:16px}.grades label{font-size:12px}.plan{background:var(--forest);color:white;border-radius:16px;padding:26px;box-shadow:0 10px 25px #193c2e12}.plan .heading{margin-bottom:7px}.plan .heading span{font-size:12px;color:#c3d9cb}.step{padding:18px 0 22px;border-bottom:1px solid #ffffff28}.step-label{font-size:14px;color:#d8e7df;display:flex;gap:10px;align-items:center}.step-label b{display:inline-grid;place-items:center;border:1px solid #8cae9a;border-radius:50%;width:24px;height:24px;font-size:11px;font-weight:500}.quantity{display:flex;align-items:baseline;gap:10px;margin-top:5px}.quantity strong{font-size:clamp(48px,6vw,66px);letter-spacing:-.045em;line-height:1.12;font-weight:600;font-variant-numeric:tabular-nums}.quantity span{font-size:14px;color:#c3d9cb}.facts{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:20px 0}.facts dt{font-size:12px;color:#c3d9cb}.facts dd{font-size:22px;margin:4px 0 0;font-weight:600;font-variant-numeric:tabular-nums}.plan-note{font-size:12px;color:#cbddd1;line-height:1.6;margin:16px 0 0}.alert{background:#fff1db;color:#634019;padding:13px;border-radius:8px;font-size:14px;margin:16px 0 0}.bar{height:8px;display:flex;border-radius:5px;overflow:hidden;background:#ffffff20;gap:2px}.bar i{display:block}.bar i:nth-child(1){background:#90a39b}.bar i:nth-child(2){background:#b4e2bd}.bar i:nth-child(3){background:#5ba984}.legend{display:flex;justify-content:space-between;gap:8px;font-size:11px;color:#cbddd1;margin-top:8px}.notice{font-size:12px;color:var(--muted);line-height:1.7;margin:22px 0}.notice strong{color:var(--ink)}.method{border-top:1px solid var(--line);padding-top:20px;font-size:13px;color:var(--muted)}.method summary{color:var(--ink)}.equation{font-family:ui-monospace,Consolas,monospace;overflow-wrap:anywhere;background:white;border:1px solid var(--line);padding:14px;border-radius:8px}.sources{display:flex;flex-wrap:wrap;gap:10px 20px;margin:16px 0}footer{margin-top:24px;padding-top:18px;border-top:1px solid var(--line);font-size:12px;color:var(--muted);display:flex;justify-content:space-between;gap:12px}[hidden]{display:none!important}.sr-only{position:absolute;width:1px;height:1px;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap}noscript{display:block;padding:16px;background:#fff1db;margin-bottom:20px}@media(max-width:740px){nav,main{width:calc(100% - 32px)}main{padding-top:27px}.intro{font-size:15px;margin-bottom:22px}.layout{grid-template-columns:1fr;gap:18px}.form,.plan{padding:21px}.quantity strong{font-size:60px}footer{flex-direction:column}}@media(max-width:360px){.form,.plan{padding:17px}.row{gap:10px}.number input{font-size:26px}.target .number{width:108px}.grades{gap:7px}.grades input{padding:10px 7px}}
+:root {
+  color-scheme: light;
+  --ink: #17221e;
+  --muted: #61716a;
+  --line: #dce5df;
+  --green: #28684e;
+  --forest: #173e32;
+  --mint: #b0edc2;
+  --page: #f5f7f5;
+  font: 16px/1.5 Inter, system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--page); color: var(--ink); -webkit-font-smoothing: antialiased; }
+a { color: var(--green); text-underline-offset: 4px; }
+button, input, select { font: inherit; }
+button { cursor: pointer; }
+nav, main { width: min(1340px, calc(100% - 112px)); margin: auto; }
+nav { min-height: 72px; display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+nav a { text-decoration: none; font-size: 14px; font-weight: 600; }
+.brand { display: grid; place-items: center; width: 44px; height: 44px; background: var(--forest); color: white; border-radius: 10px; letter-spacing: -.03em; font-size: 16px; font-weight: 750; }
+.back-link { display: inline-flex; align-items: center; gap: 9px; min-height: 44px; }
+.icon { display: inline-block; flex: none; width: 18px; height: 18px; vertical-align: middle; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+main { padding: 10px 0 10px; }
+h1 { font-size: clamp(32px, 3.7vw, 50px); letter-spacing: -.047em; line-height: 1.1; margin: 0 0 10px; font-weight: 750; }
+h2 { font-size: clamp(23px, 2.2vw, 30px); margin: 0; letter-spacing: -.035em; line-height: 1.2; font-weight: 720; }
+.intro { color: var(--muted); margin: 0 0 23px; font-size: clamp(15px, 1.5vw, 19px); line-height: 1.55; }
+.layout { display: grid; grid-template-columns: 1.18fr 1fr; gap: 16px; align-items: stretch; }
+.form, .plan { min-width: 0; border-radius: 17px; padding: 26px; }
+.form { background: white; border: 1px solid var(--line); box-shadow: 0 3px 12px #183e3203; }
+.heading { display: flex; align-items: center; justify-content: space-between; gap: 14px; margin-bottom: 22px; }
+.reset { flex: none; border: 1px solid #d8e1dc; border-radius: 7px; background: #f7f9f8; color: #4d6056; font-size: 13px; font-weight: 550; min-height: 38px; padding: 8px 13px; transition: background .15s, border-color .15s; }
+.reset:hover { background: #edf4ee; border-color: #9ab7a5; }
+label { display: block; font-size: 15px; font-weight: 600; margin-bottom: 7px; }
+input, select { width: 100%; min-width: 0; min-height: 50px; padding: 11px 13px; border: 1px solid #cbd8cf; border-radius: 8px; background: white; color: var(--ink); font-size: 16px; transition: border-color .15s, box-shadow .15s; }
+select { padding-right: 36px; appearance: none; cursor: pointer; }
+.select-wrap { position: relative; }
+.select-wrap > .icon { position: absolute; right: 14px; top: 50%; transform: translateY(-50%); pointer-events: none; color: var(--muted); }
+input:hover, select:hover { border-color: #a3b7aa; }
+input:focus, select:focus { outline: 2px solid var(--green); outline-offset: 2px; }
+input[aria-invalid="true"] { border-color: #ba603b; }
+a:focus-visible, button:focus-visible, summary:focus-visible { outline: 3px solid var(--green); outline-offset: 4px; }
+.small { font-size: 12px; color: var(--muted); margin: 8px 0; }
+.capacity { display: flex; justify-content: space-between; align-items: center; gap: 14px; padding: 12px 15px; margin: 14px 0 23px; background: #f3f6f4; border-radius: 8px; font-size: 13px; color: #52645a; }
+.capacity p { margin: 0; }
+.capacity strong { white-space: nowrap; font-size: 14px; color: #3f5549; font-variant-numeric: tabular-nums; font-weight: 600; }
+.row { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+.row > div { min-width: 0; }
+.manual-fuel { margin-bottom: 24px; }
+.manual-fuel .number input { min-height: 76px; padding-right: 92px; font-size: 32px; }
+.manual-fuel input::placeholder { font-size: 20px; font-weight: 400; }
+.manual-fuel .unit { width: 78px; font-size: 13px; }
+.manual-fuel .small { margin-top: 9px; }
+.form[data-input-mode="fuel"] { display: flex; flex-direction: column; }
+.form[data-input-mode="fuel"] .target { margin-bottom: 22px; }
+.form[data-input-mode="fuel"] .settings { margin-top: auto; padding-top: 15px; }
+.number { position: relative; }
+.number input { font-size: 24px; font-weight: 550; font-variant-numeric: tabular-nums; letter-spacing: -.025em; min-height: 55px; padding: 10px 70px 10px 15px; appearance: textfield; -moz-appearance: textfield; }
+.number input::-webkit-inner-spin-button, .number input::-webkit-outer-spin-button { appearance: none; margin: 0; }
+.unit { position: absolute; right: 1px; top: 1px; bottom: 1px; display: flex; align-items: center; justify-content: center; width: 61px; border-left: 1px solid #e2e9e5; border-radius: 0 7px 7px 0; background: #f8faf9; font-size: 13px; color: #5f7067; pointer-events: none; }
+.fuel-estimate { margin: 18px 0 23px; padding: 16px 18px; background: #eef9f0; border-radius: 11px; }
+.estimate-heading { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; }
+.estimate-heading h3 { margin: 0; color: var(--forest); font-size: 15px; font-weight: 650; }
+.estimate-heading > strong { font-size: 28px; line-height: 1.2; color: var(--forest); letter-spacing: -.035em; white-space: nowrap; font-variant-numeric: tabular-nums; }
+.estimate-heading > strong small { font-size: 17px; font-weight: 600; letter-spacing: 0; }
+.fuel-estimate .small { margin: 4px 0 0; font-size: 12px; }
+.conversion { font-size: 12px; color: var(--muted); margin: 2px 0 0; min-height: 18px; font-variant-numeric: tabular-nums; }
+.target { display: flex; justify-content: space-between; align-items: center; gap: 18px; }
+.target label { margin: 0; }
+.target .small { margin: 2px 0 0; }
+.target .number { width: 48%; flex: none; }
+.target input { min-height: 50px; font-size: 22px; }
+.settings { margin-top: 22px; border-top: 1px solid var(--line); padding-top: 13px; }
+summary { font-size: 15px; font-weight: 600; cursor: pointer; min-height: 44px; list-style: none; display: flex; align-items: center; gap: 10px; }
+summary::-webkit-details-marker { display: none; }
+summary > .icon { transition: transform .18s; }
+details[open] > summary > .icon { transform: rotate(180deg); }
+.settings summary { flex-wrap: wrap; gap: 3px 10px; }
+.settings summary .summary-text { margin-left: auto; font-size: 12px; font-weight: 400; color: var(--muted); }
+.grades { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; margin-top: 14px; }
+.grades label { font-size: 12px; }
+.grades input { font-size: 16px; }
+.plan { background: var(--forest); color: white; border: 1px solid #234b3c; box-shadow: 0 8px 24px #153c3210; display: flex; flex-direction: column; }
+.plan .heading { margin-bottom: 4px; }
+.plan .heading > span { font-size: 12px; color: #c6dfd2; white-space: nowrap; }
+.step { padding: 20px 0 22px; border-bottom: 1px solid #ffffff30; }
+.step-label { font-size: 16px; color: #eff7f1; display: flex; gap: 16px; align-items: center; }
+.step-label b { display: inline-grid; place-items: center; border: 2px solid #b9e5c8; border-radius: 50%; width: 34px; height: 34px; flex: none; color: #e9fff0; font-size: 16px; font-weight: 600; }
+.step-label .grade { font-weight: 650; }
+.quantity { display: flex; flex-wrap: wrap; align-items: baseline; gap: 12px; margin: 1px 0 0 50px; }
+.quantity strong { font-size: clamp(48px, 5.4vw, 76px); letter-spacing: -.045em; line-height: 1.06; font-weight: 650; font-variant-numeric: tabular-nums; }
+.quantity > span { font-size: 17px; color: #eef8f2; white-space: nowrap; }
+.facts { display: grid; grid-template-columns: 1fr 1.1fr; margin: 22px 0 24px; }
+.facts > div { min-width: 0; }
+.facts > div + div { border-left: 1px solid #ffffff30; padding-left: 22px; }
+.facts dt { font-size: 13px; color: #dbeee2; }
+.facts dd { font-size: clamp(27px, 2.8vw, 40px); line-height: 1.2; letter-spacing: -.025em; margin: 8px 0 0; font-weight: 650; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.facts dd small { font-size: 14px; font-weight: 450; letter-spacing: 0; }
+.plan-note { font-size: 12px; color: #c7dfd1; line-height: 1.6; margin: auto 0 0; padding-top: 16px; }
+.alert { background: #fff1db; color: #634019; padding: 13px; border-radius: 8px; font-size: 14px; margin: 16px 0 0; }
+.bar { height: 18px; display: flex; border: 1px solid #b5dec6; border-radius: 12px; overflow: hidden; background: #ffffff20; }
+.bar i { display: block; transition: width .2s ease; }
+.bar i:nth-child(1) { background: #44735f; }
+.bar i:nth-child(2) { background: #50bc80; }
+.bar i:nth-child(3) { background: var(--mint); }
+.legend { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; font-size: 12px; color: #e5f5eb; margin: 14px 0 0; padding-bottom: 17px; border-bottom: 1px solid #ffffff24; }
+.legend > span { position: relative; padding-left: 19px; min-width: 0; }
+.legend > span::before { content: ''; position: absolute; top: 4px; left: 0; width: 10px; height: 10px; border-radius: 50%; background: #44735f; box-shadow: 0 0 0 1px #ffffff30; }
+.legend > span:nth-child(2)::before { background: #50bc80; }
+.legend > span:nth-child(3)::before { background: var(--mint); }
+.legend small { display: block; margin-top: 3px; color: #c7dfd1; font-size: 11px; font-variant-numeric: tabular-nums; }
+.notice { display: grid; grid-template-columns: 1.3fr 1fr; gap: 22px; padding: 18px 23px; background: white; border: 1px solid var(--line); border-radius: 14px; margin: 16px 0 12px; }
+.notice > div { display: flex; align-items: flex-start; gap: 15px; }
+.notice > div + div { border-left: 1px solid var(--line); padding-left: 23px; }
+.notice .icon { width: 23px; height: 23px; margin-top: 2px; color: #294d3d; }
+.notice p { margin: 0; font-size: 12px; line-height: 1.65; color: var(--muted); }
+.notice strong { display: block; margin-bottom: 2px; color: #344b3f; font-size: 13px; font-weight: 550; }
+.method { padding: 3px 22px; border: 1px solid var(--line); border-radius: 12px; background: white; font-size: 13px; color: var(--muted); }
+.method summary { color: var(--ink); font-size: 14px; font-weight: 550; }
+.method[open] { padding-bottom: 16px; }
+.method p { max-width: 100ch; }
+.equation { font-family: ui-monospace, Consolas, monospace; overflow-wrap: anywhere; background: #f6f9f7; border: 1px solid var(--line); padding: 14px; border-radius: 8px; line-height: 1.8; }
+.specifications { width: 100%; max-width: 830px; border-collapse: collapse; margin: 20px 0; font-size: 13px; }
+.specifications th { text-align: left; color: var(--ink); font-weight: 600; }
+.specifications td, .specifications th { border-bottom: 1px solid var(--line); padding: 11px 10px 11px 0; vertical-align: top; }
+.specifications td:last-child, .specifications th:last-child { text-align: right; white-space: nowrap; }
+.specifications small { display: block; margin-top: 3px; font-size: 12px; }
+.sources { display: flex; flex-wrap: wrap; gap: 10px 20px; margin: 16px 0; }
+footer { padding-top: 10px; font-size: 11px; color: var(--muted); display: flex; justify-content: space-between; align-items: center; gap: 12px; }
+footer .back-link { font-size: 12px; text-decoration: none; }
+[hidden] { display: none !important; }
+.sr-only { position: absolute; width: 1px; height: 1px; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; }
+noscript { display: block; padding: 16px; background: #fff1db; margin-bottom: 20px; }
+@media (max-width: 1100px) {
+  nav, main { width: calc(100% - 64px); }
+  .form, .plan { padding: 22px; }
+  .layout { grid-template-columns: 1.12fr 1fr; }
+  .settings summary .summary-text { flex-basis: 100%; margin-left: 28px; }
+  .facts > div + div { padding-left: 15px; }
+  .facts dd { font-size: 30px; }
+  .step-label { gap: 12px; font-size: 15px; }
+  .quantity { margin-left: 46px; }
+  .quantity strong { font-size: clamp(48px, 5.1vw, 60px); }
+  .legend > span { padding-left: 15px; }
+}
+@media (max-width: 820px) {
+  nav, main { width: min(600px, calc(100% - 40px)); }
+  nav { min-height: 70px; }
+  main { padding-top: 20px; }
+  h1 { font-size: clamp(32px, 6vw, 42px); }
+  h2 { font-size: 25px; }
+  .layout { grid-template-columns: 1fr; }
+  .form, .plan { padding: 24px; }
+  .plan .quantity strong { font-size: 70px; }
+  .step { padding-top: 19px; padding-bottom: 23px; }
+  .facts dd { font-size: 36px; }
+  .notice { grid-template-columns: 1fr; gap: 14px; padding: 18px 22px; }
+  .notice > div + div { border-left: 0; border-top: 1px solid var(--line); padding: 14px 0 0; }
+  .settings summary .summary-text { flex-basis: auto; margin-left: auto; }
+  .plan-note { margin-top: 0; }
+  .method { padding-left: 18px; padding-right: 18px; }
+}
+@media (max-width: 460px) {
+  nav, main { width: calc(100% - 32px); }
+  nav { min-height: 64px; }
+  .brand { width: 38px; height: 38px; border-radius: 8px; font-size: 14px; }
+  main { padding-top: 18px; }
+  h1 { max-width: 12ch; font-size: 37px; line-height: 1.06; }
+  .intro { margin-top: 13px; margin-bottom: 22px; font-size: 15px; }
+  .form, .plan { padding: 20px; border-radius: 14px; }
+  .heading { gap: 8px; margin-bottom: 21px; }
+  h2 { font-size: 23px; }
+  .reset { font-size: 11px; min-height: 44px; padding: 8px 9px; }
+  label { font-size: 13px; }
+  select { font-size: 14px; }
+  .capacity { font-size: 11px; padding: 11px 12px; gap: 8px; }
+  .capacity strong { font-size: 12px; }
+  .row { gap: 12px; }
+  .number input { padding-left: 11px; padding-right: 53px; font-size: 24px; min-height: 57px; }
+  .unit { width: 44px; font-size: 11px; }
+  .fuel-estimate { padding: 14px; }
+  .estimate-heading h3 { font-size: 13px; max-width: 14ch; }
+  .estimate-heading > strong { font-size: 28px; }
+  .estimate-heading > strong small { font-size: 15px; }
+  .fuel-estimate .small, .conversion { font-size: 11px; }
+  .target .number { width: 46%; }
+  .target input { min-height: 49px; }
+  .settings summary { font-size: 14px; }
+  .settings summary .summary-text { flex-basis: 100%; margin-left: 28px; font-size: 11px; }
+  .grades { gap: 8px; }
+  .grades label { font-size: 11px; }
+  .grades input { padding: 10px 8px; }
+  .plan .heading { margin-bottom: 3px; }
+  .plan .heading > span { font-size: 11px; }
+  .step-label { font-size: 14px; }
+  .step-label b { width: 31px; height: 31px; font-size: 14px; }
+  .quantity { margin-left: 43px; }
+  .plan .quantity strong { font-size: 64px; }
+  .quantity > span { font-size: 15px; }
+  .facts { margin-bottom: 23px; }
+  .facts dt { font-size: 11px; }
+  .facts dd { font-size: 30px; }
+  .facts dd small { font-size: 12px; }
+  .legend { gap: 6px; font-size: 11px; }
+  .legend small { font-size: 10px; }
+  .notice { padding: 17px; }
+  .notice > div { gap: 12px; }
+  .method summary { font-size: 12px; }
+  .specifications { font-size: 12px; }
+  footer { flex-direction: column; gap: 0; padding-top: 15px; text-align: center; }
+}
+@media (max-width: 360px) {
+  h1 { font-size: 34px; }
+  .form, .plan { padding: 16px; }
+  h2 { font-size: 21px; }
+  .reset { font-size: 10px; padding: 7px; }
+  .row { gap: 9px; }
+  .row label { min-height: 39px; }
+  .number input { font-size: 22px; }
+  .plan .quantity { gap: 8px; }
+  .plan .quantity strong { font-size: 50px; }
+  .plan .quantity > span { font-size: 13px; }
+  .facts dt { min-height: 33px; }
+  .facts dd { font-size: 26px; }
+  .facts > div + div { padding-left: 10px; }
+  .legend > span { padding-left: 13px; }
+  .legend > span::before { width: 8px; height: 8px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { transition: none !important; }
+}
 </style>
 </head>
 <body>
-<header><nav aria-label="Site navigation"><a class="brand" href="/" aria-label="Bai Liping home">BLP</a><a href="/#group-tools">Back to Tools</a></nav></header>
+<header><nav aria-label="Site navigation"><a class="brand" href="/" aria-label="Bai Liping home">BLP</a><a class="back-link" href="/#group-tools">Back to Tools<svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14m-6-6 6 6-6 6"/></svg></a></nav></header>
 <main>
 <h1>Octane blend calculator</h1>
-<p class="intro">Choose your car, enter the range left, and get a fill plan for your target octane.</p>
+<p class="intro">Choose your car, enter the remaining range or fuel, and get a fill plan for your target octane.</p>
 <noscript>Enable JavaScript to calculate fuel quantities.</noscript>
 <div class="layout">
 <form id="form" class="form" novalidate autocomplete="off" aria-labelledby="form-title">
 <div class="heading"><h2 id="form-title">Your next fill</h2><button class="reset" type="reset">Reset defaults</button></div>
 <label for="vehicle">Vehicle</label>
-<select id="vehicle" aria-describedby="vehicle-note"><option value="gt3" selected>Porsche 911 GT3 (992.2)</option><option value="civic">Honda Civic Type R</option><option value="raptor">Ford F-150 Raptor R</option><option value="crv">Honda CR-V (2003)</option><option value="mr2">Toyota MR2 (first generation)</option></select>
-<p id="vehicle-note" class="small">2025 · Extended-range tank</p>
-<div class="capacity"><span>Tank capacity · fixed by vehicle</span><strong id="capacity">22.1 U.S. gal</strong></div>
-<div class="row"><div><label for="range">Remaining range</label><div class="number"><input id="range" type="number" min="0" step="any" inputmode="decimal" value="123" required aria-describedby="conversion"><span class="unit">miles</span></div></div><div><label for="mpg">Average MPG</label><div class="number"><input id="mpg" type="number" min="0.1" step="any" inputmode="decimal" value="18.0" required aria-describedby="conversion"><span class="unit">MPG</span></div></div></div>
-<p class="conversion" id="conversion">Fuel remaining = range ÷ average MPG.</p>
+<div class="select-wrap"><select id="vehicle" aria-describedby="vehicle-note capacity"><option value="gt3" selected>Porsche 911 GT3 (992.2)</option><option value="civic">Honda Civic Type R</option><option value="raptor">Ford F-150 Raptor R</option><option value="mr2">1988 Toyota MR2 Supercharged</option><option value="crv">Honda CR-V (2003)</option></select><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></div>
+<div class="capacity"><p id="vehicle-note">2025 · Extended-range tank</p><strong id="capacity">22.1 U.S. gal</strong></div>
+<div class="row" id="range-inputs"><div><label for="range">Remaining range</label><div class="number"><input id="range" type="number" min="0" step="any" inputmode="decimal" value="123" required aria-describedby="conversion"><span class="unit">miles</span></div></div><div><label for="mpg">Average MPG</label><div class="number"><input id="mpg" type="number" min="0.1" step="any" inputmode="decimal" value="18" required aria-describedby="conversion"><span class="unit">MPG</span></div></div></div>
+<div class="manual-fuel" id="manual-fuel-input" hidden><label for="remaining-fuel">Remaining fuel</label><div class="number"><input id="remaining-fuel" type="number" min="0" step="any" inputmode="decimal" value="" placeholder="Enter gallons" required disabled aria-describedby="manual-fuel-note"><span class="unit">U.S. gal</span></div><p class="small" id="manual-fuel-note">Enter the fuel currently in your tank in U.S. gallons.</p></div>
+<div class="fuel-estimate" id="fuel-estimate"><div class="estimate-heading"><h3>Estimated fuel in tank</h3><strong><span id="remaining-amount">—</span> <small>gal</small></strong></div><p class="small">Calculated from your remaining range and average MPG.</p><p class="conversion" id="conversion">Remaining range ÷ average MPG.</p></div>
 <div class="target"><div><label for="target">Target octane</label><p class="small">For the whole tank</p></div><div class="number"><input id="target" type="number" min="1" max="150" step="any" inputmode="decimal" value="94" required><span class="unit">AKI</span></div></div>
-<details class="settings"><summary>Fuel settings<span id="settings-summary">94 in tank · 100 + 91 at the pump</span></summary><div class="grades"><div><label for="current">In-tank octane</label><input id="current" type="number" min="1" max="150" step="any" inputmode="decimal" value="94" required></div><div><label for="first">First pump</label><input id="first" type="number" min="1" max="150" step="any" inputmode="decimal" value="100" required></div><div><label for="second">Second pump</label><input id="second" type="number" min="1" max="150" step="any" inputmode="decimal" value="91" required></div></div><p class="small">All octane ratings must use the same U.S. pump scale, AKI. Use compatible unleaded gasoline.</p></details>
+<details class="settings"><summary><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg><span>Fuel settings</span><span class="summary-text" id="settings-summary">94 in tank · 100 + 91 at the pump</span></summary><div class="grades"><div><label for="current">In-tank octane</label><input id="current" type="number" min="1" max="150" step="any" inputmode="decimal" value="94" required></div><div><label for="first">First pump</label><input id="first" type="number" min="1" max="150" step="any" inputmode="decimal" value="100" required></div><div><label for="second">Second pump</label><input id="second" type="number" min="1" max="150" step="any" inputmode="decimal" value="91" required></div></div><p class="small">All octane ratings must use the same U.S. pump scale, AKI. Use compatible unleaded gasoline.</p></details>
 </form>
 <section class="plan" aria-labelledby="plan-title"><div class="heading"><h2 id="plan-title">At the pump</h2><span id="state">Estimated fill</span></div><div id="alert" class="alert" hidden></div>
-<div class="step"><div class="step-label"><b aria-hidden="true">1</b><span><span id="first-grade">100</span> octane · add first</span></div><div class="quantity"><strong id="first-amount">—</strong><span>U.S. gal</span></div></div>
-<div class="step"><div class="step-label"><b aria-hidden="true">2</b><span><span id="second-grade">91</span> octane · add second</span></div><div class="quantity"><strong id="second-amount">—</strong><span>U.S. gal</span></div></div>
-<dl class="facts"><div><dt>Total to add</dt><dd><span id="total">—</span> gal</dd></div><div><dt>Estimated final octane</dt><dd>≈ <span id="final">—</span> AKI</dd></div></dl>
-<div id="composition" hidden><div class="bar" aria-hidden="true"><i id="bar-existing"></i><i id="bar-first"></i><i id="bar-second"></i></div><div class="legend"><span>In tank</span><span>First pump</span><span>Second pump</span></div></div>
+<div class="step"><div class="step-label"><b aria-hidden="true">1</b><span><span class="grade"><span id="first-grade">100</span> octane</span> · add first</span></div><div class="quantity"><strong id="first-amount">—</strong><span>U.S. gal</span></div></div>
+<div class="step"><div class="step-label"><b aria-hidden="true">2</b><span><span class="grade"><span id="second-grade">91</span> octane</span> · add second</span></div><div class="quantity"><strong id="second-amount">—</strong><span>U.S. gal</span></div></div>
+<dl class="facts"><div><dt>Total to add</dt><dd><span id="total">—</span> <small>gal</small></dd></div><div><dt>Estimated final octane</dt><dd>≈<span id="final">—</span> <small>AKI</small></dd></div></dl>
+<div id="composition" hidden><div class="bar" aria-hidden="true"><i id="bar-existing"></i><i id="bar-first"></i><i id="bar-second"></i></div><div class="legend"><span>In tank<small id="legend-existing">—</small></span><span><span id="legend-first-grade">100</span> octane<small id="legend-first">—</small></span><span><span id="legend-second-grade">91</span> octane<small id="legend-second">—</small></span></div></div>
 <p class="plan-note" id="plan-note">Quantities update as you enter your numbers.</p><p class="sr-only" id="live" role="status" aria-live="polite" aria-atomic="true"></p></section>
 </div>
-<p class="notice"><strong>Estimate, not a fuel measurement.</strong> Range ÷ MPG does not precisely account for reserves or changing driving conditions. Quantities are rounded to 0.01 U.S. gallon. Stop at the pump’s automatic shutoff; do not force in the calculated volume.</p>
-<details class="method"><summary>How it works &amp; vehicle specifications</summary><p>MPG defaults to your supplied <strong>18.0</strong> for every vehicle, not a factory rating. Enter the selected car’s observed average. The initial 123-mile range is an example from the earlier calculation, not a live reading.</p><p class="equation">Remaining gallons = remaining miles ÷ MPG<br>Refill gallons = capacity − remaining gallons<br>First-pump gallons = (target × capacity − current octane × remaining gallons − second grade × refill gallons) ÷ (first grade − second grade)<br>Second-pump gallons = refill gallons − first-pump gallons</p><p>The volume-weighted octane calculation includes fuel already in the tank. Real octane blending can be nonlinear, and the estimate does not certify fuel quality or suitability. Always follow the vehicle manufacturer’s fuel requirements.</p><p>Nominal presets: 2025 GT3 992.2 extended-range tank, 22.1 U.S. gal; 2025 U.S. Civic Type R, 12.4 U.S. gal; 2025 U.S. F-150 Raptor R, 36.0 U.S. gal; 2003 Honda CR-V, 15.3 U.S. gal. First-generation MR2 capacity is intentionally unset. Confirm the preset matches your model year and tank configuration.</p><div class="sources"><a href="https://www.hondainfocenter.com/2025/Civic-Type-R/Feature-Guide/EPA-Fuel-Economy-Ratings/">Honda Type R specifications</a><a href="https://hondanews.ca/en-CA/releases/release-4fade6c61d0220ec4eba0c87161775ed-2003-cr-v-specifications">2003 CR-V specifications</a><a href="https://www.sunoco.com/fuel-facts/post/blending-fuels-to-get-the-right-mix">Sunoco blending guidance</a></div></details>
-<footer><span>All quantities in U.S. gallons · Octane in AKI</span><a href="/#group-tools">Back to Tools</a></footer>
+<aside class="notice" aria-label="Using your fuel estimate"><div><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 11v5m0-9v.01"/></svg><p><strong id="fuel-notice-title">Fuel in tank is estimated from remaining range ÷ average MPG.</strong><span id="fuel-notice-detail">Actual fuel level may vary with reserves and driving conditions.</span></p></div><div><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 21V5a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v16M3 21h12M4 10h10m0 3h2a2 2 0 0 1 2 2v3a1.5 1.5 0 0 0 3 0V9l-4-4m2 2v4h2"/></svg><p><strong>Stop at the pump’s automatic shutoff.</strong>Amounts are rounded to 0.01 U.S. gal. Do not force in the calculated volume.</p></div></aside>
+<details class="method"><summary><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg><span>How it works &amp; vehicle specifications</span></summary><p>For the <strong>GT3, Civic Type R, and Raptor R</strong>, enter <strong>remaining range in miles</strong> and the car’s observed <strong>average MPG</strong>. Remaining fuel is calculated as range ÷ MPG. MPG starts at <strong>18</strong>; the initial 123-mile range is an example, not a live reading.</p><p>For the <strong>1988 MR2 Supercharged and 2003 CR-V</strong>, enter <strong>remaining fuel in U.S. gallons</strong> directly. Range and MPG inputs are hidden and are not used for these two vehicles. The gallons field starts blank so you can enter your fuel reading.</p><p class="equation">GT3 / Civic / Raptor: remaining gallons = remaining miles ÷ MPG<br>MR2 / CR-V: remaining gallons = the amount you enter<br>Refill gallons = capacity − remaining gallons<br>First-pump gallons = (target × capacity − current octane × remaining gallons − second grade × refill gallons) ÷ (first grade − second grade)<br>Second-pump gallons = refill gallons − first-pump gallons</p><p>The volume-weighted octane calculation includes fuel already in the tank. Real octane blending can be nonlinear, and the estimate does not certify fuel quality or suitability. Always follow the vehicle manufacturer’s fuel requirements.</p><p>Choose the preset that matches your model year and tank configuration. The default GT3 is the <strong>2025 992.2 with the extended-range tank</strong>; other GT3 generations and standard tanks have different capacities.</p>
+<table class="specifications"><caption class="sr-only">Vehicle tank capacities and manufacturer sources</caption><thead><tr><th scope="col">Vehicle and source</th><th scope="col">U.S. gallons</th></tr></thead><tbody>
+<tr><td><a href="https://finder.porsche.com/us/en-US/details/porsche-911-gt3-preowned-Z5P7Z2">Porsche 911 GT3 (992.2)</a><small>2025 · Extended-range tank · Default</small></td><td>22.1</td></tr>
+<tr><td><a href="https://hondanews.com/en-US/releases/release-a0290fb377b9a07ba1686b65910857e4-2025-honda-civic-type-r-specifications-features">Honda Civic Type R</a><small>2025 · U.S. specification (FL5)</small></td><td>12.4</td></tr>
+<tr><td><a href="https://www.ford.com/inventory/details/ford/en_us/f150/vin/1FTFW1RJ2SFC29452">Ford F-150 Raptor R</a><small>2025 · 5.2L supercharged V8</small></td><td>36.0</td></tr>
+<tr><td><a href="https://xr793.com/wp-content/uploads/2024/12/1988-Toyota-MR2.pdf#page=6">Toyota MR2 Supercharged</a><small>1988 · U.S. Toyota brochure, specification page</small></td><td>10.8</td></tr>
+<tr><td><a href="https://hondanews.com/en-US/honda-automobiles/releases/release-9f9a8b5d2cfa6463d9dc60004c34c6cf-2003-honda-cr-v-specifications">Honda CR-V</a><small>2003 · U.S. specification</small></td><td>15.3</td></tr>
+</tbody></table><div class="sources"><a href="https://www.sunoco.com/fuel-facts/post/blending-fuels-to-get-the-right-mix">Sunoco blending guidance</a></div></details>
+<footer><span>All quantities in U.S. gallons · Octane in AKI</span><a class="back-link" href="/#group-tools">Back to Tools<svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14m-6-6 6 6-6 6"/></svg></a></footer>
 </main>
 <script>
 (() => {
   'use strict';
-  // MR2 deliberately has no tank size until the owner supplies it.
-  const cars = Object.freeze({gt3:{capacity:22.1,note:'2025 · Extended-range tank'},civic:{capacity:12.4,note:'2025 U.S. specification · Civic Type R (FL5)'},raptor:{capacity:36,note:'2025 U.S. specification · F-150 Raptor R'},crv:{capacity:15.3,note:'2003 · Honda CR-V'},mr2:{capacity:null,note:'First generation · Tank capacity awaiting confirmation'}});
-  const ids = ['range','mpg','target','current','first','second'];
+  // Nominal U.S. tank capacities; manufacturer sources are linked below the calculator.
+  const cars = Object.freeze({
+    gt3: {capacity: 22.1, note: '2025 · Extended-range tank'},
+    civic: {capacity: 12.4, note: '2025 · Civic Type R (FL5)'},
+    raptor: {capacity: 36, note: '2025 · F-150 Raptor R'},
+    mr2: {capacity: 10.8, note: '1988 · Supercharged (AW11)', manualFuel: true},
+    crv: {capacity: 15.3, note: '2003 · Honda CR-V', manualFuel: true}
+  });
+  const octaneIds = ['target','current','first','second'];
+  const allInputIds = ['range','mpg','remaining-fuel',...octaneIds];
   const get = id => document.getElementById(id);
   const put = (id,text) => { get(id).textContent=text; };
   const fmt = n => n.toFixed(2);
@@ -56,27 +299,58 @@
   function render(){
     const car = cars[get('vehicle').value];
     // Clear old results first so errors never leave a stale fill plan on screen.
-    ['first-amount','second-amount','total','final'].forEach(id=>put(id,'—'));
+    ['first-amount','second-amount','total','final','remaining-amount'].forEach(id=>put(id,'—'));
     get('composition').hidden=true;get('alert').hidden=true;
     put('state','Check inputs');put('plan-note','');
-    put('conversion','Fuel remaining = range ÷ average MPG.');
+    put('conversion','Remaining range ÷ average MPG.');
     const fail = message => {put('alert',message);get('alert').hidden=false;announce(message);};
     if(!car){fail('Choose a vehicle.');return;}
+    const manualFuel = Boolean(car.manualFuel);
+    get('form').dataset.inputMode = manualFuel ? 'fuel' : 'range';
+    get('range-inputs').hidden = manualFuel;
+    get('fuel-estimate').hidden = manualFuel;
+    get('manual-fuel-input').hidden = !manualFuel;
+    get('range').disabled = manualFuel;
+    get('mpg').disabled = manualFuel;
+    get('remaining-fuel').disabled = !manualFuel;
+    get('remaining-fuel').max = car.capacity;
+    put('manual-fuel-note','Enter 0–'+car.capacity.toFixed(1)+' U.S. gallons currently in your tank.');
+    put('fuel-notice-title',manualFuel
+      ? 'Fuel in tank uses the remaining gallons you enter.'
+      : 'Fuel in tank is estimated from remaining range ÷ average MPG.');
+    put('fuel-notice-detail',manualFuel
+      ? 'Use the fuel quantity you read or estimate for your tank.'
+      : 'Actual fuel level may vary with reserves and driving conditions.');
     put('vehicle-note',car.note);
-    put('capacity',car.capacity===null?'':car.capacity.toFixed(1)+' U.S. gal');
+    put('capacity',car.capacity.toFixed(1)+' U.S. gal');
     put('first-grade',get('first').value || '—');put('second-grade',get('second').value || '—');
     put('settings-summary',(get('current').value || '—')+' in tank · '+(get('first').value || '—')+' + '+(get('second').value || '—')+' at the pump');
-    if(car.capacity===null){put('state','Tank size needed');fail('MR2 tank capacity is intentionally blank. Fill amounts will be available after its tank size is confirmed.');return;}
-    const values=ids.map(id=>get(id).value.trim()===''?NaN:Number(get(id).value));
-    ids.forEach((id,i)=>get(id).setAttribute('aria-invalid',String(!Number.isFinite(values[i]) || (i===0?values[i]<0:values[i]<=0) || (i>1&&values[i]>150))));
-    if(values.some(n=>!Number.isFinite(n))){fail('Complete all fields with valid numbers. Fuel octanes are under Fuel settings.');return;}
-    const [range,mpg,target,current,first,second]=values;
-    if(range<0 || mpg<=0){fail('Range must be zero or greater, and MPG must be greater than zero.');return;}
+    // Validate only the selected vehicle's visible inputs. Hidden range/MPG must
+    // never affect a manual-gallons calculation, and vice versa.
+    const ids = manualFuel ? ['remaining-fuel',...octaneIds] : ['range','mpg',...octaneIds];
+    const values = Object.fromEntries(ids.map(id => [id,get(id).value.trim()==='' ? NaN : Number(get(id).value)]));
+    allInputIds.forEach(id=>get(id).setAttribute('aria-invalid','false'));
+    ids.forEach(id=>{
+      const n=values[id], isQuantity=id==='range' || id==='remaining-fuel';
+      get(id).setAttribute('aria-invalid',String(!Number.isFinite(n) || (isQuantity?n<0:n<=0) || (octaneIds.includes(id)&&n>150)));
+    });
+    if(manualFuel && !Number.isFinite(values['remaining-fuel'])){
+      fail('Enter the remaining fuel in your tank in U.S. gallons.');return;
+    }
+    if(Object.values(values).some(n=>!Number.isFinite(n))){fail('Complete all fields with valid numbers. Fuel octanes are under Fuel settings.');return;}
+    const {range,mpg,target,current,first,second}=values;
+    if(manualFuel && values['remaining-fuel']<0){fail('Remaining fuel must be zero or greater.');return;}
+    if(!manualFuel && (range<0 || mpg<=0)){fail('Range must be zero or greater, and MPG must be greater than zero.');return;}
     if([target,current,first,second].some(n=>n<=0 || n>150)){fail('Enter octane ratings between 0 and 150 (greater than zero), all using AKI.');return;}
-    const capacity=car.capacity, remaining=range/mpg;
-    if(!Number.isFinite(remaining) || remaining>capacity+EPS){fail('These range and MPG values imply more fuel than the tank holds. Check both inputs.');return;}
+    const capacity=car.capacity, remaining=manualFuel ? values['remaining-fuel'] : range/mpg;
+    if(!Number.isFinite(remaining) || remaining>capacity+EPS){
+      if(manualFuel){get('remaining-fuel').setAttribute('aria-invalid','true');fail('Remaining fuel cannot exceed this vehicle’s '+capacity.toFixed(1)+'-gallon tank capacity.');}
+      else{fail('These range and MPG values imply more fuel than the tank holds. Check both inputs.');}
+      return;
+    }
     const refill=Math.max(0,capacity-remaining);
-    put('conversion',range+' miles ÷ '+mpg+' MPG ≈ '+fmt(remaining)+' gal remaining.');
+    put('remaining-amount',fmt(remaining));
+    put('conversion',manualFuel ? 'Using the entered fuel amount.' : range+' miles ÷ '+mpg+' MPG');
     if(refill<EPS){
       put('total','0.00');put('final',fmt(current));
       if(Math.abs(current-target)>EPS){fail('The tank is already full, so adding fuel cannot reach this target.');return;}
@@ -91,7 +365,9 @@
     a=Math.max(0,Math.min(refill,a));const b=refill-a;
     const final=(current*remaining+first*a+second*b)/capacity;
     put('first-amount',fmt(a));put('second-amount',fmt(b));put('total',fmt(refill));put('final',fmt(final));put('state','Estimated fill');
-    put('plan-note','Based on '+fmt(remaining)+' gal already in your '+capacity.toFixed(1)+'-gal tank. Quantities are approximate; follow the pump’s automatic shutoff.');
+    put('plan-note','Based on '+fmt(remaining)+' gal already in your '+capacity.toFixed(1)+'-gal tank.');
+    put('legend-first-grade',first);put('legend-second-grade',second);
+    [['legend-existing',remaining],['legend-first',a],['legend-second',b]].forEach(([id,volume])=>put(id,fmt(volume)+' gal ('+Math.round(100*volume/capacity)+'%)'));
     get('composition').hidden=false;
     [['bar-existing',remaining],['bar-first',a],['bar-second',b]].forEach(([id,volume])=>{get(id).style.width=(100*volume/capacity)+'%';});
     announce('Add '+fmt(a)+' gallons of '+first+' octane first, then '+fmt(b)+' gallons of '+second+' octane. Estimated final octane '+fmt(final)+'.');
@@ -100,7 +376,7 @@
   get('vehicle').addEventListener('change',render);
   get('form').addEventListener('submit',event=>{event.preventDefault();render();});
   get('form').addEventListener('reset',()=>setTimeout(render,0));
-  // Start every fresh page load at the owner's requested GT3 and 18.0 MPG defaults.
+  // Fresh loads and Reset defaults select the GT3, use 18 MPG, and clear manual gallons.
   get('form').reset();render();
 })();
 </script>
