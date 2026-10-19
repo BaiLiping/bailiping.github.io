@@ -117,8 +117,15 @@ select{appearance:none;-webkit-appearance:none;min-height:50px;padding:11px 44px
 .notice strong{color:var(--ink)}
 
 /* The math */
-.math{margin-top:56px;padding-top:36px;border-top:1px solid var(--line);max-width:860px}
-.math h2{font-family:var(--display);font-size:36px;font-weight:600;letter-spacing:0;line-height:1}
+.math{margin-top:40px;border-top:1px solid var(--line);max-width:860px}
+.math>summary{display:flex;align-items:baseline;flex-wrap:wrap;gap:2px 12px;padding:16px 30px 16px 0;position:relative;cursor:pointer;list-style:none}
+.math>summary::-webkit-details-marker{display:none}
+.math>summary::after,.specs>summary::after{content:"";position:absolute;right:6px;top:50%;width:10px;height:10px;border-right:2px solid var(--green);border-bottom:2px solid var(--green);transform:translateY(-75%) rotate(45deg);transition:transform .2s}
+.math[open]>summary::after,.specs[open]>summary::after{transform:translateY(-25%) rotate(225deg)}
+.math>summary h2{font-size:15px;font-weight:650;letter-spacing:0;line-height:1.5}
+.math-hint{font-size:13px;color:var(--muted)}
+.math-body{padding-bottom:30px}
+.math-body>p:first-child{margin-top:0}
 .math p{max-width:40em;color:#3c4740;margin:14px 0}
 .tex{font-size:19px;overflow-x:auto;overflow-y:hidden;color:var(--ink)}
 .tex mjx-container[display="true"]{margin:0!important}
@@ -139,8 +146,9 @@ select{appearance:none;-webkit-appearance:none;min-height:50px;padding:11px 44px
 .symbols dd{margin:0;align-self:center}
 .caveat{font-size:13px;color:var(--muted)!important}
 
-.specs{margin-top:34px;border-top:1px solid var(--line);padding-top:16px;font-size:13px;color:var(--muted);max-width:860px}
-.specs summary{font-size:14px;font-weight:650;color:var(--ink);cursor:pointer;min-height:32px}
+.specs{margin-top:0;border-top:1px solid var(--line);padding-top:0;font-size:13px;color:var(--muted);max-width:860px}
+.specs>summary{position:relative;list-style:none;font-size:15px;font-weight:650;line-height:1.5;color:var(--ink);cursor:pointer;padding:16px 30px 16px 0}
+.specs>summary::-webkit-details-marker{display:none}
 .specs p{max-width:62em}
 .spec-table{width:100%;border-collapse:collapse;margin:16px 0;font-size:14px}
 .spec-table th{text-align:left;font-size:12px;font-weight:600;color:var(--muted);padding:0 0 8px}
@@ -160,7 +168,7 @@ noscript{display:block;padding:14px 16px;background:var(--warn-bg);color:var(--w
   select{font-size:16px;padding-right:38px;background-position:right 13px center}
   .eqs-head{display:none}
   .eq{grid-template-columns:1fr;gap:6px}
-  .math{margin-top:44px}
+  .math{margin-top:32px}
   footer{flex-direction:column}
 }
 @media (max-width:380px){
@@ -175,7 +183,7 @@ noscript{display:block;padding:14px 16px;background:var(--warn-bg);color:var(--w
   .legend li{gap:5px}
   .legend b{font-size:15px}
 }
-@media (prefers-reduced-motion:reduce){.gauge i{transition:none}}
+@media (prefers-reduced-motion:reduce){.gauge i,.math>summary::after,.specs>summary::after{transition:none}}
 </style>
 <script>
 window.MathJax={
@@ -214,9 +222,9 @@ setTimeout(()=>document.documentElement.classList.remove('mj-wait'),5000);
     <div><label for="range">Range left</label><div class="number"><input id="range" type="number" min="0" step="any" inputmode="decimal" value="123" required aria-describedby="conversion"><span class="unit">miles</span></div></div>
     <div><label for="mpg">Average fuel economy</label><div class="number"><input id="mpg" type="number" min="0.1" step="any" inputmode="decimal" value="18.0" required aria-describedby="conversion"><span class="unit">MPG</span></div></div>
   </div>
-  <!-- Older cars (MR2, CR-V) show fuel left, not range, so they take gallons directly. -->
-  <div class="row single" id="fuel-inputs" hidden>
-    <div><label for="fuel">Remaining fuel</label><div class="number"><input id="fuel" type="number" min="0" step="any" inputmode="decimal" value="" placeholder="Enter gallons" required disabled aria-describedby="conversion"><span class="unit">U.S. gal</span></div></div>
+  <!-- Older cars (MR2, CR-V) only have a fuel gauge, so they take its reading as a percent. -->
+  <div class="row single" id="gauge-inputs" hidden>
+    <div><label for="gauge">Fuel gauge reading</label><div class="number"><input id="gauge" type="number" min="0" max="100" step="any" inputmode="decimal" value="" placeholder="Enter percent" required disabled aria-describedby="conversion"><span class="unit">% full</span></div></div>
   </div>
   <p class="conversion" id="conversion">Fuel left in the tank = range ÷ average MPG.</p>
 
@@ -254,16 +262,17 @@ setTimeout(()=>document.documentElement.classList.remove('mj-wait'),5000);
 </section>
 </div>
 
-<p class="notice"><strong>An estimate, not a fuel measurement.</strong> Range ÷ MPG and fuel-remaining readouts are both approximate, and quantities are rounded to 0.01 U.S. gallon. Stop at the pump’s automatic shutoff; don’t force in the calculated volume.</p>
+<p class="notice"><strong>An estimate, not a fuel measurement.</strong> Range ÷ MPG and fuel gauge readings are both approximate, and quantities are rounded to 0.01 U.S. gallon. Stop at the pump’s automatic shutoff; don’t force in the calculated volume.</p>
 
-<section class="math" aria-labelledby="math-title">
-  <h2 id="math-title">The math</h2>
+<details class="math" id="math">
+  <summary><h2 id="math-title">The math</h2><span class="math-hint">Formulas behind the fill plan, with your numbers plugged in</span></summary>
+  <div class="math-body">
   <p>Octane is treated as a volume-weighted average. Once the tank is full, the fuel already in it and the two pump volumes must add up to the capacity and average out to the target:</p>
   <div class="model"><div class="tex">\[ O^{\star} C = O_0 V_0 + O_1 V_1 + O_2 V_2, \]</div><div class="tex">\[ V_0 + V_1 + V_2 = C. \]</div></div>
-  <p>Estimating what’s left from the range (the MR2 and CR-V show it directly as fuel remaining), then eliminating \(V_2\), gives the four quantities the calculator reports:</p>
+  <p>Estimating what’s left in the tank (from the range, or for the MR2 and CR-V from the fuel gauge), then eliminating \(V_2\), gives the four quantities the calculator reports:</p>
   <div class="eqs-head" aria-hidden="true"><span>Formula</span><span>With your numbers</span></div>
   <ol class="eqs">
-    <li class="eq"><div class="tex" id="tex-v0-range">\[ V_0 = \frac{d}{m} \]</div><div class="tex" id="tex-v0-fuel" hidden>\[ V_0 = \text{fuel remaining} \]</div><div class="sub" id="sub-v0">—</div></li>
+    <li class="eq"><div class="tex" id="tex-v0-range">\[ V_0 = \frac{d}{m} \]</div><div class="tex" id="tex-v0-gauge" hidden>\[ V_0 = \frac{g}{100}\, C \]</div><div class="sub" id="sub-v0">—</div></li>
     <li class="eq"><div class="tex">\[ V_{\text{fill}} = C - V_0 \]</div><div class="sub" id="sub-fill">—</div></li>
     <li class="eq v1"><div class="tex">\[ V_1 = \frac{O^{\star} C - O_0 V_0 - O_2 V_{\text{fill}}}{O_1 - O_2} \]</div><div class="sub" id="sub-v1">—</div></li>
     <li class="eq v2"><div class="tex">\[ V_2 = V_{\text{fill}} - V_1 \]</div><div class="sub" id="sub-v2">—</div></li>
@@ -276,6 +285,7 @@ setTimeout(()=>document.documentElement.classList.remove('mj-wait'),5000);
   <dl class="symbols">
     <dt class="sym">\(d\)</dt><dd>Range left, miles</dd>
     <dt class="sym">\(m\)</dt><dd>Average fuel economy, MPG</dd>
+    <dt class="sym">\(g\)</dt><dd>Fuel gauge reading, percent full (MR2 and CR-V)</dd>
     <dt class="sym">\(C\)</dt><dd>Tank capacity, U.S. gallons</dd>
     <dt class="sym">\(O^{\star}\)</dt><dd>Target octane for the full tank</dd>
     <dt class="sym">\(O_0,\ V_0\)</dt><dd>Octane and volume of the fuel already in the tank</dd>
@@ -283,11 +293,12 @@ setTimeout(()=>document.documentElement.classList.remove('mj-wait'),5000);
     <dt class="sym">\(O_2,\ V_2\)</dt><dd>Octane and volume from pump 2</dd>
   </dl>
   <p class="caveat">All octane ratings are AKI. Real blends can be slightly nonlinear, so treat the result as an estimate; it doesn’t certify fuel quality or suitability. Always follow the vehicle manufacturer’s fuel requirements.</p>
-</section>
+  </div>
+</details>
 
 <details class="specs"><summary>Vehicle presets and sources</summary>
   <p>For the GT3, Civic Type R and Raptor R, enter the range left and your car’s observed average fuel economy. It starts at 18.0 MPG, which isn’t a factory rating, and the 123-mile range is an example, not a live reading.</p>
-  <p>The 1988 MR2 Supercharged and 2003 CR-V have no range readout, so for them you enter the remaining fuel in U.S. gallons instead. That field starts blank, and range and MPG aren’t used.</p>
+  <p>The 1988 MR2 Supercharged and 2003 CR-V have only a fuel gauge, so for them you enter its reading as a percent and the calculator converts it to gallons using the tank capacity. That field starts blank, and range and MPG aren’t used.</p>
   <table class="spec-table"><caption class="sr-only">Vehicle tank capacities and manufacturer sources</caption>
     <thead><tr><th scope="col">Vehicle and source</th><th scope="col">Tank</th></tr></thead>
     <tbody>
@@ -307,16 +318,16 @@ setTimeout(()=>document.documentElement.classList.remove('mj-wait'),5000);
 <script>
 (() => {
   'use strict';
-  // readsFuel: the car shows fuel remaining instead of a range estimate.
+  // readsGauge: the car has only a fuel gauge, read as a percent of the tank.
   const cars = Object.freeze({
     gt3:{capacity:22.1,note:'2025, extended-range tank'},
     civic:{capacity:12.4,note:'2025 U.S. specification (FL5)'},
     raptor:{capacity:36,note:'2025 U.S. specification'},
-    crv:{capacity:15.3,note:'2003 model year, fuel remaining readout',readsFuel:true},
-    mr2:{capacity:10.8,note:'1988, fuel remaining readout',readsFuel:true}
+    crv:{capacity:15.3,note:'2003 model year, fuel gauge only',readsGauge:true},
+    mr2:{capacity:10.8,note:'1988, fuel gauge only',readsGauge:true}
   });
   const valid = {
-    range:v => v >= 0, mpg:v => v > 0, fuel:v => v >= 0,
+    range:v => v >= 0, mpg:v => v > 0, gauge:v => v >= 0 && v <= 100,
     target:v => v > 0 && v <= 150, current:v => v > 0 && v <= 150, first:v => v > 0 && v <= 150, second:v => v > 0 && v <= 150
   };
   const octaneIds = ['target','current','first','second'];
@@ -349,55 +360,56 @@ setTimeout(()=>document.documentElement.classList.remove('mj-wait'),5000);
     const fail = message => { put('alert', message); $('alert').hidden = false; announce(message); };
     if(!car){ fail('Choose a vehicle.'); return; }
 
-    const readsFuel = Boolean(car.readsFuel);
-    $('range-inputs').hidden = readsFuel;
-    $('fuel-inputs').hidden = !readsFuel;
+    const readsGauge = Boolean(car.readsGauge);
+    $('range-inputs').hidden = readsGauge;
+    $('gauge-inputs').hidden = !readsGauge;
     // Hidden inputs are disabled so they never take part in a calculation.
-    $('range').disabled = readsFuel;
-    $('mpg').disabled = readsFuel;
-    $('fuel').disabled = !readsFuel;
-    $('fuel').max = car.capacity;
-    $('tex-v0-range').hidden = readsFuel;
-    $('tex-v0-fuel').hidden = !readsFuel;
-    put('conversion', readsFuel ? 'Enter 0 to ' + car.capacity.toFixed(1) + ' U.S. gal, as shown on the fuel display.' : 'Fuel left in the tank = range ÷ average MPG.');
+    $('range').disabled = readsGauge;
+    $('mpg').disabled = readsGauge;
+    $('gauge').disabled = !readsGauge;
+    $('tex-v0-range').hidden = readsGauge;
+    $('tex-v0-gauge').hidden = !readsGauge;
+    put('conversion', readsGauge ? 'Read the needle as a percent: ¼ is 25, ½ is 50, ¾ is 75.' : 'Fuel left in the tank = range ÷ average MPG.');
     put('vehicle-note', car.note);
     put('capacity', car.capacity.toFixed(1) + ' U.S. gal');
     put('first-grade', typed('first') || '—');
     put('second-grade', typed('second') || '—');
 
     // Only the inputs on screen for this car are read and validated.
-    const active = (readsFuel ? ['fuel'] : ['range','mpg']).concat(octaneIds);
+    const active = (readsGauge ? ['gauge'] : ['range','mpg']).concat(octaneIds);
     Object.keys(valid).forEach(id => $(id).removeAttribute('aria-invalid'));
     const v = {};
     active.forEach(id => {
       v[id] = typed(id) === '' ? NaN : Number(typed(id));
       $(id).setAttribute('aria-invalid', String(!Number.isFinite(v[id]) || !valid[id](v[id])));
     });
-    if(readsFuel && typed('fuel') === ''){
-      // A blank fuel field is a prompt, not a mistake.
-      $('fuel').setAttribute('aria-invalid', 'false');
-      setState('Waiting for fuel', true);
-      fail('Enter the remaining fuel in U.S. gallons to see your fill.');
+    if(readsGauge && typed('gauge') === ''){
+      // A blank gauge field is a prompt, not a mistake.
+      $('gauge').setAttribute('aria-invalid', 'false');
+      setState('Waiting for gauge', true);
+      fail('Enter the fuel gauge reading as a percent to see your fill.');
       return;
     }
     if(active.some(id => !Number.isFinite(v[id]))){ fail('Fill in every field with a number.'); return; }
-    if(readsFuel ? v.fuel < 0 : (v.range < 0 || v.mpg <= 0)){ fail(readsFuel ? 'Remaining fuel must be zero or more.' : 'Range must be zero or more, and fuel economy must be above zero.'); return; }
+    if(readsGauge && !valid.gauge(v.gauge)){ fail('A fuel gauge reading runs from 0% (empty) to 100% (full).'); return; }
+    if(!readsGauge && (v.range < 0 || v.mpg <= 0)){ fail('Range must be zero or more, and fuel economy must be above zero.'); return; }
     const {target, current, first, second} = v;
     if(octaneIds.some(id => !valid[id](v[id]))){ fail('Enter octane ratings above 0 and up to 150, all in AKI.'); return; }
 
     const capacity = car.capacity;
-    const remaining = readsFuel ? v.fuel : v.range / v.mpg;
-    put('sub-v0', readsFuel ? '= ' + typed('fuel') + '\u00a0gal, read from the fuel display' : '= ' + typed('range') + ' ÷ ' + typed('mpg') + ' = ' + fmt(remaining) + '\u00a0gal');
+    // Gauge cars: fuel left = reading as a fraction of the tank capacity.
+    const remaining = readsGauge ? v.gauge / 100 * capacity : v.range / v.mpg;
+    put('sub-v0', readsGauge
+      ? '= ' + typed('gauge') + ' ÷ 100 × ' + capacity.toFixed(1) + ' = ' + fmt(remaining) + '\u00a0gal'
+      : '= ' + typed('range') + ' ÷ ' + typed('mpg') + ' = ' + fmt(remaining) + '\u00a0gal');
     if(remaining > capacity + EPS){
       $('sub-v0').classList.add('out');
-      fail(readsFuel
-        ? fmt(remaining) + ' gal is more than the ' + capacity.toFixed(1) + '-gal tank holds. Check the remaining fuel.'
-        : 'That range and fuel economy imply ' + fmt(remaining) + ' gal, more than the ' + capacity.toFixed(1) + '-gal tank holds. Check both numbers.');
+      fail('That range and fuel economy imply ' + fmt(remaining) + ' gal, more than the ' + capacity.toFixed(1) + '-gal tank holds. Check both numbers.');
       return;
     }
     const refill = Math.max(0, capacity - remaining);
-    put('conversion', readsFuel
-      ? fmt(remaining) + ' of ' + capacity.toFixed(1) + ' gal in the tank, so ' + fmt(refill) + ' gal to add.'
+    put('conversion', readsGauge
+      ? typed('gauge') + '% of the ' + capacity.toFixed(1) + '-gal tank ≈ ' + fmt(remaining) + ' gal, so ' + fmt(refill) + ' gal to add.'
       : typed('range') + ' mi ÷ ' + typed('mpg') + ' MPG ≈ ' + fmt(remaining) + ' gal already in the tank.');
     put('sub-fill', '= ' + capacity.toFixed(1) + ' − ' + fmt(remaining) + ' = ' + fmt(refill) + '\u00a0gal');
     put('leg-existing', fmt(remaining));
@@ -454,7 +466,7 @@ setTimeout(()=>document.documentElement.classList.remove('mj-wait'),5000);
   $('vehicle').addEventListener('change', render);
   $('form').addEventListener('submit', event => { event.preventDefault(); render(); });
   $('form').addEventListener('reset', () => setTimeout(render, 0));
-  // Fresh loads and Reset defaults select the GT3 at 18.0 MPG and clear the fuel field.
+  // Fresh loads and Reset defaults select the GT3 at 18.0 MPG and clear the gauge field.
   $('form').reset(); render();
 })();
 </script>
