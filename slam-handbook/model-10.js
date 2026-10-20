@@ -1,2 +1,5 @@
-/* Event camera learning models. */
-(function(){const M=window.SLAM_MODELS;})();
+(function(){const M=window.SLAM_MODELS,U=window.SLAM_UTIL,{range,line,curve,out}=U;
+M.events=p=>{let k=Math.floor(p.contrast/p.threshold+1e-8);return out([["Events",k],["Unused log contrast",(p.contrast-k*p.threshold).toFixed(2)]],"A threshold crossing in log brightness generates an event.",curve("Log change","Events",line("Count",range(0,2).map(x=>[x,Math.floor(x/p.threshold+1e-8)])),line("Selected",[[p.contrast,k]])))};
+M.warp=p=>{let d=p.speed-p.guess;return out([["Residual velocity",d.toFixed(2)+" px/ms"],["Blur RMS",(Math.abs(d)*p.window/Math.sqrt(12)).toFixed(2)+" px"]],"Correctly warping events with the true velocity removes streak dispersion.",curve("Time","Position",line("Raw",range(0,p.window).map(t=>[t,p.speed*t])),line("Warped",range(0,p.window).map(t=>[t,d*t]))))};
+M.refractory=p=>{let s=p.rate/(1+p.rate*p.dead/1000);return out([["Recorded rate",s.toFixed(0)+"/s"],["Rate retained",(100*s/p.rate).toFixed(1)+"%"]],"A non-paralyzable refractory interval limits event throughput.",curve("Input rate","Output rate",line("Dead time",range(100,2000).map(v=>[v,v/(1+v*p.dead/1000)])),line("Selected",[[p.rate,s]])))};
+})();
