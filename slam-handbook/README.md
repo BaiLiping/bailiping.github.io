@@ -1,1 +1,1 @@
-SLAM learning guide, in development.
+SLAM Handbook interactive companion is in development. All 18 chapter lessons, 54 experiment specifications, and numerical model files have been committed on this branch. A shared browser UI and offline service worker are pending integration and verification before public release.
