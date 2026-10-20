@@ -1,1 +1,5 @@
-/* Geometry and learning interaction models. */
+(function(){const M=window.SLAM_MODELS,U=window.SLAM_UTIL,{range,line,out,curve}=U;
+M.features=p=>{let good=4,bad=4+p.wrong,wg=p.good,wb=p.confidence,mu=(wg*good+wb*bad)/(wg+wb);return out([["Weighted estimate",mu.toFixed(2)],["Error from good match",(mu-good).toFixed(2)]],"Wrong learned matches still cause bias when the confidence model is overconfident.",curve("Incorrect-match weight","Estimated landmark",line("Weighted average",range(0,1).map(w=>[w,(wg*good+w*bad)/(wg+w)])),line("Current",[[wb,mu]])))};
+M.scale=p=>{let z=p.pred*p.scale;return out([["Scaled depth",z.toFixed(2)+" m"],["Depth uncertainty",(z*p.error).toFixed(2)+" m"]],"Monocular projection alone cannot fix metric scene scale. A metric cue or prior is required.",curve("Scale multiplier","Metric depth",line("Scale ambiguity",range(.2,3).map(s=>[s,p.pred*s])),line("Selected",[[p.scale,z]])))};
+M.learnedba=p=>{let x=p.init,v=[x];for(let i=0;i<p.iters;i++){x*=(1-p.gain);v.push(x)}return out([["Residual",x.toFixed(3)],["Squared loss",(x*x).toFixed(4)]],"Geometric iterations can refine a learned initialization. A poor basin or mistaken correspondences can still defeat refinement.",curve("Iteration","Pose error",line("Refinement",v.map((y,i)=>[i,y])),line("Target",[[0,0],[Math.max(1,p.iters),0]])))};
+})();
