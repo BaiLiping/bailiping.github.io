@@ -21,3 +21,8 @@ Status: reader integrated and under review; **not yet published to main**. Last 
 - Do not publish the copyrighted book itself, copied book figures, or private research material.
 
 The main branch remains unchanged while this work is on a separate development/review branch. Tests can be re-run with `node slam-handbook/test-models.cjs` from repository root.
+
+## Automation QA checkpoint (2026-10-20 21:27 UTC)
+- Inspected all 18 chapter metadata records: 3 ideas, 3 demos, and at least 2 worked checks each, with chapter-specific source references.
+- Found 54 demo keys defined across three lesson files; still to verify all interactive controls in a real browser.
+- Publication remains on hold until desktop, mobile, and offline browser checks are completed.
