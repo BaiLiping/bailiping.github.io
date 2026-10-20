@@ -170,7 +170,7 @@ function start(){
   $("lesson").innerHTML='<p role="alert">Chapter content is incomplete. Check the files and reload.</p>';return;
  }
  events();render(Math.min(18,Math.max(1,chosenChapter())),false);
- if("serviceWorker" in navigator)window.addEventListener("load",()=>navigator.serviceWorker.register("./service-worker.js").catch(e=>console.warn("Offline caching unavailable",e)));
+ if("serviceWorker" in navigator){const register=()=>navigator.serviceWorker.register("./service-worker.js").catch(e=>console.warn("Offline caching unavailable",e));if(document.readyState==="complete")register();else window.addEventListener("load",register,{once:true});}
 }
 Promise.allSettled(window.SLAM_LOADS||[]).then(start);
 })();
