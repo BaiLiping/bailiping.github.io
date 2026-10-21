@@ -7,6 +7,28 @@ const safe=x=>String(x===undefined||x===null?"":x).replace(/&/g,"&amp;").replace
 const SOURCE="https://asrl.utias.utoronto.ca/~tdb/slam/slamhandbook.pdf";
 const partNames=["I · Foundations of SLAM","II · SLAM in practice","III · From SLAM to Spatial AI"];
 const part=n=>n<=6?0:n<=12?1:2,zero=n=>String(n).padStart(2,"0");
+// Printed page starts from the 21 April 2026 handbook table of contents.
+// Only bibliographic section metadata is kept here; no book text or figures.
+const SECTION_STARTS={"1.1":20,"1.2":25,"1.3":29,"1.4":33,"1.5":35,"1.6":40,"1.7":46,"1.8":51,"2.1":53,"2.2":62,"2.3":74,"3.1":75,"3.2":78,"3.3":85,"3.4":98,"4.1":102,"4.2":103,"4.3":109,"4.4":113,"4.5":118,"5.1":119,"5.2":122,"5.3":126,"5.4":135,"5.5":145,"6.1":150,"6.2":173,"6.3":178,"7.1":193,"7.2":196,"7.3":197,"7.4":207,"7.5":215,"7.6":216,"7.7":217,"7.8":219,"7.9":222,"8.1":225,"8.2":227,"8.3":236,"8.4":240,"8.5":248,"9.1":250,"9.2":261,"9.3":269,"9.4":273,"9.5":279,"9.6":280,"10.1":282,"10.2":286,"10.3":287,"10.4":289,"10.5":293,"10.6":294,"10.7":294,"10.8":302,"11.1":304,"11.2":308,"11.3":319,"11.4":326,"11.5":330,"12.1":333,"12.2":342,"12.3":345,"12.4":348,"12.5":353,"12.6":355,"13.1":368,"13.2":374,"13.3":379,"13.4":386,"13.5":392,"13.6":393,"13.7":395,"14.1":398,"14.2":401,"14.3":409,"14.4":414,"15.1":418,"15.2":423,"15.3":432,"15.4":446,"15.5":451,"16.1":455,"16.2":456,"16.3":471,"16.4":482,"16.5":487,"17.1":491,"17.2":495,"17.3":499,"17.4":514,"18.1":521,"18.2":525,"18.3":526,"18.4":528,"18.5":532,"18.6":540,"18.7":542,"18.8":545,"18.9":547};
+const NESTED_SECTION_SPANS={"1.2.2":[27,28],"2.1.1":[54,54],"3.2.1":[78,80],"3.2.2":[81,84],"4.2.1":[104,105],"4.2.3":[107,108],"8.2.2":[231,235]};
+function sourceSpan(section,pages){
+ const [firstPage,lastPage]=String(pages).match(/\\d+/g).map(Number);
+ if(NESTED_SECTION_SPANS[section])return NESTED_SECTION_SPANS[section];
+ const first=SECTION_STARTS[section],prefix=section.split(".")[0]+".";
+ if(!Number.isFinite(first))return [firstPage,lastPage];
+ const next=Object.entries(SECTION_STARTS).filter(([k,v])=>k.startsWith(prefix)&&v>first).map(x=>x[1]);
+ return [Math.max(firstPage,first),Math.min(lastPage,next.length?Math.min(...next)-1:lastPage)];
+}
+function sourceSpans(ref,pages){
+ const tokens=String(ref).match(/\\d+\\.\\d+(?:\\.\\d+)?/g)||[];
+ if(!tokens.length)return [sourceSpan("",pages)];
+ if(tokens.length>1&&/[–-]/.test(ref)&&!ref.includes(",")){
+  const first=sourceSpan(tokens[0],pages),last=sourceSpan(tokens[tokens.length-1],pages);
+  return [[first[0],last[1]]];
+ }
+ return tokens.map(t=>sourceSpan(t,pages));
+}
+const printedSpan=([a,b])=>a===b?String(a):a+"–"+b;
 const STORAGE="slam-handbook-learning-guide-v1";
 const state={n:1,done:{},notes:{},nav:false};
 try{const v=JSON.parse(localStorage.getItem(STORAGE)||"{}");if(v&&typeof v==="object"){state.done=v.done||{};state.notes=v.notes||{}}}catch(e){console.warn("No readable saved progress",e)}
@@ -66,7 +88,7 @@ function experiment(c,d,index){
    +'<input id="'+safe(id)+'" data-param="'+safe(s.key)+'" type="range" min="'+safe(s.min)+'" max="'+safe(s.max)+'" step="'+safe(s.step)+'" value="'+safe(s.value)+'" aria-label="'+safe(s.label)+'">'
    +'<div class="endpoints"><span>'+safe(format(s.min,s))+'</span><span>'+safe(format(s.max,s))+'</span></div></div>';
  }).join("");
- const page=Number(c.pages.match(/^\d+/)?.[0]||0)+16;
+ const citationSpans=sourceSpans(d.ref,c.pages),page=citationSpans[0][0]+16;
  return '<section class="experiment" id="experiment-'+index+'" data-exp-index="'+index+'">'
   +'<div class="exp-head"><h3>'+safe(d.title)+'</h3><span class="exp-no">Experiment '+index+' of '+c.demos.length+'</span></div>'
   +'<p class="exp-question">'+safe(d.question)+'</p><div class="lab-grid">'
@@ -76,7 +98,7 @@ function experiment(c,d,index){
   +'<p class="insight" id="'+prefix+'-insight"></p>'
   +'<p class="exp-prompt"><strong>Try this:</strong> '+safe(d.tryThis)+'</p>'
   +'<p class="exp-limit"><b>Model boundary:</b> '+safe(d.limit)+'</p>'
-  +'<a class="exp-citation" href="'+SOURCE+'#page='+page+'" target="_blank" rel="noopener noreferrer">Handbook '+safe(d.ref)+' (chapter '+c.n+', printed pp. '+safe(c.pages)+') ↗</a>'
+  +'<a class="exp-citation" href="'+SOURCE+'#page='+page+'" target="_blank" rel="noopener noreferrer">Handbook '+safe(d.ref)+' (printed '+citationSpans.map(s=>'pp. '+printedSpan(s)).join(', ')+') ↗</a>'
   +'</section>';
 }
 function recalc(c,index){
