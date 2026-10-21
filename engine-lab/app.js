@@ -245,7 +245,7 @@ document.querySelectorAll('[data-zoom-engine]').forEach((button) => {
     const zoomed = scroller.classList.toggle('is-zoomed');
     button.setAttribute('aria-pressed', String(zoomed));
     button.querySelector('span').textContent = zoomed ? 'Fit whole diagram' : 'Enlarge diagram';
-    if (zoomed) requestAnimationFrame(() => centerDiagram(engine, selected[engine]));
+    if (zoomed) requestAnimationFrame(() => centerDiagram(engine, state.view === 'compare' ? 'turbine' : selected[engine]));
     else scroller.scrollLeft = 0;
     announce(zoomed ? 'Diagram enlarged. Swipe horizontally to explore; choosing a component brings it into view.' : 'Whole engine diagram shown.');
   });
