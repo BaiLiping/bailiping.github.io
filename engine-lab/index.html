@@ -1,0 +1,117 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Jet &amp; Turbocharged Engines | Bai Liping</title>
+  <meta name="description" content="Explore how jet and turbocharged car engines work with animated cutaways, a four-stroke walkthrough, and interactive airflow and shaft-power diagrams.">
+  <meta name="theme-color" content="#f7f5ef">
+  <link rel="canonical" href="https://bailiping.com/engine-lab/">
+  <link rel="icon" href="/favicon.ico">
+  <link rel="stylesheet" href="./style.css">
+  <script type="module" src="./app.js"></script>
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to engine lab</a>
+  <header class="site-header">
+    <nav class="header-inner" aria-label="Site navigation">
+      <a class="brand" href="/" aria-label="Bai Liping home"><span class="brand-mark">BLP</span><span>bailiping.com</span></a>
+      <a class="back-link" href="/#group-random-thoughts"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m14 6-6 6 6 6"/></svg>Random thoughts</a>
+    </nav>
+  </header>
+
+  <main id="main">
+    <div class="intro">
+      <h1>Two engines. One clever idea.</h1>
+      <p>Follow the air. See how a jet makes thrust and a car turns its wheels.</p>
+    </div>
+
+    <noscript><style>.toolbar,.engine-panels,.inspector,.interaction-hints,.footer-actions{display:none!important}#comparison,.sources:not([open]){display:block!important}</style><div class="notice">Enable JavaScript to run the interactive cutaways. The comparison and source notes below explain both engines without animation.</div></noscript>
+
+    <div class="toolbar">
+      <div class="tabs" role="tablist" aria-label="Engine view">
+        <button id="tab-jet" role="tab" aria-selected="true" aria-controls="engine-panels" data-view="jet">Jet engine</button>
+        <button id="tab-car" role="tab" aria-selected="false" aria-controls="engine-panels" tabindex="-1" data-view="car">Turbocharged car</button>
+        <button id="tab-compare" role="tab" aria-selected="false" aria-controls="engine-panels" tabindex="-1" data-view="compare">Compare</button>
+      </div>
+      <div class="playback">
+        <button class="button playback-button" id="play-pause" type="button"><svg viewBox="0 0 20 20" aria-hidden="true" class="pause-icon"><path d="M6 4v12M14 4v12"/></svg><span>Pause</span></button>
+        <label class="check-control"><input id="slow-motion" type="checkbox"><span>Slow motion</span></label>
+      </div>
+    </div>
+
+    <section id="engine-panels" class="engine-panels" role="tabpanel" aria-labelledby="tab-jet" tabindex="0">
+      <article id="jet-panel" class="engine-panel" aria-labelledby="jet-title">
+        <div class="panel-heading">
+          <div class="panel-title"><h2 id="jet-title">Jet engine</h2><span>Continuous combustion</span></div>
+          <label class="switch-control"><span>Show turbofan bypass</span><input id="bypass" type="checkbox" role="switch"><span class="switch-track" aria-hidden="true"></span></label>
+        </div>
+        <div class="diagram-tools"><button type="button" class="text-button diagram-zoom" data-zoom-engine="jet" aria-pressed="false" aria-controls="jet-scroll"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10" cy="10" r="6"/><path d="m15 15 5 5M7 10h6m-3-3v6"/></svg><span>Enlarge diagram</span></button></div>
+        <div class="diagram-scroll" id="jet-scroll"><div id="jet-scene" class="engine-scene" aria-label="Interactive jet engine diagram"></div></div>
+        <p id="bypass-note" class="diagram-note" hidden>A fan adds an outer stream that goes around the hot core. The core and bypass streams both produce thrust. A separate turbine drives the fan.</p>
+        <div class="control-band">
+          <div class="demand-control"><label for="jet-demand">Power demand</label><div class="slider-stack"><input type="range" id="jet-demand" min="0" max="100" step="1" value="45" aria-valuetext="45 percent power demand"><div class="range-ends"><span>Idle</span><output for="jet-demand" id="jet-demand-value">45%</output><span>High</span></div></div></div>
+          <div class="response"><span>Thrust response</span><div class="response-bars" id="jet-response" role="meter" aria-label="Relative thrust response" aria-valuemin="0" aria-valuemax="100" aria-valuenow="45"></div></div>
+          <div class="legend" aria-label="Diagram legend"><span><i class="dot fresh"></i>Fresh air</span><span><i class="dot hot"></i>Hot gas</span><span><i class="shaft-line"></i>Shaft power</span></div>
+        </div>
+      </article>
+
+      <article id="car-panel" class="engine-panel" aria-labelledby="car-title" hidden>
+        <div class="panel-heading"><div class="panel-title"><h2 id="car-title">Turbocharged car</h2><span>One petrol cylinder · four strokes</span></div><span class="cycle-label" id="cycle-label">0° / 720°</span></div>
+        <div class="diagram-tools"><button type="button" class="text-button diagram-zoom" data-zoom-engine="car" aria-pressed="false" aria-controls="car-scroll"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10" cy="10" r="6"/><path d="m15 15 5 5M7 10h6m-3-3v6"/></svg><span>Enlarge diagram</span></button></div>
+        <div class="diagram-scroll" id="car-scroll"><div id="car-scene" class="engine-scene" aria-label="Interactive turbocharged car engine diagram"></div></div>
+        <div class="stroke-controls" aria-label="Four-stroke walkthrough">
+          <div class="stroke-buttons"><button type="button" data-stroke="0" aria-pressed="true"><span>1</span>Intake</button><button type="button" data-stroke="1" aria-pressed="false"><span>2</span>Compression</button><button type="button" data-stroke="2" aria-pressed="false"><span>3</span>Power</button><button type="button" data-stroke="3" aria-pressed="false"><span>4</span>Exhaust</button></div>
+          <button class="button next-stroke" type="button" id="next-stroke">Next stroke<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12h15m-6-6 6 6-6 6"/></svg></button>
+        </div>
+        <div class="stroke-description"><strong id="stroke-title">Intake</strong><span id="stroke-description">The piston moves down. The intake valve opens and fresh charge enters.</span><span id="valve-state">Intake open · exhaust closed</span></div>
+        <div class="control-band">
+          <div class="demand-control"><label for="car-demand">Power demand</label><div class="slider-stack"><input type="range" id="car-demand" min="0" max="100" step="1" value="45" aria-valuetext="45 percent power demand"><div class="range-ends"><span>Idle</span><output for="car-demand" id="car-demand-value">45%</output><span>High</span></div></div></div>
+          <div class="response"><span>Boost response</span><div class="response-bars" id="car-response" role="meter" aria-label="Relative boost response" aria-valuemin="0" aria-valuemax="100" aria-valuenow="45"></div></div>
+          <div class="legend" aria-label="Diagram legend"><span><i class="dot fresh"></i>Fresh air</span><span><i class="dot hot"></i>Hot gas</span><span><i class="shaft-line"></i>Shaft power</span></div>
+        </div>
+      </article>
+    </section>
+
+    <div class="interaction-hints"><span>Click a labeled part to explore it.</span><label class="check-control power-control"><input type="checkbox" id="power-view"><span>Highlight shaft power</span></label><button class="text-button" id="reset" type="button">Reset</button></div>
+
+    <section class="inspector" id="inspector" aria-labelledby="inspector-title">
+      <div class="component-picker"><h2 id="inspector-title">Explore a component</h2><div id="component-buttons" class="component-buttons" aria-label="Choose an engine component"></div></div>
+      <div class="component-copy"><h3 id="component-title">The compressor</h3><p id="component-description">Rotating blades squeeze incoming air. The turbine supplies the power through a shared shaft.</p><p id="component-detail" class="detail-copy">Higher-pressure air enters the combustor, where fuel is added and burned.</p><div class="takeaway"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 8h10l-3-3m1 11H6l3 3M18 8l-3 3M6 16l3-3"/></svg><p>Same mechanism: a turbine powers a compressor. Different output: thrust or crankshaft power.</p></div></div>
+    </section>
+
+    <section class="comparison" id="comparison" aria-labelledby="comparison-title" hidden>
+      <h2 id="comparison-title">Shared machinery. Different jobs.</h2>
+      <p>Both burn fuel in compressed air. In both, hot gas spins a turbine that drives a compressor. The useful output leaves the engines in different ways.</p>
+      <div class="comparison-table"><table><caption class="sr-only">Comparison of a jet engine and a turbocharged piston engine</caption><thead><tr><th scope="col">What to follow</th><th scope="col">Jet engine</th><th scope="col">Turbocharged car</th></tr></thead><tbody>
+        <tr><th scope="row">Useful output</th><td><strong>Thrust</strong> from accelerating air backward.</td><td><strong>Crankshaft power</strong> from gas pushing the pistons.</td></tr>
+        <tr><th scope="row">Combustion</th><td>Continuous, in a separate combustor.</td><td>Repeated, inside each cylinder.</td></tr>
+        <tr><th scope="row">Compression</th><td>Rotating compressor stages squeeze the air.</td><td>The turbo compresses intake air; the piston compresses it further.</td></tr>
+        <tr><th scope="row">Turbine's job</th><td>Drive the compressor; a turbofan also drives a fan.</td><td>Drive the turbo compressor using the cylinders' exhaust.</td></tr>
+        <tr><th scope="row">Mechanical connection</th><td>A shaft connects each turbine to its compressor or fan.</td><td>The turbo shaft is separate from the engine's crankshaft.</td></tr>
+      </tbody></table></div>
+      <p class="comparison-note">A turbofan is still a jet engine. A turboprop or turboshaft uses related gas-turbine machinery to deliver shaft power; those variants are outside this demo.</p>
+    </section>
+
+    <div class="footer-actions"><button type="button" class="text-button compare-link" id="compare-link">How they compare<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12h15m-6-6 6 6-6 6"/></svg></button><button type="button" class="text-button" id="sources-link" aria-controls="sources" aria-expanded="false">Sources &amp; model notes<svg viewBox="0 0 24 24" aria-hidden="true"><path d="m8 5 7 7-7 7"/></svg></button></div>
+
+    <details class="sources" id="sources">
+      <summary>Sources &amp; model notes</summary>
+      <div class="source-columns"><div><h2>How to read the demo</h2>
+      <p>These are simplified teaching cutaways, shown in slow motion. Dots trace gas paths; their spacing and speed are not measurements of pressure, temperature, or flow. Green shafts show mechanical power, not gas passages.</p>
+      <p><strong>Power demand</strong> changes an illustrative operating state. Both rotors respond gradually. Car boost lags a change in demand because the turbo needs time to speed up. The response bars are normalized within each engine; they are not comparable performance measurements. Their time constants are animation choices.</p>
+      <p><strong>Slow motion</strong> changes playback speed only. Pause freezes both the mechanism and its response. Selecting a stroke pauses at that stroke's midpoint. The car is a four-stroke petrol engine: intake, compression, power, exhaust over two crankshaft revolutions (720°). The simplified valve timing omits overlap; a real engine's timing and ignition vary.</p>
+      <p>The turbo and crankshaft rotate independently. The intercooler removes heat from compressed intake air. In the jet, combustion stays continuous and all stages operate together. The optional turbofan view schematically shows a separate fan turbine and shaft; blade counts and geometry are illustrative.</p>
+      </div><div><h2>Learn more</h2><ol>
+      <li><a href="https://www.grc.nasa.gov/www/k-12/BGP/turbth.html">NASA · Turbojet thrust</a><span>Compressor, combustor, turbine, shaft, and nozzle.</span></li>
+      <li><a href="https://www.grc.nasa.gov/www/k-12/airplane/turbfan.html">NASA · Turbofan thrust</a><span>Core flow, bypass flow, and the fan's turbine drive.</span></li>
+      <li><a href="https://www1.grc.nasa.gov/beginners-guide-to-aeronautics/internal-combustion-engine-otto-cycle/">NASA · The four-stroke engine</a><span>Pistons, crankshaft, and the repeated combustion cycle.</span></li>
+      <li><a href="https://www.garrettmotion.com/turbocharger-technology/how-a-turbo-works/">Garrett · How a turbo works</a><span>The separate intake and exhaust sides, and charge-air cooling.</span></li>
+      <li><a href="https://www.garrettmotion.com/news/newsroom/article/turbocharging-facts-from-garrett-motion/">Garrett · Turbocharging facts</a><span>Exhaust-driven compression and turbo lag.</span></li>
+      </ol><p class="source-caption">Original interactive illustrations. No measured engine data or performance prediction.</p></div></div>
+    </details>
+    <footer class="page-footer"><span>A small engine lab, for a big idea.</span><a href="/#group-random-thoughts">Back to Random thoughts</a></footer>
+    <div class="sr-only" role="status" aria-live="polite" id="status"></div>
+  </main>
+</body>
+</html>
