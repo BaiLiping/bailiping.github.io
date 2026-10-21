@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Jet &amp; Turbocharged Engines | Bai Liping</title>
-  <meta name="description" content="Explore how jet and turbocharged car engines work with animated cutaways, a four-stroke walkthrough, and interactive airflow and shaft-power diagrams.">
+  <meta name="description" content="Compare how exhaust drives turbines in jet and turbocharged car engines. Follow hot gas, shaft power, intake boost, and jet thrust in interactive cutaways.">
   <meta name="theme-color" content="#f7f5ef">
   <link rel="canonical" href="https://bailiping.com/engine-lab/">
   <link rel="icon" href="/favicon.ico">
@@ -23,7 +23,7 @@
   <main id="main">
     <div class="intro">
       <h1>Two engines. One clever idea.</h1>
-      <p>Follow the air. See how a jet makes thrust and a car turns its wheels.</p>
+      <p>Follow the exhaust. See how hot gas powers a turbine in both engines.</p>
     </div>
 
     <noscript><style>.toolbar,.engine-panels,.inspector,.interaction-hints,.footer-actions{display:none!important}#comparison,.sources:not([open]){display:block!important}</style><div class="notice">Enable JavaScript to run the interactive cutaways. The comparison and source notes below explain both engines without animation.</div></noscript>
@@ -32,7 +32,7 @@
       <div class="tabs" role="tablist" aria-label="Engine view">
         <button id="tab-jet" role="tab" aria-selected="true" aria-controls="engine-panels" data-view="jet">Jet engine</button>
         <button id="tab-car" role="tab" aria-selected="false" aria-controls="engine-panels" tabindex="-1" data-view="car">Turbocharged car</button>
-        <button id="tab-compare" role="tab" aria-selected="false" aria-controls="engine-panels" tabindex="-1" data-view="compare">Compare</button>
+        <button id="tab-compare" role="tab" aria-selected="false" aria-controls="engine-panels" tabindex="-1" data-view="compare">Compare exhaust</button>
       </div>
       <div class="playback">
         <button class="button playback-button" id="play-pause" type="button"><svg viewBox="0 0 20 20" aria-hidden="true" class="pause-icon"><path d="M6 4v12M14 4v12"/></svg><span>Pause</span></button>
@@ -40,11 +40,21 @@
       </div>
     </div>
 
+    <section class="exhaust-intro compare-only" aria-labelledby="exhaust-title">
+      <h2 id="exhaust-title">Exhaust turns the turbine. The shaft carries the power.</h2>
+      <p>Both use hot gas to turn a turbine, then a shaft to power a compressor. Follow the <strong class="gas-key">orange gas</strong> through each highlighted turbine and the <strong class="power-key">green shaft</strong> back to the compressor.</p>
+    </section>
+
     <section id="engine-panels" class="engine-panels" role="tabpanel" aria-labelledby="tab-jet" tabindex="0">
       <article id="jet-panel" class="engine-panel" aria-labelledby="jet-title">
         <div class="panel-heading">
           <div class="panel-title"><h2 id="jet-title">Jet engine</h2><span>Continuous combustion</span></div>
           <label class="switch-control"><span>Show turbofan bypass</span><input id="bypass" type="checkbox" role="switch"><span class="switch-track" aria-hidden="true"></span></label>
+        </div>
+        <div class="exhaust-summary compare-only">
+          <p class="exhaust-route" id="jet-exhaust-route">Combustor → turbine → nozzle</p>
+          <h3 id="jet-exhaust-heading">Turbine power, then nozzle thrust.</h3>
+          <p id="jet-exhaust-copy">Hot gas gives up some energy to drive the compressor through the turbine shaft. Gas leaving the turbine still has energy to accelerate through the nozzle.</p>
         </div>
         <div class="diagram-tools"><button type="button" class="text-button diagram-zoom" data-zoom-engine="jet" aria-pressed="false" aria-controls="jet-scroll"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10" cy="10" r="6"/><path d="m15 15 5 5M7 10h6m-3-3v6"/></svg><span>Enlarge diagram</span></button></div>
         <div class="diagram-scroll" id="jet-scroll"><div id="jet-scene" class="engine-scene" aria-label="Interactive jet engine diagram"></div></div>
@@ -58,6 +68,11 @@
 
       <article id="car-panel" class="engine-panel" aria-labelledby="car-title" hidden>
         <div class="panel-heading"><div class="panel-title"><h2 id="car-title">Turbocharged car</h2><span>One petrol cylinder · four strokes</span></div><span class="cycle-label" id="cycle-label">0° / 720°</span></div>
+        <div class="exhaust-summary compare-only">
+          <p class="exhaust-route">Cylinder → turbo turbine → exhaust pipe</p>
+          <h3>Recover energy after the piston.</h3>
+          <p>The gas has already pushed the piston. Some of its remaining energy turns the turbo turbine, whose shaft powers the intake compressor. The gas then leaves through the exhaust system.</p>
+        </div>
         <div class="diagram-tools"><button type="button" class="text-button diagram-zoom" data-zoom-engine="car" aria-pressed="false" aria-controls="car-scroll"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10" cy="10" r="6"/><path d="m15 15 5 5M7 10h6m-3-3v6"/></svg><span>Enlarge diagram</span></button></div>
         <div class="diagram-scroll" id="car-scroll"><div id="car-scene" class="engine-scene" aria-label="Interactive turbocharged car engine diagram"></div></div>
         <div class="stroke-controls" aria-label="Four-stroke walkthrough">
@@ -73,27 +88,28 @@
       </article>
     </section>
 
-    <div class="interaction-hints"><span>Click a labeled part to explore it.</span><label class="check-control power-control"><input type="checkbox" id="power-view"><span>Highlight shaft power</span></label><button class="text-button" id="reset" type="button">Reset</button></div>
+    <div class="interaction-hints"><span id="interaction-hint">Click a labeled part to explore it.</span><label class="check-control power-control"><input type="checkbox" id="power-view"><span>Highlight shaft power</span></label><button class="text-button" id="reset" type="button">Reset</button></div>
 
     <section class="inspector" id="inspector" aria-labelledby="inspector-title">
       <div class="component-picker"><h2 id="inspector-title">Explore a component</h2><div id="component-buttons" class="component-buttons" aria-label="Choose an engine component"></div></div>
-      <div class="component-copy"><h3 id="component-title">The compressor</h3><p id="component-description">Rotating blades squeeze incoming air. The turbine supplies the power through a shared shaft.</p><p id="component-detail" class="detail-copy">Higher-pressure air enters the combustor, where fuel is added and burned.</p><div class="takeaway"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 8h10l-3-3m1 11H6l3 3M18 8l-3 3M6 16l3-3"/></svg><p>Same mechanism: a turbine powers a compressor. Different output: thrust or crankshaft power.</p></div></div>
+      <div class="component-copy"><h3 id="component-title">The compressor</h3><p id="component-description">Rotating blades squeeze incoming air. The turbine supplies the power through a shared shaft.</p><p id="component-detail" class="detail-copy">Higher-pressure air enters the combustor, where fuel is added and burned.</p><div class="takeaway"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 8h10l-3-3m1 11H6l3 3M18 8l-3 3M6 16l3-3"/></svg><p>In both engines, hot gas turns a turbine. Its shaft transfers that energy to a compressor.</p></div></div>
     </section>
 
     <section class="comparison" id="comparison" aria-labelledby="comparison-title" hidden>
-      <h2 id="comparison-title">Shared machinery. Different jobs.</h2>
-      <p>Both burn fuel in compressed air. In both, hot gas spins a turbine that drives a compressor. The useful output leaves the engines in different ways.</p>
-      <div class="comparison-table"><table><caption class="sr-only">Comparison of a jet engine and a turbocharged piston engine</caption><thead><tr><th scope="col">What to follow</th><th scope="col">Jet engine</th><th scope="col">Turbocharged car</th></tr></thead><tbody>
-        <tr><th scope="row">Useful output</th><td><strong>Thrust</strong> from accelerating air backward.</td><td><strong>Crankshaft power</strong> from gas pushing the pistons.</td></tr>
-        <tr><th scope="row">Combustion</th><td>Continuous, in a separate combustor.</td><td>Repeated, inside each cylinder.</td></tr>
-        <tr><th scope="row">Compression</th><td>Rotating compressor stages squeeze the air.</td><td>The turbo compresses intake air; the piston compresses it further.</td></tr>
-        <tr><th scope="row">Turbine's job</th><td>Drive the compressor; a turbofan also drives a fan.</td><td>Drive the turbo compressor using the cylinders' exhaust.</td></tr>
-        <tr><th scope="row">Mechanical connection</th><td>A shaft connects each turbine to its compressor or fan.</td><td>The turbo shaft is separate from the engine's crankshaft.</td></tr>
+      <h2 id="comparison-title">Before, through, and after the turbine.</h2>
+      <p>The shared idea is to extract energy from hot gas and turn it into shaft power. The difference is what the gas has already done, and what it does next.</p>
+      <div class="comparison-table"><table><caption class="sr-only">How exhaust and turbines are used in a turbojet and a turbocharged car engine</caption><thead><tr><th scope="col">Follow the energy</th><th scope="col">Jet engine · basic turbojet</th><th scope="col">Turbocharged car</th></tr></thead><tbody>
+        <tr><th scope="row">Before the turbine</th><td>Fuel burns in the combustor, adding energy to compressed air.</td><td>Burning fuel produces gas that has already expanded against the piston and turned the crankshaft.</td></tr>
+        <tr><th scope="row">What the turbine does</th><td>Hot gas expands through the blades and turns the rotor, giving up some energy.</td><td>Exhaust expands through the turbo turbine and turns its rotor, giving up some remaining energy.</td></tr>
+        <tr><th scope="row">Where turbine power goes</th><td>A shaft drives the compressor at the front of the engine.</td><td>The turbo shaft drives the intake compressor. It is separate from the engine's crankshaft.</td></tr>
+        <tr><th scope="row">After the turbine</th><td>Gas expands and accelerates through the nozzle into a fast rearward jet.</td><td>Gas continues through the exhaust system and leaves the tailpipe.</td></tr>
+        <tr><th scope="row">How this helps propulsion</th><td><strong>Exhaust produces thrust.</strong> Accelerating gas backward pushes the engine forward.</td><td><strong>Exhaust powers intake boost.</strong> More fresh air allows more fuel to burn. Pistons and the crankshaft supply power to the wheels.</td></tr>
       </tbody></table></div>
-      <p class="comparison-note">A turbofan is still a jet engine. A turboprop or turboshaft uses related gas-turbine machinery to deliver shaft power; those variants are outside this demo.</p>
+      <p class="comparison-note"><strong>With turbofan bypass enabled:</strong> hot core gas also powers a turbine connected to the fan. The fan accelerates air around the core, adding thrust. That bypass air does not pass through the combustor.</p>
+      <p class="comparison-note"><strong>Separate gas paths, a shared shaft:</strong> the car turbo transfers energy from exhaust to fresh intake air through its shaft. The two gas streams use separate passages. Tailpipe thrust is not the car's main source of propulsion.</p>
     </section>
 
-    <div class="footer-actions"><button type="button" class="text-button compare-link" id="compare-link">How they compare<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12h15m-6-6 6 6-6 6"/></svg></button><button type="button" class="text-button" id="sources-link" aria-controls="sources" aria-expanded="false">Sources &amp; model notes<svg viewBox="0 0 24 24" aria-hidden="true"><path d="m8 5 7 7-7 7"/></svg></button></div>
+    <div class="footer-actions"><button type="button" class="text-button compare-link" id="compare-link">Compare exhaust use<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12h15m-6-6 6 6-6 6"/></svg></button><button type="button" class="text-button" id="sources-link" aria-controls="sources" aria-expanded="false">Sources &amp; model notes<svg viewBox="0 0 24 24" aria-hidden="true"><path d="m8 5 7 7-7 7"/></svg></button></div>
 
     <details class="sources" id="sources">
       <summary>Sources &amp; model notes</summary>

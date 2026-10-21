@@ -38,7 +38,7 @@ Google decides which pages to index and when.
 
 ## Structure
 
-- `/engine-lab/` is an interactive comparison of jet and turbocharged car engines, with animated cutaways, a four-stroke walkthrough, and airflow and shaft-power diagrams. It is listed under Random thoughts.
+- `/engine-lab/` compares how exhaust drives turbines in jet and turbocharged car engines, with animated cutaways, a four-stroke walkthrough, and gas-flow and shaft-power diagrams. It is listed under Random thoughts.
 
 - `/cramer-rao-bound/` is a 23-slide offline-capable presentation on the Cramér–Rao Bound, with live Gaussian-sampling, bias–variance, and localization-geometry labs, presenter notes, PDF and PowerPoint downloads. It is listed under Random thoughts and is separate from the radio-measurements CRB deck. Build and test commands are in `cramer-rao-bound/README.md`.
 

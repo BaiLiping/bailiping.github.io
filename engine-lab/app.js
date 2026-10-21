@@ -12,14 +12,14 @@ const parts = {
     { id: 'intake', name: 'The intake', text: 'The intake guides outside air into the engine.', detail: 'Air supplies the oxygen for combustion. In turbofan mode, the front fan divides the flow into core air and bypass air.' },
     { id: 'compressor', name: 'The compressor', text: 'Rotating blades squeeze incoming air. The turbine supplies the power through a shared shaft.', detail: 'Higher-pressure air enters the combustor, where fuel is added and burned.' },
     { id: 'combustor', name: 'The combustor', text: 'Fuel burns continuously in the compressed air, adding heat to the flowing gas.', detail: 'All engine stages operate at the same time. The combustor mainly raises temperature; pressure drops slightly across it.' },
-    { id: 'turbine', name: 'The turbine', text: 'Hot gas expands through the turbine, turning its blades and powering the compressor.', detail: 'The shaft carries mechanical power. A turbofan also has a turbine driving its fan; gas does not travel through either shaft.' },
-    { id: 'nozzle', name: 'The nozzle', text: 'The remaining gas expands and accelerates out the back. The engine experiences thrust in the opposite direction.', detail: 'With airflow moving right in this drawing, forward thrust points left. In a turbofan, the bypass stream also contributes thrust.' },
+    { id: 'turbine', name: 'The turbine', text: 'Hot gas expands through the turbine blades, giving up energy and turning the rotor. The shaft uses that power to drive the compressor.', detail: 'Gas leaving the turbine still has energy for the nozzle. In a turbofan, hot core gas also powers a turbine that drives the fan. The shafts carry mechanical power; gas flows around them.' },
+    { id: 'nozzle', name: 'The nozzle', text: 'Gas leaving the turbine expands and accelerates through the nozzle. The engine produces thrust in the opposite direction.', detail: 'The turbine extracts energy to turn a shaft; the nozzle converts remaining gas energy into a fast jet. With flow moving right here, forward thrust points left. A turbofan also gains thrust from bypass air.' },
   ],
   car: [
     { id: 'compressor', name: 'The compressor', text: 'The turbo compressor packs more fresh air into the engine. More oxygen allows more fuel to be burned.', detail: 'It is driven by the exhaust turbine through the turbo shaft. Intake air and exhaust use separate passages.' },
     { id: 'intercooler', name: 'The intercooler', text: 'Compressing air heats it up. The intercooler removes some of that heat before the air reaches the cylinder.', detail: 'Cooling increases air density at a given pressure. The piston then compresses the trapped charge further.' },
     { id: 'cylinder', name: 'The cylinder', text: 'Fuel burns in the cylinder. Expanding gas pushes the piston and turns the crankshaft.', detail: 'Follow intake, compression, power, and exhaust over two crankshaft revolutions. Select a stroke to pause and inspect it.' },
-    { id: 'turbine', name: 'The exhaust turbine', text: 'Exhaust leaving the cylinder spins the turbine. Its shaft turns the turbo compressor.', detail: 'Increase power demand to watch boost respond gradually. The turbo recovers exhaust energy, and also creates exhaust backpressure.' },
+    { id: 'turbine', name: 'The exhaust turbine', text: 'The gas has already pushed the piston. It now expands through the turbo turbine, giving up some remaining energy to turn the rotor and drive the intake compressor.', detail: 'Gas then leaves through the exhaust system. Only shaft power passes to the compressor; exhaust and intake air stay in separate passages. The turbo also creates exhaust backpressure.' },
     { id: 'crankshaft', name: 'The crankshaft', text: 'A connecting rod turns the piston’s up-and-down motion into crankshaft rotation.', detail: 'The drivetrain carries that power to the wheels. The turbo shaft is separate; it has no mechanical connection to the crankshaft in this conventional arrangement.' },
   ],
 };
@@ -137,8 +137,9 @@ function setView(view, updateHash = true) {
   $('#engine-panels').setAttribute('aria-labelledby', `tab-${view}`);
   $('#compare-link').hidden = view === 'compare';
   if (view !== 'compare') showInspector(view);
-  jetScene.select(selected.jet);
-  carScene.select(selected.car);
+  jetScene.select(view === 'compare' ? 'turbine' : selected.jet);
+  carScene.select(view === 'compare' ? 'turbine' : selected.car);
+  $('#interaction-hint').textContent = view === 'compare' ? 'Both turbines are highlighted. Click one to explore how the gas turns it.' : 'Click a labeled part to explore it.';
   if (updateHash && location.hash !== `#${view}`) history.replaceState(null, '', `#${view}`);
   render();
 }
@@ -168,10 +169,16 @@ $('#power-view').addEventListener('change', (event) => {
   render();
   announce(state.powerView ? 'Shaft power highlighted. Green mechanical connections transfer power; gas follows separate passages.' : 'Airflow view restored.');
 });
-$('#bypass').addEventListener('change', (event) => {
-  state.bypass = event.target.checked;
+function syncJetMode() {
   $('#bypass-note').hidden = !state.bypass;
   $('#jet-title').textContent = state.bypass ? 'Turbofan engine' : 'Jet engine';
+  $('#jet-exhaust-route').textContent = state.bypass ? 'Hot core gas → turbines → core nozzle' : 'Combustor → turbine → nozzle';
+  $('#jet-exhaust-heading').textContent = state.bypass ? 'Turbine power drives the fan, too.' : 'Turbine power, then nozzle thrust.';
+  $('#jet-exhaust-copy').textContent = state.bypass ? 'Hot core gas drives turbines connected to the compressor and the fan. The fan accelerates bypass air around the core; this air and the core exhaust both produce thrust.' : 'Hot gas gives up some energy to drive the compressor through the turbine shaft. Gas leaving the turbine still has energy to accelerate through the nozzle.';
+}
+$('#bypass').addEventListener('change', (event) => {
+  state.bypass = event.target.checked;
+  syncJetMode();
   render();
   announce(state.bypass ? 'Turbofan bypass shown. The fan sends some air around the hot core.' : 'Basic turbojet shown.');
 });
@@ -204,8 +211,7 @@ $('#reset').addEventListener('click', () => {
   $('#slow-motion').checked = false;
   $('#bypass').checked = false;
   $('#power-view').checked = false;
-  $('#bypass-note').hidden = true;
-  $('#jet-title').textContent = 'Jet engine';
+  syncJetMode();
   for (const engine of ['jet', 'car']) {
     $(`#${engine}-demand`).value = '45';
     $(`#${engine}-demand-value`).textContent = '45%';
