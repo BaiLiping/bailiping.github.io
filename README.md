@@ -38,16 +38,72 @@ Google decides which pages to index and when.
 
 ## Flight tracker
 
-The homepage **Tools** section links to `/flight-tracker/`, a static flight-number
-and departure-date lookup. It creates direct links to Flightradar24 flight
-history and FlightAware status/history; the chosen date is retained in a
-shareable query string. On the provider sites, select the matching local
-departure date. The static page cannot independently verify flight status,
-departure/arrival delays, or cancellation without a licensed data feed and a
-server-side integration. Do not place provider API keys in browser JavaScript.
+The homepage **Tools** section links to `/flight-tracker/`. It accepts a
+flight number and departure date and has two embedded sections:
 
-Verify the lookup logic with `node tests/flight-tracker.test.cjs` and regenerate
-search-discovery files when changing any page metadata.
+- **Historical performance:** the ten preceding calendar days, with a delay
+  chart, a daily table, actual departure/arrival delays, and arrival on-time
+  statistics. Missing records are explicitly marked as unavailable, never
+  treated as on time or cancelled.
+- **Current status:** the selected day's flight(s), status, route, and scheduled,
+  estimated, and actual gate-out and gate-in times (UTC), plus available delay
+  minutes. Delays use actual times when known or clearly labeled estimates.
+
+FlightAware AeroAPI is the supported data source. Its **Standard or Premium**
+subscription is needed for the historical endpoint. The Personal tier provides
+current flight data but not historical access. An API key and a separate secure
+backend are required; the GitHub Pages frontend **must never expose a key**.
+Flightradar24's public API does not provide scheduled times, so it cannot
+independently supply comparable delay metrics. The app deliberately contains
+no iframe or external result link: records render directly in the page.
+
+### Configure live embedded data
+
+1. Create a FlightAware AeroAPI account with a tier that includes history,
+   then acquire an API key at https://www.flightaware.com/commercial/aeroapi/.
+   Usage is billable; verify current pricing and access terms first.
+2. Create a Cloudflare account and authenticate Wrangler. From the repository
+   root run:
+
+   ```sh
+   cd flight-tracker/worker
+   npx wrangler login
+   npx wrangler secret put FLIGHTAWARE_API_KEY
+   npx wrangler deploy
+   ```
+
+3. Copy the deployed Worker HTTPS origin (no trailing slash) into the public
+   `flight-tracker/config.js`, e.g.:
+
+   ```js
+   window.FLIGHT_TRACKER_API_URL = "https://bailiping-flight-tracker.example.workers.dev";
+   ```
+
+   Deploy the updated GitHub Pages site. The real hostname must replace the
+   example above. **Never put the secret itself in `config.js`.**
+4. Configure Cloudflare rate limits / bot protections to control paid API
+   requests. The Worker caches successful lookups briefly. Its CORS rules
+   permit the bailiping.com origin.
+
+Without steps 1–3, the webpage still renders the two sections but honestly
+shows that status and history data are unavailable.
+
+The flight number/date survive in a shareable URL query string. If a departure
+airport timezone is present in AeroAPI, departures are grouped by its local
+calendar day; otherwise the UTC calendar day is used and may differ near
+midnight. The displayed times remain UTC. Missing provider data should not be
+interpreted as evidence of delay or cancellation. Only historical **actual**
+arrival times enter the on-time calculations; early flights have negative
+delays. For a future selected date, the historical window anchors to today.
+
+Local checks:
+
+```sh
+node tests/flight-tracker.test.cjs
+node tests/flight-tracker-worker.test.mjs
+python3 scripts/build-search-index.py --check
+```
+
 
 ## Structure
 
