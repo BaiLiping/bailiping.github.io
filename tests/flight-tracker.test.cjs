@@ -1,72 +1,149 @@
-// Regression checks for the static flight-tracker lookup.
+// Browser logic regression tests for the embedded flight tracker (no paid API needed).
 const assert = require("node:assert/strict");
 const fs = require("node:fs");
 const path = require("node:path");
 const vm = require("node:vm");
 
-const html = fs.readFileSync(path.join(__dirname, "..", "flight-tracker", "index.html"), "utf8");
-const script = html.match(/<script>([\s\S]*?)<\/script>/);
-assert.ok(script, "Tracker should include lookup script");
+const root = path.join(__dirname, "..", "flight-tracker");
+const html = fs.readFileSync(path.join(root, "index.html"), "utf8");
+const script = fs.readFileSync(path.join(root, "tracker.js"), "utf8");
+const styles = fs.readFileSync(path.join(root, "styles.css"), "utf8");
 
-const listeners = {};
-const nodes = new Map();
-for (const id of [
-  "lookup-form", "flight-number", "flight-date", "lookup-error", "results",
-  "result-flight", "result-date", "date-reminder", "fr24-link",
-  "fa-live-link", "fa-history-link", "results-title"
-]) {
-  nodes.set(id, {
-    value: "",
-    textContent: "",
-    href: "",
-    hidden: id === "results" || id === "lookup-error",
-    focus() { this.focused = true; },
-    addEventListener(event, fn) { listeners[event] = fn; }
-  });
+assert.match(html, /01 \/ Historical performance/);
+assert.match(html, /02 \/ Current status/);
+assert.match(html, /id="history-rows"/);
+assert.match(html, /id="current-flights"/);
+assert.match(html, /src="tracker.js"/);
+assert.match(html, /src="config.js"/);
+assert.match(styles, /@media/);
+assert.doesNotMatch(html, /https:\/\/(?:www\.)?(?:flightradar24|flightaware)\.com\//, "Results should render on-page, not in an outbound link");
+
+class FixedDate extends Date {
+  constructor(...args) { super(...(args.length ? args : ["2026-10-26T13:00:00Z"])); }
+  static now() { return new Date("2026-10-26T13:00:00Z").getTime(); }
 }
 
-let replacedUrl = "";
-const location = {
-  href: "https://bailiping.com/flight-tracker/?flight=BA247&date=2026-10-26",
-  search: "?flight=BA247&date=2026-10-26"
-};
-const context = {
-  document: { getElementById(id) { assert.ok(nodes.has(id), "Unknown element: " + id); return nodes.get(id); } },
-  window: { location, history: { replaceState(_a, _b, url) { replacedUrl = url; } } },
-  Date, String, Number, Intl, URL, URLSearchParams
-};
-vm.runInNewContext(script[1], context, { filename: "flight-tracker-inline.js" });
+function fixtures() {
+  const ids = ["flight-form", "flight-number", "flight-date", "form-error", "results",
+    "search-button", "result-flight", "result-date", "refresh", "fetch-status",
+    "history-period", "history-metrics", "history-chart", "history-rows",
+    "current-period", "current-flights", "provider-name", "provider-updated"];
+  const map = new Map();
+  for (const id of ids) {
+    map.set(id, {
+      textContent: "", innerHTML: "", value: "", disabled: false, hidden: id === "results" || id === "form-error",
+      events: {}, setAttribute(k, v) { this[k] = v; },
+      focus() { this.focused = true; },
+      addEventListener(ev, fn) { this.events[ev] = fn; }
+    });
+  }
+  const loc = { href: "https://bailiping.com/flight-tracker/", search: "" };
+  let urlChanged = "";
+  let requests = [];
+  let mockResponse = null;
+  const context = {
+    Date: FixedDate, String, Number, Array, Intl, URL, URLSearchParams, AbortController,
+    location: loc, history: { replaceState(_a, _b, value) { urlChanged = value; } },
+    document: { getElementById(id) { assert.ok(map.has(id), "Unrecognized element: " + id); return map.get(id); } },
+    window: { FLIGHT_TRACKER_API_URL: "" },
+    fetch: async (url, opt) => {
+      requests.push({ url, opt });
+      return { ok: true, async json() { return mockResponse; } };
+    }
+  };
+  vm.runInNewContext(script, context, { filename: "tracker.js" });
+  return {
+    byId(id) { return map.get(id); },
+    submit() { map.get("flight-form").events.submit({ preventDefault() {} }); },
+    refresh() { map.get("refresh").events.click(); },
+    setEndpoint(url) { context.window.FLIGHT_TRACKER_API_URL = url; },
+    setResponse(value) { mockResponse = value; },
+    requests, get urlChanged() { return urlChanged; }
+  };
+}
 
-const get = (id) => nodes.get(id);
-assert.equal(get("results").hidden, false, "URL query should display flight lookup");
-assert.equal(get("result-flight").textContent, "BA247");
-assert.equal(get("date-reminder").textContent, "2026-10-26");
-assert.equal(get("fr24-link").href, "https://www.flightradar24.com/data/flights/ba247");
-assert.equal(get("fa-live-link").href, "https://www.flightaware.com/live/flight/BA247");
-assert.equal(get("fa-history-link").href, "https://www.flightaware.com/live/flight/BA247/history");
-assert.match(get("result-date").textContent, /26 October 2026/);
-assert.ok(get("flight-date").value, "Date should default or load from query");
+function makeData() {
+  const dayRecord = {
+    flight: "SK1431", status: "Arrived", origin: "ARN", destination: "GOT",
+    scheduledOut: "2026-10-25T07:00:00Z", actualOut: "2026-10-25T07:35:00Z",
+    scheduledIn: "2026-10-25T08:00:00Z", actualIn: "2026-10-25T08:25:00Z",
+    departureDelay: 35, departureDelayType: "actual", arrivalDelay: 25,
+    arrivalDelayType: "actual"
+  };
+  const currentRecord = {
+    flight: "SK1431", status: "En Route", origin: "ARN", destination: "GOT",
+    scheduledOut: "2026-10-26T07:00:00Z", estimatedOut: "2026-10-26T07:20:00Z",
+    scheduledIn: "2026-10-26T08:00:00Z", estimatedIn: "2026-10-26T08:40:00Z",
+    departureDelay: 20, departureDelayType: "estimated", arrivalDelay: 40,
+    arrivalDelayType: "estimated"
+  };
+  const history = [];
+  for (let i = 16; i <= 25; i++) {
+    history.push({ date: "2026-10-" + i, flights: i === 25 ? [dayRecord] : [] });
+  }
+  return {
+    flight: "SK1431", selectedDate: "2026-10-26", history, current: [currentRecord],
+    asOf: "2026-10-26T13:00:00Z", source: "FlightAware AeroAPI"
+  };
+}
 
-const submit = () => listeners.submit({ preventDefault() {} });
-get("flight-number").value = " SK 1431 ";
-get("flight-date").value = "2026-10-27";
-submit();
-assert.equal(get("flight-number").value, "SK1431", "Flight code should be normalized");
-assert.equal(get("results").hidden, false);
-assert.match(replacedUrl, /flight=SK1431/);
-assert.match(replacedUrl, /date=2026-10-27/);
-assert.equal(get("fr24-link").href, "https://www.flightradar24.com/data/flights/sk1431");
+async function nextMicrotasks() {
+  await new Promise(resolve => setImmediate(resolve));
+}
 
-get("flight-number").value = "<script>alert(1)</script>";
-submit();
-assert.equal(get("results").hidden, true, "Invalid flight codes cannot create links");
-assert.equal(get("lookup-error").hidden, false);
-assert.ok(get("flight-number").focused);
+(async function () {
+  const f = fixtures();
+  f.byId("flight-number").value = " SK 1431 ";
+  f.byId("flight-date").value = "2026-10-26";
+  f.submit();
+  await nextMicrotasks();
+  assert.equal(f.byId("flight-number").value, "SK1431");
+  assert.equal(f.byId("results").hidden, false);
+  assert.match(f.byId("history-rows").innerHTML, /Not available/);
+  assert.match(f.byId("current-flights").innerHTML, /Status unavailable/);
+  assert.match(f.byId("history-metrics").innerHTML, /No verified records/);
+  assert.equal(f.requests.length, 0);
+  assert.match(f.urlChanged, /flight=SK1431/);
 
-get("flight-number").value = "BA247";
-get("flight-date").value = "2026-02-31";
-submit();
-assert.equal(get("results").hidden, true, "Invalid calendar dates should be rejected");
-assert.ok(get("flight-date").focused);
+  f.setEndpoint("https://flight-api.example.workers.dev");
+  f.setResponse(makeData());
+  f.submit();
+  await nextMicrotasks();
+  assert.equal(f.requests.length, 1);
+  assert.match(f.requests[0].url, /flight=SK1431/);
+  assert.match(f.requests[0].url, /date=2026-10-26/);
+  assert.match(f.byId("history-chart").innerHTML, /\+25 min/);
+  assert.match(f.byId("history-metrics").innerHTML, /100%/);
+  assert.match(f.byId("history-rows").innerHTML, /\+35 min/);
+  assert.match(f.byId("current-flights").innerHTML, /En Route/);
+  assert.match(f.byId("current-flights").innerHTML, /\+40 min \(est\.\)/);
+  assert.match(f.byId("provider-name").textContent, /FlightAware/);
 
-console.log("Flight-tracker lookup tests passed");
+  f.setResponse({ ...makeData(), historyError: "History requires Standard tier" });
+  f.refresh();
+  await nextMicrotasks();
+  assert.match(f.byId("history-chart").innerHTML, /History requires Standard tier/);
+  assert.match(f.byId("history-metrics").innerHTML, /History access unavailable/);
+  assert.match(f.byId("current-flights").innerHTML, /En Route/, "Current info remains visible");
+
+  f.setResponse({ ...makeData(), current: [{ ...makeData().current[0], status: '<img src=x onerror=alert(1)>' }] });
+  f.refresh();
+  await nextMicrotasks();
+  assert.doesNotMatch(f.byId("current-flights").innerHTML, /<img/);
+  assert.match(f.byId("current-flights").innerHTML, /&lt;img/);
+
+  f.byId("flight-number").value = "<script>";
+  f.submit();
+  await nextMicrotasks();
+  assert.equal(f.byId("results").hidden, true);
+  assert.equal(f.byId("form-error").hidden, false);
+  assert.equal(f.requests.length, 3, "Invalid input must not make a request");
+
+  f.byId("flight-number").value = "SK1431";
+  f.byId("flight-date").value = "2026-02-31";
+  f.submit();
+  await nextMicrotasks();
+  assert.match(f.byId("form-error").textContent, /valid departure date/);
+
+  console.log("Embedded flight tracker UI tests passed");
+})().catch(error => { console.error(error); process.exitCode = 1; });
