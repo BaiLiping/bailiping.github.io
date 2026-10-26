@@ -135,7 +135,7 @@ async function nextMicrotasks() {
   f.byId("flight-number").value = "<script>";
   f.submit();
   await nextMicrotasks();
-  assert.equal(f.byId("results").hidden, true);
+  assert.equal(f.byId("results").hidden, false, "Both panels stay visible after invalid input");
   assert.equal(f.byId("form-error").hidden, false);
   assert.equal(f.requests.length, 3, "Invalid input must not make a request");
 
