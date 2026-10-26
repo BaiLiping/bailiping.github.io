@@ -98,6 +98,15 @@ assert.equal(options.headers.get("Access-Control-Allow-Origin"), "https://bailip
 assert.equal(await options.text(), "");
 const invalid = await worker.fetch(new Request("https://flight.test/api/flight?flight=SK<script>&date=2026-10-26"), {});
 assert.equal(invalid.status, 400);
+for (const invalidCode of ["12345", "1A", "A1", "12A123", "U2A123", "ABCD123"]) {
+  const result = await worker.fetch(new Request("https://flight.test/api/flight?flight=" + invalidCode + "&date=2026-10-26"), {});
+  assert.equal(result.status, 400, "Reject malformed airline designator: " + invalidCode);
+}
+for (const validCode of ["BA247", "SK1431", "UAL123", "U21234", "6E123", "BA123A"]) {
+  const result = await worker.fetch(new Request("https://flight.test/api/flight?flight=" + validCode + "&date=2026-10-26"), {});
+  assert.equal(result.status, 503, "Validate code before detecting missing secret: " + validCode);
+}
+
 const missingKey = await worker.fetch(new Request("https://flight.test/api/flight?flight=SK1431&date=2026-10-26"), {});
 assert.equal(missingKey.status, 503);
 
