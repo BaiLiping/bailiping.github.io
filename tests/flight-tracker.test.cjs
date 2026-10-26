@@ -113,7 +113,7 @@ async function nextMicrotasks() {
   assert.match(f.requests[0].url, /flight=SK1431/);
   assert.match(f.requests[0].url, /date=2026-10-26/);
   assert.match(f.byId("history-chart").innerHTML, /\+25 min/);
-  assert.match(f.byId("history-metrics").innerHTML, /100%/);
+  assert.match(f.byId("history-metrics").innerHTML, /0%/, "Arrival 25 minutes late should count as not on time");
   assert.match(f.byId("history-rows").innerHTML, /\+35 min/);
   assert.match(f.byId("current-flights").innerHTML, /En Route/);
   assert.match(f.byId("current-flights").innerHTML, /\+40 min \(est\.\)/);
