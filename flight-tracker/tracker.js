@@ -63,7 +63,7 @@
   function setError(message) {
     errorField.hidden = false;
     errorField.textContent = message;
-    results.hidden = true;
+    results.hidden = false;
   }
   function resetError() {
     errorField.hidden = true;
@@ -322,5 +322,10 @@
     flightField.value = query.get("flight") || "";
     if (query.has("date")) dateField.value = query.get("date") || "";
     lookup(false);
+  } else {
+    node("result-flight").textContent = "Flight overview";
+    node("result-date").textContent = "Enter a flight number and departure date";
+    renderUnavailable(dateField.value, "Enter a flight number and select a departure date to view flight records.");
+    node("fetch-status").textContent = "Ready to search";
   }
 })();
