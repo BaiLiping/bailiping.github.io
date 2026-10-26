@@ -49,14 +49,23 @@ h2{font-size:clamp(23px,3vw,30px);line-height:1.2;letter-spacing:-.03em;margin:5
 .chart-block h3{font-size:13px;color:var(--muted);margin:0 0 10px}
 .chart{border:1px solid var(--line);border-radius:11px;padding:14px 16px}
 .chart-note{font-size:12px;color:var(--muted);margin:0 0 10px}
-.chart-row{display:grid;grid-template-columns:77px minmax(0,1fr) 78px;align-items:center;gap:12px;padding:5px 0}
+.chart-day{display:grid;grid-template-columns:60px minmax(0,1fr);align-items:center;gap:12px;padding:8px 0;border-bottom:1px solid #edf1ec}
+.chart-day:last-child{border-bottom:0}
+.chart-series{min-width:0}
+.chart-row{display:grid;grid-template-columns:70px minmax(0,1fr) 70px;align-items:center;gap:10px;padding:3px 0}
 .chart-label,.chart-value{font-size:12px;font-variant-numeric:tabular-nums}
 .chart-value{text-align:right;font-weight:750}
-.chart-track{height:12px;border-radius:8px;background:#edf1ec;overflow:hidden}
-.chart-fill{display:block;height:100%;min-width:2px;border-radius:7px;background:var(--green)}
-.chart-fill.late{background:#b87542}
-.chart-fill.early{background:#5089a4}
+.chart-series-label{font-size:11px;font-weight:650}
+.chart-series-label.departure{color:#985525}.chart-series-label.arrival{color:#2e687e}
+.chart-track{position:relative;height:10px;border-radius:3px;background:#f0f3ef;overflow:hidden}
+.chart-track::after{content:"";position:absolute;left:50%;top:0;bottom:0;border-left:1px solid #8b9b90}
+.chart-fill{position:absolute;display:block;height:100%;min-width:2px;border-radius:2px}
+.chart-fill.departure{background:#b87542}.chart-fill.arrival{background:#5089a4}
+.chart-fill.zero{transform:translateX(-1px)}
 .chart-fill.missing{display:none}
+.chart-axis{margin-left:72px;padding-left:80px;padding-right:80px}
+.chart-scale{display:flex;justify-content:space-between;position:relative;font-size:10px;color:var(--muted);font-variant-numeric:tabular-nums;white-space:nowrap}
+.chart-scale span:nth-child(2){position:absolute;left:50%;transform:translateX(-50%)}
 .table-wrap{overflow-x:auto;padding:0 26px 22px}
 table{width:100%;border-collapse:collapse;min-width:600px}
 caption{text-align:left;color:var(--muted);font-size:13px;font-weight:750;padding:1px 0 10px}
@@ -104,5 +113,5 @@ td.missing{color:#778579}
 .table-wrap table{min-width:960px}.empty p:last-child{margin-bottom:0}
 .sample-details{margin-top:14px;font-size:12px}.sample-details summary{cursor:pointer;font-weight:700}.sample-scroll{overflow-x:auto;margin-top:10px}.sample-scroll table{min-width:340px}.sample-scroll th,.sample-scroll td{font-size:11px;padding:6px}.sample-scroll caption{font-size:11px}
 @media(max-width:800px){.lookup{grid-template-columns:1fr 1fr}.lookup .primary{grid-column:1/-1}.metrics{grid-template-columns:1fr 1fr}}
-@media(max-width:520px){.site nav,main{width:calc(100% - 28px)}main{padding-top:32px}.lookup{grid-template-columns:1fr;padding:19px}.lookup .primary{grid-column:1}.metrics{grid-template-columns:1fr;padding-inline:18px}.panel-header{padding-inline:18px}.table-wrap{padding-inline:18px}.chart-block{margin-inline:18px}.fine-print{padding-inline:18px}.current-flights{padding:18px}.time-grid{grid-template-columns:1fr}.provenance{padding-inline:18px}.chart-row{grid-template-columns:60px minmax(0,1fr) 64px;gap:8px}}
+@media(max-width:520px){.site nav,main{width:calc(100% - 28px)}main{padding-top:32px}.lookup{grid-template-columns:1fr;padding:19px}.lookup .primary{grid-column:1}.metrics{grid-template-columns:1fr;padding-inline:18px}.panel-header{padding-inline:18px}.table-wrap{padding-inline:18px}.chart-block{margin-inline:18px}.fine-print{padding-inline:18px}.current-flights{padding:18px}.time-grid{grid-template-columns:1fr}.provenance{padding-inline:18px}.chart{padding:12px}.chart-day{grid-template-columns:48px minmax(0,1fr);gap:8px}.chart-row{grid-template-columns:57px minmax(0,1fr) 60px;gap:6px}.chart-series-label{font-size:10px}.chart-label,.chart-value{font-size:11px}.chart-axis{margin-left:56px;padding-left:63px;padding-right:66px}.chart-scale{font-size:9px}}
 @media(max-width:520px){.outlook{padding-inline:18px}.context-grid{grid-template-columns:1fr;padding-inline:18px}.method{margin-inline:18px}.time-grid dd{font-size:12px}.snapshot-banner{font-size:12px}}

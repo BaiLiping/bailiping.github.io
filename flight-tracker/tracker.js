@@ -35,13 +35,23 @@
     node("history-metrics").innerHTML=metric(stats.count,"Flights recorded","Across ten calendar days")+
       metric(delta(stats.meanDeparture),"Mean ATD − STD",stats.departureCount+" actual departure entries")+
       metric(delta(stats.meanArrival),"Mean landing − STA",stats.arrivalCount+" completed flights");
-    var points=rows.map(function(day) { return {date:day.date, value:core.stats(day.flights).meanDeparture}; });
-    var scale=Math.max(1,...points.map(function(p) { return Math.abs(p.value || 0); }));
-    node("history-chart").innerHTML='<p class="chart-note">Reported actual departure minus scheduled departure. These values may include taxi time; they are not a verified gate-delay rate.</p>'+points.map(function(p) {
-      var width=p.value===null ? 0 : Math.max(2,100*Math.abs(p.value)/scale);
-      return '<div class="chart-row"><span class="chart-label">'+esc(formatDate(p.date,true))+'</span><div class="chart-track"><span class="chart-fill '+(p.value===null ? 'missing' : p.value>0 ? 'late' : 'early')+'" style="width:'+width+'%"></span></div><span class="chart-value">'+esc(p.value===null ? 'No record' : delta(p.value))+'</span></div>';
+    var points=rows.map(function(day) {
+      var daily=core.stats(day.flights);
+      return {date:day.date, departure:daily.meanDeparture, arrival:daily.meanArrival};
+    });
+    var largest=Math.max(1,...points.flatMap(function(p) { return [Math.abs(p.departure || 0),Math.abs(p.arrival || 0)]; }));
+    var scale=Math.ceil(largest/10)*10;
+    function series(value,kind,label) {
+      var width=value===null ? 0 : 50*Math.abs(value)/scale;
+      var left=value!==null && value<0 ? 50-width : 50;
+      return '<div class="chart-row"><span class="chart-series-label '+kind+'">'+label+'</span><div class="chart-track"><span class="chart-fill '+kind+(value===null ? ' missing' : value===0 ? ' zero' : '')+'" style="left:'+left+'%;width:'+width+'%"></span></div><span class="chart-value">'+esc(value===null ? 'No record' : delta(value))+'</span></div>';
+    }
+    node("history-chart").innerHTML='<p class="chart-note">Daily averages: reported departure − scheduled departure, and landing − scheduled arrival. Negative values are early; positive values are late. These comparisons may include taxi time and are not verified gate-to-gate delays.</p><div class="chart-axis"><div class="chart-scale"><span>−'+scale+'</span><span>0</span><span>+'+scale+' min</span></div></div>'+points.map(function(p) {
+      return '<div class="chart-day"><span class="chart-label">'+esc(formatDate(p.date,true))+'</span><div class="chart-series">'+series(p.departure,'departure','Departure')+series(p.arrival,'arrival','Arrival')+'</div></div>';
     }).join("");
-    node("history-chart").setAttribute("aria-label",points.map(function(p) { return formatDate(p.date,true)+": "+(p.value===null ? "no record" : delta(p.value)); }).join("; "));
+    node("history-chart").setAttribute("aria-label","Departure and arrival differences from schedule, in minutes. Negative is early; positive is late. "+points.map(function(p) {
+      return formatDate(p.date,true)+": departure "+(p.departure===null ? "no record" : delta(p.departure))+", arrival "+(p.arrival===null ? "no record" : delta(p.arrival));
+    }).join("; "));
     node("history-rows").innerHTML=rows.map(function(day) {
       if(!day.flights.length) return '<tr><td>'+esc(formatDate(day.date,true))+'</td><td class="missing" colspan="7">Not checked / no saved record</td></tr>';
       return day.flights.map(function(r) {
