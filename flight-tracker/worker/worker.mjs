@@ -114,8 +114,7 @@ function compactRecord(raw) {
 }
 
 function uniqueRecords(raw) {
-  const seen = new Set();
-  const flights = [];
+  const byId = new Map();
   for (const item of raw) {
     if (!item || typeof item !== "object") continue;
     const record = compactRecord(item);
@@ -124,11 +123,13 @@ function uniqueRecords(raw) {
       record.flight, record.departureDate, record.origin,
       record.destination, record.scheduledOut
     ].join("|");
-    if (seen.has(id)) continue;
-    seen.add(id);
-    flights.push(record);
+    // The current-flight endpoint is queried after history. Prefer the latest
+    // record with the same id, because its estimated times/status may be newer.
+    byId.set(id, record);
   }
-  return flights.sort((a, b) => (a.scheduledOut || "").localeCompare(b.scheduledOut || ""));
+  return [...byId.values()].sort(
+    (a, b) => (a.scheduledOut || "").localeCompare(b.scheduledOut || "")
+  );
 }
 
 export function normalizeData(flight, selectedDate, rawFlights, now = new Date(), historyError = null) {
