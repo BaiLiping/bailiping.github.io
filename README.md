@@ -68,8 +68,8 @@ no iframe or external result link: records render directly in the page.
    ```sh
    cd flight-tracker/worker
    npx wrangler login
-   npx wrangler secret put FLIGHTAWARE_API_KEY
    npx wrangler deploy
+   npx wrangler secret put FLIGHTAWARE_API_KEY
    ```
 
 3. Copy the deployed Worker HTTPS origin (no trailing slash) into the public
