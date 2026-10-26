@@ -36,6 +36,34 @@ After verifying `https://bailiping.com/` in Google Search Console, submit
 `https://bailiping.com/sitemap.xml` in **Sitemaps**. Submission helps discovery;
 Google decides which pages to index and when.
 
+## Flight tracker
+
+The homepage **Tools → Flight Tracker** opens `/flight-tracker/`. It displays
+saved observations from `flight-tracker/observations.json`: ten days of timing
+history, the selected day's status, departure estimates, and dated airport and
+weather context. The default is SK935 from CPH, departing today in Copenhagen.
+Flight, origin, and date can be shared in the page URL.
+
+Ask Codex to check the source websites and update that file when new information
+is wanted. For example: “Check SK935 from CPH for 2026-10-27, update the flight
+tracker's saved observations with source links and check times, and publish it.”
+`flight-tracker/AGENTS.md` describes the data update procedure and validation.
+
+**Show saved data** filters the published snapshot. **Reload saved data** reads
+the newest published JSON file. Neither button initiates a new source check or
+runs Codex. There is no flight API, backend, API key, credential configuration,
+scheduled refresh, or automatic scraping. Source links open the original pages.
+The original observations retain their check times when the page is restored;
+restoring the page does not make those observations fresh.
+
+Validate updates with:
+
+```sh
+node tests/flight-tracker.test.cjs
+python3 scripts/build-search-index.py --check
+python3 -m http.server 8769 --bind 127.0.0.1
+```
+
 ## Structure
 
 - `/engine-lab/` compares how exhaust drives turbines in jet and turbocharged car engines, with animated cutaways, a four-stroke walkthrough, and gas-flow and shaft-power diagrams. It is listed under Random thoughts.
