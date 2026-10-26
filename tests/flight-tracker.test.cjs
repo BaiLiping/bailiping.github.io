@@ -145,5 +145,21 @@ async function nextMicrotasks() {
   await nextMicrotasks();
   assert.match(f.byId("form-error").textContent, /valid departure date/);
 
+  const codes = fixtures();
+  codes.byId("flight-date").value = "2026-10-26";
+  for (const flight of ["BA247", "SK1431", "UAL123", "U21234", "6E123", "BA123A"]) {
+    codes.byId("flight-number").value = flight;
+    codes.submit();
+    await nextMicrotasks();
+    assert.equal(codes.byId("form-error").hidden, true, "Valid flight code accepted: " + flight);
+  }
+  for (const flight of ["12345", "1A", "A1", "12A123", "U2A123", "ABCD123"]) {
+    codes.byId("flight-number").value = flight;
+    codes.submit();
+    await nextMicrotasks();
+    assert.equal(codes.byId("form-error").hidden, false, "Invalid flight code rejected: " + flight);
+  }
+  assert.equal(codes.requests.length, 0, "Validation must never make requests without an endpoint");
+
   console.log("Embedded flight tracker UI tests passed");
 })().catch(error => { console.error(error); process.exitCode = 1; });
