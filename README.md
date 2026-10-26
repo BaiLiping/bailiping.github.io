@@ -36,6 +36,19 @@ After verifying `https://bailiping.com/` in Google Search Console, submit
 `https://bailiping.com/sitemap.xml` in **Sitemaps**. Submission helps discovery;
 Google decides which pages to index and when.
 
+## Flight tracker
+
+The homepage **Tools** section links to `/flight-tracker/`, a static flight-number
+and departure-date lookup. It creates direct links to Flightradar24 flight
+history and FlightAware status/history; the chosen date is retained in a
+shareable query string. On the provider sites, select the matching local
+departure date. The static page cannot independently verify flight status,
+departure/arrival delays, or cancellation without a licensed data feed and a
+server-side integration. Do not place provider API keys in browser JavaScript.
+
+Verify the lookup logic with `node tests/flight-tracker.test.cjs` and regenerate
+search-discovery files when changing any page metadata.
+
 ## Structure
 
 - `/engine-lab/` compares how exhaust drives turbines in jet and turbocharged car engines, with animated cutaways, a four-stroke walkthrough, and gas-flow and shaft-power diagrams. It is listed under Random thoughts.
