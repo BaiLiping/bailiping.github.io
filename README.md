@@ -41,8 +41,10 @@ Google decides which pages to index and when.
 The homepage **Tools → Flight Tracker** opens `/flight-tracker/`. It displays
 saved observations from `flight-tracker/observations.json`: ten days of timing
 history, the selected day's status, departure estimates, and dated airport and
-weather context. The default is SK935 from CPH, departing today in Copenhagen.
-Flight, origin, and date can be shared in the page URL.
+weather context. Each requested flight check also updates `defaultFlight`,
+`defaultAirport`, and `defaultDate`, so the bare page opens on the most recently
+requested flight, origin, and departure date. Explicit flight, origin, and date
+parameters in a shared URL override those defaults.
 
 Ask Codex to check the source websites and update that file when new information
 is wanted. For example: “Check SK935 from CPH for 2026-10-27, update the flight

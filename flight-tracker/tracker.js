@@ -122,11 +122,14 @@
       core.validateSnapshot(next);
       data=next;
       node("snapshot-summary").textContent="Flight records last checked: "+time(data.checkedAt,"UTC",true)+". Updates are published after source checks with Codex.";
+      var defaultRecord=core.select(data,data.defaultFlight,data.defaultAirport,data.defaultDate).current[0];
+      var defaultRoute=defaultRecord ? defaultRecord.originName+" ("+defaultRecord.origin+") → "+defaultRecord.destinationName+" ("+defaultRecord.destination+")" : data.defaultAirport+" departures";
+      node("airport-hint").textContent="Default: "+data.defaultFlight+" · "+defaultRoute+" · "+formatDate(data.defaultDate)+". Dates use the departure airport’s local calendar. Search only covers records checked and saved here.";
       if(initial || !selection) {
         var query=new URLSearchParams(location.search);
-        flightField.value=query.get("flight") || data.defaultFlight || "SK935";
-        airportField.value=query.get("airport") || data.defaultAirport || "CPH";
-        dateField.value=query.get("date") || new Intl.DateTimeFormat("en-CA", { timeZone:"Europe/Copenhagen", year:"numeric", month:"2-digit", day:"2-digit" }).format(new Date());
+        flightField.value=query.get("flight") || data.defaultFlight;
+        airportField.value=query.get("airport") || data.defaultAirport;
+        dateField.value=query.get("date") || data.defaultDate;
         submit(false);
       } else render();
     } catch(reason) {

@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="Saved flight observations updated with Codex: flight history, status, departure estimates, sources, and check times for SAS SK935 from Copenhagen to San Francisco.">
+  <meta name="description" content="Saved flight observations updated with Codex: flight history, status, departure estimates, sources, and check times. Opens on the most recently requested flight and departure date.">
   <link rel="canonical" href="https://bailiping.com/flight-tracker/">
   <meta name="theme-color" content="#193c2e">
   <title>Flight Tracker | Bai Liping</title>
@@ -22,22 +22,22 @@
 
     <form id="flight-form" class="lookup card" novalidate>
       <div class="field"><label for="flight-number">Flight number</label>
-        <input id="flight-number" name="flight" type="text" value="SK935" placeholder="e.g. SK935" spellcheck="false" autocapitalize="characters" autocomplete="off" maxlength="12" required>
+        <input id="flight-number" name="flight" type="text" placeholder="e.g. KL1236" spellcheck="false" autocapitalize="characters" autocomplete="off" maxlength="12" required>
       </div>
       <div class="field"><label for="departure-airport">Departure airport</label>
-        <input id="departure-airport" name="airport" type="text" value="CPH" placeholder="e.g. CPH" spellcheck="false" autocapitalize="characters" autocomplete="off" maxlength="4" aria-describedby="airport-hint" required>
+        <input id="departure-airport" name="airport" type="text" placeholder="e.g. GOT" spellcheck="false" autocapitalize="characters" autocomplete="off" maxlength="4" aria-describedby="airport-hint" required>
       </div>
       <div class="field"><label for="flight-date">Departure date</label>
         <input id="flight-date" name="date" type="date" required>
       </div>
       <button type="submit" class="primary" id="search-button">Show saved data</button>
-      <p class="hint" id="airport-hint">Default: SAS SK935 · Copenhagen (CPH) → San Francisco (SFO), departing today. Dates use the departure airport’s local calendar. Search only covers records checked and saved here.</p>
+      <p class="hint" id="airport-hint">The most recently requested flight and departure date are shown by default. Dates use the departure airport’s local calendar. Search only covers records checked and saved here.</p>
       <p class="error" id="form-error" role="alert" hidden></p>
     </form>
 
     <div class="results" id="results" aria-busy="true">
       <div class="results-heading">
-        <div><strong id="result-flight">SK935 · CPH → SFO</strong><span id="result-date"></span></div>
+        <div><strong id="result-flight">Loading saved flight…</strong><span id="result-date"></span></div>
         <button type="button" id="refresh" class="secondary">Reload saved data</button>
         <p id="fetch-status" role="status" aria-live="polite"></p>
       </div>
@@ -68,7 +68,7 @@
           <p id="current-period">Status as observed at the last manual check.</p>
         </div>
         <div id="current-flights" class="current-flights"></div>
-        <div class="provenance"><span>Source: <strong>Flightradar24</strong></span><span id="provider-updated">Last checked: —</span><a id="source-flight" href="https://www.flightradar24.com/data/flights/sk935" target="_blank" rel="noopener noreferrer">View original flight record ↗</a></div>
+        <div class="provenance"><span>Source: <strong>Flightradar24</strong></span><span id="provider-updated">Last checked: —</span><a id="source-flight" href="https://www.flightradar24.com/data" target="_blank" rel="noopener noreferrer">View original flight record ↗</a></div>
       </section>
 
       <section class="panel" aria-labelledby="likelihood-title">
@@ -88,7 +88,7 @@
       </section>
     </div>
     <p class="notice"><strong>Updated with Codex.</strong> Ask Codex to check a flight and publish its observations here. This page displays the saved snapshot, including source links and check times. Reloading reads the latest published snapshot. Status and estimates can change after the displayed check time; other flights and dates appear once their observations have been checked and added.</p>
-    <noscript><p class="error">JavaScript is needed to display the saved flight observations. You can still <a href="https://www.flightradar24.com/data/flights/sk935">view SK935 on Flightradar24</a>.</p></noscript>
+    <noscript><p class="error">JavaScript is needed to display the saved flight observations. You can still <a href="https://www.flightradar24.com/data">view flight records on Flightradar24</a>.</p></noscript>
   </main>
   <script src="tracker-core.js"></script><script src="tracker.js"></script>
 </body>

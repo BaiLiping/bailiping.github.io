@@ -24,16 +24,23 @@ workflow free of flight APIs, API keys, backend workers, and automated scraping.
    origin. Clearly distinguish observations from forecasts and retrospective
    information from information available before departure. Do not invent a
    calibrated delay probability from a small sample.
-5. Set top-level `checkedAt` to the latest flight-record check and
-   `observationDate` to that check's local date at the default origin. Keep
-   `defaultFlight`, `defaultAirport`, and `defaultDate` valid. The page starts on
-   today's Copenhagen date unless the URL specifies a date. Never advance an
-   individual record's check time unless that record was checked again.
+5. Whenever the user asks to check a flight on a date, set `defaultFlight`,
+   `defaultAirport`, and `defaultDate` to that requested flight, origin, and
+   departure date in the same update. This is the user's standing preference:
+   `/flight-tracker/` must open on the most recently requested selection. Use
+   a supported flight alias if needed. Explicit URL parameters override the
+   saved defaults; do not replace the requested date with today's date. The
+   default hint is rendered from these fields, so no HTML edit is needed for
+   each lookup. Set top-level `checkedAt` to the latest flight-record check and
+   `observationDate` to that check's local date at the default origin. A change
+   to defaults alone must not advance any observation's check time.
 6. Run `node tests/flight-tracker.test.cjs` from the repository root. The tests
    validate the current JSON and exercise lookup behavior with separate fixed
    fixtures, so routine data updates must not require changing expected results.
-   Serve the site and check the selected date, historical chart, source links,
-   collapsed history details, and mobile layout. Verify that the page requests
+   Serve the site and check the bare `/flight-tracker/` URL opens on the new
+   defaults, including the requested date, and that explicit URL parameters
+   still work. Check the historical chart, source links, collapsed history
+   details, and mobile layout. Verify that the page requests
    only local assets and `observations.json` until a source link is clicked.
 7. Follow the requested publication scope and verify the live JSON after
    publishing. Describe exactly which flights and dates were checked and any
