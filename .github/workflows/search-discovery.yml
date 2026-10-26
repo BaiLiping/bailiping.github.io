@@ -31,3 +31,5 @@ jobs:
         run: python3 scripts/build-search-index.py --check
       - name: Check flight-tracker lookup
         run: node tests/flight-tracker.test.cjs
+      - name: Check flight-tracker data adapter
+        run: node tests/flight-tracker-worker.test.mjs
