@@ -76,6 +76,12 @@ td{font-size:13px}
 td.num{font-variant-numeric:tabular-nums;white-space:nowrap;font-weight:750}
 td.missing{color:#778579}
 .fine-print{font-size:12px;color:var(--muted);padding:0 26px 22px;margin:0}
+.history-details{margin:0 26px 24px;border-top:1px solid var(--line);padding-top:16px}
+.history-details summary{cursor:pointer;font-size:14px;font-weight:700;color:var(--forest)}
+.history-details summary:focus-visible{outline:3px solid var(--green);outline-offset:3px}
+.history-details[open] summary{margin-bottom:16px}
+.history-details .table-wrap{padding:0 0 16px}
+.history-details .fine-print{padding:0}
 .current-flights{display:grid;gap:15px;padding:23px 26px}
 .flight-card{border:1px solid var(--line);border-radius:12px;padding:20px}
 .flight-top{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-bottom:19px}
@@ -114,4 +120,4 @@ td.missing{color:#778579}
 .sample-details{margin-top:14px;font-size:12px}.sample-details summary{cursor:pointer;font-weight:700}.sample-scroll{overflow-x:auto;margin-top:10px}.sample-scroll table{min-width:340px}.sample-scroll th,.sample-scroll td{font-size:11px;padding:6px}.sample-scroll caption{font-size:11px}
 @media(max-width:800px){.lookup{grid-template-columns:1fr 1fr}.lookup .primary{grid-column:1/-1}.metrics{grid-template-columns:1fr 1fr}}
 @media(max-width:520px){.site nav,main{width:calc(100% - 28px)}main{padding-top:32px}.lookup{grid-template-columns:1fr;padding:19px}.lookup .primary{grid-column:1}.metrics{grid-template-columns:1fr;padding-inline:18px}.panel-header{padding-inline:18px}.table-wrap{padding-inline:18px}.chart-block{margin-inline:18px}.fine-print{padding-inline:18px}.current-flights{padding:18px}.time-grid{grid-template-columns:1fr}.provenance{padding-inline:18px}.chart{padding:12px}.chart-day{grid-template-columns:48px minmax(0,1fr);gap:8px}.chart-row{grid-template-columns:57px minmax(0,1fr) 60px;gap:6px}.chart-series-label{font-size:10px}.chart-label,.chart-value{font-size:11px}.chart-axis{margin-left:56px;padding-left:63px;padding-right:66px}.chart-scale{font-size:9px}}
-@media(max-width:520px){.outlook{padding-inline:18px}.context-grid{grid-template-columns:1fr;padding-inline:18px}.method{margin-inline:18px}.time-grid dd{font-size:12px}.snapshot-banner{font-size:12px}}
+@media(max-width:520px){.outlook{padding-inline:18px}.context-grid{grid-template-columns:1fr;padding-inline:18px}.method,.history-details{margin-inline:18px}.time-grid dd{font-size:12px}.snapshot-banner{font-size:12px}}

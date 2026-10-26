@@ -51,12 +51,15 @@
         <div class="chart-block"><h3>Departure and arrival compared with schedule</h3>
           <div class="chart" id="history-chart" role="img" aria-label="Departure and arrival difference chart"></div>
         </div>
-        <div class="table-wrap"><table>
+        <details class="history-details" id="history-details">
+          <summary>Flight history details</summary>
+          <div class="table-wrap"><table>
           <caption>Flight history · departure times local to origin; arrival times local to destination</caption>
           <thead><tr><th scope="col">Date</th><th scope="col">Route</th><th scope="col">Scheduled departure</th><th scope="col">Reported ATD</th><th scope="col">Difference</th><th scope="col">Scheduled arrival</th><th scope="col">Landed</th><th scope="col">Difference</th></tr></thead>
           <tbody id="history-rows"></tbody>
-        </table></div>
-        <p class="fine-print"><strong>What these differences mean:</strong> ATD − STD compares Flightradar24’s reported actual departure with scheduled departure. Landing − STA compares touchdown with scheduled arrival. These are not verified gate-to-gate delays: taxi time can affect the comparison. Your delay threshold is any actual gate departure after schedule (&gt; 0 minutes); no 15-minute allowance is used. Missing records and estimates are excluded from historical averages.</p>
+          </table></div>
+          <p class="fine-print"><strong>What these differences mean:</strong> ATD − STD compares Flightradar24’s reported actual departure with scheduled departure. Landing − STA compares touchdown with scheduled arrival. These are not verified gate-to-gate delays: taxi time can affect the comparison. Your delay threshold is any actual gate departure after schedule (&gt; 0 minutes); no 15-minute allowance is used. Missing records and estimates are excluded from historical averages.</p>
+        </details>
       </section>
 
       <section class="panel" aria-labelledby="current-title">
