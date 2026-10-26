@@ -30,7 +30,7 @@
       <div class="field"><label for="flight-date">Departure date</label>
         <input id="flight-date" name="date" type="date" required>
       </div>
-      <button type="submit" class="primary" id="search-button">View saved flight</button>
+      <button type="submit" class="primary" id="search-button">Fetch data</button>
       <p class="hint" id="airport-hint">Default: SAS SK935 · Copenhagen (CPH) → San Francisco (SFO), departing today. Dates use the departure airport’s local calendar. Search only covers records checked and saved here.</p>
       <p class="error" id="form-error" role="alert" hidden></p>
     </form>
@@ -38,7 +38,7 @@
     <div class="results" id="results" aria-busy="true">
       <div class="results-heading">
         <div><strong id="result-flight">SK935 · CPH → SFO</strong><span id="result-date"></span></div>
-        <button type="button" id="refresh" class="secondary">Reload saved data</button>
+        <button type="button" id="refresh" class="secondary">Display fetched data</button>
         <p id="fetch-status" role="status" aria-live="polite"></p>
       </div>
 
