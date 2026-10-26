@@ -42,8 +42,8 @@ The homepage **Tools** section links to `/flight-tracker/`. The page uses
 manually checked **Flightradar24** observations, with no flight-data API,
 credentials, paid requests, background scraping, or automatic provider refresh.
 
-The default is the next saved SAS SK935 departure from Copenhagen (CPH) to
-San Francisco (SFO). Flight number, departure airport, and local departure date
+The default is SAS SK935 from Copenhagen (CPH) to San Francisco (SFO), with
+today’s date calculated in Copenhagen’s timezone when the page opens. Flight number, departure airport, and local departure date
 are included in the shareable URL. Both IATA and known ICAO aliases work.
 
 - **Historical performance:** ten days before the selected date, capped at the
@@ -72,7 +72,8 @@ are included in the shareable URL. Both IATA and known ICAO aliases work.
 4. Add only dated airport/weather context. An observed METAR is not a forecast;
    do not describe current weather as a forecast for a later departure.
 5. Set `observationDate` to the local day of the manual check, `checkedAt` to
-   the snapshot check time, and `defaultDate` to the desired saved departure.
+   the snapshot check time. The initial date is calculated from the current day,
+   unless a date is supplied explicitly in the URL.
    Run the offline checks and review the page at desktop and mobile widths.
 
 `Reload saved data` only re-fetches this site's JSON file. It never performs a

@@ -118,7 +118,7 @@
         var query=new URLSearchParams(location.search);
         flightField.value=query.get("flight") || data.defaultFlight || "SK935";
         airportField.value=query.get("airport") || data.defaultAirport || "CPH";
-        dateField.value=query.get("date") || data.defaultDate;
+        dateField.value=query.get("date") || new Intl.DateTimeFormat("en-CA", { timeZone:"Europe/Copenhagen", year:"numeric", month:"2-digit", day:"2-digit" }).format(new Date());
       }
       submit(false);
     } catch(reason) {
