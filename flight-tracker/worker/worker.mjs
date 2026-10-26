@@ -131,7 +131,7 @@ function uniqueRecords(raw) {
   return flights.sort((a, b) => (a.scheduledOut || "").localeCompare(b.scheduledOut || ""));
 }
 
-export function normalizeData(flight, selectedDate, rawFlights, now = new Date()) {
+export function normalizeData(flight, selectedDate, rawFlights, now = new Date(), historyError = null) {
   const today = now.toISOString().slice(0, 10);
   const historyAnchor = selectedDate > today ? today : selectedDate;
   const records = uniqueRecords(rawFlights);
@@ -158,6 +158,7 @@ export function normalizeData(flight, selectedDate, rawFlights, now = new Date()
     selectedDate,
     historyAnchor,
     history,
+    historyError,
     current,
     source: PROVIDER,
     asOf: now.toISOString(),
@@ -188,7 +189,7 @@ function json(body, status, origin, cacheControl) {
     headers["Access-Control-Allow-Methods"] = "GET, OPTIONS";
     headers["Access-Control-Allow-Headers"] = "Accept";
   }
-  return new Response(JSON.stringify(body), { status, headers });
+  return new Response(status === 204 ? null : JSON.stringify(body), { status, headers });
 }
 
 async function fetchProvider(url, apiKey, fetchImpl) {
@@ -222,36 +223,50 @@ export async function loadFlightData(flight, selectedDate, apiKey, options = {})
   const fetchImpl = options.fetchImpl || fetch;
   const today = now.toISOString().slice(0, 10);
   const anchor = selectedDate > today ? today : selectedDate;
-  const oldest = shiftDate(anchor, -11);
-  const recentLimit = shiftDate(today, -9);
   const root = "https://aeroapi.flightaware.com/aeroapi";
-  let flights = [];
+  const result = [];
+  let historyError = null;
 
-  // AeroAPI's regular flight lookup serves recent history and near-future status.
-  if (oldest >= recentLimit && selectedDate <= shiftDate(today, 2)) {
-    const u = root + "/flights/" + encodeURIComponent(flight) + "?max_pages=4";
-    flights = await fetchProvider(u, apiKey, fetchImpl);
-  } else {
-    // Most lookups still benefit from the recent flight endpoint. For an older
-    // selected date the paid History endpoint is required. Split the requested
-    // window into chunks below its seven-day query-window limit.
-    if (selectedDate > shiftDate(today, 2)) {
-      const u = root + "/flights/" + encodeURIComponent(flight) + "?max_pages=4";
-      flights = await fetchProvider(u, apiKey, fetchImpl);
-    } else {
-      const first = shiftDate(anchor, -11);
-      const end = shiftDate(selectedDate, 2);
-      for (let cursor = first; cursor < end; cursor = shiftDate(cursor, 6)) {
-        const stop = shiftDate(cursor, 6) < end ? shiftDate(cursor, 6) : end;
-        const url = new URL(root + "/history/flights/" + encodeURIComponent(flight));
-        url.searchParams.set("start", cursor + "T00:00:00Z");
-        url.searchParams.set("end", stop + "T00:00:00Z");
-        url.searchParams.set("max_pages", "4");
-        flights.push(...await fetchProvider(url.toString(), apiKey, fetchImpl));
-      }
+  // History is queried in date-scoped segments: AeroAPI requires that each
+  // history query spans no more than seven days. The 1-day margin handles
+  // airports behind UTC, and the end margin handles airports ahead of UTC.
+  // Historical lookup requires AeroAPI Standard/Premium access.
+  const first = shiftDate(anchor, -11);
+  const end = selectedDate > today ? shiftDate(anchor, 1) : shiftDate(selectedDate, 2);
+  try {
+    for (let cursor = first; cursor < end; cursor = shiftDate(cursor, 6)) {
+      const stop = shiftDate(cursor, 6) < end ? shiftDate(cursor, 6) : end;
+      const url = new URL(root + "/history/flights/" + encodeURIComponent(flight));
+      url.searchParams.set("start", cursor + "T00:00:00Z");
+      url.searchParams.set("end", stop + "T00:00:00Z");
+      url.searchParams.set("max_pages", "4");
+      result.push(...await fetchProvider(url.toString(), apiKey, fetchImpl));
+    }
+  } catch (error) {
+    historyError = error instanceof Error ? error.message : "Historical flight data could not be retrieved.";
+  }
+
+  // A separate near-live query provides the status for the selected day,
+  // including scheduled flights. It also works with Personal AeroAPI accounts
+  // even when Standard/Premium history access is not available.
+  if (selectedDate >= shiftDate(today, -9) && selectedDate <= shiftDate(today, 2)) {
+    const url = new URL(root + "/flights/" + encodeURIComponent(flight));
+    url.searchParams.set("start", shiftDate(selectedDate, -1) + "T00:00:00Z");
+    url.searchParams.set("end", shiftDate(selectedDate, 2) + "T00:00:00Z");
+    url.searchParams.set("max_pages", "4");
+    try {
+      result.push(...await fetchProvider(url.toString(), apiKey, fetchImpl));
+    } catch (error) {
+      if (!result.length) throw error;
     }
   }
-  return normalizeData(flight, selectedDate, flights, now);
+
+  if (historyError && !result.length) {
+    // For a date outside the current query horizon, failure of the history
+    // endpoint means we have no verified flight records at all.
+    throw new Error(historyError);
+  }
+  return normalizeData(flight, selectedDate, result, now, historyError);
 }
 
 export default {
