@@ -38,70 +38,53 @@ Google decides which pages to index and when.
 
 ## Flight tracker
 
-The homepage **Tools** section links to `/flight-tracker/`. It accepts a
-flight number and departure date and has two embedded sections:
+The homepage **Tools** section links to `/flight-tracker/`. The page uses
+manually checked **Flightradar24** observations, with no flight-data API,
+credentials, paid requests, background scraping, or automatic provider refresh.
 
-- **Historical performance:** the ten preceding calendar days, with a delay
-  chart, a daily table, actual departure/arrival delays, and arrival on-time
-  statistics. Missing records are explicitly marked as unavailable, never
-  treated as on time or cancelled.
-- **Current status:** the selected day's flight(s), status, route, and scheduled,
-  estimated, and actual gate-out and gate-in times (UTC), plus available delay
-  minutes. Delays use actual times when known or clearly labeled estimates.
+The default is the next saved SAS SK935 departure from Copenhagen (CPH) to
+San Francisco (SFO). Flight number, departure airport, and local departure date
+are included in the shareable URL. Both IATA and known ICAO aliases work.
 
-FlightAware AeroAPI is the supported data source. Its **Standard or Premium**
-subscription is needed for the historical endpoint. The Personal tier provides
-current flight data but not historical access. An API key and a separate secure
-backend are required; the GitHub Pages frontend **must never expose a key**.
-Flightradar24's public API does not provide scheduled times, so it cannot
-independently supply comparable delay metrics. The app deliberately contains
-no iframe or external result link: records render directly in the page.
+- **Historical performance:** ten days before the selected date, capped at the
+  manual observation day for future departures. The chart and table compare
+  reported ATD with STD and landing time with STA. These are not confirmed
+  gate delays. Missing records and estimated times are excluded from averages.
+- **Current status:** the selected day's saved status and scheduled, estimated,
+  and reported actual times, displayed in each airport's timezone.
+- **Delay likelihood / expected departure:** the provider's published departure
+  estimate and its difference from schedule. An estimated time is not a
+  probability. A documented logistic model would need fitted, validated
+  coefficients and comparable gate-event labels before showing a percentage.
 
-### Configure live embedded data
+### Update a manual observation
 
-1. Create a FlightAware AeroAPI account with a tier that includes history,
-   then acquire an API key at https://www.flightaware.com/commercial/aeroapi/.
-   Usage is billable; verify current pricing and access terms first.
-2. Create a Cloudflare account and authenticate Wrangler. From the repository
-   root run:
+1. Use the normal Flightradar24 website to check the flight, origin airport,
+   departure date, and source timezone. Read an estimated departure as an
+   estimate; do not turn it into an actual timestamp.
+2. Update `flight-tracker/observations.json`. Record the source URL and actual
+   check time on every flight. Convert timestamps to ISO UTC using the
+   airport's timezone for that event date (including daylight-saving changes).
+   Keep unavailable values `null`.
+3. Keep `departureEvent: "provider-atd"` unless the source explicitly confirms
+   gate departure. A gate-delay event is **strictly greater than zero minutes**;
+   do not apply a 15-minute tolerance or substitute takeoff for gate-out.
+4. Add only dated airport/weather context. An observed METAR is not a forecast;
+   do not describe current weather as a forecast for a later departure.
+5. Set `observationDate` to the local day of the manual check, `checkedAt` to
+   the snapshot check time, and `defaultDate` to the desired saved departure.
+   Run the offline checks and review the page at desktop and mobile widths.
 
-   ```sh
-   cd flight-tracker/worker
-   npx wrangler login
-   npx wrangler deploy
-   npx wrangler secret put FLIGHTAWARE_API_KEY
-   ```
-
-3. Copy the deployed Worker HTTPS origin (no trailing slash) into the public
-   `flight-tracker/config.js`, e.g.:
-
-   ```js
-   window.FLIGHT_TRACKER_API_URL = "https://bailiping-flight-tracker.example.workers.dev";
-   ```
-
-   Deploy the updated GitHub Pages site. The real hostname must replace the
-   example above. **Never put the secret itself in `config.js`.**
-4. Configure Cloudflare rate limits / bot protections to control paid API
-   requests. The Worker caches successful lookups briefly. Its CORS rules
-   permit the bailiping.com origin.
-
-Without steps 1–3, the webpage still renders the two sections but honestly
-shows that status and history data are unavailable.
-
-The flight number/date survive in a shareable URL query string. If a departure
-airport timezone is present in AeroAPI, departures are grouped by its local
-calendar day; otherwise the UTC calendar day is used and may differ near
-midnight. The displayed times remain UTC. Missing provider data should not be
-interpreted as evidence of delay or cancellation. Only historical **actual**
-arrival times enter the on-time calculations; early flights have negative
-delays. For a future selected date, the historical window anchors to today.
+`Reload saved data` only re-fetches this site's JSON file. It never performs a
+new Flightradar24 lookup. The page labels every result as a saved observation,
+avoids copying another date/airport's status, and abstains from made-up
+probabilities. The legacy `worker/` source is unused by this page.
 
 Local checks:
 
 ```sh
 node tests/flight-tracker.test.cjs
-node tests/flight-tracker-worker.test.mjs
-python3 scripts/build-search-index.py --check
+python3 -m http.server 8769 --bind 127.0.0.1
 ```
 
 
