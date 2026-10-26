@@ -1,7 +1,0 @@
-name = "bailiping-flight-tracker"
-main = "worker.mjs"
-compatibility_date = "2026-10-01"
-workers_dev = true
-
-# FLIGHTAWARE_API_KEY must be added as a Worker secret, NOT as a plain var.
-# Example: npx wrangler secret put FLIGHTAWARE_API_KEY

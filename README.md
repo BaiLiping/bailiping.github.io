@@ -36,59 +36,6 @@ After verifying `https://bailiping.com/` in Google Search Console, submit
 `https://bailiping.com/sitemap.xml` in **Sitemaps**. Submission helps discovery;
 Google decides which pages to index and when.
 
-## Flight tracker
-
-The homepage **Tools** section links to `/flight-tracker/`. The page uses
-manually checked **Flightradar24** observations, with no flight-data API,
-credentials, paid requests, background scraping, or automatic provider refresh.
-
-The default is SAS SK935 from Copenhagen (CPH) to San Francisco (SFO), with
-today’s date calculated in Copenhagen’s timezone when the page opens. Flight number, departure airport, and local departure date
-are included in the shareable URL. Both IATA and known ICAO aliases work.
-
-- **Historical performance:** ten days before the selected date, capped at the
-  manual observation day for future departures. The chart and table compare
-  reported ATD with STD and landing time with STA. These are not confirmed
-  gate delays. Missing records and estimated times are excluded from averages.
-- **Current status:** the selected day's saved status and scheduled, estimated,
-  and reported actual times, displayed in each airport's timezone.
-- **Delay likelihood / expected departure:** the provider's published departure
-  estimate and its difference from schedule. An estimated time is not a
-  probability. A documented logistic model would need fitted, validated
-  coefficients and comparable gate-event labels before showing a percentage.
-
-### Update a manual observation
-
-1. Use the normal Flightradar24 website to check the flight, origin airport,
-   departure date, and source timezone. Read an estimated departure as an
-   estimate; do not turn it into an actual timestamp.
-2. Update `flight-tracker/observations.json`. Record the source URL and actual
-   check time on every flight. Convert timestamps to ISO UTC using the
-   airport's timezone for that event date (including daylight-saving changes).
-   Keep unavailable values `null`.
-3. Keep `departureEvent: "provider-atd"` unless the source explicitly confirms
-   gate departure. A gate-delay event is **strictly greater than zero minutes**;
-   do not apply a 15-minute tolerance or substitute takeoff for gate-out.
-4. Add only dated airport/weather context. An observed METAR is not a forecast;
-   do not describe current weather as a forecast for a later departure.
-5. Set `observationDate` to the local day of the manual check, `checkedAt` to
-   the snapshot check time. The initial date is calculated from the current day,
-   unless a date is supplied explicitly in the URL.
-   Run the offline checks and review the page at desktop and mobile widths.
-
-`Reload saved data` only re-fetches this site's JSON file. It never performs a
-new Flightradar24 lookup. The page labels every result as a saved observation,
-avoids copying another date/airport's status, and abstains from made-up
-probabilities. The legacy `worker/` source is unused by this page.
-
-Local checks:
-
-```sh
-node tests/flight-tracker.test.cjs
-python3 -m http.server 8769 --bind 127.0.0.1
-```
-
-
 ## Structure
 
 - `/engine-lab/` compares how exhaust drives turbines in jet and turbocharged car engines, with animated cutaways, a four-stroke walkthrough, and gas-flow and shaft-power diagrams. It is listed under Random thoughts.
