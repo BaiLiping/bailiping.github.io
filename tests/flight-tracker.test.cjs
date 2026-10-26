@@ -57,6 +57,19 @@ assert.match(replacedUrl, /flight=SK1431/);
 assert.match(replacedUrl, /date=2026-10-27/);
 assert.equal(get("fr24-link").href, "https://www.flightradar24.com/data/flights/sk1431");
 
+for (const flight of ["BA247", "SK1431", "UAL123", "U21234", "6E123", "BA123A"]) {
+  get("flight-number").value = flight;
+  submit();
+  assert.equal(get("results").hidden, false, "Valid airline designator should be accepted: " + flight);
+}
+
+for (const flight of ["12345", "1A", "A1", "12A123", "U2A123", "ABCD123"]) {
+  get("flight-number").value = flight;
+  submit();
+  assert.equal(get("results").hidden, true, "Invalid airline designator should be rejected: " + flight);
+  assert.equal(get("lookup-error").hidden, false);
+}
+
 get("flight-number").value = "<script>alert(1)</script>";
 submit();
 assert.equal(get("results").hidden, true, "Invalid flight codes cannot create links");
