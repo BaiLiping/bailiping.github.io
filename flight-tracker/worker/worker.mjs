@@ -7,7 +7,7 @@
  */
 
 const PROVIDER = "FlightAware AeroAPI";
-const FLIGHT_RE = /^[A-Z0-9]{2,3}[0-9]{1,5}[A-Z]?$/;
+const FLIGHT_RE = /^(?:[A-Z]{3}|[A-Z][A-Z0-9]|[0-9][A-Z])[0-9]{1,5}[A-Z]?$/;
 const DATE_RE = /^\d{4}-\d{2}-\d{2}$/;
 
 export function isValidDate(value) {
