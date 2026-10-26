@@ -1,0 +1,284 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Look up a flight by flight number and departure date, then check live status, departure and arrival delays, and flight history on Flightradar24 and FlightAware.">
+  <link rel="canonical" href="https://bailiping.com/flight-tracker/">
+  <meta name="theme-color" content="#193c2e">
+  <title>Flight Tracker | Bai Liping</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --paper: #f7f5ef;
+      --ink: #1d2520;
+      --muted: #58665d;
+      --green: #2f7d5b;
+      --dark-green: #193c2e;
+      --line: #dbe4dc;
+      --line-strong: #b7c9bb;
+      --surface: #fff;
+      --soft: #ecf3ed;
+      font: 16px/1.55 Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+    }
+    * { box-sizing: border-box; }
+    [hidden] { display: none !important; }
+    body { margin: 0; min-height: 100vh; background: var(--paper); color: var(--ink); -webkit-font-smoothing: antialiased; }
+    a { color: var(--green); text-underline-offset: 3px; }
+    button, input { font: inherit; }
+    a:focus-visible, button:focus-visible, input:focus-visible { outline: 3px solid var(--green); outline-offset: 3px; }
+    .site { background: #fff; border-bottom: 1px solid var(--line); }
+    .site nav, main { width: min(1080px, calc(100% - 40px)); margin-inline: auto; }
+    .site nav { height: 64px; display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+    .site nav a { color: var(--green); text-decoration: none; font-weight: 650; font-size: 14px; }
+    .site .brand { display: inline-block; border-radius: 7px; background: var(--green); padding: 7px 11px; color: #fff; font-weight: 800; letter-spacing: .05em; }
+    main { padding: 54px 0 74px; }
+    .eyebrow { color: #984d22; font-size: 12px; font-weight: 800; letter-spacing: .13em; text-transform: uppercase; }
+    h1 { margin: 9px 0 13px; font-size: clamp(42px, 6.5vw, 66px); letter-spacing: -.045em; line-height: 1.06; }
+    .intro { max-width: 640px; margin: 0 0 34px; color: var(--muted); font-size: 18px; }
+    h2, h3, p { margin-top: 0; }
+    h2 { font-size: 21px; letter-spacing: -.025em; }
+    h3 { font-size: 16px; letter-spacing: -.012em; }
+    .layout { display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(290px, .85fr); gap: 20px; align-items: start; }
+    .card { border: 1px solid var(--line); background: var(--surface); border-radius: 16px; padding: 27px; box-shadow: 0 14px 42px -34px #193c2e80; }
+    .lookup-head { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; margin-bottom: 21px; }
+    .lookup-head h2 { margin: 0; }
+    .lookup-head span { font-size: 12px; color: var(--muted); }
+    .fields { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+    label { display: block; margin-bottom: 7px; color: var(--ink); font-size: 13px; font-weight: 750; }
+    input { display: block; width: 100%; min-width: 0; min-height: 54px; border: 1px solid var(--line-strong); border-radius: 10px; padding: 11px 14px; background: #fff; color: var(--ink); font-size: 17px; }
+    input::placeholder { color: #829187; }
+    input:focus { border-color: var(--green); }
+    .hint { color: var(--muted); font-size: 12px; margin: 8px 0 0; }
+    .error { color: #8a2f22; background: #fff0ea; border: 1px solid #e7b4a7; border-radius: 9px; padding: 10px 12px; margin: 16px 0 0; font-size: 14px; }
+    .submit { width: 100%; border: 0; border-radius: 10px; background: var(--green); color: #fff; padding: 14px 18px; margin-top: 24px; font-size: 16px; font-weight: 750; cursor: pointer; }
+    .submit:hover { background: var(--dark-green); }
+    .steps { background: var(--dark-green); border-radius: 16px; padding: 27px; color: #fff; }
+    .steps h2 { margin-bottom: 20px; }
+    .steps ol { display: grid; gap: 17px; margin: 0; padding-left: 23px; }
+    .steps li { padding-left: 4px; color: #cbdcd1; }
+    .steps strong { display: block; color: #fff; }
+    .steps p { color: #cbdcd1; font-size: 13px; margin: 5px 0 0; }
+    .results { padding-top: 38px; scroll-margin-top: 20px; }
+    .results-header { display: flex; justify-content: space-between; align-items: baseline; flex-wrap: wrap; gap: 8px 18px; margin-bottom: 17px; }
+    .results-header h2 { margin: 0; }
+    .selected-day { color: var(--muted); font-size: 14px; }
+    .results-header strong { color: var(--dark-green); }
+    .source-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; }
+    .source { display: flex; flex-direction: column; min-width: 0; background: #fff; border: 1px solid var(--line); padding: 23px; border-radius: 14px; }
+    .source small { display: block; margin-bottom: 9px; color: #984d22; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; }
+    .source h3 { font-size: 22px; margin: 0 0 6px; letter-spacing: -.03em; }
+    .source p { color: var(--muted); font-size: 14px; margin-bottom: 15px; }
+    .links { display: flex; align-items: start; flex-wrap: wrap; gap: 9px 16px; margin-top: auto; }
+    .action { display: inline-flex; align-items: center; justify-content: center; border-radius: 9px; padding: 11px 14px; background: var(--soft); color: var(--dark-green); text-decoration: none; font-size: 13px; font-weight: 750; }
+    .action:hover { background: #d9eadd; }
+    .action.primary { color: #fff; background: var(--green); }
+    .action.primary:hover { background: var(--dark-green); }
+    .date-note { margin: 18px 0 0; background: #edf2ee; border-radius: 11px; padding: 16px 19px; color: #42534a; font-size: 14px; }
+    .date-note p { margin: 0; }
+    .availability { margin-top: 27px; padding: 22px; border-left: 3px solid var(--green); border-radius: 0 11px 11px 0; background: #fff; }
+    .availability h3 { margin-bottom: 8px; }
+    .availability p { margin-bottom: 9px; color: var(--muted); font-size: 14px; }
+    .availability p:last-child { margin-bottom: 0; }
+    .guide { margin-top: 38px; border-top: 1px solid var(--line); padding-top: 24px; }
+    .guide p { max-width: 780px; color: var(--muted); }
+    .guide dl { display: grid; gap: 11px; max-width: 780px; margin: 0; }
+    .guide dt { font-weight: 750; }
+    .guide dd { margin: -7px 0 6px; color: var(--muted); font-size: 14px; }
+    @media (max-width: 760px) {
+      main { padding-top: 34px; }
+      .layout, .source-grid { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 470px) {
+      .site nav, main { width: min(1080px, calc(100% - 28px)); }
+      .card, .steps { padding: 21px; }
+      .fields { grid-template-columns: 1fr; gap: 17px; }
+      .lookup-head { display: block; }
+      .lookup-head span { display: block; margin-top: 4px; }
+    }
+  </style>
+</head>
+<body>
+  <header class="site">
+    <nav aria-label="Site navigation">
+      <a class="brand" href="/" aria-label="Bai Liping home">BLP</a>
+      <a href="/#group-tools">Back to Tools</a>
+    </nav>
+  </header>
+  <main>
+    <div class="eyebrow">Tools / Travel</div>
+    <h1>Flight tracker</h1>
+    <p class="intro">Find a flight by number and departure date. Compare its schedule, flight status, and any delay information on Flightradar24 and FlightAware.</p>
+
+    <div class="layout">
+      <form class="card" id="lookup-form" novalidate>
+        <div class="lookup-head">
+          <h2>Look up a flight</h2>
+          <span>No account needed to search</span>
+        </div>
+        <div class="fields">
+          <div>
+            <label for="flight-number">Flight number</label>
+            <input id="flight-number" name="flight" type="text" placeholder="e.g. SK1431" autocomplete="off" spellcheck="false" autocapitalize="characters" maxlength="12" aria-describedby="flight-hint" required>
+            <p class="hint" id="flight-hint">Airline code + number (BA247, SK 1431, UAL123)</p>
+          </div>
+          <div>
+            <label for="flight-date">Departure date</label>
+            <input id="flight-date" name="date" type="date" aria-describedby="date-hint" required>
+            <p class="hint" id="date-hint">Date at the departure airport (local calendar day)</p>
+          </div>
+        </div>
+        <p id="lookup-error" class="error" role="alert" hidden></p>
+        <button type="submit" class="submit">Find flight</button>
+      </form>
+      <aside class="steps" aria-labelledby="how-title">
+        <h2 id="how-title">How it works</h2>
+        <ol>
+          <li><strong>Enter a flight number</strong><p>For example, BA247 or SK1431. Codeshares may use different numbers.</p></li>
+          <li><strong>Choose the departure date</strong><p>A flight arriving after midnight may have a different arrival date.</p></li>
+          <li><strong>Compare the two sources</strong><p>Find the selected day in each provider's flight history. For today's flight, check FlightAware's live status too.</p></li>
+        </ol>
+      </aside>
+    </div>
+
+    <section class="results" id="results" aria-labelledby="results-title" hidden>
+      <div class="results-header">
+        <h2 id="results-title" tabindex="-1">Flight <strong id="result-flight"></strong></h2>
+        <span class="selected-day">Departure: <strong id="result-date"></strong></span>
+      </div>
+      <div class="source-grid">
+        <article class="source">
+          <small>Source 01 / Flight tracking</small>
+          <h3>Flightradar24</h3>
+          <p>View flight history, aircraft position when tracked, scheduled times, and available estimated or actual times. Select the matching date in its history list.</p>
+          <div class="links">
+            <a id="fr24-link" class="action primary" href="https://www.flightradar24.com/data" target="_blank" rel="noopener noreferrer">Open flight history ↗</a>
+          </div>
+        </article>
+        <article class="source">
+          <small>Source 02 / Flight status</small>
+          <h3>FlightAware</h3>
+          <p>Check the latest status, scheduled and estimated departure/arrival, and delay information when supplied. Use its activity history to choose the selected day.</p>
+          <div class="links">
+            <a id="fa-live-link" class="action primary" href="https://www.flightaware.com/live/" target="_blank" rel="noopener noreferrer">Open live status ↗</a>
+            <a id="fa-history-link" class="action" href="https://www.flightaware.com/live/" target="_blank" rel="noopener noreferrer">Flight history ↗</a>
+          </div>
+        </article>
+      </div>
+      <div class="date-note">
+        <p><strong>Selected date: <span id="date-reminder"></span>.</strong> These provider links lead to the flight number, not directly to a guaranteed date-specific record. Select that departure date on the provider site. History and future-flight availability depend on the provider and subscription.</p>
+      </div>
+      <div class="availability">
+        <h3>Flight status and delays</h3>
+        <p><strong>Not retrieved automatically.</strong> This page does not have licensed flight-data API access. It does not independently know if this flight is on time, delayed, airborne, landed, cancelled, or diverted.</p>
+        <p>On the linked tracker pages, compare scheduled times with estimated times (before departure or landing) or actual times (after the event). A positive difference is a delay in minutes. The airline or airport remains the most authoritative source for operational changes and delay reasons.</p>
+      </div>
+    </section>
+
+    <section class="guide" aria-labelledby="guide-title">
+      <h2 id="guide-title">What do the times mean?</h2>
+      <dl>
+        <dt>Scheduled</dt><dd>The timetable departure or arrival time.</dd>
+        <dt>Estimated</dt><dd>The provider's current prediction, which may change as new information arrives.</dd>
+        <dt>Actual</dt><dd>The reported departure or arrival event; landing and arrival at the gate are not necessarily the same time.</dd>
+      </dl>
+      <p style="margin-top: 20px">Both services provide status and timing information where available. Neither reliably explains the reason for a delay. Automated in-page status and delay figures would require an authorized data API and a server-side integration; this static page links to original records rather than inventing figures.</p>
+    </section>
+  </main>
+
+  <script>
+  (function () {
+    "use strict";
+
+    var form = document.getElementById("lookup-form");
+    var flightInput = document.getElementById("flight-number");
+    var dateInput = document.getElementById("flight-date");
+    var error = document.getElementById("lookup-error");
+    var results = document.getElementById("results");
+
+    function normalizeFlight(value) {
+      return value.toUpperCase().replace(/[\s-]+/g, "");
+    }
+
+    function isValidFlight(value) {
+      return /^[A-Z0-9]{2,3}[0-9]{1,5}[A-Z]?$/.test(value);
+    }
+
+    function isValidDate(value) {
+      if (!/^\d{4}-\d{2}-\d{2}$/.test(value)) return false;
+      var date = new Date(value + "T12:00:00Z");
+      return !Number.isNaN(date.getTime()) && date.toISOString().slice(0, 10) === value;
+    }
+
+    function localToday() {
+      var today = new Date();
+      var y = today.getFullYear();
+      var m = String(today.getMonth() + 1).padStart(2, "0");
+      var d = String(today.getDate()).padStart(2, "0");
+      return y + "-" + m + "-" + d;
+    }
+
+    function displayDate(iso) {
+      var date = new Date(iso + "T12:00:00Z");
+      return new Intl.DateTimeFormat("en-GB", {
+        weekday: "long", day: "numeric", month: "long", year: "numeric", timeZone: "UTC"
+      }).format(date);
+    }
+
+    function showError(message) {
+      error.textContent = message;
+      error.hidden = false;
+      results.hidden = true;
+    }
+
+    function lookup(updateUrl) {
+      var flight = normalizeFlight(flightInput.value);
+      var date = dateInput.value;
+      error.hidden = true;
+
+      if (!isValidFlight(flight)) {
+        showError("Enter an airline code and flight number, for example SK1431 or BA247.");
+        flightInput.focus();
+        return false;
+      }
+      if (!isValidDate(date)) {
+        showError("Choose a valid departure date.");
+        dateInput.focus();
+        return false;
+      }
+
+      flightInput.value = flight;
+      document.getElementById("result-flight").textContent = flight;
+      document.getElementById("result-date").textContent = displayDate(date);
+      document.getElementById("date-reminder").textContent = date;
+      document.getElementById("fr24-link").href = "https://www.flightradar24.com/data/flights/" + encodeURIComponent(flight.toLowerCase());
+      document.getElementById("fa-live-link").href = "https://www.flightaware.com/live/flight/" + encodeURIComponent(flight);
+      document.getElementById("fa-history-link").href = "https://www.flightaware.com/live/flight/" + encodeURIComponent(flight) + "/history";
+      results.hidden = false;
+
+      if (updateUrl) {
+        var url = new URL(window.location.href);
+        url.searchParams.set("flight", flight);
+        url.searchParams.set("date", date);
+        window.history.replaceState(null, "", url.toString());
+        document.getElementById("results-title").focus();
+      }
+      return true;
+    }
+
+    form.addEventListener("submit", function (event) {
+      event.preventDefault();
+      lookup(true);
+    });
+
+    dateInput.value = localToday();
+    var query = new URLSearchParams(window.location.search);
+    if (query.has("flight")) {
+      flightInput.value = query.get("flight") || "";
+      if (query.has("date")) dateInput.value = query.get("date") || "";
+      lookup(false);
+    }
+  })();
+  </script>
+</body>
+</html>
