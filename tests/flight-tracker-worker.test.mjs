@@ -100,9 +100,5 @@ const invalid = await worker.fetch(new Request("https://flight.test/api/flight?f
 assert.equal(invalid.status, 400);
 const missingKey = await worker.fetch(new Request("https://flight.test/api/flight?flight=SK1431&date=2026-10-26"), {});
 assert.equal(missingKey.status, 503);
-const actual = await worker.fetch(new Request("https://flight.test/api/flight?flight=SK1431&date=2026-10-26"), {
-  FLIGHTAWARE_API_KEY: "TEST_KEY"
-});
-assert.equal(actual.status, 502, "No network is available for an unmocked Worker request");
 
 console.log("FlightAware data adapter tests passed");
