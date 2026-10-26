@@ -73,7 +73,7 @@
     searchButton.disabled = loading;
     refreshButton.disabled = loading;
     searchButton.textContent = loading ? "Loading…" : "Track flight";
-    node("fetch-status").textContent = loading ? "Retrieving flight records…" : "";
+    if (loading) node("fetch-status").textContent = "Retrieving flight records…";
   }
   function metric(value, label, sample) {
     return '<div class="metric"><strong>' + esc(value) + '</strong><span>' +
@@ -182,6 +182,24 @@
     }).join("");
   }
 
+  function renderHistoryError(data) {
+    var rows = safeList(data.history);
+    var first = rows[0] && rows[0].date;
+    var last = rows[rows.length - 1] && rows[rows.length - 1].date;
+    node("history-period").textContent = first && last ?
+      displayDate(first) + " – " + displayDate(last) : "Previous 10 days";
+    node("history-metrics").innerHTML =
+      metric("—", "Flight records", "History access unavailable") +
+      metric("—", "Average arrival delay", "Historical data unavailable") +
+      metric("—", "On-time arrivals", "Historical data unavailable");
+    node("history-chart").innerHTML = '<p class="muted">' + esc(data.historyError) + '</p>';
+    node("history-chart").setAttribute("aria-label", "Historical flight data is unavailable");
+    node("history-rows").innerHTML = rows.map(function (row) {
+      return '<tr><td>' + esc(displayDate(row.date)) +
+        '</td><td class="missing" colspan="4">Historical data unavailable — check AeroAPI subscription</td></tr>';
+    }).join("");
+  }
+
   function timeItem(label, value) {
     return '<div><dt>' + esc(label) + '</dt><dd>' + esc(displayTime(value)) + '</dd></div>';
   }
@@ -226,7 +244,8 @@
       data.selectedDate === date && Array.isArray(data.history) && Array.isArray(data.current);
   }
   function renderResponse(data) {
-    renderHistory(data);
+    if (data.historyError) renderHistoryError(data);
+    else renderHistory(data);
     renderCurrent(data);
     node("provider-name").textContent = data.source || "FlightAware AeroAPI";
     node("provider-updated").textContent = "Updated: " + displayTime(data.asOf);
