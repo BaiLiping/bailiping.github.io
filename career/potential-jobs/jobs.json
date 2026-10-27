@@ -1,0 +1,1105 @@
+{
+  "schema_version": 1,
+  "generated_at": "2026-10-27T21:42:16Z",
+  "sources": [
+    {
+      "id": "efference",
+      "name": "Efference official careers",
+      "status": "partial",
+      "checked_at": "2026-10-27T21:42:16Z",
+      "count": 2,
+      "error": "Detail-check limit reached; additional listings remain unchecked"
+    },
+    {
+      "id": "fieldai",
+      "name": "FieldAI official Lever board",
+      "status": "ok",
+      "checked_at": "2026-10-27T21:42:16Z",
+      "count": 8
+    },
+    {
+      "id": "glydways",
+      "name": "Glydways official Greenhouse board",
+      "status": "ok",
+      "checked_at": "2026-10-27T21:42:16Z",
+      "count": 1
+    },
+    {
+      "id": "manual",
+      "name": "Manually saved references",
+      "status": "manual",
+      "checked_at": "2026-10-27T21:42:16Z",
+      "count": 1
+    },
+    {
+      "id": "merl",
+      "name": "MERL official internship openings",
+      "status": "ok",
+      "checked_at": "2026-10-27T21:42:16Z",
+      "count": 1
+    },
+    {
+      "id": "nvidia",
+      "name": "NVIDIA official careers",
+      "status": "partial",
+      "checked_at": "2026-10-27T21:42:16Z",
+      "count": 6,
+      "error": "Workday results changed during pagination; Query ISAC was only partially checked; Query radar was only partially checked; Query SLAM was only partially checked; Query localization was only partially checked; Query positioning was only partially checked; Detail-check limit reached; additional matches remain unchecked"
+    },
+    {
+      "id": "nxp",
+      "name": "NXP official careers",
+      "status": "partial",
+      "checked_at": "2026-10-27T21:42:16Z",
+      "count": 5,
+      "error": "Workday results changed during pagination; Query UWB was only partially checked; Query radar was only partially checked; Query SLAM was only partially checked; Query localization was only partially checked; Query positioning was only partially checked; Detail-check limit reached; additional matches remain unchecked"
+    },
+    {
+      "id": "waymo",
+      "name": "Waymo official Greenhouse board",
+      "status": "ok",
+      "checked_at": "2026-10-27T21:42:16Z",
+      "count": 8
+    },
+    {
+      "id": "zadar",
+      "name": "Zadar Labs official careers",
+      "status": "ok",
+      "checked_at": "2026-10-27T21:42:16Z",
+      "count": 1
+    }
+  ],
+  "jobs": [
+    {
+      "id": "nvidia:jr2028027",
+      "source_id": "nvidia",
+      "company": "NVIDIA",
+      "title": "Applied Research Intern, Integrated Sensing and Communications (ISAC)-NVIDIA Aerial - Summer 2027",
+      "url": "https://jobs.nvidia.com/careers/job/893398185388",
+      "location": "US, CA, Santa Clara / United States of America",
+      "region": "US",
+      "employment_type": "Internship",
+      "category": "wireless-isac",
+      "status": "open",
+      "pinned": true,
+      "score": 110,
+      "match_reasons": [
+        "Integrated sensing and communications (ISAC) is explicitly mentioned"
+      ],
+      "requirements": [
+        "Python mentioned",
+        "GPU/CUDA experience mentioned",
+        "Machine-learning frameworks mentioned",
+        "PhD/graduate study mentioned",
+        "Radar mentioned"
+      ],
+      "summary": "Role text connects wireless systems with integrated sensing and communications.",
+      "requisition_id": "JR2028027",
+      "posted_at": "2026-10-20",
+      "missing_count": 0,
+      "first_seen": "2026-10-27T21:40:18Z",
+      "last_seen": "2026-10-27T21:42:16Z",
+      "last_checked": "2026-10-27T21:42:16Z",
+      "last_verified": "2026-10-27T21:42:16Z",
+      "check_status": "ok",
+      "last_detail_attempt": "2026-10-27T21:42:16Z"
+    },
+    {
+      "id": "manual:4374390601",
+      "source_id": "manual",
+      "company": "Qualcomm",
+      "title": "Location Technology Systems Engineer",
+      "url": "https://www.linkedin.com/jobs/view/location-technology-systems-engineer-at-qualcomm-4374390601/",
+      "location": "",
+      "region": "Unknown",
+      "employment_type": "Unknown",
+      "category": "radio-localization",
+      "status": "saved",
+      "pinned": true,
+      "score": 70,
+      "match_reasons": [
+        "User-saved reference; automatic verification is unavailable"
+      ],
+      "requirements": [],
+      "summary": "Manually saved reference. Availability is not checked automatically.",
+      "requisition_id": "4374390601",
+      "first_seen": "2026-10-27T21:40:18Z",
+      "last_seen": "2026-10-27T21:40:18Z",
+      "last_checked": "2026-10-27T21:40:18Z",
+      "check_status": "manual",
+      "missing_count": 0
+    },
+    {
+      "id": "merl:st0238",
+      "source_id": "merl",
+      "company": "Mitsubishi Electric Research Laboratories",
+      "title": "Internship - Multi-Modal Sensing and Understanding",
+      "url": "https://www.merl.com/employment/internship-openings#ST0238",
+      "location": "",
+      "region": "Unknown",
+      "employment_type": "Internship",
+      "category": "radar-sensing",
+      "status": "listed",
+      "pinned": false,
+      "score": 105,
+      "match_reasons": [
+        "Radar is named in the role's title or technical description"
+      ],
+      "requirements": [
+        "Python mentioned",
+        "Machine-learning frameworks mentioned",
+        "UWB mentioned",
+        "Radar mentioned"
+      ],
+      "summary": "Role text includes radar sensing, signal processing, or radar-based perception.",
+      "requisition_id": "ST0238",
+      "missing_count": 0,
+      "first_seen": "2026-10-27T21:40:18Z",
+      "last_seen": "2026-10-27T21:42:16Z",
+      "last_checked": "2026-10-27T21:42:16Z",
+      "last_verified": "2026-10-27T21:42:16Z",
+      "check_status": "ok"
+    },
+    {
+      "id": "nxp:r-10062367",
+      "source_id": "nxp",
+      "company": "NXP",
+      "title": "BSc Intern position - In-Cabin Sensing for Automotive Applications at Systems Innovation Automotive (SI A)",
+      "url": "https://nxp.wd3.myworkdayjobs.com/careers/job/Eindhoven/BSc-Intern-position---In-Cabin-Sensing-for-Automotive-Applications-at-Systems-Innovation-Automotive--SI-A-_R-10062367",
+      "location": "Eindhoven / Netherlands",
+      "region": "Europe",
+      "employment_type": "Internship",
+      "category": "radar-sensing",
+      "status": "open",
+      "pinned": false,
+      "score": 105,
+      "match_reasons": [
+        "Radar is named in the role's title or technical description"
+      ],
+      "requirements": [
+        "UWB mentioned",
+        "Radar mentioned"
+      ],
+      "summary": "Role text includes radar sensing, signal processing, or radar-based perception.",
+      "requisition_id": "R-10062367",
+      "posted_at": "2026-10-27",
+      "missing_count": 0,
+      "first_seen": "2026-10-27T21:40:18Z",
+      "last_seen": "2026-10-27T21:42:16Z",
+      "last_checked": "2026-10-27T21:42:16Z",
+      "last_verified": "2026-10-27T21:42:16Z",
+      "check_status": "ok",
+      "last_detail_attempt": "2026-10-27T21:42:16Z"
+    },
+    {
+      "id": "nxp:r-10067346",
+      "source_id": "nxp",
+      "company": "NXP",
+      "title": "Radar SDK Internship Student",
+      "url": "https://nxp.wd3.myworkdayjobs.com/careers/job/Bucharest/Radar-SDK-Internship-Student_R-10067346",
+      "location": "Bucharest / Romania",
+      "region": "Europe",
+      "employment_type": "Internship",
+      "category": "radar-sensing",
+      "status": "open",
+      "pinned": false,
+      "score": 105,
+      "match_reasons": [
+        "Radar is named in the role's title"
+      ],
+      "requirements": [
+        "C++ mentioned",
+        "Radar mentioned"
+      ],
+      "summary": "Role text includes radar sensing, signal processing, or radar-based perception.",
+      "requisition_id": "R-10067346",
+      "posted_at": "2026-10-15",
+      "missing_count": 0,
+      "first_seen": "2026-10-27T21:40:18Z",
+      "last_seen": "2026-10-27T21:42:16Z",
+      "last_checked": "2026-10-27T21:42:16Z",
+      "last_verified": "2026-10-27T21:42:16Z",
+      "check_status": "ok",
+      "last_detail_attempt": "2026-10-27T21:42:16Z"
+    },
+    {
+      "id": "nxp:r-10065402",
+      "source_id": "nxp",
+      "company": "NXP",
+      "title": "UWB Radar Signal Processing & Algorithms Intern - Summer 2027",
+      "url": "https://nxp.wd3.myworkdayjobs.com/careers/job/Irvine/UWB-Radar-Signal-Processing---Algorithms-Intern---Summer-2027_R-10065402",
+      "location": "Irvine / United States of America",
+      "region": "US",
+      "employment_type": "Internship",
+      "category": "radar-sensing",
+      "status": "open",
+      "pinned": false,
+      "score": 105,
+      "match_reasons": [
+        "Radar is named in the role's title"
+      ],
+      "requirements": [
+        "Python mentioned",
+        "C++ mentioned",
+        "PhD/graduate study mentioned",
+        "UWB mentioned",
+        "Radar mentioned"
+      ],
+      "summary": "Role text includes radar sensing, signal processing, or radar-based perception.",
+      "requisition_id": "R-10065402",
+      "posted_at": "2026-10-26",
+      "missing_count": 0,
+      "first_seen": "2026-10-27T21:40:18Z",
+      "last_seen": "2026-10-27T21:42:16Z",
+      "last_checked": "2026-10-27T21:42:16Z",
+      "last_verified": "2026-10-27T21:42:16Z",
+      "check_status": "ok",
+      "last_detail_attempt": "2026-10-27T21:42:16Z"
+    },
+    {
+      "id": "waymo:8227411",
+      "source_id": "waymo",
+      "company": "Waymo",
+      "title": "2027 Summer Intern, MS/PhD, Perception, Machine Learning",
+      "url": "https://careers.withwaymo.com/jobs?gh_jid=8227411",
+      "location": "Mountain View, CA, USA",
+      "region": "US",
+      "employment_type": "Internship",
+      "category": "radar-sensing",
+      "status": "open",
+      "pinned": false,
+      "score": 105,
+      "match_reasons": [
+        "Radar is named in the role's title or technical description"
+      ],
+      "requirements": [
+        "Python mentioned",
+        "Machine-learning frameworks mentioned",
+        "PhD/graduate study mentioned",
+        "Radar mentioned"
+      ],
+      "summary": "Role text includes radar sensing, signal processing, or radar-based perception.",
+      "posted_at": "2026-09-25T18:46:35-04:00",
+      "missing_count": 0,
+      "first_seen": "2026-10-27T21:40:18Z",
+      "last_seen": "2026-10-27T21:42:16Z",
+      "last_checked": "2026-10-27T21:42:16Z",
+      "last_verified": "2026-10-27T21:42:16Z",
+      "check_status": "ok"
+    },
+    {
+      "id": "waymo:8248411",
+      "source_id": "waymo",
+      "company": "Waymo",
+      "title": "2027 Summer Intern, MS/PhD, Perception, Model Lifecycle",
+      "url": "https://careers.withwaymo.com/jobs?gh_jid=8248411",
+      "location": "Mountain View, CA, USA",
+      "region": "US",
+      "employment_type": "Internship",
+      "category": "radar-sensing",
+      "status": "open",
+      "pinned": false,
+      "score": 105,
+      "match_reasons": [
+        "Radar is named in the role's title or technical description"
+      ],
+      "requirements": [
+        "Python mentioned",
+        "Machine-learning frameworks mentioned",
+        "PhD/graduate study mentioned",
+        "Radar mentioned"
+      ],
+      "summary": "Role text includes radar sensing, signal processing, or radar-based perception.",
+      "posted_at": "2026-10-12T18:03:20-04:00",
+      "missing_count": 0,
+      "first_seen": "2026-10-27T21:40:18Z",
+      "last_seen": "2026-10-27T21:42:16Z",
+      "last_checked": "2026-10-27T21:42:16Z",
+      "last_verified": "2026-10-27T21:42:16Z",
+      "check_status": "ok"
+    },
+    {
+      "id": "waymo:8319171",
+      "source_id": "waymo",
+      "company": "Waymo",
+      "title": "2027 Summer Intern, MS/PhD, Sensor Performance Engineer Intern",
+      "url": "https://careers.withwaymo.com/jobs?gh_jid=8319171",
+      "location": "Mountain View, CA, USA",
+      "region": "US",
+      "employment_type": "Internship",
+      "category": "radar-sensing",
+      "status": "open",
+      "pinned": false,
+      "score": 105,
+      "match_reasons": [
+        "Radar is named in the role's title or technical description"
+      ],
+      "requirements": [
+        "Python mentioned",
+        "PhD/graduate study mentioned",
+        "Radar mentioned"
+      ],
+      "summary": "Role text includes radar sensing, signal processing, or radar-based perception.",
+      "posted_at": "2026-10-27T12:19:18-04:00",
+      "missing_count": 0,
+      "first_seen": "2026-10-27T21:40:18Z",
+      "last_seen": "2026-10-27T21:42:16Z",
+      "last_checked": "2026-10-27T21:42:16Z",
+      "last_verified": "2026-10-27T21:42:16Z",
+      "check_status": "ok"
+    },
+    {
+      "id": "efference:uwb-engineer",
+      "source_id": "efference",
+      "company": "Efference",
+      "title": "UWB Systems Engineer",
+      "url": "https://efference.ai/careers/uwb-engineer/",
+      "location": "San Francisco, CA, US",
+      "region": "US",
+      "employment_type": "Full-time",
+      "category": "radio-localization",
+      "status": "listed",
+      "pinned": false,
+      "score": 100,
+      "match_reasons": [
+        "Role text connects radio/RF technology with localization or ranging"
+      ],
+      "requirements": [
+        "Python mentioned",
+        "C++ mentioned",
+        "UWB mentioned"
+      ],
+      "summary": "Role text links radio or RF measurements with positioning, ranging, or localization.",
+      "posted_at": "2026-10-19",
+      "missing_count": 0,
+      "first_seen": "2026-10-27T21:40:18Z",
+      "last_seen": "2026-10-27T21:42:16Z",
+      "last_checked": "2026-10-27T21:42:16Z",
+      "last_verified": "2026-10-27T21:42:16Z",
+      "check_status": "ok",
+      "last_detail_attempt": "2026-10-27T21:42:16Z"
+    },
+    {
+      "id": "glydways:5238232007",
+      "source_id": "glydways",
+      "company": "Glydways",
+      "title": "Localization Systems Engineer",
+      "url": "https://job-boards.greenhouse.io/glydways/jobs/5238232007",
+      "location": "Remote",
+      "region": "Remote",
+      "employment_type": "Unknown",
+      "category": "radio-localization",
+      "status": "open",
+      "pinned": false,
+      "score": 100,
+      "match_reasons": [
+        "Role text connects radio/RF technology with localization or ranging"
+      ],
+      "requirements": [
+        "C++ mentioned",
+        "Bayesian estimation/filtering mentioned",
+        "Radar mentioned"
+      ],
+      "summary": "Role text links radio or RF measurements with positioning, ranging, or localization.",
+      "posted_at": "2026-09-14T18:25:11-04:00",
+      "missing_count": 0,
+      "first_seen": "2026-10-27T21:40:18Z",
+      "last_seen": "2026-10-27T21:42:16Z",
+      "last_checked": "2026-10-27T21:42:16Z",
+      "last_verified": "2026-10-27T21:42:16Z",
+      "check_status": "ok"
+    },
+    {
+      "id": "nvidia:jr2023496",
+      "source_id": "nvidia",
+      "company": "NVIDIA",
+      "title": "NVIDIA 2027 Internships: Autonomous Vehicles and Robotics",
+      "url": "https://nvidia.wd5.myworkdayjobs.com/NVIDIAExternalCareerSite/job/US-CA-Santa-Clara/NVIDIA-2027-Internships--Autonomous-Vehicles-and-Robotics_JR2023496",
+      "location": "US, CA, Santa Clara / United States of America",
+      "region": "US",
+      "employment_type": "Internship",
+      "category": "robotics-localization",
+      "status": "open",
+      "pinned": false,
+      "score": 95,
+      "match_reasons": [
+        "Technical description mentions robotic estimation, tracking, or SLAM"
+      ],
+      "requirements": [
+        "Python mentioned",
+        "C++ mentioned",
+        "GPU/CUDA experience mentioned",
+        "Machine-learning frameworks mentioned",
+        "ROS experience mentioned",
+        "PhD/graduate study mentioned"
+      ],
+      "summary": "Role text includes robotic localization, mapping, tracking, or sensor fusion.",
+      "requisition_id": "JR2023496",
+      "posted_at": "2026-10-12",
+      "missing_count": 0,
+      "first_seen": "2026-10-27T21:40:18Z",
+      "last_seen": "2026-10-27T21:42:16Z",
+      "last_checked": "2026-10-27T21:42:16Z",
+      "last_verified": "2026-10-27T21:42:16Z",
+      "check_status": "ok",
+      "last_detail_attempt": "2026-10-27T21:42:16Z"
+    },
+    {
+      "id": "waymo:8224746",
+      "source_id": "waymo",
+      "company": "Waymo",
+      "title": "2027 Summer Intern, PhD, Perception/Road Understanding, ML Engineer",
+      "url": "https://careers.withwaymo.com/jobs?gh_jid=8224746",
+      "location": "Mountain View, California",
+      "region": "US",
+      "employment_type": "Internship",
+      "category": "robotics-localization",
+      "status": "open",
+      "pinned": false,
+      "score": 95,
+      "match_reasons": [
+        "Technical description mentions robotic estimation, tracking, or SLAM"
+      ],
+      "requirements": [
+        "Python mentioned",
+        "Machine-learning frameworks mentioned",
+        "PhD/graduate study mentioned"
+      ],
+      "summary": "Role text includes robotic localization, mapping, tracking, or sensor fusion.",
+      "posted_at": "2026-09-23T15:28:48-04:00",
+      "missing_count": 0,
+      "first_seen": "2026-10-27T21:40:18Z",
+      "last_seen": "2026-10-27T21:42:16Z",
+      "last_checked": "2026-10-27T21:42:16Z",
+      "last_verified": "2026-10-27T21:42:16Z",
+      "check_status": "ok"
+    },
+    {
+      "id": "fieldai:bb127cde-930c-446f-908d-52e2c6f24cc9",
+      "source_id": "fieldai",
+      "company": "FieldAI",
+      "title": "Perception Engineer, 3D Representation & Navigation",
+      "url": "https://jobs.lever.co/field-ai/bb127cde-930c-446f-908d-52e2c6f24cc9",
+      "location": "Irvine, CA",
+      "region": "US",
+      "employment_type": "Full-time",
+      "category": "radar-sensing",
+      "status": "open",
+      "pinned": false,
+      "score": 85,
+      "match_reasons": [
+        "Radar is named in the role's title or technical description"
+      ],
+      "requirements": [
+        "Radar mentioned"
+      ],
+      "summary": "Role text includes radar sensing, signal processing, or radar-based perception.",
+      "posted_at": "2026-08-14",
+      "missing_count": 0,
+      "first_seen": "2026-10-27T21:40:18Z",
+      "last_seen": "2026-10-27T21:42:16Z",
+      "last_checked": "2026-10-27T21:42:16Z",
+      "last_verified": "2026-10-27T21:42:16Z",
+      "check_status": "ok"
+    },
+    {
+      "id": "fieldai:95c1d7a7-f2b4-45ca-9888-2196b14afa77",
+      "source_id": "fieldai",
+      "company": "FieldAI",
+      "title": "Robotics Autonomy Engineer, Perception",
+      "url": "https://jobs.lever.co/field-ai/95c1d7a7-f2b4-45ca-9888-2196b14afa77",
+      "location": "Irvine, CA / Peoria, Illinois",
+      "region": "US",
+      "employment_type": "Full-time",
+      "category": "radar-sensing",
+      "status": "open",
+      "pinned": false,
+      "score": 85,
+      "match_reasons": [
+        "Radar is named in the role's title or technical description"
+      ],
+      "requirements": [
+        "Python mentioned",
+        "C++ mentioned",
+        "ROS experience mentioned",
+        "PhD/graduate study mentioned",
+        "Radar mentioned"
+      ],
+      "summary": "Role text includes radar sensing, signal processing, or radar-based perception.",
+      "posted_at": "2026-09-16",
+      "missing_count": 0,
+      "first_seen": "2026-10-27T21:40:18Z",
+      "last_seen": "2026-10-27T21:42:16Z",
+      "last_checked": "2026-10-27T21:42:16Z",
+      "last_verified": "2026-10-27T21:42:16Z",
+      "check_status": "ok"
+    },
+    {
+      "id": "fieldai:73c30d65-3a05-4ba3-99b6-af2d2b13e85e",
+      "source_id": "fieldai",
+      "company": "FieldAI",
+      "title": "Robotics Autonomy Engineer, Systems",
+      "url": "https://jobs.lever.co/field-ai/73c30d65-3a05-4ba3-99b6-af2d2b13e85e",
+      "location": "Irvine, CA / Peoria, Illinois",
+      "region": "US",
+      "employment_type": "Full-time",
+      "category": "radar-sensing",
+      "status": "open",
+      "pinned": false,
+      "score": 85,
+      "match_reasons": [
+        "Radar is named in the role's title or technical description"
+      ],
+      "requirements": [
+        "Python mentioned",
+        "C++ mentioned",
+        "ROS experience mentioned",
+        "PhD/graduate study mentioned",
+        "Radar mentioned"
+      ],
+      "summary": "Role text includes radar sensing, signal processing, or radar-based perception.",
+      "posted_at": "2025-03-11",
+      "missing_count": 0,
+      "first_seen": "2026-10-27T21:40:18Z",
+      "last_seen": "2026-10-27T21:42:16Z",
+      "last_checked": "2026-10-27T21:42:16Z",
+      "last_verified": "2026-10-27T21:42:16Z",
+      "check_status": "ok"
+    },
+    {
+      "id": "waymo:8241745",
+      "source_id": "waymo",
+      "company": "Waymo",
+      "title": "Product Quality Engineer, Automotive Sensors",
+      "url": "https://careers.withwaymo.com/jobs?gh_jid=8241745",
+      "location": "Mountain View, CA, USA",
+      "region": "US",
+      "employment_type": "Unknown",
+      "category": "radar-sensing",
+      "status": "open",
+      "pinned": false,
+      "score": 85,
+      "match_reasons": [
+        "Radar is named in the role's title or technical description"
+      ],
+      "requirements": [
+        "Radar mentioned"
+      ],
+      "summary": "Role text includes radar sensing, signal processing, or radar-based perception.",
+      "posted_at": "2026-09-30T15:42:41-04:00",
+      "missing_count": 0,
+      "first_seen": "2026-10-27T21:40:18Z",
+      "last_seen": "2026-10-27T21:42:16Z",
+      "last_checked": "2026-10-27T21:42:16Z",
+      "last_verified": "2026-10-27T21:42:16Z",
+      "check_status": "ok"
+    },
+    {
+      "id": "zadar:radar-perception-and-sensor-fusion-software-engineer",
+      "source_id": "zadar",
+      "company": "Zadar Labs",
+      "title": "Radar Perception and Sensor Fusion Software Engineer",
+      "url": "https://www.zadarlabs.com/careers",
+      "location": "",
+      "region": "Unknown",
+      "employment_type": "Unknown",
+      "category": "radar-sensing",
+      "status": "listed",
+      "pinned": false,
+      "score": 85,
+      "match_reasons": [
+        "Radar is named in the role's title"
+      ],
+      "requirements": [
+        "Python mentioned",
+        "C++ mentioned",
+        "Machine-learning frameworks mentioned",
+        "ROS experience mentioned",
+        "Bayesian estimation/filtering mentioned",
+        "Radar mentioned"
+      ],
+      "summary": "Role text includes radar sensing, signal processing, or radar-based perception.",
+      "missing_count": 0,
+      "first_seen": "2026-10-27T21:40:18Z",
+      "last_seen": "2026-10-27T21:42:16Z",
+      "last_checked": "2026-10-27T21:42:16Z",
+      "last_verified": "2026-10-27T21:42:16Z",
+      "check_status": "ok"
+    },
+    {
+      "id": "efference:research-engineer-vio-slam",
+      "source_id": "efference",
+      "company": "Efference",
+      "title": "Computer Vision Engineer, VIO / SLAM",
+      "url": "https://efference.ai/careers/research-engineer-vio-slam/",
+      "location": "San Francisco, CA, US",
+      "region": "US",
+      "employment_type": "Full-time",
+      "category": "robotics-localization",
+      "status": "listed",
+      "pinned": false,
+      "score": 75,
+      "match_reasons": [
+        "Role title names localization, SLAM, sensor fusion, or state estimation"
+      ],
+      "requirements": [
+        "Python mentioned",
+        "C++ mentioned"
+      ],
+      "summary": "Role text includes robotic localization, mapping, tracking, or sensor fusion.",
+      "posted_at": "2026-10-19",
+      "missing_count": 0,
+      "first_seen": "2026-10-27T21:40:18Z",
+      "last_seen": "2026-10-27T21:42:16Z",
+      "last_checked": "2026-10-27T21:42:16Z",
+      "last_verified": "2026-10-27T21:42:16Z",
+      "check_status": "ok",
+      "last_detail_attempt": "2026-10-27T21:42:16Z"
+    },
+    {
+      "id": "fieldai:9524c7c2-8be2-4463-afe3-7c1c60f7e6f2",
+      "source_id": "fieldai",
+      "company": "FieldAI",
+      "title": "Robotics AI Engineer – Calibration, Localization, and Mapping",
+      "url": "https://jobs.lever.co/field-ai/9524c7c2-8be2-4463-afe3-7c1c60f7e6f2",
+      "location": "Boston, MA",
+      "region": "US",
+      "employment_type": "Full-time",
+      "category": "robotics-localization",
+      "status": "open",
+      "pinned": false,
+      "score": 75,
+      "match_reasons": [
+        "Role title names localization, SLAM, sensor fusion, or state estimation"
+      ],
+      "requirements": [
+        "Python mentioned",
+        "C++ mentioned",
+        "ROS experience mentioned",
+        "PhD/graduate study mentioned",
+        "Radar mentioned"
+      ],
+      "summary": "Role text includes robotic localization, mapping, tracking, or sensor fusion.",
+      "posted_at": "2026-10-09",
+      "missing_count": 0,
+      "first_seen": "2026-10-27T21:40:18Z",
+      "last_seen": "2026-10-27T21:42:16Z",
+      "last_checked": "2026-10-27T21:42:16Z",
+      "last_verified": "2026-10-27T21:42:16Z",
+      "check_status": "ok"
+    },
+    {
+      "id": "fieldai:ad7999a2-3ce7-4231-935c-e14a8d2c5d96",
+      "source_id": "fieldai",
+      "company": "FieldAI",
+      "title": "Robotics AI Engineer – Calibration, Localization, and Mapping",
+      "url": "https://jobs.lever.co/field-ai/ad7999a2-3ce7-4231-935c-e14a8d2c5d96",
+      "location": "Irvine, CA",
+      "region": "US",
+      "employment_type": "Full-time",
+      "category": "robotics-localization",
+      "status": "open",
+      "pinned": false,
+      "score": 75,
+      "match_reasons": [
+        "Role title names localization, SLAM, sensor fusion, or state estimation"
+      ],
+      "requirements": [
+        "Python mentioned",
+        "C++ mentioned",
+        "ROS experience mentioned",
+        "PhD/graduate study mentioned",
+        "Radar mentioned"
+      ],
+      "summary": "Role text includes robotic localization, mapping, tracking, or sensor fusion.",
+      "posted_at": "2026-10-01",
+      "missing_count": 0,
+      "first_seen": "2026-10-27T21:40:18Z",
+      "last_seen": "2026-10-27T21:42:16Z",
+      "last_checked": "2026-10-27T21:42:16Z",
+      "last_verified": "2026-10-27T21:42:16Z",
+      "check_status": "ok"
+    },
+    {
+      "id": "fieldai:f9f0a9b0-b8b3-4e1e-82c4-9f2ee11e23c8",
+      "source_id": "fieldai",
+      "company": "FieldAI",
+      "title": "Robotics Applied Scientist, Spatio-Temporal Scene Understanding & Memory",
+      "url": "https://jobs.lever.co/field-ai/f9f0a9b0-b8b3-4e1e-82c4-9f2ee11e23c8",
+      "location": "Irvine, CA",
+      "region": "US",
+      "employment_type": "Full-time",
+      "category": "robotics-localization",
+      "status": "open",
+      "pinned": false,
+      "score": 75,
+      "match_reasons": [
+        "Technical description mentions robotic estimation, tracking, or SLAM"
+      ],
+      "requirements": [
+        "Python mentioned",
+        "C++ mentioned",
+        "ROS experience mentioned",
+        "PhD/graduate study mentioned"
+      ],
+      "summary": "Role text includes robotic localization, mapping, tracking, or sensor fusion.",
+      "posted_at": "2026-10-19",
+      "missing_count": 0,
+      "first_seen": "2026-10-27T21:40:18Z",
+      "last_seen": "2026-10-27T21:42:16Z",
+      "last_checked": "2026-10-27T21:42:16Z",
+      "last_verified": "2026-10-27T21:42:16Z",
+      "check_status": "ok"
+    },
+    {
+      "id": "fieldai:9e451b91-7633-4b86-bf64-38cd7bd6a8dc",
+      "source_id": "fieldai",
+      "company": "FieldAI",
+      "title": "Robotics Release Engineer, System Validation",
+      "url": "https://jobs.lever.co/field-ai/9e451b91-7633-4b86-bf64-38cd7bd6a8dc",
+      "location": "Irvine, CA",
+      "region": "US",
+      "employment_type": "Full-time",
+      "category": "robotics-localization",
+      "status": "open",
+      "pinned": false,
+      "score": 75,
+      "match_reasons": [
+        "Technical description mentions robotic estimation, tracking, or SLAM"
+      ],
+      "requirements": [
+        "Python mentioned",
+        "ROS experience mentioned"
+      ],
+      "summary": "Role text includes robotic localization, mapping, tracking, or sensor fusion.",
+      "posted_at": "2026-10-13",
+      "missing_count": 0,
+      "first_seen": "2026-10-27T21:40:18Z",
+      "last_seen": "2026-10-27T21:42:16Z",
+      "last_checked": "2026-10-27T21:42:16Z",
+      "last_verified": "2026-10-27T21:42:16Z",
+      "check_status": "ok"
+    },
+    {
+      "id": "nvidia:jr2003384",
+      "source_id": "nvidia",
+      "company": "NVIDIA",
+      "title": "Distinguished Engineer - Wireless Infrastructure",
+      "url": "https://nvidia.wd5.myworkdayjobs.com/NVIDIAExternalCareerSite/job/US-CA-Santa-Clara/Distinguished-Engineer---6G-Chief-Architect_JR2003384",
+      "location": "US, CA, Santa Clara / US, NH, Remote / US, MA, Remote / United States of America",
+      "region": "Remote",
+      "employment_type": "Full-time",
+      "category": "wireless-isac",
+      "status": "open",
+      "pinned": false,
+      "score": 70,
+      "match_reasons": [
+        "Integrated sensing and communications (ISAC) is explicitly mentioned"
+      ],
+      "requirements": [
+        "Python mentioned",
+        "C++ mentioned",
+        "PhD/graduate study mentioned",
+        "Senior/experienced role"
+      ],
+      "summary": "Role text connects wireless systems with integrated sensing and communications.",
+      "requisition_id": "JR2003384",
+      "posted_at": "2026-06-12",
+      "missing_count": 0,
+      "first_seen": "2026-10-27T21:40:18Z",
+      "last_seen": "2026-10-27T21:42:16Z",
+      "last_checked": "2026-10-27T21:42:16Z",
+      "last_verified": "2026-10-27T21:42:16Z",
+      "check_status": "ok",
+      "last_detail_attempt": "2026-10-27T21:42:16Z"
+    },
+    {
+      "id": "nvidia:jr2021077",
+      "source_id": "nvidia",
+      "company": "NVIDIA",
+      "title": "Senior Radar Perception Engineer, Obstacle Foundation Models - Autonomous Vehicles",
+      "url": "https://nvidia.wd5.myworkdayjobs.com/NVIDIAExternalCareerSite/job/US-CA-Santa-Clara/Senior-Radar-Perception-Engineer--Obstacle-Foundation-Models---Autonomous-Vehicles_JR2021077",
+      "location": "US, CA, Santa Clara / US, CA, Remote / US, Remote / United States of America",
+      "region": "Remote",
+      "employment_type": "Full-time",
+      "category": "radar-sensing",
+      "status": "open",
+      "pinned": false,
+      "score": 65,
+      "match_reasons": [
+        "Radar is named in the role's title"
+      ],
+      "requirements": [
+        "Python mentioned",
+        "C++ mentioned",
+        "GPU/CUDA experience mentioned",
+        "Machine-learning frameworks mentioned",
+        "PhD/graduate study mentioned",
+        "Radar mentioned",
+        "Senior/experienced role"
+      ],
+      "summary": "Role text includes radar sensing, signal processing, or radar-based perception.",
+      "requisition_id": "JR2021077",
+      "posted_at": "2026-10-02",
+      "missing_count": 0,
+      "first_seen": "2026-10-27T21:40:18Z",
+      "last_seen": "2026-10-27T21:42:16Z",
+      "last_checked": "2026-10-27T21:42:16Z",
+      "last_verified": "2026-10-27T21:42:16Z",
+      "check_status": "ok",
+      "last_detail_attempt": "2026-10-27T21:42:16Z"
+    },
+    {
+      "id": "nxp:r-10066095",
+      "source_id": "nxp",
+      "company": "NXP",
+      "title": "Senior Embedded Software Engineer – Radar SDK",
+      "url": "https://nxp.wd3.myworkdayjobs.com/careers/job/Bucharest/Senior-Embedded-Software-Engineer---Radar-SDK_R-10066095-1",
+      "location": "Bucharest / Romania",
+      "region": "Europe",
+      "employment_type": "Full-time",
+      "category": "radar-sensing",
+      "status": "open",
+      "pinned": false,
+      "score": 65,
+      "match_reasons": [
+        "Radar is named in the role's title"
+      ],
+      "requirements": [
+        "C++ mentioned",
+        "Radar mentioned",
+        "Senior/experienced role"
+      ],
+      "summary": "Role text includes radar sensing, signal processing, or radar-based perception.",
+      "requisition_id": "R-10066095",
+      "posted_at": "2026-09-15",
+      "missing_count": 0,
+      "first_seen": "2026-10-27T21:40:18Z",
+      "last_seen": "2026-10-27T21:42:16Z",
+      "last_checked": "2026-10-27T21:42:16Z",
+      "last_verified": "2026-10-27T21:42:16Z",
+      "check_status": "ok",
+      "last_detail_attempt": "2026-10-27T21:42:16Z"
+    },
+    {
+      "id": "nxp:r-10066096",
+      "source_id": "nxp",
+      "company": "NXP",
+      "title": "Senior Embedded Software Engineer – Radar SDK",
+      "url": "https://nxp.wd3.myworkdayjobs.com/careers/job/Bucharest/Senior-Embedded-Software-Engineer---Radar-SDK_R-10066096-1",
+      "location": "Bucharest / Romania",
+      "region": "Europe",
+      "employment_type": "Full-time",
+      "category": "radar-sensing",
+      "status": "open",
+      "pinned": false,
+      "score": 65,
+      "match_reasons": [
+        "Radar is named in the role's title"
+      ],
+      "requirements": [
+        "C++ mentioned",
+        "Radar mentioned",
+        "Senior/experienced role"
+      ],
+      "summary": "Role text includes radar sensing, signal processing, or radar-based perception.",
+      "requisition_id": "R-10066096",
+      "posted_at": "2026-09-15",
+      "missing_count": 0,
+      "first_seen": "2026-10-27T21:40:18Z",
+      "last_seen": "2026-10-27T21:42:16Z",
+      "last_checked": "2026-10-27T21:42:16Z",
+      "last_verified": "2026-10-27T21:42:16Z",
+      "check_status": "ok",
+      "last_detail_attempt": "2026-10-27T21:42:16Z"
+    },
+    {
+      "id": "waymo:8003626",
+      "source_id": "waymo",
+      "company": "Waymo",
+      "title": "Senior Research Scientist, Perception",
+      "url": "https://careers.withwaymo.com/jobs?gh_jid=8003626",
+      "location": "Mountain View, CA, USA ; San Francisco, CA, USA ; Kirkland, WA, USA ; New York City, NY, USA",
+      "region": "US",
+      "employment_type": "Unknown",
+      "category": "radar-sensing",
+      "status": "open",
+      "pinned": false,
+      "score": 65,
+      "match_reasons": [
+        "Radar is named in the role's title or technical description"
+      ],
+      "requirements": [
+        "PhD/graduate study mentioned",
+        "Radar mentioned",
+        "Senior/experienced role"
+      ],
+      "summary": "Role text includes radar sensing, signal processing, or radar-based perception.",
+      "posted_at": "2026-06-12T18:40:58-04:00",
+      "missing_count": 0,
+      "first_seen": "2026-10-27T21:40:18Z",
+      "last_seen": "2026-10-27T21:42:16Z",
+      "last_checked": "2026-10-27T21:42:16Z",
+      "last_verified": "2026-10-27T21:42:16Z",
+      "check_status": "ok"
+    },
+    {
+      "id": "fieldai:8f3af86b-ded0-4c8a-a657-b89e50256bdd",
+      "source_id": "fieldai",
+      "company": "FieldAI",
+      "title": "Senior Robotics Software Engineer, 3D Mapping",
+      "url": "https://jobs.lever.co/field-ai/8f3af86b-ded0-4c8a-a657-b89e50256bdd",
+      "location": "Irvine, CA",
+      "region": "US",
+      "employment_type": "Full-time",
+      "category": "robotics-localization",
+      "status": "open",
+      "pinned": false,
+      "score": 55,
+      "match_reasons": [
+        "Technical description mentions robotic estimation, tracking, or SLAM"
+      ],
+      "requirements": [
+        "Python mentioned",
+        "C++ mentioned",
+        "ROS experience mentioned",
+        "PhD/graduate study mentioned",
+        "Senior/experienced role"
+      ],
+      "summary": "Role text includes robotic localization, mapping, tracking, or sensor fusion.",
+      "posted_at": "2026-05-23",
+      "missing_count": 0,
+      "first_seen": "2026-10-27T21:40:18Z",
+      "last_seen": "2026-10-27T21:42:16Z",
+      "last_checked": "2026-10-27T21:42:16Z",
+      "last_verified": "2026-10-27T21:42:16Z",
+      "check_status": "ok"
+    },
+    {
+      "id": "nvidia:jr2022858",
+      "source_id": "nvidia",
+      "company": "NVIDIA",
+      "title": "Senior Localization and Planning Engineer - Autonomous Vehicles",
+      "url": "https://nvidia.wd5.myworkdayjobs.com/NVIDIAExternalCareerSite/job/US-CA-Santa-Clara/Senior-Localization-and-Planning-Engineer---Autonomous-Vehicles_JR2022858",
+      "location": "US, CA, Santa Clara / US, WA, Remote / US, CA, Remote / US, WA, Redmond / United States of America",
+      "region": "Remote",
+      "employment_type": "Full-time",
+      "category": "robotics-localization",
+      "status": "open",
+      "pinned": false,
+      "score": 55,
+      "match_reasons": [
+        "Role title names localization, SLAM, sensor fusion, or state estimation"
+      ],
+      "requirements": [
+        "C++ mentioned",
+        "PhD/graduate study mentioned",
+        "Senior/experienced role"
+      ],
+      "summary": "Role text includes robotic localization, mapping, tracking, or sensor fusion.",
+      "requisition_id": "JR2022858",
+      "posted_at": "2026-08-29",
+      "missing_count": 0,
+      "first_seen": "2026-10-27T21:40:18Z",
+      "last_seen": "2026-10-27T21:42:16Z",
+      "last_checked": "2026-10-27T21:42:16Z",
+      "last_verified": "2026-10-27T21:42:16Z",
+      "check_status": "ok",
+      "last_detail_attempt": "2026-10-27T21:42:16Z"
+    },
+    {
+      "id": "nvidia:jr2014589",
+      "source_id": "nvidia",
+      "company": "NVIDIA",
+      "title": "Senior Localization Engineer - Autonomous Vehicles",
+      "url": "https://nvidia.wd5.myworkdayjobs.com/NVIDIAExternalCareerSite/job/US-CA-Santa-Clara/Senior-Localization-Engineer---Autonomous-Vehicles_JR2014589",
+      "location": "US, CA, Santa Clara / US, CA, Remote / United States of America",
+      "region": "Remote",
+      "employment_type": "Full-time",
+      "category": "robotics-localization",
+      "status": "open",
+      "pinned": false,
+      "score": 55,
+      "match_reasons": [
+        "Role title names localization, SLAM, sensor fusion, or state estimation"
+      ],
+      "requirements": [
+        "C++ mentioned",
+        "GPU/CUDA experience mentioned",
+        "PhD/graduate study mentioned",
+        "Senior/experienced role"
+      ],
+      "summary": "Role text includes robotic localization, mapping, tracking, or sensor fusion.",
+      "requisition_id": "JR2014589",
+      "posted_at": "2026-09-14",
+      "missing_count": 0,
+      "first_seen": "2026-10-27T21:40:18Z",
+      "last_seen": "2026-10-27T21:42:16Z",
+      "last_checked": "2026-10-27T21:42:16Z",
+      "last_verified": "2026-10-27T21:42:16Z",
+      "check_status": "ok",
+      "last_detail_attempt": "2026-10-27T21:42:16Z"
+    },
+    {
+      "id": "waymo:8157152",
+      "source_id": "waymo",
+      "company": "Waymo",
+      "title": "Senior Machine Learning Engineer, Multimodal Perception",
+      "url": "https://careers.withwaymo.com/jobs?gh_jid=8157152",
+      "location": "Mountain View, California, USA",
+      "region": "US",
+      "employment_type": "Unknown",
+      "category": "robotics-localization",
+      "status": "open",
+      "pinned": false,
+      "score": 55,
+      "match_reasons": [
+        "Technical description mentions robotic estimation, tracking, or SLAM"
+      ],
+      "requirements": [
+        "Machine-learning frameworks mentioned",
+        "Senior/experienced role"
+      ],
+      "summary": "Role text includes robotic localization, mapping, tracking, or sensor fusion.",
+      "posted_at": "2026-08-31T17:09:27-04:00",
+      "missing_count": 0,
+      "first_seen": "2026-10-27T21:40:18Z",
+      "last_seen": "2026-10-27T21:42:16Z",
+      "last_checked": "2026-10-27T21:42:16Z",
+      "last_verified": "2026-10-27T21:42:16Z",
+      "check_status": "ok"
+    },
+    {
+      "id": "waymo:7450706",
+      "source_id": "waymo",
+      "company": "Waymo",
+      "title": "Staff Tech Lead, Machine Learning Engineer, Perception",
+      "url": "https://careers.withwaymo.com/jobs?gh_jid=7450706",
+      "location": "Mountain View, California, United States; San Francisco, California, United States",
+      "region": "US",
+      "employment_type": "Unknown",
+      "category": "robotics-localization",
+      "status": "open",
+      "pinned": false,
+      "score": 55,
+      "match_reasons": [
+        "Technical description mentions robotic estimation, tracking, or SLAM"
+      ],
+      "requirements": [
+        "Python mentioned",
+        "C++ mentioned",
+        "Machine-learning frameworks mentioned",
+        "PhD/graduate study mentioned",
+        "Senior/experienced role"
+      ],
+      "summary": "Role text includes robotic localization, mapping, tracking, or sensor fusion.",
+      "posted_at": "2025-12-09T13:49:15-05:00",
+      "missing_count": 0,
+      "first_seen": "2026-10-27T21:40:18Z",
+      "last_seen": "2026-10-27T21:42:16Z",
+      "last_checked": "2026-10-27T21:42:16Z",
+      "last_verified": "2026-10-27T21:42:16Z",
+      "check_status": "ok"
+    }
+  ]
+}

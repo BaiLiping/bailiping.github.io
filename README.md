@@ -39,9 +39,19 @@ Google decides which pages to index and when.
 ## Career
 
 The homepage **Career** tab opens `/career/`. Its **Potential Jobs** page at
-`/career/potential-jobs/` collects the Qualcomm Location Technology Systems
-Engineer posting and the NVIDIA Aerial ISAC research internship for Summer 2027.
-The homepage also links directly to Potential Jobs under the Career heading.
+`/career/potential-jobs/` collects jobs and internships in radio localization,
+radar, robotics, SLAM, and integrated sensing and communications. The original
+Qualcomm reference and NVIDIA Aerial ISAC internship remain saved.
+
+The **Update potential jobs** GitHub Actions workflow refreshes configured
+official employer feeds daily around **09:17 Europe/Stockholm** and publishes
+the generated page. It can also be run from the Actions tab. Each listing shows
+its check status; failed requests retain previous results. Search and filters
+run in the browser, while the listings themselves are static HTML.
+
+See [the job watch documentation](career/README.md) for sources, local commands,
+status rules, and maintenance. The homepage also links directly to Potential
+Jobs under the Career heading.
 
 ## Flight tracker
 

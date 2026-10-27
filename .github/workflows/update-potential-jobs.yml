@@ -1,0 +1,114 @@
+name: Update potential jobs
+
+on:
+  schedule:
+    - cron: '17 9 * * *'
+      timezone: Europe/Stockholm
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - .github/workflows/update-potential-jobs.yml
+      - scripts/crawl-potential-jobs.py
+      - scripts/render-potential-jobs.py
+      - career/job-sources.json
+      - career/potential-jobs/template.html
+      - tests/test_job_*.py
+      - tests/fixtures/jobs/**
+
+permissions:
+  contents: write
+  pages: write
+
+concurrency:
+  group: potential-jobs-refresh
+  cancel-in-progress: false
+
+jobs:
+  refresh:
+    if: github.repository == 'BaiLiping/bailiping.github.io' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 1
+          sparse-checkout-cone-mode: false
+          sparse-checkout: |
+            *.html
+            /scripts/
+            /tests/
+            /career/
+            /site-map/
+            /sitemap.xml
+            /CNAME
+            /README.md
+            /AGENTS.md
+            /.github/workflows/
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Test matching, source failures, and page rendering
+        run: python3 -m unittest discover -s tests -p 'test_job_*.py'
+      - name: Find and recheck jobs on official employer sources
+        run: python3 scripts/crawl-potential-jobs.py
+      - name: Render the job page and validate site discovery
+        run: |
+          python3 scripts/render-potential-jobs.py
+          python3 scripts/render-potential-jobs.py --check
+          python3 scripts/build-search-index.py --check
+          git diff --check
+      - name: Publish only the refreshed job snapshot and page
+        id: publish
+        run: |
+          set -euo pipefail
+          git add -- career/potential-jobs/jobs.json career/potential-jobs/index.html
+          if git diff --cached --quiet; then
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git commit -m 'Refresh potential jobs from official employer sources'
+          for attempt in 1 2 3; do
+            if git push origin HEAD:main; then
+              echo "changed=true" >> "$GITHUB_OUTPUT"
+              exit 0
+            fi
+            # Preserve concurrent edits. A rebase conflict fails the run; never force-push.
+            git fetch origin main
+            if ! git diff --quiet HEAD...origin/main -- scripts/crawl-potential-jobs.py scripts/render-potential-jobs.py career/job-sources.json career/potential-jobs/template.html; then
+              echo 'Refresh inputs changed during this run; leave the newer configuration for the next run.'
+              exit 1
+            fi
+            git rebase origin/main
+            python3 scripts/render-potential-jobs.py --check
+            python3 -m unittest discover -s tests -p 'test_job_*.py'
+            python3 scripts/build-search-index.py --check
+          done
+          exit 1
+      - name: Request publication through the existing GitHub Pages setup
+        if: steps.publish.outputs.changed == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          # GITHUB_TOKEN commits do not trigger a Pages build automatically.
+          gh api --method POST "repos/${GITHUB_REPOSITORY}/pages/builds"
+      - name: Record refresh summary
+        if: always()
+        run: |
+          python3 - <<'PY'
+          import json, os
+          from pathlib import Path
+          path = Path('career/potential-jobs/jobs.json')
+          if path.exists():
+              data = json.loads(path.read_text())
+              sources = data.get('sources', [])
+              jobs = data.get('jobs', [])
+              with open(os.environ['GITHUB_STEP_SUMMARY'], 'a') as summary:
+                  summary.write('## Potential jobs\n')
+                  summary.write(f"Snapshot: {data.get('generated_at', 'unknown')}\n\n")
+                  summary.write(f"{len(jobs)} retained listings; {sum(s.get('status') == 'ok' for s in sources)} of {len(sources)} sources checked successfully.\n\n")
+                  summary.write('[Open Potential Jobs](https://bailiping.com/career/potential-jobs/)\n')
+          PY

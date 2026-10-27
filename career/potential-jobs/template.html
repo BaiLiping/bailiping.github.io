@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="robots" content="noindex">
+    <meta name="description" content="Regularly updated jobs and internships in radio localization, UWB, radar, robotics, SLAM, and integrated sensing and communications.">
+    <link rel="canonical" href="https://bailiping.com/career/potential-jobs/">
+    <link rel="stylesheet" href="/career/styles.css">
+    <link rel="stylesheet" href="/career/potential-jobs/jobs.css">
+    <script src="/career/potential-jobs/jobs.js" defer></script>
+    <title>Potential Jobs — Career — Bai Liping</title>
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="header-inner">
+        <a href="/" aria-label="Bai Liping home"><span class="brand-mark">BLP</span></a>
+        <nav class="site-nav" aria-label="Main navigation">
+          <a href="/">Home</a>
+          <a class="active" href="/career/">Career</a>
+        </nav>
+      </div>
+    </header>
+    <main class="jobs-page">
+      <nav class="breadcrumbs" aria-label="Breadcrumb">
+        <ol>
+          <li><a href="/">Home</a></li>
+          <li><a href="/career/">Career</a></li>
+          <li aria-current="page">Potential Jobs</li>
+        </ol>
+      </nav>
+      <p class="eyebrow">Career / Job watch</p>
+      <h1>Potential Jobs</h1>
+      <p class="intro">Radio localization, robotics, radar, and sensing opportunities.</p>
+      <!-- SNAPSHOT -->
+      <p id="stale-notice" class="notice" hidden>This snapshot is more than two days old. Check the original posting for current availability.</p>
+      <form id="job-filters" class="filters" role="search" aria-label="Filter job listings" hidden>
+        <label class="search-field" for="job-search">Search opportunities
+          <input id="job-search" type="search" placeholder="Company, role, skill, or location" autocomplete="off">
+        </label>
+        <div class="filter-grid">
+          <label for="job-category">Focus
+            <select id="job-category">
+              <option value="all">All focus areas</option>
+              <option value="radio-localization">Radio localization / UWB</option>
+              <option value="radar-sensing">Radar &amp; sensing</option>
+              <option value="robotics-localization">Robotics &amp; SLAM</option>
+              <option value="wireless-isac">Wireless &amp; ISAC</option>
+            </select>
+          </label>
+          <label for="job-type">Role type
+            <select id="job-type">
+              <option value="all">All role types</option>
+              <option value="Internship">Internships</option>
+              <option value="Full-time">Full-time</option>
+              <option value="Unknown">Not specified</option>
+            </select>
+          </label>
+          <label for="job-region">Location
+            <select id="job-region">
+              <option value="all">All locations</option>
+              <option value="US">United States</option>
+              <option value="Europe">Europe</option>
+              <option value="Remote">Remote</option>
+              <option value="Unknown">Not specified</option>
+              <option value="Other">Other locations</option>
+            </select>
+          </label>
+          <label for="job-status">Availability
+            <select id="job-status">
+              <option value="current">Current &amp; saved listings</option>
+              <option value="open">Confirmed open</option>
+              <option value="listed">Listed by employer</option>
+              <option value="unknown">Needs recheck</option>
+              <option value="saved">Saved links</option>
+              <option value="closed">Closed</option>
+              <option value="all">All, including closed</option>
+            </select>
+          </label>
+        </div>
+        <button class="reset-filters" type="reset">Clear filters</button>
+      </form>
+      <div class="results-heading">
+        <h2>Opportunities</h2>
+        <p id="results-count" aria-live="polite"><!-- COUNT --></p>
+      </div>
+      <div id="job-list" class="job-list"><!-- JOBS --></div>
+      <p id="no-results" class="empty-state" hidden>No opportunities match these filters. Try a broader search.</p>
+      <noscript><p class="notice">Current listings are shown on this page. Enable JavaScript to search, filter, or view closed listings.</p></noscript>
+      <!-- SOURCES -->
+      <footer class="site-footer">
+        <a href="/career/">Career</a>
+        <a href="/site-map/">All pages</a>
+        <a href="https://github.com/BaiLiping/bailiping.github.io/actions/workflows/update-potential-jobs.yml">Refresh history</a>
+      </footer>
+    </main>
+  </body>
+</html>
