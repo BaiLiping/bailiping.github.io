@@ -2,6 +2,9 @@
 
 Public page: <https://bailiping.com/career/chinese-healthcare-system-reform/>
 
+The first section, Career in 2010s, is a heading-only placeholder. Selected
+Publications is the second section.
+
 The Selected Publications collection contains all 27 entries from the supplied
 publication list: 26 健康界 articles and one Forbes feature. The Forbes feature
 appears first; the other entries retain their relative order. Chinese titles
