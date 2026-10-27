@@ -19,8 +19,7 @@
   function delta(value) { if (value === null || !Number.isFinite(value)) return "—"; var rounded=Math.round(value*10)/10; return (rounded>0 ? "+" : "") + rounded + " min"; }
   function metric(value, label, note) { return '<div class="metric"><strong>'+esc(value)+'</strong><span>'+esc(label)+'</span><small>'+esc(note)+'</small></div>'; }
   function sourceUrl(value) {
-    try { var url = new URL(value); return url.protocol === "https:" && (url.hostname === "www.flightradar24.com" || url.hostname === "flightradar24.com") ? url.href : "https://www.flightradar24.com/data"; }
-    catch (_) { return "https://www.flightradar24.com/data"; }
+    return core.validSourceUrl(value) ? new URL(value).href : "https://www.flightradar24.com/data";
   }
   function link(value, label) { return '<a href="'+esc(sourceUrl(value))+'" target="_blank" rel="noopener noreferrer">'+esc(label)+' ↗</a>'; }
   function empty(title, reason) { return '<div class="empty"><strong>'+esc(title)+'</strong><p>'+esc(reason)+'</p></div>'; }

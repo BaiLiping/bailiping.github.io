@@ -15,14 +15,18 @@
   function instant(value) {
     return typeof value === "string" && /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:Z|[+-]\d{2}:\d{2})$/.test(value) && validDate(value.slice(0,10)) && Number.isFinite(Date.parse(value)) ? Date.parse(value) : null;
   }
+  function validSourceUrl(value) {
+    try {
+      var url = new URL(value);
+      return url.protocol === "https:" && ["www.flightradar24.com", "flightradar24.com", "data.flightradar24.com", "data-live.flightradar24.com", "free.flightradar24.com"].includes(url.hostname) && !url.username && !url.password;
+    } catch (_) { return false; }
+  }
   function validateSnapshot(data) {
     function check(condition, label) {
       if (!condition) throw new Error("The saved observation file has an invalid " + label + ".");
     }
     function source(value) {
-      var url;
-      try { url = new URL(value); } catch (_) { check(false, "source link"); }
-      check(url.protocol === "https:" && ["www.flightradar24.com", "flightradar24.com"].includes(url.hostname) && !url.username && !url.password, "source link");
+      check(validSourceUrl(value), "source link");
     }
     function identity(row) {
       check(row && validFlight(row.flight) && validAirport(row.origin) && validDate(row.date), "flight, origin, or date");
@@ -120,5 +124,5 @@
     return { title: "Insufficient evidence for a percentage", reason: "A reliable estimate needs earlier airport departures, a forecast issued before departure, and a model fitted and tested on comparable records." };
   }
   return { normalFlight: normalFlight, validFlight: validFlight, normalAirport: normalAirport, validAirport: validAirport,
-    validDate: validDate, instant: instant, validateSnapshot: validateSnapshot, difference: difference, gateDelay: gateDelay, select: select, stats: stats, outlook: outlook };
+    validDate: validDate, instant: instant, validSourceUrl: validSourceUrl, validateSnapshot: validateSnapshot, difference: difference, gateDelay: gateDelay, select: select, stats: stats, outlook: outlook };
 });

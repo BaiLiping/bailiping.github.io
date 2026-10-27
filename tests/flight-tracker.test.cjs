@@ -28,6 +28,8 @@ core.validateSnapshot(data);
 assert.throws(()=>core.validateSnapshot({...data,observationDate:'2026-02-30'}),/snapshot date/);
 assert.throws(()=>core.validateSnapshot({...data,records:[{...observed,checkedAt:null}]}),/check time/);
 assert.throws(()=>core.validateSnapshot({...data,records:[{...observed,sourceUrl:'https://evilflightradar24.com/data'}]}),/source link/);
+for (const host of ['www.flightradar24.com','flightradar24.com','data.flightradar24.com','data-live.flightradar24.com','free.flightradar24.com']) assert.ok(core.validSourceUrl(`https://${host}/data/flights/sk935`));
+for (const url of ['https://www.flightradar24.com.evil.test/data','https://user@www.flightradar24.com/data','http://www.flightradar24.com/data','https://fr24api.flightradar24.com/']) assert.ok(!core.validSourceUrl(url));
 assert.throws(()=>core.validateSnapshot({...data,records:[{...observed,originTimeZone:'Invalid/Zone'}]}),/timezone/);
 assert.throws(()=>core.validateSnapshot({...data,records:[{...observed,date:'2026-10-27'}]}),/local departure date/);
 assert.throws(()=>core.validateSnapshot({...data,records:[{...observed,actualDeparture:'2026-02-30T12:00:00Z'}]}),/actualDeparture/);
