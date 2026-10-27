@@ -2,9 +2,9 @@
   "schemaVersion": 1,
   "provider": "Flightradar24",
   "collectionMethod": "Manual browser observation",
-  "checkedAt": "2026-10-27T21:05:17Z",
-  "defaultDate": "2026-10-28",
-  "defaultFlight": "UA5264",
+  "checkedAt": "2026-10-27T21:15:18Z",
+  "defaultDate": "2026-10-19",
+  "defaultFlight": "UA1219",
   "defaultAirport": "RNO",
   "records": [
     {
@@ -603,6 +603,32 @@
       "status": "Estimated departure",
       "registration": "N623UX",
       "date": "2026-10-28"
+    },
+    {
+      "flight": "UA1219",
+      "aliases": [
+        "UAL1219"
+      ],
+      "date": "2026-10-19",
+      "origin": "RNO",
+      "originAliases": [],
+      "destination": "SFO",
+      "originName": "Reno\u2013Tahoe",
+      "destinationName": "San Francisco",
+      "originTimeZone": "America/Los_Angeles",
+      "destinationTimeZone": "America/Los_Angeles",
+      "scheduledDeparture": "2026-10-20T01:39:00Z",
+      "estimatedDeparture": null,
+      "actualDeparture": "2026-10-20T02:39:00Z",
+      "departureEvent": "provider-atd",
+      "scheduledArrival": "2026-10-20T02:56:00Z",
+      "estimatedArrival": null,
+      "landedAt": "2026-10-20T03:50:00Z",
+      "status": "Landed",
+      "aircraft": "Airbus A319-131",
+      "registration": "N840UA",
+      "checkedAt": "2026-10-27T21:15:18Z",
+      "sourceUrl": "https://www.flightradar24.com/data/flights/ua1219"
     }
   ],
   "contexts": [
