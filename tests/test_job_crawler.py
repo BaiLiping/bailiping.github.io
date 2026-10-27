@@ -539,6 +539,63 @@ class FeedFailureTests(unittest.TestCase):
                          "A failed detail and a successful detail must both yield "
                          "the next run's limited slots to previously unchecked roles")
 
+    def test_workday_fresh_discovery_rotates_past_candidates_that_never_persist(self):
+        settings = self.workday_source()
+        settings.update(max_details=4, page_size=4, max_pages_per_query=1)
+        seed, known = "JR90001", "JR90002"
+        fresh = [f"JR2000{i}" for i in range(1, 5)]
+        paths = {native: f"/job/US-CA/Radio-Research_{native}"
+                 for native in [seed, known, *fresh]}
+        titles = {native: f"Radio Research Intern {letter}"
+                  for native, letter in zip(fresh, "ABCZ")}
+        titles.update({seed: "Research Intern, Radio Localization",
+                       known: "Research Intern, Radio Localization"})
+        settings["seed_paths"] = [paths[seed]]
+        old = job(known, url=settings["base_url"] + "/External" + paths[known])
+
+        class FreshCandidateClient:
+            def __init__(self):
+                self.requested = []
+
+            def post_json(self, url, payload=None, **kwargs):
+                return {"total": len(fresh), "jobPostings": [
+                    {"title": titles[native], "externalPath": paths[native],
+                     "locationsText": "Santa Clara, CA"}
+                    for native in fresh
+                ]}
+
+            def get_json(self, url, **kwargs):
+                native = crawler.requisition_from_url(url)
+                self.requested.append(native)
+                relevant = native in {seed, known, fresh[-1]}
+                return {"jobPostingInfo": {
+                    "title": titles[native], "jobReqId": native,
+                    "location": "Santa Clara, CA", "posted": True, "canApply": True,
+                    "jobDescription": (
+                        "Develop radio localization and Bayesian estimation."
+                        if relevant else
+                        "Design RF amplifier packaging and validate manufacturing yield."
+                    ),
+                }}
+
+        first_day, next_day = "2026-10-26T12:00:00Z", "2026-10-27T12:00:00Z"
+        first_client = FreshCandidateClient()
+        first = crawler.fetch_source(
+            dict(settings, _known_jobs=[old], _now=first_day), first_client)
+        self.assertEqual(first_client.requested, [seed, known, *fresh[:2]])
+        self.assertEqual({record["requisition_id"] for record in first.records},
+                         {seed, known}, "Irrelevant fresh descriptions must not persist")
+        merged = crawler.merge_results(state(old), [first], config(settings), first_day)
+
+        next_client = FreshCandidateClient()
+        second = crawler.fetch_source(
+            dict(settings, _known_jobs=merged["jobs"], _now=next_day), next_client)
+        self.assertEqual(next_client.requested, [seed, known, *fresh[2:]],
+                         "Fresh discovery must advance even when earlier candidates "
+                         "were excluded and therefore absent from saved jobs")
+        self.assertIn(fresh[-1], {record["requisition_id"] for record in second.records})
+        self.assertEqual(len(next_client.requested), settings["max_details"])
+
     def test_malformed_lever_payload_is_failure_not_empty_success(self):
         class MalformedClient:
             def get_json(self, url, **kwargs):

@@ -444,7 +444,15 @@ def _workday(source, client):
     fresh = [item for item in ordered if item[1][0] >= 2]
     slots = max(0, limit - len(seeds))
     known_slots = min(len(known), slots // 2 if fresh else slots)
-    selected = (seeds + known[:known_slots] + fresh[:slots - known_slots])[:limit]
+    fresh_slots = slots - known_slots
+    # Irrelevant details are not retained as jobs. Rotate the unpersisted
+    # candidates too, so they cannot permanently consume the same detail slots.
+    if fresh and len(fresh) > fresh_slots and fresh_slots > 0:
+        check_time = source.get("_now") or datetime.now(timezone.utc).isoformat()
+        day = int(datetime.fromisoformat(check_time.replace("Z", "+00:00")).timestamp() // 86400)
+        offset = (day * fresh_slots) % len(fresh)
+        fresh = fresh[offset:] + fresh[:offset]
+    selected = (seeds + known[:known_slots] + fresh[:fresh_slots])[:limit]
     if len(selected) < limit:
         selected.extend(known[known_slots:known_slots + limit - len(selected)])
     for path, _metadata in selected:
