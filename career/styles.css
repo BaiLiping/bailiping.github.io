@@ -99,6 +99,13 @@ h1 { margin: 0; font-size: clamp(2rem, 5vw, 2.7rem); line-height: 1.15; letter-s
 .page-link strong { font-size: 1.35rem; }
 .page-link span { color: var(--muted); }
 
+.career-pages {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 320px), 1fr));
+  gap: 18px;
+}
+.career-pages .page-link { max-width: none; }
+
 .job-list {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(min(100%, 360px), 1fr));

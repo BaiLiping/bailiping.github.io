@@ -53,6 +53,12 @@ See [the job watch documentation](career/README.md) for sources, local commands,
 status rules, and maintenance. The homepage also links directly to Potential
 Jobs under the Career heading.
 
+The **Chinese Healthcare System Reform** page at
+`/career/chinese-healthcare-system-reform/` collects 27 publications and media
+features from the supplied publication list, with original Chinese titles,
+English translations, and publisher links. Search and publisher filters run
+in the browser; the complete list remains available without JavaScript.
+
 ## Flight tracker
 
 The homepage **Tools → Flight Tracker** opens `/flight-tracker/`. It displays
