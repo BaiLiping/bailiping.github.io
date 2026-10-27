@@ -2,7 +2,7 @@ name: Update potential jobs
 
 on:
   schedule:
-    - cron: '17 9 * * *'
+    - cron: '17 9 * * 1'
       timezone: Europe/Stockholm
   workflow_dispatch:
   push:

@@ -1,72 +1,114 @@
 {
   "schema_version": 1,
-  "generated_at": "2026-10-27T21:52:03Z",
+  "generated_at": "2026-10-27T22:08:44Z",
   "sources": [
+    {
+      "id": "agility-robotics",
+      "name": "Agility Robotics official careers",
+      "status": "ok",
+      "checked_at": "2026-10-27T22:08:44Z",
+      "count": 3,
+      "careers_url": "https://www.agilityrobotics.com/careers"
+    },
+    {
+      "id": "amazon-robotics",
+      "name": "Amazon Robotics and related robotics teams",
+      "status": "ok",
+      "checked_at": "2026-10-27T22:08:44Z",
+      "count": 15,
+      "careers_url": "https://www.amazon.jobs/content/en/teams/ftr/amazon-robotics"
+    },
+    {
+      "id": "boston-dynamics",
+      "name": "Boston Dynamics official careers",
+      "status": "partial",
+      "checked_at": "2026-10-27T22:08:44Z",
+      "count": 1,
+      "error": "Workday results changed during pagination; Query state estimation was only partially checked; Query intern was only partially checked; Detail-check limit reached; additional matches remain unchecked",
+      "careers_url": "https://bostondynamics.com/careers/"
+    },
     {
       "id": "efference",
       "name": "Efference official careers",
       "status": "partial",
-      "checked_at": "2026-10-27T21:52:03Z",
+      "checked_at": "2026-10-27T22:08:44Z",
       "count": 2,
-      "error": "Detail-check limit reached; additional listings remain unchecked"
+      "error": "Detail-check limit reached; additional listings remain unchecked",
+      "careers_url": "https://efference.ai/careers/"
     },
     {
       "id": "fieldai",
       "name": "FieldAI official Lever board",
-      "status": "ok",
-      "checked_at": "2026-10-27T21:52:03Z",
-      "count": 8
+      "status": "error",
+      "checked_at": "2026-10-27T22:08:44Z",
+      "count": 0,
+      "error": "The read operation timed out",
+      "careers_url": "https://jobs.lever.co/field-ai"
     },
     {
       "id": "glydways",
       "name": "Glydways official Greenhouse board",
       "status": "ok",
-      "checked_at": "2026-10-27T21:52:03Z",
-      "count": 1
+      "checked_at": "2026-10-27T22:08:44Z",
+      "count": 1,
+      "careers_url": "https://job-boards.greenhouse.io/glydways"
+    },
+    {
+      "id": "intrinsic",
+      "name": "Intrinsic official careers",
+      "status": "ok",
+      "checked_at": "2026-10-27T22:08:44Z",
+      "count": 0,
+      "careers_url": "https://www.intrinsic.ai/careers"
     },
     {
       "id": "manual",
       "name": "Manually saved references",
       "status": "manual",
-      "checked_at": "2026-10-27T21:52:03Z",
+      "checked_at": "2026-10-27T22:08:44Z",
       "count": 1
     },
     {
       "id": "merl",
       "name": "MERL official internship openings",
       "status": "ok",
-      "checked_at": "2026-10-27T21:52:03Z",
-      "count": 1
+      "checked_at": "2026-10-27T22:08:44Z",
+      "count": 1,
+      "careers_url": "https://www.merl.com/employment/internship-openings"
     },
     {
       "id": "nvidia",
       "name": "NVIDIA official careers",
       "status": "partial",
-      "checked_at": "2026-10-27T21:52:03Z",
+      "checked_at": "2026-10-27T22:08:44Z",
       "count": 6,
-      "error": "Workday results changed during pagination; Query ISAC was only partially checked; Query radar was only partially checked; Query SLAM was only partially checked; Query localization was only partially checked; Query positioning was only partially checked; Detail-check limit reached; additional matches remain unchecked"
+      "error": "Workday results changed during pagination; Query ISAC was only partially checked; Query radar was only partially checked; Query SLAM was only partially checked; Query localization was only partially checked; Query positioning was only partially checked; Detail-check limit reached; additional matches remain unchecked",
+      "careers_url": "https://nvidia.wd5.myworkdayjobs.com/NVIDIAExternalCareerSite"
     },
     {
       "id": "nxp",
       "name": "NXP official careers",
       "status": "partial",
-      "checked_at": "2026-10-27T21:52:03Z",
+      "checked_at": "2026-10-27T22:08:44Z",
       "count": 5,
-      "error": "Workday results changed during pagination; Query UWB was only partially checked; Query radar was only partially checked; Query SLAM was only partially checked; Query localization was only partially checked; Query positioning was only partially checked; Detail-check limit reached; additional matches remain unchecked"
+      "error": "Workday results changed during pagination; Query UWB was only partially checked; Query radar was only partially checked; Query SLAM was only partially checked; Query localization was only partially checked; Query positioning was only partially checked; Detail-check limit reached; additional matches remain unchecked",
+      "careers_url": "https://nxp.wd3.myworkdayjobs.com/careers"
     },
     {
       "id": "waymo",
       "name": "Waymo official Greenhouse board",
       "status": "ok",
-      "checked_at": "2026-10-27T21:52:03Z",
-      "count": 8
+      "checked_at": "2026-10-27T22:08:44Z",
+      "count": 8,
+      "careers_url": "https://careers.withwaymo.com/jobs/search"
     },
     {
       "id": "zadar",
       "name": "Zadar Labs official careers",
       "status": "ok",
-      "checked_at": "2026-10-27T21:52:03Z",
-      "count": 1
+      "checked_at": "2026-10-27T22:08:44Z",
+      "count": 1,
+      "careers_url": "https://www.zadarlabs.com/careers"
     }
   ],
   "jobs": [
@@ -98,11 +140,11 @@
       "posted_at": "2026-10-20",
       "missing_count": 0,
       "first_seen": "2026-10-27T21:40:18Z",
-      "last_seen": "2026-10-27T21:52:03Z",
-      "last_checked": "2026-10-27T21:52:03Z",
-      "last_verified": "2026-10-27T21:52:03Z",
+      "last_seen": "2026-10-27T22:08:44Z",
+      "last_checked": "2026-10-27T22:08:44Z",
+      "last_verified": "2026-10-27T22:08:44Z",
       "check_status": "ok",
-      "last_detail_attempt": "2026-10-27T21:52:03Z"
+      "last_detail_attempt": "2026-10-27T22:08:44Z"
     },
     {
       "id": "manual:4374390601",
@@ -155,9 +197,9 @@
       "requisition_id": "ST0238",
       "missing_count": 0,
       "first_seen": "2026-10-27T21:40:18Z",
-      "last_seen": "2026-10-27T21:52:03Z",
-      "last_checked": "2026-10-27T21:52:03Z",
-      "last_verified": "2026-10-27T21:52:03Z",
+      "last_seen": "2026-10-27T22:08:44Z",
+      "last_checked": "2026-10-27T22:08:44Z",
+      "last_verified": "2026-10-27T22:08:44Z",
       "check_status": "ok"
     },
     {
@@ -185,11 +227,11 @@
       "posted_at": "2026-10-27",
       "missing_count": 0,
       "first_seen": "2026-10-27T21:40:18Z",
-      "last_seen": "2026-10-27T21:52:03Z",
-      "last_checked": "2026-10-27T21:52:03Z",
-      "last_verified": "2026-10-27T21:52:03Z",
+      "last_seen": "2026-10-27T22:08:44Z",
+      "last_checked": "2026-10-27T22:08:44Z",
+      "last_verified": "2026-10-27T22:08:44Z",
       "check_status": "ok",
-      "last_detail_attempt": "2026-10-27T21:52:03Z"
+      "last_detail_attempt": "2026-10-27T22:08:44Z"
     },
     {
       "id": "nxp:r-10067346",
@@ -216,11 +258,11 @@
       "posted_at": "2026-10-15",
       "missing_count": 0,
       "first_seen": "2026-10-27T21:40:18Z",
-      "last_seen": "2026-10-27T21:52:03Z",
-      "last_checked": "2026-10-27T21:52:03Z",
-      "last_verified": "2026-10-27T21:52:03Z",
+      "last_seen": "2026-10-27T22:08:44Z",
+      "last_checked": "2026-10-27T22:08:44Z",
+      "last_verified": "2026-10-27T22:08:44Z",
       "check_status": "ok",
-      "last_detail_attempt": "2026-10-27T21:52:03Z"
+      "last_detail_attempt": "2026-10-27T22:08:44Z"
     },
     {
       "id": "nxp:r-10065402",
@@ -250,11 +292,11 @@
       "posted_at": "2026-10-26",
       "missing_count": 0,
       "first_seen": "2026-10-27T21:40:18Z",
-      "last_seen": "2026-10-27T21:52:03Z",
-      "last_checked": "2026-10-27T21:52:03Z",
-      "last_verified": "2026-10-27T21:52:03Z",
+      "last_seen": "2026-10-27T22:08:44Z",
+      "last_checked": "2026-10-27T22:08:44Z",
+      "last_verified": "2026-10-27T22:08:44Z",
       "check_status": "ok",
-      "last_detail_attempt": "2026-10-27T21:52:03Z"
+      "last_detail_attempt": "2026-10-27T22:08:44Z"
     },
     {
       "id": "waymo:8227411",
@@ -282,9 +324,9 @@
       "posted_at": "2026-09-25T18:46:35-04:00",
       "missing_count": 0,
       "first_seen": "2026-10-27T21:40:18Z",
-      "last_seen": "2026-10-27T21:52:03Z",
-      "last_checked": "2026-10-27T21:52:03Z",
-      "last_verified": "2026-10-27T21:52:03Z",
+      "last_seen": "2026-10-27T22:08:44Z",
+      "last_checked": "2026-10-27T22:08:44Z",
+      "last_verified": "2026-10-27T22:08:44Z",
       "check_status": "ok"
     },
     {
@@ -313,9 +355,9 @@
       "posted_at": "2026-10-12T18:03:20-04:00",
       "missing_count": 0,
       "first_seen": "2026-10-27T21:40:18Z",
-      "last_seen": "2026-10-27T21:52:03Z",
-      "last_checked": "2026-10-27T21:52:03Z",
-      "last_verified": "2026-10-27T21:52:03Z",
+      "last_seen": "2026-10-27T22:08:44Z",
+      "last_checked": "2026-10-27T22:08:44Z",
+      "last_verified": "2026-10-27T22:08:44Z",
       "check_status": "ok"
     },
     {
@@ -343,9 +385,41 @@
       "posted_at": "2026-10-27T12:19:18-04:00",
       "missing_count": 0,
       "first_seen": "2026-10-27T21:40:18Z",
-      "last_seen": "2026-10-27T21:52:03Z",
-      "last_checked": "2026-10-27T21:52:03Z",
-      "last_verified": "2026-10-27T21:52:03Z",
+      "last_seen": "2026-10-27T22:08:44Z",
+      "last_checked": "2026-10-27T22:08:44Z",
+      "last_verified": "2026-10-27T22:08:44Z",
+      "check_status": "ok"
+    },
+    {
+      "id": "amazon-robotics:10570662",
+      "source_id": "amazon-robotics",
+      "company": "Amazon",
+      "title": "SLAM Software Engineer, RIVR",
+      "url": "https://www.amazon.jobs/en/jobs/10570662/slam-software-engineer-rivr",
+      "location": "Zurich, Zurich, Switzerland",
+      "region": "Europe",
+      "employment_type": "Full-time",
+      "category": "radio-localization",
+      "status": "listed",
+      "pinned": false,
+      "score": 100,
+      "match_reasons": [
+        "Role text connects radio/RF technology with localization or ranging"
+      ],
+      "requirements": [
+        "Python mentioned",
+        "C++ mentioned",
+        "ROS experience mentioned",
+        "Bayesian estimation/filtering mentioned"
+      ],
+      "summary": "Role text links radio or RF measurements with positioning, ranging, or localization.",
+      "requisition_id": "10570662",
+      "posted_at": "2026-10-06",
+      "missing_count": 0,
+      "first_seen": "2026-10-27T22:08:44Z",
+      "last_seen": "2026-10-27T22:08:44Z",
+      "last_checked": "2026-10-27T22:08:44Z",
+      "last_verified": "2026-10-27T22:08:44Z",
       "check_status": "ok"
     },
     {
@@ -373,11 +447,11 @@
       "posted_at": "2026-10-19",
       "missing_count": 0,
       "first_seen": "2026-10-27T21:40:18Z",
-      "last_seen": "2026-10-27T21:52:03Z",
-      "last_checked": "2026-10-27T21:52:03Z",
-      "last_verified": "2026-10-27T21:52:03Z",
+      "last_seen": "2026-10-27T22:08:44Z",
+      "last_checked": "2026-10-27T22:08:44Z",
+      "last_verified": "2026-10-27T22:08:44Z",
       "check_status": "ok",
-      "last_detail_attempt": "2026-10-27T21:52:03Z"
+      "last_detail_attempt": "2026-10-27T22:08:44Z"
     },
     {
       "id": "glydways:5238232007",
@@ -404,9 +478,9 @@
       "posted_at": "2026-09-14T18:25:11-04:00",
       "missing_count": 0,
       "first_seen": "2026-10-27T21:40:18Z",
-      "last_seen": "2026-10-27T21:52:03Z",
-      "last_checked": "2026-10-27T21:52:03Z",
-      "last_verified": "2026-10-27T21:52:03Z",
+      "last_seen": "2026-10-27T22:08:44Z",
+      "last_checked": "2026-10-27T22:08:44Z",
+      "last_verified": "2026-10-27T22:08:44Z",
       "check_status": "ok"
     },
     {
@@ -438,11 +512,11 @@
       "posted_at": "2026-10-12",
       "missing_count": 0,
       "first_seen": "2026-10-27T21:40:18Z",
-      "last_seen": "2026-10-27T21:52:03Z",
-      "last_checked": "2026-10-27T21:52:03Z",
-      "last_verified": "2026-10-27T21:52:03Z",
+      "last_seen": "2026-10-27T22:08:44Z",
+      "last_checked": "2026-10-27T22:08:44Z",
+      "last_verified": "2026-10-27T22:08:44Z",
       "check_status": "ok",
-      "last_detail_attempt": "2026-10-27T21:52:03Z"
+      "last_detail_attempt": "2026-10-27T22:08:44Z"
     },
     {
       "id": "waymo:8224746",
@@ -469,9 +543,9 @@
       "posted_at": "2026-09-23T15:28:48-04:00",
       "missing_count": 0,
       "first_seen": "2026-10-27T21:40:18Z",
-      "last_seen": "2026-10-27T21:52:03Z",
-      "last_checked": "2026-10-27T21:52:03Z",
-      "last_verified": "2026-10-27T21:52:03Z",
+      "last_seen": "2026-10-27T22:08:44Z",
+      "last_checked": "2026-10-27T22:08:44Z",
+      "last_verified": "2026-10-27T22:08:44Z",
       "check_status": "ok"
     },
     {
@@ -495,12 +569,13 @@
       ],
       "summary": "Role text includes radar sensing, signal processing, or radar-based perception.",
       "posted_at": "2026-08-14",
-      "missing_count": 0,
       "first_seen": "2026-10-27T21:40:18Z",
       "last_seen": "2026-10-27T21:52:03Z",
-      "last_checked": "2026-10-27T21:52:03Z",
+      "last_checked": "2026-10-27T22:08:44Z",
       "last_verified": "2026-10-27T21:52:03Z",
-      "check_status": "ok"
+      "check_status": "error",
+      "missing_count": 0,
+      "last_check_error": "The read operation timed out"
     },
     {
       "id": "fieldai:95c1d7a7-f2b4-45ca-9888-2196b14afa77",
@@ -527,12 +602,13 @@
       ],
       "summary": "Role text includes radar sensing, signal processing, or radar-based perception.",
       "posted_at": "2026-09-16",
-      "missing_count": 0,
       "first_seen": "2026-10-27T21:40:18Z",
       "last_seen": "2026-10-27T21:52:03Z",
-      "last_checked": "2026-10-27T21:52:03Z",
+      "last_checked": "2026-10-27T22:08:44Z",
       "last_verified": "2026-10-27T21:52:03Z",
-      "check_status": "ok"
+      "check_status": "error",
+      "missing_count": 0,
+      "last_check_error": "The read operation timed out"
     },
     {
       "id": "fieldai:73c30d65-3a05-4ba3-99b6-af2d2b13e85e",
@@ -559,12 +635,13 @@
       ],
       "summary": "Role text includes radar sensing, signal processing, or radar-based perception.",
       "posted_at": "2025-03-11",
-      "missing_count": 0,
       "first_seen": "2026-10-27T21:40:18Z",
       "last_seen": "2026-10-27T21:52:03Z",
-      "last_checked": "2026-10-27T21:52:03Z",
+      "last_checked": "2026-10-27T22:08:44Z",
       "last_verified": "2026-10-27T21:52:03Z",
-      "check_status": "ok"
+      "check_status": "error",
+      "missing_count": 0,
+      "last_check_error": "The read operation timed out"
     },
     {
       "id": "waymo:8241745",
@@ -589,9 +666,9 @@
       "posted_at": "2026-09-30T15:42:41-04:00",
       "missing_count": 0,
       "first_seen": "2026-10-27T21:40:18Z",
-      "last_seen": "2026-10-27T21:52:03Z",
-      "last_checked": "2026-10-27T21:52:03Z",
-      "last_verified": "2026-10-27T21:52:03Z",
+      "last_seen": "2026-10-27T22:08:44Z",
+      "last_checked": "2026-10-27T22:08:44Z",
+      "last_verified": "2026-10-27T22:08:44Z",
       "check_status": "ok"
     },
     {
@@ -621,10 +698,272 @@
       "summary": "Role text includes radar sensing, signal processing, or radar-based perception.",
       "missing_count": 0,
       "first_seen": "2026-10-27T21:40:18Z",
-      "last_seen": "2026-10-27T21:52:03Z",
-      "last_checked": "2026-10-27T21:52:03Z",
-      "last_verified": "2026-10-27T21:52:03Z",
+      "last_seen": "2026-10-27T22:08:44Z",
+      "last_checked": "2026-10-27T22:08:44Z",
+      "last_verified": "2026-10-27T22:08:44Z",
       "check_status": "ok"
+    },
+    {
+      "id": "amazon-robotics:10524287",
+      "source_id": "amazon-robotics",
+      "company": "Amazon",
+      "title": "Applied Scientist - Perception (SLAM/VIO), Fauna",
+      "url": "https://www.amazon.jobs/en/jobs/10524287/applied-scientist-perception-slam-vio-fauna",
+      "location": "New York, New York, United States",
+      "region": "US",
+      "employment_type": "Full-time",
+      "category": "robotics-localization",
+      "status": "listed",
+      "pinned": false,
+      "score": 75,
+      "match_reasons": [
+        "Role title names localization, SLAM, sensor fusion, or state estimation"
+      ],
+      "requirements": [
+        "Python mentioned",
+        "C++ mentioned",
+        "ROS experience mentioned",
+        "PhD/graduate study mentioned",
+        "Bayesian estimation/filtering mentioned"
+      ],
+      "summary": "Role text includes robotic localization, mapping, tracking, or sensor fusion.",
+      "requisition_id": "10524287",
+      "posted_at": "2026-09-01",
+      "missing_count": 0,
+      "first_seen": "2026-10-27T22:08:44Z",
+      "last_seen": "2026-10-27T22:08:44Z",
+      "last_checked": "2026-10-27T22:08:44Z",
+      "last_verified": "2026-10-27T22:08:44Z",
+      "check_status": "ok"
+    },
+    {
+      "id": "amazon-robotics:10582742",
+      "source_id": "amazon-robotics",
+      "company": "Amazon",
+      "title": "Applied Scientist - Perception (SLAM/VIO), Fauna",
+      "url": "https://www.amazon.jobs/en/jobs/10582742/applied-scientist-perception-slam-vio-fauna",
+      "location": "New York, New York, United States",
+      "region": "US",
+      "employment_type": "Full-time",
+      "category": "robotics-localization",
+      "status": "listed",
+      "pinned": false,
+      "score": 75,
+      "match_reasons": [
+        "Role title names localization, SLAM, sensor fusion, or state estimation"
+      ],
+      "requirements": [
+        "Python mentioned",
+        "C++ mentioned",
+        "ROS experience mentioned",
+        "PhD/graduate study mentioned",
+        "Bayesian estimation/filtering mentioned"
+      ],
+      "summary": "Role text includes robotic localization, mapping, tracking, or sensor fusion.",
+      "requisition_id": "10582742",
+      "posted_at": "2026-10-19",
+      "missing_count": 0,
+      "first_seen": "2026-10-27T22:08:44Z",
+      "last_seen": "2026-10-27T22:08:44Z",
+      "last_checked": "2026-10-27T22:08:44Z",
+      "last_verified": "2026-10-27T22:08:44Z",
+      "check_status": "ok"
+    },
+    {
+      "id": "amazon-robotics:10413647",
+      "source_id": "amazon-robotics",
+      "company": "Amazon",
+      "title": "Applied Scientist, Navigation",
+      "url": "https://www.amazon.jobs/en/jobs/10413647/applied-scientist-navigation",
+      "location": "San Francisco, California, United States",
+      "region": "US",
+      "employment_type": "Full-time",
+      "category": "robotics-localization",
+      "status": "listed",
+      "pinned": false,
+      "score": 75,
+      "match_reasons": [
+        "Technical description mentions robotic estimation, tracking, or SLAM"
+      ],
+      "requirements": [
+        "Python mentioned",
+        "C++ mentioned",
+        "Machine-learning frameworks mentioned",
+        "ROS experience mentioned",
+        "PhD/graduate study mentioned"
+      ],
+      "summary": "Role text includes robotic localization, mapping, tracking, or sensor fusion.",
+      "requisition_id": "10413647",
+      "posted_at": "2026-05-07",
+      "missing_count": 0,
+      "first_seen": "2026-10-27T22:08:44Z",
+      "last_seen": "2026-10-27T22:08:44Z",
+      "last_checked": "2026-10-27T22:08:44Z",
+      "last_verified": "2026-10-27T22:08:44Z",
+      "check_status": "ok"
+    },
+    {
+      "id": "amazon-robotics:10444170",
+      "source_id": "amazon-robotics",
+      "company": "Amazon",
+      "title": "Postdoctoral Researcher – Visual Localization & Navigation | Amazon Last Mile",
+      "url": "https://www.amazon.jobs/en/jobs/10444170/postdoctoral-researcher-visual-localization-navigation-amazon-last-mile",
+      "location": "Santa Cruz, California, United States",
+      "region": "US",
+      "employment_type": "Full-time",
+      "category": "robotics-localization",
+      "status": "listed",
+      "pinned": false,
+      "score": 75,
+      "match_reasons": [
+        "Role title names localization, SLAM, sensor fusion, or state estimation"
+      ],
+      "requirements": [
+        "Python mentioned",
+        "C++ mentioned",
+        "Machine-learning frameworks mentioned",
+        "ROS experience mentioned",
+        "PhD/graduate study mentioned"
+      ],
+      "summary": "Role text includes robotic localization, mapping, tracking, or sensor fusion.",
+      "requisition_id": "10444170",
+      "posted_at": "2026-06-11",
+      "missing_count": 0,
+      "first_seen": "2026-10-27T22:08:44Z",
+      "last_seen": "2026-10-27T22:08:44Z",
+      "last_checked": "2026-10-27T22:08:44Z",
+      "last_verified": "2026-10-27T22:08:44Z",
+      "check_status": "ok"
+    },
+    {
+      "id": "amazon-robotics:10466814",
+      "source_id": "amazon-robotics",
+      "company": "Amazon",
+      "title": "Software Development Engineer II",
+      "url": "https://www.amazon.jobs/en/jobs/10466814/software-development-engineer-ii",
+      "location": "North Reading, Massachusetts, United States",
+      "region": "US",
+      "employment_type": "Full-time",
+      "category": "robotics-localization",
+      "status": "listed",
+      "pinned": false,
+      "score": 75,
+      "match_reasons": [
+        "Technical description mentions robotic estimation, tracking, or SLAM"
+      ],
+      "requirements": [
+        "Python mentioned",
+        "C++ mentioned",
+        "ROS experience mentioned"
+      ],
+      "summary": "Role text includes robotic localization, mapping, tracking, or sensor fusion.",
+      "requisition_id": "10466814",
+      "posted_at": "2026-07-06",
+      "missing_count": 0,
+      "first_seen": "2026-10-27T22:08:44Z",
+      "last_seen": "2026-10-27T22:08:44Z",
+      "last_checked": "2026-10-27T22:08:44Z",
+      "last_verified": "2026-10-27T22:08:44Z",
+      "check_status": "ok"
+    },
+    {
+      "id": "amazon-robotics:10571877",
+      "source_id": "amazon-robotics",
+      "company": "Amazon",
+      "title": "Software Development Engineer II",
+      "url": "https://www.amazon.jobs/en/jobs/10571877/software-development-engineer-ii",
+      "location": "North Reading, Massachusetts, United States",
+      "region": "US",
+      "employment_type": "Full-time",
+      "category": "robotics-localization",
+      "status": "listed",
+      "pinned": false,
+      "score": 75,
+      "match_reasons": [
+        "Technical description mentions robotic estimation, tracking, or SLAM"
+      ],
+      "requirements": [
+        "Python mentioned",
+        "C++ mentioned",
+        "GPU/CUDA experience mentioned",
+        "ROS experience mentioned",
+        "PhD/graduate study mentioned"
+      ],
+      "summary": "Role text includes robotic localization, mapping, tracking, or sensor fusion.",
+      "requisition_id": "10571877",
+      "posted_at": "2026-10-07",
+      "missing_count": 0,
+      "first_seen": "2026-10-27T22:08:44Z",
+      "last_seen": "2026-10-27T22:08:44Z",
+      "last_checked": "2026-10-27T22:08:44Z",
+      "last_verified": "2026-10-27T22:08:44Z",
+      "check_status": "ok"
+    },
+    {
+      "id": "amazon-robotics:10486012",
+      "source_id": "amazon-robotics",
+      "company": "Amazon",
+      "title": "Software Development Engineer II - Amazon Robotics, Autonomous Mobility, Motion",
+      "url": "https://www.amazon.jobs/en/jobs/10486012/software-development-engineer-ii-amazon-robotics-autonomous-mobility-motion",
+      "location": "North Reading, Massachusetts, United States",
+      "region": "US",
+      "employment_type": "Full-time",
+      "category": "robotics-localization",
+      "status": "listed",
+      "pinned": false,
+      "score": 75,
+      "match_reasons": [
+        "Technical description mentions robotic estimation, tracking, or SLAM"
+      ],
+      "requirements": [
+        "Python mentioned",
+        "C++ mentioned",
+        "Machine-learning frameworks mentioned",
+        "ROS experience mentioned"
+      ],
+      "summary": "Role text includes robotic localization, mapping, tracking, or sensor fusion.",
+      "requisition_id": "10486012",
+      "posted_at": "2026-07-28",
+      "missing_count": 0,
+      "first_seen": "2026-10-27T22:08:44Z",
+      "last_seen": "2026-10-27T22:08:44Z",
+      "last_checked": "2026-10-27T22:08:44Z",
+      "last_verified": "2026-10-27T22:08:44Z",
+      "check_status": "ok"
+    },
+    {
+      "id": "boston-dynamics:r2871",
+      "source_id": "boston-dynamics",
+      "company": "Boston Dynamics",
+      "title": "Atlas Research Engineer, SLAM & Spatial AI",
+      "url": "https://bostondynamics.wd1.myworkdayjobs.com/Boston_Dynamics/job/Waltham-Office-POST/Research-Scientist--Spatial-AI---Perception_R2871",
+      "location": "Waltham Office (POST) / United States of America",
+      "region": "US",
+      "employment_type": "Full-time",
+      "category": "robotics-localization",
+      "status": "open",
+      "pinned": false,
+      "score": 75,
+      "match_reasons": [
+        "Role title names localization, SLAM, sensor fusion, or state estimation"
+      ],
+      "requirements": [
+        "Python mentioned",
+        "C++ mentioned",
+        "Machine-learning frameworks mentioned",
+        "PhD/graduate study mentioned",
+        "Bayesian estimation/filtering mentioned"
+      ],
+      "summary": "Role text includes robotic localization, mapping, tracking, or sensor fusion.",
+      "requisition_id": "R2871",
+      "posted_at": "2026-09-01",
+      "missing_count": 0,
+      "first_seen": "2026-10-27T22:08:44Z",
+      "last_seen": "2026-10-27T22:08:44Z",
+      "last_checked": "2026-10-27T22:08:44Z",
+      "last_verified": "2026-10-27T22:08:44Z",
+      "check_status": "ok",
+      "last_detail_attempt": "2026-10-27T22:08:44Z"
     },
     {
       "id": "efference:research-engineer-vio-slam",
@@ -650,11 +989,11 @@
       "posted_at": "2026-10-19",
       "missing_count": 0,
       "first_seen": "2026-10-27T21:40:18Z",
-      "last_seen": "2026-10-27T21:52:03Z",
-      "last_checked": "2026-10-27T21:52:03Z",
-      "last_verified": "2026-10-27T21:52:03Z",
+      "last_seen": "2026-10-27T22:08:44Z",
+      "last_checked": "2026-10-27T22:08:44Z",
+      "last_verified": "2026-10-27T22:08:44Z",
       "check_status": "ok",
-      "last_detail_attempt": "2026-10-27T21:52:03Z"
+      "last_detail_attempt": "2026-10-27T22:08:44Z"
     },
     {
       "id": "fieldai:9524c7c2-8be2-4463-afe3-7c1c60f7e6f2",
@@ -681,12 +1020,13 @@
       ],
       "summary": "Role text includes robotic localization, mapping, tracking, or sensor fusion.",
       "posted_at": "2026-10-09",
-      "missing_count": 0,
       "first_seen": "2026-10-27T21:40:18Z",
       "last_seen": "2026-10-27T21:52:03Z",
-      "last_checked": "2026-10-27T21:52:03Z",
+      "last_checked": "2026-10-27T22:08:44Z",
       "last_verified": "2026-10-27T21:52:03Z",
-      "check_status": "ok"
+      "check_status": "error",
+      "missing_count": 0,
+      "last_check_error": "The read operation timed out"
     },
     {
       "id": "fieldai:ad7999a2-3ce7-4231-935c-e14a8d2c5d96",
@@ -713,12 +1053,13 @@
       ],
       "summary": "Role text includes robotic localization, mapping, tracking, or sensor fusion.",
       "posted_at": "2026-10-01",
-      "missing_count": 0,
       "first_seen": "2026-10-27T21:40:18Z",
       "last_seen": "2026-10-27T21:52:03Z",
-      "last_checked": "2026-10-27T21:52:03Z",
+      "last_checked": "2026-10-27T22:08:44Z",
       "last_verified": "2026-10-27T21:52:03Z",
-      "check_status": "ok"
+      "check_status": "error",
+      "missing_count": 0,
+      "last_check_error": "The read operation timed out"
     },
     {
       "id": "fieldai:f9f0a9b0-b8b3-4e1e-82c4-9f2ee11e23c8",
@@ -744,12 +1085,13 @@
       ],
       "summary": "Role text includes robotic localization, mapping, tracking, or sensor fusion.",
       "posted_at": "2026-10-19",
-      "missing_count": 0,
       "first_seen": "2026-10-27T21:40:18Z",
       "last_seen": "2026-10-27T21:52:03Z",
-      "last_checked": "2026-10-27T21:52:03Z",
+      "last_checked": "2026-10-27T22:08:44Z",
       "last_verified": "2026-10-27T21:52:03Z",
-      "check_status": "ok"
+      "check_status": "error",
+      "missing_count": 0,
+      "last_check_error": "The read operation timed out"
     },
     {
       "id": "fieldai:9e451b91-7633-4b86-bf64-38cd7bd6a8dc",
@@ -773,12 +1115,13 @@
       ],
       "summary": "Role text includes robotic localization, mapping, tracking, or sensor fusion.",
       "posted_at": "2026-10-13",
-      "missing_count": 0,
       "first_seen": "2026-10-27T21:40:18Z",
       "last_seen": "2026-10-27T21:52:03Z",
-      "last_checked": "2026-10-27T21:52:03Z",
+      "last_checked": "2026-10-27T22:08:44Z",
       "last_verified": "2026-10-27T21:52:03Z",
-      "check_status": "ok"
+      "check_status": "error",
+      "missing_count": 0,
+      "last_check_error": "The read operation timed out"
     },
     {
       "id": "nvidia:jr2003384",
@@ -807,11 +1150,11 @@
       "posted_at": "2026-06-12",
       "missing_count": 0,
       "first_seen": "2026-10-27T21:40:18Z",
-      "last_seen": "2026-10-27T21:52:03Z",
-      "last_checked": "2026-10-27T21:52:03Z",
-      "last_verified": "2026-10-27T21:52:03Z",
+      "last_seen": "2026-10-27T22:08:44Z",
+      "last_checked": "2026-10-27T22:08:44Z",
+      "last_verified": "2026-10-27T22:08:44Z",
       "check_status": "ok",
-      "last_detail_attempt": "2026-10-27T21:52:03Z"
+      "last_detail_attempt": "2026-10-27T22:08:44Z"
     },
     {
       "id": "nvidia:jr2021077",
@@ -843,11 +1186,11 @@
       "posted_at": "2026-10-02",
       "missing_count": 0,
       "first_seen": "2026-10-27T21:40:18Z",
-      "last_seen": "2026-10-27T21:52:03Z",
-      "last_checked": "2026-10-27T21:52:03Z",
-      "last_verified": "2026-10-27T21:52:03Z",
+      "last_seen": "2026-10-27T22:08:44Z",
+      "last_checked": "2026-10-27T22:08:44Z",
+      "last_verified": "2026-10-27T22:08:44Z",
       "check_status": "ok",
-      "last_detail_attempt": "2026-10-27T21:52:03Z"
+      "last_detail_attempt": "2026-10-27T22:08:44Z"
     },
     {
       "id": "nxp:r-10066095",
@@ -875,11 +1218,11 @@
       "posted_at": "2026-09-15",
       "missing_count": 0,
       "first_seen": "2026-10-27T21:40:18Z",
-      "last_seen": "2026-10-27T21:52:03Z",
-      "last_checked": "2026-10-27T21:52:03Z",
-      "last_verified": "2026-10-27T21:52:03Z",
+      "last_seen": "2026-10-27T22:08:44Z",
+      "last_checked": "2026-10-27T22:08:44Z",
+      "last_verified": "2026-10-27T22:08:44Z",
       "check_status": "ok",
-      "last_detail_attempt": "2026-10-27T21:52:03Z"
+      "last_detail_attempt": "2026-10-27T22:08:44Z"
     },
     {
       "id": "nxp:r-10066096",
@@ -907,11 +1250,11 @@
       "posted_at": "2026-09-15",
       "missing_count": 0,
       "first_seen": "2026-10-27T21:40:18Z",
-      "last_seen": "2026-10-27T21:52:03Z",
-      "last_checked": "2026-10-27T21:52:03Z",
-      "last_verified": "2026-10-27T21:52:03Z",
+      "last_seen": "2026-10-27T22:08:44Z",
+      "last_checked": "2026-10-27T22:08:44Z",
+      "last_verified": "2026-10-27T22:08:44Z",
       "check_status": "ok",
-      "last_detail_attempt": "2026-10-27T21:52:03Z"
+      "last_detail_attempt": "2026-10-27T22:08:44Z"
     },
     {
       "id": "waymo:8003626",
@@ -938,9 +1281,328 @@
       "posted_at": "2026-06-12T18:40:58-04:00",
       "missing_count": 0,
       "first_seen": "2026-10-27T21:40:18Z",
-      "last_seen": "2026-10-27T21:52:03Z",
-      "last_checked": "2026-10-27T21:52:03Z",
-      "last_verified": "2026-10-27T21:52:03Z",
+      "last_seen": "2026-10-27T22:08:44Z",
+      "last_checked": "2026-10-27T22:08:44Z",
+      "last_verified": "2026-10-27T22:08:44Z",
+      "check_status": "ok"
+    },
+    {
+      "id": "agility-robotics:6210999004",
+      "source_id": "agility-robotics",
+      "company": "Agility Robotics",
+      "title": "Senior AI Software Engineer, Perception",
+      "url": "https://www.agilityrobotics.com/about/job-post?gh_jid=6210999004",
+      "location": "Hybrid- Any Office (Fremont, CA, Salem, OR, or Pittsburgh, PA)",
+      "region": "US",
+      "employment_type": "Unknown",
+      "category": "robotics-localization",
+      "status": "open",
+      "pinned": false,
+      "score": 55,
+      "match_reasons": [
+        "Technical description mentions robotic estimation, tracking, or SLAM"
+      ],
+      "requirements": [
+        "GPU/CUDA experience mentioned",
+        "PhD/graduate study mentioned",
+        "Current US work authorization required",
+        "Senior/experienced role"
+      ],
+      "summary": "Role text includes robotic localization, mapping, tracking, or sensor fusion.",
+      "posted_at": "2026-09-30T12:15:10-04:00",
+      "missing_count": 0,
+      "first_seen": "2026-10-27T22:08:44Z",
+      "last_seen": "2026-10-27T22:08:44Z",
+      "last_checked": "2026-10-27T22:08:44Z",
+      "last_verified": "2026-10-27T22:08:44Z",
+      "check_status": "ok"
+    },
+    {
+      "id": "agility-robotics:6138661004",
+      "source_id": "agility-robotics",
+      "company": "Agility Robotics",
+      "title": "Senior Staff AI Software Engineer, Perception",
+      "url": "https://www.agilityrobotics.com/about/job-post?gh_jid=6138661004",
+      "location": "Hybrid- Any Office (Fremont, CA, Salem, OR, or Pittsburgh, PA); Remote",
+      "region": "Remote",
+      "employment_type": "Unknown",
+      "category": "robotics-localization",
+      "status": "open",
+      "pinned": false,
+      "score": 55,
+      "match_reasons": [
+        "Technical description mentions robotic estimation, tracking, or SLAM"
+      ],
+      "requirements": [
+        "PhD/graduate study mentioned",
+        "Current US work authorization required",
+        "Senior/experienced role"
+      ],
+      "summary": "Role text includes robotic localization, mapping, tracking, or sensor fusion.",
+      "posted_at": "2026-09-01T14:47:43-04:00",
+      "missing_count": 0,
+      "first_seen": "2026-10-27T22:08:44Z",
+      "last_seen": "2026-10-27T22:08:44Z",
+      "last_checked": "2026-10-27T22:08:44Z",
+      "last_verified": "2026-10-27T22:08:44Z",
+      "check_status": "ok"
+    },
+    {
+      "id": "agility-robotics:5973040004",
+      "source_id": "agility-robotics",
+      "company": "Agility Robotics",
+      "title": "Staff AI Engineer, Perception",
+      "url": "https://www.agilityrobotics.com/about/job-post?gh_jid=5973040004",
+      "location": "Hybrid- Any Office (Fremont, CA, Salem, OR, or Pittsburgh, PA)",
+      "region": "US",
+      "employment_type": "Unknown",
+      "category": "robotics-localization",
+      "status": "open",
+      "pinned": false,
+      "score": 55,
+      "match_reasons": [
+        "Technical description mentions robotic estimation, tracking, or SLAM"
+      ],
+      "requirements": [
+        "Machine-learning frameworks mentioned",
+        "PhD/graduate study mentioned",
+        "Current US work authorization required",
+        "Senior/experienced role"
+      ],
+      "summary": "Role text includes robotic localization, mapping, tracking, or sensor fusion.",
+      "posted_at": "2026-04-23T17:31:10-04:00",
+      "missing_count": 0,
+      "first_seen": "2026-10-27T22:08:44Z",
+      "last_seen": "2026-10-27T22:08:44Z",
+      "last_checked": "2026-10-27T22:08:44Z",
+      "last_verified": "2026-10-27T22:08:44Z",
+      "check_status": "ok"
+    },
+    {
+      "id": "amazon-robotics:10571281",
+      "source_id": "amazon-robotics",
+      "company": "Amazon",
+      "title": "Principal Audio Scientist, Fauna",
+      "url": "https://www.amazon.jobs/en/jobs/10571281/principal-audio-scientist-fauna",
+      "location": "New York, New York, United States",
+      "region": "US",
+      "employment_type": "Full-time",
+      "category": "robotics-localization",
+      "status": "listed",
+      "pinned": false,
+      "score": 55,
+      "match_reasons": [
+        "Technical description mentions robotic estimation, tracking, or SLAM"
+      ],
+      "requirements": [
+        "PhD/graduate study mentioned",
+        "Senior/experienced role"
+      ],
+      "summary": "Role text includes robotic localization, mapping, tracking, or sensor fusion.",
+      "requisition_id": "10571281",
+      "posted_at": "2026-10-06",
+      "missing_count": 0,
+      "first_seen": "2026-10-27T22:08:44Z",
+      "last_seen": "2026-10-27T22:08:44Z",
+      "last_checked": "2026-10-27T22:08:44Z",
+      "last_verified": "2026-10-27T22:08:44Z",
+      "check_status": "ok"
+    },
+    {
+      "id": "amazon-robotics:10454082",
+      "source_id": "amazon-robotics",
+      "company": "Amazon",
+      "title": "Senior Applied Scientist",
+      "url": "https://www.amazon.jobs/en/jobs/10454082/senior-applied-scientist",
+      "location": "San Francisco, California, United States",
+      "region": "US",
+      "employment_type": "Full-time",
+      "category": "robotics-localization",
+      "status": "listed",
+      "pinned": false,
+      "score": 55,
+      "match_reasons": [
+        "Technical description mentions robotic estimation, tracking, or SLAM"
+      ],
+      "requirements": [
+        "Python mentioned",
+        "C++ mentioned",
+        "Machine-learning frameworks mentioned",
+        "ROS experience mentioned",
+        "PhD/graduate study mentioned",
+        "Senior/experienced role"
+      ],
+      "summary": "Role text includes robotic localization, mapping, tracking, or sensor fusion.",
+      "requisition_id": "10454082",
+      "posted_at": "2026-06-19",
+      "missing_count": 0,
+      "first_seen": "2026-10-27T22:08:44Z",
+      "last_seen": "2026-10-27T22:08:44Z",
+      "last_checked": "2026-10-27T22:08:44Z",
+      "last_verified": "2026-10-27T22:08:44Z",
+      "check_status": "ok"
+    },
+    {
+      "id": "amazon-robotics:10402332",
+      "source_id": "amazon-robotics",
+      "company": "Amazon",
+      "title": "Senior Robotics SW Engineer , Velocity",
+      "url": "https://www.amazon.jobs/en/jobs/10402332/senior-robotics-sw-engineer-velocity",
+      "location": "Westborough, Massachusetts, United States",
+      "region": "US",
+      "employment_type": "Full-time",
+      "category": "robotics-localization",
+      "status": "listed",
+      "pinned": false,
+      "score": 55,
+      "match_reasons": [
+        "Technical description mentions robotic estimation, tracking, or SLAM"
+      ],
+      "requirements": [
+        "Python mentioned",
+        "C++ mentioned",
+        "ROS experience mentioned",
+        "Senior/experienced role"
+      ],
+      "summary": "Role text includes robotic localization, mapping, tracking, or sensor fusion.",
+      "requisition_id": "10402332",
+      "posted_at": "2026-04-24",
+      "missing_count": 0,
+      "first_seen": "2026-10-27T22:08:44Z",
+      "last_seen": "2026-10-27T22:08:44Z",
+      "last_checked": "2026-10-27T22:08:44Z",
+      "last_verified": "2026-10-27T22:08:44Z",
+      "check_status": "ok"
+    },
+    {
+      "id": "amazon-robotics:10500076",
+      "source_id": "amazon-robotics",
+      "company": "Amazon",
+      "title": "Senior Software Development Engineer",
+      "url": "https://www.amazon.jobs/en/jobs/10500076/senior-software-development-engineer",
+      "location": "North Reading, Massachusetts, United States",
+      "region": "US",
+      "employment_type": "Full-time",
+      "category": "robotics-localization",
+      "status": "listed",
+      "pinned": false,
+      "score": 55,
+      "match_reasons": [
+        "Technical description mentions robotic estimation, tracking, or SLAM"
+      ],
+      "requirements": [
+        "Python mentioned",
+        "C++ mentioned",
+        "ROS experience mentioned",
+        "Radar mentioned",
+        "Senior/experienced role"
+      ],
+      "summary": "Role text includes robotic localization, mapping, tracking, or sensor fusion.",
+      "requisition_id": "10500076",
+      "posted_at": "2026-08-12",
+      "missing_count": 0,
+      "first_seen": "2026-10-27T22:08:44Z",
+      "last_seen": "2026-10-27T22:08:44Z",
+      "last_checked": "2026-10-27T22:08:44Z",
+      "last_verified": "2026-10-27T22:08:44Z",
+      "check_status": "ok"
+    },
+    {
+      "id": "amazon-robotics:10577454",
+      "source_id": "amazon-robotics",
+      "company": "Amazon",
+      "title": "Senior Software Development Engineer, Robotics",
+      "url": "https://www.amazon.jobs/en/jobs/10577454/senior-software-development-engineer-robotics",
+      "location": "North Reading, Massachusetts, United States",
+      "region": "US",
+      "employment_type": "Full-time",
+      "category": "robotics-localization",
+      "status": "listed",
+      "pinned": false,
+      "score": 55,
+      "match_reasons": [
+        "Technical description mentions robotic estimation, tracking, or SLAM"
+      ],
+      "requirements": [
+        "GPU/CUDA experience mentioned",
+        "Machine-learning frameworks mentioned",
+        "ROS experience mentioned",
+        "PhD/graduate study mentioned",
+        "Senior/experienced role"
+      ],
+      "summary": "Role text includes robotic localization, mapping, tracking, or sensor fusion.",
+      "requisition_id": "10577454",
+      "posted_at": "2026-10-13",
+      "missing_count": 0,
+      "first_seen": "2026-10-27T22:08:44Z",
+      "last_seen": "2026-10-27T22:08:44Z",
+      "last_checked": "2026-10-27T22:08:44Z",
+      "last_verified": "2026-10-27T22:08:44Z",
+      "check_status": "ok"
+    },
+    {
+      "id": "amazon-robotics:10481505",
+      "source_id": "amazon-robotics",
+      "company": "Amazon",
+      "title": "Sr. Applied Scientist - Perception (SLAM/VIO), Fauna",
+      "url": "https://www.amazon.jobs/en/jobs/10481505/sr-applied-scientist-perception-slam-vio-fauna",
+      "location": "New York, New York, United States",
+      "region": "US",
+      "employment_type": "Full-time",
+      "category": "robotics-localization",
+      "status": "listed",
+      "pinned": false,
+      "score": 55,
+      "match_reasons": [
+        "Role title names localization, SLAM, sensor fusion, or state estimation"
+      ],
+      "requirements": [
+        "Python mentioned",
+        "C++ mentioned",
+        "Machine-learning frameworks mentioned",
+        "PhD/graduate study mentioned",
+        "Senior/experienced role"
+      ],
+      "summary": "Role text includes robotic localization, mapping, tracking, or sensor fusion.",
+      "requisition_id": "10481505",
+      "posted_at": "2026-07-22",
+      "missing_count": 0,
+      "first_seen": "2026-10-27T22:08:44Z",
+      "last_seen": "2026-10-27T22:08:44Z",
+      "last_checked": "2026-10-27T22:08:44Z",
+      "last_verified": "2026-10-27T22:08:44Z",
+      "check_status": "ok"
+    },
+    {
+      "id": "amazon-robotics:10478767",
+      "source_id": "amazon-robotics",
+      "company": "Amazon",
+      "title": "Sr. Applied Scientist, Fauna Robotics",
+      "url": "https://www.amazon.jobs/en/jobs/10478767/sr-applied-scientist-fauna-robotics",
+      "location": "Sunnyvale, California, United States",
+      "region": "US",
+      "employment_type": "Full-time",
+      "category": "robotics-localization",
+      "status": "listed",
+      "pinned": false,
+      "score": 55,
+      "match_reasons": [
+        "Technical description mentions robotic estimation, tracking, or SLAM"
+      ],
+      "requirements": [
+        "Python mentioned",
+        "C++ mentioned",
+        "PhD/graduate study mentioned",
+        "Senior/experienced role"
+      ],
+      "summary": "Role text includes robotic localization, mapping, tracking, or sensor fusion.",
+      "requisition_id": "10478767",
+      "posted_at": "2026-07-20",
+      "missing_count": 0,
+      "first_seen": "2026-10-27T22:08:44Z",
+      "last_seen": "2026-10-27T22:08:44Z",
+      "last_checked": "2026-10-27T22:08:44Z",
+      "last_verified": "2026-10-27T22:08:44Z",
       "check_status": "ok"
     },
     {
@@ -968,12 +1630,13 @@
       ],
       "summary": "Role text includes robotic localization, mapping, tracking, or sensor fusion.",
       "posted_at": "2026-05-23",
-      "missing_count": 0,
       "first_seen": "2026-10-27T21:40:18Z",
       "last_seen": "2026-10-27T21:52:03Z",
-      "last_checked": "2026-10-27T21:52:03Z",
+      "last_checked": "2026-10-27T22:08:44Z",
       "last_verified": "2026-10-27T21:52:03Z",
-      "check_status": "ok"
+      "check_status": "error",
+      "missing_count": 0,
+      "last_check_error": "The read operation timed out"
     },
     {
       "id": "nvidia:jr2022858",
@@ -1001,11 +1664,11 @@
       "posted_at": "2026-08-29",
       "missing_count": 0,
       "first_seen": "2026-10-27T21:40:18Z",
-      "last_seen": "2026-10-27T21:52:03Z",
-      "last_checked": "2026-10-27T21:52:03Z",
-      "last_verified": "2026-10-27T21:52:03Z",
+      "last_seen": "2026-10-27T22:08:44Z",
+      "last_checked": "2026-10-27T22:08:44Z",
+      "last_verified": "2026-10-27T22:08:44Z",
       "check_status": "ok",
-      "last_detail_attempt": "2026-10-27T21:52:03Z"
+      "last_detail_attempt": "2026-10-27T22:08:44Z"
     },
     {
       "id": "nvidia:jr2014589",
@@ -1034,11 +1697,11 @@
       "posted_at": "2026-09-14",
       "missing_count": 0,
       "first_seen": "2026-10-27T21:40:18Z",
-      "last_seen": "2026-10-27T21:52:03Z",
-      "last_checked": "2026-10-27T21:52:03Z",
-      "last_verified": "2026-10-27T21:52:03Z",
+      "last_seen": "2026-10-27T22:08:44Z",
+      "last_checked": "2026-10-27T22:08:44Z",
+      "last_verified": "2026-10-27T22:08:44Z",
       "check_status": "ok",
-      "last_detail_attempt": "2026-10-27T21:52:03Z"
+      "last_detail_attempt": "2026-10-27T22:08:44Z"
     },
     {
       "id": "waymo:8157152",
@@ -1064,9 +1727,9 @@
       "posted_at": "2026-08-31T17:09:27-04:00",
       "missing_count": 0,
       "first_seen": "2026-10-27T21:40:18Z",
-      "last_seen": "2026-10-27T21:52:03Z",
-      "last_checked": "2026-10-27T21:52:03Z",
-      "last_verified": "2026-10-27T21:52:03Z",
+      "last_seen": "2026-10-27T22:08:44Z",
+      "last_checked": "2026-10-27T22:08:44Z",
+      "last_verified": "2026-10-27T22:08:44Z",
       "check_status": "ok"
     },
     {
@@ -1096,9 +1759,9 @@
       "posted_at": "2025-12-09T13:49:15-05:00",
       "missing_count": 0,
       "first_seen": "2026-10-27T21:40:18Z",
-      "last_seen": "2026-10-27T21:52:03Z",
-      "last_checked": "2026-10-27T21:52:03Z",
-      "last_verified": "2026-10-27T21:52:03Z",
+      "last_seen": "2026-10-27T22:08:44Z",
+      "last_checked": "2026-10-27T22:08:44Z",
+      "last_verified": "2026-10-27T22:08:44Z",
       "check_status": "ok"
     }
   ]

@@ -124,7 +124,7 @@ def render_card(job: dict) -> str:
     evidence = '<ul class="job-evidence">' + "".join(f"<li>{escape(reason)}</li>" for reason in reasons) + "</ul>" if reasons else ""
     # Keep eligibility and seniority cues visible even when a role lists many
     # tools. These are evidence labels, never a claim about the reader's eligibility.
-    priority_flags = {"Citizenship/clearance conditions mentioned", "Sponsorship restriction mentioned", "Senior/experienced role"}
+    priority_flags = {"Citizenship/clearance conditions mentioned", "Sponsorship restriction mentioned", "Current US work authorization required", "Senior/experienced role"}
     flags = sorted(job.get("requirements", []), key=lambda value: value not in priority_flags)[:4]
     requirements = '<p class="job-requirements">' + escape(" · ".join(flags)) + "</p>" if flags else ""
     if status == "saved":
@@ -157,7 +157,7 @@ def render_snapshot(data: dict) -> str:
     stamp = escape(data["generated_at"])
     return f'''<section class="snapshot-panel" aria-label="Latest refresh">
   <div><p><strong>{confirmed} confirmed open</strong> · {internships} internship listings</p><p class="snapshot-note">{healthy} of {len(sources)} employer sources refreshed successfully</p></div>
-  <div><p>Updated <time datetime="{stamp}" data-snapshot-time="{stamp}">{escape(display_time(data['generated_at']))}</time></p><p class="snapshot-note">Daily refresh scheduled around 09:17, Stockholm time</p></div>
+  <div><p>Updated <time datetime="{stamp}" data-snapshot-time="{stamp}">{escape(display_time(data['generated_at']))}</time></p><p class="snapshot-note">Weekly refresh · Mondays around 09:17, Stockholm time</p></div>
 </section>'''
 
 
@@ -166,9 +166,15 @@ def render_sources(data: dict) -> str:
     items = []
     for source in data["sources"]:
         label = labels.get(source.get("status"), "Not checked")
-        items.append(f'<li><strong>{escape(source.get("name") or source.get("id"))}</strong><span>{escape(label)}</span><span>{escape(display_time(source.get("checked_at")))}</span></li>')
-    return '''<details class="source-details"><summary>Sources and how this page is updated</summary>
-<p>Official employer feeds and career pages are checked daily. New matching roles are added automatically. Focus labels describe keyword evidence, not a guarantee of suitability or work authorization. The original employer posting is the source of truth.</p>
+        name = escape(source.get("name") or source.get("id"))
+        if source.get("careers_url"):
+            name = f'<a href="{escape(https_url(source["careers_url"]))}">{name}</a>'
+        matched = source.get("count")
+        count_note = f'<span>{matched} matches in this check</span>' if isinstance(matched, int) and matched >= 0 else ""
+        items.append(f'<li><strong>{name}</strong><span>{escape(label)}</span>{count_note}<span>{escape(display_time(source.get("checked_at")))}</span></li>')
+    return '''<details class="source-details"><summary>Employers being tracked and update status</summary>
+<p>Official employer feeds and career pages are checked weekly. New matching roles are added automatically. Each employer remains on this watchlist even when no current role matches the filters. Follow its careers link to browse all openings.</p>
+<p>Focus labels describe keyword evidence, not a guarantee of suitability or work authorization. The original employer posting is the source of truth.</p>
 <p>A failed or incomplete check keeps the previous listing and marks it for rechecking. Roles close only after explicit closure or repeated absence from a successfully read complete job board. Closed roles remain available through the availability filter. Saved reference links may be unverified.</p>
 <p>Coverage follows the employers configured for this job watch; it is not an exhaustive search of every employer.</p>
 <ul class="source-grid">''' + "".join(items) + "</ul></details>"

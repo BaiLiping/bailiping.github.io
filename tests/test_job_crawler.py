@@ -18,7 +18,7 @@ import tempfile
 import unittest
 from unittest.mock import patch
 from urllib.error import HTTPError
-from urllib.parse import urlsplit
+from urllib.parse import parse_qs, urlsplit
 from urllib.request import Request
 
 
@@ -150,6 +150,17 @@ class MatchingAndIdentityTests(unittest.TestCase):
                     title, description, "Boston, MA", "Full-time"
                 ))
 
+    def test_electronics_roles_with_incidental_sensor_fusion_are_not_estimation_matches(self):
+        for title in ("Senior Electrical Engineer", "Staff Electrical Engineer"):
+            with self.subTest(title=title):
+                self.assertIsNone(crawler.classify_job(
+                    title,
+                    "Design robot circuit boards, power electronics, schematics "
+                    "and PCB layouts. Collaborate with software teams on sensor "
+                    "fusion and support prototype hardware bring-up.",
+                    "Pittsburgh, PA", "Full-time",
+                ))
+
     def test_explicit_radar_title_keeps_the_radar_category(self):
         matched = crawler.classify_job(
             "Radar Perception and Sensor Fusion Software Engineer",
@@ -158,6 +169,20 @@ class MatchingAndIdentityTests(unittest.TestCase):
         )
         self.assertIsNotNone(matched)
         self.assertEqual(matched["category"], "radar-sensing")
+
+    def test_robot_perception_tracking_matches_and_work_authorization_is_not_a_sponsorship_ban(self):
+        matched = crawler.classify_job(
+            "Senior AI Software Engineer, Perception",
+            "Develop multi-object tracking, data association and pose estimation "
+            "for humanoid robot perception. Applicants must have current "
+            "authorization to work in the United States.",
+            "Pittsburgh, PA, United States", "Full-time",
+        )
+        self.assertIsNotNone(matched)
+        self.assertEqual(matched["category"], "robotics-localization")
+        self.assertIn("Current US work authorization required", matched["requirements"])
+        self.assertNotIn("Sponsorship restriction mentioned", matched["requirements"])
+        self.assertNotIn("Citizenship/clearance conditions mentioned", matched["requirements"])
 
     def test_native_requisition_keeps_identity_when_url_changes(self):
         first = crawler.stable_job_id(
@@ -539,15 +564,16 @@ class FeedFailureTests(unittest.TestCase):
                          "A failed detail and a successful detail must both yield "
                          "the next run's limited slots to previously unchecked roles")
 
-    def test_workday_fresh_discovery_rotates_past_candidates_that_never_persist(self):
+    def test_weekly_workday_discovery_rotates_past_candidates_that_never_persist(self):
         settings = self.workday_source()
-        settings.update(max_details=4, page_size=4, max_pages_per_query=1)
+        settings.update(max_details=4, page_size=7, max_pages_per_query=1)
         seed, known = "JR90001", "JR90002"
-        fresh = [f"JR2000{i}" for i in range(1, 5)]
+        # Seven candidates expose daily-index rotation that aliases a weekly run.
+        fresh = [f"JR2000{i}" for i in range(1, 8)]
         paths = {native: f"/job/US-CA/Radio-Research_{native}"
                  for native in [seed, known, *fresh]}
         titles = {native: f"Radio Research Intern {letter}"
-                  for native, letter in zip(fresh, "ABCZ")}
+                  for native, letter in zip(fresh, "ABCDEFG")}
         titles.update({seed: "Research Intern, Radio Localization",
                        known: "Research Intern, Radio Localization"})
         settings["seed_paths"] = [paths[seed]]
@@ -578,23 +604,28 @@ class FeedFailureTests(unittest.TestCase):
                     ),
                 }}
 
-        first_day, next_day = "2026-10-26T12:00:00Z", "2026-10-27T12:00:00Z"
-        first_client = FreshCandidateClient()
-        first = crawler.fetch_source(
-            dict(settings, _known_jobs=[old], _now=first_day), first_client)
-        self.assertEqual(first_client.requested, [seed, known, *fresh[:2]])
-        self.assertEqual({record["requisition_id"] for record in first.records},
-                         {seed, known}, "Irrelevant fresh descriptions must not persist")
-        merged = crawler.merge_results(state(old), [first], config(settings), first_day)
-
-        next_client = FreshCandidateClient()
-        second = crawler.fetch_source(
-            dict(settings, _known_jobs=merged["jobs"], _now=next_day), next_client)
-        self.assertEqual(next_client.requested, [seed, known, *fresh[2:]],
-                         "Fresh discovery must advance even when earlier candidates "
-                         "were excluded and therefore absent from saved jobs")
-        self.assertIn(fresh[-1], {record["requisition_id"] for record in second.records})
-        self.assertEqual(len(next_client.requested), settings["max_details"])
+        previous = state(old)
+        checked_fresh = set()
+        discovered = False
+        for stamp in ("2026-10-26T12:00:00Z", "2026-11-02T12:00:00Z",
+                      "2026-11-09T12:00:00Z", "2026-11-16T12:00:00Z"):
+            client = FreshCandidateClient()
+            fetched = crawler.fetch_source(
+                dict(settings, _known_jobs=previous["jobs"], _now=stamp), client)
+            self.assertEqual(client.requested[:2], [seed, known])
+            self.assertEqual(len(client.requested), settings["max_details"])
+            checked_fresh.update(set(client.requested) - {seed, known})
+            returned = {record["requisition_id"] for record in fetched.records}
+            self.assertTrue(returned.issubset({seed, known, fresh[-1]}),
+                            "Irrelevant fresh descriptions must never persist")
+            previous = crawler.merge_results(previous, [fetched], config(settings), stamp)
+            if fresh[-1] in returned:
+                discovered = True
+                break
+        self.assertTrue(discovered,
+                        "Weekly runs must advance past discarded candidates instead "
+                        "of repeatedly choosing the same subset of a seven-job pool")
+        self.assertGreater(len(checked_fresh), 2)
 
     def test_malformed_lever_payload_is_failure_not_empty_success(self):
         class MalformedClient:
@@ -635,6 +666,125 @@ class FeedFailureTests(unittest.TestCase):
         self.assertNotIn("Sponsorship restriction mentioned", radar["requirements"])
         self.assertEqual(neighbor["region"], "US")
         self.assertIn("Sponsorship restriction mentioned", neighbor["requirements"])
+
+
+class AmazonAdapterTests(unittest.TestCase):
+    @staticmethod
+    def amazon_source(**changes):
+        settings = {
+            "id": "amazon", "name": "Amazon robotics careers", "company": "Amazon",
+            "type": "amazon", "enabled": True,
+            "allowed_hosts": ["www.amazon.jobs", "amazon.jobs"],
+            "api_url": "https://www.amazon.jobs/en/search.json",
+            "index_url": "https://www.amazon.jobs/en/search",
+            "queries": ["robotics"], "page_size": 10,
+            "max_pages_per_query": 2, "max_requests": 4,
+        }
+        settings.update(changes)
+        return settings
+
+    @staticmethod
+    def amazon_record(native, title, description, **changes):
+        record = {
+            "id_icims": native, "title": title,
+            "job_path": f"/en/jobs/{native}/research-role",
+            "description": description,
+            "basic_qualifications": "<p>Python and C++ research experience.</p>",
+            "preferred_qualifications": "<p>Relevant publications.</p>",
+            "team": {"label": "team-amazon-robotics"},
+            "location": "New York, NY, USA", "country_code": "USA",
+            "is_intern": False, "job_schedule_type": "full-time",
+            "posted_date": "October 26, 2026",
+        }
+        record.update(changes)
+        return record
+
+    def test_relevant_robotics_cross_team_roles_survive_generic_and_translation_filters(self):
+        entries = [
+            self.amazon_record(
+                10582742, "Applied Scientist - Perception (SLAM/VIO), Fauna",
+                "<p>Build robot visual-inertial SLAM, camera/IMU sensor fusion, "
+                "and real-time state estimation using factor graphs.</p>",
+                team={"label": "team-devices-services"}),
+            self.amazon_record(
+                10570662, "SLAM Software Engineer, RIVR",
+                "<p>Fuse camera, LiDAR, IMU and GNSS data for mobile robot "
+                "localization with Bayesian estimation.</p>",
+                team={"label": "team-transportation"},
+                location="Zurich, CHE", country_code="CHE"),
+            self.amazon_record(
+                90000001, "Software Development Engineer, Amazon Robotics",
+                "<p>Build inventory dashboards, billing APIs and account services.</p>"),
+            self.amazon_record(
+                90000002, "Localization Engineer",
+                "<p>Translate product descriptions, maintain language glossaries "
+                "and improve translation quality across international markets.</p>"),
+            self.amazon_record(
+                90000003, "Applied Scientist, Retail Search",
+                "<p>Improve shopping search relevance and product ranking models.</p>"),
+            self.amazon_record(
+                90000004, "Software Development Engineer, Robotics Cloud Platform",
+                "<p>Build cloud infrastructure, scalable logging services and "
+                "internal developer dashboards.</p><h2>About the team</h2>"
+                "<p>The wider robotics organization includes experts in SLAM, "
+                "localization and sensor fusion.</p>"),
+        ]
+
+        class CompleteSearchClient:
+            def get_json(self, url, **kwargs):
+                return {"error": None, "hits": len(entries), "jobs": entries}
+
+        fetched = crawler.fetch_source(self.amazon_source(), CompleteSearchClient())
+        self.assertEqual(fetched.status, "ok")
+        self.assertFalse(fetched.complete, "A complete keyword query is not a complete employer board")
+        self.assertEqual({record["id"] for record in fetched.records},
+                         {"amazon:10582742", "amazon:10570662"})
+        self.assertTrue(all(record["status"] == "listed" for record in fetched.records))
+        self.assertEqual(next(record for record in fetched.records
+                              if record["id"] == "amazon:10570662")["region"], "Europe")
+
+    def test_partial_amazon_pagination_keeps_good_records_and_does_not_close_saved_jobs(self):
+        entry = self.amazon_record(
+            10582742, "Applied Scientist - Perception (SLAM/VIO), Fauna",
+            "Develop sensor fusion and robot visual-inertial SLAM.")
+
+        class InterruptedSearchClient:
+            def __init__(self):
+                self.offsets = []
+
+            def get_json(self, url, **kwargs):
+                offset = int(parse_qs(urlsplit(url).query)["offset"][0])
+                self.offsets.append(offset)
+                if offset:
+                    raise HTTPError(url, 403, "Forbidden", {}, None)
+                return {"error": None, "hits": 2, "jobs": [entry]}
+
+        settings = self.amazon_source(page_size=1)
+        client = InterruptedSearchClient()
+        fetched = crawler.fetch_source(settings, client)
+        self.assertEqual(client.offsets, [0, 1])
+        self.assertEqual(fetched.status, "partial")
+        self.assertFalse(fetched.complete)
+        self.assertEqual(len(fetched.records), 1)
+        old = job("10478767", "amazon",
+                  url="https://www.amazon.jobs/en/jobs/10478767/old-slam-role",
+                  missing_count=1)
+        merged = crawler.merge_results(state(old), [fetched], config(settings), NOW)
+        retained = by_id(merged, old["id"])
+        self.assertEqual(retained["status"], "open")
+        self.assertEqual(retained["missing_count"], 1)
+        self.assertEqual(retained["last_verified"], EARLIER)
+        self.assertEqual(retained["check_status"], "partial")
+
+    def test_amazon_error_payload_is_not_a_successful_empty_search(self):
+        class ErrorSearchClient:
+            def get_json(self, url, **kwargs):
+                return {"error": "Service unavailable", "hits": 0, "jobs": []}
+
+        fetched = crawler.fetch_source(self.amazon_source(), ErrorSearchClient())
+        self.assertEqual(fetched.status, "error")
+        self.assertFalse(fetched.complete)
+        self.assertEqual(fetched.records, [])
 
 
 if __name__ == "__main__":

@@ -10,12 +10,23 @@
       "company": "NVIDIA",
       "type": "workday",
       "enabled": true,
-      "allowed_hosts": ["nvidia.wd5.myworkdayjobs.com", "jobs.nvidia.com"],
+      "allowed_hosts": [
+        "nvidia.wd5.myworkdayjobs.com",
+        "jobs.nvidia.com"
+      ],
       "base_url": "https://nvidia.wd5.myworkdayjobs.com",
       "tenant": "nvidia",
       "site": "NVIDIAExternalCareerSite",
       "search_url": "https://nvidia.wd5.myworkdayjobs.com/wday/cxs/nvidia/NVIDIAExternalCareerSite/jobs",
-      "queries": ["UWB", "ISAC", "radio", "radar", "SLAM", "localization", "positioning"],
+      "queries": [
+        "UWB",
+        "ISAC",
+        "radio",
+        "radar",
+        "SLAM",
+        "localization",
+        "positioning"
+      ],
       "page_size": 20,
       "max_pages_per_query": 2,
       "max_details": 12,
@@ -31,12 +42,22 @@
       "company": "NXP",
       "type": "workday",
       "enabled": true,
-      "allowed_hosts": ["nxp.wd3.myworkdayjobs.com"],
+      "allowed_hosts": [
+        "nxp.wd3.myworkdayjobs.com"
+      ],
       "base_url": "https://nxp.wd3.myworkdayjobs.com",
       "tenant": "nxp",
       "site": "careers",
       "search_url": "https://nxp.wd3.myworkdayjobs.com/wday/cxs/nxp/careers/jobs",
-      "queries": ["UWB", "ISAC", "radio", "radar", "SLAM", "localization", "positioning"],
+      "queries": [
+        "UWB",
+        "ISAC",
+        "radio",
+        "radar",
+        "SLAM",
+        "localization",
+        "positioning"
+      ],
       "page_size": 20,
       "max_pages_per_query": 2,
       "max_details": 12,
@@ -52,7 +73,10 @@
       "company": "FieldAI",
       "type": "lever",
       "enabled": true,
-      "allowed_hosts": ["api.lever.co", "jobs.lever.co"],
+      "allowed_hosts": [
+        "api.lever.co",
+        "jobs.lever.co"
+      ],
       "api_url": "https://api.lever.co/v0/postings/field-ai?mode=json",
       "index_url": "https://jobs.lever.co/field-ai",
       "max_requests": 2,
@@ -64,7 +88,10 @@
       "company": "Glydways",
       "type": "greenhouse",
       "enabled": true,
-      "allowed_hosts": ["boards-api.greenhouse.io", "job-boards.greenhouse.io"],
+      "allowed_hosts": [
+        "boards-api.greenhouse.io",
+        "job-boards.greenhouse.io"
+      ],
       "api_url": "https://boards-api.greenhouse.io/v1/boards/glydways/jobs?content=true",
       "index_url": "https://job-boards.greenhouse.io/glydways",
       "max_requests": 2,
@@ -76,7 +103,11 @@
       "company": "Waymo",
       "type": "greenhouse",
       "enabled": true,
-      "allowed_hosts": ["boards-api.greenhouse.io", "careers.withwaymo.com", "job-boards.greenhouse.io"],
+      "allowed_hosts": [
+        "boards-api.greenhouse.io",
+        "careers.withwaymo.com",
+        "job-boards.greenhouse.io"
+      ],
       "api_url": "https://boards-api.greenhouse.io/v1/boards/waymo/jobs?content=true",
       "index_url": "https://careers.withwaymo.com/jobs/search",
       "max_requests": 2,
@@ -88,9 +119,13 @@
       "company": "Efference",
       "type": "html",
       "enabled": true,
-      "allowed_hosts": ["efference.ai"],
+      "allowed_hosts": [
+        "efference.ai"
+      ],
       "index_url": "https://efference.ai/careers/",
-      "job_url_patterns": ["^https://efference\\.ai/careers/[a-z0-9-]+/$"],
+      "job_url_patterns": [
+        "^https://efference\\.ai/careers/[a-z0-9-]+/$"
+      ],
       "seed_urls": [
         "https://efference.ai/careers/uwb-engineer/",
         "https://efference.ai/careers/research-engineer-vio-slam/",
@@ -108,7 +143,10 @@
       "company": "Mitsubishi Electric Research Laboratories",
       "type": "html",
       "enabled": true,
-      "allowed_hosts": ["www.merl.com", "merl.clearcompany.com"],
+      "allowed_hosts": [
+        "www.merl.com",
+        "merl.clearcompany.com"
+      ],
       "index_url": "https://www.merl.com/employment/internship-openings",
       "inline_discovery": "merl",
       "inline_jobs": [
@@ -144,7 +182,9 @@
       "company": "Zadar Labs",
       "type": "html",
       "enabled": true,
-      "allowed_hosts": ["www.zadarlabs.com"],
+      "allowed_hosts": [
+        "www.zadarlabs.com"
+      ],
       "index_url": "https://www.zadarlabs.com/careers",
       "inline_discovery": "zadar",
       "inline_jobs": [
@@ -158,6 +198,95 @@
       "max_requests": 2,
       "complete_listing": false,
       "notes": "Current page contains two separate accordion job sections. Discover accordion-item__title headings and isolate each role's description. The first radar-perception role does not state location or sponsorship; the separate Software Engineer role states Campbell, California and no sponsorship. Never transfer those conditions across sections."
+    },
+    {
+      "id": "boston-dynamics",
+      "name": "Boston Dynamics official careers",
+      "company": "Boston Dynamics",
+      "type": "workday",
+      "enabled": true,
+      "allowed_hosts": [
+        "bostondynamics.wd1.myworkdayjobs.com",
+        "bostondynamics.com"
+      ],
+      "base_url": "https://bostondynamics.wd1.myworkdayjobs.com",
+      "tenant": "bostondynamics",
+      "site": "Boston_Dynamics",
+      "search_url": "https://bostondynamics.wd1.myworkdayjobs.com/wday/cxs/bostondynamics/Boston_Dynamics/jobs",
+      "index_url": "https://bostondynamics.com/careers/",
+      "queries": [
+        "SLAM",
+        "localization",
+        "perception",
+        "state estimation",
+        "sensor fusion",
+        "intern"
+      ],
+      "page_size": 20,
+      "max_pages_per_query": 2,
+      "max_details": 10,
+      "max_requests": 26,
+      "seed_paths": [
+        "/job/Waltham-Office-POST/Research-Scientist--Spatial-AI---Perception_R2871"
+      ],
+      "notes": "Official public search and detail JSON verified. R2871 Atlas Research Engineer, SLAM & Spatial AI explicitly names probabilistic estimation, factor graphs, filtering, and deployed SLAM. Enrolled-student internship recruiting is described on the careers page; no specific future internship availability or sponsorship is assumed. Bounded keyword results cannot establish closure by absence."
+    },
+    {
+      "id": "amazon-robotics",
+      "name": "Amazon Robotics and related robotics teams",
+      "company": "Amazon",
+      "type": "amazon",
+      "enabled": true,
+      "allowed_hosts": [
+        "www.amazon.jobs",
+        "amazon.jobs"
+      ],
+      "api_url": "https://www.amazon.jobs/en/search.json",
+      "index_url": "https://www.amazon.jobs/content/en/teams/ftr/amazon-robotics",
+      "queries": [
+        "SLAM",
+        "localization",
+        "robotics perception",
+        "robotics sensing"
+      ],
+      "page_size": 50,
+      "max_pages_per_query": 3,
+      "max_requests": 16,
+      "notes": "Official public Amazon.jobs JSON search supplies complete descriptions and qualifications. Require robotics context plus physical localization, SLAM, estimation, or sensing relevance; exclude language localization and generic software. Relevant Fauna and RIVR positions may be included under Amazon without calling them Amazon Robotics team roles. Keyword results never establish complete-inventory absence, and results are employer-listed rather than independently confirmed application availability."
+    },
+    {
+      "id": "agility-robotics",
+      "name": "Agility Robotics official careers",
+      "company": "Agility Robotics",
+      "type": "greenhouse",
+      "enabled": true,
+      "allowed_hosts": [
+        "boards-api.greenhouse.io",
+        "www.agilityrobotics.com",
+        "job-boards.greenhouse.io"
+      ],
+      "api_url": "https://boards-api.greenhouse.io/v1/boards/agilityrobotics/jobs?content=true",
+      "index_url": "https://www.agilityrobotics.com/careers",
+      "max_requests": 2,
+      "notes": "Official careers site references the agilityrobotics Greenhouse board. Verified complete JSON inventory; the board count can change. Match relevant perception, tracking, localization, and estimation roles conservatively. Preserve explicit experience and work-authorization conditions without inferring sponsorship."
+    },
+    {
+      "id": "intrinsic",
+      "name": "Intrinsic official careers",
+      "company": "Intrinsic",
+      "type": "greenhouse",
+      "enabled": true,
+      "allowed_hosts": [
+        "boards-api.greenhouse.io",
+        "boards.greenhouse.io",
+        "job-boards.greenhouse.io",
+        "www.intrinsic.ai",
+        "intrinsic.ai"
+      ],
+      "api_url": "https://boards-api.greenhouse.io/v1/boards/intrinsicrobotics/jobs?content=true",
+      "index_url": "https://www.intrinsic.ai/careers",
+      "max_requests": 2,
+      "notes": "Official careers site references the intrinsicrobotics Greenhouse board. This is an employer watchlist source; no current US/European localization match is promised. Keep normal technical and geographic filters, and do not broaden to generic software or all manipulation roles simply to display a result."
     }
   ],
   "pinned_jobs": [

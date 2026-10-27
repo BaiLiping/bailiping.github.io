@@ -44,7 +44,7 @@ radar, robotics, SLAM, and integrated sensing and communications. The original
 Qualcomm reference and NVIDIA Aerial ISAC internship remain saved.
 
 The **Update potential jobs** GitHub Actions workflow refreshes configured
-official employer feeds daily around **09:17 Europe/Stockholm** and publishes
+official employer feeds on Mondays around **09:17 Europe/Stockholm** and publishes
 the generated page. It can also be run from the Actions tab. Each listing shows
 its check status; failed requests retain previous results. Search and filters
 run in the browser, while the listings themselves are static HTML.

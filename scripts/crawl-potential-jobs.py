@@ -30,7 +30,7 @@ from urllib.request import Request, HTTPRedirectHandler, build_opener
 ROOT = Path(__file__).resolve().parent.parent
 CATEGORIES = {"radio-localization", "radar-sensing", "robotics-localization", "wireless-isac"}
 JOB_STATUSES = {"open", "listed", "unknown", "closed", "saved"}
-SOURCE_TYPES = {"workday", "lever", "greenhouse", "html"}
+SOURCE_TYPES = {"workday", "lever", "greenhouse", "html", "amazon"}
 MAX_RESPONSE_BYTES = 6 * 1024 * 1024
 INSTRUCTION_TEXT = re.compile(
     r"ignore\s+(?:all\s+)?(?:previous|prior|above)\s+instructions|"
@@ -108,7 +108,7 @@ class SafeRedirectHandler(HTTPRedirectHandler):
 
 
 class RunBudget:
-    def __init__(self, seconds=300, requests=100):
+    def __init__(self, seconds=420, requests=160):
         self.deadline = time.monotonic() + min(max(seconds, 10), 600)
         self.remaining = min(max(requests, 1), 200)
 
@@ -288,9 +288,11 @@ def classify_job(title, description, location="", employment_type=""):
                          and re.search(r"\bradar\b", b)):
         category = "radar-sensing"
         reasons = ["Radar is named in the role's title or technical description"]
-    elif re.search(r"robotics|robotic|autonomous|perception|research|mapping", t) and re.search(
+    elif (re.search(r"robotics|robotic|autonomous|perception|research|mapping", t)
+          or (re.search(r"software.*(?:engineer|developer)|(?:algorithm|development) engineer|scientist", t)
+              and re.search(r"\brobot(?:ic(?:s)?|s)?\b", b))) and re.search(
             r"\bslam\b|visual[- ]inertial|lidar[- ]inertial|probabilistic state estimation|"
-            r"sensor fusion|robot locali[sz]ation|multi[- ]target tracking", b):
+            r"sensor fusion|robot locali[sz]ation|multi[- ](?:target|object) tracking|pose estimation", b):
         category = "robotics-localization"
         reasons = ["Technical description mentions robotic estimation, tracking, or SLAM"]
     if category is None:
@@ -308,6 +310,9 @@ def classify_job(title, description, location="", employment_type=""):
         (r"\b(?:uwb|ultra[- ]wideband)\b", "UWB mentioned"),
         (r"\bradar\b", "Radar mentioned"),
         (r"security clearance|u\.?s\.? citizen|united states citizen|us person|u\.s\. person", "Citizenship/clearance conditions mentioned"),
+        (r"\bmust\s+(?:have\s+current\s+(?:work\s+)?authori[sz]ation\s+to\s+work|"
+         r"be\s+currently\s+authori[sz]ed\s+to\s+work)\s+in\s+(?:the\s+)?(?:united states|u\.?s\.?a?\.?)\b",
+         "Current US work authorization required"),
         (r"(?:not|no|unable to|cannot|can't|do not)\s+(?:offer\s+|provide\s+|support\s+)?(?:visa\s+)?sponsor", "Sponsorship restriction mentioned"),
     ]:
         if re.search(pattern, text, re.I):
@@ -372,6 +377,15 @@ def brief_error(exc):
     if isinstance(exc, json.JSONDecodeError):
         return "Employer returned invalid JSON or an access challenge"
     return clean_text(str(exc), 200) or type(exc).__name__
+
+
+def _rotation_week(source):
+    """Advance discovery windows once per UTC Monday, including manual reruns."""
+    check_time = source.get("_now") or datetime.now(timezone.utc).isoformat()
+    moment = datetime.fromisoformat(check_time.replace("Z", "+00:00"))
+    if moment.tzinfo is None:
+        moment = moment.replace(tzinfo=timezone.utc)
+    return (moment.astimezone(timezone.utc).date().toordinal() - 1) // 7
 
 
 def _workday(source, client):
@@ -448,9 +462,7 @@ def _workday(source, client):
     # Irrelevant details are not retained as jobs. Rotate the unpersisted
     # candidates too, so they cannot permanently consume the same detail slots.
     if fresh and len(fresh) > fresh_slots and fresh_slots > 0:
-        check_time = source.get("_now") or datetime.now(timezone.utc).isoformat()
-        day = int(datetime.fromisoformat(check_time.replace("Z", "+00:00")).timestamp() // 86400)
-        offset = (day * fresh_slots) % len(fresh)
+        offset = (_rotation_week(source) * fresh_slots) % len(fresh)
         fresh = fresh[offset:] + fresh[:offset]
     selected = (seeds + known[:known_slots] + fresh[:fresh_slots])[:limit]
     if len(selected) < limit:
@@ -491,6 +503,159 @@ def _workday(source, client):
     result.seen_ids = sorted(seen)
     if errors:
         result.status = "partial" if result.records or seen else "error"
+        result.error = "; ".join(dict.fromkeys(errors))[:400]
+    return result
+
+
+def _amazon_location(entry):
+    """Use this posting's location fields, including Amazon's ISO country codes."""
+    countries = {
+        "US": "United States", "USA": "United States", "CH": "Switzerland", "CHE": "Switzerland",
+        "DE": "Germany", "DEU": "Germany", "GB": "United Kingdom", "GBR": "United Kingdom",
+        "FR": "France", "FRA": "France", "SE": "Sweden", "SWE": "Sweden",
+        "NL": "Netherlands", "NLD": "Netherlands", "AT": "Austria", "AUT": "Austria",
+        "BE": "Belgium", "BEL": "Belgium", "IE": "Ireland", "IRL": "Ireland",
+        "IT": "Italy", "ITA": "Italy", "ES": "Spain", "ESP": "Spain",
+        "FI": "Finland", "FIN": "Finland", "NO": "Norway", "NOR": "Norway",
+        "DK": "Denmark", "DNK": "Denmark", "PL": "Poland", "POL": "Poland",
+        "PT": "Portugal", "PRT": "Portugal", "CZ": "Czechia", "CZE": "Czechia",
+        "RO": "Romania", "ROU": "Romania", "LU": "Luxembourg", "LUX": "Luxembourg",
+        "CA": "Canada", "CAN": "Canada", "IN": "India", "IND": "India",
+        "CN": "China", "CHN": "China", "JP": "Japan", "JPN": "Japan",
+        "SG": "Singapore", "SGP": "Singapore", "AU": "Australia", "AUS": "Australia",
+        "IL": "Israel", "ISR": "Israel", "TW": "Taiwan", "TWN": "Taiwan",
+        "BR": "Brazil", "BRA": "Brazil", "MX": "Mexico", "MEX": "Mexico",
+    }
+    def display_location(label, country, code):
+        label = clean_text(label, 180)
+        if country and code:
+            label = re.sub(r"\b" + re.escape(code) + r"\b", str(country), label)
+        if country and str(country).casefold() not in label.casefold():
+            label = ", ".join(x for x in (label, str(country)) if x)
+        return label
+
+    locations = []
+    for raw in entry.get("locations") or []:
+        if isinstance(raw, str):
+            try:
+                raw = json.loads(raw)
+            except (ValueError, TypeError):
+                locations.append(clean_text(raw, 180))
+                continue
+        if isinstance(raw, dict):
+            label = raw.get("normalizedLocation") or raw.get("locationNonStemming") or raw.get("location") or raw.get("city") or ""
+            code = str(raw.get("countryIso3a") or raw.get("normalizedCountryCode") or raw.get("countryIso2a") or "").upper()
+            country = raw.get("normalizedCountryName") or countries.get(code, "")
+            locations.append(display_location(label, country, code))
+    if not locations:
+        label = entry.get("normalized_location") or entry.get("location") or ""
+        code = str(entry.get("country_code") or "").upper()
+        country = countries.get(code, "")
+        locations.append(display_location(label, country, code))
+    return " / ".join(dict.fromkeys(clean_text(x, 200) for x in locations if x))
+
+
+def _amazon_robotics_context(entry, description):
+    """Exclude Amazon-wide language localization and unrelated software roles."""
+    team = entry.get("team") or {}
+    label = team.get("label", "") if isinstance(team, dict) else ""
+    text = clean_text(str(entry.get("title", "")) + " " + description, 35000).lower()
+    robotics = "robotics" in str(label).lower() or re.search(r"\brobot(?:ic(?:s)?|s)?\b", text)
+    physical_estimation = re.search(
+        r"\bslam\b|\bvio\b|visual[- ]inertial|lidar[- ]inertial|sensor fusion|state estimation|"
+        r"multi[- ](?:target|object) tracking|robot locali[sz]ation|"
+        r"locali[sz]ation[^.!?]{0,120}(?:mapping|navigation|odometry|ranging)|"
+        r"(?:mapping|navigation|odometry|ranging)[^.!?]{0,120}locali[sz]ation|"
+        r"\bradar\b|\buwb\b|ultra[- ]wideband|\bisac\b|"
+        r"(?:radio|wireless|\brf\b)[^.!?]{0,120}(?:positioning|ranging|locali[sz]ation)", text)
+    return bool(robotics and physical_estimation)
+
+
+def _amazon(source, client):
+    """Read Amazon's public, paginated search feed; it is never a full board."""
+    result = SourceResult(source["id"], "ok", [], complete=False)
+    errors, seen = [], set()
+    valid_entries, empty_queries = 0, 0
+    page_size = source.get("page_size", 50)
+    api = urlsplit(source["api_url"])
+    for query in source.get("queries", ["SLAM", "localization"]):
+        offset, expected, query_complete = 0, None, False
+        query_ids = set()
+        for _page in range(source.get("max_pages_per_query", 3)):
+            try:
+                params = dict(parse_qsl(api.query, keep_blank_values=True))
+                params.update(base_query=query, offset=offset, result_limit=page_size, sort="recent")
+                url = urlunsplit((api.scheme, api.netloc, api.path, urlencode(params), ""))
+                data = client.get_json(url)
+                if (not isinstance(data, dict) or data.get("error")
+                        or not isinstance(data.get("jobs"), list)
+                        or type(data.get("hits")) is not int or data["hits"] < 0):
+                    raise FetchError("Amazon search shape changed or returned an error")
+                total, entries = data["hits"], data["jobs"]
+                if expected is not None and total != expected:
+                    raise FetchError("Amazon results changed during pagination")
+                expected = total
+                if (not entries and offset < total) or offset + len(entries) > total:
+                    raise FetchError("Amazon pagination returned an inconsistent page")
+                page_ids = set()
+                for entry in entries:
+                    try:
+                        if not isinstance(entry, dict):
+                            raise FetchError("Amazon job entry shape changed")
+                        native, title, path = str(entry.get("id_icims") or ""), entry.get("title"), entry.get("job_path")
+                        if (not re.fullmatch(r"\d{1,12}", native) or not isinstance(title, str) or not title.strip()
+                                or not isinstance(path, str)
+                                or not re.match(r"^/(?:[a-z-]+/)?jobs/" + re.escape(native) + r"(?:/|$)", path)):
+                            raise FetchError("Amazon job lacks a matching ID, title, or official job path")
+                        target = safe_url(urljoin(source["api_url"], path), source["allowed_hosts"])
+                        fields = [entry.get(key) or "" for key in ("description", "basic_qualifications", "preferred_qualifications")]
+                        if not fields[0] or any(not isinstance(x, str) for x in fields):
+                            raise FetchError("Amazon full job description is missing or changed")
+                        # Wider-team boilerplate can mention SLAM even when this
+                        # role only builds generic infrastructure. Keep this
+                        # role's duties and its separate qualifications instead.
+                        role_text = re.split(r"\babout the team\b|\babout amazon\b",
+                                             clean_text(fields[0], 30000), maxsplit=1, flags=re.I)[0]
+                        description = "\n".join([role_text, *fields[1:]])
+                        page_ids.add(native)
+                        valid_entries += 1
+                        identity = stable_job_id(source["id"], native, target)
+                        if identity in seen:
+                            continue
+                        seen.add(identity)
+                        if not _amazon_robotics_context(entry, description):
+                            continue
+                        employment = entry.get("job_schedule_type") or ""
+                        if entry.get("is_intern") is True or str(entry.get("is_intern")).lower() in {"true", "1"}:
+                            employment = "Internship"
+                        posted = entry.get("posted_date")
+                        if isinstance(posted, str) and not re.match(r"^\d{4}-\d{2}-\d{2}", posted):
+                            try:
+                                posted = datetime.strptime(posted, "%B %d, %Y").strftime("%Y-%m-%d")
+                            except ValueError:
+                                posted = None
+                        job = make_job(source, native, title, target, _amazon_location(entry), description,
+                                       employment, "listed", native, posted)
+                        if job:
+                            result.records.append(job)
+                    except Exception as exc:
+                        errors.append(brief_error(exc))
+                if entries and page_ids and page_ids <= query_ids:
+                    raise FetchError("Amazon pagination repeated a previously returned page")
+                query_ids.update(page_ids)
+                offset += len(entries)
+                if offset >= total:
+                    query_complete = True
+                    empty_queries += total == 0
+                    break
+            except Exception as exc:
+                errors.append(brief_error(exc))
+                break
+        if not query_complete:
+            errors.append(f"Query {query} was only partially checked")
+    result.seen_ids = sorted(seen)
+    if errors:
+        result.status = "partial" if valid_entries or empty_queries else "error"
         result.error = "; ".join(dict.fromkeys(errors))[:400]
     return result
 
@@ -666,13 +831,11 @@ def _html(source, client):
     slots = max(0, limit - len(seeds))
     known_slots = min(len(known), slots // 2 if fresh else slots)
     fresh_slots = slots - known_slots
-    # Unknown/irrelevant pages are intentionally not persisted as jobs. A daily
+    # Unknown/irrelevant pages are intentionally not persisted as jobs. A weekly
     # rotating window still gives their URLs coverage instead of rechecking the
     # same first twelve pages forever.
     if fresh and len(fresh) > fresh_slots and fresh_slots > 0:
-        check_time = source.get("_now") or datetime.now(timezone.utc).isoformat()
-        day = int(datetime.fromisoformat(check_time.replace("Z", "+00:00")).timestamp() // 86400)
-        offset = (day * fresh_slots) % len(fresh)
+        offset = (_rotation_week(source) * fresh_slots) % len(fresh)
         fresh = fresh[offset:] + fresh[:offset]
     selected = (seeds + known[:known_slots] + fresh[:fresh_slots])[:limit]
     if len(selected) < limit:
@@ -728,7 +891,8 @@ def _html(source, client):
 
 def fetch_source(source, client):
     try:
-        result = {"workday": _workday, "lever": _lever, "greenhouse": _greenhouse, "html": _html}[source["type"]](source, client)
+        result = {"workday": _workday, "lever": _lever, "greenhouse": _greenhouse,
+                  "html": _html, "amazon": _amazon}[source["type"]](source, client)
     except Exception as exc:
         result = SourceResult(source["id"], "error", [], error=brief_error(exc))
     result.requests = getattr(client, "requests", 0)
@@ -750,7 +914,7 @@ def validate_config(config):
         hosts = source.get("allowed_hosts")
         if not isinstance(hosts, list) or not hosts or any(not re.fullmatch(r"[a-z0-9.-]+", h) for h in hosts):
             raise ValueError("Source requires exact allowed_hosts")
-        for key in ("base_url", "search_url", "api_url", "index_url"):
+        for key in ("base_url", "search_url", "api_url", "index_url", "careers_url"):
             if key in source:
                 safe_url(source[key], hosts)
         for key in ("seed_urls",):
@@ -768,8 +932,13 @@ def validate_config(config):
             for path in source.get("seed_paths", []):
                 if not path.startswith("/job/") or ".." in path:
                     raise ValueError("Invalid Workday seed path")
-        elif source["type"] in {"lever", "greenhouse"} and not source.get("api_url"):
+        elif source["type"] in {"lever", "greenhouse", "amazon"} and not source.get("api_url"):
             raise ValueError("API source missing api_url")
+        if source["type"] == "amazon":
+            queries = source.get("queries", ["SLAM", "localization"])
+            if (not isinstance(queries, list) or not 1 <= len(queries) <= 10
+                    or any(not isinstance(q, str) or not q.strip() or len(q) > 80 for q in queries)):
+                raise ValueError("Amazon queries must be a bounded nonempty string array")
         elif source["type"] == "html":
             if not source.get("index_url"):
                 raise ValueError("HTML source missing index_url")
@@ -836,6 +1005,20 @@ def _same_job(a, b):
     if ar and br and a["company"].casefold() == b["company"].casefold() and ar.casefold() == br.casefold():
         return True
     return canonical_url(a["url"]) == canonical_url(b["url"]) and a["title"].casefold() == b["title"].casefold()
+
+
+def _careers_url(source):
+    url = source.get("careers_url") or source.get("index_url")
+    if not url and source.get("base_url"):
+        url = source["base_url"].rstrip("/")
+        if source.get("type") == "workday" and source.get("site"):
+            url += "/" + source["site"]
+    if url:
+        try:
+            return safe_url(url, source["allowed_hosts"])
+        except (ValueError, TypeError, KeyError):
+            pass
+    return ""
 
 
 def merge_results(previous, results, config, now):
@@ -935,6 +1118,12 @@ def merge_results(previous, results, config, now):
     if config.get("manual_jobs"):
         source_states["manual"] = {"id": "manual", "name": "Manually saved references", "status": "manual",
                                    "checked_at": now, "count": sum(j["source_id"] == "manual" for j in jobs.values())}
+    for sid, state in source_states.items():
+        careers = _careers_url(sources[sid])
+        if careers:
+            state["careers_url"] = careers
+        else:
+            state.pop("careers_url", None)
     # Keep saved records, recent closed history, and the most relevant active records.
     cutoff = datetime.fromisoformat(now.replace("Z", "+00:00")) - timedelta(days=120)
     retained = []
@@ -993,7 +1182,7 @@ def main(argv=None):
         print(f"Configuration/state error: {brief_error(exc)}", file=sys.stderr)
         return 2
     results = []
-    budget = RunBudget(seconds=300, requests=100)
+    budget = RunBudget(seconds=420, requests=160)
     for original in config["sources"]:
         if not original.get("enabled", True) or (chosen and original["id"] not in chosen):
             continue

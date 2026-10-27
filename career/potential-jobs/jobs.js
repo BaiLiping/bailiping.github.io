@@ -40,7 +40,7 @@
   const timestamp = document.querySelector('[data-snapshot-time]');
   if (timestamp) {
     const checked = Date.parse(timestamp.dataset.snapshotTime);
-    if (Number.isFinite(checked) && Date.now() - checked > 48 * 60 * 60 * 1000) {
+    if (Number.isFinite(checked) && Date.now() - checked > 9 * 24 * 60 * 60 * 1000) {
       document.getElementById('stale-notice').hidden = false;
     }
   }

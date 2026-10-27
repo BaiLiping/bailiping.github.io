@@ -11,8 +11,8 @@ applications when a reader follows the link.
 
 ## Schedule and publishing
 
-`.github/workflows/update-potential-jobs.yml` runs daily at approximately **09:17
-Europe/Stockholm**, including daylight-saving changes. GitHub can delay scheduled
+`.github/workflows/update-potential-jobs.yml` runs weekly, on Mondays at approximately
+**09:17 Europe/Stockholm**, including daylight-saving changes. GitHub can delay scheduled
 runs. It also runs when its crawler, configuration, template, renderer, or tests
 change on `main`, and supports **Actions → Update potential jobs → Run workflow**.
 
@@ -42,9 +42,12 @@ The workflow summary and the page's source-status panel show what happened.
 
 ## Current coverage
 
-- NVIDIA and NXP: public Workday search and job-detail endpoints.
+- NVIDIA, NXP, and Boston Dynamics: public Workday search and job-detail endpoints.
+- Amazon Robotics and related robotics teams: official Amazon.jobs search feed,
+  with a separate robotics-context check to exclude unrelated localization and
+  general software roles. Search listings remain labeled as employer-listed.
 - FieldAI: official Lever board.
-- Glydways and Waymo: official Greenhouse boards.
+- Glydways, Waymo, Agility Robotics, and Intrinsic: official Greenhouse boards.
 - Efference: official careers index and structured job pages.
 - Mitsubishi Electric Research Laboratories (MERL): individual internship
   sections on its official openings page.
@@ -56,9 +59,16 @@ original NVIDIA internship is pinned and matched to its requisition ID so its
 saved link is preserved without creating duplicates.
 
 This is a bounded search of configured employers, not the entire job market.
-Workday search results and detail requests have limits. A partial source can
+Tracked employers remain in the source panel even when no role matches the
+current technical and geographic filters. Their official careers links are
+available there. An employer being tracked does not imply an available matching
+vacancy or sponsorship. Amazon coverage includes explicitly relevant teams such
+as Fauna and RIVR; their roles are not relabeled as Amazon Robotics team openings.
+
+Workday and Amazon search results and detail requests have limits. A partial source can
 still contribute individually verified roles, while unchecked older roles are
-marked for rechecking. Additional employers can be added after verifying their
+marked for rechecking. Bounded discovery windows advance weekly so the Monday
+schedule does not repeatedly sample the same candidates. Additional employers can be added after verifying their
 official feed or careers page and, if necessary, implementing a tested adapter.
 
 ## Local refresh
@@ -111,9 +121,10 @@ erase old listings or count as an absence. If every selected source fails, the
 crawler exits unsuccessfully and leaves the previous snapshot byte-for-byte
 unchanged. Successful output and HTML writes use atomic replacement.
 
-The page displays the refresh timestamp and a stale-data notice after 48 hours.
+The page displays the refresh timestamp and a stale-data notice after nine days
+(one weekly interval plus a two-day grace period).
 Check the Actions logs when a source repeatedly fails; do not bypass a site's
-access controls or silently label an inaccessible role as closed. If the daily
+access controls or silently label an inaccessible role as closed. If the weekly
 workflow stops running, check whether it is enabled and whether repository
 Actions permissions or GitHub's public-repository inactivity rules apply.
 

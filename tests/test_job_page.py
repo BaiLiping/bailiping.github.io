@@ -72,11 +72,22 @@ class JobPageTests(unittest.TestCase):
         job = snapshot()["jobs"][0]
         job["requirements"] = ["Python mentioned", "C++ mentioned", "ROS experience mentioned",
                                "Machine-learning frameworks mentioned", "Senior/experienced role",
-                               "Sponsorship restriction mentioned"]
+                               "Sponsorship restriction mentioned", "Current US work authorization required"]
         card = page.render_card(job)
         visible_flags = card.split('<p class="job-requirements">', 1)[1].split('</p>', 1)[0]
         self.assertIn("Sponsorship restriction mentioned", visible_flags)
         self.assertIn("Senior/experienced role", visible_flags)
+        self.assertIn("Current US work authorization required", visible_flags)
+
+    def test_employer_watchlist_link_is_escaped_and_https_only(self):
+        data = snapshot()
+        data["sources"][0].update(careers_url="https://example.com/careers?x=1&y=2", count=0)
+        result = page.render_sources(data)
+        self.assertIn('href="https://example.com/careers?x=1&amp;y=2"', result)
+        self.assertIn("0 matches in this check", result)
+        data["sources"][0]["careers_url"] = "javascript:alert(1)"
+        with self.assertRaises(ValueError):
+            page.render_page(data, self.template)
 
     def test_unsafe_links_and_duplicate_ids_fail_before_rendering(self):
         for bad_url in ("javascript:alert(1)", "http://example.com/job", "https://user:pass@example.com/job", "https://example.com:444/job"):
