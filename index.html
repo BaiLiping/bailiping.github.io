@@ -81,6 +81,23 @@
         letter-spacing: 0.05em;
       }
 
+      .site-nav a {
+        display: inline-block;
+        padding: 9px 14px;
+        border-radius: 8px;
+        color: var(--accent-dark);
+        font-weight: 700;
+      }
+
+      .site-nav a:hover {
+        background: #edf4ee;
+      }
+
+      .site-nav a:focus-visible {
+        outline: 3px solid var(--accent);
+        outline-offset: 3px;
+      }
+
       main {
         padding: 54px 0 80px;
       }
@@ -183,6 +200,9 @@
         <a class="brand" href="/" aria-label="Bai Liping home">
           <span class="brand-mark">BLP</span>
         </a>
+        <nav class="site-nav" aria-label="Main navigation">
+          <a href="/career/">Career</a>
+        </nav>
       </div>
     </header>
 
@@ -197,6 +217,15 @@
           </a>
           <a class="page-link" href="/et-handover/">
             <strong>Extended-Target Handover</strong>
+          </a>
+        </div>
+      </section>
+
+      <section class="group" aria-labelledby="group-career">
+        <h2 class="group-title" id="group-career">Career</h2>
+        <div class="page-list">
+          <a class="page-link" href="/career/potential-jobs/">
+            <strong>Potential Jobs</strong>
           </a>
         </div>
       </section>

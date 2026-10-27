@@ -36,6 +36,13 @@ After verifying `https://bailiping.com/` in Google Search Console, submit
 `https://bailiping.com/sitemap.xml` in **Sitemaps**. Submission helps discovery;
 Google decides which pages to index and when.
 
+## Career
+
+The homepage **Career** tab opens `/career/`. Its **Potential Jobs** page at
+`/career/potential-jobs/` collects the Qualcomm Location Technology Systems
+Engineer posting and the NVIDIA Aerial ISAC research internship for Summer 2027.
+The homepage also links directly to Potential Jobs under the Career heading.
+
 ## Flight tracker
 
 The homepage **Tools → Flight Tracker** opens `/flight-tracker/`. It displays
