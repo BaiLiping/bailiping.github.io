@@ -4,8 +4,9 @@ The homepage links to **Books & Podcast** at `/books/` under Life. The page has
 Books and Podcast sections with anchor links. Edit the ordered book list in
 `index.html` to add books and the user's own notes. Preserve the supplied order.
 The two Feynman books are first and second, followed by the previous books in order.
-The Podcast section is empty until the user supplies episodes. Only user-supplied
-summaries are shown; other entries contain only covers, titles, and authors.
+The Podcast section uses the supplied screenshots and links to matching episode
+pages. Only user-supplied summaries and reflections are shown; leave these blank
+when they have not been supplied.
 Retailer links are intentionally omitted from the rendered page at the user's request.
 
 ## Cover sources
@@ -54,3 +55,20 @@ https://www.penguinrandomhouse.com/books/47841/china-airborne-by-james-fallows/
 The supplied Swedish pages for the two Feynman books were unavailable. Their
 cover images and details come from the matching ISBN editions at Amazon.com:
 https://www.amazon.com/dp/0393355624 and https://www.amazon.com/dp/0393355640
+
+## Podcast thumbnails and episode links
+
+Added 2026-10-28 from the user's five supplied JPEG screenshots. The files are
+copied without resizing or cropping. Their episode titles were checked against
+the matching 忽左忽右 pages on 小宇宙. The complete thumbnail cards, including their
+titles, link to these pages in the same tab. No personal reflections were supplied.
+
+| Order | Episode | Supplied image | Local asset | Episode link |
+| --- | --- | --- | --- | --- |
+| 1 | 451 聂辉华谈政治经济学视角下的基层权力与秩序 | `1000011501.jpg` | `assets/podcast-451.jpg` | https://www.xiaoyuzhoufm.com/episode/69539c9914db1df9ef88fdc6 |
+| 2 | 441 钛星来客：从苏联金星探测器谈冷战中的材料竞技 | `1000011503.jpg` | `assets/podcast-441.jpg` | https://www.xiaoyuzhoufm.com/episode/68e8ca03224325ea7084ecd7 |
+| 3 | 361 陶然谈「城中村改造」与「城市更新」新模式 | `1000011504.jpg` | `assets/podcast-361.jpg` | https://www.xiaoyuzhoufm.com/episode/6733221a43dc3a438706e388 |
+| 4 | 254 银行买手：单伟建谈收购深圳发展银行往事 | `1000011507.jpg` | `assets/podcast-254.jpg` | https://www.xiaoyuzhoufm.com/episode/649abbd32e8cc41505e86476 |
+
+`1000011505.jpg` shows the same episode 361 as `1000011504.jpg`, with only phone
+interface differences. Use the first screenshot and list the episode once.
