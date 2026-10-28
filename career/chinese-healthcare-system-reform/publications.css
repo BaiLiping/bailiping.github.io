@@ -28,3 +28,26 @@
   .publication { break-inside: avoid; }
   .publication-list { overflow: visible; }
 }
+
+.career-period { margin: -8px 0 24px; display: flex; flex-wrap: wrap; gap: 8px; color: var(--muted); font-size: .88rem; }
+.career-prose { max-width: 76ch; font-size: 1.02rem; line-height: 1.8; }
+.career-prose p { margin: 0 0 1.15em; }
+.career-prose h3 { margin: 32px 0 12px; font-size: 1.16rem; line-height: 1.5; letter-spacing: -.012em; }
+.career-prose sup { margin-left: 3px; font-size: .72em; line-height: 0; }
+.career-prose a, .career-sources a { color: var(--accent-dark); text-decoration: underline; text-underline-offset: .18em; }
+.career-prose a:hover, .career-sources a:hover { color: var(--accent); }
+.career-sources { max-width: 84ch; margin-top: 28px; padding: 20px 0 4px; border-top: 1px solid var(--line); color: var(--muted); font-size: .85rem; line-height: 1.7; }
+.career-sources h3 { margin: 0 0 8px; font-size: .95rem; color: var(--text); }
+.career-sources p { margin: 0 0 12px; }
+.career-sources ol { margin: 0; padding-left: 22px; }
+.career-sources li { margin-top: 9px; padding-left: 3px; overflow-wrap: anywhere; }
+[id^="lesson-"], [id^="career-source-"], #career-heading { scroll-margin-top: 24px; }
+.career-sources li:target { background: #e5eee5; border-radius: 3px; }
+@media (max-width: 560px) {
+  .career-prose { font-size: 1rem; line-height: 1.75; }
+  .career-prose h3 { font-size: 1.1rem; }
+}
+@media print {
+  .career-prose h3, .career-sources h3 { break-after: avoid; }
+  .career-prose p { orphans: 3; widows: 3; }
+}

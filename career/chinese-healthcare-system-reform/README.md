@@ -2,8 +2,13 @@
 
 Public page: <https://bailiping.com/career/chinese-healthcare-system-reform/>
 
-The first section, Career in 2010s, is a heading-only placeholder. Selected
-Publications is the second section.
+The first section, Career in 2010s, contains first-person reflections on the
+2009–2018 career period and four lessons: reading omissions in official
+briefings, listening to frontline practitioners, understanding retirement
+incentives, and assessing the evolving public/private mix in healthcare.
+Policy and statistical context is linked separately from personal observations.
+The 2026 assessment uses the 2025 NHC bulletin and official hospital information.
+Selected Publications is the second section.
 
 The Selected Publications collection contains all 27 entries from the supplied
 publication list: 26 健康界 articles and one Forbes feature. The Forbes feature
