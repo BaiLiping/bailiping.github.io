@@ -5,7 +5,7 @@ Public page: <https://bailiping.com/career/potential-jobs/>
 The job watch finds research and engineering opportunities involving radio/UWB
 localization, robotic localization and SLAM, sensor fusion, and integrated
 sensing and communications. It prioritizes relevant internships and US or
-European roles. Keyword matches are leads to review, not an assessment of
+European roles, with explicit coverage of Sweden. Keyword matches are leads to review, not an assessment of
 eligibility, sponsorship, or a guarantee that an employer is still accepting
 applications when a reader follows the link.
 
@@ -52,6 +52,24 @@ The workflow summary and the page's source-status panel show what happened.
 - Mitsubishi Electric Research Laboratories (MERL): individual internship
   sections on its official openings page.
 - Zadar Labs: individual roles on its official careers page.
+- Sweden: Ericsson's public search and detail API; Zenseact's careers index and
+  structured job pages; Einride's official Jobylon embed and structured details;
+  and Swedish Workday searches for Saab, ABB, and Axis Communications.
+
+The **Sweden** location filter uses each posting's location, not company
+headquarters or words in a job description. Swedish listings remain included in
+**Europe**. Explicitly Swedish remote jobs can match Sweden; unspecified remote
+jobs do not. Dedicated Swedish sources require an explicit Swedish country in
+the provider's location data. Workday sources additionally use a verified
+Swedish country facet, and structured `SE`/`SWE` addresses are normalized.
+
+The Swedish feeds exclude master's and bachelor's thesis projects so they are
+not presented as PhD internship opportunities. Current experienced engineering
+roles remain useful watchlist leads and retain their seniority labels. Matching
+recognizes relevant Swedish terms such as `målföljning` and `sensorfusion`, and
+preserves explicit security-vetting or citizenship-condition flags without
+assuming eligibility. The weekly discovery task also searches other Swedish
+employers; a feed is enabled only after its official source can be read reliably.
 
 The original Qualcomm LinkedIn URL is a **saved, unverified reference**. The
 crawler does not scrape LinkedIn or infer that this role is still open. The
@@ -65,7 +83,7 @@ available there. An employer being tracked does not imply an available matching
 vacancy or sponsorship. Amazon coverage includes explicitly relevant teams such
 as Fauna and RIVR; their roles are not relabeled as Amazon Robotics team openings.
 
-Workday and Amazon search results and detail requests have limits. A partial source can
+Workday, Amazon, Ericsson, and HTML discovery/detail requests have limits. A partial source can
 still contribute individually verified roles, while unchecked older roles are
 marked for rechecking. Bounded discovery windows advance weekly so the Monday
 schedule does not repeatedly sample the same candidates. Additional employers can be added after verifying their

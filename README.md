@@ -43,6 +43,10 @@ The homepage **Career** tab opens `/career/`. Its **Potential Jobs** page at
 radar, robotics, SLAM, and integrated sensing and communications. The original
 Qualcomm reference and NVIDIA Aerial ISAC internship remain saved.
 
+Swedish opportunities are included through selected official employer feeds.
+The **Sweden** location filter is available alongside **Europe**, which continues
+to include Swedish roles.
+
 The **Update potential jobs** GitHub Actions workflow refreshes configured
 official employer feeds on Mondays around **09:17 Europe/Stockholm** and publishes
 the generated page. It can also be run from the Actions tab. Each listing shows

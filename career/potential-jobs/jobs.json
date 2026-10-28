@@ -1,7 +1,16 @@
 {
   "schema_version": 1,
-  "generated_at": "2026-10-28T01:33:41Z",
+  "generated_at": "2026-10-28T05:34:16Z",
   "sources": [
+    {
+      "id": "abb-sweden",
+      "name": "ABB — Sweden",
+      "status": "partial",
+      "checked_at": "2026-10-28T05:31:30Z",
+      "count": 0,
+      "error": "Query robotics was only partially checked; Detail-check limit reached; additional matches remain unchecked",
+      "careers_url": "https://abb.wd3.myworkdayjobs.com/External_Career_Page"
+    },
     {
       "id": "agility-robotics",
       "name": "Agility Robotics official careers",
@@ -17,6 +26,14 @@
       "checked_at": "2026-10-28T01:33:41Z",
       "count": 15,
       "careers_url": "https://www.amazon.jobs/content/en/teams/ftr/amazon-robotics"
+    },
+    {
+      "id": "axis-sweden",
+      "name": "Axis Communications — Sweden",
+      "status": "ok",
+      "checked_at": "2026-10-28T05:31:30Z",
+      "count": 0,
+      "careers_url": "https://axis.wd3.myworkdayjobs.com/External_Career_Site"
     },
     {
       "id": "boston-dynamics",
@@ -35,6 +52,24 @@
       "count": 2,
       "error": "Detail-check limit reached; additional listings remain unchecked",
       "careers_url": "https://efference.ai/careers/"
+    },
+    {
+      "id": "einride-sweden",
+      "name": "Einride — Sweden",
+      "status": "partial",
+      "checked_at": "2026-10-28T05:34:16Z",
+      "count": 2,
+      "error": "Detail-check limit reached; additional listings remain unchecked",
+      "careers_url": "https://careers.einride.tech/"
+    },
+    {
+      "id": "ericsson-sweden",
+      "name": "Ericsson — Sweden",
+      "status": "partial",
+      "checked_at": "2026-10-28T05:34:16Z",
+      "count": 1,
+      "error": "Detail-check limit reached; additional matches remain unchecked",
+      "careers_url": "https://jobs.ericsson.com/careers?location=Sweden"
     },
     {
       "id": "fieldai",
@@ -64,7 +99,7 @@
       "id": "manual",
       "name": "Manually saved references",
       "status": "manual",
-      "checked_at": "2026-10-28T01:33:41Z",
+      "checked_at": "2026-10-28T05:34:16Z",
       "count": 1
     },
     {
@@ -94,6 +129,15 @@
       "careers_url": "https://nxp.wd3.myworkdayjobs.com/careers"
     },
     {
+      "id": "saab-sweden",
+      "name": "Saab — Sweden",
+      "status": "partial",
+      "checked_at": "2026-10-28T05:31:30Z",
+      "count": 1,
+      "error": "Query radar was only partially checked; Detail-check limit reached; additional matches remain unchecked",
+      "careers_url": "https://saabgroup.wd116.myworkdayjobs.com/Saab_careers"
+    },
+    {
       "id": "waymo",
       "name": "Waymo official Greenhouse board",
       "status": "ok",
@@ -108,6 +152,14 @@
       "checked_at": "2026-10-28T01:33:41Z",
       "count": 1,
       "careers_url": "https://www.zadarlabs.com/careers"
+    },
+    {
+      "id": "zenseact-sweden",
+      "name": "Zenseact — Sweden",
+      "status": "ok",
+      "checked_at": "2026-10-28T05:31:30Z",
+      "count": 1,
+      "careers_url": "https://career.zenseact.com/jobs"
     }
   ],
   "jobs": [
@@ -137,13 +189,13 @@
       "summary": "Role text connects wireless systems with integrated sensing and communications.",
       "requisition_id": "JR2028027",
       "posted_at": "2026-10-20",
-      "missing_count": 0,
       "first_seen": "2026-10-27T21:40:18Z",
       "last_seen": "2026-10-28T01:33:41Z",
       "last_checked": "2026-10-28T01:33:41Z",
       "last_verified": "2026-10-28T01:33:41Z",
+      "last_detail_attempt": "2026-10-28T01:33:41Z",
       "check_status": "ok",
-      "last_detail_attempt": "2026-10-28T01:33:41Z"
+      "missing_count": 0
     },
     {
       "id": "manual:4374390601",
@@ -194,12 +246,12 @@
       ],
       "summary": "Role text includes radar sensing, signal processing, or radar-based perception.",
       "requisition_id": "ST0238",
-      "missing_count": 0,
       "first_seen": "2026-10-27T21:40:18Z",
       "last_seen": "2026-10-28T01:33:41Z",
       "last_checked": "2026-10-28T01:33:41Z",
       "last_verified": "2026-10-28T01:33:41Z",
-      "check_status": "ok"
+      "check_status": "ok",
+      "missing_count": 0
     },
     {
       "id": "nxp:r-10062367",
@@ -224,13 +276,13 @@
       "summary": "Role text includes radar sensing, signal processing, or radar-based perception.",
       "requisition_id": "R-10062367",
       "posted_at": "2026-10-27",
-      "missing_count": 0,
       "first_seen": "2026-10-27T21:40:18Z",
       "last_seen": "2026-10-28T01:33:41Z",
       "last_checked": "2026-10-28T01:33:41Z",
       "last_verified": "2026-10-28T01:33:41Z",
+      "last_detail_attempt": "2026-10-28T01:33:41Z",
       "check_status": "ok",
-      "last_detail_attempt": "2026-10-28T01:33:41Z"
+      "missing_count": 0
     },
     {
       "id": "nxp:r-10067346",
@@ -255,13 +307,13 @@
       "summary": "Role text includes radar sensing, signal processing, or radar-based perception.",
       "requisition_id": "R-10067346",
       "posted_at": "2026-10-15",
-      "missing_count": 0,
       "first_seen": "2026-10-27T21:40:18Z",
       "last_seen": "2026-10-28T01:33:41Z",
       "last_checked": "2026-10-28T01:33:41Z",
       "last_verified": "2026-10-28T01:33:41Z",
+      "last_detail_attempt": "2026-10-28T01:33:41Z",
       "check_status": "ok",
-      "last_detail_attempt": "2026-10-28T01:33:41Z"
+      "missing_count": 0
     },
     {
       "id": "nxp:r-10065402",
@@ -289,13 +341,13 @@
       "summary": "Role text includes radar sensing, signal processing, or radar-based perception.",
       "requisition_id": "R-10065402",
       "posted_at": "2026-10-26",
-      "missing_count": 0,
       "first_seen": "2026-10-27T21:40:18Z",
       "last_seen": "2026-10-28T01:33:41Z",
       "last_checked": "2026-10-28T01:33:41Z",
       "last_verified": "2026-10-28T01:33:41Z",
+      "last_detail_attempt": "2026-10-28T01:33:41Z",
       "check_status": "ok",
-      "last_detail_attempt": "2026-10-28T01:33:41Z"
+      "missing_count": 0
     },
     {
       "id": "waymo:8227411",
@@ -321,12 +373,12 @@
       ],
       "summary": "Role text includes radar sensing, signal processing, or radar-based perception.",
       "posted_at": "2026-09-25T18:46:35-04:00",
-      "missing_count": 0,
       "first_seen": "2026-10-27T21:40:18Z",
       "last_seen": "2026-10-28T01:33:41Z",
       "last_checked": "2026-10-28T01:33:41Z",
       "last_verified": "2026-10-28T01:33:41Z",
-      "check_status": "ok"
+      "check_status": "ok",
+      "missing_count": 0
     },
     {
       "id": "waymo:8248411",
@@ -352,12 +404,12 @@
       ],
       "summary": "Role text includes radar sensing, signal processing, or radar-based perception.",
       "posted_at": "2026-10-12T18:03:20-04:00",
-      "missing_count": 0,
       "first_seen": "2026-10-27T21:40:18Z",
       "last_seen": "2026-10-28T01:33:41Z",
       "last_checked": "2026-10-28T01:33:41Z",
       "last_verified": "2026-10-28T01:33:41Z",
-      "check_status": "ok"
+      "check_status": "ok",
+      "missing_count": 0
     },
     {
       "id": "waymo:8319171",
@@ -382,12 +434,12 @@
       ],
       "summary": "Role text includes radar sensing, signal processing, or radar-based perception.",
       "posted_at": "2026-10-27T12:19:18-04:00",
-      "missing_count": 0,
       "first_seen": "2026-10-27T21:40:18Z",
       "last_seen": "2026-10-28T01:33:41Z",
       "last_checked": "2026-10-28T01:33:41Z",
       "last_verified": "2026-10-28T01:33:41Z",
-      "check_status": "ok"
+      "check_status": "ok",
+      "missing_count": 0
     },
     {
       "id": "amazon-robotics:10570662",
@@ -414,12 +466,12 @@
       "summary": "Role text links radio or RF measurements with positioning, ranging, or localization.",
       "requisition_id": "10570662",
       "posted_at": "2026-10-06",
-      "missing_count": 0,
       "first_seen": "2026-10-27T22:08:44Z",
       "last_seen": "2026-10-28T01:33:41Z",
       "last_checked": "2026-10-28T01:33:41Z",
       "last_verified": "2026-10-28T01:33:41Z",
-      "check_status": "ok"
+      "check_status": "ok",
+      "missing_count": 0
     },
     {
       "id": "efference:uwb-engineer",
@@ -444,13 +496,13 @@
       ],
       "summary": "Role text links radio or RF measurements with positioning, ranging, or localization.",
       "posted_at": "2026-10-19",
-      "missing_count": 0,
       "first_seen": "2026-10-27T21:40:18Z",
       "last_seen": "2026-10-28T01:33:41Z",
       "last_checked": "2026-10-28T01:33:41Z",
       "last_verified": "2026-10-28T01:33:41Z",
+      "last_detail_attempt": "2026-10-28T01:33:41Z",
       "check_status": "ok",
-      "last_detail_attempt": "2026-10-28T01:33:41Z"
+      "missing_count": 0
     },
     {
       "id": "glydways:5238232007",
@@ -475,12 +527,12 @@
       ],
       "summary": "Role text links radio or RF measurements with positioning, ranging, or localization.",
       "posted_at": "2026-09-14T18:25:11-04:00",
-      "missing_count": 0,
       "first_seen": "2026-10-27T21:40:18Z",
       "last_seen": "2026-10-28T01:33:41Z",
       "last_checked": "2026-10-28T01:33:41Z",
       "last_verified": "2026-10-28T01:33:41Z",
-      "check_status": "ok"
+      "check_status": "ok",
+      "missing_count": 0
     },
     {
       "id": "nvidia:jr2023496",
@@ -509,13 +561,13 @@
       "summary": "Role text includes robotic localization, mapping, tracking, or sensor fusion.",
       "requisition_id": "JR2023496",
       "posted_at": "2026-10-12",
-      "missing_count": 0,
       "first_seen": "2026-10-27T21:40:18Z",
       "last_seen": "2026-10-28T01:33:41Z",
       "last_checked": "2026-10-28T01:33:41Z",
       "last_verified": "2026-10-28T01:33:41Z",
+      "last_detail_attempt": "2026-10-28T01:33:41Z",
       "check_status": "ok",
-      "last_detail_attempt": "2026-10-28T01:33:41Z"
+      "missing_count": 0
     },
     {
       "id": "waymo:8224746",
@@ -540,12 +592,44 @@
       ],
       "summary": "Role text includes robotic localization, mapping, tracking, or sensor fusion.",
       "posted_at": "2026-09-23T15:28:48-04:00",
-      "missing_count": 0,
       "first_seen": "2026-10-27T21:40:18Z",
       "last_seen": "2026-10-28T01:33:41Z",
       "last_checked": "2026-10-28T01:33:41Z",
       "last_verified": "2026-10-28T01:33:41Z",
-      "check_status": "ok"
+      "check_status": "ok",
+      "missing_count": 0
+    },
+    {
+      "id": "ericsson-sweden:791394",
+      "source_id": "ericsson-sweden",
+      "company": "Ericsson",
+      "title": "ISAC Technical Coordinator | Early Career Program",
+      "url": "https://jobs.ericsson.com/careers/job/563121777269660",
+      "location": "Lund,Skåne,Sweden",
+      "region": "Europe",
+      "employment_type": "Unknown",
+      "category": "wireless-isac",
+      "status": "open",
+      "pinned": false,
+      "score": 90,
+      "match_reasons": [
+        "Integrated sensing and communications (ISAC) is explicitly mentioned"
+      ],
+      "requirements": [
+        "Python mentioned",
+        "C++ mentioned",
+        "PhD/graduate study mentioned"
+      ],
+      "summary": "Role text connects wireless systems with integrated sensing and communications.",
+      "requisition_id": "791394",
+      "posted_at": "2026-10-20",
+      "missing_count": 0,
+      "first_seen": "2026-10-28T05:34:16Z",
+      "last_seen": "2026-10-28T05:34:16Z",
+      "last_checked": "2026-10-28T05:34:16Z",
+      "last_verified": "2026-10-28T05:34:16Z",
+      "check_status": "ok",
+      "last_detail_attempt": "2026-10-28T05:34:16Z"
     },
     {
       "id": "fieldai:bb127cde-930c-446f-908d-52e2c6f24cc9",
@@ -568,12 +652,12 @@
       ],
       "summary": "Role text includes radar sensing, signal processing, or radar-based perception.",
       "posted_at": "2026-08-14",
-      "missing_count": 0,
       "first_seen": "2026-10-27T21:40:18Z",
       "last_seen": "2026-10-28T01:33:41Z",
       "last_checked": "2026-10-28T01:33:41Z",
       "last_verified": "2026-10-28T01:33:41Z",
-      "check_status": "ok"
+      "check_status": "ok",
+      "missing_count": 0
     },
     {
       "id": "fieldai:95c1d7a7-f2b4-45ca-9888-2196b14afa77",
@@ -600,12 +684,12 @@
       ],
       "summary": "Role text includes radar sensing, signal processing, or radar-based perception.",
       "posted_at": "2026-09-16",
-      "missing_count": 0,
       "first_seen": "2026-10-27T21:40:18Z",
       "last_seen": "2026-10-28T01:33:41Z",
       "last_checked": "2026-10-28T01:33:41Z",
       "last_verified": "2026-10-28T01:33:41Z",
-      "check_status": "ok"
+      "check_status": "ok",
+      "missing_count": 0
     },
     {
       "id": "fieldai:73c30d65-3a05-4ba3-99b6-af2d2b13e85e",
@@ -632,12 +716,12 @@
       ],
       "summary": "Role text includes radar sensing, signal processing, or radar-based perception.",
       "posted_at": "2025-03-11",
-      "missing_count": 0,
       "first_seen": "2026-10-27T21:40:18Z",
       "last_seen": "2026-10-28T01:33:41Z",
       "last_checked": "2026-10-28T01:33:41Z",
       "last_verified": "2026-10-28T01:33:41Z",
-      "check_status": "ok"
+      "check_status": "ok",
+      "missing_count": 0
     },
     {
       "id": "waymo:8241745",
@@ -660,12 +744,12 @@
       ],
       "summary": "Role text includes radar sensing, signal processing, or radar-based perception.",
       "posted_at": "2026-09-30T15:42:41-04:00",
-      "missing_count": 0,
       "first_seen": "2026-10-27T21:40:18Z",
       "last_seen": "2026-10-28T01:33:41Z",
       "last_checked": "2026-10-28T01:33:41Z",
       "last_verified": "2026-10-28T01:33:41Z",
-      "check_status": "ok"
+      "check_status": "ok",
+      "missing_count": 0
     },
     {
       "id": "zadar:radar-perception-and-sensor-fusion-software-engineer",
@@ -692,12 +776,12 @@
         "Radar mentioned"
       ],
       "summary": "Role text includes radar sensing, signal processing, or radar-based perception.",
-      "missing_count": 0,
       "first_seen": "2026-10-27T21:40:18Z",
       "last_seen": "2026-10-28T01:33:41Z",
       "last_checked": "2026-10-28T01:33:41Z",
       "last_verified": "2026-10-28T01:33:41Z",
-      "check_status": "ok"
+      "check_status": "ok",
+      "missing_count": 0
     },
     {
       "id": "amazon-robotics:10524287",
@@ -725,12 +809,12 @@
       "summary": "Role text includes robotic localization, mapping, tracking, or sensor fusion.",
       "requisition_id": "10524287",
       "posted_at": "2026-09-01",
-      "missing_count": 0,
       "first_seen": "2026-10-27T22:08:44Z",
       "last_seen": "2026-10-28T01:33:41Z",
       "last_checked": "2026-10-28T01:33:41Z",
       "last_verified": "2026-10-28T01:33:41Z",
-      "check_status": "ok"
+      "check_status": "ok",
+      "missing_count": 0
     },
     {
       "id": "amazon-robotics:10582742",
@@ -758,12 +842,12 @@
       "summary": "Role text includes robotic localization, mapping, tracking, or sensor fusion.",
       "requisition_id": "10582742",
       "posted_at": "2026-10-19",
-      "missing_count": 0,
       "first_seen": "2026-10-27T22:08:44Z",
       "last_seen": "2026-10-28T01:33:41Z",
       "last_checked": "2026-10-28T01:33:41Z",
       "last_verified": "2026-10-28T01:33:41Z",
-      "check_status": "ok"
+      "check_status": "ok",
+      "missing_count": 0
     },
     {
       "id": "amazon-robotics:10413647",
@@ -791,12 +875,12 @@
       "summary": "Role text includes robotic localization, mapping, tracking, or sensor fusion.",
       "requisition_id": "10413647",
       "posted_at": "2026-05-07",
-      "missing_count": 0,
       "first_seen": "2026-10-27T22:08:44Z",
       "last_seen": "2026-10-28T01:33:41Z",
       "last_checked": "2026-10-28T01:33:41Z",
       "last_verified": "2026-10-28T01:33:41Z",
-      "check_status": "ok"
+      "check_status": "ok",
+      "missing_count": 0
     },
     {
       "id": "amazon-robotics:10444170",
@@ -824,12 +908,12 @@
       "summary": "Role text includes robotic localization, mapping, tracking, or sensor fusion.",
       "requisition_id": "10444170",
       "posted_at": "2026-06-11",
-      "missing_count": 0,
       "first_seen": "2026-10-27T22:08:44Z",
       "last_seen": "2026-10-28T01:33:41Z",
       "last_checked": "2026-10-28T01:33:41Z",
       "last_verified": "2026-10-28T01:33:41Z",
-      "check_status": "ok"
+      "check_status": "ok",
+      "missing_count": 0
     },
     {
       "id": "amazon-robotics:10466814",
@@ -855,12 +939,12 @@
       "summary": "Role text includes robotic localization, mapping, tracking, or sensor fusion.",
       "requisition_id": "10466814",
       "posted_at": "2026-07-06",
-      "missing_count": 0,
       "first_seen": "2026-10-27T22:08:44Z",
       "last_seen": "2026-10-28T01:33:41Z",
       "last_checked": "2026-10-28T01:33:41Z",
       "last_verified": "2026-10-28T01:33:41Z",
-      "check_status": "ok"
+      "check_status": "ok",
+      "missing_count": 0
     },
     {
       "id": "amazon-robotics:10571877",
@@ -888,12 +972,12 @@
       "summary": "Role text includes robotic localization, mapping, tracking, or sensor fusion.",
       "requisition_id": "10571877",
       "posted_at": "2026-10-07",
-      "missing_count": 0,
       "first_seen": "2026-10-27T22:08:44Z",
       "last_seen": "2026-10-28T01:33:41Z",
       "last_checked": "2026-10-28T01:33:41Z",
       "last_verified": "2026-10-28T01:33:41Z",
-      "check_status": "ok"
+      "check_status": "ok",
+      "missing_count": 0
     },
     {
       "id": "amazon-robotics:10486012",
@@ -920,12 +1004,12 @@
       "summary": "Role text includes robotic localization, mapping, tracking, or sensor fusion.",
       "requisition_id": "10486012",
       "posted_at": "2026-07-28",
-      "missing_count": 0,
       "first_seen": "2026-10-27T22:08:44Z",
       "last_seen": "2026-10-28T01:33:41Z",
       "last_checked": "2026-10-28T01:33:41Z",
       "last_verified": "2026-10-28T01:33:41Z",
-      "check_status": "ok"
+      "check_status": "ok",
+      "missing_count": 0
     },
     {
       "id": "boston-dynamics:r2871",
@@ -953,13 +1037,13 @@
       "summary": "Role text includes robotic localization, mapping, tracking, or sensor fusion.",
       "requisition_id": "R2871",
       "posted_at": "2026-09-01",
-      "missing_count": 0,
       "first_seen": "2026-10-27T22:08:44Z",
       "last_seen": "2026-10-28T01:33:41Z",
       "last_checked": "2026-10-28T01:33:41Z",
       "last_verified": "2026-10-28T01:33:41Z",
+      "last_detail_attempt": "2026-10-28T01:33:41Z",
       "check_status": "ok",
-      "last_detail_attempt": "2026-10-28T01:33:41Z"
+      "missing_count": 0
     },
     {
       "id": "efference:research-engineer-vio-slam",
@@ -983,13 +1067,45 @@
       ],
       "summary": "Role text includes robotic localization, mapping, tracking, or sensor fusion.",
       "posted_at": "2026-10-19",
-      "missing_count": 0,
       "first_seen": "2026-10-27T21:40:18Z",
       "last_seen": "2026-10-28T01:33:41Z",
       "last_checked": "2026-10-28T01:33:41Z",
       "last_verified": "2026-10-28T01:33:41Z",
+      "last_detail_attempt": "2026-10-28T01:33:41Z",
       "check_status": "ok",
-      "last_detail_attempt": "2026-10-28T01:33:41Z"
+      "missing_count": 0
+    },
+    {
+      "id": "einride-sweden:381325-einride-machine-learning-engineer-autonomy-with-dual-use-application",
+      "source_id": "einride-sweden",
+      "company": "Einride",
+      "title": "Machine Learning Engineer — Autonomy with dual-use application",
+      "url": "https://emp.jobylon.com/jobs/381325-einride-machine-learning-engineer-autonomy-with-dual-use-application/",
+      "location": "Gothenburg, Sweden",
+      "region": "Europe",
+      "employment_type": "Unknown",
+      "category": "robotics-localization",
+      "status": "listed",
+      "pinned": false,
+      "score": 75,
+      "match_reasons": [
+        "Technical description mentions robotic estimation, tracking, or SLAM"
+      ],
+      "requirements": [
+        "Python mentioned",
+        "C++ mentioned",
+        "Machine-learning frameworks mentioned",
+        "Citizenship/clearance conditions mentioned"
+      ],
+      "summary": "Role text includes robotic localization, mapping, tracking, or sensor fusion.",
+      "posted_at": "2026-09-08T10:55:09+00:00",
+      "missing_count": 0,
+      "first_seen": "2026-10-28T05:34:16Z",
+      "last_seen": "2026-10-28T05:34:16Z",
+      "last_checked": "2026-10-28T05:34:16Z",
+      "last_verified": "2026-10-28T05:34:16Z",
+      "check_status": "ok",
+      "last_detail_attempt": "2026-10-28T05:34:16Z"
     },
     {
       "id": "fieldai:9524c7c2-8be2-4463-afe3-7c1c60f7e6f2",
@@ -1016,12 +1132,12 @@
       ],
       "summary": "Role text includes robotic localization, mapping, tracking, or sensor fusion.",
       "posted_at": "2026-10-09",
-      "missing_count": 0,
       "first_seen": "2026-10-27T21:40:18Z",
       "last_seen": "2026-10-28T01:33:41Z",
       "last_checked": "2026-10-28T01:33:41Z",
       "last_verified": "2026-10-28T01:33:41Z",
-      "check_status": "ok"
+      "check_status": "ok",
+      "missing_count": 0
     },
     {
       "id": "fieldai:ad7999a2-3ce7-4231-935c-e14a8d2c5d96",
@@ -1048,12 +1164,12 @@
       ],
       "summary": "Role text includes robotic localization, mapping, tracking, or sensor fusion.",
       "posted_at": "2026-10-01",
-      "missing_count": 0,
       "first_seen": "2026-10-27T21:40:18Z",
       "last_seen": "2026-10-28T01:33:41Z",
       "last_checked": "2026-10-28T01:33:41Z",
       "last_verified": "2026-10-28T01:33:41Z",
-      "check_status": "ok"
+      "check_status": "ok",
+      "missing_count": 0
     },
     {
       "id": "fieldai:f9f0a9b0-b8b3-4e1e-82c4-9f2ee11e23c8",
@@ -1079,12 +1195,12 @@
       ],
       "summary": "Role text includes robotic localization, mapping, tracking, or sensor fusion.",
       "posted_at": "2026-10-19",
-      "missing_count": 0,
       "first_seen": "2026-10-27T21:40:18Z",
       "last_seen": "2026-10-28T01:33:41Z",
       "last_checked": "2026-10-28T01:33:41Z",
       "last_verified": "2026-10-28T01:33:41Z",
-      "check_status": "ok"
+      "check_status": "ok",
+      "missing_count": 0
     },
     {
       "id": "fieldai:9e451b91-7633-4b86-bf64-38cd7bd6a8dc",
@@ -1108,12 +1224,43 @@
       ],
       "summary": "Role text includes robotic localization, mapping, tracking, or sensor fusion.",
       "posted_at": "2026-10-13",
-      "missing_count": 0,
       "first_seen": "2026-10-27T21:40:18Z",
       "last_seen": "2026-10-28T01:33:41Z",
       "last_checked": "2026-10-28T01:33:41Z",
       "last_verified": "2026-10-28T01:33:41Z",
-      "check_status": "ok"
+      "check_status": "ok",
+      "missing_count": 0
+    },
+    {
+      "id": "saab-sweden:req_46371",
+      "source_id": "saab-sweden",
+      "company": "Saab",
+      "title": "Doktorerad analytiker till avancerade sensorsystem",
+      "url": "https://saabgroup.wd116.myworkdayjobs.com/Saab_careers/job/Gteborg/Doktorerad-analytiker-till-avancerade-sensorsystem_REQ_46371",
+      "location": "Göteborg / Sweden",
+      "region": "Europe",
+      "employment_type": "Full-time",
+      "category": "robotics-localization",
+      "status": "open",
+      "pinned": false,
+      "score": 75,
+      "match_reasons": [
+        "Technical description mentions robotic estimation, tracking, or SLAM"
+      ],
+      "requirements": [
+        "PhD/graduate study mentioned",
+        "Citizenship/clearance conditions mentioned"
+      ],
+      "summary": "Role text includes robotic localization, mapping, tracking, or sensor fusion.",
+      "requisition_id": "REQ_46371",
+      "posted_at": "2026-10-23",
+      "first_seen": "2026-10-28T05:31:30Z",
+      "last_seen": "2026-10-28T05:31:30Z",
+      "last_checked": "2026-10-28T05:31:30Z",
+      "last_verified": "2026-10-28T05:31:30Z",
+      "last_detail_attempt": "2026-10-28T05:31:30Z",
+      "check_status": "ok",
+      "missing_count": 0
     },
     {
       "id": "nvidia:jr2003384",
@@ -1140,13 +1287,47 @@
       "summary": "Role text connects wireless systems with integrated sensing and communications.",
       "requisition_id": "JR2003384",
       "posted_at": "2026-06-12",
-      "missing_count": 0,
       "first_seen": "2026-10-27T21:40:18Z",
       "last_seen": "2026-10-28T01:33:41Z",
       "last_checked": "2026-10-28T01:33:41Z",
       "last_verified": "2026-10-28T01:33:41Z",
+      "last_detail_attempt": "2026-10-28T01:33:41Z",
       "check_status": "ok",
-      "last_detail_attempt": "2026-10-28T01:33:41Z"
+      "missing_count": 0
+    },
+    {
+      "id": "einride-sweden:377266-einride-senior-calibration-engineer",
+      "source_id": "einride-sweden",
+      "company": "Einride",
+      "title": "Senior Calibration Engineer",
+      "url": "https://emp.jobylon.com/jobs/377266-einride-senior-calibration-engineer/",
+      "location": "Gothenburg, Sweden / Stockholm, Sweden",
+      "region": "Europe",
+      "employment_type": "Unknown",
+      "category": "radar-sensing",
+      "status": "listed",
+      "pinned": false,
+      "score": 65,
+      "match_reasons": [
+        "Radar is named in the role's title or technical description"
+      ],
+      "requirements": [
+        "Python mentioned",
+        "C++ mentioned",
+        "ROS experience mentioned",
+        "PhD/graduate study mentioned",
+        "Radar mentioned",
+        "Senior/experienced role"
+      ],
+      "summary": "Role text includes radar sensing, signal processing, or radar-based perception.",
+      "posted_at": "2026-08-20T12:11:00+00:00",
+      "missing_count": 0,
+      "first_seen": "2026-10-28T05:34:16Z",
+      "last_seen": "2026-10-28T05:34:16Z",
+      "last_checked": "2026-10-28T05:34:16Z",
+      "last_verified": "2026-10-28T05:34:16Z",
+      "check_status": "ok",
+      "last_detail_attempt": "2026-10-28T05:34:16Z"
     },
     {
       "id": "nvidia:jr2021077",
@@ -1176,13 +1357,13 @@
       "summary": "Role text includes radar sensing, signal processing, or radar-based perception.",
       "requisition_id": "JR2021077",
       "posted_at": "2026-10-02",
-      "missing_count": 0,
       "first_seen": "2026-10-27T21:40:18Z",
       "last_seen": "2026-10-28T01:33:41Z",
       "last_checked": "2026-10-28T01:33:41Z",
       "last_verified": "2026-10-28T01:33:41Z",
+      "last_detail_attempt": "2026-10-28T01:33:41Z",
       "check_status": "ok",
-      "last_detail_attempt": "2026-10-28T01:33:41Z"
+      "missing_count": 0
     },
     {
       "id": "nxp:r-10066095",
@@ -1208,13 +1389,13 @@
       "summary": "Role text includes radar sensing, signal processing, or radar-based perception.",
       "requisition_id": "R-10066095",
       "posted_at": "2026-09-15",
-      "missing_count": 0,
       "first_seen": "2026-10-27T21:40:18Z",
       "last_seen": "2026-10-28T01:33:41Z",
       "last_checked": "2026-10-28T01:33:41Z",
       "last_verified": "2026-10-28T01:33:41Z",
+      "last_detail_attempt": "2026-10-28T01:33:41Z",
       "check_status": "ok",
-      "last_detail_attempt": "2026-10-28T01:33:41Z"
+      "missing_count": 0
     },
     {
       "id": "nxp:r-10066096",
@@ -1240,13 +1421,13 @@
       "summary": "Role text includes radar sensing, signal processing, or radar-based perception.",
       "requisition_id": "R-10066096",
       "posted_at": "2026-09-15",
-      "missing_count": 0,
       "first_seen": "2026-10-27T21:40:18Z",
       "last_seen": "2026-10-28T01:33:41Z",
       "last_checked": "2026-10-28T01:33:41Z",
       "last_verified": "2026-10-28T01:33:41Z",
+      "last_detail_attempt": "2026-10-28T01:33:41Z",
       "check_status": "ok",
-      "last_detail_attempt": "2026-10-28T01:33:41Z"
+      "missing_count": 0
     },
     {
       "id": "waymo:8003626",
@@ -1271,12 +1452,12 @@
       ],
       "summary": "Role text includes radar sensing, signal processing, or radar-based perception.",
       "posted_at": "2026-06-12T18:40:58-04:00",
-      "missing_count": 0,
       "first_seen": "2026-10-27T21:40:18Z",
       "last_seen": "2026-10-28T01:33:41Z",
       "last_checked": "2026-10-28T01:33:41Z",
       "last_verified": "2026-10-28T01:33:41Z",
-      "check_status": "ok"
+      "check_status": "ok",
+      "missing_count": 0
     },
     {
       "id": "agility-robotics:6210999004",
@@ -1302,12 +1483,12 @@
       ],
       "summary": "Role text includes robotic localization, mapping, tracking, or sensor fusion.",
       "posted_at": "2026-09-30T12:15:10-04:00",
-      "missing_count": 0,
       "first_seen": "2026-10-27T22:08:44Z",
       "last_seen": "2026-10-28T01:33:41Z",
       "last_checked": "2026-10-28T01:33:41Z",
       "last_verified": "2026-10-28T01:33:41Z",
-      "check_status": "ok"
+      "check_status": "ok",
+      "missing_count": 0
     },
     {
       "id": "agility-robotics:6138661004",
@@ -1332,12 +1513,12 @@
       ],
       "summary": "Role text includes robotic localization, mapping, tracking, or sensor fusion.",
       "posted_at": "2026-09-01T14:47:43-04:00",
-      "missing_count": 0,
       "first_seen": "2026-10-27T22:08:44Z",
       "last_seen": "2026-10-28T01:33:41Z",
       "last_checked": "2026-10-28T01:33:41Z",
       "last_verified": "2026-10-28T01:33:41Z",
-      "check_status": "ok"
+      "check_status": "ok",
+      "missing_count": 0
     },
     {
       "id": "agility-robotics:5973040004",
@@ -1363,12 +1544,12 @@
       ],
       "summary": "Role text includes robotic localization, mapping, tracking, or sensor fusion.",
       "posted_at": "2026-04-23T17:31:10-04:00",
-      "missing_count": 0,
       "first_seen": "2026-10-27T22:08:44Z",
       "last_seen": "2026-10-28T01:33:41Z",
       "last_checked": "2026-10-28T01:33:41Z",
       "last_verified": "2026-10-28T01:33:41Z",
-      "check_status": "ok"
+      "check_status": "ok",
+      "missing_count": 0
     },
     {
       "id": "amazon-robotics:10571281",
@@ -1393,12 +1574,12 @@
       "summary": "Role text includes robotic localization, mapping, tracking, or sensor fusion.",
       "requisition_id": "10571281",
       "posted_at": "2026-10-06",
-      "missing_count": 0,
       "first_seen": "2026-10-27T22:08:44Z",
       "last_seen": "2026-10-28T01:33:41Z",
       "last_checked": "2026-10-28T01:33:41Z",
       "last_verified": "2026-10-28T01:33:41Z",
-      "check_status": "ok"
+      "check_status": "ok",
+      "missing_count": 0
     },
     {
       "id": "amazon-robotics:10454082",
@@ -1427,12 +1608,12 @@
       "summary": "Role text includes robotic localization, mapping, tracking, or sensor fusion.",
       "requisition_id": "10454082",
       "posted_at": "2026-06-19",
-      "missing_count": 0,
       "first_seen": "2026-10-27T22:08:44Z",
       "last_seen": "2026-10-28T01:33:41Z",
       "last_checked": "2026-10-28T01:33:41Z",
       "last_verified": "2026-10-28T01:33:41Z",
-      "check_status": "ok"
+      "check_status": "ok",
+      "missing_count": 0
     },
     {
       "id": "amazon-robotics:10402332",
@@ -1459,12 +1640,12 @@
       "summary": "Role text includes robotic localization, mapping, tracking, or sensor fusion.",
       "requisition_id": "10402332",
       "posted_at": "2026-04-24",
-      "missing_count": 0,
       "first_seen": "2026-10-27T22:08:44Z",
       "last_seen": "2026-10-28T01:33:41Z",
       "last_checked": "2026-10-28T01:33:41Z",
       "last_verified": "2026-10-28T01:33:41Z",
-      "check_status": "ok"
+      "check_status": "ok",
+      "missing_count": 0
     },
     {
       "id": "amazon-robotics:10500076",
@@ -1492,12 +1673,12 @@
       "summary": "Role text includes robotic localization, mapping, tracking, or sensor fusion.",
       "requisition_id": "10500076",
       "posted_at": "2026-08-12",
-      "missing_count": 0,
       "first_seen": "2026-10-27T22:08:44Z",
       "last_seen": "2026-10-28T01:33:41Z",
       "last_checked": "2026-10-28T01:33:41Z",
       "last_verified": "2026-10-28T01:33:41Z",
-      "check_status": "ok"
+      "check_status": "ok",
+      "missing_count": 0
     },
     {
       "id": "amazon-robotics:10577454",
@@ -1525,12 +1706,12 @@
       "summary": "Role text includes robotic localization, mapping, tracking, or sensor fusion.",
       "requisition_id": "10577454",
       "posted_at": "2026-10-13",
-      "missing_count": 0,
       "first_seen": "2026-10-27T22:08:44Z",
       "last_seen": "2026-10-28T01:33:41Z",
       "last_checked": "2026-10-28T01:33:41Z",
       "last_verified": "2026-10-28T01:33:41Z",
-      "check_status": "ok"
+      "check_status": "ok",
+      "missing_count": 0
     },
     {
       "id": "amazon-robotics:10481505",
@@ -1558,12 +1739,12 @@
       "summary": "Role text includes robotic localization, mapping, tracking, or sensor fusion.",
       "requisition_id": "10481505",
       "posted_at": "2026-07-22",
-      "missing_count": 0,
       "first_seen": "2026-10-27T22:08:44Z",
       "last_seen": "2026-10-28T01:33:41Z",
       "last_checked": "2026-10-28T01:33:41Z",
       "last_verified": "2026-10-28T01:33:41Z",
-      "check_status": "ok"
+      "check_status": "ok",
+      "missing_count": 0
     },
     {
       "id": "amazon-robotics:10478767",
@@ -1590,12 +1771,12 @@
       "summary": "Role text includes robotic localization, mapping, tracking, or sensor fusion.",
       "requisition_id": "10478767",
       "posted_at": "2026-07-20",
-      "missing_count": 0,
       "first_seen": "2026-10-27T22:08:44Z",
       "last_seen": "2026-10-28T01:33:41Z",
       "last_checked": "2026-10-28T01:33:41Z",
       "last_verified": "2026-10-28T01:33:41Z",
-      "check_status": "ok"
+      "check_status": "ok",
+      "missing_count": 0
     },
     {
       "id": "fieldai:8f3af86b-ded0-4c8a-a657-b89e50256bdd",
@@ -1622,12 +1803,12 @@
       ],
       "summary": "Role text includes robotic localization, mapping, tracking, or sensor fusion.",
       "posted_at": "2026-05-23",
-      "missing_count": 0,
       "first_seen": "2026-10-27T21:40:18Z",
       "last_seen": "2026-10-28T01:33:41Z",
       "last_checked": "2026-10-28T01:33:41Z",
       "last_verified": "2026-10-28T01:33:41Z",
-      "check_status": "ok"
+      "check_status": "ok",
+      "missing_count": 0
     },
     {
       "id": "fieldai:b8127d47-3af0-4a8d-abf2-8de5e660ae8f",
@@ -1654,12 +1835,12 @@
       ],
       "summary": "Role text includes robotic localization, mapping, tracking, or sensor fusion.",
       "posted_at": "2026-02-24",
-      "missing_count": 0,
       "first_seen": "2026-10-27T22:15:37Z",
       "last_seen": "2026-10-28T01:33:41Z",
       "last_checked": "2026-10-28T01:33:41Z",
       "last_verified": "2026-10-28T01:33:41Z",
-      "check_status": "ok"
+      "check_status": "ok",
+      "missing_count": 0
     },
     {
       "id": "fieldai:c3650d39-20eb-454e-97f8-4d38494e0fe6",
@@ -1685,12 +1866,12 @@
       ],
       "summary": "Role text includes robotic localization, mapping, tracking, or sensor fusion.",
       "posted_at": "2025-05-02",
-      "missing_count": 0,
       "first_seen": "2026-10-27T22:15:37Z",
       "last_seen": "2026-10-28T01:33:41Z",
       "last_checked": "2026-10-28T01:33:41Z",
       "last_verified": "2026-10-28T01:33:41Z",
-      "check_status": "ok"
+      "check_status": "ok",
+      "missing_count": 0
     },
     {
       "id": "nvidia:jr2022858",
@@ -1716,13 +1897,13 @@
       "summary": "Role text includes robotic localization, mapping, tracking, or sensor fusion.",
       "requisition_id": "JR2022858",
       "posted_at": "2026-08-29",
-      "missing_count": 0,
       "first_seen": "2026-10-27T21:40:18Z",
       "last_seen": "2026-10-28T01:33:41Z",
       "last_checked": "2026-10-28T01:33:41Z",
       "last_verified": "2026-10-28T01:33:41Z",
+      "last_detail_attempt": "2026-10-28T01:33:41Z",
       "check_status": "ok",
-      "last_detail_attempt": "2026-10-28T01:33:41Z"
+      "missing_count": 0
     },
     {
       "id": "nvidia:jr2014589",
@@ -1749,13 +1930,13 @@
       "summary": "Role text includes robotic localization, mapping, tracking, or sensor fusion.",
       "requisition_id": "JR2014589",
       "posted_at": "2026-09-14",
-      "missing_count": 0,
       "first_seen": "2026-10-27T21:40:18Z",
       "last_seen": "2026-10-28T01:33:41Z",
       "last_checked": "2026-10-28T01:33:41Z",
       "last_verified": "2026-10-28T01:33:41Z",
+      "last_detail_attempt": "2026-10-28T01:33:41Z",
       "check_status": "ok",
-      "last_detail_attempt": "2026-10-28T01:33:41Z"
+      "missing_count": 0
     },
     {
       "id": "waymo:8157152",
@@ -1779,12 +1960,12 @@
       ],
       "summary": "Role text includes robotic localization, mapping, tracking, or sensor fusion.",
       "posted_at": "2026-08-31T17:09:27-04:00",
-      "missing_count": 0,
       "first_seen": "2026-10-27T21:40:18Z",
       "last_seen": "2026-10-28T01:33:41Z",
       "last_checked": "2026-10-28T01:33:41Z",
       "last_verified": "2026-10-28T01:33:41Z",
-      "check_status": "ok"
+      "check_status": "ok",
+      "missing_count": 0
     },
     {
       "id": "waymo:7450706",
@@ -1811,12 +1992,44 @@
       ],
       "summary": "Role text includes robotic localization, mapping, tracking, or sensor fusion.",
       "posted_at": "2025-12-09T13:49:15-05:00",
-      "missing_count": 0,
       "first_seen": "2026-10-27T21:40:18Z",
       "last_seen": "2026-10-28T01:33:41Z",
       "last_checked": "2026-10-28T01:33:41Z",
       "last_verified": "2026-10-28T01:33:41Z",
-      "check_status": "ok"
+      "check_status": "ok",
+      "missing_count": 0
+    },
+    {
+      "id": "zenseact-sweden:7722097",
+      "source_id": "zenseact-sweden",
+      "company": "Zenseact",
+      "title": "Experienced Computer Vision Engineer",
+      "url": "https://career.zenseact.com/jobs/7722097-experienced-computer-vision-engineer",
+      "location": "Gothenburg, Sweden",
+      "region": "Europe",
+      "employment_type": "Full-time",
+      "category": "robotics-localization",
+      "status": "listed",
+      "pinned": false,
+      "score": 55,
+      "match_reasons": [
+        "Technical description mentions robotic estimation, tracking, or SLAM"
+      ],
+      "requirements": [
+        "Python mentioned",
+        "C++ mentioned",
+        "GPU/CUDA experience mentioned",
+        "Senior/experienced role"
+      ],
+      "summary": "Role text includes robotic localization, mapping, tracking, or sensor fusion.",
+      "posted_at": "2026-05-12T10:38:33+02:00",
+      "first_seen": "2026-10-28T05:31:30Z",
+      "last_seen": "2026-10-28T05:31:30Z",
+      "last_checked": "2026-10-28T05:31:30Z",
+      "last_verified": "2026-10-28T05:31:30Z",
+      "last_detail_attempt": "2026-10-28T05:31:30Z",
+      "check_status": "ok",
+      "missing_count": 0
     }
   ]
 }

@@ -30,7 +30,7 @@ from urllib.request import Request, HTTPRedirectHandler, build_opener
 ROOT = Path(__file__).resolve().parent.parent
 CATEGORIES = {"radio-localization", "radar-sensing", "robotics-localization", "wireless-isac"}
 JOB_STATUSES = {"open", "listed", "unknown", "closed", "saved"}
-SOURCE_TYPES = {"workday", "lever", "greenhouse", "html", "amazon"}
+SOURCE_TYPES = {"workday", "lever", "greenhouse", "html", "amazon", "ericsson"}
 MAX_RESPONSE_BYTES = 6 * 1024 * 1024
 INSTRUCTION_TEXT = re.compile(
     r"ignore\s+(?:all\s+)?(?:previous|prior|above)\s+instructions|"
@@ -220,11 +220,12 @@ def region_for(location):
         return "US"
     if re.search(r",\s*(?:ca|ma|wa|tx|co|ny|mi|va|nc|il|pa|az|or|fl|oh)(?:\b|,)", text):
         return "US"
-    if re.search(r"\b(?:europe|germany|france|sweden|finland|norway|denmark|switzerland|austria|"
+    if re.search(r"\b(?:europe|germany|france|sweden|sverige|finland|norway|denmark|switzerland|austria|"
                  r"netherlands|belgium|ireland|united kingdom|uk|england|scotland|spain|italy|"
                  r"portugal|poland|czechia|czech republic|romania|hungary|greece|luxembourg|"
                  r"lithuania|latvia|estonia|iceland|zurich|zürich|berlin|munich|münchen|"
-                 r"london|paris|stockholm|gothenburg|helsinki|eindhoven|hamburg|bristol|"
+                 r"london|paris|stockholm|gothenburg|göteborg|lund|västerås|vasteras|linköping|linkoping|"
+                 r"malmö|malmo|mölndal|molndal|helsinki|eindhoven|hamburg|bristol|"
                  r"leuven|copenhagen|cambridge,? (?:uk|united kingdom))\b", text):
         return "Europe"
     if re.search(r"\b(?:china|india|taiwan|singapore|japan|korea|israel|australia|canada|"
@@ -243,7 +244,8 @@ def classify_job(title, description, location="", employment_type=""):
                           r"human resources|legal counsel|business development|product manager|"
                           r"program manager|project manager|executive assistant)\b", t):
         return None
-    if not re.search(r"engineer|scientist|research|intern|developer|student|algorithm|ph\.?d|postdoc", t):
+    if not re.search(r"engineer|scientist|research|intern|developer|student|algorithm|ph\.?d|postdoc|"
+                     r"ingenjör|utvecklare|forskare|analytiker|doktor(?:and|erad)|technical coordinator", t):
         return None
     if re.search(r"(?:anomaly|defect|fault) locali[sz]ation|predictive maintenance", t):
         return None
@@ -284,32 +286,35 @@ def classify_job(title, description, location="", employment_type=""):
     elif slam_title:
         category = "robotics-localization"
         reasons = ["Role title names localization, SLAM, sensor fusion, or state estimation"]
-    elif radar_title or (re.search(r"perception|sensing|sensor|signal processing|autonomous|robotics|robotic", t)
+    elif radar_title or (re.search(r"perception|sensing|sensor|signal processing|calibration|autonomous|robotics|robotic", t)
                          and re.search(r"\bradar\b", b)):
         category = "radar-sensing"
         reasons = ["Radar is named in the role's title or technical description"]
-    elif (re.search(r"robotics|robotic|autonomous|perception|research|mapping", t)
+    elif (re.search(r"robotics|robotic|autonom(?:ous|y)|perception|research|mapping|computer vision|"
+                   r"calibration|analytiker|sensorfusion|signalbehandling", t)
           or (re.search(r"software.*(?:engineer|developer)|(?:algorithm|development) engineer|scientist", t)
               and re.search(r"\brobot(?:ic(?:s)?|s)?\b", b))) and re.search(
             r"\bslam\b|visual[- ]inertial|lidar[- ]inertial|probabilistic state estimation|"
-            r"sensor fusion|robot locali[sz]ation|multi[- ](?:target|object) tracking|pose estimation", b):
+            r"sensor fusion|robot locali[sz]ation|multi[- ](?:target|object) tracking|pose estimation|"
+            r"visual odometry|lidar odometry|målföljning|sensorfusion", b):
         category = "robotics-localization"
         reasons = ["Technical description mentions robotic estimation, tracking, or SLAM"]
     if category is None:
         return None
     kind = "Internship" if re.search(r"intern|co[- ]?op|placement|working student", t + " " + str(employment_type).lower()) else (
-        "Full-time" if re.search(r"full[-_ ]?time|regular", str(employment_type), re.I) else "Unknown")
+        "Full-time" if re.search(r"full[-_ ]?time|regular|heltid", str(employment_type), re.I) else "Unknown")
     requirements = []
     for pattern, label in [
         (r"\bpython\b", "Python mentioned"), (r"\bc\+\+", "C++ mentioned"),
         (r"\bcuda\b|\bcupy\b", "GPU/CUDA experience mentioned"),
         (r"pytorch|tensorflow|\bjax\b", "Machine-learning frameworks mentioned"),
         (r"\bros\b|\bros2\b", "ROS experience mentioned"),
-        (r"ph\.?\s?d|doctoral|graduate (?:student|program)", "PhD/graduate study mentioned"),
+        (r"ph\.?\s?d|doctoral|graduate (?:student|program)|doktor(?:and|erad|sexamen)|disputerad", "PhD/graduate study mentioned"),
         (r"bayesian|kalman|factor graph|belief propagation", "Bayesian estimation/filtering mentioned"),
         (r"\b(?:uwb|ultra[- ]wideband)\b", "UWB mentioned"),
         (r"\bradar\b", "Radar mentioned"),
-        (r"security clearance|u\.?s\.? citizen|united states citizen|us person|u\.s\. person", "Citizenship/clearance conditions mentioned"),
+        (r"security clearance|u\.?s\.? citizen|united states citizen|us person|u\.s\. person|"
+         r"säkerhetsprövning|säkerhetsklass|medborgarskap", "Citizenship/clearance conditions mentioned"),
         (r"\bmust\s+(?:have\s+current\s+(?:work\s+)?authori[sz]ation\s+to\s+work|"
          r"be\s+currently\s+authori[sz]ed\s+to\s+work)\s+in\s+(?:the\s+)?(?:united states|u\.?s\.?a?\.?)\b",
          "Current US work authorization required"),
@@ -317,7 +322,7 @@ def classify_job(title, description, location="", employment_type=""):
     ]:
         if re.search(pattern, text, re.I):
             requirements.append(label)
-    senior = bool(re.search(r"\b(?:senior|sr\.?|staff|principal|lead|manager|director|distinguished)\b", t))
+    senior = bool(re.search(r"\b(?:senior|sr\.?|staff|principal|lead|manager|director|distinguished|experienced|erfaren)\b", t))
     if senior:
         requirements.append("Senior/experienced role")
     score = {"radio-localization": 100, "wireless-isac": 90, "radar-sensing": 85, "robotics-localization": 75}[category]
@@ -349,7 +354,7 @@ def stable_job_id(source_id, native_id, url):
 
 
 def requisition_from_url(url):
-    m = re.search(r"_(JR\d+|R-\d+|R\d{4,})(?:\b|/)", url, re.I)
+    m = re.search(r"_(JR\d+|R-\d+|R\d{4,}|REQ_\d+)(?:\b|/)", url, re.I)
     return m.group(1) if m else ""
 
 
@@ -357,6 +362,14 @@ def make_job(source, native_id, title, url, location="", description="", employm
              status="listed", requisition_id="", posted_at=None):
     url = safe_url(url, source["allowed_hosts"])
     title, location = clean_text(title, 260), clean_text(location, 260)
+    # Dedicated country sources use explicit provider location data, never a
+    # mention in the description or an unspecified remote-work arrangement.
+    if source.get("country_filter") == "SE" and not re.search(r"\b(?:sweden|sverige)\b", location, re.I):
+        return None
+    if source.get("exclude_student_theses") and re.search(
+            r"\b(?:master(?:['’]s)?|bachelor(?:['’]s)?|msc|bsc|m\.sc\.?|b\.sc\.?)\b.*\bthes[ie]s\b|"
+            r"\b(?:examensarbete|exjobb)\b", title, re.I):
+        return None
     matched = classify_job(title, description, location, employment_type)
     if matched is None:
         return None
@@ -408,7 +421,7 @@ def _workday(source, client):
         offset, expected, query_complete = 0, None, False
         for _page in range(source.get("max_pages_per_query", 2)):
             try:
-                data = client.post_json(source["search_url"], {"appliedFacets": {}, "limit": page_size,
+                data = client.post_json(source["search_url"], {"appliedFacets": source.get("applied_facets", {}), "limit": page_size,
                                                               "offset": offset, "searchText": query})
                 if not isinstance(data, dict) or not isinstance(data.get("jobPostings"), list) or not isinstance(data.get("total"), int):
                     raise FetchError("Workday search shape changed")
@@ -660,6 +673,236 @@ def _amazon(source, client):
     return result
 
 
+def _ericsson_endpoint(base, parameters, source):
+    parts = urlsplit(safe_url(base, source["allowed_hosts"]))
+    query = dict(parse_qsl(parts.query, keep_blank_values=True))
+    query.update(parameters)
+    return safe_url(urlunsplit((parts.scheme, parts.netloc, parts.path,
+                               urlencode(query), "")), source["allowed_hosts"])
+
+
+def _ericsson_payload(response, label):
+    if not isinstance(response, dict) or response.get("status") != 200:
+        raise FetchError(f"Ericsson {label} did not return a successful JSON response")
+    if not isinstance(response.get("data"), dict):
+        raise FetchError(f"Ericsson {label} data object is missing")
+    error = response.get("error")
+    if isinstance(error, dict) and (error.get("message") or error.get("body")):
+        raise FetchError(f"Ericsson {label} returned an error payload")
+    if error and not isinstance(error, dict):
+        raise FetchError(f"Ericsson {label} returned an error payload")
+    if isinstance(response.get("metadata"), dict) and response["metadata"].get("isFallback"):
+        raise FetchError(f"Ericsson {label} returned fallback data")
+    return response["data"]
+
+
+def _ericsson_position_id(value):
+    if isinstance(value, bool) or not isinstance(value, (str, int)):
+        raise FetchError("Ericsson position id is missing or malformed")
+    value = str(value)
+    if not re.fullmatch(r"[0-9]{1,24}", value):
+        raise FetchError("Ericsson position id is missing or malformed")
+    return value
+
+
+def _ericsson_native_id(entry, position_id):
+    value = entry.get("displayJobId") or entry.get("atsJobId") or position_id
+    if isinstance(value, bool) or not isinstance(value, (str, int)):
+        raise FetchError("Ericsson requisition id is malformed")
+    value = str(value)
+    if not re.fullmatch(r"[A-Za-z0-9._-]{1,100}", value):
+        raise FetchError("Ericsson requisition id is malformed")
+    return value
+
+
+def _ericsson_location(entry):
+    locations = entry.get("locations")
+    if locations is not None:
+        if not isinstance(locations, list) or any(not isinstance(x, str) for x in locations):
+            raise FetchError("Ericsson locations array is malformed")
+        location = " / ".join(x.strip() for x in locations if x.strip())
+    else:
+        location = entry.get("location", "")
+        if not isinstance(location, str):
+            raise FetchError("Ericsson location is malformed")
+    if not clean_text(location, 500):
+        raise FetchError("Ericsson job location is missing")
+    return location
+
+
+def _ericsson_job_url(source, position_id, entry):
+    value = entry.get("publicUrl") or entry.get("positionUrl") or f"/careers/job/{position_id}"
+    if not isinstance(value, str):
+        raise FetchError("Ericsson job URL is malformed")
+    url = safe_url(urljoin(source["api_url"], value), source["allowed_hosts"])
+    parts = urlsplit(url)
+    if (parts.hostname != urlsplit(source["api_url"]).hostname
+            or not re.match(r"^/careers/job/" + re.escape(position_id) + r"(?:$|[-/])", parts.path)):
+        raise FetchError("Ericsson job URL does not identify the requested posting")
+    return url
+
+
+def _ericsson(source, client):
+    """Discover bounded search results and verify descriptions individually.
+
+    Even completed keyword searches are not the complete employer inventory;
+    this adapter never uses absence to close an earlier posting. HTTP errors,
+    malformed data, and expired detail URLs preserve previous observations.
+    """
+    result = SourceResult(source["id"], "ok", [], complete=False)
+    queries = source.get("queries", ["ISAC", "sensing", "radar", "positioning"])
+    if (not isinstance(queries, list) or not 1 <= len(queries) <= 10
+            or any(not isinstance(q, str) or len(q) > 80 for q in queries)):
+        raise FetchError("Ericsson queries must be a bounded string array")
+    max_pages = min(max(int(source.get("max_pages_per_query", 2)), 1), 5)
+    max_details = min(max(int(source.get("max_details", 12)), 1), 30)
+    domain = source.get("domain", "ericsson.com")
+    location = source.get("search_location", "Sweden")
+    if not isinstance(domain, str) or not re.fullmatch(r"[a-z0-9.-]{1,100}", domain):
+        raise FetchError("Ericsson domain setting is invalid")
+    if not isinstance(location, str) or len(location) > 120:
+        raise FetchError("Ericsson search location setting is invalid")
+    safe_url(source["api_url"], source["allowed_hosts"])
+    safe_url(source["detail_url"], source["allowed_hosts"])
+    errors, candidates, seen, known_order = [], {}, set(), {}
+
+    for value in source.get("seed_ids", [])[:max_details]:
+        pid = _ericsson_position_id(value)
+        candidates[pid] = {"id": pid, "_priority": 0}
+    for old in source.get("_known_jobs", []):
+        parts = urlsplit(old.get("url", ""))
+        match = re.match(r"^/careers/job/([0-9]{1,24})(?:$|[-/])", parts.path)
+        if parts.hostname != urlsplit(source["api_url"]).hostname or not match:
+            continue
+        pid = match.group(1)
+        candidates.setdefault(pid, {"id": pid, "name": old.get("title", ""),
+                                    "displayJobId": old.get("requisition_id", ""), "_priority": 1})
+        known_order[pid] = old.get("last_detail_attempt") or old.get("last_verified") or old.get("last_seen", "")
+
+    for query in queries:
+        offset, expected, query_done, query_ids = 0, None, False, set()
+        for _page in range(max_pages):
+            try:
+                endpoint = _ericsson_endpoint(source["api_url"], {
+                    "domain": domain, "query": query, "location": location,
+                    "start": offset, "sort_by": "relevance"}, source)
+                data = _ericsson_payload(client.get_json(endpoint), "search")
+                count, entries = data.get("count"), data.get("positions")
+                if (not isinstance(count, int) or isinstance(count, bool) or count < 0
+                        or not isinstance(entries, list) or len(entries) > 100):
+                    raise FetchError("Ericsson search count or positions array is malformed")
+                if expected is not None and count != expected:
+                    raise FetchError("Ericsson results changed during pagination")
+                expected = count
+                if (not entries and offset < count) or offset + len(entries) > count:
+                    raise FetchError("Ericsson pagination returned an inconsistent page")
+                for entry in entries:
+                    if not isinstance(entry, dict):
+                        raise FetchError("Ericsson search job entry is malformed")
+                    pid = _ericsson_position_id(entry.get("id"))
+                    if pid in query_ids:
+                        raise FetchError("Ericsson pagination repeated a posting")
+                    query_ids.add(pid)
+                    title = entry.get("name")
+                    if not isinstance(title, str) or not clean_text(title, 260):
+                        raise FetchError("Ericsson search job title is missing")
+                    _ericsson_location(entry)
+                    job_url = _ericsson_job_url(source, pid, entry)
+                    native = _ericsson_native_id(entry, pid)
+                    seen.add(stable_job_id(source["id"], native, job_url))
+                    priority = 2 if re.search(r"\bisac\b|\bradar\b|\bslam\b|locali[sz]ation|"
+                                              r"positioning|sensor fusion|sensing", title, re.I) else 4
+                    if pid in candidates:
+                        priority = candidates[pid]["_priority"]
+                    candidates[pid] = dict(entry, _priority=priority)
+                offset += len(entries)
+                if offset >= count:
+                    query_done = True
+                    break
+            except Exception as exc:
+                errors.append(brief_error(exc))
+                break
+        if not query_done:
+            errors.append(f"Query {query or '(all)'} was only partially checked")
+
+    ordered = sorted(candidates.items(), key=lambda item: (
+        item[1]["_priority"], str(item[1].get("name", "")).casefold(), item[0]))
+    seeds = [x for x in ordered if x[1]["_priority"] == 0]
+    known = sorted((x for x in ordered if x[1]["_priority"] == 1),
+                   key=lambda x: (known_order.get(x[0], ""), x[0]))
+    fresh = [x for x in ordered if x[1]["_priority"] >= 2]
+    slots = max(0, max_details - len(seeds))
+    known_slots = min(len(known), slots // 2 if fresh else slots)
+    fresh_slots = slots - known_slots
+    if fresh_slots and len(fresh) > fresh_slots:
+        offset = (_rotation_week(source) * fresh_slots) % len(fresh)
+        fresh = fresh[offset:] + fresh[:offset]
+    selected = (seeds + known[:known_slots] + fresh[:fresh_slots])[:max_details]
+    if len(selected) < max_details:
+        selected.extend(known[known_slots:known_slots + max_details - len(selected)])
+    if len(ordered) > len(selected):
+        errors.append("Detail-check limit reached; additional matches remain unchecked")
+
+    for pid, entry in selected:
+        try:
+            old_native = _ericsson_native_id(entry, pid)
+            old_url = _ericsson_job_url(source, pid, entry)
+            old_identity = stable_job_id(source["id"], old_native, old_url)
+            result.attempted_ids.append(old_identity)
+            endpoint = _ericsson_endpoint(source["detail_url"], {
+                "position_id": pid, "domain": domain, "hl": "en"}, source)
+            detail = _ericsson_payload(client.get_json(endpoint), "detail")
+            if _ericsson_position_id(detail.get("id")) != pid:
+                raise FetchError("Ericsson returned details for a different posting")
+            title, description = detail.get("name"), detail.get("jobDescription")
+            if not isinstance(title, str) or not clean_text(title, 260):
+                raise FetchError("Ericsson detail job title is missing")
+            if (not isinstance(description, str) or len(clean_text(description, 30000)) < 80
+                    or CHALLENGE.search(description)):
+                raise FetchError("Ericsson full job description is missing or blocked")
+            job_location = _ericsson_location(detail)
+            url = _ericsson_job_url(source, pid, detail)
+            native = _ericsson_native_id(detail, pid)
+            if native == pid and old_native != pid:
+                native = old_native
+            elif old_native != pid and native != old_native:
+                raise FetchError("Ericsson requisition identity changed between search and detail")
+            identity = stable_job_id(source["id"], native, url)
+            if identity not in result.attempted_ids:
+                result.attempted_ids.append(identity)
+            seen.add(identity)
+            status = "listed"
+            actions = detail.get("positionUserActions") or {}
+            apply_action = actions.get("applyAction") if isinstance(actions, dict) else None
+            if isinstance(apply_action, dict) and apply_action.get("status") == "link_off":
+                # Explicit live application link supplied by the official detail
+                # payload. Validate it, but never request or submit to it.
+                try:
+                    safe_url(apply_action.get("applyUrl", ""), source["allowed_hosts"])
+                except ValueError:
+                    errors.append("Ericsson application destination is not in the configured allowlist")
+                else:
+                    status = "open"
+            posted = None
+            if isinstance(detail.get("postedTs"), (int, float)) and not isinstance(detail["postedTs"], bool):
+                try:
+                    posted = datetime.fromtimestamp(detail["postedTs"], timezone.utc).strftime("%Y-%m-%d")
+                except (ValueError, OverflowError, OSError):
+                    pass
+            job = make_job(source, native, title, url, job_location, description,
+                           detail.get("employmentType", ""), status, native, posted)
+            if job:
+                result.records.append(job)
+        except Exception as exc:
+            errors.append(brief_error(exc))
+
+    result.seen_ids = sorted(seen)
+    if errors:
+        result.status = "partial" if seen or result.records else "error"
+        result.error = "; ".join(dict.fromkeys(errors))[:400]
+    return result
+
+
 def _lever(source, client):
     data = client.get_json(source["api_url"])
     if not isinstance(data, list):
@@ -762,7 +1005,17 @@ def _address_text(value):
     country = value.get("addressCountry", "")
     if isinstance(country, dict):
         country = country.get("name", "")
-    return ", ".join(str(x) for x in [value.get("addressLocality", ""), value.get("addressRegion", ""), country] if x)
+    # Jobylon sometimes places an explicit country in streetAddress while
+    # omitting addressCountry. Keep the country evidence without publishing
+    # an unnecessary street address or inferring it from company boilerplate.
+    if not country and re.search(r"(?:^|,)\s*(?:sweden|sverige)\s*$", str(value.get("streetAddress", "")), re.I):
+        country = "Sweden"
+    country = {"SE": "Sweden", "SWE": "Sweden"}.get(str(country).upper(), country)
+    parts = list(dict.fromkeys(str(x) for x in [value.get("addressLocality", ""), value.get("addressRegion", "")] if x))
+    location = ", ".join(parts)
+    if country and not re.search(r"(?:^|,\s*)" + re.escape(str(country)) + r"(?:,|$)", location, re.I):
+        parts.append(str(country))
+    return ", ".join(parts)
 
 
 def _inline_html(source, text):
@@ -799,6 +1052,16 @@ def _inline_html(source, text):
     return result
 
 
+def _jobylon_embed_urls(page):
+    """Read literal ID/URL pairs from the public embed; never run its scripts."""
+    pair = re.compile(
+        r"(?m)^\s*id:\s*['\"](?P<job_id>[0-9]+)['\"],\s*\n"
+        r"\s*url:\s*['\"](?P<path>/jobs/(?P=job_id)-[a-z0-9-]+/)['\"],\s*$"
+    )
+    return sorted({"https://emp.jobylon.com" + match.group("path")
+                   for match in pair.finditer(page)})
+
+
 def _html(source, client):
     text = client.get_text(source["index_url"])
     if CHALLENGE.search(text):
@@ -813,6 +1076,10 @@ def _html(source, client):
         url = urljoin(source["index_url"], href)
         if any(pattern.fullmatch(url) for pattern in patterns):
             links.add(safe_url(url, source["allowed_hosts"]))
+    if source.get("html_discovery") == "jobylon":
+        for url in _jobylon_embed_urls(text):
+            if any(pattern.fullmatch(url) for pattern in patterns):
+                links.add(safe_url(url, source["allowed_hosts"]))
     if not links:
         raise FetchError("Employer job links disappeared; listing completeness is unknown")
     seeds = list(dict.fromkeys(source.get("seed_urls", [])))
@@ -892,7 +1159,7 @@ def _html(source, client):
 def fetch_source(source, client):
     try:
         result = {"workday": _workday, "lever": _lever, "greenhouse": _greenhouse,
-                  "html": _html, "amazon": _amazon}[source["type"]](source, client)
+                  "html": _html, "amazon": _amazon, "ericsson": _ericsson}[source["type"]](source, client)
     except Exception as exc:
         result = SourceResult(source["id"], "error", [], error=brief_error(exc))
     result.requests = getattr(client, "requests", 0)
@@ -914,9 +1181,13 @@ def validate_config(config):
         hosts = source.get("allowed_hosts")
         if not isinstance(hosts, list) or not hosts or any(not re.fullmatch(r"[a-z0-9.-]+", h) for h in hosts):
             raise ValueError("Source requires exact allowed_hosts")
-        for key in ("base_url", "search_url", "api_url", "index_url", "careers_url"):
+        for key in ("base_url", "search_url", "api_url", "detail_url", "index_url", "careers_url"):
             if key in source:
                 safe_url(source[key], hosts)
+        if source.get("country_filter") not in (None, "SE"):
+            raise ValueError("Unsupported country filter")
+        if "exclude_student_theses" in source and not isinstance(source["exclude_student_theses"], bool):
+            raise ValueError("exclude_student_theses must be boolean")
         for key in ("seed_urls",):
             for url in source.get(key, []):
                 safe_url(url, hosts)
@@ -926,24 +1197,46 @@ def validate_config(config):
                     raise ValueError(f"Workday source missing {key}")
             if not all(re.fullmatch(r"[A-Za-z0-9_-]+", source[k]) for k in ("tenant", "site")):
                 raise ValueError("Invalid Workday tenant/site")
+            facets = source.get("applied_facets", {})
+            if (not isinstance(facets, dict) or len(facets) > 5
+                    or any(not re.fullmatch(r"[A-Za-z0-9_-]{1,80}", str(key))
+                           or not isinstance(values, list) or not 1 <= len(values) <= 10
+                           or any(not isinstance(value, str) or not re.fullmatch(r"[A-Za-z0-9_-]{1,100}", value)
+                                  for value in values) for key, values in facets.items())):
+                raise ValueError("Invalid Workday applied facets")
             queries = source.get("queries", [""])
             if not isinstance(queries, list) or not 1 <= len(queries) <= 10 or any(not isinstance(q, str) or len(q) > 80 for q in queries):
                 raise ValueError("Workday queries must be a bounded string array")
             for path in source.get("seed_paths", []):
                 if not path.startswith("/job/") or ".." in path:
                     raise ValueError("Invalid Workday seed path")
-        elif source["type"] in {"lever", "greenhouse", "amazon"} and not source.get("api_url"):
+        elif source["type"] in {"lever", "greenhouse", "amazon", "ericsson"} and not source.get("api_url"):
             raise ValueError("API source missing api_url")
-        if source["type"] == "amazon":
+        if source["type"] in {"amazon", "ericsson"}:
             queries = source.get("queries", ["SLAM", "localization"])
             if (not isinstance(queries, list) or not 1 <= len(queries) <= 10
                     or any(not isinstance(q, str) or not q.strip() or len(q) > 80 for q in queries)):
-                raise ValueError("Amazon queries must be a bounded nonempty string array")
+                raise ValueError("Search queries must be a bounded nonempty string array")
+            if source["type"] == "ericsson":
+                if not source.get("detail_url"):
+                    raise ValueError("Ericsson source missing detail_url")
+                if not re.fullmatch(r"[a-z0-9.-]{1,100}", source.get("domain", "ericsson.com")):
+                    raise ValueError("Invalid Ericsson search domain")
+                location = source.get("search_location", "Sweden")
+                if not isinstance(location, str) or len(location) > 120:
+                    raise ValueError("Invalid Ericsson search location")
+                seeds = source.get("seed_ids", [])
+                if (not isinstance(seeds, list) or len(seeds) > 30
+                        or any(not isinstance(seed, str) or not re.fullmatch(r"[0-9]{1,24}", seed)
+                               for seed in seeds)):
+                    raise ValueError("Invalid Ericsson seed IDs")
         elif source["type"] == "html":
             if not source.get("index_url"):
                 raise ValueError("HTML source missing index_url")
             if source.get("inline_discovery") not in (None, "merl", "zadar"):
                 raise ValueError("Unsupported inline HTML parser")
+            if source.get("html_discovery") not in (None, "jobylon"):
+                raise ValueError("Unsupported HTML discovery mode")
             for pattern in source.get("job_url_patterns", []):
                 if len(pattern) > 250:
                     raise ValueError("Overlong job URL pattern")

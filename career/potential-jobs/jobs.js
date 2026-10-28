@@ -17,10 +17,13 @@
     let visible = 0;
     cards.forEach(card => {
       const d = card.dataset;
+      const locationMatches = region.value === 'all'
+        || (region.value === 'Sweden' ? d.sweden === 'true'
+          : d.region === region.value || (region.value === 'Europe' && d.sweden === 'true'));
       const matches = terms.every(term => d.search.includes(term))
         && (category.value === 'all' || d.category === category.value)
         && (type.value === 'all' || d.type === type.value)
-        && (region.value === 'all' || d.region === region.value)
+        && locationMatches
         && (status.value === 'all'
           || (status.value === 'current' ? d.status !== 'closed' : d.status === status.value));
       card.hidden = !matches;

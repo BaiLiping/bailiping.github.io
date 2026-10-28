@@ -2,7 +2,10 @@
 from copy import deepcopy
 from html.parser import HTMLParser
 import importlib.util
+import json
 from pathlib import Path
+import shutil
+import subprocess
 import unittest
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -41,6 +44,90 @@ class JobPageTests(unittest.TestCase):
         self.assertNotIn('<img src=x', result)
         self.assertNotIn("<script>alert", result)
         self.assertIn('&lt;img src=x onerror=&quot;alert(1)&quot;&gt;', result)
+
+    def test_sweden_uses_only_explicit_location_evidence(self):
+        for location in ("Stockholm, Sweden", "Remote / Sverige", "Göteborg", "Linköping, SE",
+                         "Lund", "Västerås", "Malmö"):
+            with self.subTest(location=location):
+                self.assertTrue(page.is_sweden_location(location))
+        for location in ("Zurich, Switzerland", "Boston, MA, United States", "Remote",
+                         "Remote, Europe", "Stockholm, Wisconsin, US", "Lund, BC, Canada",
+                         "Gothenburg, NE", "Stockholmer Straße, Berlin, Germany"):
+            with self.subTest(location=location):
+                self.assertFalse(page.is_sweden_location(location))
+        job = snapshot()["jobs"][0]
+        job["summary"] = "The team collaborates with colleagues in Sweden."
+        self.assertIn('data-sweden="false"', page.render_card(job))
+        job["location"] = 'Stockholm, Sweden" onmouseover="alert(1)'
+        card = page.render_card(job)
+        attributes = []
+        parser = HTMLParser()
+        parser.handle_starttag = lambda tag, attrs: attributes.append(dict(attrs)) if tag == "article" else None
+        parser.feed(card)
+        self.assertEqual(attributes[0]["data-sweden"], "true")
+        self.assertNotIn("onmouseover", attributes[0])
+        self.assertIn('Sweden&quot; onmouseover=&quot;alert(1)', card)
+
+    @unittest.skipUnless(shutil.which("node"), "Node is needed to exercise the browser filter script")
+    def test_sweden_and_europe_filters_include_the_right_rendered_cards(self):
+        examples = [
+            ("sweden", "Stockholm, Sweden", "Europe"),
+            ("switzerland", "Zurich, Switzerland", "Europe"),
+            ("us", "Boston, MA, United States", "US"),
+            ("remote-sweden", "Remote / Sweden", "Remote"),
+            ("remote-unspecified", "Remote", "Remote"),
+            ("swedish-city", "Göteborg", "Unknown"),
+        ]
+        cards = []
+        for identity, location, region in examples:
+            job = snapshot()["jobs"][0]
+            job.update(id=identity, location=location, region=region)
+            parser = HTMLParser()
+            parser.handle_starttag = lambda tag, attrs: cards.append(
+                {key.removeprefix("data-"): value for key, value in attrs if key.startswith("data-")}
+            ) if tag == "article" else None
+            parser.feed(page.render_card(job))
+        # Exercise the actual progressive-enhancement script with its small DOM
+        # interface, using data attributes produced by the renderer above.
+        harness = r'''
+const fs = require('node:fs');
+const vm = require('node:vm');
+const cards = JSON.parse(fs.readFileSync(0, 'utf8')).map(dataset => ({dataset, hidden: false}));
+const handlers = {};
+const nodes = {
+  'job-filters': {addEventListener: (name, callback) => {handlers[name] = callback;}},
+  'job-search': {value: ''}, 'job-category': {value: 'all'},
+  'job-type': {value: 'all'}, 'job-region': {value: 'all'},
+  'job-status': {value: 'current'}, 'results-count': {}, 'no-results': {},
+};
+vm.runInNewContext(fs.readFileSync(process.argv[1], 'utf8'), {
+  document: {
+    getElementById: id => nodes[id],
+    querySelectorAll: () => cards,
+    querySelector: () => null,
+  },
+  requestAnimationFrame: callback => callback(),
+});
+const results = {};
+for (const region of ['Sweden', 'Europe', 'US', 'Remote', 'all']) {
+  nodes['job-region'].value = region;
+  handlers.change();
+  results[region] = cards.filter(card => !card.hidden).map(card => card.dataset.job);
+}
+process.stdout.write(JSON.stringify(results));
+'''
+        result = subprocess.run(
+            [shutil.which("node"), "-e", harness, str(ROOT / "career/potential-jobs/jobs.js")],
+            input=json.dumps(cards), text=True, capture_output=True, check=True,
+        )
+        visible = json.loads(result.stdout)
+        self.assertEqual(visible["Sweden"], ["sweden", "remote-sweden", "swedish-city"])
+        self.assertEqual(visible["Europe"], ["sweden", "switzerland", "remote-sweden", "swedish-city"])
+        self.assertEqual(visible["US"], ["us"])
+        self.assertEqual(visible["Remote"], ["remote-sweden", "remote-unspecified"])
+        self.assertEqual(len(visible["all"]), len(examples))
+        self.assertIn('<option value="Sweden">Sweden</option>', self.template)
+        self.assertIn('<option value="Europe">Europe</option>', self.template)
 
     def test_failed_check_does_not_display_confirmed_open(self):
         data = snapshot()

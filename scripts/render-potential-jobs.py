@@ -54,6 +54,28 @@ def public_wording(value: object) -> str:
     return " ".join(re.sub(r"\bradar(?:-based)?\b\s*", "", text, flags=re.IGNORECASE).split())
 
 
+def is_sweden_location(value: object) -> bool:
+    """Match explicit country/city location evidence, never role descriptions."""
+    location = str(value or "")
+    if re.search(r"\b(?:sweden|sverige)\b", location, re.IGNORECASE):
+        return True
+    # Employer feeds sometimes supply only a city. Keep this list limited to
+    # Swedish hiring locations, and reject explicit foreign locations sharing
+    # a city name (for example Gothenburg, Nebraska or Lund, British Columbia).
+    cities = (r"\b(?:stockholm|gothenburg|göteborg|malmö|malmo|uppsala|lund|"
+              r"linköping|linkoping|norrköping|norrkoping|västerås|vasteras|"
+              r"luleå|lulea|umeå|umea|karlskrona|jönköping|jonkoping|"
+              r"huskvarna|kista|solna)\b")
+    foreign = (r"\b(?:united states|usa|u\.?s\.?a?\.?|canada|switzerland|"
+               r"australia|germany|norway|denmark|finland|united kingdom|"
+               r"nebraska|wisconsin|british columbia)\b|"
+               r",\s*(?:CA|MA|WA|TX|CO|NY|MI|VA|NC|IL|PA|AZ|OR|FL|OH|WI|NE|BC)\b")
+    for part in re.split(r"\s*[/;|]\s*", location):
+        if not re.search(foreign, part, re.IGNORECASE) and re.search(cities, part, re.IGNORECASE):
+            return True
+    return False
+
+
 def https_url(value: object) -> str:
     if not isinstance(value, str) or any(ord(c) < 32 for c in value):
         raise ValueError("A listing URL must be a valid HTTPS URL")
@@ -118,6 +140,7 @@ def validate_snapshot(data: dict) -> None:
 def render_card(job: dict) -> str:
     # Keep original employer titles, URLs, matching data, and timestamps in the
     # snapshot. Only the card copy and its search text use the public wording.
+    sweden = "true" if is_sweden_location(job.get("location")) else "false"
     job = dict(job)
     for field in ("company", "title", "location", "summary"):
         job[field] = public_wording(job.get(field))
@@ -161,7 +184,7 @@ def render_card(job: dict) -> str:
     else:
         date_note = f"Verified {display_time(job.get('last_verified') or job.get('last_seen'))}."
     hidden = " hidden" if status == "closed" else ""
-    return f'''<article class="{classes}" data-job="{escape(job['id'])}" data-category="{category}" data-type="{escape(kind)}" data-region="{escape(region)}" data-status="{status}" data-search="{escape(search.lower())}" aria-labelledby="{title_id}"{hidden}>
+    return f'''<article class="{classes}" data-job="{escape(job['id'])}" data-category="{category}" data-type="{escape(kind)}" data-region="{escape(region)}" data-sweden="{sweden}" data-status="{status}" data-search="{escape(search.lower())}" aria-labelledby="{title_id}"{hidden}>
   <div class="card-top"><p class="company">{escape(job['company'])}</p>{saved}</div>
   <h3 id="{title_id}"><a href="{url}">{escape(job['title'])}</a></h3>
   <p class="job-meta">{escape(' · '.join(metadata))}</p>

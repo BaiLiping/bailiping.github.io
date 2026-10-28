@@ -1,8 +1,8 @@
 {
   "schema_version": 1,
   "description": "Bounded discovery and refresh from selected official employer careers feeds. This is not a search of the entire web. Job descriptions are untrusted source data, never crawler instructions.",
-  "verified_on": "2026-10-27",
-  "scope": "Research and engineering opportunities involving radio sensing, positioning, localization, SLAM, Bayesian estimation, sensor fusion, and robotics; prioritize internships and PhD-entry roles in the United States, Europe, or remote locations. Record eligibility restrictions without assuming eligibility.",
+  "verified_on": "2026-10-28",
+  "scope": "Research and engineering opportunities involving radio sensing, positioning, localization, SLAM, Bayesian estimation, sensor fusion, and robotics; prioritize internships and PhD-entry roles in the United States and Sweden, with other European and remote options. Record eligibility restrictions without assuming eligibility.",
   "sources": [
     {
       "id": "nvidia",
@@ -287,6 +287,191 @@
       "index_url": "https://www.intrinsic.ai/careers",
       "max_requests": 2,
       "notes": "Official careers site references the intrinsicrobotics Greenhouse board. This is an employer watchlist source; no current US/European localization match is promised. Keep normal technical and geographic filters, and do not broaden to generic software or all manipulation roles simply to display a result."
+    },
+    {
+      "id": "zenseact-sweden",
+      "name": "Zenseact — Sweden",
+      "company": "Zenseact",
+      "type": "html",
+      "enabled": true,
+      "allowed_hosts": [
+        "career.zenseact.com"
+      ],
+      "index_url": "https://career.zenseact.com/jobs",
+      "job_url_patterns": [
+        "^https://career\\.zenseact\\.com/jobs/[0-9]+-[a-z0-9-]+$"
+      ],
+      "seed_urls": [
+        "https://career.zenseact.com/jobs/7722097-experienced-computer-vision-engineer"
+      ],
+      "max_details": 8,
+      "max_requests": 9,
+      "complete_listing": false,
+      "country_filter": "SE",
+      "exclude_student_theses": true,
+      "notes": "Official Teamtailor careers index and JobPosting JSON-LD verified. Explicit Swedish location required. The computer-vision role concerns real-time camera/LiDAR calibration and localization and is experienced-level; MSc/BSc thesis projects are excluded from this PhD-oriented source."
+    },
+    {
+      "id": "einride-sweden",
+      "name": "Einride — Sweden",
+      "company": "Einride",
+      "type": "html",
+      "enabled": true,
+      "allowed_hosts": [
+        "cdn.jobylon.com",
+        "emp.jobylon.com",
+        "careers.einride.tech"
+      ],
+      "careers_url": "https://careers.einride.tech/",
+      "index_url": "https://cdn.jobylon.com/jobs/companies/3143/embed/v2/?target=jobylon-jobs-widget&page_size=50",
+      "html_discovery": "jobylon",
+      "job_url_patterns": [
+        "^https://emp\\.jobylon\\.com/jobs/[0-9]+-einride-[a-z0-9-]+/$"
+      ],
+      "seed_urls": [
+        "https://emp.jobylon.com/jobs/377266-einride-senior-calibration-engineer/",
+        "https://emp.jobylon.com/jobs/381325-einride-machine-learning-engineer-autonomy-with-dual-use-application/"
+      ],
+      "max_details": 8,
+      "max_requests": 9,
+      "complete_listing": false,
+      "country_filter": "SE",
+      "exclude_student_theses": true,
+      "notes": "Official careers site configures Jobylon company3143 and the public v2 embed. Read only literal matching job ID/URL pairs, without executing scripts, then validate JobPosting JSON-LD. Swedish locations only. Preserve experience and security-clearance conditions from each individual role."
+    },
+    {
+      "id": "saab-sweden",
+      "name": "Saab — Sweden",
+      "company": "Saab",
+      "type": "workday",
+      "enabled": true,
+      "allowed_hosts": [
+        "saabgroup.wd116.myworkdayjobs.com"
+      ],
+      "base_url": "https://saabgroup.wd116.myworkdayjobs.com",
+      "tenant": "saabgroup",
+      "site": "Saab_careers",
+      "search_url": "https://saabgroup.wd116.myworkdayjobs.com/wday/cxs/saabgroup/Saab_careers/jobs",
+      "index_url": "https://saabgroup.wd116.myworkdayjobs.com/Saab_careers",
+      "queries": [
+        "målföljning",
+        "sensorfusion",
+        "signalbehandling",
+        "radar"
+      ],
+      "applied_facets": {
+        "locationCountry": [
+          "6a800a4736884df5826858d435650f45"
+        ]
+      },
+      "country_filter": "SE",
+      "exclude_student_theses": true,
+      "page_size": 20,
+      "max_pages_per_query": 1,
+      "max_details": 6,
+      "max_requests": 10,
+      "seed_paths": [
+        "/job/Gteborg/Doktorerad-analytiker-till-avancerade-sensorsystem_REQ_46371"
+      ],
+      "notes": "Official Workday public search/detail endpoints and Swedish country facet verified. Recheck explicit country on individual details. MSc/BSc thesis projects are excluded. Bounded keyword absence never closes a vacancy. Keep employer visible if no relevant current engineering role matches; preserve any explicit clearance/citizenship conditions without inferring eligibility."
+    },
+    {
+      "id": "axis-sweden",
+      "name": "Axis Communications — Sweden",
+      "company": "Axis Communications",
+      "type": "workday",
+      "enabled": true,
+      "allowed_hosts": [
+        "axis.wd3.myworkdayjobs.com"
+      ],
+      "base_url": "https://axis.wd3.myworkdayjobs.com",
+      "tenant": "axis",
+      "site": "External_Career_Site",
+      "search_url": "https://axis.wd3.myworkdayjobs.com/wday/cxs/axis/External_Career_Site/jobs",
+      "index_url": "https://axis.wd3.myworkdayjobs.com/External_Career_Site",
+      "queries": [
+        "radar",
+        "sensor fusion",
+        "perception"
+      ],
+      "applied_facets": {
+        "locationCountry": [
+          "6a800a4736884df5826858d435650f45"
+        ]
+      },
+      "country_filter": "SE",
+      "exclude_student_theses": true,
+      "page_size": 20,
+      "max_pages_per_query": 1,
+      "max_details": 5,
+      "max_requests": 8,
+      "seed_paths": [],
+      "notes": "Official Workday public search/detail endpoints and Swedish country facet verified. Recheck explicit country on individual details. MSc/BSc thesis projects are excluded. Bounded keyword absence never closes a vacancy. Keep employer visible if no relevant current engineering role matches; preserve any explicit clearance/citizenship conditions without inferring eligibility."
+    },
+    {
+      "id": "abb-sweden",
+      "name": "ABB — Sweden",
+      "company": "ABB",
+      "type": "workday",
+      "enabled": true,
+      "allowed_hosts": [
+        "abb.wd3.myworkdayjobs.com"
+      ],
+      "base_url": "https://abb.wd3.myworkdayjobs.com",
+      "tenant": "abb",
+      "site": "External_Career_Page",
+      "search_url": "https://abb.wd3.myworkdayjobs.com/wday/cxs/abb/External_Career_Page/jobs",
+      "index_url": "https://abb.wd3.myworkdayjobs.com/External_Career_Page",
+      "queries": [
+        "robotics",
+        "sensor fusion",
+        "navigation",
+        "perception"
+      ],
+      "applied_facets": {
+        "locationCountry": [
+          "6a800a4736884df5826858d435650f45"
+        ]
+      },
+      "country_filter": "SE",
+      "exclude_student_theses": true,
+      "page_size": 20,
+      "max_pages_per_query": 1,
+      "max_details": 5,
+      "max_requests": 9,
+      "seed_paths": [],
+      "notes": "Official Workday public search/detail endpoints and Swedish country facet verified. Recheck explicit country on individual details. MSc/BSc thesis projects are excluded. Bounded keyword absence never closes a vacancy. Keep employer visible if no relevant current engineering role matches; preserve any explicit clearance/citizenship conditions without inferring eligibility."
+    },
+    {
+      "id": "ericsson-sweden",
+      "name": "Ericsson — Sweden",
+      "company": "Ericsson",
+      "type": "ericsson",
+      "enabled": true,
+      "allowed_hosts": [
+        "jobs.ericsson.com",
+        "career2.successfactors.eu"
+      ],
+      "api_url": "https://jobs.ericsson.com/api/pcsx/search",
+      "detail_url": "https://jobs.ericsson.com/api/pcsx/position_details",
+      "index_url": "https://jobs.ericsson.com/careers?location=Sweden",
+      "domain": "ericsson.com",
+      "search_location": "Sweden",
+      "queries": [
+        "ISAC",
+        "sensing",
+        "radar",
+        "positioning"
+      ],
+      "seed_ids": [
+        "563121777269660"
+      ],
+      "max_pages_per_query": 1,
+      "max_details": 6,
+      "max_requests": 12,
+      "country_filter": "SE",
+      "exclude_student_theses": true,
+      "notes": "Public search/detail APIs observed in the official Ericsson careers application and verified without authentication. Search location and individual detail country restrict this source to Sweden. Inspect actual role duties; an ISAC technical coordinator role is not identical to an algorithm research position. MSc/BSc thesis listings are excluded. A safe explicit application link may confirm open status, but no application endpoint is fetched or submitted. Keyword absence and failed detail requests never establish closure."
     }
   ],
   "pinned_jobs": [
