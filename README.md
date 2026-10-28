@@ -116,6 +116,7 @@ python3 -m http.server 8769 --bind 127.0.0.1
   Run `node scripts/install-deck-extensions.mjs` after editing a static deck.
   The BP vs PMBM builder and the Density Fusion source apply the helper directly.
 - `/sales/` is the static English second-hand sale catalog.
+- `/books/` lists books and user-provided lessons learned under **Life**. Keep the supplied order and leave missing summaries blank; cover sources are recorded in `books/README.md`.
 - `/handover/` is the target-handover project page with paper, repository, and result animation links.
 - `/vslam/` is an interactive step-by-step visual SLAM explainer (tracking, loop closure, pose graph optimization, bundle adjustment) with live solvers.
 - `/bp-vs-pmbm/` is an interactive side-by-side comparison of belief propagation and PMBM data association for multi-target tracking.

@@ -158,6 +158,22 @@
         align-content: center;
       }
 
+      .group[aria-labelledby="group-life"] .page-list {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      @media (min-width: 900px) {
+        .group[aria-labelledby="group-life"] .page-list {
+          grid-template-columns: repeat(4, minmax(0, 1fr));
+        }
+      }
+
+      @media (max-width: 540px) {
+        .group[aria-labelledby="group-life"] .page-list {
+          grid-template-columns: 1fr;
+        }
+      }
+
       .site-footer {
         margin-top: 40px;
         padding-top: 20px;
@@ -223,6 +239,10 @@
           <a class="page-link" href="/moments-in-the-movies/">
             <span>Film collection</span>
             <strong>Movie Moments</strong>
+          </a>
+          <a class="page-link" href="/books/">
+            <span>Reading notes</span>
+            <strong>Books</strong>
           </a>
           <a class="page-link" href="/sales/">
             <span>Gothenburg</span>
