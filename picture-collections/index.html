@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Picture Collections | Bai Liping</title>
-<meta name="description" content="Photo and video collections from Gothenburg, Stockholm, Vienna, and Beijing, plus Buildings and curated galleries of John Thomson, Liang Sicheng, Wu Guanzhong, and Fan Ho.">
+<meta name="description" content="Photo and video collections from Gothenburg, Stockholm, Vienna, and Beijing, plus Buildings, Buddhist Art, and curated galleries of John Thomson, Liang Sicheng, Wu Guanzhong, and Fan Ho.">
 <style>
 :root{
   --bg:#eef0ea; --panel:#fdfdfb; --ink:#1b2320; --mut:#5b665f; --line:#d8dcd1;
@@ -94,6 +94,7 @@ h2{font-family:var(--serif);font-weight:600;font-size:clamp(21px,2.8vw,27px);mar
 <a href="#vienna"><span class="b">Vienna</span> <span class="n">28</span></a>
 <a href="#beijing"><span class="b">Beijing</span> <span class="n">43</span></a>
 <a href="#buildings"><span class="b">Buildings</span> <span class="n">18</span></a>
+<a href="#buddhist-art"><span class="b">Buddhist Art</span> <span class="n">5</span></a>
 <a href="#john-thomson-collection"><span class="b">John Thomson Collection</span> <span class="n">46</span></a>
 <a href="#sicheng-liang-collection"><span class="b">Sicheng Liang Collection</span> <span class="n">22</span></a>
 <a href="#guanzhong-wu"><span class="b">Guanzhong Wu</span> <span class="n">21</span></a>
@@ -597,6 +598,29 @@ h2{font-family:var(--serif);font-weight:600;font-size:clamp(21px,2.8vw,27px);mar
 <img src="buildings/assets/thumb/stockholm-gardet-09.jpg" alt="Stockholm Gärdet building photograph" loading="lazy" width="1000" height="750"></a><div class="sp"></div></div>
 </section>
 
+<section id="buddhist-art">
+  <div class="shead">
+    <h2>Buddhist Art</h2>
+    <span class="cnt">5 photos</span>
+  </div>
+  <p class="blurb">Guanyin and bodhisattva sculptures, collected from three shared posts.</p>
+  <div class="g"><a class="t" href="assets/full/buddhist-art-001.jpg" style="--ar:0.7706">
+<img src="assets/thumb/buddhist-art-001.jpg" alt="Song-dynasty Avalokiteshvara wood sculpture, side view" loading="lazy" width="432" height="560"></a>
+<a class="t" href="assets/full/buddhist-art-002.jpg" style="--ar:0.7724">
+<img src="assets/thumb/buddhist-art-002.jpg" alt="Song-dynasty Avalokiteshvara wood sculpture, front view" loading="lazy" width="433" height="560"></a>
+<a class="t" href="assets/full/buddhist-art-003.jpg" style="--ar:0.7500">
+<img src="assets/thumb/buddhist-art-003.jpg" alt="Stone bodhisattva sculpture, close-up of the face and crown" loading="lazy" width="420" height="560"></a>
+<a class="t" href="assets/full/buddhist-art-004.jpg" style="--ar:0.7500">
+<img src="assets/thumb/buddhist-art-004.jpg" alt="Stone bodhisattva sculpture, wider view in warm light" loading="lazy" width="420" height="560"></a>
+<a class="t" href="assets/full/buddhist-art-005.jpg" style="--ar:0.6907">
+<img src="assets/thumb/buddhist-art-005.jpg" alt="Painted Guanyin sculpture, close-up of the face and crown" loading="lazy" width="387" height="560"></a><div class="sp"></div></div>
+  <p class="note">Sources:
+    <a class="ext" href="https://x.com/bai_liping/status/1835253523606339715">Avalokiteshvara wood sculpture</a> (<a class="ext" href="https://www.sothebys.com/en/buy/auction/2021/icons-masterpieces-from-across-time-and-space/a-magnificent-and-extremely-rare-large-wood">Sotheby’s catalogue</a>);
+    <a class="ext" href="https://x.com/bai_liping/status/2009278853328302175" lang="zh-Hans">光、风与菩萨</a> (<a class="ext" href="https://x.com/HanyangWang/status/2009276492807618570">original post by @HanyangWang</a>);
+    <a class="ext" href="https://x.com/bai_liping/status/2112708895063847091" lang="zh-Hans">敦煌四十五窟，盛唐观音</a> (<a class="ext" href="https://x.com/biantaishabi5/status/2112461612850536687">original post</a>).
+  </p>
+</section>
+
 <section id="john-thomson-collection">
   <div class="shead">
     <h2>John Thomson Collection</h2>
@@ -830,7 +854,7 @@ h2{font-family:var(--serif);font-weight:600;font-size:clamp(21px,2.8vw,27px);mar
 </section>
 
 <footer style="margin:52px 0 0;padding-top:18px;border-top:1px solid var(--line);font-size:12.5px;color:var(--mut)">
-  Mirrored from my Notion picture collection. Historical and art collections remain the property of
+  Collected from my Notion picture collection and shared posts. Historical and art collections remain the property of
   their respective estates and archives; shown here as a personal reference gallery.
 </footer>
 
@@ -868,7 +892,14 @@ const BUILDING_TILES = [
   {"k":"b","f":"stockholm-gardet-08","c":"Buildings · Stockholm GÄRDET"},
   {"k":"b","f":"stockholm-gardet-09","c":"Buildings · Stockholm GÄRDET"}
 ];
-TILES.splice(196, 0, ...BUILDING_TILES);
+const BUDDHIST_ART_TILES = [
+  {"k":"i","f":"buddhist-art-001","c":"Buddhist Art · Avalokiteshvara, side view"},
+  {"k":"i","f":"buddhist-art-002","c":"Buddhist Art · Avalokiteshvara, front view"},
+  {"k":"i","f":"buddhist-art-003","c":"Buddhist Art · Stone bodhisattva, close-up"},
+  {"k":"i","f":"buddhist-art-004","c":"Buddhist Art · Stone bodhisattva, wider view"},
+  {"k":"i","f":"buddhist-art-005","c":"Buddhist Art · Painted Guanyin"}
+];
+TILES.splice(196, 0, ...BUILDING_TILES, ...BUDDHIST_ART_TILES);
 const lb = document.getElementById('lb');
 const stage = document.getElementById('lbStage');
 const cap = document.getElementById('lbCap');
