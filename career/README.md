@@ -3,7 +3,7 @@
 Public page: <https://bailiping.com/career/potential-jobs/>
 
 The job watch finds research and engineering opportunities involving radio/UWB
-localization, radar, robotic localization and SLAM, sensor fusion, and integrated
+localization, robotic localization and SLAM, sensor fusion, and integrated
 sensing and communications. It prioritizes relevant internships and US or
 European roles. Keyword matches are leads to review, not an assessment of
 eligibility, sponsorship, or a guarantee that an employer is still accepting
@@ -129,6 +129,10 @@ workflow stops running, check whether it is enabled and whether repository
 Actions permissions or GitHub's public-repository inactivity rules apply.
 
 ## Data boundaries
+
+The renderer uses shorter display wording, including abbreviated role titles.
+Original employer titles, URLs, and observation timestamps remain unchanged in
+`jobs.json`; weekly refreshes apply the same display wording automatically.
 
 Only public job information is published. The snapshot excludes CVs, application
 status, personal circumstances, and raw job-description HTML. Summaries are

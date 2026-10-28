@@ -1,5 +1,6 @@
 """Regression checks for untrusted job content and availability presentation."""
 from copy import deepcopy
+from html.parser import HTMLParser
 import importlib.util
 from pathlib import Path
 import unittest
@@ -50,6 +51,30 @@ class JobPageTests(unittest.TestCase):
         self.assertIn('Latest check incomplete.', card)
         self.assertNotIn('Open at last check', card)
         self.assertIn('0 confirmed open', page.render_snapshot(data))
+
+    def test_public_wording_preserves_source_titles_links_and_snapshot(self):
+        data = snapshot()
+        data["jobs"][0].update(
+            title="Senior RADAR Perception Engineer",
+            url="https://example.com/jobs/Senior-Radar-Perception-Engineer",
+            category="radar-sensing",
+            summary="Role text includes radar sensing, signal processing, or radar-based perception.",
+            match_reasons=["Radar is named in the role's title"],
+            requirements=["Radar mentioned", "Python mentioned"],
+        )
+        original = deepcopy(data)
+        result = page.render_page(data, self.template)
+        text = []
+        parser = HTMLParser()
+        parser.handle_data = text.append
+        parser.feed(result)
+        self.assertNotRegex(" ".join(text), r"(?i)\bradar\b")
+        self.assertIn("Senior Perception Engineer", result)
+        self.assertIn("Role text includes sensing, signal processing, or perception.", result)
+        self.assertIn("Sensing mentioned", result)
+        self.assertIn('value="radar-sensing">Sensing</option>', result)
+        self.assertIn('href="https://example.com/jobs/Senior-Radar-Perception-Engineer"', result)
+        self.assertEqual(data, original)
 
     def test_closed_role_hidden_by_default_but_still_filterable(self):
         job = snapshot()["jobs"][0]

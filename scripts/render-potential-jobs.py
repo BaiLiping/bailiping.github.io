@@ -13,6 +13,7 @@ import html
 import json
 import os
 from pathlib import Path
+import re
 import tempfile
 from urllib.parse import urlsplit
 from zoneinfo import ZoneInfo
@@ -21,7 +22,7 @@ ROOT = Path(__file__).resolve().parents[1]
 PAGE = ROOT / "career/potential-jobs"
 CATEGORIES = {
     "radio-localization": "Radio localization / UWB",
-    "radar-sensing": "Radar & sensing",
+    "radar-sensing": "Sensing",
     "robotics-localization": "Robotics & SLAM",
     "wireless-isac": "Wireless & ISAC",
 }
@@ -38,6 +39,19 @@ REGIONS = {"US", "Europe", "Remote", "Other", "Unknown"}
 
 def escape(value: object) -> str:
     return html.escape(str(value or ""), quote=True)
+
+
+def public_wording(value: object) -> str:
+    """Apply the Career wording preference without changing source records or URLs."""
+    wording = {
+        "Radar is named in the role's title": "Role title describes sensing work",
+        "Radar is named in the role's title or technical description":
+            "Role title or technical description describes sensing work",
+        "Radar mentioned": "Sensing mentioned",
+    }
+    text = str(value or "")
+    text = wording.get(text, text)
+    return " ".join(re.sub(r"\bradar(?:-based)?\b\s*", "", text, flags=re.IGNORECASE).split())
 
 
 def https_url(value: object) -> str:
@@ -102,6 +116,14 @@ def validate_snapshot(data: dict) -> None:
 
 
 def render_card(job: dict) -> str:
+    # Keep original employer titles, URLs, matching data, and timestamps in the
+    # snapshot. Only the card copy and its search text use the public wording.
+    job = dict(job)
+    for field in ("company", "title", "location", "summary"):
+        job[field] = public_wording(job.get(field))
+    job["title"] = job["title"] or "Sensing role"
+    for field in ("match_reasons", "requirements"):
+        job[field] = [text for value in job.get(field, []) if (text := public_wording(value))]
     status = effective_status(job)
     category = job["category"]
     kind = job.get("employment_type", "Unknown")
