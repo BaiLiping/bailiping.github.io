@@ -4,9 +4,9 @@ The homepage links to **Books & Podcast** at `/books/` under Life. The page has
 Books and Podcast sections with anchor links. Edit the ordered book list in
 `index.html` to add books and the user's own notes. Preserve the supplied order.
 The two Feynman books are first and second, followed by the previous books in order.
-The Podcast section uses the supplied screenshots and links to matching episode
-pages. Only user-supplied summaries and reflections are shown; leave these blank
-when they have not been supplied.
+The Podcast section uses the supplied screenshots, Spotify episode players, and
+links to matching episode pages. Only user-supplied summaries and reflections are
+shown; leave these blank when they have not been supplied.
 Retailer links are intentionally omitted from the rendered page at the user's request.
 
 ## Cover sources
@@ -60,8 +60,9 @@ https://www.amazon.com/dp/0393355624 and https://www.amazon.com/dp/0393355640
 
 Added 2026-10-28 from the user's five supplied JPEG screenshots. The files are
 copied without resizing or cropping. Their episode titles were checked against
-the matching 忽左忽右 pages on 小宇宙. The complete thumbnail cards, including their
-titles, link to these pages in the same tab. No personal reflections were supplied.
+the matching 忽左忽右 pages on 小宇宙. Thumbnails and titles link to Spotify in the
+same tab, with 小宇宙 links retained as an alternative. No personal reflections
+were supplied.
 
 | Order | Episode | Supplied image | Local asset | Episode link |
 | --- | --- | --- | --- | --- |
@@ -72,3 +73,25 @@ titles, link to these pages in the same tab. No personal reflections were suppli
 
 `1000011505.jpg` shows the same episode 361 as `1000011504.jpg`, with only phone
 interface differences. Use the first screenshot and list the episode once.
+
+## Spotify players
+
+Verified 2026-10-28 using Spotify's web search and its official oEmbed endpoint.
+The episode number, full title, and show (`1Fm6RmlyY9YsqoOLMBQpxJ`) match all four
+screenshots. Each card contains the corresponding official Spotify iframe,
+with the 152 px height returned by oEmbed, lazy loading, and an accessible title.
+Playback starts only when the visitor presses play. The player occupies the full
+card width on mobile. Spotify hosts the audio; no audio files are copied here.
+
+| Episode | Spotify URL |
+| --- | --- |
+| 451 | https://open.spotify.com/episode/6iIr7CIkTTO3zcdfBnnMcp |
+| 441 | https://open.spotify.com/episode/7xdKKXb6Bmq0uGqI4nCVt8 |
+| 361 | https://open.spotify.com/episode/1lTdhIpZma258lJe0fitfB |
+| 254 | https://open.spotify.com/episode/2eaTQBuWZsQeWYOUDJfuFe |
+
+Embed documentation: https://developer.spotify.com/documentation/embeds/reference/oembed
+
+For playback QA, use installed Chrome through Playwright. The bundled Chromium
+test browser showed previews; Chrome displayed full episode timelines, advanced
+playback, and paused successfully. Keep the iframe's `encrypted-media` permission.
