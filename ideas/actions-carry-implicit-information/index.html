@@ -14,6 +14,7 @@
       .example { margin-top: 42px; padding-top: 30px; border-top: 1px solid var(--line); scroll-margin-top: 24px; }
       .example h2 { margin: 0 0 18px; font-size: clamp(1.45rem, 3vw, 1.8rem); line-height: 1.3; letter-spacing: -.02em; }
       .example h3 { margin: 28px 0 10px; font-size: 1.15rem; }
+      .subexample { scroll-margin-top: 24px; }
       .prose { max-width: 78ch; line-height: 1.8; }
       .prose a, figcaption a, .research-links a { text-decoration: underline; text-underline-offset: .18em; }
       .video-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 24px; margin: 26px 0; }
@@ -64,7 +65,6 @@
         <a href="#road-hazards">Road hazard warnings</a>
         <a href="#traffic-lights">Hidden traffic lights</a>
         <a href="#track-initiation">Track initiation under occlusion</a>
-        <a href="#bu-chao-qi-tou-che"><span lang="zh-Hans">不超齐头车</span></a>
       </nav>
 
       <section class="example" id="road-hazards" aria-labelledby="road-hazards-heading">
@@ -150,30 +150,30 @@
         <h3>The proposed application: initiating a tentative track</h3>
         <p class="prose">A target filter could use the lead vehicle’s deceleration and evasive maneuver to initiate a tentative track for a potentially occluded object. Because the same maneuver can have several causes, the track would begin as a hypothesis with uncertainty about the object’s existence and location. Subsequent observations could strengthen, refine, or reject that hypothesis.</p>
         <p class="prose">This is an application of action-based information extraction: another agent’s response to what it observes becomes evidence for our own perception and decision-making.</p>
-      </section>
 
-      <section class="example" id="bu-chao-qi-tou-che" aria-labelledby="bu-chao-qi-tou-che-heading">
-        <h2 id="bu-chao-qi-tou-che-heading">4. <span lang="zh-Hans">不超齐头车</span>: learning from another driver’s pause</h2>
-        <p class="prose">The driving rule <span lang="zh-Hans">“不超齐头车”</span>—do not rush past a vehicle alongside you—captures the same idea in everyday practice. If that vehicle slows or stops while blocking your view, its behavior may reflect something you cannot yet see.</p>
+        <section class="subexample" id="bu-chao-qi-tou-che" aria-labelledby="bu-chao-qi-tou-che-heading">
+          <h3 id="bu-chao-qi-tou-che-heading"><span lang="zh-Hans">不超齐头车</span>: learning from another driver’s pause</h3>
+          <p class="prose">The driving rule <span lang="zh-Hans">“不超齐头车”</span>—do not rush past a vehicle alongside you—captures the same idea in everyday practice. If that vehicle slows or stops while blocking your view, its behavior may reflect something you cannot yet see.</p>
 
-        <div class="video-grid single portrait-card">
-          <figure>
-            <div class="video-stage">
-              <video controls playsinline preload="none" poster="./assets/bu-chao-qi-tou-che.jpg" aria-label="Video: a truck stops before a hidden scooter crosses" aria-describedby="bu-chao-qi-tou-che-caption">
-                <source src="./assets/bu-chao-qi-tou-che.mp4" type="video/mp4">
-                <a href="https://x.com/huo_tao60239/status/1873759737587941796">Watch the 不超齐头车 video on X.</a>
-              </video>
-            </div>
-            <figcaption id="bu-chao-qi-tou-che-caption">
-              <strong>A pause before the hazard becomes visible</strong>
-              <p>The driver holds back beside a truck. A scooter then crosses from behind the truck, revealing a road user that was initially hidden from view.</p>
-              <a href="https://x.com/huo_tao60239/status/1873759737587941796">Original video and post on X</a>
-            </figcaption>
-          </figure>
-        </div>
+          <div class="video-grid single portrait-card">
+            <figure>
+              <div class="video-stage">
+                <video controls playsinline preload="none" poster="./assets/bu-chao-qi-tou-che.jpg" aria-label="Video: a truck stops before a hidden scooter crosses" aria-describedby="bu-chao-qi-tou-che-caption">
+                  <source src="./assets/bu-chao-qi-tou-che.mp4" type="video/mp4">
+                  <a href="https://x.com/huo_tao60239/status/1873759737587941796">Watch the 不超齐头车 video on X.</a>
+                </video>
+              </div>
+              <figcaption id="bu-chao-qi-tou-che-caption">
+                <strong>A pause before the hazard becomes visible</strong>
+                <p>The driver holds back beside a truck. A scooter then crosses from behind the truck, revealing a road user that was initially hidden from view.</p>
+                <a href="https://x.com/huo_tao60239/status/1873759737587941796">Original video and post on X</a>
+              </figcaption>
+            </figure>
+          </div>
 
-        <h3>The application: treating a pause as evidence</h3>
-        <p class="prose">The driver cannot initially see the scooter, but can observe the truck stopping. That action provides evidence of a possible hidden road user before direct visual confirmation. In an automated system, the same reasoning could raise the estimated probability of an occluded obstacle and inform the next action while preserving uncertainty.</p>
+          <h4>The application: treating a pause as evidence</h4>
+          <p class="prose">The driver cannot initially see the scooter, but can observe the truck stopping. That action provides evidence of a possible hidden road user before direct visual confirmation. In an automated system, the same reasoning could raise the estimated probability of an occluded obstacle and inform the next action while preserving uncertainty.</p>
+        </section>
       </section>
 
       <footer class="site-footer">
