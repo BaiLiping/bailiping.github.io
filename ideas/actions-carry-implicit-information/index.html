@@ -17,6 +17,8 @@
       .prose { max-width: 78ch; line-height: 1.8; }
       .prose a, figcaption a, .research-links a { text-decoration: underline; text-underline-offset: .18em; }
       .video-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 24px; margin: 26px 0; }
+      .video-grid.single { grid-template-columns: minmax(0, 1fr); max-width: 780px; }
+      .video-grid.single .video-stage { height: auto; aspect-ratio: 16 / 9; }
       .video-grid figure { margin: 0; overflow: hidden; border: 1px solid var(--line); border-radius: 8px; background: rgba(255, 255, 255, .88); }
       .video-stage { width: 100%; height: 400px; background: #101610; }
       .video-stage video { display: block; width: 100%; height: 100%; object-fit: contain; }
@@ -124,7 +126,27 @@
 
       <section class="example" id="track-initiation" aria-labelledby="track-initiation-heading">
         <h2 id="track-initiation-heading">3. Track initiation under occlusion</h2>
-        <!-- Add the user's explanation of this example when supplied. -->
+        <p class="prose">In the highway scenario described in the post, the lead vehicle slows down and changes lanes to avoid a stopped vehicle hidden from the following driver. These actions provide indirect evidence of a possible hazard before the following vehicle observes it directly.</p>
+
+        <div class="video-grid single">
+          <figure>
+            <div class="video-stage landscape">
+              <video controls playsinline preload="none" poster="./assets/track-initiation-occlusion.jpg" aria-label="Video: a lead vehicle changes lanes to reveal an occluded stopped vehicle" aria-describedby="track-initiation-video-caption">
+                <source src="./assets/track-initiation-occlusion.mp4" type="video/mp4">
+                <a href="https://x.com/bai_liping/status/1948461305897136204">Watch the highway occlusion example on X.</a>
+              </video>
+            </div>
+            <figcaption id="track-initiation-video-caption">
+              <strong>A hidden hazard revealed by the lead vehicle’s maneuver</strong>
+              <p>The clip illustrates the highway scenario discussed in the original post.</p>
+              <a href="https://x.com/bai_liping/status/1982043556610269193">Reflection on X</a> · <a href="https://x.com/bai_liping/status/1948461305897136204">Original example and video</a>
+            </figcaption>
+          </figure>
+        </div>
+
+        <h3>The proposed application: initiating a tentative track</h3>
+        <p class="prose">A target filter could use the lead vehicle’s deceleration and evasive maneuver to initiate a tentative track for a potentially occluded object. Because the same maneuver can have several causes, the track would begin as a hypothesis with uncertainty about the object’s existence and location. Subsequent observations could strengthen, refine, or reject that hypothesis.</p>
+        <p class="prose">This is an application of action-based information extraction: another agent’s response to what it observes becomes evidence for our own perception and decision-making.</p>
       </section>
 
       <footer class="site-footer">
