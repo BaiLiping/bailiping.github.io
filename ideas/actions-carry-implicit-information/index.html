@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="description" content="How other agents' actions reveal hidden conditions: Gaode road hazard warnings and inferring obscured traffic lights from vehicle behavior.">
+    <meta name="description" content="How other agents' actions reveal hidden conditions: connected navigation, obscured traffic lights, track initiation, and a driver's pause before a hidden hazard.">
     <link rel="canonical" href="https://bailiping.com/ideas/actions-carry-implicit-information/">
     <link rel="stylesheet" href="/books/styles.css">
     <title>Actions Carry Implicit Information | Bai Liping</title>
@@ -17,7 +17,10 @@
       .prose { max-width: 78ch; line-height: 1.8; }
       .prose a, figcaption a, .research-links a { text-decoration: underline; text-underline-offset: .18em; }
       .video-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 24px; margin: 26px 0; }
-      .video-grid.landscape-pair .video-stage { height: auto; aspect-ratio: 16 / 9; }
+      .video-grid.single { grid-template-columns: minmax(0, 1fr); max-width: 780px; }
+      .video-grid.single .video-stage { height: auto; aspect-ratio: 16 / 9; }
+      .video-grid.single.portrait-card { max-width: 480px; }
+      .video-grid.single.portrait-card .video-stage { aspect-ratio: 3 / 4; }
       .video-grid figure { margin: 0; overflow: hidden; border: 1px solid var(--line); border-radius: 8px; background: rgba(255, 255, 255, .88); }
       .video-stage { width: 100%; height: 400px; background: #101610; }
       .video-stage video { display: block; width: 100%; height: 100%; object-fit: contain; }
@@ -61,6 +64,7 @@
         <a href="#road-hazards">Road hazard warnings</a>
         <a href="#traffic-lights">Hidden traffic lights</a>
         <a href="#track-initiation">Track initiation under occlusion</a>
+        <a href="#bu-chao-qi-tou-che"><span lang="zh-Hans">不超齐头车</span></a>
       </nav>
 
       <section class="example" id="road-hazards" aria-labelledby="road-hazards-heading">
@@ -127,7 +131,7 @@
         <h2 id="track-initiation-heading">3. Track initiation under occlusion</h2>
         <p class="prose">In the highway scenario described in the post, the lead vehicle slows down and changes lanes to avoid a stopped vehicle hidden from the following driver. These actions provide indirect evidence of a possible hazard before the following vehicle observes it directly.</p>
 
-        <div class="video-grid landscape-pair">
+        <div class="video-grid single">
           <figure>
             <div class="video-stage landscape">
               <video controls playsinline preload="none" poster="./assets/track-initiation-occlusion.jpg" aria-label="Video: a lead vehicle changes lanes to reveal an occluded stopped vehicle" aria-describedby="track-initiation-video-caption">
@@ -141,24 +145,35 @@
               <a href="https://x.com/bai_liping/status/1982043556610269193">Reflection on X</a> · <a href="https://x.com/bai_liping/status/1948461305897136204">Original example and video</a>
             </figcaption>
           </figure>
-          <figure>
-            <div class="video-stage landscape">
-              <video controls playsinline preload="none" poster="./assets/occlusion-driving-test.jpg" aria-label="Video: driving tests with a stationary obstacle revealed by a lead vehicle" aria-describedby="occlusion-driving-test-caption">
-                <source src="./assets/occlusion-driving-test.mp4" type="video/mp4">
-                <a href="https://x.com/SawyerMerritt/status/1948055082467004544">Watch the driving-test footage on X.</a>
-              </video>
-            </div>
-            <figcaption id="occlusion-driving-test-caption">
-              <strong>Driving-test footage: the hidden obstacle</strong>
-              <p>The longer clip linked from the original post shows vehicles responding when a lead car moves aside and reveals a stationary obstacle.</p>
-              <a href="https://x.com/SawyerMerritt/status/1948055082467004544">Driving-test video on X</a>
-            </figcaption>
-          </figure>
         </div>
 
         <h3>The proposed application: initiating a tentative track</h3>
         <p class="prose">A target filter could use the lead vehicle’s deceleration and evasive maneuver to initiate a tentative track for a potentially occluded object. Because the same maneuver can have several causes, the track would begin as a hypothesis with uncertainty about the object’s existence and location. Subsequent observations could strengthen, refine, or reject that hypothesis.</p>
         <p class="prose">This is an application of action-based information extraction: another agent’s response to what it observes becomes evidence for our own perception and decision-making.</p>
+      </section>
+
+      <section class="example" id="bu-chao-qi-tou-che" aria-labelledby="bu-chao-qi-tou-che-heading">
+        <h2 id="bu-chao-qi-tou-che-heading">4. <span lang="zh-Hans">不超齐头车</span>: learning from another driver’s pause</h2>
+        <p class="prose">The driving rule <span lang="zh-Hans">“不超齐头车”</span>—do not rush past a vehicle alongside you—captures the same idea in everyday practice. If that vehicle slows or stops while blocking your view, its behavior may reflect something you cannot yet see.</p>
+
+        <div class="video-grid single portrait-card">
+          <figure>
+            <div class="video-stage">
+              <video controls playsinline preload="none" poster="./assets/bu-chao-qi-tou-che.jpg" aria-label="Video: a truck stops before a hidden scooter crosses" aria-describedby="bu-chao-qi-tou-che-caption">
+                <source src="./assets/bu-chao-qi-tou-che.mp4" type="video/mp4">
+                <a href="https://x.com/huo_tao60239/status/1873759737587941796">Watch the 不超齐头车 video on X.</a>
+              </video>
+            </div>
+            <figcaption id="bu-chao-qi-tou-che-caption">
+              <strong>A pause before the hazard becomes visible</strong>
+              <p>The driver holds back beside a truck. A scooter then crosses from behind the truck, revealing a road user that was initially hidden from view.</p>
+              <a href="https://x.com/huo_tao60239/status/1873759737587941796">Original video and post on X</a>
+            </figcaption>
+          </figure>
+        </div>
+
+        <h3>The application: treating a pause as evidence</h3>
+        <p class="prose">The driver cannot initially see the scooter, but can observe the truck stopping. That action provides evidence of a possible hidden road user before direct visual confirmation. In an automated system, the same reasoning could raise the estimated probability of an occluded obstacle and inform the next action while preserving uncertainty.</p>
       </section>
 
       <footer class="site-footer">
