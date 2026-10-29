@@ -17,8 +17,7 @@
       .prose { max-width: 78ch; line-height: 1.8; }
       .prose a, figcaption a, .research-links a { text-decoration: underline; text-underline-offset: .18em; }
       .video-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 24px; margin: 26px 0; }
-      .video-grid.single { grid-template-columns: minmax(0, 1fr); max-width: 780px; }
-      .video-grid.single .video-stage { height: auto; aspect-ratio: 16 / 9; }
+      .video-grid.landscape-pair .video-stage { height: auto; aspect-ratio: 16 / 9; }
       .video-grid figure { margin: 0; overflow: hidden; border: 1px solid var(--line); border-radius: 8px; background: rgba(255, 255, 255, .88); }
       .video-stage { width: 100%; height: 400px; background: #101610; }
       .video-stage video { display: block; width: 100%; height: 100%; object-fit: contain; }
@@ -128,7 +127,7 @@
         <h2 id="track-initiation-heading">3. Track initiation under occlusion</h2>
         <p class="prose">In the highway scenario described in the post, the lead vehicle slows down and changes lanes to avoid a stopped vehicle hidden from the following driver. These actions provide indirect evidence of a possible hazard before the following vehicle observes it directly.</p>
 
-        <div class="video-grid single">
+        <div class="video-grid landscape-pair">
           <figure>
             <div class="video-stage landscape">
               <video controls playsinline preload="none" poster="./assets/track-initiation-occlusion.jpg" aria-label="Video: a lead vehicle changes lanes to reveal an occluded stopped vehicle" aria-describedby="track-initiation-video-caption">
@@ -140,6 +139,19 @@
               <strong>A hidden hazard revealed by the lead vehicle’s maneuver</strong>
               <p>The clip illustrates the highway scenario discussed in the original post.</p>
               <a href="https://x.com/bai_liping/status/1982043556610269193">Reflection on X</a> · <a href="https://x.com/bai_liping/status/1948461305897136204">Original example and video</a>
+            </figcaption>
+          </figure>
+          <figure>
+            <div class="video-stage landscape">
+              <video controls playsinline preload="none" poster="./assets/occlusion-driving-test.jpg" aria-label="Video: driving tests with a stationary obstacle revealed by a lead vehicle" aria-describedby="occlusion-driving-test-caption">
+                <source src="./assets/occlusion-driving-test.mp4" type="video/mp4">
+                <a href="https://x.com/SawyerMerritt/status/1948055082467004544">Watch the driving-test footage on X.</a>
+              </video>
+            </div>
+            <figcaption id="occlusion-driving-test-caption">
+              <strong>Driving-test footage: the hidden obstacle</strong>
+              <p>The longer clip linked from the original post shows vehicles responding when a lead car moves aside and reveals a stationary obstacle.</p>
+              <a href="https://x.com/SawyerMerritt/status/1948055082467004544">Driving-test video on X</a>
             </figcaption>
           </figure>
         </div>
