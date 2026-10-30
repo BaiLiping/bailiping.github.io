@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="color-scheme" content="light">
+<title>Latent Fields · Interactive Labs | Bai Liping</title>
+<meta name="description" content="Explore a complex-array likelihood and online power-field learning in transparent, computed teaching examples for Learning Latent Fields in Multiobject Tracking.">
+<link rel="stylesheet" href="./styles.css">
+<script>if(new URLSearchParams(location.search).get('embed')==='1')document.documentElement.classList.add('embedded');</script>
+</head>
+<body>
+<header><a href="../" target="_top">← Slides</a><a href="https://arxiv.org/abs/2610.38898v1" target="_top">arXiv:2610.38898v1 ↗</a></header>
+<div class="page-title"><p class="eyebrow">LEARNING LATENT FIELDS · COMPUTED TEACHING LABS</p><h1>Signals, uncertainty and a learned field</h1><p>Change the observations. Inspect the likelihood. Let posterior beliefs teach a power model.</p></div>
+<nav class="tabs" aria-label="Interactive labs"><button data-lab="covariance" aria-pressed="true">1 · Complex-array likelihood</button><button data-lab="learning" aria-pressed="false">2 · Learn a power field</button><a id="expand" href="./?lab=covariance" target="_top">Full lab ↗</a></nav>
+<main class="shell">
+<aside class="controls" aria-label="Simulation controls">
+<section id="covariance-controls">
+<div class="control-heading"><h2>Two sources · six sensors</h2></div>
+<label for="separation">Bearing separation <output id="separation-value">14°</output></label><input id="separation" type="range" min="2" max="50" value="14" step="1">
+<label for="snr">Per-source array SNR <output id="snr-value">8 dB</output></label><input id="snr" type="range" min="-10" max="20" value="8" step="1">
+<div class="control-row"><label for="snapshots">Snapshots</label><select id="snapshots"><option>1</option><option>8</option><option selected>32</option><option>128</option></select></div>
+<label for="threshold">Beam peak threshold <output id="threshold-value">0.60</output></label><input id="threshold" type="range" min="0.1" max="0.95" value="0.6" step="0.05">
+<div class="control-row"><label for="cov-seed">Random seed</label><input id="cov-seed" type="number" min="1" max="9999" value="7"></div>
+<div class="buttons"><button id="resample">New draw</button><button id="cov-reset">Reset</button></div>
+<p class="control-note">First bearing and both powers are known to the likelihood scan. The beam scan receives the same raw samples.</p>
+</section>
+<section id="learning-controls" hidden>
+<h2>One known-present object</h2>
+<label for="learn-snr">Reference array SNR <output id="learn-snr-value">6 dB</output></label><input id="learn-snr" type="range" min="-6" max="16" value="6" step="1">
+<div class="control-row"><label for="learn-seed">Random seed</label><input id="learn-seed" type="number" min="1" max="9999" value="7"></div>
+<label class="checkbox"><input id="learning-on" type="checkbox" checked> Update shared power model</label>
+<div class="buttons"><button id="play" class="primary">▶ Play</button><button id="step">Step</button><button id="learn-reset">Reset</button></div>
+<div class="control-row"><label for="passes">Traversals</label><select id="passes"><option value="1">1 · 80 frames</option><option value="2" selected>2 · 160 frames</option><option value="4">4 · 320 frames</option></select></div>
+<button id="run" class="wide">Run selected traversals</button>
+<p class="control-note">Sliders, seed and learning toggle reset the run. Play and Step show every update. No ground truth enters either filter or training.</p>
+</section>
+</aside>
+<section class="results" aria-labelledby="result-title">
+<div class="result-heading"><h2 id="result-title">What survives in the array data?</h2><span id="frame-label">32 independent snapshots</span></div>
+<div id="covariance-view" class="visual-grid">
+<figure class="main-plot"><figcaption>Angle scan <span>each curve scaled to peak 1</span></figcaption><svg id="angle-chart" viewBox="0 0 580 230" role="img" aria-label="Beam power and covariance likelihood versus bearing"></svg><div class="legend"><span class="teal">Full likelihood</span><span class="rust">Beam power</span><span class="gray">Sensor-wise powers</span></div><p class="plot-note" id="angle-note"></p></figure>
+<div class="side-panel"><figure><figcaption>Measured cross-sensor covariance <span>real part · sample estimate</span></figcaption><svg id="matrix-chart" viewBox="0 0 240 190" role="img" aria-label="Measured covariance matrix heat map"></svg></figure><div id="cov-metrics" class="metrics"></div><p class="small">Off-diagonal entries carry relative phase. Diagonal sensor powers alone give a flat bearing likelihood.</p></div>
+</div>
+<div id="learning-view" class="learning-grid" hidden>
+<div class="double-plots">
+<figure><figcaption>Position through time <span>x = sin(bearing)</span></figcaption><svg id="track-chart" viewBox="0 0 540 154" role="img" aria-label="True and filtered object positions through time"></svg></figure>
+<figure><figcaption>Shared conditional median power <span>exp μ(context)</span></figcaption><svg id="field-chart" viewBox="0 0 540 154" role="img" aria-label="True and learned conditional median power across position"></svg></figure>
+<div class="legend"><span class="gray">Truth</span><span class="teal">Learned prior filter</span><span class="rust">Fixed prior filter</span></div>
+</div>
+<div class="side-panel"><figure><figcaption>Updated power model at context <span id="context-label">c = −0.85</span></figcaption><svg id="density-chart" viewBox="0 0 290 180" role="img" aria-label="Conditional signal power probability density"></svg></figure><div id="learn-metrics" class="metrics"></div><p class="small" id="learning-note">Press Play or Step. The initial power model has not seen data.</p></div>
+</div>
+</section>
+</main>
+<p id="scope" class="scope" role="status">Synthetic Gaussian array example. Known first bearing and powers. These are computed curves, not paper benchmark results.</p>
+<section class="explanation" id="covariance-explanation">
+<h2>What the likelihood lab computes</h2>
+<div class="explanation-grid"><article><h3>One coherent array observation</h3><p>Each snapshot is z = ρ₁a(θ₁) + ρ₂a(θ₂) + w. Independent amplitudes satisfy ρₙ ∼ CN(0,γₙ), and w ∼ CN(0,ηI). The six-element, half-wavelength array uses unit-norm steering vectors. Here γ₁ = γ₂ = 1 and the slider is 10 log₁₀(γ/η). Random draws are reproducible from the seed.</p></article><article><h3>An exact covariance score</h3><p>After marginalizing amplitudes, Σ = ηI + γ₁a₁a₁ᴴ + γ₂a₂a₂ᴴ. For S independent snapshots, log L = −S log det Σ − Σₛ zₛᴴΣ⁻¹zₛ, up to a constant. The green curve varies the second bearing, holding the first bearing and powers known. A complex Cholesky factorization evaluates the likelihood. A uniform grid prior gives the plotted relative posterior.</p></article><article><h3>Two different kinds of intensity</h3><p>The orange curve is conventional beam power, the mean of |a(θ)ᴴz|². It uses cross-sensor products and retains angular information. Local peaks above the adjustable threshold are detection candidates. The gray curve instead retains only sensor-wise powers, or diagonal covariance. Every sensor has the same modeled power, so this particular compression is direction-independent.</p></article><article><h3>A controlled illustration</h3><p>Both scans use the same samples. The full-likelihood scan has stronger information about the scene: a known first source and known powers. Its accuracy is therefore not a fair end-to-end tracker comparison. Change the separation, noise or number of snapshots to inspect ambiguity. The covariance heat map shows the actual sample estimate, not the expected matrix.</p></article></div>
+</section>
+<section class="explanation" id="learning-explanation" hidden>
+<h2>What the learning lab computes</h2>
+<div class="explanation-grid"><article><h3>A reduced tracking problem</h3><p>One always-present object traverses x ∈ [−0.85, 0.85] with a known motion model, using x = sin(bearing). Four array sensors produce three independent complex snapshots per frame. Two finite-grid Bayesian filters infer position and log power from exactly the same data. Both know the noise model. The SNR slider refers to the coefficient-to-noise ratio at reference power γ = 2; instantaneous SNR varies with the field. One uses a fixed broad lognormal power prior and one uses the learned conditional prior.</p></article><article><h3>A small conditional flow</h3><p>The field plot shows conditional median power exp μ(c), which isolates the learned location dependence. The learned family uses t = log γ = μθ(c) + σε with ε ∼ N(0,1). This is a conditional affine flow in log power, followed by exponentiation. Both filters use the same fixed log-power standard deviation, σ = 1.1. The synthetic field has σ = 0.45, so this restricted family learns the context-dependent mean of log power and deliberately cannot match the full density. The context c is the preceding posterior position estimate, frozen during the current frame. Shared coefficients θ make information from one traversal useful at other positions and later times.</p></article><article><h3>Posterior beliefs teach the model</h3><p>After inference, the learner stores the frozen context and posterior E[log γ]. A regularized regression update fits μθ(c) to these soft targets. This is a small, regularized version of the paper's expected log-density objective. There are no true positions or powers in the training targets. Numerical integration takes place on a log-power grid with the correct change of variables.</p></article><article><h3>What this leaves out</h3><p>This lab fixes the object count and sets existence probability to one. It omits births, deaths, multiobject interference, belief propagation and the paper's flexible conditional normalizing flow. Hidden truth appears only for visual comparison and evaluation. RMSE is calculated from the displayed synthetic run and need not improve for every setting. It is not a reproduction of any reported experiment.</p></article></div>
+</section>
+<footer><a href="../" target="_top">Learning Latent Fields in Multiobject Tracking slides</a><a href="https://arxiv.org/html/2610.38898v1" target="_top">Wei, Rao & Meyer · Eqs. (1)–(4), (21)</a></footer>
+<script type="module" src="./app.mjs"></script><script src="../../assets/bento-inline-frame.js"></script>
+</body></html>

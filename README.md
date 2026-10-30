@@ -91,6 +91,8 @@ python3 -m http.server 8769 --bind 127.0.0.1
 
 ## Structure
 
+- `/latent-field-tracking/` is a paper walkthrough of Wei, Rao and Meyer, arXiv:2610.38898v1, with embedded complex-array likelihood and online power-field learning demos. It is listed under Random thoughts. The browser examples are simplified teaching models, distinct from the paper's tracker and benchmark experiments. Build instructions and numerical checks are in `latent-field-tracking/README.md`.
+
 - `/engine-lab/` compares how exhaust drives turbines in jet and turbocharged car engines, with animated cutaways, a four-stroke walkthrough, and gas-flow and shaft-power diagrams. It is listed under Random thoughts.
 
 - `/cramer-rao-bound/` is a 23-slide offline-capable presentation on the Cramér–Rao Bound, with live Gaussian-sampling, bias–variance, and localization-geometry labs, presenter notes, PDF and PowerPoint downloads. It is listed under Random thoughts and is separate from the radio-measurements CRB deck. Build and test commands are in `cramer-rao-bound/README.md`.
