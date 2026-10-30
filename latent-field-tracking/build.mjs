@@ -23,10 +23,50 @@ for(const s of deck.slides){
 assert.equal(inlineLiveMap.length,2);
 for(const l of inlineLiveMap){assert.equal(ids.indexOf(l.slide),l.slideIndex);assert.equal(ids.indexOf(l.introSlide),l.slideIndex-1);}
 
+// Bento sanitizes HTML table tags. Use native cells in slides, retaining the
+// semantic HTML tables in the responsive reading notes below.
+const renderedDeck=structuredClone(deck);
+const columnFractions={
+ 'variables-body':[.18,.41,.41],
+ 'memory-table-body':[.40,.40,.20],
+ 'results-body':[.40,.15,.17,.14,.14],
+ 'runtime-table-body':[.58,.42],
+ 'acoustics-body':[.31,.23,.18,.14,.14],
+ 'ablation-table-body':[.82,.18]
+};
+for(const slide of renderedDeck.slides){
+ slide.elements=slide.elements.flatMap(e=>{
+  if(e.type!=='text'||!e.html.includes('<table'))return[e];
+  const match=e.html.match(/<table[\s\S]*?<\/table>/);
+  assert.ok(match,'Malformed table');
+  const rows=[...match[0].matchAll(/<tr>([\s\S]*?)<\/tr>/g)].map(r=>[...r[1].matchAll(/<t[hd]>([\s\S]*?)<\/t[hd]>/g)].map(c=>c[1]));
+  const fractions=columnFractions[e.id];
+  assert.ok(fractions&&rows.every(r=>r.length===fractions.length),'Unknown table layout: '+e.id);
+  const tail=e.html.replace(match[0],'').trim(),rowHeight=Math.min(56,(e.h-(tail?90:0))/rows.length);
+  const fontSize=e.id==='variables-body'?19:e.id==='acoustics-body'?20:Math.min(e.fontSize,23);
+  const elements=[];
+  rows.forEach((row,ri)=>{
+   const y=e.y+ri*rowHeight;
+   if(ri===0)elements.push({id:e.id+'-header',type:'shape',shape:'rect',x:e.x,y,w:e.w,h:rowHeight,fill:'#E4F0ED',stroke:'none',strokeWidth:0,radius:0,rotation:0,opacity:1});
+   let x=e.x;
+   row.forEach((html,ci)=>{
+    const width=e.w*fractions[ci];
+    elements.push({...e,id:e.id+'-r'+ri+'-c'+ci,x:x+10,y:y+3,w:width-20,h:rowHeight-6,html,fontSize:ri===0?Math.min(fontSize,19):fontSize,fontWeight:ri===0?700:400,color:ri===0?'#16736E':e.color,lineHeight:1.2});
+    x+=width;
+   });
+   elements.push({id:e.id+'-line-'+ri,type:'shape',shape:'rect',x:e.x,y:y+rowHeight-1,w:e.w,h:1,fill:'#D6DEDC',stroke:'none',strokeWidth:0,radius:0,rotation:0,opacity:1});
+  });
+  if(tail)elements.push({...e,id:e.id+'-caption',y:e.y+rowHeight*rows.length+14,h:e.h-rowHeight*rows.length-14,html:tail,fontSize:22});
+  return elements;
+ });
+ for(const e of slide.elements)assert.ok(e.x>=0&&e.y>=0&&e.x+e.w<=1280.01&&e.y+e.h<=720,`Outside slide: ${slide.id}/${e.id}`);
+ assert.equal(new Set(slide.elements.map(e=>e.id)).size,slide.elements.length);
+}
+
 // Keep the established native Bento renderer and its existing license notices.
 let html=readFileSync(resolve(here,'../mpc-detection-to-bounce-count-slides/index.html'),'utf8');
 assert.ok(html.includes('id="bento-doc"')&&html.includes('id="bento-inline-live-map"'));
-html=html.replace(/(<script type="application\/bento\+json" id="bento-doc">\s*)[\s\S]*?(\s*<\/script>)/,(_,a,b)=>a+safe(deck)+b);
+html=html.replace(/(<script type="application\/bento\+json" id="bento-doc">\s*)[\s\S]*?(\s*<\/script>)/,(_,a,b)=>a+safe(renderedDeck)+b);
 html=html.replace(/(<script type="application\/json" id="bento-inline-live-map">\s*)[\s\S]*?(\s*<\/script>)/,(_,a,b)=>a+safe(inlineLiveMap)+b);
 html=html.replace(/<title>[\s\S]*?<\/title>/,'<title>Learning Latent Fields in Multiobject Tracking | Bai Liping</title>');
 html=html.replace(/<link rel="canonical"[^>]*>/,'<link rel="canonical" href="https://bailiping.com/latent-field-tracking/">');
@@ -56,7 +96,7 @@ html=html.replace('</head>',`<meta name="description" content="28 Bento slides a
 <script>(()=>{const routes=${JSON.stringify(routes)};function route(){let r;try{r=decodeURIComponent(location.hash.replace(/^#\\/?/,''));}catch{return;}if(Object.hasOwn(routes,r))history.replaceState(null,'',location.pathname+location.search+'#/'+routes[r]);}addEventListener('hashchange',route);route();})();</script>
 </head>`);
 writeFileSync(resolve(here,'index.html'),withAuthoring(html, import.meta.url));
-writeFileSync(resolve(here,'deck.json'),JSON.stringify(deck,null,2)+'\n');
+writeFileSync(resolve(here,'deck.json'),JSON.stringify(renderedDeck,null,2)+'\n');
 writeFileSync(resolve(here,'live-demos.json'),JSON.stringify(inlineLiveMap,null,2)+'\n');
 
 // Responsive reading mode comes from the same canonical slide data.
