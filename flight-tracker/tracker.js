@@ -3,7 +3,7 @@
   var core = window.FlightTracker;
   var node = function (id) { return document.getElementById(id); };
   var form = node("flight-form"), flightField = node("flight-number"), airportField = node("departure-airport"), dateField = node("flight-date");
-  var data = null, selection = null, loading = false;
+  var data = null, selection = null, loading = false, apiEndpoint = "", liveResult = false;
   function esc(value) { return String(value == null ? "" : value).replace(/[&<>"']/g, function (c) { return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]; }); }
   function formatDate(value, short) {
     if (!core.validDate(value)) return "—";
@@ -25,9 +25,11 @@
   function empty(title, reason) { return '<div class="empty"><strong>'+esc(title)+'</strong><p>'+esc(reason)+'</p></div>'; }
   function setBusy(value) {
     loading=value; node("search-button").disabled=value; node("refresh").disabled=value;
+    node("live-check").disabled=value || !apiEndpoint;
+    [flightField,airportField,dateField].forEach(function(field) { field.disabled=value; });
     node("results").setAttribute("aria-busy",String(value));
   }
-  function formError(reason, field) { node("form-error").textContent=reason; node("form-error").hidden=false; if(field) field.focus(); }
+  function formError(reason, field) { node("form-error").textContent=reason; node("form-error").hidden=false; if(field) field.focus(); return false; }
   function drawHistory(view) {
     var rows=view.history, records=rows.flatMap(function (day) { return day.flights; }), stats=core.stats(records);
     node("history-period").textContent=formatDate(rows[0].date)+" – "+formatDate(rows[9].date)+" · "+stats.count+" saved flight records · "+view.airport+" departures";
@@ -62,7 +64,7 @@
   function drawCurrent(view) {
     node("current-period").textContent="Departure "+formatDate(view.date)+" · times local to each airport, with timezone labels.";
     if(!view.current.length) {
-      node("current-flights").innerHTML=empty("No saved observation for this flight and date","This does not mean the flight is cancelled or on time. A manual check is needed before a record can be shown here.");
+      node("current-flights").innerHTML=empty("No saved observation for this flight and date","This does not mean the flight is cancelled or on time. A record will appear here when source-backed information is available.");
       node("provider-updated").textContent="Last checked: no matching observation";
       node("source-flight").href="https://www.flightradar24.com/data/flights/"+encodeURIComponent(view.flight.toLowerCase());
       return;
@@ -97,7 +99,7 @@
     node("result-flight").textContent=selection.flight+" · "+selection.airport+(current ? " → "+current.destination : " departures");
     node("result-date").textContent=formatDate(selection.date);
     drawHistory(view);drawCurrent(view);drawOutlook(view);
-    node("fetch-status").textContent=view.current.length ? "Showing saved observations. Ask Codex to check and publish an update when needed." : "No matching saved status. Ask Codex to check this flight and date and add its observations.";
+    node("fetch-status").textContent=view.current.length ? (liveResult ? "Showing source-checked observations. Each record retains its check time." : "Showing the published snapshot. Use Check Flightradar24 for a fresh source lookup.") : "No matching observation is saved for this date. Use Check Flightradar24 to look for its records.";
   }
   function submit(updateUrl) {
     var flight=core.normalFlight(flightField.value),airport=core.normalAirport(airportField.value),date=dateField.value;
@@ -109,6 +111,7 @@
     selection={flight:flight,airport:airport,date:date};
     if(updateUrl) { var url=new URL(location.href);url.searchParams.set("flight",flight);url.searchParams.set("airport",airport);url.searchParams.set("date",date);history.replaceState(null,"",url.toString()); }
     render();
+    return true;
   }
   async function load(initial) {
     if(loading) return;
@@ -119,11 +122,11 @@
       if(!response.ok) throw new Error("The saved observation file could not be loaded.");
       var next=await response.json();
       core.validateSnapshot(next);
-      data=next;
+      data=next;liveResult=false;node("snapshot-tag").textContent="Saved snapshot";
       node("snapshot-summary").textContent="Flight records last checked: "+time(data.checkedAt,"UTC",true)+". Updates are published after source checks with Codex.";
       var defaultRecord=core.select(data,data.defaultFlight,data.defaultAirport,data.defaultDate).current[0];
       var defaultRoute=defaultRecord ? defaultRecord.originName+" ("+defaultRecord.origin+") → "+defaultRecord.destinationName+" ("+defaultRecord.destination+")" : data.defaultAirport+" departures";
-      node("airport-hint").textContent="Default: "+data.defaultFlight+" · "+defaultRoute+" · "+formatDate(data.defaultDate)+". Dates use the departure airport’s local calendar. Search only covers records checked and saved here.";
+      node("airport-hint").textContent="Published default: "+data.defaultFlight+" · "+defaultRoute+" · "+formatDate(data.defaultDate)+". Dates use the departure airport’s local calendar.";
       if(initial || !selection) {
         var query=new URLSearchParams(location.search);
         flightField.value=query.get("flight") || data.defaultFlight;
@@ -141,7 +144,48 @@
       }
     } finally { setBusy(false); }
   }
+  async function configureLiveCheck() {
+    try {
+      var response=await fetch(new URL("api-config.json",location.href),{cache:"no-cache"});
+      if(!response.ok) throw new Error("Configuration unavailable");
+      var config=await response.json();
+      var endpoint=new URL(config.endpoint);
+      var local=["127.0.0.1","localhost"].includes(location.hostname) && ["127.0.0.1","localhost"].includes(endpoint.hostname);
+      if(endpoint.username || endpoint.password || endpoint.search || endpoint.hash || (endpoint.protocol!=="https:" && !(local && endpoint.protocol==="http:"))) throw new Error("Invalid endpoint");
+      apiEndpoint=endpoint.href.replace(/\/$/,"");
+    } catch (_) {
+      node("live-check-note").textContent="Live checks are temporarily unavailable. You can still view the published observations.";
+    }
+    setBusy(loading);
+  }
+  async function checkLive() {
+    if(loading || !apiEndpoint || !submit(true)) return;
+    var requested=Object.assign({},selection);
+    var controller=new AbortController();
+    var timeout=setTimeout(function(){ controller.abort(); },165000);
+    setBusy(true);
+    node("live-check").textContent="Checking Flightradar24…";
+    node("fetch-status").textContent="Reading Flightradar24’s records for this flight and its ten-day history window. This may take a minute or two…";
+    try {
+      var response=await fetch(apiEndpoint+"/check",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(requested),signal:controller.signal});
+      var result=await response.json();
+      if(!response.ok) throw new Error(typeof result.error==="string" ? result.error.slice(0,600) : "The source check could not be completed.");
+      data=window.FlightTrackerLive.merge(data,result,requested);
+      liveResult=true;
+      render();
+      var history=core.select(data,requested.flight,requested.airport,requested.date).history;
+      var found=history.filter(function(day){return day.flights.length;}).length;
+      node("snapshot-tag").textContent="Source checked";
+      node("snapshot-summary").textContent="Latest lookup: "+time(result.snapshot.checkedAt,"UTC",true)+". Each record shows its own source-check time.";
+      node("fetch-status").textContent=(result.cacheHit ? "Loaded a recent Flightradar24 check. " : "Flightradar24 check completed. ")+(result.selectedDateAvailable===false ? "The selected day was unavailable in the retrieved pages. " : "")+found+" of 10 history dates have source-backed records; "+(10-found)+" remain unavailable.";
+    } catch(reason) {
+      node("fetch-status").textContent=(reason.name==="AbortError" ? "The source check timed out." : reason.message)+" The previously displayed observations have been kept.";
+    } finally {
+      clearTimeout(timeout);node("live-check").textContent="Check Flightradar24";setBusy(false);
+    }
+  }
   form.addEventListener("submit",function(event) { event.preventDefault();submit(true); });
   node("refresh").addEventListener("click",function() { load(false); });
-  load(true);
+  node("live-check").addEventListener("click",checkLive);
+  load(true);configureLiveCheck();
 })();

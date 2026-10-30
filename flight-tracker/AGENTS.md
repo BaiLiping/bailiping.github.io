@@ -1,12 +1,18 @@
 # Updating flight observations
 
-This page displays a published JSON snapshot. The user requires Flightradar24
-as the data source and explicitly requested a script that searches its historical
-data. Use `check-flight.cjs` for future flight checks. It calls Codex's web tools
+This page displays a published JSON snapshot and supports on-demand source checks.
+The user requires Flightradar24 as the sole data source and, on 30 October 2026,
+requested an OpenAI API lookup from the webpage, hosted in their Cloudflare account.
+Use `check-flight.cjs` for Codex-assisted publication of historical data. It calls Codex's web tools
 to search and open public Flightradar24 pages, then uses
 `update-observations.cjs` to validate and update `observations.json`.
-Keep this workflow free of flight APIs, API keys, and backend workers.
-The scripts run during authoring; they are not loaded by the visitor's browser.
+The Codex scripts run during authoring; they are not loaded by the browser.
+The webpage's Check Flightradar24 button uses `worker/api.mjs` through the endpoint
+in `api-config.json`. OpenAI only searches and extracts public Flightradar24 data;
+it is not a flight-data provider. Gold-only data is not available to web search.
+Keep API keys in ignored local env files and Cloudflare secrets, never public JS,
+JSON, Git, or logs. A missing source or failed lookup must preserve saved records.
+See `worker/README.md` for deployment and the live-check validation rules.
 
 ## Quick update with Codex
 
@@ -83,7 +89,7 @@ an empty history panel while accessible records exist.
    each lookup. Set top-level `checkedAt` to the latest flight-record check and
    `observationDate` to that check's local date at the default origin. A change
    to defaults alone must not advance any observation's check time.
-6. Run `node --test tests/flight-update.test.cjs tests/flight-history-search.test.cjs`
+6. Run `node --test tests/flight-update.test.cjs tests/flight-history-search.test.cjs tests/flight-live-api.test.mjs`
    after changing the scripts, and `node tests/flight-tracker.test.cjs` after
    every data update. The tests
    validate the current JSON and exercise lookup behavior with separate fixed
@@ -92,7 +98,9 @@ an empty history panel while accessible records exist.
    defaults, including the requested date, and that explicit URL parameters
    still work. Check the historical chart, source links, collapsed history
    details, and mobile layout. Verify that the page requests
-   only local assets and `observations.json` until a source link is clicked.
+   only local assets, `api-config.json`, and `observations.json` on initial load.
+   Live requests must start only after Check Flightradar24 is clicked. Exercise
+   success, missing records, failure preservation, and desktop/mobile behavior.
 7. Follow the requested publication scope and verify the live JSON after
    publishing. Describe exactly which flights and dates were checked and any
    unavailable information. A successful local edit alone is not publication.

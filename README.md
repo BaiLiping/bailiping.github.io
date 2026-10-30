@@ -78,10 +78,14 @@ is wanted. For example: “Check SK935 from CPH for 2026-10-27, update the fligh
 tracker's saved observations with source links and check times, and publish it.”
 `flight-tracker/AGENTS.md` describes the data update procedure and validation.
 
-**Show saved data** filters the published snapshot. **Reload saved data** reads
-the newest published JSON file. Neither button initiates a new source check or
-runs Codex. There is no flight API, backend, API key, credential configuration,
-scheduled refresh, or automatic scraping. Source links open the original pages.
+**Show saved data** filters the loaded observations. **Reload published snapshot**
+reads the newest published JSON file. **Check Flightradar24** requests an on-demand
+lookup through the Cloudflare Worker in `flight-tracker/worker/`. The OpenAI
+Responses API searches only public Flightradar24 pages and extracts dated records;
+it does not use Gold sign-in or another flight provider. Missing dates and context
+remain explicit, and older confirmed actual outcomes cannot be erased by a cached
+schedule. The key stays in a server secret. No live request runs on page load.
+See `flight-tracker/worker/README.md` for setup, limits, and tests.
 The original observations retain their check times when the page is restored;
 restoring the page does not make those observations fresh.
 

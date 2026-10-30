@@ -3,11 +3,11 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="Saved flight observations updated with Codex: flight history, status, departure estimates, sources, and check times. Opens on the most recently requested flight and departure date.">
+  <meta name="description" content="Check Flightradar24 flight history, status, and departure estimates, with source links, check times, and saved observations when a fresh lookup is unavailable.">
   <link rel="canonical" href="https://bailiping.com/flight-tracker/">
   <meta name="theme-color" content="#193c2e">
   <title>Flight Tracker | Bai Liping</title>
-  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="styles.css?v=20261030-live">
 </head>
 <body>
   <header class="site"><nav aria-label="Site navigation">
@@ -18,7 +18,7 @@
     <p class="eyebrow">Tools / Travel</p>
     <h1>Flight tracker</h1>
     <p class="intro">Flight history, flight status, and estimated departure time.</p>
-    <div class="snapshot-banner" role="status"><span class="snapshot-tag">Saved snapshot</span><span id="snapshot-summary">Loading saved observations…</span></div>
+    <div class="snapshot-banner" role="status"><span class="snapshot-tag" id="snapshot-tag">Saved snapshot</span><span id="snapshot-summary">Loading saved observations…</span></div>
 
     <form id="flight-form" class="lookup card" novalidate>
       <div class="field"><label for="flight-number">Flight number</label>
@@ -30,15 +30,19 @@
       <div class="field"><label for="flight-date">Departure date</label>
         <input id="flight-date" name="date" type="date" required>
       </div>
-      <button type="submit" class="primary" id="search-button">Show saved data</button>
+      <div class="lookup-actions">
+        <button type="button" class="primary" id="live-check" disabled>Check Flightradar24</button>
+        <button type="submit" class="secondary" id="search-button">Show saved data</button>
+      </div>
       <p class="hint" id="airport-hint">The most recently requested flight and departure date are shown by default. Dates use the departure airport’s local calendar. Search only covers records checked and saved here.</p>
+      <p class="hint live-note" id="live-check-note">Live checks search public Flightradar24 records. Some dates or fields may be unavailable.</p>
       <p class="error" id="form-error" role="alert" hidden></p>
     </form>
 
     <div class="results" id="results" aria-busy="true">
       <div class="results-heading">
         <div><strong id="result-flight">Loading saved flight…</strong><span id="result-date"></span></div>
-        <button type="button" id="refresh" class="secondary">Reload saved data</button>
+        <button type="button" id="refresh" class="secondary">Reload published snapshot</button>
         <p id="fetch-status" role="status" aria-live="polite"></p>
       </div>
 
@@ -65,7 +69,7 @@
       <section class="panel" aria-labelledby="current-title">
         <div class="panel-header"><span class="section-label">02 / Current status</span>
           <h2 id="current-title">Selected day’s flight</h2>
-          <p id="current-period">Status as observed at the last manual check.</p>
+          <p id="current-period">Status as reported at the last source check.</p>
         </div>
         <div id="current-flights" class="current-flights"></div>
         <div class="provenance"><span>Source: <strong>Flightradar24</strong></span><span id="provider-updated">Last checked: —</span><a id="source-flight" href="https://www.flightradar24.com/data" target="_blank" rel="noopener noreferrer">View original flight record ↗</a></div>
@@ -87,9 +91,9 @@
         </details>
       </section>
     </div>
-    <p class="notice"><strong>Updated with Codex.</strong> Ask Codex to check a flight and publish its observations here. This page displays the saved snapshot, including source links and check times. Reloading reads the latest published snapshot. Status and estimates can change after the displayed check time; other flights and dates appear once their observations have been checked and added.</p>
+    <p class="notice"><strong>Source: Flightradar24.</strong> Use Check Flightradar24 to request a fresh source lookup for the selected flight and date. Each available record keeps its source link and check time. Public history may not cover all ten days; missing records are not treated as cancellations or on-time flights. Older saved records retain their original check times. Status and estimates can change after a check, and source pages may be cached. Reload published snapshot restores the observations published with Codex.</p>
     <noscript><p class="error">JavaScript is needed to display the saved flight observations. You can still <a href="https://www.flightradar24.com/data">view flight records on Flightradar24</a>.</p></noscript>
   </main>
-  <script src="tracker-core.js?v=20261027-history"></script><script src="tracker.js?v=20261027-history"></script>
+  <script src="tracker-core.js?v=20261030-live"></script><script src="live-core.js?v=20261030-live"></script><script src="tracker.js?v=20261030-live"></script>
 </body>
 </html>

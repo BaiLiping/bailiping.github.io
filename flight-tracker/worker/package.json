@@ -1,0 +1,13 @@
+{
+  "name": "bailiping-flight-tracker-api",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "check": "wrangler deploy --dry-run",
+    "deploy": "wrangler deploy",
+    "dev": "wrangler dev --var ALLOWED_ORIGINS:http://127.0.0.1:8765"
+  },
+  "devDependencies": {
+    "wrangler": "4.156.0"
+  }
+}

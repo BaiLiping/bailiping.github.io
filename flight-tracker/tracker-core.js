@@ -112,7 +112,7 @@
       delayedGateCount: gates.filter(function (v) { return v > 0; }).length };
   }
   function outlook(row, now) {
-    if (!row) return { title: "No saved observation", reason: "This flight and date have not been manually checked. No delay probability is available." };
+    if (!row) return { title: "No saved observation", reason: "No source-backed observation is available for this flight and date. No delay probability is available." };
     if (row.cancelled) return { title: "Cancelled at last check", reason: "A departure-delay probability is not applicable to a flight reported cancelled." };
     if (instant(row.actualDeparture) !== null) return { title: "Already departed", reason: "Departure had already occurred when this flight was checked. A pre-departure probability would no longer be a forecast." };
     var estimated = difference(row.scheduledDeparture, row.estimatedDeparture);
