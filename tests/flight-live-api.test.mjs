@@ -23,7 +23,7 @@ test('request only permits Flightradar24 and bounds upstream work',()=>{
 
 test('only retrieved data-page sources can back a flight record',()=>{
   assert.equal(result().snapshot.records[0].departureEvent,'provider-atd');
-  assert.equal(result().missingHistoryDates.length,10);
+  assert.equal(result().missingHistoryDates.length,7);
   assert.throws(()=>validateResult({records:[row]}, {output:[]},query,checkedAt),/source check/);
   assert.throws(()=>validateResult({records:[row]}, {...provider,output:[{...provider.output[0],action:{url:url+'/different'}}]},query,checkedAt),/not backed/);
   for(const sourceUrl of ['https://flightradar24.com.evil.test/data/flights/ua1219','https://www.flightradar24.com/blog/']) {
@@ -51,23 +51,24 @@ test('unavailable or wrong-date context is dropped without losing source-backed 
   assert.equal(validateResult({records:[row],context},sourced,query,checkedAt).snapshot.contexts[0].weather.asOf,item.asOf);
 });
 
-test('browser merge preserves older observations and check times, and rejects another selection',()=>{
+test('browser accepts only the submitted flight, origin, date and seven-day window',()=>{
   const incoming=result();
-  const oldRow={...incoming.snapshot.records[0],date:'2026-10-28',scheduledDeparture:'2026-10-28T13:00:00Z',actualDeparture:null,landedAt:null,scheduledArrival:null,checkedAt:'2026-10-28T14:00:00Z'};
-  const baseline={...incoming.snapshot,records:[oldRow]};
-  const merged=live.merge(baseline,incoming,query);
-  assert.equal(merged.records.length,2);
-  assert.equal(merged.records[0].checkedAt,oldRow.checkedAt);
-  assert.throws(()=>live.merge(baseline,incoming,{...query,airport:'SFO'}),/different/);
-  assert.equal(baseline.records.length,1,'merging does not mutate the fallback snapshot');
+  assert.equal(live.validateResponse(incoming,query),incoming.snapshot);
+  assert.throws(()=>live.validateResponse({...incoming,snapshot:{...incoming.snapshot,records:[]}},query),/No accessible/);
+  for(const update of [{airport:'SFO'},{flight:'BA123'},{date:'2026-10-28'}]) {
+    assert.throws(()=>live.validateResponse(incoming,{...query,...update}),/different/);
+  }
+  const older={...incoming.snapshot.records[0],date:'2026-10-21',scheduledDeparture:'2026-10-21T13:00:00Z',actualDeparture:null,landedAt:null,scheduledArrival:null};
+  assert.throws(()=>live.validateResponse({...incoming,snapshot:{...incoming.snapshot,records:[older]}},query),/outside/);
 });
 
-test('a newer cached schedule cannot erase an actual flight outcome',()=>{
-  const observed=result().snapshot.records[0];
-  const staleSchedule={...observed,status:'Scheduled',actualDeparture:null,landedAt:null,checkedAt:'2026-10-30T11:00:00Z'};
-  const merged=live.mergeRows([observed],[staleSchedule]);
-  assert.equal(merged.length,1);
-  assert.deepEqual(merged[0],observed);
+test('API accepts the seventh preceding date and rejects the eighth',()=>{
+  function dated(date) {
+    return {...row,date,scheduledDeparture:date+'T13:00:00Z',actualDeparture:null,landedAt:null,scheduledArrival:null};
+  }
+  assert.equal(validateResult({records:[dated('2026-10-22')]},provider,query,checkedAt).snapshot.records.length,1);
+  assert.throws(()=>validateResult({records:[dated('2026-10-21')]},provider,query,checkedAt),/outside/);
+  assert.match(buildRequest(query,checkedAt).instructions,/previous seven local dates/);
 });
 
 test('upstream auth, quota and incomplete responses do not expose secrets or become flight records',async()=>{
@@ -95,22 +96,53 @@ class MemoryStorage {
   values=new Map();queue=Promise.resolve();
   async get(key){return structuredClone(this.values.get(key));}
   async put(key,value){this.values.set(key,structuredClone(value));}
+  async list({prefix,limit}){return new Map([...this.values].filter(([key])=>key.startsWith(prefix)).sort().slice(0,limit));}
+  async delete(keys){for(const key of keys)this.values.delete(key);}
   transaction(fn){const operation=this.queue.then(()=>fn(this));this.queue=operation.catch(()=>{});return operation;}
 }
+const context=storage=>({storage,blockConcurrencyWhile:fn=>fn()});
 test('global daily limit is atomic, even with concurrent visitors',async()=>{
-  const object=new LiveChecks({storage:new MemoryStorage()},{MAX_DAILY_CHECKS:'2'});
+  const object=new LiveChecks(context(new MemoryStorage()),{MAX_DAILY_CHECKS:'2'});
   const outcomes=await Promise.allSettled(['a','b','c'].map(ip=>object.reserve(ip,Date.parse(checkedAt))));
   assert.equal(outcomes.filter(r=>r.status==='fulfilled').length,2);
   assert.equal(outcomes.find(r=>r.status==='rejected').reason.code,'daily_limit');
   await object.reserve('d',Date.parse(checkedAt)+86400000);
 });
-test('shared cached checks preserve their check time and avoid another API call',async()=>{
-  const object=new LiveChecks({storage:new MemoryStorage()},{MAX_DAILY_CHECKS:'2'});
+test('each completed search fetches again without persisting or merging flight records',async()=>{
+  const storage=new MemoryStorage();
+  const object=new LiveChecks(context(storage),{MAX_DAILY_CHECKS:'2'});
   let calls=0;
   object.lookup=async()=>{calls++;return result();};
-  const first=await object.check(query,'test','visitor');
-  const second=await object.check(query,'test','visitor');
+  await object.check(query,'visitor');
+  await object.check(query,'visitor');
+  assert.equal(calls,2);
+  assert.deepEqual([...storage.values.keys()].sort(),['budget','input-only-v1']);
+});
+
+test('retired cached results and archives are purged without resetting usage limits',async()=>{
+  const storage=new MemoryStorage();
+  const budget={day:'2026-10-30',total:2,visitors:{}};
+  await storage.put('budget',budget);
+  for(let i=0;i<130;i++) await storage.put('cache:'+i,{record:'old'});
+  await storage.put('archive:UA1219:RNO',{record:'old'});
+  const object=new LiveChecks(context(storage),{});
+  await object.ready;
+  assert.deepEqual(await storage.get('budget'),budget);
+  assert.deepEqual([...storage.values.keys()].sort(),['budget','input-only-v1']);
+});
+
+test('simultaneous identical searches share only the in-flight request',async()=>{
+  const object=new LiveChecks(context(new MemoryStorage()),{MAX_DAILY_CHECKS:'3'});
+  let calls=0,release;
+  object.lookup=async()=>{calls++;await new Promise(resolve=>{release=resolve});return result();};
+  const request=()=>new Request('https://internal/check',{method:'POST',headers:{'X-Visitor':'test'},body:JSON.stringify(query)});
+  const first=object.fetch(request());
+  const second=object.fetch(request());
+  while(!release) await new Promise(resolve=>setTimeout(resolve,0));
+  release();
+  assert.deepEqual((await Promise.all([first,second])).map(response=>response.status),[200,200]);
   assert.equal(calls,1);
-  assert.equal(second.cacheHit,true);
-  assert.equal(second.snapshot.checkedAt,first.snapshot.checkedAt);
+  object.lookup=async()=>{calls++;return result();};
+  assert.equal((await object.fetch(request())).status,200);
+  assert.equal(calls,2);
 });

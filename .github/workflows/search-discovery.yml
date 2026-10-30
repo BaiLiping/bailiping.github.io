@@ -38,7 +38,7 @@ jobs:
           node-version: '24'
       - name: Check sitemap and public page directory
         run: python3 scripts/build-search-index.py --check
-      - name: Check saved flight observations and lookup logic
+      - name: Check flight selection and seven-day history logic
         run: node tests/flight-tracker.test.cjs
-      - name: Check source validation, update scripts, and live API limits
-        run: node --test tests/flight-live-api.test.mjs tests/flight-history-search.test.cjs tests/flight-update.test.cjs
+      - name: Check source validation, fresh lookups, and API limits
+        run: node --test tests/flight-live-api.test.mjs

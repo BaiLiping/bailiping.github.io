@@ -3,11 +3,11 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="Check Flightradar24 flight history, status, and departure estimates, with source links, check times, and saved observations when a fresh lookup is unavailable.">
+  <meta name="description" content="Enter a flight, departure airport, and date to check Flightradar24 for seven days of history, flight status, and departure estimates, with source links and check times.">
   <link rel="canonical" href="https://bailiping.com/flight-tracker/">
   <meta name="theme-color" content="#193c2e">
   <title>Flight Tracker | Bai Liping</title>
-  <link rel="stylesheet" href="styles.css?v=20261030-live">
+  <link rel="stylesheet" href="styles.css?v=20261030-search">
 </head>
 <body>
   <header class="site"><nav aria-label="Site navigation">
@@ -18,7 +18,6 @@
     <p class="eyebrow">Tools / Travel</p>
     <h1>Flight tracker</h1>
     <p class="intro">Flight history, flight status, and estimated departure time.</p>
-    <div class="snapshot-banner" role="status"><span class="snapshot-tag" id="snapshot-tag">Saved snapshot</span><span id="snapshot-summary">Loading saved observations…</span></div>
 
     <form id="flight-form" class="lookup card" novalidate>
       <div class="field"><label for="flight-number">Flight number</label>
@@ -30,25 +29,21 @@
       <div class="field"><label for="flight-date">Departure date</label>
         <input id="flight-date" name="date" type="date" required>
       </div>
-      <div class="lookup-actions">
-        <button type="button" class="primary" id="live-check" disabled>Check Flightradar24</button>
-        <button type="submit" class="secondary" id="search-button">Show saved data</button>
-      </div>
-      <p class="hint" id="airport-hint">The most recently requested flight and departure date are shown by default. Dates use the departure airport’s local calendar. Search only covers records checked and saved here.</p>
-      <p class="hint live-note" id="live-check-note">Live checks search public Flightradar24 records. Some dates or fields may be unavailable.</p>
+      <button type="submit" class="primary" id="live-check" disabled>Check Flightradar24</button>
+      <p class="hint" id="airport-hint">Dates use the departure airport’s local calendar.</p>
+      <p class="hint" id="live-check-note">Search public Flightradar24 records for the selected flight and its previous seven days. Some dates or fields may be unavailable.</p>
       <p class="error" id="form-error" role="alert" hidden></p>
     </form>
 
-    <div class="results" id="results" aria-busy="true">
+    <p id="fetch-status" class="lookup-status" role="status" aria-live="polite">Enter a flight number, departure airport, and date to check Flightradar24.</p>
+    <div class="results" id="results" aria-busy="false" hidden>
       <div class="results-heading">
-        <div><strong id="result-flight">Loading saved flight…</strong><span id="result-date"></span></div>
-        <button type="button" id="refresh" class="secondary">Reload published snapshot</button>
-        <p id="fetch-status" role="status" aria-live="polite"></p>
+        <div><strong id="result-flight"></strong><span id="result-date"></span></div>
       </div>
 
       <section class="panel" aria-labelledby="history-title">
         <div class="panel-header"><span class="section-label">01 / Historical performance</span>
-          <h2 id="history-title">Previous 10 days</h2>
+          <h2 id="history-title">Previous 7 days</h2>
           <p id="history-period">Reported departure and arrival times for this flight and airport.</p>
         </div>
         <div class="metrics" id="history-metrics" aria-label="Historical timing summary"></div>
@@ -87,13 +82,13 @@
           <div class="equation" role="math" aria-label="Probability of delay equals one divided by one plus exp of minus z">P(delay) = 1 / (1 + exp(−z))<br>z = β₀ + β₁r + β₂w + β₃g + β₄v + β₅p + β₆h</div>
           <p>Here <strong>r</strong> is the share of earlier resolved departures delayed at this airport; <strong>w</strong> is forecast wind speed, <strong>g</strong> gusts, <strong>v</strong> visibility, <strong>p</strong> precipitation, and <strong>h</strong> this flight’s historical delay rate. Only information available before the prediction time belongs in the model.</p>
           <p>The β coefficients must be fitted to matched historical flights and weather, then tested on later dates. There is no universal set of coefficients. This page does not invent weights or turn a few observed flights into a calibrated percentage. Takeoff times cannot substitute for gate departure labels when training this model.</p>
-          <p><a href="https://link.springer.com/article/10.1186/s40064-016-2623-5" target="_blank" rel="noopener noreferrer">Research example using logistic regression for airport delays</a> · This is a model family, not a validated SK935 forecast.</p>
+          <p><a href="https://link.springer.com/article/10.1186/s40064-016-2623-5" target="_blank" rel="noopener noreferrer">Research example using logistic regression for airport delays</a> · This model family would need validation for the selected flight.</p>
         </details>
       </section>
     </div>
-    <p class="notice"><strong>Source: Flightradar24.</strong> Use Check Flightradar24 to request a fresh source lookup for the selected flight and date. Each available record keeps its source link and check time. Public history may not cover all ten days; missing records are not treated as cancellations or on-time flights. Older saved records retain their original check times. Status and estimates can change after a check, and source pages may be cached. Reload published snapshot restores the observations published with Codex.</p>
-    <noscript><p class="error">JavaScript is needed to display the saved flight observations. You can still <a href="https://www.flightradar24.com/data">view flight records on Flightradar24</a>.</p></noscript>
+    <p class="notice"><strong>Source: Flightradar24.</strong> Each search checks the selected flight, departure airport, and date. Results include source links and check times. Public history may not cover all seven days; missing records are not treated as cancellations or on-time flights. Status and estimates can change after a check, and source pages may be cached.</p>
+    <noscript><p class="error">JavaScript is needed to search for flight records. You can still <a href="https://www.flightradar24.com/data">view flight records on Flightradar24</a>.</p></noscript>
   </main>
-  <script src="tracker-core.js?v=20261030-live"></script><script src="live-core.js?v=20261030-live"></script><script src="tracker.js?v=20261030-live"></script>
+  <script src="tracker-core.js?v=20261030-search"></script><script src="live-core.js?v=20261030-search"></script><script src="tracker.js?v=20261030-search"></script>
 </body>
 </html>

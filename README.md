@@ -65,34 +65,26 @@ in the browser; the complete list remains available without JavaScript.
 
 ## Flight tracker
 
-The homepage **Tools → Flight Tracker** opens `/flight-tracker/`. It displays
-saved observations from `flight-tracker/observations.json`: ten days of timing
-history, the selected day's status, departure estimates, and dated airport and
-weather context. Each requested flight check also updates `defaultFlight`,
-`defaultAirport`, and `defaultDate`, so the bare page opens on the most recently
-requested flight, origin, and departure date. Explicit flight, origin, and date
-parameters in a shared URL override those defaults.
+The homepage **Tools → Flight Tracker** opens `/flight-tracker/`. Enter a flight
+number, departure airport, and local departure date, then choose **Check
+Flightradar24**. Each submitted search fetches the selected day's status and the
+previous seven days of history through the Cloudflare Worker in
+`flight-tracker/worker/`, including departure estimates and dated airport/weather
+context when the source provides them. Shared URL parameters prefill the form;
+opening a page never starts a paid lookup.
 
-Ask Codex to check the source websites and update that file when new information
-is wanted. For example: “Check SK935 from CPH for 2026-10-27, update the flight
-tracker's saved observations with source links and check times, and publish it.”
-`flight-tracker/AGENTS.md` describes the data update procedure and validation.
-
-**Show saved data** filters the loaded observations. **Reload published snapshot**
-reads the newest published JSON file. **Check Flightradar24** requests an on-demand
-lookup through the Cloudflare Worker in `flight-tracker/worker/`. The OpenAI
-Responses API searches only public Flightradar24 pages and extracts dated records;
-it does not use Gold sign-in or another flight provider. Missing dates and context
-remain explicit, and older confirmed actual outcomes cannot be erased by a cached
-schedule. The key stays in a server secret. No live request runs on page load.
-See `flight-tracker/worker/README.md` for setup, limits, and tests.
-The original observations retain their check times when the page is restored;
-restoring the page does not make those observations fresh.
+The OpenAI Responses API searches only public Flightradar24 pages. The API key
+stays in a Cloudflare secret. The page has no saved dataset or default flight,
+and searches neither reuse a result cache nor merge old flight records. Missing
+records remain explicit; changing the inputs or a failed lookup clears prior
+results. See `flight-tracker/AGENTS.md` and `flight-tracker/worker/README.md` for
+source validation, deployment, and usage limits.
 
 Validate updates with:
 
 ```sh
 node tests/flight-tracker.test.cjs
+node --test tests/flight-live-api.test.mjs
 python3 scripts/build-search-index.py --check
 python3 -m http.server 8769 --bind 127.0.0.1
 ```

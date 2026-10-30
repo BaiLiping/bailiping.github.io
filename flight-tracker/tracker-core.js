@@ -3,6 +3,7 @@
   else root.FlightTracker = factory();
 })(typeof globalThis !== "undefined" ? globalThis : this, function () {
   "use strict";
+  var HISTORY_DAYS = 7;
   function normalFlight(value) { return String(value || "").toUpperCase().replace(/[\s-]+/g, ""); }
   function validFlight(value) { return /^(?:[A-Z]{3}|[A-Z][A-Z0-9]|[0-9][A-Z])[0-9]{1,5}[A-Z]?$/.test(value); }
   function normalAirport(value) { return String(value || "").trim().toUpperCase(); }
@@ -23,7 +24,7 @@
   }
   function validateSnapshot(data) {
     function check(condition, label) {
-      if (!condition) throw new Error("The saved observation file has an invalid " + label + ".");
+      if (!condition) throw new Error("The flight lookup has an invalid " + label + ".");
     }
     function source(value) {
       check(validSourceUrl(value), "source link");
@@ -93,7 +94,7 @@
     var datasetDay = validDate(data.observationDate) ? data.observationDate : data.defaultDate;
     var anchor = date > datasetDay ? datasetDay : date;
     var history = [];
-    for (var i = 10; i >= 1; i--) {
+    for (var i = HISTORY_DAYS; i >= 1; i--) {
       var day = shiftDay(anchor, -i);
       history.push({ date: day, flights: records.filter(function (r) { return r.date === day; }) });
     }
@@ -112,7 +113,7 @@
       delayedGateCount: gates.filter(function (v) { return v > 0; }).length };
   }
   function outlook(row, now) {
-    if (!row) return { title: "No saved observation", reason: "No source-backed observation is available for this flight and date. No delay probability is available." };
+    if (!row) return { title: "No flight record available", reason: "No source-backed observation is available for this flight and date. No delay probability is available." };
     if (row.cancelled) return { title: "Cancelled at last check", reason: "A departure-delay probability is not applicable to a flight reported cancelled." };
     if (instant(row.actualDeparture) !== null) return { title: "Already departed", reason: "Departure had already occurred when this flight was checked. A pre-departure probability would no longer be a forecast." };
     var estimated = difference(row.scheduledDeparture, row.estimatedDeparture);
@@ -120,9 +121,9 @@
       title: estimated > 0 ? "Departure estimated " + estimated + " minutes after schedule" : estimated < 0 ? "Departure estimated " + Math.abs(estimated) + " minutes before schedule" : "Departure estimated on schedule",
       reason: "This is Flightradar24’s published departure-time estimate at the last check. It may change. Flightradar24 does not provide a probability percentage in this record."
     };
-    if (instant(row.scheduledDeparture) !== null && instant(row.scheduledDeparture) <= now) return { title: "Departure outcome needs checking", reason: "The scheduled departure time has passed. The saved observation does not confirm an actual departure; no fresh status or probability is inferred." };
+    if (instant(row.scheduledDeparture) !== null && instant(row.scheduledDeparture) <= now) return { title: "Departure outcome unavailable", reason: "The scheduled departure time has passed. The retrieved record does not confirm an actual departure; no status or probability is inferred." };
     return { title: "Insufficient evidence for a percentage", reason: "A reliable estimate needs earlier airport departures, a forecast issued before departure, and a model fitted and tested on comparable records." };
   }
-  return { normalFlight: normalFlight, validFlight: validFlight, normalAirport: normalAirport, validAirport: validAirport,
+  return { HISTORY_DAYS: HISTORY_DAYS, normalFlight: normalFlight, validFlight: validFlight, normalAirport: normalAirport, validAirport: validAirport,
     validDate: validDate, instant: instant, validSourceUrl: validSourceUrl, validateSnapshot: validateSnapshot, difference: difference, gateDelay: gateDelay, select: select, stats: stats, outlook: outlook };
 });

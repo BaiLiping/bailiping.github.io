@@ -1,9 +1,8 @@
 import {lookup,LookupError} from './api.mjs';
 import live from '../live-core.js';
-import core from '../tracker-core.js';
 
 const json = (value,status=200,headers={}) => new Response(JSON.stringify(value),{status,headers:{'Content-Type':'application/json; charset=utf-8','Cache-Control':'no-store',...headers}});
-const failure = error => json({error:error instanceof LookupError?error.message:'The live check could not be completed. Saved observations are still available.',code:error.code || 'lookup_failed'},error.status || 502);
+const failure = error => json({error:error instanceof LookupError?error.message:'The flight lookup could not be completed. Please try again.',code:error.code || 'lookup_failed'},error.status || 502);
 
 export default {
   async fetch(request,env) {
@@ -37,14 +36,29 @@ export default {
 };
 
 export class LiveChecks {
-  constructor(ctx,env) { this.ctx=ctx;this.env=env;this.pending=new Map(); }
+  constructor(ctx,env) {
+    this.ctx=ctx;this.env=env;this.pending=new Map();
+    this.ready=ctx.blockConcurrencyWhile(async()=>{
+      if(await ctx.storage.get('input-only-v1')) return;
+      // Remove the retired result cache and archive, preserving usage counters.
+      for(const prefix of ['cache:','archive:']) {
+        let entries;
+        do {
+          entries=await ctx.storage.list({prefix,limit:128});
+          if(entries.size) await ctx.storage.delete([...entries.keys()]);
+        } while(entries.size===128);
+      }
+      await ctx.storage.put('input-only-v1',true);
+    });
+  }
   async lookup(query) { return lookup(query,this.env); }
   async fetch(request) {
     try {
+      await this.ready;
       const query=live.selection(await request.json());
       const key=[query.flight,query.airport,query.date].join(':');
       if(!this.pending.has(key)) {
-        const promise=this.check(query,key,request.headers.get('X-Visitor') || 'unknown').finally(()=>this.pending.delete(key));
+        const promise=this.check(query,request.headers.get('X-Visitor') || 'unknown').finally(()=>this.pending.delete(key));
         this.pending.set(key,promise);
       }
       return json(await this.pending.get(key));
@@ -60,29 +74,15 @@ export class LiveChecks {
       const previous=await txn.get('budget');
       const budget=previous?.day===day?previous:{day,total:0,visitors:{}};
       const count=budget.visitors[visitorId]?.hour===hour?budget.visitors[visitorId].count:0;
-      if(budget.total>=daily) throw new LookupError('Today’s live-check allowance has been reached. Saved observations remain available. Please try again tomorrow.',429,'daily_limit');
-      if(count>=3) throw new LookupError('Please wait before requesting another live check. Saved observations remain available.',429,'rate_limit');
+      if(budget.total>=daily) throw new LookupError('Today’s flight-lookup allowance has been reached. Please try again tomorrow.',429,'daily_limit');
+      if(count>=3) throw new LookupError('Please wait before requesting another flight lookup.',429,'rate_limit');
       budget.total++;budget.visitors[visitorId]={hour,count:count+1};
       await txn.put('budget',budget);
     });
   }
-  async check(query,key,visitor) {
-    const now=Date.now();
-    const cached=await this.ctx.storage.get('cache:'+key);
-    if(cached && now-cached.savedAt<15*60*1000) return {...cached.result,cacheHit:true};
-    await this.reserve(visitor,now);
-    const result=await this.lookup(query);
-    const archiveKey='archive:'+query.flight+':'+query.airport;
-    await this.ctx.storage.transaction(async txn=>{
-      const previous=await txn.get(archiveKey);
-      const records=live.mergeRows(previous?.records || [],result.snapshot.records).sort((a,b)=>b.date.localeCompare(a.date)).slice(0,150);
-      await txn.put(archiveKey,{records});
-      // Past source checks remain dated; they are never stamped as newly checked.
-      result.snapshot.records=records;
-      const history=core.select(result.snapshot,query.flight,query.airport,query.date).history;
-      result.missingHistoryDates=history.filter(day=>!day.flights.length).map(day=>day.date);
-      await txn.put('cache:'+key,{savedAt:Date.now(),result});
-    });
-    return result;
+  async check(query,visitor) {
+    await this.ready;
+    await this.reserve(visitor,Date.now());
+    return this.lookup(query);
   }
 }

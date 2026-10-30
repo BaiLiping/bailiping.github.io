@@ -1,13 +1,8 @@
-// Offline validation of the published snapshot, plus independent behavior fixtures.
+// Offline validation using synthetic records, independent of live source availability.
 const assert = require('node:assert/strict');
-const fs = require('node:fs');
-const path = require('node:path');
 const core = require('../flight-tracker/tracker-core.js');
-const root = path.join(__dirname, '..', 'flight-tracker');
-const publishedData = JSON.parse(fs.readFileSync(path.join(root, 'observations.json'), 'utf8'));
-core.validateSnapshot(publishedData);
 
-// Synthetic fixtures stay fixed when Codex publishes newer observations.
+// Include older records to verify that only the preceding seven dates are selected.
 const base = {
   flight:'SK935', aliases:['SAS935'], origin:'CPH', originAliases:['EKCH'], destination:'SFO',
   originName:'Copenhagen', destinationName:'San Francisco',
@@ -50,15 +45,15 @@ assert.equal(core.instant('2026-10-26 12:00'),null,'Unzoned times are not accept
 
 const view=core.select(data,'SK935','CPH','2026-10-26');
 assert.equal(view.current.length,1);
-assert.equal(view.history.length,10);
-assert.equal(view.history[0].date,'2026-10-16');
-assert.equal(view.history[9].date,'2026-10-25');
-assert.equal(view.history.flatMap(x=>x.flights).length,10);
+assert.equal(view.history.length,7);
+assert.equal(view.history[0].date,'2026-10-19');
+assert.equal(view.history[6].date,'2026-10-25');
+assert.equal(view.history.flatMap(x=>x.flights).length,7);
 assert.equal(core.select(data,'SK935','ARN','2026-10-26').current.length,0,'Never reuse another origin');
 assert.equal(core.select(data,'BA247','CPH','2026-10-26').current.length,0,'Never reuse another flight');
 assert.equal(core.select(data,'SK935','CPH','2026-10-28').current.length,0,'Never reuse another date');
 assert.equal(core.select(data,'SAS935','EKCH','2026-10-26').current.length,1,'Known aliases work');
-assert.equal(core.select(data,'SK935','CPH','2026-11-01').history[9].date,'2026-10-25','Future history is anchored to the saved observation day');
+assert.equal(core.select(data,'SK935','CPH','2026-11-01').history[6].date,'2026-10-25','Future history is anchored to the source-check day');
 
 const r=view.current[0];
 assert.equal(core.difference(r.scheduledDeparture,r.actualDeparture),16);
@@ -72,15 +67,15 @@ assert.equal(stats.delayedGateCount,1);
 assert.equal(core.stats([r]).arrivalCount,0,'Estimated arrival is excluded from actual history');
 assert.equal(core.stats([]).meanDeparture,null,'Missing data is not zero delay');
 assert.equal(core.outlook(r,Date.parse('2026-10-26T14:00:00Z')).title,'Already departed');
-assert.equal(core.outlook({...r,actualDeparture:null},Date.parse('2026-10-26T14:00:00Z')).title,'Departure outcome needs checking');
+assert.equal(core.outlook({...r,actualDeparture:null},Date.parse('2026-10-26T14:00:00Z')).title,'Departure outcome unavailable');
 assert.equal(core.outlook({...r,actualDeparture:null},Date.parse('2026-10-26T10:00:00Z')).title,'Insufficient evidence for a percentage');
 const future=core.select(data,'SK935','CPH','2026-10-27').current[0];
 assert.match(core.outlook(future,Date.parse('2026-10-26T14:00:00Z')).title,/10 minutes after schedule/);
-assert.equal(core.outlook(future,Date.parse('2026-10-27T14:00:00Z')).title,'Departure outcome needs checking','Old estimates do not become current status');
+assert.equal(core.outlook(future,Date.parse('2026-10-27T14:00:00Z')).title,'Departure outcome unavailable','Old estimates do not become current status');
 
 const old={...r,checkedAt:'2026-10-26T12:00:00Z',estimatedArrival:'2026-10-26T23:00:00Z'};
-assert.equal(core.select({...data,records:[r,old]},'SK935','CPH',r.date).current[0].estimatedArrival,r.estimatedArrival,'Latest manual observation wins, without duplicate flights');
-for(const record of publishedData.records){
+assert.equal(core.select({...data,records:[r,old]},'SK935','CPH',r.date).current[0].estimatedArrival,r.estimatedArrival,'Latest source observation wins, without duplicate flights');
+for(const record of data.records){
   assert.ok(core.validDate(record.date));
   assert.ok(core.instant(record.checkedAt)!==null);
   assert.equal(new Intl.DateTimeFormat('en-CA',{timeZone:record.originTimeZone,year:'numeric',month:'2-digit',day:'2-digit'}).format(new Date(record.scheduledDeparture)),record.date,'Departure date is local to origin');
@@ -89,4 +84,4 @@ for(const record of publishedData.records){
 // Copenhagen changed from summer time on 25 October; San Francisco did not.
 assert.equal(new Intl.DateTimeFormat('en-GB',{timeZone:'Europe/Copenhagen',hour:'2-digit',minute:'2-digit',hour12:false}).format(new Date(data.records.find(r=>r.date==='2026-10-24').scheduledDeparture)),'12:45');
 assert.equal(new Intl.DateTimeFormat('en-GB',{timeZone:'Europe/Copenhagen',hour:'2-digit',minute:'2-digit',hour12:false}).format(new Date(r.scheduledDeparture)),'12:40');
-console.log('Flight tracker: published snapshot validation, selection isolation, timestamp arithmetic, event semantics, missing data, deduplication, and forecast abstention passed.');
+console.log('Flight tracker: response validation and seven-day history, selection isolation, timestamp arithmetic, event semantics, missing data, deduplication, and forecast abstention passed.');

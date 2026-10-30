@@ -1,8 +1,9 @@
 # Flight tracker live checks
 
 The webpage calls this Cloudflare Worker to obtain source-backed flight records
-from public Flightradar24 pages through OpenAI Responses web search. The existing
-Codex authoring scripts and published `observations.json` remain available.
+from public Flightradar24 pages through OpenAI Responses web search. Every
+submitted search fetches new data for the selected flight, departure airport,
+and local date, including the previous seven days.
 
 The OpenAI API key belongs to the user's Personal / Default project and is kept
 in the ignored repository-root `.env.local` and the deployed `OPENAI_API_KEY`
@@ -39,24 +40,26 @@ does not enable paid billing or automatic credit purchases.
   is dropped without losing valid flight records. No delay probability is invented.
 - Public history may be incomplete; Gold subscription credentials are not used.
   A result can contain history without a selected-day record, and the UI says so.
+  The page starts empty; shared URL parameters only prefill the form.
 - The global Durable Object enforces at most 10 new checks per UTC day and three
   per visitor per hour. Each request permits at most six web-tool calls and 10,000
   output tokens. Failed upstream requests still count toward the daily allowance.
   Visitor addresses are hashed with the current day and kept only in that day's
   counter, rather than stored as raw addresses.
-- Successful identical selections share a 15-minute cache. Check times do not
-  advance when cached data is reused. Up to 150 prior records per flight/origin
-  are retained to extend history across checks, with their original check times.
-- API results update the current view and shared backend history. They do not
-  commit to GitHub or change the public default flight/date for other visitors.
-  Codex publication remains the way to change the bare-page default.
+- Results are not cached or archived. Every completed search is followed by a new
+  API lookup on the next submission. Only simultaneous identical requests share
+  an in-flight call. The retired cache/archive is removed on initialization,
+  without resetting usage counters.
+- The frontend replaces the entire result with the response to the submitted
+  inputs. Input edits, errors, and empty lookups clear previous results; there is
+  no saved dataset or fallback. No flight/date is selected by default.
 
 ## Verification
 
 From the repository root:
 
 ```sh
-node --test tests/flight-live-api.test.mjs tests/flight-history-search.test.cjs tests/flight-update.test.cjs
+node --test tests/flight-live-api.test.mjs
 node tests/flight-tracker.test.cjs
 python3 scripts/build-search-index.py --check
 git diff --check
@@ -68,7 +71,8 @@ Bundle check, from this directory:
 npx --yes wrangler@4.156.0 deploy --dry-run
 ```
 
-Exercise the browser at desktop/mobile widths: saved loading, live success,
-partial history, unavailable selected date, error preservation, invalid inputs,
-and reloading the published snapshot. Initial page load must not call OpenAI.
-Verify real production checks separately from mocked browser cases.
+Exercise the browser at desktop/mobile widths: empty form, URL prefill without
+fetching, button and Enter submission, seven-day history, partial results,
+unavailable selected date, input changes, and failure without stale records.
+Initial page load must not call OpenAI or load a dataset. Verify a real production
+lookup separately from mocked browser cases.
