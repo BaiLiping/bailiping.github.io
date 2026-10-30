@@ -1,5 +1,6 @@
 import core from '../tracker-core.js';
 import live from '../live-core.js';
+import {addPublicContext} from './source-context.mjs';
 
 const DAY = 86400000;
 const string = {type:'string'};
@@ -103,6 +104,7 @@ export function validateResult(payload,response,query,checkedAt) {
             !(item.origin===first.origin || first.originAliases.includes(item.origin)) || core.instant(item.asOf)===null ||
             Date.parse(item.asOf)>Date.parse(checkedAt)+60000 || !['observation','forecast'].includes(item.kind)) throw new Error('Unverified context');
         if(item.kind==='observation' && dayAt(item.asOf,first.originTimeZone)!==query.date) throw new Error('Different observation date');
+        if(item.kind==='observation' && first.scheduledDeparture && Date.parse(item.asOf)>Date.parse(first.scheduledDeparture)) throw new Error('Observation after departure');
         if(item.kind==='forecast' && (!first.scheduledDeparture || Date.parse(item.asOf)>Date.parse(first.scheduledDeparture))) throw new Error('Forecast issued after departure');
         context[name]={summary:boundedText(item.summary,1200,'context summary'),details:boundedText(item.details,1800,'context details',true),sourceUrl:item.sourceUrl,checkedAt,asOf:item.asOf,kind:item.kind,evidenceQuote:boundedText(item.evidenceQuote,1800,'context evidence')};
       } catch { unavailableContext.push(name); }
@@ -152,5 +154,6 @@ export async function lookup(query,env,{fetchImpl=fetch,now=()=>new Date().toISO
   const text=(result.output || []).filter(item=>item.type==='message').flatMap(item=>item.content || []).filter(item=>item.type==='output_text').map(item=>item.text).join('');
   let payload;
   try { payload=JSON.parse(text); } catch { throw new LookupError('The source check did not return readable flight records.'); }
-  return validateResult(payload,result,query,now());
+  const validated=validateResult(payload,result,query,now());
+  return env.FR24_DIRECT_CONTEXT==='true' ? addPublicContext(validated,query,{fetchImpl,now}) : validated;
 }

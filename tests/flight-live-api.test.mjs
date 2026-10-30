@@ -3,6 +3,7 @@ import assert from 'node:assert/strict';
 import {buildRequest,validateResult,lookup} from '../flight-tracker/worker/api.mjs';
 import worker,{LiveChecks} from '../flight-tracker/worker/worker.mjs';
 import live from '../flight-tracker/live-core.js';
+import {airportPage,departureEstimate,departureContext,weatherContext,addPublicContext} from '../flight-tracker/worker/source-context.mjs';
 
 const query={flight:'UA1219',airport:'RNO',date:'2026-10-29'};
 const checkedAt='2026-10-30T10:00:00Z';
@@ -49,6 +50,86 @@ test('unavailable or wrong-date context is dropped without losing source-backed 
   const wrongDay=validateResult({records:[row],context:{...context,weather:{...item,asOf:'2026-10-30T12:00:00Z'}}},sourced,query,checkedAt);
   assert.deepEqual(wrongDay.snapshot.contexts,[]);
   assert.equal(validateResult({records:[row],context},sourced,query,checkedAt).snapshot.contexts[0].weather.asOf,item.asOf);
+  const afterDeparture=validateResult({records:[row],context:{...context,weather:{...item,asOf:'2026-10-29T13:10:00Z'}}},sourced,query,checkedAt);
+  assert.deepEqual(afterDeparture.snapshot.contexts,[]);
+});
+
+const airport={iata:'RNO',icao:'KRNO',timezone:'America/Los_Angeles'};
+const metar=(time,temperature=13)=>({timeUtc:Date.parse(time)/1000,metar:'KRNO '+time.slice(8,10)+time.slice(11,13)+time.slice(14,16)+'Z 00000KT 10SM SCT060 13/00 A2988',temperature,temperatureUnit:'°C',condition:{label:'Cloudy'},wind:{speed:0,speedUnit:'kts'},visibility:10,visibilityUnit:'SM'});
+const weatherPage={airport,latestMetar:metar('2026-10-30T09:55:00Z'),weatherHistory:[metar('2026-10-29T13:55:00Z'),metar('2026-10-29T12:55:00Z'),metar('2026-10-29T11:55:00Z')]};
+const departuresPage={airport,meta:{dateModified:'2026-10-29T12:58:00Z',outsideAllowance:false},statistics:{live:{averageDelayMin:12},today:{delayed:4,cancelled:0}}};
+const encodePage=props=>'<div data-page="'+JSON.stringify({props}).replace(/&/g,'&amp;').replace(/"/g,'&quot;')+'"></div>';
+
+test('public page parser excludes account fields and never executes page scripts',()=>{
+  const parsed=airportPage(encodePage({...weatherPage,dispatcher:{sessionToken:'must-not-leave-parser'},extra:'ignored'})+'<script>throw new Error("not executed")</script>');
+  assert.equal(parsed.airport.iata,'RNO');
+  assert.equal(parsed.dispatcher,undefined);
+  assert.equal(parsed.extra,undefined);
+  assert.equal(airportPage('<p>Sign in</p>'),null);
+});
+
+test('weather selects a recent observation before departure, never a later observation or another airport',()=>{
+  const context=weatherContext(weatherPage,row,checkedAt,'https://www.flightradar24.com/data/airports/rno/weather');
+  assert.equal(context.asOf,'2026-10-29T12:55:00Z');
+  assert.equal(context.kind,'observation');
+  assert.match(context.summary,/13 °C/);
+  assert.equal(weatherContext({...weatherPage,airport:{...airport,iata:'SFO',icao:'KSFO'}},row,checkedAt,url),null);
+  assert.equal(weatherContext({...weatherPage,weatherHistory:[metar('2026-10-29T09:55:00Z')]},row,checkedAt,url),null);
+  assert.equal(weatherContext({...weatherPage,weatherHistory:[{...metar('2026-10-29T12:55:00Z'),metar:'KSFO 291255Z 00000KT'}]},row,checkedAt,url),null);
+  assert.equal(weatherContext({...weatherPage,weatherHistory:[{...metar('2026-10-29T12:55:00Z'),metar:'KRNO 281255Z 00000KT'}]},row,checkedAt,url),null);
+  assert.equal(weatherContext(weatherPage,{...row,date:'2026-10-28',scheduledDeparture:'2026-10-28T13:00:00Z'},checkedAt,url),null);
+  const futureWeather=weatherContext({...weatherPage,latestMetar:metar('2026-10-29T12:55:00Z'),weatherHistory:[]},row,'2026-10-29T12:58:00Z',url);
+  assert.equal(futureWeather.asOf,'2026-10-29T12:55:00Z');
+});
+
+test('enabled lookup adds public weather to validated flight results',async()=>{
+  const incoming=await lookup(query,{OPENAI_API_KEY:'test-secret',FR24_DIRECT_CONTEXT:'true'},{now:()=>checkedAt,fetchImpl:async(address,options)=>{
+    if(address==='https://api.openai.com/v1/responses') return Response.json({...provider,output:[...provider.output,{type:'message',content:[{type:'output_text',text:JSON.stringify({records:[row],context:null})}]}]});
+    assert.equal(options.headers.Authorization,undefined);
+    return new Response(encodePage(address.endsWith('/weather')?weatherPage:departuresPage),{headers:{'Content-Type':'text/html'}});
+  }});
+  assert.equal(incoming.snapshot.contexts[0].weather.asOf,'2026-10-29T12:55:00Z');
+  assert.deepEqual(incoming.unavailableContext,['airport']);
+});
+
+test('current airport totals are available before a same-day flight, never as historical pre-departure evidence',()=>{
+  const before='2026-10-29T12:59:00Z';
+  assert.match(departureContext(departuresPage,row,before,url).summary,/12 minutes/);
+  assert.equal(departureContext({...departuresPage,meta:{dateModified:'2026-10-29T13:05:00Z'}},row,'2026-10-29T13:06:00Z',url),null);
+  assert.equal(departureContext(departuresPage,row,checkedAt,url),null);
+  assert.equal(departureContext({...departuresPage,meta:{...departuresPage.meta,outsideAllowance:true}},row,before,url),null);
+});
+
+test('departure estimate requires the same flight, route and scheduled instant and never overwrites actual departure',()=>{
+  const upcoming={...row,actualDeparture:null,landedAt:null};
+  const flight={flightNumber:'UA1219',callsign:'UAL1219',endpoint:{iata:'SFO',icao:'KSFO'},scheduledTime:Date.parse(row.scheduledDeparture)/1000,estimatedTime:Date.parse('2026-10-29T13:20:00Z')/1000,status:{name:'estimated'}};
+  const page={...departuresPage,flights:[flight]};
+  const before='2026-10-29T12:59:00Z';
+  assert.equal(departureEstimate(page,upcoming,before,url).time,'2026-10-29T13:20:00Z');
+  assert.equal(departureEstimate(page,row,before,url),null);
+  assert.equal(departureEstimate(page,{...upcoming,cancelled:true},before,url),null);
+  assert.equal(departureEstimate(page,upcoming,checkedAt,url),null);
+  for(const update of [{flightNumber:'BA123',callsign:'BAW123'},{endpoint:{iata:'LAX',icao:'KLAX'}},{scheduledTime:flight.scheduledTime-86400},{status:{name:'departed'}}]) {
+    assert.equal(departureEstimate({...page,flights:[{...flight,...update}]},upcoming,before,url),null);
+  }
+});
+
+test('direct context uses two fixed public URLs, no credentials, and tolerates blocked or changed pages',async()=>{
+  const urls=[];
+  const incoming=await addPublicContext(result(),query,{now:()=>checkedAt,fetchImpl:async(address,options)=>{
+    urls.push(address);
+    assert.equal(options.redirect,'manual');
+    assert.equal(options.headers.Authorization,undefined);
+    assert.equal(options.headers.Cookie,undefined);
+    return address.endsWith('/weather')?new Response(encodePage(weatherPage),{headers:{'Content-Type':'text/html'}}):new Response('blocked',{status:403});
+  }});
+  assert.deepEqual(urls,['https://www.flightradar24.com/data/airports/rno/departures','https://www.flightradar24.com/data/airports/rno/weather']);
+  assert.deepEqual(incoming.unavailableContext,['airport']);
+  assert.equal(incoming.snapshot.contexts[0].weather.asOf,'2026-10-29T12:55:00Z');
+  assert.equal(live.validateResponse(incoming,query).records.length,1);
+  for(const fetchImpl of [async()=>new Response('<div data-page="bad"></div>',{headers:{'Content-Type':'text/html'}}),async()=>{throw new Error('timeout');},async()=>new Response(encodePage(weatherPage),{headers:{'Content-Type':'text/html','Content-Length':'3000000'}})]) {
+    assert.deepEqual(await addPublicContext(result(),query,{fetchImpl,now:()=>checkedAt}),result());
+  }
 });
 
 test('browser accepts only the submitted flight, origin, date and seven-day window',()=>{

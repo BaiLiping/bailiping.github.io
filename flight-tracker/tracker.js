@@ -82,15 +82,16 @@
   function drawOutlook(view) {
     var r=view.current[0], result=core.outlook(r,Date.now()), context=view.context;
     node("delay-outlook").innerHTML='<div class="outlook-label">'+esc(result.title)+'</div>'+((r && !r.actualDeparture && r.estimatedDeparture) ? '<p class="forecast-time">Estimated departure: <strong>'+esc(time(r.estimatedDeparture,r.originTimeZone,true))+'</strong></p>' : '')+'<p>'+esc(result.reason)+'</p>';
+    if(r && !r.actualDeparture && r.departureEstimateSource) node("delay-outlook").innerHTML+='<p class="record-note">Reported '+esc(time(r.departureEstimateSource.asOf,r.originTimeZone,true))+' · '+link(r.departureEstimateSource.sourceUrl,"Departure estimate source")+'</p>';
     if(context && context.airport) {
       var a=context.airport;
-      node("airport-context").innerHTML='<p>'+esc(a.summary)+'</p>'+(a.details?'<p class="record-note">'+esc(a.details)+'</p>':'')+'<p class="record-note">Checked '+esc(time(a.checkedAt,"UTC",true))+'</p>'+link(a.sourceUrl,"Airport departure board");
+      node("airport-context").innerHTML='<p>'+esc(a.summary)+'</p>'+(a.details?'<p class="record-note">'+esc(a.details)+'</p>':'')+'<p class="record-note">'+(a.asOf?'Reported '+esc(time(a.asOf,r?r.originTimeZone:"UTC",true))+' · ':'')+'Checked '+esc(time(a.checkedAt,"UTC",true))+'</p>'+link(a.sourceUrl,"Airport departure board");
       if(Array.isArray(a.samples) && a.samples.length) node("airport-context").innerHTML+='<details class="sample-details"><summary>View the '+a.samples.length+' sampled flights</summary><div class="sample-scroll"><table><caption>'+esc(formatDate(context.date)+' · '+context.origin+' local time'+(a.timeZone ? ' ('+a.timeZone+')' : ''))+'</caption><thead><tr><th>Flight</th><th>Scheduled</th><th>Reported departure</th></tr></thead><tbody>'+a.samples.map(function(s) { return '<tr><td>'+esc(s.flight)+'</td><td>'+esc(s.scheduled)+'</td><td>'+esc(s.reported || 'Not resolved')+'</td></tr>'; }).join('')+'</tbody></table></div></details>';
-    } else node("airport-context").innerHTML='<p>No earlier-departure sample was available for this flight date.</p>';
+    } else node("airport-context").innerHTML='<p>No airport conditions recorded before this departure were available.</p>';
     if(context && context.weather) {
       var w=context.weather;
-      node("weather-context").innerHTML='<p>'+esc(w.summary)+'</p>'+(w.report?'<p class="weather-report">'+esc(w.report)+'</p>':'')+(w.details?'<p class="record-note">'+esc(w.details)+'</p>':'')+'<p class="record-note">Checked '+esc(time(w.checkedAt,"UTC",true))+'</p>'+link(w.sourceUrl,"Airport weather");
-    } else node("weather-context").innerHTML='<p>No forecast issued before this departure was available. Current weather cannot reconstruct what was forecast beforehand.</p>';
+      node("weather-context").innerHTML='<p>'+esc(w.summary)+'</p>'+(w.report?'<p class="weather-report">'+esc(w.report)+'</p>':'')+(w.details?'<p class="record-note">'+esc(w.details)+'</p>':'')+'<p class="record-note">'+(w.asOf?(w.kind==='forecast'?'Forecast issued ':'Observed ')+esc(time(w.asOf,r?r.originTimeZone:"UTC",true))+' · ':'')+'Checked '+esc(time(w.checkedAt,"UTC",true))+'</p>'+link(w.sourceUrl,"Airport weather");
+    } else node("weather-context").innerHTML='<p>No weather observation or forecast was available for this departure time.</p>';
   }
   function render() {
     if(!selection || !data) return;

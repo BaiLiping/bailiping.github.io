@@ -7,6 +7,7 @@ workers_dev = true
 ALLOWED_ORIGINS = "https://bailiping.com"
 OPENAI_MODEL = "gpt-6-astra"
 MAX_DAILY_CHECKS = "10"
+FR24_DIRECT_CONTEXT = "true"
 
 [[durable_objects.bindings]]
 name = "LIVE_CHECKS"

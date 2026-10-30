@@ -76,7 +76,7 @@
           <p>Flightradar24’s departure estimate, with airport and weather context where available.</p>
         </div>
         <div class="outlook" id="delay-outlook"></div>
-        <div class="context-grid"><article><h3>Earlier airport departures</h3><div id="airport-context"></div></article><article><h3>Weather at departure</h3><div id="weather-context"></div></article></div>
+        <div class="context-grid"><article><h3>Airport conditions</h3><div id="airport-context"></div></article><article><h3>Airport weather</h3><div id="weather-context"></div></article></div>
         <details class="method"><summary>How a delay probability would be calculated</summary>
           <p>Define a delayed departure as <strong>actual gate departure − scheduled gate departure &gt; 0</strong>. A standard approach is logistic regression:</p>
           <div class="equation" role="math" aria-label="Probability of delay equals one divided by one plus exp of minus z">P(delay) = 1 / (1 + exp(−z))<br>z = β₀ + β₁r + β₂w + β₃g + β₄v + β₅p + β₆h</div>
@@ -89,6 +89,6 @@
     <p class="notice"><strong>Source: Flightradar24.</strong> Each search checks the selected flight, departure airport, and date. Results include source links and check times. Public history may not cover all seven days; missing records are not treated as cancellations or on-time flights. Status and estimates can change after a check, and source pages may be cached.</p>
     <noscript><p class="error">JavaScript is needed to search for flight records. You can still <a href="https://www.flightradar24.com/data">view flight records on Flightradar24</a>.</p></noscript>
   </main>
-  <script src="tracker-core.js?v=20261030-search"></script><script src="live-core.js?v=20261030-search"></script><script src="tracker.js?v=20261030-search"></script>
+  <script src="tracker-core.js?v=20261030-search"></script><script src="live-core.js?v=20261030-search"></script><script src="tracker.js?v=20261030-context"></script>
 </body>
 </html>

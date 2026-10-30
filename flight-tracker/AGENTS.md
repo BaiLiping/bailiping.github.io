@@ -20,8 +20,12 @@ change the bare-page default flight/date. Do not restore that dataset or workflo
 ## Source and data rules
 
 1. Flightradar24 is the sole flight-data source. OpenAI searches and extracts its
-   public pages through worker/api.mjs. Do not invent records or use another
-   provider. Gold-only data is not available through web search.
+   public pages through worker/api.mjs. worker/source-context.mjs additionally
+   reads public airport departure/weather pages for timestamped context and a
+   current estimate matched to the exact flight, route and scheduled departure.
+   That estimate retains its airport-page source link and report time. Do not
+   invent records or use another provider. Gold-only data is not available
+   through web search; the backend does not use subscriber credentials.
 2. Include the selected local departure date and the preceding seven dates.
    For future dates, history ends the day before the source check's local date.
    Keep different departure airports and routes separate, and report missing
@@ -33,6 +37,8 @@ change the bare-page default flight/date. Do not restore that dataset or workflo
    ATD and landing times are not confirmed gate events.
 4. Airport/weather context needs retrieved airport evidence for the same origin
    and date, with a valid observation or forecast time. Omit unsupported context.
+   Observations must precede the scheduled departure. Current airport totals
+   cannot reconstruct earlier conditions. METARs are observations, not forecasts.
    Do not invent a delay probability from a small sample.
 5. Keep API keys in ignored env files and Cloudflare secrets, never public files,
    Git, or logs. Preserve the global daily and per-visitor API limits.

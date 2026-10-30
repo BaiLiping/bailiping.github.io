@@ -38,6 +38,19 @@ does not enable paid billing or automatic credit purchases.
 - Airport and weather context additionally require a retrieved airport data page,
   matching origin/date, and a valid observation/forecast time. Unsupported context
   is dropped without losing valid flight records. No delay probability is invented.
+- With `FR24_DIRECT_CONTEXT=true`, the Worker also reads the public airport
+  departure and weather pages directly, using their embedded page JSON. These two
+  bounded requests use no account cookies or credentials. Only airport identity,
+  flight estimates, timestamped statistics and METAR fields are used; page scripts
+  are never run. A current departure estimate must match the flight/callsign,
+  destination and exact scheduled departure, and gets its own source link and time.
+  Current statistics are included only before the selected departure on the same
+  local date. Weather uses the latest same-date observation before departure (or
+  before the current check for a future flight), with a maximum age of three hours
+  at that cutoff. The UI distinguishes observation time from retrieval time.
+  Source errors, access restrictions, changed markup and unavailable history leave
+  context missing without losing verified flight records. Gold history and
+  archived weather forecasts are not provided by this integration.
 - Public history may be incomplete; Gold subscription credentials are not used.
   A result can contain history without a selected-day record, and the UI says so.
   The page starts empty; shared URL parameters only prefill the form.
