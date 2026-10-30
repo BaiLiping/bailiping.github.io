@@ -12,7 +12,7 @@ const link=(label,url)=>({label,url});
 const slides=[],labs=[];
 function text(id,x,y,w,h,html,o={}){return{id,type:'text',x,y,w,h,rotation:0,opacity:1,html,fontFamily:sans,fontSize:22,fontWeight:400,color:C.ink,align:'left',valign:'top',lineHeight:1.32,...o};}
 function box(id,x,y,w,h,fill=C.paper){return{id,type:'shape',shape:'rect',x,y,w,h,fill,stroke:C.line,strokeWidth:1,radius:10,rotation:0,opacity:1};}
-function panel(id,x,y,w,h,label,html,{fill=C.soft,size=22}={}){return[box(id+'-box',x,y,w,h,fill),text(id+'-label',x+22,y+18,w-44,24,label,{fontFamily:mono,fontSize:13,fontWeight:700,color:C.teal}),text(id+'-body',x+22,y+57,w-44,h-73,html,{fontSize:size})];}
+function panel(id,x,y,w,h,label,html,{fill=C.soft,size=22}={}){return[box(id+'-box',x,y,w,h,fill),text(id+'-label',x+22,y+18,w-44,24,label,{fontFamily:mono,fontSize:13,fontWeight:700,color:C.teal}),text(id+'-body',x+22,y+(h<120?46:57),w-44,h-(h<120?58:73),html,{fontSize:size})];}
 function add(id,section,title,subtitle,elements,notes,sources=[cite('Paper')]){
  slides.push({id,background:C.bg,transition:'none',lessonTitle:title,lessonSubtitle:subtitle,notes:notes+'\n\nSources:\n'+sources.map(s=>s.label+' — '+s.url).join('\n'),elements:[
  text('section',72,29,880,25,section.toUpperCase(),{fontSize:13,fontFamily:mono,color:C.rust,fontWeight:700}),
@@ -21,7 +21,7 @@ function add(id,section,title,subtitle,elements,notes,sources=[cite('Paper')]){
  text('subtitle',72,143,1136,34,subtitle,{fontSize:18,color:C.muted}),...elements,
  text('sources',72,676,850,29,sources[0].label,{fontSize:12,color:C.muted,link:sources[0].url}),
  text('read',931,679,155,20,'READ NOTES',{fontSize:12,fontFamily:mono,color:C.teal,link:'https://bailiping.com/latent-field-tracking/study.html#'+id,align:'right'}),
- text('contents',1090,679,118,20,'CONTENTS',{fontSize:12,fontFamily:mono,color:C.teal,link:'overview',align:'right'})]});
+ text('contents',1090,679,118,20,'CONTENTS',{fontSize:12,fontFamily:mono,color:C.teal,link:'contents',align:'right'})]});
 }
 function pair(id,section,title,subtitle,l,L,r,U,notes,sources,size=[22,22]){add(id,section,title,subtitle,[...panel('left',72,193,550,448,l,L,{size:size[0]}),...panel('right',646,193,562,448,r,U,{fill:C.paper,size:size[1]})],notes,sources);}
 function live(id,intro,lab,title,subtitle,summary,notes,sources){add(id,'Interactive laboratory',title,subtitle,[...panel('fallback',72,180,1136,475,'LIVE EQUATIONS',summary,{size:25}),{...box('live-demo-mount',72,180,1136,475,'transparent'),opacity:0}],notes,sources);labs.push({slide:id,introSlide:intro,inline:true,layout:'region',bounds:{x:72,y:180,width:1136,height:475},src:`./live/?lab=${lab}&embed=1`,source:`./live/?lab=${lab}`,title,sandbox:'allow-scripts allow-same-origin allow-top-navigation-by-user-activation',hideSource:true,readyMessage:true,unloadWhenHidden:true});}
@@ -135,7 +135,7 @@ pair('radar-setting','11 · radio experiments','The radar study separates simula
 
 add('radar-results','11 · reported radar accuracy','The latent field adds a smaller gain beyond raw-data tracking','Selected rows from UWCR Table II. Lower GOSPA is better.',[
  ...panel('results',72,193,1136,317,'GOSPA AND ITS COMPONENTS · METRES',table(['Method','GOSPA','Localization','Missed','False'],[['MVDR + BP','0.871','0.759','0.048','0.065'],['RAMP-CNN + BP','0.765','0.690','0.040','0.035'],['BP-TkBD-RW','0.577','0.542','0.017','0.018'],['BP-TkBD-NF','<b>0.552</b>','<b>0.526</b>','<b>0.013</b>','<b>0.013</b>']]),{size:24,fill:C.paper}),
- ...panel('comparison',72,531,1136,110,'THE CLOSEST COMPARISON','NF reduces GOSPA by about 4.3% versus the random-walk power model, using the same efficient likelihood evaluation.',{size:24})
+ ...panel('comparison',72,531,1136,110,'THE CLOSEST COMPARISON','With the same likelihood evaluation, NF lowers GOSPA 4.3% versus the random-walk prior.',{size:24})
 ],'Table II reports 50-run averages on UWCR, with GOSPA c=5 m. BP-TkBD-RW replaces the shared latent field with a random-walk power model while retaining the efficient likelihood evaluation. The computed relative reduction is (0.577−0.552)/0.577≈4.33%. Compared with RAMP-CNN+BP it is about 27.8%, but that broader comparison changes representation, model and inference together. Displayed components may differ from their sum because the table rounds values.',[cite('Section V-B3 · Table II','S5.SS2')]);
 
 add('radar-runtime','11 · reported runtime','Learning dominates the proposed method’s per-frame cost','UWCR timings use the same workstation. They do not imply universal speed rankings.',[
@@ -150,7 +150,7 @@ add('acoustic-results','12 · underwater acoustics','The same framework uses a d
 
 add('ablation','12 · controlled prior ablation','Context and density flexibility both affect performance','The acoustic simulation fixes measurements, inference and trajectories.',[
  ...panel('ablation-table',72,193,1136,330,'SECTION V-C5 · GOSPA IN METRES',table(['Signal-power prior','GOSPA'],[['Flow with spatial context and preceding-posterior summaries','<b>21.44</b>'],['Flow with spatial context only','22.13'],['Flow with shifted base PDF','23.57'],['Context-conditioned Gamma prior','27.16'],['Gamma random walk','31.92']]),{size:23,fill:C.paper}),
- ...panel('ablation-reading',72,544,1136,97,'READING THE ABLATION','This controlled simulation probes the prior design more directly than comparisons between complete detector and tracker pipelines.',{size:22})
+ ...panel('ablation-reading',72,544,1136,97,'READING THE ABLATION','The controlled comparison gives clearer evidence for the power-prior design.',{size:22})
 ],'Section V-C5 reports this controlled simulation with KRAKEN-generated measurements. The comparison keeps the measurement model, inference procedure and trajectories fixed. A flow with preceding-posterior summaries in its context has the lowest reported GOSPA. These values are simulation findings and are distinct from real-data Table III. The results support useful context and flexible density modeling in this setup, rather than proving every conditional flow will outperform every parametric prior.',[cite('Section V-C5 and supplementary Section VII','as1_S7')]);
 
 pair('limits','13 · interpretation and limits','The learned field needs a careful interpretation','The method learns power statistics relative to a chosen physical model.',
