@@ -1,0 +1,163 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Step-by-step 3D radio GraphSLAM demo using finite reflector walls as persistent map features, with no virtual-anchor variables.">
+  <link rel="icon" href="data:,">
+  <script>
+    (() => {
+      const embed = new URLSearchParams(location.search).get("embed");
+      if (embed !== "region" && embed !== "article") return;
+      document.documentElement.classList.add("wall-live-region");
+      document.documentElement.dataset.wallEmbed = embed;
+    })();
+  </script>
+  <link rel="stylesheet" href="styles.css">
+  <script src="../../../assets/bento-inline-frame.js" defer></script>
+  <title>3D Wall-Feature Radio GraphSLAM</title>
+</head>
+<body data-bento-live-app data-interactive-slides="wall-graphslam-3d">
+  <header class="masthead">
+    <div class="brand-block">
+      <p class="eyebrow">RADIO SLAM · INTERACTIVE LAB</p>
+      <h1>Build the radio map from walls, not VAs.</h1>
+    </div>
+    <nav class="project-links" aria-label="Project links">
+      <a href="../../">Back to slides</a>
+      <a href="/#group-random-thoughts">Random thoughts</a>
+    </nav>
+  </header>
+
+  <main class="workspace">
+    <aside class="lesson-panel panel" aria-labelledby="step-title">
+      <div class="scan-kicker">
+        <span id="scan-label">SCAN 01 / 12</span>
+        <span class="live-dot"><i></i><span id="step-state">PREDICT</span></span>
+      </div>
+
+      <section class="step-copy" aria-live="polite">
+        <p class="step-number" id="step-number">STEP 1 OF 4</p>
+        <h2 id="step-title">Anchor the first pose</h2>
+        <p id="step-description">Insert the prior on the first UE pose. The calibrated base station is a fixed argument, not an optimized node.</p>
+        <div class="equation" id="step-equation" aria-label="Current factor equation">
+          <span class="factor prior">f<sup>prior</sup></span>(x<sub>0</sub>)
+        </div>
+      </section>
+
+      <div class="phase-rail" role="group" aria-label="Processing phase">
+        <button class="phase active" type="button" data-phase="0"><span>1</span><b>Predict</b><small>pose + prior/odometry</small></button>
+        <button class="phase" type="button" data-phase="1"><span>2</span><b>Measure</b><small>delay + AoA + AoD</small></button>
+        <button class="phase" type="button" data-phase="2"><span>3</span><b>Connect</b><small>sparse radio factors</small></button>
+        <button class="phase" type="button" data-phase="3"><span>4</span><b>Optimize</b><small>trajectory + walls</small></button>
+      </div>
+
+      <div class="controls" aria-label="Demo controls">
+        <button class="button quiet" id="back-button" type="button" aria-label="Previous processing step">← Back</button>
+        <button class="button play" id="play-button" type="button" aria-pressed="false"><span aria-hidden="true">▶</span> Play</button>
+        <button class="button primary" id="next-button" type="button">Next step →</button>
+      </div>
+
+      <div class="time-control">
+        <label for="time-range"><span>Trajectory time</span><output id="time-output">t = 0</output></label>
+        <input id="time-range" type="range" min="0" max="11" step="1" value="0">
+        <div class="time-ticks" aria-hidden="true"><span>start</span><span>new walls</span><span>revisit</span></div>
+      </div>
+
+      <div class="model-note">
+        <strong>Teaching boundary</strong>
+        <p>Deterministic collision-free trajectory with LoS, S1, and ordered S2 paths from the two outer walls. The final revisit adds an explicit pose-to-pose loop-closure factor.</p>
+      </div>
+    </aside>
+
+    <section class="scene-panel panel" aria-labelledby="scene-heading">
+      <div class="panel-head scene-head">
+        <div>
+          <p class="panel-kicker">WORLD FRAME F<sup>W</sup></p>
+          <h2 id="scene-heading">Trajectory and evolving finite-wall map</h2>
+        </div>
+        <dl class="scene-stats" aria-label="Current graph statistics">
+          <div><dt>Poses</dt><dd id="pose-count">1</dd></div>
+          <div><dt>Walls</dt><dd id="surface-count">0 / 2</dd></div>
+          <div><dt>Factors</dt><dd id="factor-count">1</dd></div>
+        </dl>
+      </div>
+
+      <div class="scene-wrap">
+        <canvas id="scene-canvas" tabindex="0" aria-label="Interactive 3D view of a known base station, a growing UE trajectory, specular bounce points, wall normals, and estimated finite reflector walls. Drag to orbit and use the mouse wheel to zoom.">
+          This 3D GraphSLAM view requires canvas support.
+        </canvas>
+        <div class="scene-tools" aria-label="Scene layers">
+          <label><input id="truth-toggle" type="checkbox" checked> Reference geometry</label>
+          <label><input id="rays-toggle" type="checkbox" checked> Current radio paths</label>
+          <label><input id="normal-toggle" type="checkbox" checked> Wall normals</label>
+        </div>
+        <div class="orbit-hint">Drag to orbit · wheel to zoom · double-click to reset view</div>
+        <div class="legend" aria-label="Scene legend">
+          <span><i class="swatch pose"></i>estimated trajectory</span>
+          <span><i class="swatch radio"></i>S1 path</span>
+          <span><i class="swatch double"></i>S2 path</span>
+          <span><i class="swatch loop"></i>loop closure</span>
+          <span><i class="swatch prediction"></i>wall-factor prediction</span>
+          <span><i class="swatch map"></i>estimated wall</span>
+          <span><i class="swatch bounce"></i>bounce q<sub>t,j</sub></span>
+          <span><i class="swatch truth"></i>reference</span>
+        </div>
+      </div>
+
+      <div class="change-strip" aria-live="polite">
+        <span class="change-label">THIS STEP</span>
+        <strong id="change-title">Prior fixes the gauge</strong>
+        <p id="change-detail">Without one anchored pose, the entire trajectory and map can move together.</p>
+      </div>
+    </section>
+
+    <aside class="graph-panel panel" aria-label="Factor graph and map status">
+      <section class="graph-section" aria-labelledby="graph-heading">
+        <div class="panel-head compact">
+          <div>
+            <p class="panel-kicker">SPARSE BACK END</p>
+            <h2 id="graph-heading">Factor graph</h2>
+          </div>
+          <span class="fixed-bs">■ BS fixed</span>
+        </div>
+        <canvas id="graph-canvas" aria-label="Growing factor graph with UE poses, odometry factors, direct wall-reflection factors, a known base station, and finite wall variables.">
+          This factor graph requires canvas support.
+        </canvas>
+        <div class="graph-key" aria-hidden="true">
+          <span><i class="node pose-node"></i>x<sub>t</sub> pose</span>
+          <span><i class="node map-node"></i>π<sub>j</sub> wall</span>
+          <span><i class="factor-box"></i>factor</span>
+          <span><i class="factor-box loop-factor"></i>loop</span>
+        </div>
+      </section>
+
+      <section class="map-section" aria-labelledby="map-heading">
+        <div class="panel-head compact ledger-head">
+          <div>
+            <p class="panel-kicker">PERSISTENT VARIABLES</p>
+            <h2 id="map-heading">Wall ledger</h2>
+          </div>
+          <span id="map-rmse">— m mean |Δd|</span>
+        </div>
+        <div id="map-ledger" class="map-ledger"></div>
+      </section>
+
+      <section class="activity-section" aria-labelledby="activity-heading">
+        <div class="panel-head compact activity-head">
+          <h2 id="activity-heading">Graph update</h2>
+          <span id="cost-value">χ² 148.0</span>
+        </div>
+        <ol id="activity-log" class="activity-log"></ol>
+      </section>
+    </aside>
+  </main>
+
+  <footer>
+    <p><strong>State:</strong> x<sub>t</sub> = (p<sub>t</sub>, R<sub>t</sub>, b<sub>t</sub>), &nbsp; π<sub>j</sub> = (n<sub>j</sub>, d<sub>j</sub>, c<sub>j</sub>, φ<sub>j</sub>, L<sub>j</sub>, W<sub>j</sub>)</p>
+    <p><strong>Controls:</strong> <kbd>←</kbd>/<kbd>→</kbd> step · <kbd>Space</kbd> play/pause · <kbd>R</kbd> reset</p>
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>

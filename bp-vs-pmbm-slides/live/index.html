@@ -1,0 +1,33 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Association experiments | Belief-Propagation MTT</title>
+<link rel="stylesheet" href="./styles.css?v=20260918-redesign"><link rel="stylesheet" href="../slides.css?v=20260918-redesign">
+<script src="../../bp-vs-pmbm/association-model.js" defer></script><script src="./render.js?v=20260918-redesign" defer></script><script src="./app.js?v=20260918-redesign" defer></script>
+<script src="../assets/math-config.js"></script><script defer src="../assets/mathjax-3.2.2-tex-svg-full.js"></script><script defer src="../../assets/mathjax-dynamic.js"></script><script defer src="../../assets/bento-inline-frame.js"></script>
+</head><body>
+<header class="standalone"><a href="../">← Belief-Propagation MTT</a><h1>Association experiments</h1><nav aria-label="Experiment"><a href="?demo=assignment">Weights</a><a href="?demo=bp">BP messages</a><a href="?demo=hypotheses">Hypotheses</a></nav></header>
+<main id="lab">
+<div class="visual">
+<section id="assignment" hidden><div class="visual-heading"><h2>Predicted tracks and detections</h2><span>Drag a point to change the evidence</span></div><svg id="scene" viewBox="0 0 720 350" role="img" aria-label="Predicted track gates and draggable measurements"></svg><div class="legend"><span><i class="dot"></i> Predicted track</span><span>× Detection</span><span>Dashed ellipse: 99% gate</span></div></section>
+<section id="bp" hidden><div class="visual-heading"><h2>Messages on candidate pairs</h2><span id="phase" aria-live="polite"></span></div><svg id="graph" viewBox="0 0 720 200" role="img" aria-label="Association message graph with one selected pair"></svg><div class="table-heading"><h2 id="bp-table-title">Track association probabilities</h2><label class="compact"><input id="compare" type="checkbox"> Show exact reference</label></div><div id="bpTable"></div></section>
+<section id="hypotheses" hidden><div class="visual-heading"><h2>Probability of each compatible assignment</h2><span>Green = retained</span></div><svg id="eventChart" viewBox="0 0 720 152" role="img" aria-label="Ranked joint assignment probabilities"></svg><div class="table-heading"><h2>Full-sum marginals</h2><span>Exact for these weights</span></div><div id="exactTable"></div><div class="table-heading"><h2>Retained-hypothesis marginals</h2><span>Renormalized after truncation</span></div><div id="topTable"></div></section>
+</div>
+<aside class="controls">
+<label class="field">Scene<select id="preset"><option value="default">Overlapping tracks</option><option value="separated">Separated tracks</option><option value="symmetric">Symmetric ambiguity</option></select></label>
+<div id="assignment-controls" hidden>
+<label class="field">Detection probability <output id="pdOut">0.90</output><input id="pd" type="range" min="0.5" max="0.99" step="0.01" value="0.9"></label>
+<label class="field">Clutter intensity <output id="clutterOut"></output><input id="clutter" type="range" min="-6" max="-3" step="0.001" value="-4.30103"></label>
+<label class="check"><input id="gate" type="checkbox" checked> Apply 99% gate</label>
+<h2>Assignment weights</h2><div id="weights"></div><button id="sceneReset">Reset scene</button>
+</div>
+<div id="bp-controls" hidden>
+<label class="field">Inspect one candidate pair<select id="edge"></select></label><div class="message-values"><div><span class="math-tex math-inline">\(\mu_{i\to j}\)</span><strong id="mu-value">—</strong></div><div><span class="math-tex math-inline">\(\nu_{j\to i}\)</span><strong id="nu-value">1.000</strong></div></div>
+<div class="buttons"><button id="back">Back</button><button id="step">Step →</button><button id="play">Play</button><button id="end">Final iterate</button><button id="reset">Reset</button></div>
+<div class="metric"><strong id="bpGap"></strong><span>Current BP–exact gap (pp)</span></div><p id="bpStats"></p>
+</div>
+<div id="hypotheses-controls" hidden>
+<label class="field">Assignments retained <output id="keepOut">5</output><input id="keep" type="range" min="1" max="22" step="1" value="5"></label>
+<div class="metric"><strong id="mass"></strong><span>Posterior probability retained</span></div><div class="metric"><strong id="topGap"></strong><span>Maximum marginal change (pp)</span></div><p id="topStats"></p><button id="keepAll">Keep all</button><button id="hypReset">Reset</button>
+</div>
+</aside>
+<footer id="status"></footer>
+</main></body></html>

@@ -1,0 +1,26 @@
+body{background:#f6f3eb}
+.bento-slide .math-display{height:auto!important;min-height:0;display:block;margin:.5em 0;line-height:1.1}
+.bento-slide .math-display:first-child{margin-top:0}.bento-slide .math-display:last-child{margin-bottom:0}
+.bento-slide mjx-container[display=true]{margin:.4em 0!important}.bento-slide .math-inline{white-space:normal}
+.bento-slide .bento-text-inner{overflow:visible}.bento-slide [data-link]:focus-visible{outline:3px solid #bc702d;outline-offset:3px}
+.companion-demo-stage{border:1px solid #d4ddd5;border-radius:12px}
+.companion-demo-stage::before{background:#f8f6f0;color:#64746d;font-weight:400;content:'Loading the experiment…'}
+.companion-demo-frame{opacity:0;background:#f8f6f0}
+.companion-demo-frame[data-ready=true]{opacity:1}
+.companion-demo-frame:focus-visible{outline-color:#bc702d}
+#deck-shortcuts{position:fixed;z-index:10000000;left:16px;bottom:12px;font:11px/1.4 system-ui;display:flex;gap:14px;align-items:center}
+#deck-shortcuts a{color:#213d36;background:#fffdf8ed;padding:6px 9px;border:1px solid #d4ddd5;border-radius:6px;text-decoration:none}
+#deck-shortcuts a:focus-visible{outline:3px solid #bc702d}
+/* Live pages use the available phone viewport instead of shrinking controls
+   with the 16:9 illustration. They remain ordinary pages in Reveal's flow. */
+@media(max-width:720px){
+ .reveal.reveal-scroll:not(.overview) section:has(>.companion-demo-slide){left:0!important;top:0!important;width:100%!important;height:100%!important;transform:none!important}
+ .reveal.reveal-scroll:not(.overview) .companion-demo-slide{width:100%!important;height:100%!important}
+ .reveal.reveal-scroll:not(.overview) .companion-demo-slide>.bento-el{display:none!important}
+ .reveal.reveal-scroll:not(.overview) .companion-demo-slide>[data-el-id=section]{display:block!important;left:14px!important;top:16px!important;width:calc(100% - 28px)!important;font-size:10px!important}
+ .reveal.reveal-scroll:not(.overview) .companion-demo-slide>[data-el-id=heading]{display:block!important;left:14px!important;top:40px!important;width:calc(100% - 28px)!important;height:63px!important;font-size:25px!important;line-height:1.15!important}
+ .reveal.reveal-scroll:not(.overview) .companion-demo-stage{left:10px!important;top:105px!important;width:calc(100% - 20px)!important;height:calc(100% - 153px)!important}
+ .reveal.reveal-scroll:not(.overview) .companion-demo-slide>[data-el-id=heading] .bento-text-inner{font-size:25px!important;line-height:1.15!important}
+ #deck-shortcuts{left:8px;bottom:6px;gap:5px;font-size:9px}#deck-shortcuts a{padding:5px 7px}
+}
+@media print{#deck-shortcuts{display:none!important}}

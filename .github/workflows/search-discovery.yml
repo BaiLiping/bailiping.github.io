@@ -1,0 +1,31 @@
+name: Search discovery
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '**/*.html'
+      - sitemap.xml
+      - robots.txt
+      - scripts/build-search-index.py
+      - .github/workflows/search-discovery.yml
+  pull_request:
+    paths:
+      - '**/*.html'
+      - sitemap.xml
+      - robots.txt
+      - scripts/build-search-index.py
+      - .github/workflows/search-discovery.yml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - name: Check sitemap and public page directory
+        run: python3 scripts/build-search-index.py --check

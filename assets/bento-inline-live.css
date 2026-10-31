@@ -1,0 +1,69 @@
+.bento-slide.companion-demo-slide {
+  position: relative;
+  overflow: hidden;
+}
+
+.companion-demo-stage {
+  position: absolute;
+  z-index: 40;
+  overflow: hidden;
+  border: 0;
+  background: transparent;
+}
+
+.companion-demo-stage::before {
+  content: "Loading interactive example…";
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  color: #68758a;
+  background: rgba(255, 255, 255, .96);
+  font: 700 14px/1.4 system-ui, sans-serif;
+}
+
+.companion-demo-frame {
+  position: relative;
+  z-index: 1;
+  display: block;
+  width: 100%;
+  height: 100%;
+  border: 0;
+  background: transparent;
+}
+
+.bento-slide.companion-demo-full .companion-demo-stage {
+  inset: 0;
+  width: 1280px;
+  height: 720px;
+}
+
+.companion-demo-source {
+  position: absolute;
+  z-index: 42;
+  right: 24px;
+  bottom: 22px;
+  padding: 7px 12px;
+  border-radius: 999px;
+  color: #fff;
+  background: rgba(0, 0, 0, .42);
+  font: 700 12px/1 system-ui, sans-serif;
+  text-decoration: none;
+}
+
+.companion-demo-frame:focus-visible {
+  outline: 3px solid rgba(47, 111, 178, .55);
+  outline-offset: -3px;
+}
+
+.reveal.overview .companion-demo-stage,
+.reveal.overview .companion-demo-source {
+  display: none !important;
+}
+
+@media print {
+  .companion-demo-stage,
+  .companion-demo-source {
+    display: none !important;
+  }
+}
