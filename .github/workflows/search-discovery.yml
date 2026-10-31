@@ -9,9 +9,6 @@ on:
       - robots.txt
       - scripts/build-search-index.py
       - .github/workflows/search-discovery.yml
-      - 'flight-tracker/**'
-      - 'tests/flight-*.cjs'
-      - 'tests/flight-*.mjs'
   pull_request:
     paths:
       - '**/*.html'
@@ -19,9 +16,6 @@ on:
       - robots.txt
       - scripts/build-search-index.py
       - .github/workflows/search-discovery.yml
-      - 'flight-tracker/**'
-      - 'tests/flight-*.cjs'
-      - 'tests/flight-*.mjs'
   workflow_dispatch:
 
 permissions:
@@ -33,12 +27,5 @@ jobs:
     timeout-minutes: 5
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: '24'
       - name: Check sitemap and public page directory
         run: python3 scripts/build-search-index.py --check
-      - name: Check flight selection and seven-day history logic
-        run: node tests/flight-tracker.test.cjs
-      - name: Check source validation, fresh lookups, and API limits
-        run: node --test tests/flight-live-api.test.mjs

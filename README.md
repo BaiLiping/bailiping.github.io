@@ -63,32 +63,6 @@ features from the supplied publication list, with original Chinese titles,
 English translations, and publisher links. Search and publisher filters run
 in the browser; the complete list remains available without JavaScript.
 
-## Flight tracker
-
-The homepage **Tools → Flight Tracker** opens `/flight-tracker/`. Enter a flight
-number, departure airport, and local departure date, then choose **Check
-Flightradar24**. Each submitted search fetches the selected day's status and the
-previous seven days of history through the Cloudflare Worker in
-`flight-tracker/worker/`, including departure estimates and dated airport/weather
-context when the source provides them. Shared URL parameters prefill the form;
-opening a page never starts a paid lookup.
-
-The OpenAI Responses API searches only public Flightradar24 pages. The API key
-stays in a Cloudflare secret. The page has no saved dataset or default flight,
-and searches neither reuse a result cache nor merge old flight records. Missing
-records remain explicit; changing the inputs or a failed lookup clears prior
-results. See `flight-tracker/AGENTS.md` and `flight-tracker/worker/README.md` for
-source validation, deployment, and usage limits.
-
-Validate updates with:
-
-```sh
-node tests/flight-tracker.test.cjs
-node --test tests/flight-live-api.test.mjs
-python3 scripts/build-search-index.py --check
-python3 -m http.server 8769 --bind 127.0.0.1
-```
-
 ## Structure
 
 - `/latent-field-tracking/` is a paper walkthrough of Wei, Rao and Meyer, arXiv:2610.38898v1, with embedded complex-array likelihood and online power-field learning demos. It is listed under Random thoughts. The browser examples are simplified teaching models, distinct from the paper's tracker and benchmark experiments. Build instructions and numerical checks are in `latent-field-tracking/README.md`.
