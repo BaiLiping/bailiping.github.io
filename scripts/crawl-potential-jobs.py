@@ -91,7 +91,7 @@ def is_military_role(title, description="", department=""):
     end = re.search(
         r"\b(?:why join|about the company|equal opportunity employer|"
         r"we are an equal opportunity|equal employment opportunity|"
-        r"does not discriminate|non[- ]discrimination|benefits and perks|"
+        r"(?:do|does) not discriminate|non[- ]discrimination|benefits and perks|"
         r"be part of the next robotics revolution)\b", detail, re.I
     )
     if end:
