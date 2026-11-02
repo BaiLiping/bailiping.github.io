@@ -8,6 +8,12 @@ on:
       - sitemap.xml
       - robots.txt
       - scripts/build-search-index.py
+      - scripts/crawl-potential-jobs.py
+      - scripts/render-potential-jobs.py
+      - career/job-sources.json
+      - career/potential-jobs/jobs.json
+      - career/potential-jobs/template.html
+      - tests/test_job_*.py
       - .github/workflows/search-discovery.yml
   pull_request:
     paths:
@@ -15,6 +21,12 @@ on:
       - sitemap.xml
       - robots.txt
       - scripts/build-search-index.py
+      - scripts/crawl-potential-jobs.py
+      - scripts/render-potential-jobs.py
+      - career/job-sources.json
+      - career/potential-jobs/jobs.json
+      - career/potential-jobs/template.html
+      - tests/test_job_*.py
       - .github/workflows/search-discovery.yml
   workflow_dispatch:
 

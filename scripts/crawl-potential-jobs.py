@@ -1222,7 +1222,7 @@ def _html(source, client):
         except Exception as exc:
             errors.append(brief_error(exc))
     if errors:
-        result.status = "partial" if result.records else "error"
+        result.status = "partial" if result.records or result.seen_ids else "error"
         result.complete, result.error = False, "; ".join(dict.fromkeys(errors))[:400]
     return result
 

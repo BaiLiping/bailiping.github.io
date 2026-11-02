@@ -1,6 +1,7 @@
 """Regression coverage for civilian-only employer and role screening."""
 from __future__ import annotations
 import importlib.util
+import json
 from pathlib import Path
 import sys
 import unittest
@@ -99,6 +100,35 @@ class CivilianOnlyTests(unittest.TestCase):
         self.assertFalse(crawler.is_military_role(
             "Robotics Engineer", "Build industrial robot perception systems. "
             "We do not discriminate on the basis of military status."))
+
+    def test_bounded_mixed_source_without_civilian_matches_is_partial_not_error(self):
+        seed = "https://emp.jobylon.com/jobs/377266-einride-senior-calibration-engineer/"
+        other = "https://emp.jobylon.com/jobs/381326-einride-test-engineer/"
+        src = {
+            "id": "einride-sweden", "company": "Einride", "type": "html",
+            "allowed_hosts": ["careers.einride.tech", "emp.jobylon.com"],
+            "index_url": "https://careers.einride.tech/jobs",
+            "job_url_patterns": [r"^https://emp\.jobylon\.com/jobs/[0-9]+-einride-[a-z0-9-]+/$"],
+            "seed_urls": [seed], "max_details": 1, "complete_listing": False,
+            "civilian_review_required": True, "civilian_verified_job_ids": [],
+        }
+        posting_json = {
+            "@type": "JobPosting", "title": "Senior Calibration Engineer",
+            "url": seed, "description": "Develop sensor fusion and calibration for freight vehicles.",
+            "jobLocation": {"address": {"addressLocality": "Gothenburg", "addressCountry": "SE"}},
+        }
+        class FakeClient:
+            def get_text(self, url):
+                if url == src["index_url"]:
+                    return f'<a href="{seed}">Calibration</a><a href="{other}">Other</a>'
+                if url == seed:
+                    return '<script type="application/ld+json">' + json.dumps(posting_json) + '</script>'
+                raise AssertionError("Unexpected source URL")
+        result = crawler._html(src, FakeClient())
+        self.assertEqual(result.records, [])
+        self.assertEqual(len(result.seen_ids), 1)
+        self.assertEqual(result.status, "partial")
+        self.assertIn("Detail-check limit", result.error)
 
     def test_defence_employer_cannot_be_readded(self):
         src=source()
