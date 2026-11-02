@@ -54,7 +54,25 @@ The workflow summary and the page's source-status panel show what happened.
 - Zadar Labs: individual roles on its official careers page.
 - Sweden: Ericsson's public search and detail API; Zenseact's careers index and
   structured job pages; Einride's official Jobylon embed and structured details;
-  and Swedish Workday searches for Saab, ABB, and Axis Communications.
+  and Swedish Workday searches for ABB and Axis Communications.
+
+## Civilian-only coverage
+
+This job watch excludes defence manufacturers (including Saab) and any roles
+explicitly tied to military, defence, combat, weapons, national-security,
+intelligence, or military/civilian dual-use applications. Employer descriptions
+and ATS department/team metadata are checked for role-specific evidence.
+Generic sensing, radar, historical research background, export controls,
+ordinary background checks, and veteran equal-opportunity notices alone are not
+military evidence.
+
+Mixed-use employers such as FieldAI and Einride have
+`civilian_review_required: true` and default to **no approved job IDs**.
+Only a role with independently verified civilian assignment may be added to
+`civilian_verified_job_ids`; an approved ID never overrides new military
+evidence. Unreviewed positions are omitted from current listings, saved links,
+and closed history, including when a source check fails. The employer can remain
+in the tracked source panel for future civilian opportunities.
 
 The **Sweden** location filter uses each posting's location, not company
 headquarters or words in a job description. Swedish listings remain included in

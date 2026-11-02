@@ -45,7 +45,8 @@ Qualcomm reference and NVIDIA Aerial ISAC internship remain saved.
 
 Swedish opportunities are included through selected official employer feeds.
 The **Sweden** location filter is available alongside **Europe**, which continues
-to include Swedish roles.
+to include Swedish roles. The watch is civilian-only: military, defence, and
+explicitly dual-use roles are excluded.
 
 The **Update potential jobs** GitHub Actions workflow refreshes configured
 official employer feeds on Mondays around **09:17 Europe/Stockholm** and publishes

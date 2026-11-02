@@ -49,6 +49,53 @@ EXPLICIT_CLOSED = re.compile(
 )
 
 
+
+# Defence manufacturers are excluded even if a particular job sounds civilian.
+# Mixed-use employers require verified role-specific civilian assignment.
+EXCLUDED_DEFENCE_COMPANIES = {
+    "saab", "lockheed martin", "raytheon", "rtx", "northrop grumman",
+    "bae systems", "general dynamics", "anduril", "shield ai",
+    "rheinmetall", "l3harris", "leonardo drs",
+}
+MILITARY_ROLE_TERMS = re.compile(
+    r"\b(?:military|militarised|militarized|defen[cs]e|weapons?|weaponry|"
+    r"combat|battlefield|warfighting|warfare|armed forces|"
+    r"army|navy|air force|department of defen[cs]e|"
+    r"national[- ]security|intelligence (?:agency|community|programmes?|"
+    r"programs?|operations)|dual[- ]use|"
+    r"federal (?:autonomy|team|programmes?|programs?|contracts?))\b",
+    re.I,
+)
+
+
+def is_military_role(title, description="", department=""):
+    """Check role duties and ATS department, not generic company marketing.
+
+    Historical DARPA affiliations, civilian background checks, veteran EEO
+    notices, generic sensing and export controls are not military evidence.
+    """
+    title = clean_text(title, 260)
+    department = clean_text(department, 300)
+    if re.search(r"\bfederal\b", department, re.I):
+        return True  # mixed-use federal team needs civilian review
+    detail = clean_text(description, 30000)
+    start = re.search(
+        r"\b(?:about (?:the )?(?:role|job)|we(?: are|'re|’re) looking for|"
+        r"what you(?:'|’)ll do|what you will do|your responsibilities|"
+        r"the role|job responsibilities|responsibilities)\b", detail, re.I
+    )
+    if start:
+        detail = detail[start.start():]
+    end = re.search(
+        r"\b(?:why join|about the company|equal opportunity employer|"
+        r"we are an equal opportunity|benefits and perks|"
+        r"be part of the next robotics revolution)\b", detail, re.I
+    )
+    if end:
+        detail = detail[:end.start()]
+    return bool(MILITARY_ROLE_TERMS.search(" ".join((title, department, detail))))
+
+
 @dataclass
 class SourceResult:
     source_id: str
@@ -250,7 +297,7 @@ def classify_job(title, description, location="", employment_type=""):
     if re.search(r"(?:anomaly|defect|fault) locali[sz]ation|predictive maintenance", t):
         return None
     region = region_for(location)
-    if region == "Other":
+    if region == "Other" or is_military_role(title, description):
         return None
     # Prefer role-specific sections over company introductions wherever available.
     boundary = re.search(r"what you(?:'|’)ll (?:do|get to do)|what you will|about the job|"
@@ -359,9 +406,16 @@ def requisition_from_url(url):
 
 
 def make_job(source, native_id, title, url, location="", description="", employment_type="",
-             status="listed", requisition_id="", posted_at=None):
+             status="listed", requisition_id="", posted_at=None, department=""):
     url = safe_url(url, source["allowed_hosts"])
     title, location = clean_text(title, 260), clean_text(location, 260)
+    identity = stable_job_id(source["id"], native_id or requisition_id, url)
+    if (str(source["company"]).strip().casefold() in EXCLUDED_DEFENCE_COMPANIES
+            or is_military_role(title, description, department)):
+        return None
+    if (source.get("civilian_review_required")
+            and identity not in set(source.get("civilian_verified_job_ids", []))):
+        return None
     # Dedicated country sources use explicit provider location data, never a
     # mention in the description or an unspecified remote-work arrangement.
     if source.get("country_filter") == "SE" and not re.search(r"\b(?:sweden|sverige)\b", location, re.I):
@@ -924,7 +978,8 @@ def _lever(source, client):
             if isinstance(d.get("createdAt"), (int, float)):
                 posted = datetime.fromtimestamp(d["createdAt"] / 1000, timezone.utc).strftime("%Y-%m-%d")
             job = make_job(source, native, d["text"], url, location, desc,
-                           categories.get("commitment", ""), "open", posted_at=posted)
+                           categories.get("commitment", ""), "open", posted_at=posted,
+                           department=" / ".join(str(categories.get(key) or "") for key in ("department", "team")))
             if job:
                 result.records.append(job)
         except Exception as exc:
@@ -948,7 +1003,8 @@ def _greenhouse(source, client):
             result.seen_ids.append(stable_job_id(source["id"], native, url))
             location = (d.get("location") or {}).get("name", "")
             job = make_job(source, native, d["title"], url, location, d.get("content", ""),
-                           "", "open", posted_at=d.get("first_published"))
+                           "", "open", posted_at=d.get("first_published"),
+                           department=" / ".join(str(dep.get("name", "")) for dep in (d.get("departments") or []) if isinstance(dep, dict)))
             if job:
                 result.records.append(job)
         except Exception as exc:
@@ -1178,6 +1234,18 @@ def validate_config(config):
         seen.add(source["id"])
         if source.get("type") not in SOURCE_TYPES or not source.get("name") or not source.get("company"):
             raise ValueError("Source type, name, and company are required")
+        if str(source["company"]).strip().casefold() in EXCLUDED_DEFENCE_COMPANIES:
+            raise ValueError("Defence employer is excluded from civilian job watch")
+        if "civilian_review_required" in source and not isinstance(source["civilian_review_required"], bool):
+            raise ValueError("civilian_review_required must be boolean")
+        verified = source.get("civilian_verified_job_ids", [])
+        if (not isinstance(verified, list) or len(verified) > 100
+                or len(verified) != len(set(str(x) for x in verified))
+                or any(not isinstance(x, str) or not x.startswith(source["id"] + ":")
+                       or not re.fullmatch(r"[a-z0-9][a-z0-9._:-]{1,150}", x) for x in verified)):
+            raise ValueError("Invalid civilian_verified_job_ids")
+        if verified and not source.get("civilian_review_required"):
+            raise ValueError("Civilian verified IDs require role review")
         hosts = source.get("allowed_hosts")
         if not isinstance(hosts, list) or not hosts or any(not re.fullmatch(r"[a-z0-9.-]+", h) for h in hosts):
             raise ValueError("Source requires exact allowed_hosts")
@@ -1263,6 +1331,13 @@ def _public_job(record, source):
     title = clean_text(record.get("title", ""), 260)
     if not title:
         raise ValueError("Job title is empty after sanitization")
+    company = clean_text(record.get("company") or source["company"], 120)
+    if company.casefold() in EXCLUDED_DEFENCE_COMPANIES or is_military_role(
+            title, record.get("description", ""), record.get("department", "")):
+        raise ValueError("Non-civilian record excluded")
+    if (source.get("civilian_review_required")
+            and record.get("id") not in set(source.get("civilian_verified_job_ids", []))):
+        raise ValueError("Mixed-use role lacks verified civilian assignment")
     classification = classify_job(title, record.get("description", ""), record.get("location", ""), record.get("employment_type", ""))
     category = record.get("category") if record.get("category") in CATEGORIES else (classification or {}).get("category")
     if not category:
@@ -1378,6 +1453,13 @@ def merge_results(previous, results, config, now):
             jobs[current["id"]] = current
             returned.add(current["id"])
             seen.add(current["id"])
+        if source.get("civilian_review_required"):
+            # A successfully read, now-disallowed role cannot survive merely
+            # because it appeared in the previous snapshot.
+            for rejected_id in set(result.seen_ids) - returned:
+                existing = jobs.get(rejected_id)
+                if existing and existing["source_id"] == result.source_id:
+                    del jobs[rejected_id]
         for job in list(jobs.values()):
             if job["source_id"] != result.source_id or job["id"] in returned:
                 continue
