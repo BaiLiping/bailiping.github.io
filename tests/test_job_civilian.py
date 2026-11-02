@@ -90,6 +90,16 @@ class CivilianOnlyTests(unittest.TestCase):
         self.assertEqual(matched["category"], "robotics-localization")
         self.assertEqual(matched["employment_type"], "Internship")
 
+    def test_swedish_military_context_excluded_not_background_clearance(self):
+        self.assertTrue(crawler.is_military_role(
+            "Sensorfusioningenjör", "Utveckla radarspårning åt Försvarsmakten."))
+        self.assertFalse(crawler.is_military_role(
+            "Sensorfusioningenjör", "Utveckla radarsensorer för civila fordon. "
+            "Vanlig bakgrundskontroll och säkerhetsprövning kan förekomma."))
+        self.assertFalse(crawler.is_military_role(
+            "Robotics Engineer", "Build industrial robot perception systems. "
+            "We do not discriminate on the basis of military status."))
+
     def test_defence_employer_cannot_be_readded(self):
         src=source()
         src["company"]="Saab"

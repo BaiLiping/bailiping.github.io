@@ -60,6 +60,8 @@ EXCLUDED_DEFENCE_COMPANIES = {
 MILITARY_ROLE_TERMS = re.compile(
     r"\b(?:military|militarised|militarized|defen[cs]e|weapons?|weaponry|"
     r"combat|battlefield|warfighting|warfare|armed forces|"
+    r"försvarsmakten|försvarsindustrin|försvaret|försvar|"
+    r"militär(?:a|t)?|vapensystem|krigföring|"
     r"army|navy|air force|department of defen[cs]e|"
     r"national[- ]security|intelligence (?:agency|community|programmes?|"
     r"programs?|operations)|dual[- ]use|"
@@ -88,7 +90,8 @@ def is_military_role(title, description="", department=""):
         detail = detail[start.start():]
     end = re.search(
         r"\b(?:why join|about the company|equal opportunity employer|"
-        r"we are an equal opportunity|benefits and perks|"
+        r"we are an equal opportunity|equal employment opportunity|"
+        r"does not discriminate|non[- ]discrimination|benefits and perks|"
         r"be part of the next robotics revolution)\b", detail, re.I
     )
     if end:
@@ -566,7 +569,10 @@ def _workday(source, client):
             job = make_job(source, d["jobReqId"], d["title"], url, " / ".join(filter(None, locations)),
                            d.get("jobDescription", ""), d.get("timeType", ""),
                            "open" if d.get("canApply") is True and d.get("posted") is True else "listed",
-                           d["jobReqId"], d.get("startDate"))
+                           d["jobReqId"], d.get("startDate"),
+                           department=" / ".join(str(d.get(key) or "") for key in (
+                               "department", "jobFamily", "jobFamilyGroup", "businessUnit",
+                               "supervisoryOrganization")))
             if job:
                 result.records.append(job)
         except Exception as exc:
@@ -707,7 +713,8 @@ def _amazon(source, client):
                             except ValueError:
                                 posted = None
                         job = make_job(source, native, title, target, _amazon_location(entry), description,
-                                       employment, "listed", native, posted)
+                                       employment, "listed", native, posted,
+                                       department=str(entry.get("team") or ""))
                         if job:
                             result.records.append(job)
                     except Exception as exc:
@@ -949,7 +956,9 @@ def _ericsson(source, client):
                 except (ValueError, OverflowError, OSError):
                     pass
             job = make_job(source, native, title, url, job_location, description,
-                           detail.get("employmentType", ""), status, native, posted)
+                           detail.get("employmentType", ""), status, native, posted,
+                           department=" / ".join(str(detail.get(key) or "") for key in (
+                               "department", "departmentName", "jobFamily", "businessUnit")))
             if job:
                 result.records.append(job)
         except Exception as exc:
@@ -1206,7 +1215,8 @@ def _html(source, client):
                 if isinstance(employment, list):
                     employment = " ".join(str(x) for x in employment)
                 job = make_job(source, native, d.get("title", ""), target, location,
-                               d.get("description", ""), employment, "listed", posted_at=d.get("datePosted"))
+                               d.get("description", ""), employment, "listed", posted_at=d.get("datePosted"),
+                               department=str(d.get("occupationalCategory") or d.get("industry") or ""))
                 if job:
                     result.records.append(job)
         except Exception as exc:
