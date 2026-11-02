@@ -79,6 +79,17 @@ class CivilianOnlyTests(unittest.TestCase):
         merged=crawler.merge_results({"jobs":[old],"sources":[]},[result],conf,"2026-11-02T07:00:00Z")
         self.assertEqual(merged["jobs"],[])
 
+    def test_robotic_multisensor_calibration_internship_matches(self):
+        matched = crawler.classify_job(
+            "2027 Summer Intern, MS/PhD, Perception, Robotics",
+            "Within perception we develop sensor data alignment and calibration algorithms "
+            "for self-driving cars. You will evaluate next-generation calibration systems "
+            "and calibrate multi-sensor robotic platforms.",
+            "Mountain View, CA", "Internship")
+        self.assertIsNotNone(matched)
+        self.assertEqual(matched["category"], "robotics-localization")
+        self.assertEqual(matched["employment_type"], "Internship")
+
     def test_defence_employer_cannot_be_readded(self):
         src=source()
         src["company"]="Saab"

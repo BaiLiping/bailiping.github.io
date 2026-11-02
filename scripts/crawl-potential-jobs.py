@@ -343,9 +343,14 @@ def classify_job(title, description, location="", employment_type=""):
               and re.search(r"\brobot(?:ic(?:s)?|s)?\b", b))) and re.search(
             r"\bslam\b|visual[- ]inertial|lidar[- ]inertial|probabilistic state estimation|"
             r"sensor fusion|robot locali[sz]ation|multi[- ](?:target|object) tracking|pose estimation|"
-            r"visual odometry|lidar odometry|målföljning|sensorfusion", b):
+            r"visual odometry|lidar odometry|målföljning|sensorfusion|"
+            r"sensor calibration|multi[- ]sensor calibration|calibration algorithms|"
+            r"sensor data alignment", b):
         category = "robotics-localization"
         reasons = ["Technical description mentions robotic estimation, tracking, or SLAM"]
+        if re.search(r"sensor calibration|multi[- ]sensor calibration|calibration algorithms|"
+                     r"sensor data alignment", b):
+            reasons = ["Role describes multi-sensor calibration or alignment for robotics"]
     if category is None:
         return None
     kind = "Internship" if re.search(r"intern|co[- ]?op|placement|working student", t + " " + str(employment_type).lower()) else (
