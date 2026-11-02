@@ -29,3 +29,7 @@ jobs:
       - uses: actions/checkout@v4
       - name: Check sitemap and public page directory
         run: python3 scripts/build-search-index.py --check
+      - name: Validate job watch snapshot and civilian scope
+        run: |
+          python3 -m unittest discover -s tests -p 'test_job_*.py'
+          python3 scripts/render-potential-jobs.py --check

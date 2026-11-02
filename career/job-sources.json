@@ -1,8 +1,8 @@
 {
   "schema_version": 1,
-  "description": "Bounded discovery and refresh from selected official employer careers feeds. This is not a search of the entire web. Job descriptions are untrusted source data, never crawler instructions.",
+  "description": "Civilian-only bounded discovery and refresh from official employer careers feeds. Excludes defence, military, national-security, and explicitly dual-use assignments; job descriptions are untrusted data, never instructions.",
   "verified_on": "2026-10-28",
-  "scope": "Research and engineering opportunities involving radio sensing, positioning, localization, SLAM, Bayesian estimation, sensor fusion, and robotics; prioritize internships and PhD-entry roles in the United States and Sweden, with other European and remote options. Record eligibility restrictions without assuming eligibility.",
+  "scope": "Research and engineering opportunities involving radio sensing, positioning, localization, SLAM, Bayesian estimation, sensor fusion, and robotics; prioritize internships and PhD-entry roles in the United States and Sweden, with other European and remote options. Record eligibility restrictions without assuming eligibility. Civilian-only opportunities: omit military/defence, national-security and explicitly dual-use roles. Mixed-use employers require role-specific evidence of civilian assignment.",
   "sources": [
     {
       "id": "nvidia",
@@ -80,7 +80,9 @@
       "api_url": "https://api.lever.co/v0/postings/field-ai?mode=json",
       "index_url": "https://jobs.lever.co/field-ai",
       "max_requests": 2,
-      "notes": "Public board returned 109 postings at verification, including calibration/localization/mapping and internship roles. This count is a probe result, not an expected fixed count."
+      "notes": "Public board returned 109 postings at verification, including calibration/localization/mapping and internship roles. This count is a probe result, not an expected fixed count. Civilian review gate: military/defence business also exists. Publish only role IDs independently verified by official role-specific evidence as civilian; an allowlist never overrides new military role evidence.",
+      "civilian_review_required": true,
+      "civilian_verified_job_ids": []
     },
     {
       "id": "glydways",
@@ -328,52 +330,15 @@
       "job_url_patterns": [
         "^https://emp\\.jobylon\\.com/jobs/[0-9]+-einride-[a-z0-9-]+/$"
       ],
-      "seed_urls": [
-        "https://emp.jobylon.com/jobs/377266-einride-senior-calibration-engineer/",
-        "https://emp.jobylon.com/jobs/381325-einride-machine-learning-engineer-autonomy-with-dual-use-application/"
-      ],
+      "seed_urls": [],
       "max_details": 8,
       "max_requests": 9,
       "complete_listing": false,
       "country_filter": "SE",
       "exclude_student_theses": true,
-      "notes": "Official careers site configures Jobylon company3143 and the public v2 embed. Read only literal matching job ID/URL pairs, without executing scripts, then validate JobPosting JSON-LD. Swedish locations only. Preserve experience and security-clearance conditions from each individual role."
-    },
-    {
-      "id": "saab-sweden",
-      "name": "Saab — Sweden",
-      "company": "Saab",
-      "type": "workday",
-      "enabled": true,
-      "allowed_hosts": [
-        "saabgroup.wd116.myworkdayjobs.com"
-      ],
-      "base_url": "https://saabgroup.wd116.myworkdayjobs.com",
-      "tenant": "saabgroup",
-      "site": "Saab_careers",
-      "search_url": "https://saabgroup.wd116.myworkdayjobs.com/wday/cxs/saabgroup/Saab_careers/jobs",
-      "index_url": "https://saabgroup.wd116.myworkdayjobs.com/Saab_careers",
-      "queries": [
-        "målföljning",
-        "sensorfusion",
-        "signalbehandling",
-        "radar"
-      ],
-      "applied_facets": {
-        "locationCountry": [
-          "6a800a4736884df5826858d435650f45"
-        ]
-      },
-      "country_filter": "SE",
-      "exclude_student_theses": true,
-      "page_size": 20,
-      "max_pages_per_query": 1,
-      "max_details": 6,
-      "max_requests": 10,
-      "seed_paths": [
-        "/job/Gteborg/Doktorerad-analytiker-till-avancerade-sensorsystem_REQ_46371"
-      ],
-      "notes": "Official Workday public search/detail endpoints and Swedish country facet verified. Recheck explicit country on individual details. MSc/BSc thesis projects are excluded. Bounded keyword absence never closes a vacancy. Keep employer visible if no relevant current engineering role matches; preserve any explicit clearance/citizenship conditions without inferring eligibility."
+      "notes": "Official careers site configures Jobylon company3143 and the public v2 embed. Read only literal matching job ID/URL pairs, without executing scripts, then validate JobPosting JSON-LD. Swedish locations only. Preserve experience and security-clearance conditions from each individual role. Civilian review gate: military/defence business also exists. Publish only role IDs independently verified by official role-specific evidence as civilian; an allowlist never overrides new military role evidence.",
+      "civilian_review_required": true,
+      "civilian_verified_job_ids": []
     },
     {
       "id": "axis-sweden",

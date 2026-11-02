@@ -65,13 +65,16 @@ class SwedishMatchingTests(unittest.TestCase):
              "Develop visual odometry and camera/LiDAR localization for vehicles."),
             ("Senior Calibration Engineer",
              "Develop sensor fusion and pose estimation for robot calibration."),
-            ("Machine Learning Engineer — Autonomy with dual-use application",
-             "Develop multimodal sensor fusion and tracking for autonomous vehicles."),
         ):
             with self.subTest(title=title):
                 matched = crawler.classify_job(title, description, "Gothenburg, Sweden")
                 self.assertIsNotNone(matched)
                 self.assertEqual(matched["category"], "robotics-localization")
+        self.assertIsNone(crawler.classify_job(
+            "Machine Learning Engineer — Autonomy with dual-use application",
+            "Develop multimodal sensor fusion and tracking for autonomous vehicles.",
+            "Gothenburg, Sweden",
+        ))
         self.assertIsNone(crawler.classify_job(
             "Experienced Computer Vision Engineer",
             "Classify shopping catalogue images and improve product thumbnails.",
