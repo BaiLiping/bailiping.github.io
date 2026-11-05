@@ -9,8 +9,10 @@ sensing and communications. Hands-on algorithm development, real-time deployment
 and validation in civilian robotics and autonomous driving are explicit search
 criteria. C++ and Python are useful evidence rather than mandatory keywords.
 Relevant full-time and experienced individual-contributor roles are retained
-with their stated requirements. The watch prioritizes relevant internships and US or
-European roles, with explicit coverage of Sweden. Keyword matches are leads to review, not an assessment of
+with their stated requirements. The watch prioritizes relevant internships and US,
+Canadian, or European roles, with explicit coverage of Sweden and Canada outside
+Québec. Canadian postings requiring French or bilingual proficiency are excluded;
+optional French is allowed. Keyword matches are leads to review, not an assessment of
 eligibility, sponsorship, or a guarantee that an employer is still accepting
 applications when a reader follows the link.
 
@@ -47,6 +49,21 @@ The workflow summary and the page's source-status panel show what happened.
 
 ## Current coverage
 
+- Canada: Waabi's official Lever board discovers civilian autonomous-driving
+  localization, sensor processing, calibration and PhD research opportunities.
+  Ericsson's Canadian search includes ISAC, integrated sensing and communication,
+  joint communication and sensing, 6G sensing, radio sensing and positioning.
+  The live employer detail API verified the Ottawa Junior AI Developer opening
+  in the ISAC System Verification team. Its description explicitly rules out
+  immigration sponsorship now and in the future. AI verification work is not
+  described as sensing-algorithm research. The older ISAC Test Manager returned
+  HTTP 404 and was not retained as an active lead.
+- u-blox's Calgary GNSS Engineer link
+  is retained as a dated manually reviewed reference with no automatic
+  availability claim. Generic Hexagon GNSS/INS roles were not added because
+  role-specific civilian assignment was not established. A closed Huawei RF ISAC
+  internship and an adjacent optical-fibre sensing role were not added as
+  wireless ISAC openings.
 - Caterpillar: bounded Workday checks for the two independently reviewed civilian
   autonomy-positioning requisitions. Both currently state visa sponsorship is
   available. New Caterpillar requisitions still need role-specific civilian review.
@@ -118,6 +135,15 @@ Structured multi-location listings can match more than one regional filter.
 For example, Wayve's London/Sunnyvale role appears under both **Europe** and
 **United States**. Hybrid roles are not labeled fully remote merely because
 their employer's feed also sets an `isRemote` flag.
+
+The **Canada** filter uses explicit hiring locations, including named Canadian
+cities and Canada-remote options; `CA` alone is never interpreted as Canada.
+Québec locations and explicit required French/bilingual proficiency are outside
+this search. Canadian cards show a dated language review: **No French requirement
+stated** means the full reviewed description did not state one, not a guarantee
+about daily working language. **English required** additionally reflects explicit
+English proficiency wording. Optional French does not exclude a role. Failed
+refreshes retain earlier evidence with its original date.
 
 The **Added from / Added through** filters use the original `first_seen` date
 in Europe/Stockholm, with both endpoints included. Either endpoint can be left

@@ -606,10 +606,76 @@ def _carry_eligibility(current, existing):
     _set_job_eligibility(current, posting, new_review)
 
 
+def is_canada_location(location):
+    """Use hiring locations, never descriptions or the ambiguous abbreviation CA."""
+    text = clean_text(location, 1000).lower()
+    for part in re.split(r"\s*[/;|]\s*", text):
+        if re.search(r"\bcanada\b", part):
+            return True
+        if re.search(r"\b(?:united states|usa|california|washington|oregon|texas)\b|,\s*(?:wa|ca|or|tx)\b", part):
+            continue
+        if re.search(r"\b(?:toronto|ottawa|waterloo|kitchener|calgary|cochrane|edmonton|"
+                     r"vancouver|burnaby|victoria|winnipeg|halifax|saskatoon|regina|"
+                     r"montréal|montreal|québec|quebec|ontario|alberta|british columbia|"
+                     r"nova scotia|manitoba|saskatchewan|new brunswick|newfoundland)\b", part):
+            return True
+    return False
+
+
+def is_quebec_location(location):
+    return bool(re.search(r"\b(?:québec|quebec|montréal|montreal|laval|gatineau|sherbrooke)\b|,\s*qc\b",
+                          clean_text(location, 1000), re.I))
+
+
+def french_required(description):
+    """Screen explicit language requirements, preserving optional French wording."""
+    text = clean_text(description, 30000).lower()
+    # Strip only the language clause, not the rest of its sentence: French may
+    # be optional in one clause and mandatory in a different requirement.
+    text = re.sub(r"(?:french|bilingual(?:ism)?(?:\s*\([^)]*\))?)"
+                  r"(?:(?!\b(?:required|mandatory|essential|must|english|german|spanish|italian|mandarin)\b)[^,.;:]){0,65}?"
+                  r"(?:not required|not necessary|not needed|optional|an? (?:asset|advantage|bonus)|preferred|a plus|nice[- ]to[- ]have)", "", text)
+    text = re.sub(r"(?:no|without)\s+(?:knowledge of\s+)?french(?:\s+(?:is\s+)?required)?", "", text)
+    text = re.sub(r"(?:optional|preferred|nice[- ]to[- ]have)\s*[:–-]?\s*(?:french|bilingual(?:ism)?)", "", text)
+    return bool(re.search(
+        r"\bbilingual(?:ism)?\b|(?:must|required|requirement|fluen\w*|proficien\w*|command of|ability to (?:speak|write|communicate in))"
+        r"[^.;:]{0,75}\bfrench\b|\bfrench\b\s*:?[^.;:]{0,75}(?:required|mandatory|essential|fluen\w*|proficien\w*)|"
+        r"(?:required(?: languages?)?|mandatory(?: languages?)?|requirements?|language requirements?)"
+        r"\s*:[^.;]{0,75}\bfrench\b", text))
+
+
+def language_review(description, checked_at=None):
+    text = clean_text(description, 30000)
+    status = "unknown"
+    if text:
+        status = "french_required" if french_required(text) else "no_french_stated"
+        if status != "french_required" and re.search(
+                r"(?:fluen\w*|proficien\w*)[^.;:]{0,55}\benglish\b|\benglish\b[^.;:]{0,55}(?:fluen\w*|proficien\w*|required)", text, re.I):
+            status = "english_required"
+    return {"status": status, "checked_at": checked_at if text else None, "method": "posting_text"}
+
+
+def normalize_language_review(value):
+    if not isinstance(value, dict):
+        return {"status": "unknown", "checked_at": None, "method": "posting_text"}
+    if value.get("status") not in {"unknown", "no_french_stated", "english_required", "french_required"}:
+        raise ValueError("Invalid language review status")
+    if value.get("method", "posting_text") not in {"posting_text", "manual_review"}:
+        raise ValueError("Invalid language review method")
+    stamp = value.get("checked_at")
+    if stamp is not None:
+        if not isinstance(stamp, str) or not re.fullmatch(r"\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:Z|[+-]\d{2}:\d{2})", stamp):
+            raise ValueError("Invalid language review date")
+        datetime.fromisoformat(stamp.replace("Z", "+00:00"))
+    return {"status": value["status"], "checked_at": stamp, "method": value.get("method", "posting_text")}
+
+
 def region_for(location):
     text = clean_text(location, 1000).lower()
     if re.search(r"\bremote\b|work from home", text):
         return "Remote"
+    if is_canada_location(location):
+        return "Canada"
     if re.search(r"\b(?:united states|usa|u\.s\.?a?\.?|us)\b", text):
         return "US"
     if re.search(r"\b(?:california|massachusetts|washington|texas|colorado|michigan|new york|"
@@ -645,16 +711,18 @@ def classify_job(title, description, location="", employment_type=""):
                           r"program manager|project manager|executive assistant)\b", t):
         return None
     if not re.search(r"engineer|scientist|research|intern|developer|student|algorithm|ph\.?d|postdoc|"
-                     r"ingenjör|utvecklare|forskare|analytiker|doktor(?:and|erad)|technical coordinator", t):
+                     r"ingenjör|utvecklare|forskare|analytiker|doktor(?:and|erad)|technical coordinator|test manager.*isac", t):
         return None
     if re.search(r"(?:anomaly|defect|fault) locali[sz]ation|predictive maintenance", t):
         return None
     region = region_for(location)
+    if is_canada_location(location) and (is_quebec_location(location) or french_required(title + ". " + description)):
+        return None
     if region == "Other" or is_military_role(title, description):
         return None
     # Prefer role-specific sections over company introductions wherever available.
     boundary = re.search(r"what you(?:'|’)ll (?:do|get to do)|what you will|about the job|"
-                         r"key job responsibilities|responsibilities|you will:", b)
+                         r"key job responsibilities|responsibilities|you will(?:[:.]|\b)", b)
     if boundary:
         b = b[boundary.start():]
     footer = re.search(r"why join (?:us|field)|equal opportunity employer|compensation and benefits", b)
@@ -684,7 +752,7 @@ def classify_job(title, description, location="", employment_type=""):
     radio_pair = re.search(radio + r"[^.!?]{0,200}(?:" + position + r")|(?:" + position + r")[^.!?]{0,200}" + radio, text)
     if re.search(position, t) and re.search(r"\buwb\b|ultra[- ]wideband|wi[- ]?fi|bluetooth", body, re.I):
         radio_pair = True
-    isac = re.search(r"\bisac\b|integrated sensing and communication|joint sensing and communication", text)
+    isac = re.search(r"\bisac\b|(?:integrated|joint) sensing and communications?|joint communications? and sensing", text)
     slam_title = re.search(r"\bslam\b|locali[sz]ation|odometry|sensor[- ]fusion|state[- ]estimation|calibration.*mapping", t)
     if re.search(r"sensor[- ]fusion|state[- ]estimation", t) and not motion_context:
         slam_title = None
@@ -723,6 +791,11 @@ def classify_job(title, description, location="", employment_type=""):
             r"state[- ]estimation|geometric optimi[sz]ation|probabilistic estimation|bundle adjustment|factor[- ]graph", b):
         category = "robotics-localization"
         reasons = ["Role describes geometric or probabilistic estimation for robotic motion"]
+    elif motion_context and re.search(r"research|scientist", t) and re.search(
+            r"\bmapping\b(?:\s*[,/&]\s*|\s+and\s+)locali[sz]ation|"
+            r"\blocali[sz]ation\b(?:\s*[,/&]\s*|\s+and\s+)mapping", b):
+        category = "robotics-localization"
+        reasons = ["Role research topics include robotic mapping and localization"]
     elif (re.search(r"robotics|robotic|autonom(?:ous|y)|perception|research|mapping|tracking|computer vision|"
                    r"calibration|analytiker|sensorfusion|signalbehandling", t)
           or (re.search(r"software.*(?:engineer|developer)|(?:algorithm|development) engineer|scientist", t)
@@ -814,6 +887,8 @@ def make_job(source, native_id, title, url, location="", description="", employm
     # mention in the description or an unspecified remote-work arrangement.
     if source.get("country_filter") == "SE" and not re.search(r"\b(?:sweden|sverige)\b", location, re.I):
         return None
+    if source.get("country_filter") == "CA" and not is_canada_location(location):
+        return None
     if source.get("exclude_student_theses") and re.search(
             r"\b(?:master(?:['’]s)?|bachelor(?:['’]s)?|msc|bsc|m\.sc\.?|b\.sc\.?)\b.*\bthes[ie]s\b|"
             r"\b(?:examensarbete|exjobb)\b", title, re.I):
@@ -826,6 +901,11 @@ def make_job(source, native_id, title, url, location="", description="", employm
            "title": title, "url": url, "location": location, **matched,
            "status": status, "pinned": False,
            "eligibility": extract_eligibility(description, source.get("_now"))}
+    if is_canada_location(location):
+        job["regions"] = list(dict.fromkeys([
+            job["region"], *[region_for(part) for part in re.split(r"\s*[/;|]\s*", location)], "Canada"]))
+        job["regions"] = [region for region in job["regions"] if region != "Unknown"]
+        job["language_review"] = language_review(description, source.get("_now"))
     if requisition_id:
         job["requisition_id"] = clean_text(requisition_id, 100)
     if posted_at and re.match(r"^\d{4}-\d{2}-\d{2}", str(posted_at)):
@@ -1379,11 +1459,28 @@ def _lever(source, client):
             native, url = str(d["id"]), d["hostedUrl"]
             result.seen_ids.append(stable_job_id(source["id"], native, url))
             categories = d.get("categories") or {}
-            location = " / ".join(categories.get("allLocations") or [categories.get("location", "")])
-            if d.get("workplaceType") == "remote":
+            locations = categories.get("allLocations") or [categories.get("location", "")]
+            if not isinstance(locations, list) or not all(isinstance(item, str) for item in locations):
+                raise FetchError("Lever hiring locations are malformed")
+            locations = list(dict.fromkeys(clean_text(item, 260) for item in locations if item))
+            workplace = d.get("workplaceType")
+            if workplace not in (None, "unspecified", "onsite", "on-site", "remote", "hybrid"):
+                raise FetchError("Lever workplace type is malformed")
+            geographic_locations = [re.sub(r"\bremote\b|work from home", "", item, flags=re.I) for item in locations]
+            regions = list(dict.fromkeys(region_for(item) for item in geographic_locations)) or ["Unknown"]
+            if all(region == "Other" for region in regions):
+                continue
+            location = " / ".join(locations)
+            if workplace == "remote":
                 location = "Remote / " + location
+                regions = list(dict.fromkeys([*regions, "Remote"]))
+            elif workplace == "hybrid":
+                location = "Hybrid / " + location
+            elif workplace in (None, "unspecified") and re.search(r"\bremote\b|work from home", location, re.I):
+                regions = list(dict.fromkeys([*regions, "Remote"]))
             desc = " ".join([d.get("descriptionPlain") or d.get("description", ""),
-                             *[str(x.get("text", "")) + " " + str(x.get("content", "")) for x in d.get("lists", [])]])
+                             *[str(x.get("text", "")) + " " + str(x.get("content", "")) for x in d.get("lists", [])],
+                             d.get("additionalPlain") or d.get("additional", "")])
             posted = None
             if isinstance(d.get("createdAt"), (int, float)):
                 posted = datetime.fromtimestamp(d["createdAt"] / 1000, timezone.utc).strftime("%Y-%m-%d")
@@ -1391,6 +1488,11 @@ def _lever(source, client):
                            categories.get("commitment", ""), "open", posted_at=posted,
                            department=" / ".join(str(categories.get(key) or "") for key in ("department", "team")))
             if job:
+                job["regions"] = regions
+                if workplace in {"hybrid", "onsite", "on-site"}:
+                    # The explicit arrangement governs the Remote filter even
+                    # when secondary location labels contain remote options.
+                    job["region"] = region_for(" / ".join(geographic_locations))
                 result.records.append(job)
             else:
                 result.rejected_ids.append(stable_job_id(source["id"], native, url))
@@ -1596,7 +1698,7 @@ def _address_text(value):
     # an unnecessary street address or inferring it from company boilerplate.
     if not country and re.search(r"(?:^|,)\s*(?:sweden|sverige)\s*$", str(value.get("streetAddress", "")), re.I):
         country = "Sweden"
-    country = {"SE": "Sweden", "SWE": "Sweden"}.get(str(country).upper(), country)
+    country = {"SE": "Sweden", "SWE": "Sweden", "CA": "Canada", "CAN": "Canada"}.get(str(country).upper(), country)
     parts = list(dict.fromkeys(str(x) for x in [value.get("addressLocality", ""), value.get("addressRegion", "")] if x))
     location = ", ".join(parts)
     if country and not re.search(r"(?:^|,\s*)" + re.escape(str(country)) + r"(?:,|$)", location, re.I):
@@ -1787,7 +1889,7 @@ def validate_config(config):
         for key in ("base_url", "search_url", "api_url", "detail_url", "index_url", "careers_url"):
             if key in source:
                 safe_url(source[key], hosts)
-        if source.get("country_filter") not in (None, "SE"):
+        if source.get("country_filter") not in (None, "SE", "CA"):
             raise ValueError("Unsupported country filter")
         if "exclude_student_theses" in source and not isinstance(source["exclude_student_theses"], bool):
             raise ValueError("exclude_student_theses must be boolean")
@@ -1889,22 +1991,30 @@ def _public_job(record, source):
             and record.get("id") not in set(source.get("civilian_verified_job_ids", []))):
         raise ValueError("Mixed-use role lacks verified civilian assignment")
     classification = classify_job(title, record.get("description", ""), record.get("location", ""), record.get("employment_type", ""))
+    canadian = is_canada_location(record.get("location", ""))
+    review = normalize_language_review(record.get("language_review"))
+    if canadian and (is_quebec_location(record.get("location", ""))
+                     or french_required(title + ". " + record.get("description", "")) or review["status"] == "french_required"):
+        raise ValueError("Canadian location or French requirement outside search scope")
     category = record.get("category") if record.get("category") in CATEGORIES else (classification or {}).get("category")
     if not category:
         raise ValueError("Job has no supported relevance category")
     job = {"id": str(record.get("id") or stable_job_id(source["id"], record.get("requisition_id"), url)),
            "source_id": source["id"], "company": clean_text(record.get("company") or source["company"], 120),
            "title": title, "url": url, "location": clean_text(record.get("location", ""), 260),
-           "region": record.get("region") if record.get("region") in {"US", "Europe", "Remote", "Other", "Unknown"} else region_for(record.get("location", "")),
+           "region": record.get("region") if record.get("region") in {"US", "Canada", "Europe", "Remote", "Other", "Unknown"} else region_for(record.get("location", "")),
            "employment_type": record.get("employment_type") if record.get("employment_type") in {"Internship", "Full-time", "Unknown"} else (classification or {}).get("employment_type", "Unknown"),
            "category": category, "status": record.get("status") if record.get("status") in JOB_STATUSES else "unknown",
            "pinned": bool(record.get("pinned", False)), "score": max(0, min(int(record.get("score", 70)), 150))}
     if "regions" in record:
         regions = record["regions"]
         if (not isinstance(regions, list) or not 1 <= len(regions) <= 5
-                or any(not isinstance(region, str) or region not in {"US", "Europe", "Remote", "Other", "Unknown"} for region in regions)):
+                or any(not isinstance(region, str) or region not in {"US", "Canada", "Europe", "Remote", "Other", "Unknown"} for region in regions)):
             raise ValueError("Invalid job regions")
         job["regions"] = list(dict.fromkeys(regions))
+    if canadian:
+        job["regions"] = list(dict.fromkeys([*job.get("regions", [job["region"]]), "Canada"]))
+        job["language_review"] = review
     for key in ("match_reasons", "requirements"):
         items = record.get(key, (classification or {}).get(key, []))
         job[key] = [clean_text(x, 150) for x in items[:12] if clean_text(x, 150)] if isinstance(items, list) else []
@@ -2007,6 +2117,8 @@ def merge_results(previous, results, config, now):
                 current["first_seen"] = existing.get("first_seen", now)
                 current["pinned"] = existing.get("pinned", False) or current["pinned"]
                 _carry_eligibility(current, existing)
+                if (existing.get("language_review") and current.get("language_review", {}).get("status") == "unknown"):
+                    current["language_review"] = existing["language_review"]
                 if existing.get("pinned"):
                     current["url"] = existing["url"]
                 if existing["id"] != current["id"]:
@@ -2028,6 +2140,12 @@ def merge_results(previous, results, config, now):
                 existing = jobs.get(rejected_id)
                 if existing and existing["source_id"] == result.source_id:
                     del jobs[rejected_id]
+        # A newly read French requirement or excluded Canadian location must
+        # not linger as an old accepted record after a successful detail check.
+        for rejected_id in set(result.rejected_ids) - returned:
+            existing = jobs.get(rejected_id)
+            if existing and existing["source_id"] == result.source_id and is_canada_location(existing.get("location", "")):
+                del jobs[rejected_id]
         for job in list(jobs.values()):
             if job["source_id"] != result.source_id or job["id"] in returned:
                 continue

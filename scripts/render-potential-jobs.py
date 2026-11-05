@@ -34,7 +34,12 @@ STATUS_LABELS = {
     "saved": "Saved link · unverified",
 }
 TYPES = {"Internship", "Full-time", "Unknown"}
-REGIONS = {"US", "Europe", "Remote", "Other", "Unknown"}
+REGIONS = {"US", "Canada", "Europe", "Remote", "Other", "Unknown"}
+LANGUAGE_LABELS = {
+    "unknown": "Language requirements not yet verified",
+    "no_french_stated": "No French requirement stated in the reviewed posting",
+    "english_required": "English required; no French requirement stated",
+}
 SPONSORSHIP_LABELS = {
     "offered": "Explicitly offered for this role",
     "case_by_case": "Case-by-case — employer decision",
@@ -125,6 +130,19 @@ def render_eligibility(job: dict) -> str:
     <dl>{definitions}</dl>
     <details class="eligibility-evidence"><summary>Evidence and review date</summary>{evidence}<p>{escape(review)}</p>{conflict_note}<p><a href="{escape(https_url(job['url']))}">Check the original posting</a></p></details>
   </section>'''
+
+
+def render_language_review(job: dict) -> str:
+    if "Canada" not in job_regions(job):
+        return ""
+    value = job.get("language_review") or {"status": "unknown"}
+    label = LANGUAGE_LABELS[value.get("status", "unknown")]
+    stamp = display_time(value.get("checked_at"))
+    method = "Manual review" if value.get("method") == "manual_review" else "Posting-text check"
+    review = f" {method}: {stamp}." if stamp != "not recorded" else ""
+    return (f'<p class="career-note language-note"><strong>Language:</strong> {escape(label)}.'
+            f'{escape(review)} Confirm the working language with the employer. '
+            f'<a href="{escape(https_url(job["url"]))}">Source posting</a></p>')
 
 
 def escape(value: object) -> str:
@@ -251,6 +269,12 @@ def validate_snapshot(data: dict) -> None:
         if job.get("region", "Unknown") not in REGIONS:
             raise ValueError("Invalid job region")
         job_regions(job)
+        language = job.get("language_review")
+        if language is not None:
+            if (not isinstance(language, dict) or language.get("status") not in LANGUAGE_LABELS
+                    or language.get("method", "posting_text") not in {"posting_text", "manual_review"}
+                    or (language.get("checked_at") is not None and display_time(language["checked_at"]) == "not recorded")):
+                raise ValueError("Invalid language review")
         for field in ("match_reasons", "requirements"):
             if not isinstance(job.get(field, []), list) or not all(isinstance(x, str) for x in job.get(field, [])):
                 raise ValueError(f"Invalid {field}")
@@ -304,6 +328,7 @@ def render_card(job: dict) -> str:
                                ACCESS_LABELS[eligibility["access"]],
                                WORK_AUTH_LABELS[eligibility["work_authorization"]]))
     application_html = render_eligibility(job)
+    language_html = render_language_review(job)
     career_notes = ""
     for field, label in (("fit_note", "Fit / experience"), ("compensation_note", "Posted compensation")):
         if job.get(field):
@@ -339,7 +364,7 @@ def render_card(job: dict) -> str:
   <p class="job-meta">{escape(' · '.join(metadata))}</p>
   <div class="job-tags"><span class="tag">{escape(CATEGORIES[category])}</span><span class="tag status-{status}">{STATUS_LABELS[status]}</span></div>
   {summary}{evidence}{requirements}
-  {application_html}{career_notes}
+  {application_html}{language_html}{career_notes}
   <div class="job-card-bottom"><a class="job-link" href="{url}">View posting</a><p class="added-date">{added_note}</p><p class="checked-date">{escape(date_note)}</p></div>
 </article>'''
 
