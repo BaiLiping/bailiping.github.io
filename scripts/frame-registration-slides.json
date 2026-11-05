@@ -1,0 +1,140 @@
+{
+  "edits": {
+    "s-cover": {
+      "cover-kicker": "A TEACHING GUIDE · POINT-CLOUD ALIGNMENT",
+      "cover-sub": "Separate the correspondence model, alignment objective, and optimizer.",
+      "cover-author": "Bai Liping · companion article: bailiping.com/frame-registration · Reviewed 7 Sep 2026"
+    },
+    "s-problem": {
+      "eqcap": "Source → target: T(p) = Rp + t, R ∈ SO(d), det R = 1. This sum assumes fixed pairs; no scale or reflection.",
+      "colLbody": "Two clouds observe overlapping geometry. Estimate the transform from source coordinates to target coordinates. The demos use <b>SE(2): 3 pose parameters</b>; 3-D rigid registration uses <b>SE(3): 6</b>. A similarity transform additionally estimates scale.",
+      "colRbody": "The paired sum assumes we know which target belongs to each source point. With unknown pairs, choose an association or distribution model. <b>Low objective, numerical stopping, and correct pose are three different claims.</b>"
+    },
+    "s-ladder": {
+      "ladder-cap": "Different assumptions about matches lead to different objectives; complexity is not a strict ladder.",
+      "lmeth0": "Kabsch–Procrustes · exact paired least-squares optimum",
+      "lname4": "Point-to-cell association",
+      "lmeth4": "NDT · approximate target geometry by Gaussian cells"
+    },
+    "s-rung1": {
+      "eqcap": "H = Σᵢ p̃ᵢq̃ᵢᵀ; p̃ and q̃ are centered. Translation: t̂ = q̄ − R̂p̄. C prevents a reflection.",
+      "colLbody": "Fixed paired least squares has a closed-form global optimum over proper rotations and translation. <b>The optimum need not equal the true motion</b> under noise or bad pairs. No iterative starting pose is required.",
+      "colRbody": "Geometry still matters: two distinct 2-D pairs, or three noncollinear 3-D pairs, determine a noise-free rigid pose. Collinear 3-D points leave rotation about their line undetermined. Point-to-point ICP reuses this solve on its current pairs."
+    },
+    "s-rung2": {
+      "eqcap": "Sampling bound with 0 < p,w < 1, independent trials and usable all-inlier samples; wˢ is the usual approximation.",
+      "colLbody": "Gross outliers can strongly distort least squares; not every wrong match ruins it. Fit small subsets, score a distance-threshold consensus, and refit. Two distinct paired points give a planar hypothesis; noisy pairs need not be exactly consistent.",
+      "colRbody": "No supplied pose initialization is needed, but <b>sampling confidence is not a correctness certificate</b>. Thresholds, nondegenerate samples, repeated geometry, and iteration caps matter. The usual 3-D rigid minimum is three noncollinear pairs."
+    },
+    "s-rung2-live": {
+      "live-fallback-copy": "This separate demo samples geometric point-pair congruences without a precomputed match list. Change outliers and test batches; consensus still needs verification."
+    },
+    "s-rung3": {
+      "colRbody": "With a fixed source set, exact nearest neighbors, and exact paired fitting, the <b>objective values decrease or stay equal</b> and have a limit. This is not a global or correct-pose guarantee. A gated/trimmed displayed RMS can change its contributing set; suitable capped or fixed-count objectives can still have descent guarantees."
+    },
+    "s-rung3-live": {
+      "live-fallback-copy": "Gated point-to-point ICP trims the worst 16% of surviving pairs here. Compare residuals with the synthetic pose error; stopping does not certify a local minimum or correct alignment."
+    },
+    "s-rung35": {
+      "p35body0": "Penalize the normal component. A single plane leaves tangential directions unobservable; varied geometry is needed. The demo uses a local linearized solve.",
+      "p35body1": "Covariances encode local surface orientation, not automatic normal confidence. The demo freezes the rotation-dependent covariance within each step.",
+      "p35body2": "Huber has <b>linear, unbounded tails</b>; Tukey has bounded loss and zero weight beyond a cutoff. Neither makes pose estimation globally convex."
+    },
+    "s-rung4": {
+      "rungtag": "RUNG FOUR · POINT-TO-CELL ASSOCIATION",
+      "eqcap": "Unnormalized cell score; empty cells contribute zero. q̃ᵢ = transformed point − selected cell mean.",
+      "colLbody": "A Gaussian approximates the points in each target cell. This removes raw point matching, <b>not association</b>: each transformed point selects a cell. Covariance regularization prevents singular inverses; a single Gaussian can blur mixed surfaces.",
+      "colRbody": "The hard-cell objective is <b>piecewise analytic and can jump at cell boundaries</b>. Newton derivatives apply within unchanged cells. Shifted grids reduce artifacts but do not guarantee continuity. Coarse-to-fine processing can help; it is not globally reliable."
+    },
+    "s-rung4-live": {
+      "rungtag": "RUNG FOUR · POINT-TO-CELL ASSOCIATION",
+      "live-fallback-title": "Translation-only direct search on an NDT score",
+      "live-fallback-copy": "Rotation is fixed by the slider. This demo tests translation directions on four regularized grids; it is not the article’s Newton method. A stopped search is not a certified maximum."
+    },
+    "s-families": {
+      "fbody0": "Reassign nearest neighbors, then fit. Smooth for fixed pairs; assignment switches can create kinks. Indexed search is often O(M log N); the browser uses brute force.",
+      "fbody1": "Mixture responsibilities express alternatives. Exact EM improves a fixed model’s likelihood; schedules and approximate steps require separate care. Gaussian filtering can accelerate the sums.",
+      "ftag2": "DISTRIBUTIONS",
+      "fverb2": "Compare",
+      "fwho2": "GMMReg · MMD-Reg",
+      "fbody2": "Compare mixture densities or kernel mean embeddings without discrete pair assignments. NDT differs: it selects grid cells and need not be globally smooth.",
+      "fam-note": "As σ → 0, a unique nearest component dominates conditional on being an inlier; clutter may otherwise take all the mass."
+    },
+    "s-cpd": {
+      "eqcap": "c = (2πσ²)ᵈᐟ² [w/(1−w)] M/V for uniform density 1/V; original CPD’s 1/N convention gives M/N.",
+      "colLbody": "Gaussians sit on transformed source points; targets are observations. The E-step normalizes every observation’s responsibilities, including clutter. The M-step is weighted Procrustes; rigid CPD fixes s = 1, while the walkthrough enables similarity scale.",
+      "colRbody": "Variance can be updated analytically, but <b>need not decrease every step</b>; this is not deterministic annealing. Naive E-step evaluation is O(MN). Blocked sufficient sums avoid storing the full matrix, and Gaussian transforms can accelerate it."
+    },
+    "s-filterreg": {
+      "eqtext": "Gaussians on the <b>fixed</b> cloud → filtered mass and moments → soft targets and confidences.<br>M-step: local twist-based Gauss–Newton.",
+      "fr-num": "σ²",
+      "fr-numcap": "can be optimized analytically",
+      "colLbody": "The reversed mixture permits Gaussian filtering of a fixed target set. FilterReg uses a customized permutohedral lattice and supports additional moments, features, or normals. A fixed bandwidth allows index reuse.",
+      "colRbody": "<b>The variance update is not lost.</b> Section 3.3 explicitly allows analytic optimization. Changing bandwidth may rebuild the filter. Near-linear filtering is approximate; exact EM monotonicity does not automatically transfer to a filtered, linearized implementation."
+    },
+    "s-mmd": {
+      "eqcap": "D Gaussian frequencies → 2D sine/cosine features; F(θ) = ‖mean z(TθX) − mean z(Y)‖². Fixed-D cost is linear in points.",
+      "colLbody": "Compare empirical distributions through feature means, with no E-step or discrete pairs. D frequencies give a <b>2D-dimensional residual</b>. Finite random features approximate a characteristic kernel; the finite embedding need not uniquely identify a distribution.",
+      "colRbody": "The objective is smooth but nonconvex. Differentiating a selected optimum requires an <b>isolated solution and nonsingular pose Hessian</b>. Partial overlap, density imbalance, and outliers can shift the optimum; learned weights may mitigate, not guarantee removal of, these effects."
+    },
+    "s-table": {
+      "rungtitle": "Representations and implementation choices"
+    },
+    "s-bench": {
+      "rungtitle": "Measure both rotation and translation",
+      "bench-cond": "Planar teaching scenes · arbitrary world units · configurable noise, outliers, rotation and offset · no universal ranking",
+      "bench-take": "A low objective is not ground truth. A small pose step is not success. Iteration count is not runtime."
+    },
+    "s-pipeline": {
+      "rungtitle": "Initialize, refine, and independently verify",
+      "pipe-a-h": "1 · Propose an initial pose",
+      "pipe-a-b": "Features + RANSAC, a learned model, or an odometry motion prediction. No proposal is automatically basin-safe.",
+      "pipe-b-h": "2 · Refine, then verify",
+      "pipe-b-b": "ICP / GICP / NDT are local options. Check overlap, geometry, motion consistency, and independent support.",
+      "rap-h": "A different inference route: learned flow",
+      "rap-b": "RAP uses conditional flow matching with test-time rigidity enforcement and rigid pose readout. It does not need a supplied initial pose, but this is <b>not a global correctness guarantee</b>. The article’s small planar MLP is an analogy, not RAP or its evaluation. Its scale failures must not be attributed to RAP.",
+      "rap-num": "Verify",
+      "rap-numcap": "initialization-free ≠ failure-free"
+    },
+    "s-takeaways": {
+      "tkhead0": "Separate the model from the optimizer.",
+      "tkbody0": "Fixed pairs, soft associations, point-to-cell scores, and distribution distances encode different assumptions. Newton, EM, and LM solve different subproblems.",
+      "tkhead1": "Several knobs, different meanings.",
+      "tkbody1": "Gates select pairs; cell size changes geometry; σ and ℓ change interactions. Coarse-to-fine can help, but these controls are not interchangeable.",
+      "tkhead2": "Smooth objective ≠ differentiable solution.",
+      "tkbody2": "NN costs have piecewise derivatives; hard-grid NDT can jump. Smooth MMD still needs a nonsingular Hessian for a local solution derivative.",
+      "tkhead3": "Stopping is not registration success.",
+      "tkbody3": "Validate both rotation and translation in simulation. On real data, check overlap, conditioning, motion consistency, and independent evidence."
+    }
+  },
+  "notes": {
+    "s-cover": "A planar teaching guide, not an exhaustive survey or official benchmark reproduction. Follow the article for equations, implementation boundaries, primary references, and numerical tests.",
+    "s-problem": "Convention: T maps source to target. R is a proper rotation; reflections are prohibited. These demos are SE(2), except the similarity CPD option. Three-dimensional observability differs from the planar case.",
+    "s-ladder": "The ladder is a pedagogical ordering, not a theorem about information or complexity. NDT retains point-to-cell association. Known-pair Kabsch is exact only for its stated least-squares objective.",
+    "s-rung1": "H=sum p-centered q-centered transpose. H=U Lambda V^T gives R=V C U^T with C=diag(1,...,det(VU^T)); t=qbar-R pbar. This excludes reflections. Geometric degeneracy can cause nonunique solutions. Sources: Arun et al. 1987; Umeyama 1991.",
+    "s-rung2": "The ceiling matters. With independent trials, probability of at least one all-inlier sample is 1-(1-a)^N. Usually a is approximated by w^s; without-replacement sampling uses a combinatorial ratio. Correct-model consensus and nondegenerate geometry are additional assumptions. RANSAC is not a global optimum certificate. Source: Fischler and Bolles 1981.",
+    "s-rung2-live": "This demonstration is geometric pair-congruence hypothesis search, rather than textbook RANSAC on a supplied correspondence list. It tests batches of 36 hypotheses. The preceding sampling formula does not directly certify this proposal mechanism.",
+    "s-rung3": "Exact vanilla point-to-point ICP decreases a fixed nearest-neighbor squared cost. This proves convergence of cost values, not global pose recovery. Fixed-count trimmed and capped-distance variants can also have monotonic objectives; variable gated/trimmed RMS can change its denominator. Sources: Besl and McKay 1992; Chetverikov et al. 2002.",
+    "s-rung3-live": "This separate slide demo uses a gate, trims approximately 16 percent of the surviving matches, and stops on RMS change or a 35-step cap. Its truth-based status is a simulation diagnostic, not a deployed acceptance test.",
+    "s-rung35": "Point-to-plane degeneracy: one plane leaves two tangential translations and normal-axis rotation unconstrained in 3-D. GICP uses prescribed anisotropic surface covariances; the browser freezes them during a step. Huber loss is not bounded, while Tukey loss is bounded. Sources: Chen and Medioni 1992; Segal et al. 2009.",
+    "s-rung4": "The displayed unnormalized score is smooth only within unchanged hard cell assignments. Covariance determinants are omitted from this particular score. Shifted grids do not guarantee continuity. Empty cells contribute zero. NDT variants differ; the article derives fixed-cell gradient and Hessian. Source: Biber and Straßer 2003.",
+    "s-rung4-live": "Do not call this Newton: the live slide searches eight translation directions and shrinks the step when none improves. It holds rotation fixed, uses four grids of size 1.3, and adds 0.026 to covariance diagonals. The full article instead implements damped Newton. A finite direct search stopping flag is not a maximum certificate.",
+    "s-families": "Do not confuse smooth fixed-bandwidth likelihood with an exact EM update, or distribution matching with point-to-cell NDT. GMMReg minimizes a density distance without an E-step. The zero-noise nearest-neighbor limit needs an inlier condition when clutter has positive weight.",
+    "s-cpd": "Responsibilities must be normalized with clutter in the denominator. The displayed spatial-window convention is distinguished from the original paper convention. Variance optimization is not guaranteed monotone annealing. Full pair storage is a visualization choice; fast Gauss transforms and blocked sufficient statistics are possible. Source: Myronenko and Song 2010, arXiv:0905.2635.",
+    "s-filterreg": "Correction: Section 3.3 Optimized Variance explicitly states that isotropic variance may be optimized analytically. Fixed bandwidth enables index reuse; changing bandwidth can require rebuilding. The article walkthrough uses a Cartesian sparse-grid approximation, not the original custom permutohedral implementation. Source: Gao and Tedrake 2019, arXiv:1811.10136v3.",
+    "s-mmd": "D sine/cosine frequency pairs produce 2D features. Exact Gaussian-kernel population MMD identifies probability measures; a finite RFF approximation need not. Implicit differentiation is local and requires a nonsingular Hessian at an isolated selected optimum. Source: Crane et al. 2026, arXiv:2606.27818; Gretton et al. 2012.",
+    "s-table": "Costs refer to computational routes, not universal lower bounds. CPD may stream sufficient sums; FilterReg supports optimized variance. The table does not claim these methods uniquely own differentiability or suitability for a sensor.",
+    "s-bench": "The previous hard-coded success-rate chart had inconsistent and unsupported interpretations, including rotation-only success and a universal NDT capture angle. Use the live reproducible 25-seed benchmark instead. It now reports rotation-only and joint pose success. No superiority claim follows from these educational implementations.",
+    "s-pipeline": "Global proposal, local refinement, and verification is common, but odometry can initialize locally from motion prediction. KISS-ICP is point-to-point, not point-to-plane. RAP provides learned initialization-free inference, not failure-free registration. Do not infer RAP behavior from the toy MLP. Sources: KISS-ICP arXiv:2209.15397; RAP arXiv:2512.01850.",
+    "s-takeaways": "Low cost, optimizer stopping, and correct registration must be distinguished. Scale schedules, robust losses, and local geometry have separate roles. Use synthetic ground truth only for evaluation; deployed checks must rely on independent evidence and consistency."
+  },
+  "table": [
+    ["", "CPD", "FilterReg", "MMD-Reg"],
+    ["Intermediate state", "responsibilities or sufficient sums", "filtered moments; soft targets", "feature means; 2D residual"],
+    ["Evaluation cost", "O(MN) naive; accelerations exist", "near-linear approximate filtering", "O((M+N)D); target can be cached"],
+    ["Outlier model", "uniform component", "uniform component; confidence", "none in basic objective"],
+    ["Bandwidth", "analytic σ² estimation", "fixed, scheduled, or optimized", "fixed or scheduled ℓ"],
+    ["Solution derivative", "requires regularity", "depends on approximations", "IFT needs nonsingular Hessian"],
+    ["Model choice", "rigid or similarity; also nonrigid", "rigid and broader kinematics", "rigid demo; model-dependent"]
+  ]
+}

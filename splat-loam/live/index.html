@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="color-scheme" content="light">
+  <title>Splat-LOAM · Interactive geometry labs</title>
+  <meta name="description" content="Explore spherical ray–Gaussian intersections and geometric pose registration with a small, deterministic Splat-LOAM teaching demo.">
+  <script>document.documentElement.classList.toggle('embedded',new URLSearchParams(location.search).get('embed')==='1');</script>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<div class="app">
+  <header class="standalone-header">
+    <a class="back-link" href="../">← Return to the Splat-LOAM deck</a>
+    <div class="eyebrow">Interactive paper companion</div>
+    <h1>See what a splat measures.</h1>
+    <p>Explore the renderer and the geometric part of the tracker using small synthetic scenes.</p>
+  </header>
+  <div class="topbar">
+    <div><span class="lab-number" id="lab-number">LAB 01</span><strong id="lab-title">LiDAR rays → range cells</strong></div>
+    <nav aria-label="Choose a laboratory">
+      <a id="render-tab" class="tab" href="?lab=rendering">Rendering</a>
+      <a id="register-tab" class="tab" href="?lab=registration">Registration</a>
+    </nav>
+  </div>
+
+  <main id="rendering-lab" class="laboratory rendering">
+    <section class="panel controls" aria-labelledby="render-controls-title">
+      <h2 id="render-controls-title">Change the front splat</h2>
+      <label class="slider-label" for="tilt"><span>Tilt</span><output id="tilt-out">25°</output></label>
+      <input id="tilt" type="range" min="-60" max="60" value="25" step="1">
+      <label class="slider-label" for="scale"><span>Scale</span><output id="scale-out">1.15 m</output></label>
+      <input id="scale" type="range" min="0.45" max="2.1" value="1.15" step="0.05">
+      <label class="slider-label" for="opacity"><span>Peak opacity</span><output id="opacity-out">0.82</output></label>
+      <input id="opacity" type="range" min="0" max="1" value="0.82" step="0.01">
+      <div class="control-rule"></div>
+      <label class="slider-label" for="yaw"><span>Sensor yaw</span><output id="yaw-out">0°</output></label>
+      <input id="yaw" type="range" min="-35" max="35" value="0" step="1">
+      <label class="select-label grid-label" for="scan-grid">Angular samples <select id="scan-grid"><option value="72">72 × 32</option><option value="144">144 × 64</option></select></label>
+      <div class="footprint-summary"><span>Rays through A’s 3σ footprint</span><strong id="footprint-count">—</strong><small id="footprint-detail">Within this angular window</small></div>
+      <button id="render-reset" class="button secondary">Reset scene</button>
+      <p class="control-hint">A splat contains no fixed ray count. Resize it or change sampling. Counted before visibility weighting; not detected returns.</p>
+    </section>
+    <section class="panel scene-panel" aria-labelledby="geometry-title">
+      <div class="panel-heading"><h2 id="geometry-title">1 · Sample rays in 3D</h2><span class="tag">geometry only</span></div>
+      <div class="canvas-wrap scene-wrap"><canvas id="render-scene" aria-label="Three planar Gaussian splats and a selected spherical ray, shown in an oblique 3D projection."></canvas></div>
+      <div class="selected-cell" id="selected-cell">Selected cell —</div>
+      <div class="ray-picker">
+        <label for="azimuth">Azimuth <output id="azimuth-out">0°</output></label>
+        <input id="azimuth" type="range" min="-55" max="55" step="any" value="0">
+        <label for="elevation">Elevation <output id="elevation-out">0°</output></label>
+        <input id="elevation" type="range" min="-24" max="24" step="any" value="0">
+      </div>
+      <div class="mini-legend"><span><i class="dot orange"></i>A · adjustable</span><span><i class="dot teal"></i>B · rear</span><span><i class="dot sage"></i>C · side</span></div>
+    </section>
+    <section class="panel measurement-panel" aria-labelledby="range-title">
+      <div class="panel-heading"><h2 id="range-title">2 · Unwrap directions into cells</h2></div>
+      <div class="map-controls"><select id="range-mode" aria-label="Range image quantity"><option value="expectedDepth">Range D/O (m)</option><option value="depth">Accumulated D (m)</option><option value="opacity">Opacity O</option></select><select id="range-colors" aria-label="Display palette"><option value="gray">Grayscale</option><option value="color">False color</option></select></div>
+      <div class="canvas-wrap image-wrap"><canvas id="range-image" tabindex="0" aria-label="Clickable spherical range image. Choose azimuth and elevation with the adjacent sliders, or click this image to select a ray."></canvas></div>
+      <div class="image-caption"><span id="image-scale">0 m</span><span class="range-gradient" id="range-gradient" aria-hidden="true"></span><span id="image-scale-end">12+ m</span></div>
+      <div class="map-explainer" id="image-caption">Each cell = one beam direction · shade encodes range</div>
+      <div class="measurements" aria-live="polite">
+        <div><span>D<sub>acc</sub> = ∑ w d</span><strong id="accumulated-depth">—</strong></div>
+        <div><span>E[d | hit] = D / O</span><strong id="expected-depth">—</strong></div>
+        <div><span>Opacity O = ∑ w</span><strong id="ray-opacity">—</strong></div>
+      </div>
+      <table class="ray-table"><caption class="sr-only">Selected ray's hits sorted front to back</caption><thead><tr><th>Hit order</th><th>Range d</th><th>α = oG</th><th>Weight w</th></tr></thead><tbody id="hit-rows"></tbody></table>
+      <p class="formula-note">wᵢ = αᵢ ∏ⱼ₍ⱼ&lt;ᵢ₎ (1 − αⱼ). Blank cells: negligible support (O ≤ 10⁻⁶). Display tones are not RGB measurements.</p>
+    </section>
+  </main>
+
+  <main id="registration-lab" class="laboratory registration" hidden>
+    <section class="panel controls" aria-labelledby="registration-controls-title">
+      <div class="panel-heading"><h2 id="registration-controls-title">Set an initial pose</h2></div>
+      <label class="select-label" for="scene-kind">Geometry <select id="scene-kind"><option value="corner">Room corner</option><option value="corridor">Parallel corridor</option></select></label>
+      <label class="slider-label" for="initial-x"><span>x offset</span><output id="initial-x-out">0.70 m</output></label><input id="initial-x" type="range" min="-1.2" max="1.2" value="0.7" step="0.05">
+      <label class="slider-label" for="initial-y"><span>y offset</span><output id="initial-y-out">−0.60 m</output></label><input id="initial-y" type="range" min="-1.2" max="1.2" value="-0.6" step="0.05">
+      <label class="slider-label" for="initial-yaw"><span>Yaw offset</span><output id="initial-yaw-out">9°</output></label><input id="initial-yaw" type="range" min="-14" max="14" value="9" step="0.5">
+      <label class="slider-label" for="noise"><span>Normal noise σ</span><output id="noise-out">0.015 m</output></label><input id="noise" type="range" min="0" max="0.06" value="0.015" step="0.005">
+      <div class="button-row"><button id="run" class="button">Run</button><button id="step" class="button secondary">Step</button><button id="registration-reset" class="button secondary">Reset</button></div>
+      <label class="check-label"><input id="show-matches" type="checkbox"> Show normal residuals</label>
+    </section>
+    <section class="panel scene-panel" aria-labelledby="alignment-title">
+      <div class="panel-heading"><h2 id="alignment-title">Align the scan to surfaces</h2><span class="tag">SE(2) analogue</span></div>
+      <div class="canvas-wrap alignment-wrap"><canvas id="registration-scene" aria-label="A fixed surface map, displaced LiDAR scan, estimated sensor pose, and ground-truth pose for evaluation."></canvas></div>
+      <div class="mini-legend"><span><i class="line teal"></i>Map</span><span><i class="dot orange"></i>Transformed scan</span><span><i class="line grey"></i>Initial scan</span></div>
+      <div id="registration-status" class="status" aria-live="polite">Ready · press Run or Step.</div>
+    </section>
+    <section class="panel results-panel" aria-labelledby="convergence-title">
+      <div class="panel-heading"><h2 id="convergence-title">Does a low residual mean a good pose?</h2></div>
+      <div class="canvas-wrap chart-wrap"><canvas id="convergence-chart" aria-label="History of measured point-to-line residual and position error against optimizer iterations, in metres."></canvas></div>
+      <div class="mini-legend chart-legend"><span><i class="line teal"></i>Residual RMSE</span><span><i class="line orange"></i>Position error*</span></div>
+      <div class="measurements registration-metrics"><div><span>Residual</span><strong id="residual-value">—</strong></div><div><span>Position error*</span><strong id="position-error">—</strong></div><div><span>Yaw error*</span><strong id="yaw-error">—</strong></div></div>
+      <div class="insight" id="insight"><b>Corner geometry constrains the pose.</b> Surfaces with different normals resolve both translations and yaw.</div>
+      <p class="formula-note">rᵢ = nᵢᵀ(Rqᵢ + t − pᵢ). Robust Gauss–Newton recomputes matches each step. *Truth is used only to evaluate error.</p>
+    </section>
+  </main>
+  <footer class="scope" id="scope"></footer>
+  <section class="standalone-notes">
+    <h2>How to explore</h2>
+    <p><b>Rendering:</b> every angular cell specifies an emitted beam direction. Click a cell to see that exact ray, its intersections with several splats, and the weighted range. “Spherical” refers to azimuth and elevation coordinates; the rectangular image is an unwrapped angular window (110° × 48°). Its values are distances, not camera RGB. Grayscale and optional false color only display those values.</p>
+    <p><b>How many rays touch one splat?</b> the count shown for A tests the sampled rays against its chosen 3σ ellipse (u² + v² ≤ 9 in normalised local coordinates). The Gaussian itself has unbounded support, so this is a teaching footprint, not a renderer cutoff or a count of returned points. The count depends on scale, orientation, sensor pose, and angular sampling. Opacity changes contribution weights, not this geometric count.</p>
+    <p><b>Registration:</b> run the room-corner case, then switch to a corridor. The geometric residual can become very small while motion along the corridor remains unobservable. Increase the synthetic noise along surface normals to see an actual residual floor.</p>
+    <p><b>Scope:</b> this is an explanatory simulation. It uses three planar 3D Gaussians and per-ray sorting, not the paper's GPU tile rasteriser. Its registration lab implements only the geometric point-to-line SE(2) analogue. Splat-LOAM uses SE(3), rendered-keyframe geometry, and a joint geometric plus range-image warping objective; Gaussian map optimisation is a separate operation. The repository's optional median-depth mixture is omitted.</p>
+    <p><a href="https://arxiv.org/html/2503.17491v1" target="_blank" rel="noopener">Paper: §§3.2, 3.3.3</a> · <a href="https://github.com/BaiLiping/Splat-LOAM" target="_blank" rel="noopener">Reference implementation</a></p>
+  </section>
+</div>
+<script src="../../assets/bento-inline-frame.js"></script>
+<script type="module" src="app.mjs"></script>
+</body>
+</html>
+

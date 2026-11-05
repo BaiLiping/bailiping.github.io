@@ -1,0 +1,980 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="An interactive explanation of differentiable rendering and ray tracing: four renderer families, Sionna RT path sampling, which parameters Sionna RT can differentiate, visibility discontinuities, and practical limitations.">
+  <meta name="theme-color" content="#101522">
+  <title>Differentiable ray tracing — from paths to gradients | Bai Liping</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to the explanation</a>
+
+  <header class="site-header">
+    <div class="header-inner">
+      <a class="brand" href="/" aria-label="Bai Liping home">
+        <span class="brand-mark">BLP</span>
+        <span>Diff. ray tracing</span>
+      </a>
+      <nav aria-label="Page sections">
+        <a href="#forward"><span>01</span> Idea</a>
+        <a href="#gradient-lab"><span>02</span> Geometry</a>
+        <a href="#sionna-diff"><span>03</span> θ in Sionna</a>
+        <a href="#visibility"><span>04</span> Visibility</a>
+        <a href="#optimize"><span>05</span> Use</a>
+      </nav>
+    </div>
+  </header>
+
+  <main id="main">
+    <section class="hero" aria-labelledby="page-title">
+      <div class="hero-inner">
+        <div class="hero-copy">
+          <p class="eyebrow">Forward physics <span>+</span> backward sensitivity</p>
+          <h1 id="page-title">Differentiable<br><em>ray tracing.</em></h1>
+          <p class="hero-lede">
+            Ordinary ray tracing predicts what a scene produces. Differentiable
+            ray tracing also tells us how that prediction would change if a
+            supported scene parameter moved—so an optimizer can work backward
+            from a target observation.
+          </p>
+          <div class="hero-actions">
+            <a class="button primary" href="#gradient-lab">Try the gradient</a>
+            <a class="button secondary" href="#renderer-families">Compare renderers</a>
+          </div>
+          <dl class="hero-facts">
+            <div><dt>forward</dt><dd>parameters → rays → prediction</dd></div>
+            <div><dt>backward</dt><dd>loss → parameter sensitivities</dd></div>
+            <div><dt>purpose</dt><dd>calibration, reconstruction, design</dd></div>
+          </dl>
+        </div>
+
+        <figure class="hero-figure" aria-labelledby="hero-figure-title hero-figure-caption">
+          <svg viewBox="0 0 720 520" role="img" aria-labelledby="hero-figure-title" aria-describedby="hero-figure-desc">
+            <title id="hero-figure-title">Forward ray tracing and reverse gradient flow</title>
+            <desc id="hero-figure-desc">Scene parameters flow through a ray tracer to a prediction and loss. A gradient flows backward from the loss to the parameters.</desc>
+            <defs>
+              <linearGradient id="forwardGradient" x1="0" x2="1">
+                <stop offset="0" stop-color="#65d7e3"/>
+                <stop offset="1" stop-color="#c7f36b"/>
+              </linearGradient>
+              <linearGradient id="backwardGradient" x1="1" x2="0">
+                <stop offset="0" stop-color="#ff7868"/>
+                <stop offset="1" stop-color="#9c8cff"/>
+              </linearGradient>
+              <marker id="arrowForward" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto">
+                <path d="M0 0L10 5L0 10Z" fill="#c7f36b"/>
+              </marker>
+              <marker id="arrowBackward" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto">
+                <path d="M0 0L10 5L0 10Z" fill="#9c8cff"/>
+              </marker>
+              <filter id="heroGlow" x="-40%" y="-40%" width="180%" height="180%">
+                <feGaussianBlur stdDeviation="5" result="blur"/>
+                <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+              </filter>
+            </defs>
+            <rect class="hero-panel" x="22" y="22" width="676" height="476" rx="24"/>
+            <g class="hero-grid-lines" aria-hidden="true">
+              <path d="M56 90H664M56 150H664M56 210H664M56 270H664M56 330H664M56 390H664M56 450H664"/>
+              <path d="M100 52V468M180 52V468M260 52V468M340 52V468M420 52V468M500 52V468M580 52V468"/>
+            </g>
+
+            <g class="machine-card parameters" transform="translate(62 126)">
+              <rect width="150" height="118" rx="15"/>
+              <text class="machine-index" x="18" y="27">PARAMETERS</text>
+              <text class="machine-symbol" x="18" y="73">θ</text>
+              <text class="machine-detail" x="57" y="57">geometry</text>
+              <text class="machine-detail" x="57" y="78">material · pose</text>
+              <text class="machine-detail" x="57" y="99">source</text>
+            </g>
+
+            <g class="machine-card renderer" transform="translate(285 105)">
+              <rect width="150" height="160" rx="15"/>
+              <text class="machine-index" x="18" y="27">RAY TRACER</text>
+              <circle cx="28" cy="72" r="7"/>
+              <path class="mini-ray" d="M35 72L76 45L119 96"/>
+              <path class="mini-surface" d="M57 113H129"/>
+              <text class="machine-formula" x="75" y="142" text-anchor="middle">R(θ; ξ)</text>
+            </g>
+
+            <g class="machine-card output" transform="translate(508 126)">
+              <rect width="150" height="118" rx="15"/>
+              <text class="machine-index" x="18" y="27">PREDICTION</text>
+              <text class="machine-symbol" x="18" y="78">ŷ</text>
+              <path class="output-curve" d="M58 89C72 78 74 50 88 58S108 101 130 63"/>
+              <path class="output-axis" d="M58 98H132M58 98V42"/>
+            </g>
+
+            <path class="flow forward-flow" d="M212 185H275" marker-end="url(#arrowForward)"/>
+            <path class="flow forward-flow" d="M435 185H498" marker-end="url(#arrowForward)"/>
+            <text class="flow-label forward-label" x="360" y="80" text-anchor="middle">forward evaluation</text>
+            <path class="top-flow" d="M132 102C242 45 487 45 583 102" marker-end="url(#arrowForward)"/>
+
+            <g class="loss-card" transform="translate(250 328)">
+              <rect width="220" height="96" rx="15"/>
+              <text class="machine-index" x="18" y="27">COMPARE WITH TARGET</text>
+              <text class="loss-formula" x="110" y="66" text-anchor="middle">ℒ(ŷ, y*)</text>
+            </g>
+            <path class="loss-link" d="M583 254C583 306 495 326 466 351" marker-end="url(#arrowBackward)"/>
+            <path class="flow backward-flow" d="M250 376C184 376 132 321 132 258" marker-end="url(#arrowBackward)"/>
+            <text class="flow-label backward-label" x="154" y="410">backward gradient ∇θℒ</text>
+          </svg>
+          <figcaption id="hero-figure-caption">
+            The primal/forward solve computes a prediction. The derivative pass computes
+            a local sensitivity—not a second image and not a new physical ray.
+          </figcaption>
+        </figure>
+      </div>
+    </section>
+
+    <section class="section forward-section" id="forward" aria-labelledby="forward-title">
+      <div class="section-heading">
+        <p class="section-index">01 / The central idea</p>
+        <h2 id="forward-title">A simulator becomes<br><em>an optimization layer.</em></h2>
+        <p>
+          The word “differentiable” refers to derivatives of a chosen output or
+          loss with respect to supported inputs. It does not mean that rays bend
+          because of calculus, and it does not mean every discrete visibility
+          decision is automatically smooth.
+        </p>
+      </div>
+
+      <div class="definition-grid">
+        <article class="definition-card ordinary-card">
+          <p class="card-kicker">ordinary ray tracing</p>
+          <h3>Ask: what would this scene produce?</h3>
+          <div class="equation compact" role="math" aria-label="Predicted observation y hat equals renderer R of theta and random samples xi">
+            <span>ŷ</span><strong>=</strong><code>R(θ; ξ)</code>
+          </div>
+          <p>
+            <code>θ</code> holds scene and system parameters. <code>ξ</code>
+            represents sampling choices in a Monte Carlo renderer. The result
+            might be pixel radiance, a path response, or a spatial field. With
+            Monte Carlo sampling, <code>R(θ; ξ)</code> is a sampled estimate;
+            its expectation over <code>ξ</code> is the underlying prediction.
+          </p>
+        </article>
+
+        <article class="definition-card diff-card">
+          <p class="card-kicker">differentiable ray tracing</p>
+          <h3>Also ask: which parameter change reduces the error?</h3>
+          <div class="equation stack" role="math" aria-label="Loss of theta equals a distance between the rendered prediction and target; theta is updated opposite the loss gradient">
+            <div><span>ℒ(θ)</span><strong>=</strong><code>D(R(θ; ξ), y*)</code></div>
+            <div><span>θ</span><strong>←</strong><code>θ − η ∇<sub>θ</sub>ℒ</code></div>
+          </div>
+          <p>
+            A differentiable renderer supplies the derivative path needed for
+            forward- or reverse-mode automatic differentiation, sometimes with
+            specialized estimators for visibility boundaries.
+          </p>
+        </article>
+      </div>
+
+      <div class="flow-strip" role="group" aria-label="Optimization loop through a differentiable ray tracer">
+        <div><span>1</span><strong>Choose parameters</strong><small>geometry · material · pose</small></div>
+        <i aria-hidden="true">→</i>
+        <div><span>2</span><strong>Trace paths</strong><small>intersections · transport</small></div>
+        <i aria-hidden="true">→</i>
+        <div><span>3</span><strong>Measure mismatch</strong><small>prediction versus target</small></div>
+        <i aria-hidden="true">→</i>
+        <div><span>4</span><strong>Backpropagate</strong><small>local parameter gradient</small></div>
+      </div>
+
+      <div class="parameter-grid">
+        <article><span>geometry</span><h3>Where is the surface?</h3><p>Vertex positions, object pose, receiver/camera pose, or other continuously parameterized geometry.</p></article>
+        <article><span>transport</span><h3>How does it interact?</h3><p>Supported reflectance, roughness, permittivity, scattering, emission, or attenuation parameters.</p></article>
+        <article><span>system</span><h3>How is it observed?</h3><p>Source intensity, lighting, antenna pattern, array geometry, sensor pose, or sampling configuration.</p></article>
+      </div>
+
+      <aside class="scope-note" aria-label="Scope of this explainer">
+        <strong>Differentiable rendering is the broader family.</strong>
+        <p>
+          Rasterizers, volume renderers, splatters, and ray/path tracers can all
+          be differentiable. This page focuses on ray-based transport, where
+          intersection, path contribution, sampling, and visibility each need a
+          correct derivative treatment. Here “forward solve” means evaluating
+          <code>R</code>; it is distinct from forward-mode AD and from the
+          direction in which a renderer launches ray samples.
+        </p>
+      </aside>
+
+      <section class="renderer-family-demo" id="renderer-families" aria-labelledby="renderer-family-title">
+        <div class="family-intro">
+          <p class="section-index">One scene / four pixel-forming operations</p>
+          <h2 id="renderer-family-title">Choose a renderer.<br><em>Reveal its forward work.</em></h2>
+          <p>
+            The camera, light, orange object, and floor below are an invented
+            conceptual arrangement. Switch families and reveal the stages that
+            turn their representation into a pixel. These are explanatory 2-D
+            abstractions—not four production renderers or a quality benchmark.
+          </p>
+        </div>
+
+        <fieldset class="family-picker">
+          <legend>Dominant pixel-formation operation</legend>
+          <label><input type="radio" name="rendererFamily" value="raster" checked><span>Rasterizer</span></label>
+          <label><input type="radio" name="rendererFamily" value="volume"><span>Volume</span></label>
+          <label><input type="radio" name="rendererFamily" value="splat"><span>Splatter</span></label>
+          <label><input type="radio" name="rendererFamily" value="ray"><span>Ray / path</span></label>
+        </fieldset>
+
+        <div class="family-workbench">
+          <figure class="family-stage">
+            <div class="panel-topline"><span id="familyStageLabel">triangle pipeline</span><span>same conceptual arrangement</span></div>
+            <svg id="familyScene" viewBox="0 0 760 430" role="img" aria-labelledby="family-scene-title" aria-describedby="family-scene-desc">
+              <title id="family-scene-title">How four renderer families form an image</title>
+              <desc id="family-scene-desc">A rasterizer is selected. Triangles are projected, tested for coverage and depth, interpolated, and shaded.</desc>
+              <defs>
+                <pattern id="familyGrid" width="25" height="25" patternUnits="userSpaceOnUse">
+                  <path d="M25 0H0V25" fill="none" stroke="#d8e8e4" stroke-opacity=".07"/>
+                </pattern>
+                <radialGradient id="familyDensity" cx="50%" cy="50%" r="50%">
+                  <stop offset="0" stop-color="#65d7e3" stop-opacity=".66"/>
+                  <stop offset="1" stop-color="#65d7e3" stop-opacity="0"/>
+                </radialGradient>
+                <radialGradient id="familyGaussian" cx="50%" cy="50%" r="50%">
+                  <stop offset="0" stop-color="#9c8cff" stop-opacity=".78"/>
+                  <stop offset="1" stop-color="#9c8cff" stop-opacity="0"/>
+                </radialGradient>
+                <clipPath id="familyOutputClip"><rect x="554" y="91" width="174" height="260" rx="9"/></clipPath>
+                <marker id="familyArrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
+                  <path d="M0 0L8 4L0 8Z" fill="#c7f36b"/>
+                </marker>
+                <marker id="familyBackArrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
+                  <path d="M0 0L8 4L0 8Z" fill="#9c8cff"/>
+                </marker>
+              </defs>
+              <rect width="760" height="430" rx="15" class="family-bg"/>
+              <rect width="760" height="430" rx="15" fill="url(#familyGrid)"/>
+              <text class="family-eyebrow" x="26" y="35">PROCESS VIEW</text>
+              <text class="family-eyebrow" x="554" y="67">RENDERED OUTPUT</text>
+
+              <g class="family-common-scene">
+                <g transform="translate(56 212)" class="family-camera">
+                  <rect x="0" y="-22" width="34" height="44" rx="6"/>
+                  <path d="M34-12L52 0L34 12Z"/>
+                  <text x="-4" y="45">camera</text>
+                </g>
+                <line class="family-image-plane" x1="137" x2="137" y1="94" y2="337"/>
+                <text class="family-small-label" x="128" y="79" text-anchor="middle">image plane</text>
+                <line class="family-floor" x1="155" x2="520" y1="337" y2="337"/>
+                <path class="family-box" d="M437 225H501V337H437Z"/>
+                <path class="family-box-side" d="M501 225L520 210V322L501 337Z"/>
+                <g class="family-light" transform="translate(456 75)">
+                  <circle r="13"/><path d="M0-23V-17M0 17V23M-23 0H-17M17 0H23M-16-16L-12-12M12 12L16 16M16-16L12-12M-12 12L-16 16"/>
+                  <text x="20" y="5">light</text>
+                </g>
+                <circle class="family-object-guide family-scene-shift" cx="345" cy="270" r="52"/>
+              </g>
+
+              <g class="family-output-base" clip-path="url(#familyOutputClip)">
+                <rect x="554" y="91" width="174" height="260" fill="#253646"/>
+                <path d="M554 257H728V351H554Z" fill="#344842"/>
+                <path d="M680 195H718V351H680Z" fill="#4d6770"/>
+                <path d="M680 195L696 181H728V351H718V195Z" fill="#68818a" opacity=".7"/>
+              </g>
+              <rect class="family-output-frame" x="554" y="91" width="174" height="260" rx="9"/>
+
+              <g class="family-mode-layer is-active" data-family-layer="raster">
+                <g data-stage="1" class="family-stage-step">
+                  <g class="family-scene-shift family-raster-object">
+                    <path d="M345 218L345 270L293 270Z M345 218L397 270L345 270Z M293 270L345 270L316 313Z M345 270L397 270L374 313Z M316 313L345 270L374 313Z"/>
+                    <path class="family-mesh-line" d="M345 218L293 270L316 313L374 313L397 270ZM345 218V270M293 270H397M316 313L345 270L374 313"/>
+                    <text class="family-direct-label" x="303" y="205">triangles</text>
+                  </g>
+                </g>
+                <g data-stage="2" class="family-stage-step">
+                  <path class="family-project-line" id="familyRasterProjection" d="M294 270L137 177M397 270L137 247M345 218L137 203"/>
+                  <text class="family-direct-label" x="166" y="157">project</text>
+                </g>
+                <g data-stage="3" class="family-stage-step">
+                  <g class="family-fragments" transform="translate(113 185)">
+                    <rect x="0" y="0" width="12" height="12"/><rect x="14" y="0" width="12" height="12"/>
+                    <rect x="0" y="14" width="12" height="12"/><rect class="winner" x="14" y="14" width="12" height="12"/>
+                  </g>
+                  <text class="family-direct-label" x="158" y="286">coverage + closest depth</text>
+                </g>
+                <g data-stage="4" class="family-stage-step" clip-path="url(#familyOutputClip)">
+                  <g class="family-output-shift family-raster-output">
+                    <path d="M626 181L626 230L588 230Z M626 181L664 230L626 230Z M588 230L626 230L604 273Z M626 230L664 230L648 273Z M604 273L626 230L648 273Z"/>
+                    <path class="family-mesh-line" d="M626 181L588 230L604 273L648 273L664 230ZM626 181V230M588 230H664M604 273L626 230L648 273"/>
+                  </g>
+                </g>
+              </g>
+
+              <g class="family-mode-layer" data-family-layer="volume">
+                <g data-stage="1" class="family-stage-step family-scene-shift">
+                  <ellipse class="family-density" cx="345" cy="270" rx="82" ry="78"/>
+                  <ellipse class="family-density-core" cx="345" cy="270" rx="48" ry="52"/>
+                  <text class="family-direct-label" x="285" y="188">density σ + radiance c</text>
+                </g>
+                <g data-stage="2" class="family-stage-step family-volume-rays">
+                  <path d="M108 212L520 166M108 212L520 212M108 212L520 258M108 212L520 304"/>
+                  <g class="family-samples">
+                    <circle cx="232" cy="198" r="4"/><circle cx="272" cy="194" r="4"/><circle cx="312" cy="189" r="4"/><circle cx="352" cy="185" r="4"/><circle cx="392" cy="180" r="4"/>
+                    <circle cx="232" cy="212" r="4"/><circle cx="272" cy="212" r="4"/><circle cx="312" cy="212" r="4"/><circle cx="352" cy="212" r="4"/><circle cx="392" cy="212" r="4"/>
+                    <circle cx="232" cy="226" r="4"/><circle cx="272" cy="230" r="4"/><circle cx="312" cy="235" r="4"/><circle cx="352" cy="239" r="4"/><circle cx="392" cy="244" r="4"/>
+                  </g>
+                  <text class="family-direct-label" x="184" y="145">sample along camera rays</text>
+                </g>
+                <g data-stage="3" class="family-stage-step family-weight-strip">
+                  <text x="184" y="373">front</text><rect x="220" y="359" width="22" height="16" opacity=".18"/><rect x="244" y="359" width="22" height="16" opacity=".35"/><rect x="268" y="359" width="22" height="16" opacity=".68"/><rect x="292" y="359" width="22" height="16" opacity=".42"/><rect x="316" y="359" width="22" height="16" opacity=".16"/><text x="346" y="373">back</text>
+                  <text class="family-direct-label" x="220" y="401">transmittance weights</text>
+                </g>
+                <g data-stage="4" class="family-stage-step" clip-path="url(#familyOutputClip)">
+                  <g class="family-output-shift"><ellipse class="family-density" cx="626" cy="232" rx="55" ry="70"/><ellipse class="family-density-core" cx="626" cy="232" rx="31" ry="42"/></g>
+                </g>
+              </g>
+
+              <g class="family-mode-layer" data-family-layer="splat">
+                <g data-stage="1" class="family-stage-step family-scene-shift family-world-splats">
+                  <ellipse cx="322" cy="247" rx="38" ry="21" transform="rotate(-28 322 247)"/>
+                  <ellipse cx="367" cy="238" rx="29" ry="43" transform="rotate(18 367 238)"/>
+                  <ellipse cx="326" cy="286" rx="34" ry="43" transform="rotate(25 326 286)"/>
+                  <ellipse cx="374" cy="289" rx="39" ry="24" transform="rotate(-20 374 289)"/>
+                  <circle cx="345" cy="270" r="4"/><text class="family-direct-label" x="284" y="188">3-D Gaussians</text>
+                </g>
+                <g data-stage="2" class="family-stage-step">
+                  <path class="family-project-line splat" id="familySplatProjection" d="M312 240L588 208M380 236L659 205M315 298L594 264M385 294L662 260"/>
+                  <text class="family-direct-label" x="405" y="175">project elliptical footprints</text>
+                </g>
+                <g data-stage="3" class="family-stage-step family-order-chips">
+                  <g transform="translate(474 237)"><circle r="11"/><text y="4">1</text></g>
+                  <g transform="translate(495 259)"><circle r="11"/><text y="4">2</text></g>
+                  <g transform="translate(514 282)"><circle r="11"/><text y="4">3</text></g>
+                  <text class="family-direct-label" x="430" y="318">visibility order</text>
+                </g>
+                <g data-stage="4" class="family-stage-step" clip-path="url(#familyOutputClip)">
+                  <g class="family-output-shift family-output-splats">
+                    <ellipse cx="610" cy="213" rx="37" ry="23" transform="rotate(-24 610 213)"/>
+                    <ellipse cx="640" cy="215" rx="28" ry="47" transform="rotate(15 640 215)"/>
+                    <ellipse cx="611" cy="252" rx="31" ry="45" transform="rotate(22 611 252)"/>
+                    <ellipse cx="644" cy="253" rx="38" ry="25" transform="rotate(-18 644 253)"/>
+                  </g>
+                </g>
+              </g>
+
+              <g class="family-mode-layer" data-family-layer="ray">
+                <g data-stage="1" class="family-stage-step family-primary-rays">
+                  <line x1="108" y1="212" x2="293" y2="270" data-ray-end="object"/>
+                  <line x1="108" y1="212" x2="437" y2="257"/>
+                  <line x1="108" y1="212" x2="418" y2="337"/>
+                  <text class="family-direct-label" x="157" y="257">primary rays</text>
+                </g>
+                <g data-stage="2" class="family-stage-step family-hit-points">
+                  <circle cx="293" cy="270" r="7" data-ray-hit="object"/><circle cx="437" cy="257" r="7"/><circle cx="418" cy="337" r="7"/>
+                  <text class="family-direct-label" x="305" y="294">surface hits</text>
+                </g>
+                <g data-stage="3" class="family-stage-step family-secondary-rays">
+                  <line x1="293" y1="270" x2="456" y2="75" data-shadow-start="object"/>
+                  <path d="M418 337L345 270L456 75"/>
+                  <text class="family-direct-label" x="350" y="130">shadow / bounce paths</text>
+                </g>
+                <g data-stage="4" class="family-stage-step" clip-path="url(#familyOutputClip)">
+                  <g class="family-output-shift family-ray-output"><circle cx="626" cy="232" r="44"/></g>
+                  <g class="family-sample-pixels"><rect x="562" y="103" width="8" height="8"/><rect x="700" y="126" width="8" height="8"/><rect x="575" y="306" width="8" height="8"/><rect x="675" y="290" width="8" height="8"/><rect x="652" y="117" width="8" height="8"/></g>
+                </g>
+              </g>
+
+              <g id="familySensitivityOverlay" class="family-sensitivity" aria-hidden="true">
+                <g class="family-scene-shift"><circle cx="335" cy="270" r="54"/><circle cx="355" cy="270" r="54"/></g>
+                <g class="family-output-shift"><path d="M586 175V287M666 175V287"/></g>
+                <path d="M670 380C575 416 441 403 374 333" marker-end="url(#familyBackArrow)"/>
+                <text x="487" y="401">conceptual nearby-state comparison</text>
+              </g>
+            </svg>
+            <figcaption id="familyStageCaption">Triangles are projected into pixel space; the closest covering fragment supplies attributes for shading.</figcaption>
+          </figure>
+
+          <div class="family-inspector">
+            <div class="family-mode-copy">
+              <p class="card-kicker" id="familyModeKicker">surface representation</p>
+              <h3 id="familyModeTitle">Rasterizer</h3>
+              <p id="familyModeSummary">Triangles are projected into screen space. Coverage and depth select a surface sample before interpolation and shading.</p>
+            </div>
+
+            <div class="family-control">
+              <div class="family-control-label"><label for="familyObjectSlider">orange-object position <em>x</em></label><output id="familyObjectOutput" for="familyObjectSlider">center</output></div>
+              <input id="familyObjectSlider" type="range" min="-30" max="30" step="1" value="0">
+            </div>
+            <div class="family-control">
+              <div class="family-control-label"><label for="familyStageSlider">forward stages revealed</label><output id="familyStageOutput" for="familyStageSlider">4 / 4</output></div>
+              <input id="familyStageSlider" type="range" min="1" max="4" step="1" value="4">
+            </div>
+            <button class="family-sensitivity-button" id="familySensitivityButton" type="button" aria-pressed="false" aria-controls="familySensitivityOverlay">Show illustrative perturbation</button>
+            <p class="family-perturbation-note">Illustrative only: the overlay compares nearby conceptual states; these four teaching diagrams do not numerically evaluate a derivative.</p>
+
+            <ol class="family-pipeline" id="familyPipeline">
+              <li class="is-revealed"><span>01</span><strong>Project triangles</strong></li>
+              <li class="is-revealed"><span>02</span><strong>Test coverage and depth</strong></li>
+              <li class="is-revealed"><span>03</span><strong>Interpolate attributes</strong></li>
+              <li class="is-revealed is-current"><span>04</span><strong>Shade the visible fragment</strong></li>
+            </ol>
+
+            <div class="family-formula" id="familyFormula" role="math">C(p) = shade(interpolated attributes of the nearest covering triangle)</div>
+            <dl class="family-facts">
+              <div><dt>representation</dt><dd id="familyRepresentation">triangles + vertex attributes</dd></div>
+              <div><dt>gradient route</dt><dd id="familyGradient">projection, interpolation, textures, and shading; geometry visibility needs coverage or antialias treatment</dd></div>
+              <div><dt>non-smooth part</dt><dd id="familyCaveat">coverage and the winning depth can switch discretely</dd></div>
+            </dl>
+          </div>
+        </div>
+
+        <p class="family-overlap-note">
+          <strong>These families overlap.</strong> Volume rendering integrates
+          along camera rays, splatters often use rasterization-like kernels,
+          and hybrid renderers are common. The selector compares the dominant
+          operation used to form a pixel, not mutually exclusive scene types.
+        </p>
+        <p class="sr-only" id="familyAnnouncement" aria-live="polite"></p>
+      </section>
+
+      <section class="sionna-sampling" id="sionna-sampling" aria-labelledby="sionna-sampling-title">
+        <div class="sionna-heading">
+          <p class="section-index">Sionna RT / PathSolver sampling</p>
+          <h2 id="sionna-sampling-title">A million launched rays<br><em>are candidate discovery.</em></h2>
+          <p>
+            In Sionna RT, <code>samples_per_src</code> controls SBR samples
+            launched from each source. It is not a waveform sampling rate, a
+            CIR tap count, or receiver noise. The solver uses those samples to
+            discover interaction sequences that may become valid propagation
+            paths.
+          </p>
+        </div>
+
+        <div class="sionna-lab">
+          <figure class="sionna-figure">
+            <div class="panel-topline"><span>2-D cross-section</span><span>full solver launches over a sphere</span></div>
+            <svg id="sionnaSamplingScene" viewBox="0 0 700 390" role="img" aria-labelledby="sionna-figure-title" aria-describedby="sionna-figure-desc">
+              <title id="sionna-figure-title">Schematic of Sionna shooting and bouncing rays sampling</title>
+              <desc id="sionna-figure-desc">Thirty-six displayed directions radiate from a source in a two-dimensional explanatory cross-section. A dashed provisional reflection chain misses the point target; a solid image-method-refined path connects it.</desc>
+              <defs>
+                <pattern id="sionnaGrid" width="25" height="25" patternUnits="userSpaceOnUse"><path d="M25 0H0V25" fill="none" stroke="#d8e8e4" stroke-opacity=".07"/></pattern>
+                <marker id="sionnaArrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0 0L8 4L0 8Z" fill="#c7f36b"/></marker>
+                <marker id="sionnaProvisionalArrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0 0L8 4L0 8Z" fill="#ffb66e"/></marker>
+              </defs>
+              <rect width="700" height="390" rx="14" class="sionna-bg"/>
+              <rect width="700" height="390" rx="14" fill="url(#sionnaGrid)"/>
+              <path class="sionna-wall" d="M168 52H650M650 52V338M168 338H650M168 52V140M168 250V338"/>
+              <path class="sionna-inner-wall" d="M420 52V90M420 245V338"/>
+              <g id="sionnaRayFan" aria-hidden="true"></g>
+              <path class="sionna-provisional" d="M122 196L320 52L606 260" marker-end="url(#sionnaProvisionalArrow)"/>
+              <circle class="sionna-provisional-hit" cx="320" cy="52" r="6"/>
+              <text class="sionna-path-label provisional" x="190" y="117">provisional SBR chain</text>
+              <path class="sionna-candidate" d="M122 196L348.29 52L606 216" marker-end="url(#sionnaArrow)"/>
+              <circle class="sionna-candidate-hit" cx="348.29" cy="52" r="7"/>
+              <text class="sionna-path-label refined" x="462" y="180">refined valid path</text>
+              <g class="sionna-source" transform="translate(122 196)"><circle r="15"/><path d="M-6 0H6M0-6V6"/><text x="-24" y="-27">source</text></g>
+              <g class="sionna-target" transform="translate(606 216)"><circle r="15"/><path d="M-6-6L6 6M6-6L-6 6"/><text x="-22" y="-27">target</text></g>
+              <g class="sionna-callout" transform="translate(383 105)"><rect width="218" height="56" rx="8"/><text x="12" y="21">SBR proposes a surface sequence</text><text x="12" y="40">image method derives hit + angle</text></g>
+              <text class="sionna-figure-label" x="28" y="365">displayed rays are a decimated teaching view—not the actual 3-D lattice</text>
+            </svg>
+            <figcaption>
+              Initial directions come from a spherical Fibonacci lattice. The
+              dashed chain is a provisional SBR sample that misses the point
+              target. The solid chain is the image-method result after its hit
+              point has been refined and the path validated.
+            </figcaption>
+          </figure>
+
+          <div class="sionna-controls">
+            <div class="family-control">
+              <div class="family-control-label"><label for="sionnaDirectionSlider">directions displayed in this 2-D view</label><output id="sionnaDirectionOutput" for="sionnaDirectionSlider">36</output></div>
+              <input id="sionnaDirectionSlider" type="range" min="12" max="72" step="12" value="36">
+            </div>
+            <div class="sionna-metric-grid">
+              <div><small>PathSolver 2.0.1 default</small><strong>10<sup>6</sup> samples / source</strong></div>
+              <div><small>initial directions</small><strong>spherical Fibonacci lattice</strong></div>
+              <div><small>ray-tube solid angle</small><strong>approximately 4π / N<sub>S</sub></strong></div>
+              <div><small>reproducibility</small><strong>set the solver seed</strong></div>
+            </div>
+            <p class="sionna-scope">
+              More samples make ray tubes narrower and increase the chance of
+              finding relevant interaction sequences; they do not guarantee
+              that every path is found. One PathSolver “sample” is a connected
+              chain of ray segments—not a row of points sampled along one ray.
+              It can yield candidates or valid paths at multiple depths and
+              for multiple targets.
+            </p>
+          </div>
+        </div>
+
+        <ol class="sionna-pipeline">
+          <li><span>01</span><div><strong>Launch quasi-uniform directions</strong><p>Each source spawns <code>samples_per_src</code> rays from a spherical Fibonacci lattice over the sphere. Initial directions are not drawn from the transmit antenna pattern; that pattern weights fields later.</p></div></li>
+          <li><span>02</span><div><strong>Shoot, intersect, and choose one continuation</strong><p>Direct LoS is tested explicitly. At a surface hit, at most one enabled interaction continues until the sample exits or reaches <code>max_depth</code>.</p></div></li>
+          <li><span>03</span><div><strong>Refine candidate chains</strong><p>SBR proposes primitive and interaction sequences. For a specular suffix, the image method moves provisional vertices to connect the target, then checks finite surfaces, interaction validity, and occlusion.</p></div></li>
+          <li><span>04</span><div><strong>Compute the radio path</strong><p>For valid paths, Sionna computes complex channel coefficients, delay, departure/arrival angles, and Doppler information; <code>cir()</code>, <code>taps()</code>, or <code>cfr()</code> are later representations.</p></div></li>
+        </ol>
+
+        <dl class="sionna-sampling-map">
+          <div><dt>interaction type</dt><dd>At each hit, specular, diffuse, and refraction choices are importance-sampled from material-dependent coefficients. Diffraction uses its own fixed sampling probability when enabled.</dd></div>
+          <div><dt>continuation direction</dt><dd>Specular and refraction directions follow their transport models. Diffuse continuation is uniform over the outgoing hemisphere; diffraction samples an edge and a direction on its cone.</dd></div>
+          <div><dt>target connection</dt><dd>LoS is tested directly. A diffuse vertex also tests a direct visible connection to each target—next-event estimation—before the random continuation proceeds.</dd></div>
+          <div><dt>2.0.1 defaults</dt><dd>LoS, specular reflection, and refraction are enabled. Diffuse reflection and diffraction are disabled unless requested.</dd></div>
+        </dl>
+
+        <div class="sionna-detail-grid">
+          <article>
+            <p class="card-kicker">deterministic scene, sampled discovery</p>
+            <h3>A path can exist even when a run misses it.</h3>
+            <p>The physical path set is determined by the scene and endpoints. The Fibonacci launch lattice is deterministic; later interaction choices and diffuse directions make discovery stochastic, while a fixed <code>seed</code> makes those choices reproducible.</p>
+          </article>
+          <article>
+            <p class="card-kicker">PathSolver ≠ RadioMapSolver</p>
+            <h3>Point-to-point paths and area maps use samples differently.</h3>
+            <p><code>PathSolver</code> discovers source-to-target paths. <code>RadioMapSolver</code> transports contributions onto map cells and additionally supports controls such as Russian roulette and gain thresholds.</p>
+          </article>
+          <article>
+            <p class="card-kicker">differentiability boundary</p>
+            <h3>Sampling is not automatically a smooth path set.</h3>
+            <p>Candidate discovery is discrete and detached from later differentiation. For discovered topology, supported refinement and field quantities can carry gradients. The current API notes that the fastest default symbolic loop mode does not support AD; use an AD-compatible mode such as <code>solver.loop_mode = "evaluated"</code>.</p>
+          </article>
+        </div>
+
+        <aside class="sionna-angle-note" aria-label="Reflection angle in Sionna RT">
+          <strong>Sionna does not sample a free specular angle.</strong>
+          <p>A sampled ray proposes an interaction sequence. Once a candidate says “reflect from this known surface,” the image method derives the hit point that connects source and target; the path is kept only if that hit lies on the finite surfaces and passes validation. The specular angle follows from geometry and the reflection law. By contrast, a diffuse or scattering continuation direction is a sampling variable—but it is still not a wall coordinate to optimize. What gradients do attach to is enumerated in <a href="#sionna-diff">θ in Sionna RT</a>.</p>
+        </aside>
+
+        <p class="sionna-reference-note">
+          Behavior and defaults above were checked for Sionna RT 2.0.1 against the official
+          <a href="https://nvlabs.github.io/sionna/rt/tech-report/S3.html" target="_blank" rel="noopener">Sionna RT Path Solver technical report</a>
+          and <a href="https://nvlabs.github.io/sionna/rt/api/paths_solvers.html" target="_blank" rel="noopener">PathSolver API</a>.
+        </p>
+      </section>
+    </section>
+
+    <section class="section lab-section" id="gradient-lab" aria-labelledby="gradient-title">
+      <div class="section-heading light">
+        <p class="section-index">02 / Specified geometry</p>
+        <h2 id="gradient-title">Everything specified.<br><em>Everything derived.</em></h2>
+        <p>
+          In a scene you authored, the wall, source, receiver, and specular law
+          are all given — so the hit point, reflection angle, and path length
+          are consequences, not variables. Nothing on this diagram is
+          optimized, and no gradient is needed to compute any of it. This is
+          the ordinary forward solve that a ray tracer performs.
+        </p>
+      </div>
+
+      <div class="lab-shell">
+        <div class="scene-panel">
+          <div class="panel-topline"><span>analytic 2-D reflection</span><span>invented geometry</span></div>
+          <svg id="reflectionScene" viewBox="0 0 700 410" role="img" aria-labelledby="reflection-title" aria-describedby="reflection-desc">
+            <title id="reflection-title">Adjustable single-reflection scene</title>
+            <desc id="reflection-desc">A known horizontal wall, emitter, and movable receiver determine one specular reflection point and angle.</desc>
+            <defs>
+              <pattern id="labGrid" width="28" height="28" patternUnits="userSpaceOnUse">
+                <path d="M28 0H0V28" fill="none" stroke="#d8e8e4" stroke-opacity=".08"/>
+              </pattern>
+            </defs>
+            <rect width="700" height="410" rx="14" class="scene-bg"/>
+            <rect width="700" height="410" rx="14" fill="url(#labGrid)"/>
+            <line class="current-surface" id="currentSurface" x1="38" x2="662" y1="286" y2="286"/>
+            <path class="reflected-path glow" id="reflectionGlow" d="M82 82L356.42 286L612 96"/>
+            <path class="reflected-path" id="reflectionPath" d="M82 82L356.42 286L612 96"/>
+            <line class="normal-line" id="normalLine" x1="356.42" x2="356.42" y1="244" y2="328"/>
+            <g class="endpoint emitter" transform="translate(82 82)">
+              <circle r="13"/>
+              <path d="M-5 0H5M0-5V5"/>
+              <text x="-24" y="-24">emitter</text>
+            </g>
+            <g class="endpoint receiver" id="receiverPoint" transform="translate(612 96)">
+              <circle r="13"/>
+              <path d="M-5-5L5 5M5-5L-5 5"/>
+              <text x="-25" y="-24">receiver</text>
+            </g>
+            <g class="bounce" id="bouncePoint" transform="translate(356.42 286)">
+              <circle class="bounce-halo" r="15"/>
+              <circle class="bounce-core" r="5"/>
+              <text x="13" y="-12">specular hit</text>
+            </g>
+            <text class="surface-label" id="surfacePositionLabel" x="650" y="276" text-anchor="end">known wall h = 286</text>
+          </svg>
+        </div>
+
+        <div class="lab-controls">
+          <div class="control-heading">
+            <p class="card-kicker">known geometry · forward solve</p>
+            <h3>Move the receiver; derive the specular path.</h3>
+            <p>The wall stays fixed. The image method determines the hit point and equal incident/reflected angles for every receiver position.</p>
+          </div>
+          <div class="range-label">
+            <label for="surfaceSlider" id="reflectionSliderLabel">receiver horizontal position <em>x<sub>R</sub></em></label>
+            <output id="surfaceOutput" for="surfaceSlider">612</output>
+          </div>
+          <input id="surfaceSlider" type="range" min="500" max="650" step="1" value="612">
+          <dl class="metric-grid">
+            <div><dt>path length ℓ</dt><dd id="predictedLength">660.41 units</dd></div>
+            <div><dt>derived hit point x<sub>B</sub></dt><dd id="reflectionHit">356.42</dd></div>
+            <div><dt>derived angle from normal</dt><dd id="reflectionAngle">53.37°</dd></div>
+          </dl>
+
+        </div>
+      </div>
+
+      <div class="derivation-grid">
+        <article>
+          <p class="card-kicker">forward value</p>
+          <h3>Unfold the reflection with the image method.</h3>
+          <div class="formula-block" role="math" tabindex="0">ℓ(h) = √[ Δx² + (2h − y<sub>S</sub> − y<sub>R</sub>)² ]</div>
+          <div class="formula-block" role="math" tabindex="0">x<sub>B</sub> = x<sub>S</sub> + (h − y<sub>S</sub>)(x<sub>R</sub> − x<sub>S</sub>) / (2h − y<sub>S</sub> − y<sub>R</sub>)</div>
+          <p>The broken emitter→surface→receiver path becomes one straight line to the mirrored receiver. Its intersection with the wall gives the specular hit—no angle search is required.</p>
+        </article>
+        <article>
+          <p class="card-kicker">derived, not free</p>
+          <h3>The angle is a consequence of the geometry.</h3>
+          <div class="formula-block" role="math" tabindex="0">θ<sub>i</sub> = θ<sub>r</sub> = atan[ |x<sub>R</sub> − x<sub>S</sub>| / |2h − y<sub>S</sub> − y<sub>R</sub>| ]</div>
+          <p>Hit point, angle, length, and AoD/AoA are deterministic functions of the scene inputs, not independent optimization variables. They can still be differentiated with respect to those inputs. This demo holds the wall fixed; that is a modeling choice, not a mathematical restriction on geometric gradients.</p><div class="formula-block" role="math" tabindex="0">∂ℓ/∂h = 2(2h − y<sub>S</sub> − y<sub>R</sub>) / ℓ(h)</div><p>This derivative applies to a nonzero-length path while the same valid reflection branch is retained.</p>
+        </article>
+      </div>
+
+      <div class="known-derived-grid">
+        <article>
+          <span>known inputs</span>
+          <h3>Wall plane, source/receiver poses, specular model</h3>
+          <p>When these are trusted, keep them fixed in the forward model.</p>
+        </article>
+        <article>
+          <span>derived—not optimized</span>
+          <h3>Hit point, θ<sub>i</sub> = θ<sub>r</sub>, path length, AoD/AoA</h3>
+          <p>The reflection angle can be unmeasured and still not be an independent unknown: geometry determines it.</p>
+        </article>
+        <article>
+          <span>trainable in Sionna RT</span>
+          <h3>Materials ε<sub>r</sub>, σ, S, XPD · antenna &amp; scattering patterns · poses</h3>
+          <p>Supported material, system, and geometric parameters can be optimized. The next section separates smooth geometric derivatives from discrete path selection.</p>
+        </article>
+      </div>
+
+    </section>
+
+
+    <section class="section lab-section" id="sionna-diff" aria-labelledby="sionna-diff-title">
+      <div class="section-heading light">
+        <p class="section-index">03 / θ in Sionna RT</p>
+        <h2 id="sionna-diff-title">What the gradients<br><em>actually attach to.</em></h2>
+        <p>
+          Sionna RT, built on Mitsuba&nbsp;3 and Dr.Jit, computes gradients of
+          channel responses and radio maps with respect to supported material, pattern, and geometric parameters. The official introduction explicitly includes object positions and orientations. These are examples, not an exhaustive list. Support for arbitrary mesh deformations must be checked for the chosen solver and parameterization.
+        </p>
+      </div>
+
+      <div class="derivation-grid">
+        <article>
+          <p class="card-kicker">differentiable ✓</p>
+          <h3>Electromagnetic and system parameters</h3>
+          <p><strong>Radio materials</strong> — each surface's <code>RadioMaterial</code> holds relative permittivity ε<sub>r</sub>, conductivity σ, scattering coefficient S, and XPD coefficient as AD-capable Dr.Jit floats. Shipped scenes use <code>ITURadioMaterial</code>: ITU-R P.2040-3 named materials (concrete, brick, glass, …) whose ε<sub>r</sub> = a·f<sup>b</sup> and σ = c·f<sup>d</sup> follow tabulated frequency power laws.</p>
+          <p><strong>Antenna patterns and scattering patterns</strong> — differentiable, and replaceable with trainable parametric or neural patterns.</p>
+          <p><strong>Positions, orientations, and array geometries</strong> of transmitters, receivers, and objects.</p>
+          <p><strong>One switch required:</strong> the default <code>loop_mode = "symbolic"</code> “does not support automatic differentiation” — set the solver's <code>loop_mode = "evaluated"</code> before calling <code>dr.backward</code>.</p>
+        </article>
+        <article>
+          <p class="card-kicker">support and smoothness limits</p>
+          <h3>Separate geometry from discrete path selection</h3>
+          <p><strong>Geometric parameterization.</strong> A wall coordinate or object pose can influence path length and angles differentiably on a fixed valid branch. Supported rigid poses do not establish automatic-differentiation support for every mesh-vertex deformation. The wall in section&nbsp;02 is held fixed only for that demonstration.</p>
+          <p><strong>Discrete path topology.</strong> Which surfaces a path visits is decided by SBR candidate discovery plus image-method refinement — a discrete selection, outside automatic differentiation. Gradients flow through the field computation of discovered paths, not through the discovery.</p>
+          <p><strong>RIS, currently.</strong> Sionna RT v1/v2 has no reconfigurable intelligent surfaces; the TF-based v0.19 had them, including a gradient-based optimization tutorial for phase and amplitude profiles.</p>
+        </article>
+      </div>
+
+      <div class="known-derived-grid">
+        <article>
+          <span>simulation only</span>
+          <h3>You authored every value — nothing to optimize</h3>
+          <p>If you trust every number you typed, the tracer is a pure forward model and the gradients go unused. That reading of section 02 is correct.</p>
+        </article>
+        <article>
+          <span>calibration against measurements</span>
+          <h3>Specified ≠ correct for a real site</h3>
+          <p>NVIDIA calibrated materials, scattering, and antenna patterns against channel-sounder measurements (DICHASUS, Univ. of Stuttgart): ITU-default materials missed the measured channel gain by 4.93&nbsp;dB on average; gradient-calibrated materials cut it to 2.16&nbsp;dB, neural materials to 1.00&nbsp;dB. The learned values also absorb geometry and model error — they are the best-predicting parameters, not certified physical constants.</p>
+        </article>
+        <article>
+          <span>design variables</span>
+          <h3>Nothing unknown — θ is a decision</h3>
+          <p>The Sionna RT paper's own demo: gradient ascent on a transmitter's orientation to maximize received power in a chosen map region. The v0.19 tutorial did the same for RIS phase/amplitude profiles; envisioned extensions include precoding codebooks and array geometries.</p>
+        </article>
+      </div>
+
+      <p class="sionna-reference-note">
+        Sources: the
+        <a href="https://nvlabs.github.io/sionna/rt/tutorials/Introduction.html" target="_blank" rel="noopener">Sionna RT introduction</a> and
+        <a href="https://nvlabs.github.io/sionna/rt/api/radio_materials.html" target="_blank" rel="noopener">radio-materials API</a>,
+        the developer guide's
+        <a href="https://nvlabs.github.io/sionna/rt/developer/dev_custom_radio_materials.html" target="_blank" rel="noopener">“Calibrating Material Parameters Through Gradient Descent”</a> example,
+        and the papers
+        <a href="https://arxiv.org/abs/2303.11103" target="_blank" rel="noopener">arXiv:2303.11103</a> (material learning, transmitter-orientation optimization) and
+        <a href="https://arxiv.org/abs/2311.18558" target="_blank" rel="noopener">arXiv:2311.18558</a> (measurement calibration; Table&nbsp;II error figures).
+      </p>
+    </section>
+
+    <section class="section visibility-section" id="visibility" aria-labelledby="visibility-title">
+      <div class="section-heading">
+        <p class="section-index">04 / The difficult part</p>
+        <h2 id="visibility-title">A path can disappear.<br><em>The graph can jump.</em></h2>
+        <p>
+          Continuous path contribution is one part of the derivative. When an
+          edge crosses a ray, visibility changes discretely: a path exists on
+          one side and is blocked on the other. Naively differentiating only the
+          currently traced path misses that boundary effect.
+        </p>
+      </div>
+
+      <div class="visibility-lab">
+        <div class="visibility-scene-wrap">
+          <div class="panel-topline dark"><span>hard visibility test</span><span>move the occluder edge</span></div>
+          <svg id="visibilityScene" viewBox="0 0 700 330" role="img" aria-labelledby="visibility-scene-title" aria-describedby="visibility-scene-desc">
+            <title id="visibility-scene-title">Ray visibility changes at an occluder edge</title>
+            <desc id="visibility-scene-desc">A straight ray between an emitter and receiver becomes blocked when the top of an occluder crosses it.</desc>
+            <defs>
+              <pattern id="visibilityGrid" width="28" height="28" patternUnits="userSpaceOnUse">
+                <path d="M28 0H0V28" fill="none" stroke="#41505e" stroke-opacity=".16"/>
+              </pattern>
+            </defs>
+            <rect width="700" height="330" rx="14" class="visibility-bg"/>
+            <rect width="700" height="330" rx="14" fill="url(#visibilityGrid)"/>
+            <line class="visibility-ray" id="visibleRay" x1="82" y1="135" x2="612" y2="135"/>
+            <line class="blocked-tail" id="blockedTail" x1="350" y1="135" x2="612" y2="135"/>
+            <rect class="occluder" id="occluder" x="350" y="172" width="86" height="158"/>
+            <circle class="edge-handle" id="edgeHandle" cx="350" cy="172" r="8"/>
+            <text class="edge-label" id="edgeLabel" x="366" y="164">edge e = 172</text>
+            <g class="visibility-endpoint source" transform="translate(82 135)">
+              <circle r="13"/><path d="M-5 0H5M0-5V5"/><text x="-25" y="-23">source</text>
+            </g>
+            <g class="visibility-endpoint sensor" transform="translate(612 135)">
+              <circle r="13"/><path d="M-5-5L5 5M5-5L-5 5"/><text x="-22" y="-23">sensor</text>
+            </g>
+            <g class="blocked-symbol" id="blockedSymbol" transform="translate(350 135)">
+              <circle r="13"/><path d="M-5-5L5 5M5-5L-5 5"/>
+            </g>
+            <text class="ray-status" id="rayStatus" x="347" y="95" text-anchor="middle">VISIBLE</text>
+          </svg>
+        </div>
+
+        <div class="visibility-controls">
+          <div class="range-label">
+            <label for="edgeSlider">occluder top edge <em>e</em></label>
+            <output id="edgeOutput" for="edgeSlider">172</output>
+          </div>
+          <input id="edgeSlider" type="range" min="70" max="200" step="1" value="172">
+
+          <div class="visibility-formula" role="math" aria-label="Visibility is zero when the occluder edge is at or above the ray, and one when it is below the ray">
+            V(e) = { 0 if e ≤ y<sub>ray</sub>; 1 if e &gt; y<sub>ray</sub> }
+          </div>
+
+          <div class="visibility-readout" aria-live="polite">
+            <span id="visibilityBadge" class="visible">path visible</span>
+            <div><small>visibility V(e)</small><strong id="visibilityValue">1</strong></div>
+            <div><small>ordinary local derivative</small><strong id="visibilityDerivative">0</strong></div>
+          </div>
+
+          <figure class="step-figure">
+            <svg id="stepGraph" viewBox="0 0 420 170" role="img" aria-labelledby="step-title" aria-describedby="step-desc">
+              <title id="step-title">Hard visibility as a step function</title>
+              <desc id="step-desc">Visibility is zero for e less than or equal to 135 and one for e greater than 135, with a jump at 135.</desc>
+              <path class="step-axes" d="M42 18V140H402"/>
+              <path class="step-function" d="M42 126H220M224 42H402"/>
+              <line class="step-jump" x1="222" x2="222" y1="42" y2="126"/>
+              <circle class="step-dot" id="stepDot" cx="0" cy="0" r="6"/>
+              <text class="step-label" x="22" y="47">1</text>
+              <text class="step-label" x="22" y="131">0</text>
+              <text class="step-label" x="222" y="159" text-anchor="middle">ray / edge crossing</text>
+            </svg>
+            <figcaption>Zero slope away from the switch does not mean the boundary contribution is irrelevant.</figcaption>
+          </figure>
+        </div>
+      </div>
+
+      <div class="visibility-explanation">
+        <article class="problem-card">
+          <span>where naive AD is incomplete</span>
+          <h3>It differentiates the path it saw.</h3>
+          <p>
+            Within a fixed hit sequence, intersection position and path
+            contribution can vary smoothly. The Boolean visibility indicator
+            is constant almost everywhere and undefined at its switch, while
+            an integrated image or measurement can require an additional
+            boundary term.
+          </p>
+        </article>
+        <article>
+          <span>edge sampling</span>
+          <h3>Sample the missing boundary term.</h3>
+          <p>
+            Li and colleagues explicitly sample discontinuity edges so their
+            Monte Carlo estimator captures derivative contributions that normal
+            path samples almost surely miss.
+          </p>
+        </article>
+        <article>
+          <span>reparameterization</span>
+          <h3>Move the integration domain instead.</h3>
+          <p>
+            Another family warps or reparameterizes samples so a moving
+            discontinuity becomes stationary in the transformed domain, making
+            differentiation tractable.
+          </p>
+        </article>
+      </div>
+
+      <aside class="warning-note" aria-label="Visibility derivative caution">
+        <strong>A smooth surrogate is not automatically the correct physical derivative.</strong>
+        <p>
+          Soft visibility can be useful in an optimization design, but it changes
+          the forward model. Edge estimators and reparameterization aim to
+          differentiate the original integrated transport more faithfully.
+        </p>
+      </aside>
+    </section>
+
+    <section class="section optimize-section" id="optimize" aria-labelledby="optimize-title">
+      <div class="section-heading light">
+        <p class="section-index">05 / From derivative to solution</p>
+        <h2 id="optimize-title">Useful gradients.<br><em>No guarantee of truth.</em></h2>
+        <p>
+          Once a renderer can propagate the relevant derivatives, it can sit
+          inside an optimizer. The loop is simple; choosing a faithful model,
+          identifiable parameters, a stable estimator, and a good initialization
+          is not.
+        </p>
+      </div>
+
+      <div class="optimizer-grid">
+        <section class="code-card" aria-label="Pseudocode for optimization through a differentiable ray tracer">
+          <div class="code-top"><span>inverse_problem.py</span><span>conceptual pseudocode</span></div>
+          <pre tabindex="0"><code><span class="comment"># θ: supported scene/system parameters</span>
+θ = initialize()
+
+<span class="keyword">for</span> step <span class="keyword">in</span> range(K):
+    prediction = trace(θ, samples)
+    loss = distance(prediction, target)
+
+    gradient = backward(loss, θ)
+    θ = optimizer.update(θ, gradient)
+
+<span class="comment"># Validate with held-out observations and physics.</span></code></pre>
+        </section>
+
+        <div class="mode-card">
+          <p class="card-kicker">automatic differentiation modes</p>
+          <h3>Which direction should derivatives flow?</h3>
+          <div class="mode-row">
+            <span>forward mode</span>
+            <strong>few inputs → many output sensitivities</strong>
+            <p>Propagate a chosen input perturbation alongside the forward computation; this evaluates a Jacobian–vector product.</p>
+          </div>
+          <div class="mode-row featured">
+            <span>reverse mode</span>
+            <strong>one scalar loss → many parameter gradients</strong>
+            <p>Backpropagate an output sensitivity through the recorded computation; this evaluates a vector–Jacobian product.</p>
+          </div>
+          <p class="mode-caveat">The better mode depends on input/output dimensions, memory, estimator design, and the renderer—not the word “differentiable” alone.</p>
+        </div>
+      </div>
+
+      <div class="application-grid">
+        <article><span>inverse rendering</span><h3>Recover a scene</h3><p>Estimate pose, geometry, materials, or illumination from images or other measured responses.</p></article>
+        <article><span>calibration</span><h3>Fit a physical model</h3><p>Adjust supported transport and sensor parameters so simulated observations better match measurements — Sionna\u2019s measurement-calibrated materials cut channel-gain error from 4.9 to 1.0\u20132.2 dB.</p></article>
+        <article><span>design</span><h3>Optimize a system</h3><p>Move sources or sensors, tune patterns, or search continuous design parameters against a task loss.</p></article>
+        <article><span>learning</span><h3>Connect physics to ML</h3><p>Place the renderer inside a larger differentiable program while keeping an explicit physical forward model.</p></article>
+      </div>
+
+      <div class="reality-grid">
+        <article class="reality-intro">
+          <p class="card-kicker">what the gradient does not promise</p>
+          <h3>Local slope is information, not certainty.</h3>
+          <p>A low loss can still come from the wrong parameters when the inverse problem is ambiguous or the forward model is incomplete.</p>
+        </article>
+        <ul class="limitation-list">
+          <li><span>01</span><div><strong>Non-convex objectives</strong><p>Multiple scenes can explain similar observations; gradients can reach a local minimum.</p></div></li>
+          <li><span>02</span><div><strong>Noisy estimates</strong><p>Monte Carlo estimates can have high variance—even when a gradient estimator is unbiased.</p></div></li>
+          <li><span>03</span><div><strong>Visibility and topology</strong><p>Paths can appear, disappear, or change interaction sequence; these events need special treatment.</p></div></li>
+          <li><span>04</span><div><strong>Model mismatch</strong><p>A ray or geometric-transport model contains only the phenomena it implements; differentiability does not turn it into a full-wave solver.</p></div></li>
+          <li><span>05</span><div><strong>Supported parameters only</strong><p>Discrete choices and renderer features are not differentiable merely because an AD library is present.</p></div></li>
+        </ul>
+      </div>
+
+      <section class="sources" aria-labelledby="sources-title">
+        <div class="sources-heading">
+          <p class="card-kicker">primary sources and official documentation</p>
+          <h3 id="sources-title">Where to go deeper</h3>
+          <p>The demos above are analytic teaching examples. These references describe production research methods and systems.</p>
+        </div>
+        <div class="source-list">
+          <a href="https://nvlabs.github.io/nvdiffrast/" target="_blank" rel="noopener">
+            <span>nvdiffrast · official documentation</span>
+            <strong>Modular Primitives for Differentiable Rasterization</strong>
+            <small>Coverage, interpolation, antialiasing, and gradients ↗</small>
+          </a>
+          <a href="https://www.matthewtancik.com/nerf" target="_blank" rel="noopener">
+            <span>Mildenhall et al. · ECCV 2020</span>
+            <strong>NeRF: Neural Radiance Fields for View Synthesis</strong>
+            <small>Differentiable volume rendering along camera rays ↗</small>
+          </a>
+          <a href="https://repo-sam.inria.fr/fungraph/3d-gaussian-splatting/" target="_blank" rel="noopener">
+            <span>Kerbl et al. · SIGGRAPH 2023</span>
+            <strong>3D Gaussian Splatting for Real-Time Radiance Field Rendering</strong>
+            <small>Visibility-aware anisotropic splatting ↗</small>
+          </a>
+          <a href="https://cseweb.ucsd.edu/~tzli/diffrt/" target="_blank" rel="noopener">
+            <span>Li et al. · SIGGRAPH Asia 2018</span>
+            <strong>Differentiable Monte Carlo Ray Tracing through Edge Sampling</strong>
+            <small>Visibility derivatives and edge sampling ↗</small>
+          </a>
+          <a href="https://rgl.epfl.ch/publications/Loubet2019Reparameterizing" target="_blank" rel="noopener">
+            <span>Loubet et al. · SIGGRAPH Asia 2019</span>
+            <strong>Reparameterizing Discontinuous Integrands for Differentiable Rendering</strong>
+            <small>Moving visibility discontinuities ↗</small>
+          </a>
+          <a href="https://www.mitsuba-renderer.org/" target="_blank" rel="noopener">
+            <span>Mitsuba 3</span>
+            <strong>A retargetable forward and inverse renderer</strong>
+            <small>Renderer, paper, and documentation ↗</small>
+          </a>
+          <a href="https://mitsuba.readthedocs.io/en/latest/src/inverse_rendering/gradient_based_opt.html" target="_blank" rel="noopener">
+            <span>Official Mitsuba tutorial</span>
+            <strong>Gradient-based inverse rendering</strong>
+            <small>Optimization through a renderer ↗</small>
+          </a>
+          <a href="https://drjit.readthedocs.io/en/stable/autodiff.html" target="_blank" rel="noopener">
+            <span>Dr.Jit documentation</span>
+            <strong>Forward- and reverse-mode automatic differentiation</strong>
+            <small>AD graph and derivative traversal ↗</small>
+          </a>
+          <a href="https://nvlabs.github.io/sionna/rt/" target="_blank" rel="noopener">
+            <span>Sionna RT documentation</span>
+            <strong>Differentiable ray tracing for radio propagation</strong>
+            <small>Channel and radio-map applications ↗</small>
+          </a>
+        </div>
+      </section>
+    </section>
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+      <div>
+        <a class="brand footer-brand" href="/"><span class="brand-mark">BLP</span><span>Bai Liping</span></a>
+        <p>An interactive note on gradients through ray-based transport.</p>
+      </div>
+      <div class="footer-links">
+        <strong>Related notes</strong>
+        <a href="/gaussian-splatting/">Gaussian splatting &amp; GS-SLAM</a>
+        <a href="/frame-registration/">Frame registration</a>
+      </div>
+      <div class="footer-links">
+        <strong>On this page</strong>
+        <a href="#forward">The central idea</a>
+        <a href="#renderer-families">Four renderer families</a>
+        <a href="#sionna-sampling">Sionna RT sampling</a>
+        <a href="#gradient-lab">Specular reflection lab</a>
+        <a href="#sionna-diff">What Sionna RT differentiates</a>
+        <a href="#visibility">Visibility discontinuity</a>
+      </div>
+    </div>
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>

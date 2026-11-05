@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>JPDA Lab — Joint Probabilistic Data Association</title>
+  <meta name="description" content="Explore exact joint association probabilities, missed detections, clutter, and Gaussian moment updates in a two-target JPDA teaching lab, based on Fortmann et al. (1983) and Bar-Shalom et al. (2009).">
+  <link rel="canonical" href="https://bailiping.com/jpda/">
+  <script>if(new URLSearchParams(location.search).get('embed')==='1')document.documentElement.classList.add('embedded');</script>
+  <link rel="stylesheet" href="./style.css">
+  <script src="../et-handover/assets/math-config.js"></script>
+  <script defer src="../et-handover/assets/vendor/mathjax-3.2.2-tex-svg-full.js"></script>
+  <script defer src="../et-handover/assets/mathjax-dynamic.js"></script>
+  <script type="module" src="./app.mjs"></script>
+</head>
+<body>
+<a class="skip" href="#lab">Skip to interactive lab</a>
+<header class="page-header">
+  <nav aria-label="Related pages"><a href="/et-handover/#/3">← Extended-target handover</a><a href="/jpda-slides/">Open the slide deck →</a></nav>
+  <p class="eyebrow">TRACKING / ASSOCIATION / UNCERTAINTY</p>
+  <h1>One return.<br><em>Two plausible targets.</em></h1>
+  <p class="lead">Joint probabilistic data association (JPDA) weighs complete, feasible assignments before updating each target. Explore what changes when measurements can be clutter, targets can be missed, and nobody gets to claim the same return twice.</p>
+  <p class="source-line">Based on <a href="#references">Fortmann, Bar-Shalom &amp; Scheffe (1983)</a> and <a href="#references">Bar-Shalom, Daum &amp; Huang (2009)</a>.</p>
+</header>
+<main>
+<section class="lab" id="lab" aria-labelledby="lab-title">
+  <div class="lab-heading"><div><p class="eyebrow">INTERACTIVE / ONE SCAN</p><h2 id="lab-title">Reason jointly. Update softly.</h2></div><button id="reset" type="button">Reset scene</button></div>
+  <p class="lab-intro">Drag a measurement, or use the position controls. Watch the joint events, marginal probabilities, and updated target estimates respond.</p>
+  <div class="lab-grid">
+    <aside class="controls" aria-label="Experiment controls">
+      <label class="control full">Scene<select id="preset"><option value="shared">One shared return</option><option value="separated">Separated returns</option><option value="ambiguous">Overlapping targets</option><option value="missed">A missed detection</option></select></label>
+      <label class="control">Target separation <output for="separation" id="separation-out"></output><input id="separation" type="range" min="0" max="8" step="0.1" value="2"><span>Predictions move apart along x.</span></label>
+      <label class="control">Detection probability P<sub>D</sub> <output for="pd" id="pd-out"></output><input id="pd" type="range" min="0.05" max="0.99" step="0.01" value="0.9"></label>
+      <label class="control">Clutter intensity λ <output for="lambda" id="lambda-out"></output><input id="lambda" type="range" min="-2.69897" max="-0.69897" step="0.01" value="-1.69897"><span>Expected clutter returns per m².</span></label>
+      <label class="control">Measurement noise σ <output for="sigma" id="sigma-out"></output><input id="sigma" type="range" min="0.2" max="1.8" step="0.05" value="0.65"><span>R = σ²I; prior P⁻ = 1.21I m².</span></label>
+      <fieldset class="position full"><legend>Move a measurement</legend><label>Measurement<select id="measurement"></select></label><label>x <output for="zx" id="zx-out"></output><input id="zx" type="range" min="-8.5" max="8.5" step="0.01"></label><label>y <output for="zy" id="zy-out"></output><input id="zy" type="range" min="-5" max="5" step="0.01"></label></fieldset>
+      <label class="check full"><input id="compare" type="checkbox" checked> Compare independent PDA</label>
+      <label class="check full"><input id="contours" type="checkbox" checked> Show innovation contours</label>
+    </aside>
+    <div class="experiment">
+      <div class="scene-summary"><span><strong id="event-count">3</strong> feasible joint events</span><span>Σ event probabilities = <strong id="total-probability">1.000</strong></span></div>
+      <div id="plot" class="plot" aria-label="Interactive association plot"></div>
+      <div class="legend"><span><i class="circle"></i> Prediction</span><span><i class="diamond"></i> JPDA mean</span><span><i class="square"></i> Independent PDA mean</span><span><i class="dot"></i> Measurement</span></div>
+      <p class="plot-note">Dashed ellipses: 95% innovation contours, <strong>not gates</strong>. Filled ellipses: 95% contours of the moment-matched posterior Gaussians. Every displayed measurement remains eligible.</p>
+      <p id="insight" class="insight"></p>
+      <div class="results-grid">
+        <section class="panel" aria-labelledby="marginal-title"><p class="eyebrow">SUM OVER EVENTS</p><h3 id="marginal-title">Marginal association probabilities</h3><div id="marginals" class="table-scroll"></div><p>Each target row sums to 1. A measurement’s target probabilities plus its clutter probability sum to 1.</p><div id="pda-comparison"></div></section>
+        <section class="panel events-panel" aria-labelledby="events-title"><div class="panel-heading"><div><p class="eyebrow">NORMALIZED JOINT WEIGHTS</p><h3 id="events-title">Feasible assignments</h3></div><button id="clear-event" type="button" aria-pressed="true">All</button></div><p id="event-hint">Select an event to inspect its lines. The JPDA update still uses all events.</p><div id="events" class="events"></div></section>
+      </div>
+      <section class="panel update-panel" aria-labelledby="updates-title"><p class="eyebrow">MOMENT-MATCH THE MIXTURE</p><h3 id="updates-title">Updated state &amp; uncertainty</h3><div id="updates" class="updates"></div><p>The spread term preserves uncertainty between association alternatives; a mean between returns is not a selected measurement.</p></section>
+    </div>
+  </div>
+  <p id="status" class="sr-only" role="status" aria-live="polite"></p>
+  <noscript><p>This interactive lab needs JavaScript. The <a href="/jpda-slides/">slide deck</a> includes static figures and explanations.</p></noscript>
+</section>
+<div class="article">
+<section aria-labelledby="model-title"><p class="eyebrow">01 / MODEL</p><h2 id="model-title">A small, explicit association problem</h2><p>This is a synthetic Cartesian teaching example with two established point targets and a fixed measurement set. Target states and measurements are 2D positions; H = I. Each target independently generates at most one return with probability P<sub>D</sub>. Clutter is an independent homogeneous Poisson process with spatial intensity λ. There are no births, deaths, track management, or temporal trajectory simulation.</p><p>All candidate measurements are considered: P<sub>G</sub> = 1 is the large-gate simplification used in the 1983 paper’s Section III and footnote 5. The drawing window is only a viewport. Its boundary and the dashed contours do not gate measurements or change the likelihood.</p></section>
+<section aria-labelledby="weights-title"><p class="eyebrow">02 / JOINT EVENTS</p><h2 id="weights-title">Normalize complete explanations of the scan</h2><p>Let a<sub>t</sub> = 0 denote a missed detection and a<sub>t</sub> = j denote target t generating measurement j. Positive assignments must be distinct. Any unassigned measurement is clutter. With predicted measurement mean μ<sub>t</sub> and innovation covariance S<sub>t</sub> = P<sub>t</sub><sup>−</sup> + R:</p><div class="equation"><span class="math-tex">\[\ell_{tj}=\frac{P_{D,t}\,\mathcal N(z_j;\mu_t,S_t)}{\lambda},\qquad w(a)=\prod_{t:a_t=0}(1-P_{D,t})\prod_{t:a_t>0}\ell_{t,a_t},\qquad p(a\mid Z)=\frac{w(a)}{\sum_{a'\in\mathcal A}w(a')} .\]</span></div><p>The likelihood ratio comes from the 2009 paper’s (38); the joint weight is the parametric Poisson-clutter form in 1983 (3.18) and 2009 (47), after removing a common λ<sup>m</sup> factor. No additional clutter-count factorial is inserted. The demo enumerates all feasible events and normalizes their weights in log space.</p></section>
+<section aria-labelledby="update-title"><p class="eyebrow">03 / MARGINALS &amp; UPDATE</p><h2 id="update-title">Average the branches—and keep their spread</h2><div class="equation"><span class="math-tex">\[\beta_{tj}=\sum_{a\in\mathcal A:a_t=j}p(a\mid Z),\qquad \hat x_t^+=\sum_{j=0}^{m}\beta_{tj}\hat x_{tj},\qquad P_t^+=\sum_{j=0}^{m}\beta_{tj}\left[P_{tj}+(\hat x_{tj}-\hat x_t^+)(\hat x_{tj}-\hat x_t^+)^\top\right].\]</span></div><p>The missed-detection branch retains the prior. Each measurement branch uses its ordinary Kalman correction. These mixture moments are equivalent to the innovation and covariance formulas in 2009 (39)–(44). Marginalization follows 1983 (3.19)–(3.20) and 2009 (51).</p><p>The lab computes exact association sums for this scan under its independent Gaussian prediction model, then shows the decoupled JPDAF Gaussian update. A recursive JPDA filter approximates the resulting mixture; this is not an exact multitarget posterior over all time. Separate Gaussian tracks can move together under persistent ambiguity (track coalescence). Maintaining cross-covariances, as in JPDACF, is beyond this lab.</p></section>
+<section id="references" aria-labelledby="references-title"><p class="eyebrow">PRIMARY REFERENCES</p><h2 id="references-title">Read the source papers</h2><ol class="references"><li><a href="/et-handover/papers/55JOE.pdf"><strong>Sonar Tracking of Multiple Targets Using Joint Probabilistic Data Association</strong></a><br>Thomas E. Fortmann, Yaakov Bar-Shalom &amp; Molly Scheffe. <em>IEEE Journal of Oceanic Engineering</em>, OE-8(3), pp. 173–184, July 1983.<br><span>Joint-event constraints, Poisson-clutter weights, and marginal probabilities: Section III, especially (3.18)–(3.20), printed p. 177.</span></li><li><a href="/et-handover/papers/358CSM.pdf"><strong>The Probabilistic Data Association Filter</strong></a><br>Yaakov Bar-Shalom, Fred Daum &amp; Jim Huang. <em>IEEE Control Systems Magazine</em>, pp. 82–100, December 2009. DOI: 10.1109/MCS.2009.934469.<br><span>Likelihood ratio (38), PDA moment update (39)–(44), and JPDA event weights and marginals (45)–(51), printed pp. 90–93.</span></li></ol><p>Figures and numerical examples on this page are generated from the teaching model above; they do not reproduce the papers’ sonar experiments.</p><p><a class="primary-link" href="/jpda-slides/">Continue with the JPDA slide deck →</a></p></section>
+</div>
+</main>
+<footer class="page-footer"><span>JPDA / A companion to Extended-Target Handover</span><a href="/et-handover/#/3">Back to Intuitive Intepretation →</a></footer>
+</body>
+</html>

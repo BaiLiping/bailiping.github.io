@@ -1,0 +1,139 @@
+% (optional, but makes the colours closer to the original)
+\definecolor{predarrow}{HTML}{DDEFF7} % color-blind-safe prediction fill
+\definecolor{predline}{HTML}{6BA7BE}  % prediction connector
+
+% convenient arrow size macros so both the
+% rectangular body and triangular head scale together
+\newcommand{\predarrowheight}{15mm} % overall length
+\newcommand{\predarrowwidth}{20mm}  % thickness
+
+% ---------------------------------------------------------------------------
+\begin{tikzpicture}[
+    >=Stealth,
+    every node/.style={font=\tiny},
+    obs/.style   ={circle,draw=black!70,fill=white,inner sep=1pt,minimum size=7mm,line width=0.35pt},
+    latent/.style={circle,draw=black!70,fill=white,inner sep=1pt,minimum size=7mm,line width=0.35pt},
+    box/.style   ={draw=black!70,fill=black!2,rounded corners=2pt,inner sep=3pt,minimum height=8mm,line width=0.35pt},
+    pot/.style   ={draw=black!75,fill=plotD!10,rounded corners=2pt,inner sep=4pt,line width=0.4pt},
+    predarrow/.style={
+        single arrow,
+        draw=none,
+        fill=predarrow,
+        fill opacity=0.72,
+        minimum height=\predarrowheight,
+        minimum width=\predarrowwidth,
+        single arrow head extend=0.7\predarrowheight
+    }
+]
+
+%--- nodes: left block (time k-1 / prediction side) -----------------------
+\node[box]   (f1)  at (0,   1) {$f(\underline{\V{y}}_k^{1})$};
+\node[box]   (fp)  at (0,  -1.0) {$f(\underline{\V{y}}_k^{n_p})$};
+
+\node[obs]   (y1)  at (1.5,  1) {$\underline{\V{y}}_k^{1}$};
+\node[obs]   (yp)  at (1.5, -1.0) {$\underline{\V{y}}_k^{n_p}$};
+
+\node[box]   (q1)  at (3.4,  1) {$\underline{l}(\underline{\V{y}}_k^{1},a_k^{1};\V{Z}_k^{G})$};
+\node[box]   (qp)  at (3.4, -1.0) {$\underline{l}(\underline{\V{y}}_k^{n_p},a_k^{n_p};\V{Z}_k^{G})$};
+
+\node[latent] (a1) at (5.0,  1) {$a_k^{1}$};
+\node[latent] (ap) at (5.0, -1.0) {$a_k^{n_p}$};
+
+%--- central potential -----------------------------------------------------
+\node[pot]    (psi) at (6.4,0) {$\boldsymbol{\psi}(\V{a}_k,\V{b}_k)$};
+
+%--- nodes: right block (time k / newborn & measurements side) ------------
+\node[latent] (b1)   at (8.2,  1) {$b_k^{1}$};
+\node[latent] (bm)   at (8.2, -1.0) {$b_k^{n_g}$};
+
+\node[box]    (v1)   at (10.1,  1) {$\overline{l}(\overline{\V{y}}_k^{1},b_k^{1};\V{Z}_k^{1})$};
+\node[box]    (vm)   at (10.1, -1.0) {$\overline{l}(\overline{\V{y}}_k^{n_g},b_k^{n_g};\V{Z}_k^{n_g})$};
+
+\node[obs]    (ybar1) at (12.0,  1) {$\overline{\V{y}}_k^{1}$};
+\node[obs]    (ybarm) at (12.0, -1.0) {$\overline{\V{y}}_k^{n_g}$};
+
+%--- connections between nodes --------------------------------------------
+\draw[draw=black!65,line cap=round] (f1) -- (y1);
+\draw[draw=black!65,line cap=round] (fp) -- (yp);
+
+\draw[draw=black!65,line cap=round] (y1) -- (q1);
+\draw[draw=black!65,line cap=round] (yp) -- (qp);
+
+\draw[draw=black!65,line cap=round] (q1) -- (a1);
+\draw[draw=black!65,line cap=round] (qp) -- (ap);
+
+\draw[draw=black!65,line cap=round] (a1) -- (psi);
+\draw[draw=black!65,line cap=round] (ap) -- (psi);
+
+\draw[draw=black!65,line cap=round] (psi) -- (b1);
+\draw[draw=black!65,line cap=round] (psi) -- (bm);
+
+\draw[draw=black!65,line cap=round] (b1) -- (v1);
+\draw[draw=black!65,line cap=round] (bm) -- (vm);
+
+\draw[draw=black!65,line cap=round] (v1) -- (ybar1);
+\draw[draw=black!65,line cap=round] (vm) -- (ybarm);
+
+%--- vertical ellipses between top and bottom rows ------------------------
+\coordinate (midF)    at ($(f1)!0.5!(fp)$);
+\coordinate (midY)    at ($(y1)!0.5!(yp)$);
+\coordinate (midQ)    at ($(q1)!0.5!(qp)$);
+\coordinate (midA)    at ($(a1)!0.5!(ap)$);
+\coordinate (midB)    at ($(b1)!0.5!(bm)$);
+\coordinate (midV)    at ($(v1)!0.5!(vm)$);
+\coordinate (midYbar) at ($(ybar1)!0.5!(ybarm)$);
+
+\foreach \m in {midF,midY,midQ,midA,midB,midV,midYbar}{
+  \node[font=\large] at (\m) {$\vdots$};
+}
+
+%--- left & right blue prediction arrows (background) ---------------------
+\begin{scope}[on background layer]
+\node[predarrow] (predL) at (-2.2,0) {};
+\node[predarrow] (predR) at (13.3,0) {};
+\end{scope}
+
+\draw[densely dashed, draw=black!60]
+  ($(predL.west)+(0,2.2)$) -- ($(predL.west)+(0,-2.2)$);
+\node[above] at ($(predL.west)+(0,2.3)$) {$k-1$};
+
+\draw[densely dashed, draw=black!60]
+  ($(predR.west)+(0,2.2)$) -- ($(predR.west)+(0,-2.2)$);
+\node[above] at ($(predR.west)+(0,2.3)$) {$k$};
+
+% text on arrows (vertical)
+\node[font=\tiny] at (predL.center) {prediction};
+\node[font=\tiny] at (predR.center) {prediction};
+
+%--- blue prediction connections from left arrow to transition factors -----
+  \draw[very thick,draw=predline]
+    (predL.north) -- (predL.north |- f1.west) -- (f1.west);                             % go down to f1.north
+
+\draw[very thick,draw=predline]
+    (predL.south)
+    -- (predL.south |- fp.west)
+    -- (fp.west);
+
+%--- blue prediction connections (all into right arrow) -------------------
+% downward from y_k^1
+\draw[very thick,draw=predline]
+  (y1.south) -- ++(0,-0.3) coordinate (yL0)
+  -- (predR.west |- yL0);
+
+% single upward line from y_k^{n_p}
+\draw[very thick,draw=predline]
+  (yp.north) -- ++(0,0.3) coordinate (yL1)
+  -- (predR.west |- yL1);
+
+% downward from \bar{y}_k^{1}
+\draw[very thick,draw=predline]
+  (ybar1.south) -- ++(0,-0.5) coordinate (yR0)
+  -- (predR.west |- yR0);
+
+% upward from \bar{y}_k^{n_c}
+\draw[very thick,draw=predline]
+  (ybarm.north) -- ++(0,0.5) coordinate (yR1)
+  -- (predR.west |- yR1);
+
+\end{tikzpicture}
+% -------------------------------------------------------------------------

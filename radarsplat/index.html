@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="en">
+<head>
+ <meta charset="utf-8">
+ <meta name="viewport" content="width=device-width, initial-scale=1">
+ <meta name="description" content="An interactive RadarSplat lab: build 3D Gaussians, project covariance into radar coordinates, accumulate returns, model beam spread and range leakage, and fit splats to synthetic measurements.">
+ <meta name="theme-color" content="#f7f5ef">
+ <link rel="canonical" href="https://bailiping.com/radarsplat/">
+ <title>RadarSplat | Bai Liping</title>
+ <link rel="stylesheet" href="styles.css">
+ <script type="module" src="app.mjs"></script>
+</head>
+<body>
+<a class="skip" href="#main">Skip to the lab</a>
+<header class="header"><div class="header-inner">
+ <a class="brand" href="/" aria-label="Bai Liping home"><span class="brand-mark">BLP</span><span class="brand-name">Interactive notes</span></a>
+ <nav aria-label="On this page"><a href="#lab">Renderer</a><a href="#anatomy">The math</a><a href="#training">Fit a splat</a></nav>
+ <a class="paper-link" href="https://arxiv.org/abs/2506.01379">Read the paper <span aria-hidden="true">↗</span></a>
+</div></header>
+<main id="main">
+ <section class="intro" aria-labelledby="title">
+  <div><h1 id="title">RadarSplat,<br><em>from shape to signal.</em></h1><p class="lede">Build a Gaussian. Put it in a radar beam. Watch a 3D scene become a range–azimuth image.</p></div>
+  <div class="intro-note"><span class="small-index">THE PART WE ARE EXPLORING</span><p>Scene parameters → differentiable rendering → measurement error → updated splats.</p><p class="muted">Preprocessing is out of scope. Poses and an occupancy reference are assumed available.</p></div>
+ </section>
+ <div class="scope"><strong>Not a camera renderer.</strong><span>Returns add; α denotes occupancy, not front-to-back transparency. RadarSplat synthesizes radar images. The optional peak detector below is our teaching extension. <a href="#sources">Sources &amp; assumptions</a></span></div>
+ <section id="lab" class="lab-section" aria-labelledby="lab-title">
+  <div class="section-head"><div><span class="section-number">01</span><h2 id="lab-title">Build the return.</h2></div><button id="reset-scene" class="text-button">Reset scene <span aria-hidden="true">↺</span></button></div>
+  <div class="pipeline" aria-label="Rendering stage">
+   <button data-stage="0" aria-pressed="false"><span>1</span> Gaussian footprint</button>
+   <button data-stage="1" aria-pressed="false"><span>2</span> Elevation &amp; power</button>
+   <button data-stage="2" aria-pressed="false"><span>3</span> Azimuth beam</button>
+   <button data-stage="3" aria-pressed="true"><span>4</span> Range leakage</button>
+  </div>
+  <div class="workbench">
+   <div class="visual-column">
+    <div class="panel-heading"><h3>Scene space</h3><div class="segmented" aria-label="Scene view"><button data-view="top" aria-pressed="true">Top</button><button data-view="oblique" aria-pressed="false">3D</button></div></div>
+    <canvas id="scene-canvas" role="img" aria-label="Editable Gaussian scene. Select a splat in the controls or drag a center in top view."></canvas>
+    <div class="canvas-caption"><span class="legend-dot green"></span>Occupancy-dominant <span class="legend-dot orange"></span>Noise-dominant</div>
+    <p class="canvas-help" id="scene-help">Drag a center to move it. Use the inspector for height and shape.</p>
+   </div>
+   <div class="visual-column radar-column">
+    <div class="panel-heading"><h3 id="radar-title">Rendered radar</h3><label class="sr-only" for="render-mode">Rendered quantity</label><select id="render-mode"><option value="total">Total · σ</option><option value="target">Target · ρα</option><option value="noise">Noise · ρη</option><option value="occupancy">Occupancy · α</option></select></div>
+    <canvas id="radar-canvas" role="img" aria-label="Range–azimuth radar intensity image. Click to select a beam."></canvas>
+    <div class="scale-row"><span id="scale-min">−50 dB</span><span class="color-scale"></span><span id="scale-max">+10 dB</span></div>
+    <p class="canvas-help">Click a row to inspect its range profile. The display scale stays fixed.</p>
+   </div>
+   <aside class="inspector" aria-label="Scene inspector">
+    <div class="inspector-top"><label for="selected-splat">Selected splat</label><select id="selected-splat"></select></div>
+    <div class="inspector-tabs" aria-label="Parameter group"><button data-inspector="shape" aria-pressed="true">Geometry</button><button data-inspector="return" aria-pressed="false">Return</button><button data-inspector="sensor" aria-pressed="false">Radar</button></div>
+    <div id="controls"></div>
+    <div id="parameter-note" class="parameter-note"></div>
+   </aside>
+  </div>
+  <div class="stage-note" aria-live="polite"><div><span class="small-index" id="stage-label">STAGE 4 / 4</span><h3 id="stage-title">A return occupies more than one range bin.</h3></div><div><div class="formula" id="stage-formula">I = Kᵣ ∗ I<sub>azi</sub></div><p id="stage-copy">The Gaussian range kernel approximates spectral leakage after windowing. Increase its width in the Radar controls; the geometry has not changed.</p></div></div>
+  <div class="beam-lab">
+   <div class="beam-header"><div><h3>Inside one azimuth beam</h3><p id="beam-description">The same scene, sliced along range.</p></div><label class="beam-control" for="beam-angle">Azimuth <output id="beam-value" for="beam-angle"></output><input id="beam-angle" type="range" min="0" max="399" step="1" value="218"></label></div>
+   <canvas id="beam-canvas" role="img" aria-label="Range profile comparing elevation projection and the selected rendering stage."></canvas>
+   <div class="beam-footer"><div class="plot-legend"><span><i class="line-swatch grey"></i>Before beam &amp; leakage</span><span><i class="line-swatch green"></i>Selected stage</span></div><label class="check-label"><input id="show-detections" type="checkbox"> Show teaching peak detector</label></div>
+   <div id="detection-controls" class="detection-box" hidden><label for="threshold">Threshold <output id="threshold-value" for="threshold">−24 dB</output><input id="threshold" type="range" min="-45" max="0" step="1" value="-24"></label><div><strong id="detection-count"></strong><p>Local range maxima above a fixed power threshold. This is not CFAR, object classification, or a RadarSplat component. Noise returns may also produce peaks.</p></div></div>
+   <p id="beam-readout" class="numeric-readout" aria-live="polite"></p>
+  </div>
+ </section>
+ <section id="anatomy" class="math-section" aria-labelledby="math-title">
+  <div class="section-head"><div><span class="section-number">02</span><h2 id="math-title">What is inside a splat?</h2></div><a href="/3dgs/" class="text-link">Compare with 3DGS <span aria-hidden="true">↗</span></a></div>
+  <div class="math-grid">
+   <article><h3>Geometry is a 3D ellipsoid.</h3><div class="equation">Σ = R(q) diag(s₁², s₂², s₃²) R(q)ᵀ</div><p>The center μ places the splat. Three positive scales give its principal widths; a rotation q turns those axes. The editor exposes yaw and pitch, a two-angle subset of the quaternion rotation.</p><p>A splat is a smooth basis function, <strong>not one radar detection</strong>. Several splats can contribute to the same bin, and a single splat can spread into many bins.</p><div class="matrix-label">Selected splat · world covariance (m²)</div><div id="world-matrix" class="matrix" aria-label="World covariance matrix"></div></article>
+   <article><h3>The radar sees different coordinates.</h3><div class="equation">(r, θ, φ) = (‖μ′‖, atan2(y′, x′), asin(z′/r))<br>Σ<sub>spherical</sub> ≈ J Σ<sub>sensor</sub> Jᵀ</div><p>First move the mean <em>and covariance</em> into the radar frame. Linearize the nonlinear spherical conversion around that mean. The upper-left 2 × 2 covariance block gives the range–azimuth footprint after marginalizing elevation.</p><div id="projection-values" class="numeric-readout"></div><div class="matrix-label">Selected splat · (r, θ) covariance · m², m·rad, rad²</div><div id="polar-matrix" class="matrix" aria-label="Range azimuth covariance matrix"></div><details><summary>Inspect the actual Jacobian</summary><div id="jacobian-matrix" class="matrix"></div><p class="caption">Rows are r, θ, φ; columns are sensor-frame x, y, z. Large splats or near-axis geometry can make this first-order approximation inaccurate.</p></details></article>
+   <article><h3>Brightness is not occupancy.</h3><div class="equation">σᵢ = ρᵢ(v) min(αᵢ + ηᵢ, 1)</div><p>ρ controls view-dependent reflectivity; α and η distinguish occupancy and noise contributions. Set α low and η high: the return can stay bright without representing occupied space.</p><div id="return-values" class="return-values"></div><p>The total, target, noise, and occupancy selectors replace the return weight. The occupancy rendering is a <strong>weighted image, not a calibrated per-pixel probability</strong>.</p><p id="clipping-note" class="parameter-note"></p></article>
+  </div>
+  <div class="derivation"><div><h3>From one ellipsoid to one pixel</h3><p>Our explicit teaching discretization of the paper’s additive rendering equation:</p></div><div class="equation large-equation">I<sub>elev</sub>(θ, r) = C / r⁴ · ∑ᵢ G<sub>φ</sub>(φᵢ)² σᵢ<br><span class="equation-continuation">· exp[−½ δᵢᵀ Σ<sub>rθ,i</sub>⁻¹ δᵢ]</span><span class="equation-definition">δᵢ = [r − rᵢ, wrap(θ − θᵢ)]ᵀ</span></div></div>
+  <div class="three-notes"><article><span>ADD, DO NOT OCCLUDE</span><p>No depth-sorted transparency product. This model sums power contributions; it does not solve full electromagnetic visibility or coherent interference.</p></article><article><span>SPREAD IN TWO DIFFERENT DIRECTIONS</span><p>Azimuth convolution mixes neighboring directions, with circular padding at ±180°. Range convolution mixes neighboring distances. Neither changes the underlying 3D geometry.</p></article><article><span>SIZE IS NOT SENSOR BLUR</span><p>An elongated object and a broad antenna can both widen a return. Keeping the sensor kernel separate prevents assigning every blurred pixel to larger scene geometry.</p></article></div>
+ </section>
+ <section id="training" class="training-section" aria-labelledby="training-title">
+  <div class="section-head"><div><span class="section-number">03</span><h2 id="training-title">Let the measurement move the splat.</h2></div></div>
+  <div class="training-intro"><p>The forward model predicts a signal; inverse rendering changes parameters to reduce the mismatch. This small, deterministic experiment fits a <strong>synthetic one-beam measurement</strong>, not Boreas data.</p><div class="training-actions"><button id="train-run" class="button-primary">Run 100 steps</button><button id="train-step" class="button-secondary">One step</button><button id="train-reset" class="text-button">Reset</button></div></div>
+  <div class="training-workbench"><div class="training-plots"><div class="panel-heading"><h3>Predicted vs. observed</h3><span class="mono" id="train-iteration">ITERATION 000</span></div><canvas id="train-canvas" role="img" aria-label="Observed synthetic radar signal and the current fitted signal."></canvas><div class="plot-legend"><span><i class="line-swatch grey dashed"></i>Synthetic observation</span><span><i class="line-swatch orange"></i>Current splat</span></div><div class="loss-heading"><h3>Objective history</h3><output id="train-loss"></output></div><canvas id="loss-canvas" role="img" aria-label="Actual loss values after accepted optimization steps."></canvas></div><aside class="training-inspector"><h3>What the optimizer can change</h3><div id="train-values"></div><label class="slider-label" for="occ-weight">Occupancy supervision <output id="occ-value" for="occ-weight">1.0×</output><input id="occ-weight" type="range" min="0" max="3" step=".1" value="1"></label><p class="caption">Changing this weight resets the experiment so the loss history remains comparable.</p><div class="training-note"><strong>Try turning supervision off.</strong><p>Intensity constrains the product ρ · min(α + η, 1), not α alone. An occupancy reference helps constrain α, but does not uniquely determine every remaining parameter.</p></div></aside></div>
+  <p id="train-status" class="numeric-readout" aria-live="polite">Ready. Every step computes a numerical gradient and checks the objective.</p>
+  <details class="method-details"><summary>The actual paper loop, and what this miniature changes</summary><div class="details-grid"><div><h3>RadarSplat</h3><p>Initialize 20,000 random Gaussians (scale 0.5 m, α = η = 0.1); render from known poses; minimize image L1 + SSIM, occupancy L1, size, and probability regularization losses. The supplement reports 3,000 training iterations.</p><div class="equation">L = λ₁L<sub>L1</sub> + λ₂L<sub>SSIM</sub> + λ₃L<sub>occ</sub><br> + λ₄L<sub>size</sub> + λ₅L<sub>reg</sub></div><p>Gradients update the scene. A new radar pose uses the learned splats without fitting again. The input occupancy reference comes from preprocessing, which we do not implement here.</p></div><div><h3>This browser experiment</h3><p>One radial Gaussian; five scalar parameters; fixed leakage; energy-normalized squared power and occupancy errors; a squared excess-probability penalty. Central finite differences and backtracking keep accepted steps non-increasing. No SSIM, CUDA training, density control, or full 3D reconstruction is claimed.</p><p>Positions, scale, reflectivity, α, and η really update. The orange curve and objective history are calculated from those current parameters, not pre-recorded animation.</p></div></div></details>
+ </section>
+ <section id="sources" class="sources-section" aria-labelledby="sources-title">
+  <div class="section-head"><div><span class="section-number">04</span><h2 id="sources-title">Paper fidelity, without the black box.</h2></div></div>
+  <div class="sources-grid"><div><h3>Read alongside the source</h3><p>Kung, Harisha, Vasudevan, Eid &amp; Skinner. <cite>RadarSplat: Radar Gaussian Splatting for High-Fidelity Data Synthesis and 3D Reconstruction of Autonomous Driving Scenes.</cite> ICCV 2025; arXiv:2506.01379.</p><div class="source-links"><a href="https://arxiv.org/html/2506.01379v1#S3.SS5">§3.5 · Representation &amp; rendering</a><a href="https://arxiv.org/html/2506.01379v1#S3.SS6">§3.6 · Training objective</a><a href="https://arxiv.org/html/2506.01379v1#S8">§8 · Implementation &amp; Jacobian</a><a href="https://github.com/umautobots/radarsplat">Authors’ implementation</a></div></div><div><h3>Deliberate teaching simplifications</h3><p>Four editable splats, 400 azimuth rows, 240 range bins over 2.5–50 m, and Q = 4. The paper uses 400 × 839, Q = 10, and a 0.17 m range-kernel standard deviation.</p><p>We use a symmetric analytic elevation gain and a normalized Gaussian azimuth kernel, not the manufacturer’s measured antenna pattern. Reflectivity uses a restricted first-order SH slice; the paper reports SH level 10. Power units and display thresholds are illustrative.</p><p>A small pixel-variance floor limits aliasing; range convolution uses zero padding. The separately estimated periodic multipath source map is omitted. η is <strong>not</strong> a replacement for that map. There is no Doppler, tracker, or semantic detector here.</p><p>The paper’s ReLU(α + η − 1) penalty discourages sums above one; it does not enforce equality. Target + noise equals total only where clipping is inactive.</p></div></div>
+ </section>
+ <footer><a href="/">Bai Liping</a><span>Built to inspect, not just to watch.</span><a href="/radar-slam/">Continue to Radar SLAM <span aria-hidden="true">↗</span></a></footer>
+</main>
+<noscript><div class="noscript">The explanatory text is available without JavaScript. Enable JavaScript to use the renderer and optimizer.</div></noscript>
+</body>
+</html>

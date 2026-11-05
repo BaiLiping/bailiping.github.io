@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1136" height="228" viewBox="0 0 1136 228" role="img" aria-label="Clone, split and prune are distinct capacity operations"><title>Clone, split and prune are distinct capacity operations</title><defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 1L9 5L0 9" fill="none" stroke="#60747A" stroke-width="1.7"/></marker></defs><style>text{font-family:Arial,Helvetica,sans-serif;fill:#182D33} .label{font-size:15px;font-weight:700;letter-spacing:.7px;fill:#16736E}.small{font-size:16px;fill:#60747A}.body{font-size:20px}.title{font-size:23px;font-weight:700}.mono{font-family:monospace;font-size:19px}.line{stroke:#60747A;stroke-width:1.6;fill:none}.dash{stroke-dasharray:7 6}</style><rect width="1136" height="228" rx="10" fill="#FFFDFA" stroke="#D6DEDC"/>
+ <path d="M378 20V207M756 20V207" stroke="#D6DEDC"/>
+ <text x="24" y="35" class="label">CLONE SMALL, HIGH-GRADIENT</text>
+ <ellipse cx="83" cy="111" rx="24" ry="16" transform="rotate(-25 83 111)" fill="#16736E" fill-opacity=".3" stroke="#16736E" stroke-width="2"/>
+ <path d="M127 111H195" class="line" marker-end="url(#arrow)"/>
+ <ellipse cx="251" cy="102" rx="24" ry="16" transform="rotate(-25 251 102)" fill="#16736E" fill-opacity=".2" stroke="#16736E" stroke-width="2"/>
+ <ellipse cx="270" cy="119" rx="24" ry="16" transform="rotate(-25 270 119)" fill="#16736E" fill-opacity=".3" stroke="#16736E" stroke-width="2"/>
+ <text x="24" y="180" class="body">More adjustable primitives</text><text x="24" y="207" class="small">Shown separated for clarity.</text>
+ <text x="402" y="35" class="label">SPLIT LARGE, HIGH-GRADIENT</text>
+ <ellipse cx="457" cy="111" rx="42" ry="27" transform="rotate(-25 457 111)" fill="#B44F37" fill-opacity=".2" stroke="#B44F37" stroke-width="2"/>
+ <path d="M510 111H571" class="line" marker-end="url(#arrow)"/>
+ <ellipse cx="619" cy="123" rx="27" ry="17" transform="rotate(-25 619 123)" fill="#B44F37" fill-opacity=".2" stroke="#B44F37" stroke-width="2"/>
+ <ellipse cx="661" cy="97" rx="27" ry="17" transform="rotate(-25 661 97)" fill="#B44F37" fill-opacity=".2" stroke="#B44F37" stroke-width="2"/>
+ <text x="402" y="180" class="body">Smaller, more local footprints</text><text x="402" y="207" class="small">The parent is replaced.</text>
+ <text x="780" y="35" class="label">PRUNE LOW-OPACITY</text>
+ <ellipse cx="842" cy="111" rx="32" ry="23" transform="rotate(-25 842 111)" fill="#60747A" fill-opacity=".08" stroke="#9EAFAF" stroke-width="1.5" stroke-dasharray="5 4"/>
+ <path d="M892 111H955" class="line" marker-end="url(#arrow)"/>
+ <path d="M995 92L1031 128M1031 92L995 128" stroke="#60747A" stroke-width="2"/>
+ <text x="780" y="180" class="body">Remove weak contributions</text><text x="780" y="207" class="small">Size criteria can also trigger removal.</text></svg>

@@ -1,0 +1,102 @@
+[
+  {
+    "introSlide": "s-known",
+    "slide": "s-known-live",
+    "slideIndex": 6,
+    "inline": true,
+    "layout": "region",
+    "bounds": {
+      "x": 96,
+      "y": 180,
+      "width": 1088,
+      "height": 480
+    },
+    "src": "./live/geometry/?section=known&case=los&embed=section",
+    "source": "./live/geometry/?section=known&case=los",
+    "title": "02 · KNOWN BS/UE POSE AND MAP · consolidated cases",
+    "sandbox": "allow-scripts",
+    "hideSource": true,
+    "readyMessage": true,
+    "unloadWhenHidden": true
+  },
+  {
+    "introSlide": "s-map",
+    "slide": "s-map-live",
+    "slideIndex": 8,
+    "inline": true,
+    "layout": "region",
+    "bounds": {
+      "x": 96,
+      "y": 180,
+      "width": 1088,
+      "height": 480
+    },
+    "src": "./live/geometry/?section=unknown-map&case=usingle&embed=section",
+    "source": "./live/geometry/?section=unknown-map&case=usingle",
+    "title": "Known BS/UE pose, unknown map: Virtual Anchor",
+    "sandbox": "allow-scripts",
+    "hideSource": true,
+    "readyMessage": true,
+    "unloadWhenHidden": true
+  },
+  {
+    "introSlide": "s-map",
+    "slide": "s-map-incidence-points-live",
+    "slideIndex": 9,
+    "inline": true,
+    "layout": "region",
+    "bounds": {
+      "x": 96,
+      "y": 180,
+      "width": 1088,
+      "height": 480
+    },
+    "src": "./live/geometry/?section=unknown-map&case=usingle&embed=section&construction=incidence-points&v=incidence-all-4",
+    "source": "./live/geometry/?section=unknown-map&case=usingle&construction=incidence-points&v=incidence-all-4",
+    "title": "Known BS/UE pose, unknown map: Incidence Points",
+    "sandbox": "allow-scripts",
+    "hideSource": true,
+    "readyMessage": true,
+    "unloadWhenHidden": true
+  },
+  {
+    "introSlide": "s-pose",
+    "slide": "s-pose-live",
+    "slideIndex": 11,
+    "inline": true,
+    "layout": "region",
+    "bounds": {
+      "x": 96,
+      "y": 180,
+      "width": 1088,
+      "height": 480
+    },
+    "src": "./live/geometry/?section=unknown-pose-map&case=usingleu&embed=section",
+    "source": "./live/geometry/?section=unknown-pose-map&case=usingleu",
+    "title": "04 · KNOWN BS POSE, UNKNOWN UE POSE AND MAP · consolidated cases",
+    "sandbox": "allow-scripts",
+    "hideSource": true,
+    "readyMessage": true,
+    "unloadWhenHidden": true
+  },
+  {
+    "introSlide": "s-pose",
+    "slide": "s-wall-graphslam-3d-live",
+    "src": "./live/wall-map/?embed=region",
+    "source": "./live/wall-map/",
+    "title": "Section 04 · 3D finite-wall radio GraphSLAM map build",
+    "slideIndex": 12,
+    "inline": true,
+    "layout": "region",
+    "bounds": {
+      "x": 96,
+      "y": 180,
+      "width": 1088,
+      "height": 480
+    },
+    "sandbox": "allow-scripts",
+    "hideSource": true,
+    "readyMessage": true,
+    "unloadWhenHidden": true
+  }
+]

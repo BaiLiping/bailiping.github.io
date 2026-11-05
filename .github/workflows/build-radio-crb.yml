@@ -1,0 +1,74 @@
+name: Build and validate radio CRB slides
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'radio-cramer-rao-slides/bento-deck.mjs'
+      - 'radio-cramer-rao-slides/analog-deck.mjs'
+      - 'radio-cramer-rao-slides/build.mjs'
+      - 'radio-cramer-rao-slides/analog/**'
+      - 'radio-cramer-rao-slides/tests/**'
+      - '.github/workflows/build-radio-crb.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: build-radio-crb
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 1
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Validate reference and acquisition models
+        run: |
+          node radio-cramer-rao-slides/tests/model.test.cjs
+          node radio-cramer-rao-slides/tests/project-model.test.cjs
+          if test -f radio-cramer-rao-slides/tests/analog-model.test.cjs; then
+            node radio-cramer-rao-slides/tests/analog-model.test.cjs
+          fi
+      - name: Build the existing Bento presentation
+        run: node radio-cramer-rao-slides/build.mjs
+      - name: Browser checks
+        run: |
+          if test -f radio-cramer-rao-slides/tests/analog-browser.py; then
+            pip install playwright==1.55.0
+            python -m playwright install --with-deps chromium
+            python -m http.server 8765 --bind 127.0.0.1 > /tmp/radio-crb-http.log 2>&1 &
+            python radio-cramer-rao-slides/tests/analog-browser.py
+          fi
+      - name: Preserve the built presentation and validation
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: radio-crb-built
+          path: |
+            radio-cramer-rao-slides/
+            mpc-detection-to-bounce-count-slides/index.html
+            mpc-detection-to-bounce-count-slides/assets/vendor/mathjax-3.2.2-tex-svg-full.js
+            assets/bento-inline-live.js
+            assets/bento-inline-live.css
+            assets/mathjax-dynamic.js
+            radio-crb-validation/
+          retention-days: 7
+      - name: Commit only generated radio CRB assets
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add radio-cramer-rao-slides/index.html radio-cramer-rao-slides/deck.json radio-cramer-rao-slides/live-demos.json
+          if ! git diff --cached --quiet; then
+            git commit -m 'Build validated analog radio CRB presentation'
+            git pull --rebase origin main
+            git push origin HEAD:main
+          fi

@@ -1,0 +1,22 @@
+.math-display{height:100%}.math-display mjx-container[jax="SVG"]>svg{max-height:100%}
+.deck-link{display:inline-flex;gap:.45em;align-items:center;color:inherit;text-decoration:none;cursor:pointer}.deck-link span:first-child{border-bottom:1px solid currentColor}.deck-link:hover{color:#055847}.deck-link:focus-visible{outline:3px solid #2766b1;outline-offset:5px}.reference-arrow{font-weight:400}
+.crb-inline-lab{position:absolute;left:72px;top:228px;width:1136px;height:446px;z-index:40;background:#fff;color:#16273e;font:14px/1.4 Arial,Helvetica,sans-serif;text-align:left}
+.crb-inline-lab [hidden]{display:none!important}.crb-lab-heading,.crb-lab-navigation{display:none}.crb-lab-content{position:relative;height:100%;min-height:0}.crb-lab-frame{display:block;border:0;width:100%;height:100%;background:#fff}.crb-lab-loading{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;background:#f2f6fa;border:1px solid #d8e1e9;border-radius:8px;color:#596d80}
+.crb-inline-lab button{font:600 13px Arial,Helvetica,sans-serif;color:#087f68;background:#fff;border:1px solid #d8e1e9;border-radius:6px;padding:9px 12px;cursor:pointer}.crb-inline-lab button:focus-visible,.crb-lab-frame:focus-visible{outline:3px solid #2766b1;outline-offset:-3px}
+.crb-mobile-lab{inset:0;width:auto;height:auto;z-index:50;display:flex;flex-direction:column;box-sizing:border-box}
+.crb-mobile-lab .crb-lab-heading{display:block;padding:20px 18px 14px;border-bottom:1px solid #d8e1e9}.crb-lab-heading p{margin:0}.crb-lab-heading .crb-lab-kicker{font-size:10px;font-weight:700;color:#087f68;letter-spacing:.4px}.crb-lab-heading h1{font:700 24px/1.15 Arial,Helvetica,sans-serif;color:#16273e;margin:10px 0}.crb-lab-heading .crb-lab-subtitle{font-size:13px;line-height:1.4;color:#596d80}
+.crb-mobile-lab .crb-lab-content{flex:1}.crb-mobile-lab .crb-lab-navigation{display:flex;align-items:center;justify-content:space-between;gap:6px;border-top:1px solid #d8e1e9;padding:10px 12px}.crb-lab-navigation span{font-size:12px;color:#596d80}
+@media print{.crb-inline-lab{display:none!important}.deck-link{color:inherit}}
+#crb-print{display:none}
+@media print{
+  /* Bento also injects a generic print page; keep this source-sized layout. */
+  @page{size:1280px 720px!important;margin:0!important}
+  @page crb-slide{size:1280px 720px!important;margin:0!important}
+  html,body{width:auto!important;height:auto!important;overflow:visible!important;margin:0!important;background:white!important}
+  body>*{display:none!important}
+  body>#crb-print{display:block!important}
+  .crb-print-slide{page:crb-slide;display:block;position:relative;width:1280px;height:720px;background:white;overflow:hidden;break-after:page;page-break-after:always;print-color-adjust:exact;-webkit-print-color-adjust:exact}
+  .crb-print-slide:last-child{break-after:auto;page-break-after:auto}
+  .crb-print-slide .math-display{display:flex;align-items:center;justify-content:center;width:100%;height:100%}
+  .crb-print-slide mjx-container{color:inherit!important;margin:0!important}
+}

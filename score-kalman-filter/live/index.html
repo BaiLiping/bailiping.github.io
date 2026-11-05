@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="color-scheme" content="light">
+  <title>The Score Kalman Filter · Equation Lab | Bai Liping</title>
+  <meta name="description" content="Explore score matching, Stein moment closure, and a Bayesian coefficient update in a transparent one-dimensional teaching example for The Score Kalman Filter.">
+  <link rel="stylesheet" href="./styles.css">
+  <script>if(new URLSearchParams(location.search).get('embed')==='1')document.documentElement.classList.add('embedded');</script>
+</head>
+<body>
+  <header class="site-header"><a href="../" target="_top">← Slides</a><a href="https://arxiv.org/abs/2605.16644v1" target="_top">arXiv:2605.16644v1 ↗</a></header>
+  <div class="page-title"><p class="eyebrow">THE SCORE KALMAN FILTER · EQUATION LAB</p><h1>From moments to a score</h1><p>Change a non-Gaussian prior, inspect the linear solve, then add one observation.</p></div>
+  <nav class="tabs" aria-label="Equation lab views">
+    <button type="button" data-lab="score" aria-pressed="true">1 · Score fit</button>
+    <button type="button" data-lab="closure" aria-pressed="false">2 · Stein closure</button>
+    <button type="button" data-lab="update" aria-pressed="false">3 · Bayes update</button>
+    <a class="expand" id="expand" href="./" target="_top">Full lab ↗</a>
+  </nav>
+  <main class="lab-shell">
+    <aside class="controls" aria-label="Synthetic example controls">
+      <div class="section-heading"><h2>Quartic prior</h2><button id="reset" type="button">Reset</button></div>
+      <p class="formula">p(x) ∝ exp(−a x⁴ − b x² + c x)</p>
+      <label for="a">Tail strength <b>a</b><output id="a-value" for="a">0.35</output></label>
+      <input id="a" type="range" min="0.15" max="0.8" step="0.05" value="0.35">
+      <label for="b">Well shape <b>b</b><output id="b-value" for="b">−1.30</output></label>
+      <input id="b" type="range" min="-2" max="2" step="0.1" value="-1.3">
+      <label for="c">Tilt <b>c</b><output id="c-value" for="c">0.25</output></label>
+      <input id="c" type="range" min="-1" max="1" step="0.05" value="0.25">
+      <div class="presets"><button type="button" id="two-wells">Two wells</button><button type="button" id="one-well">One well</button></div>
+      <p class="hint" id="shape-description">Negative b allows two wells. The tilt changes their relative mass.</p>
+      <section id="measurement-controls" class="measurement-controls" hidden>
+        <h2>One observation · y = x + v</h2>
+        <label for="y">Observation <b>y</b><output id="y-value" for="y">1.10</output></label>
+        <input id="y" type="range" min="-2.5" max="2.5" step="0.05" value="1.1">
+        <label for="R">Noise variance <b>R</b><output id="R-value" for="R">0.45</output></label>
+        <input id="R" type="range" min="0.1" max="2.5" step="0.05" value="0.45">
+        <button type="button" id="apply-update" class="primary">Show prior only</button>
+        <p class="hint">Every change starts from this prior and applies the likelihood once.</p>
+      </section>
+      <details id="moment-details"><summary>Input moments m₀ … m₆</summary><div id="input-moments"></div></details>
+      <p class="hint provenance">Input moments are synthetic quadrature references. The fit receives only m₀ … m₆.</p>
+    </aside>
+    <section class="results" aria-labelledby="view-title">
+      <div class="result-heading"><h2 id="view-title">Fit four coefficients from seven moments</h2><a id="equation-link" href="https://arxiv.org/html/2605.16644v1#S3.E8" target="_top">Eqs. (8)–(9) ↗</a></div>
+      <div class="result-grid">
+        <div class="plots-column">
+          <figure><figcaption id="density-title">Density · reference and fitted family</figcaption><div class="canvas-wrap"><canvas id="density-plot" aria-label="Normalized quartic reference density and density with fitted coefficients" role="img"></canvas></div><div class="legend" id="density-legend"></div></figure>
+          <figure><figcaption id="second-title">Score · derivative of log density</figcaption><div class="canvas-wrap"><canvas id="second-plot" aria-label="Reference score and fitted score" role="img"></canvas></div><div class="legend" id="second-legend"></div></figure>
+        </div>
+        <div class="inspector" id="inspector" tabindex="0" aria-label="Numerical equations and results"></div>
+      </div>
+    </section>
+  </main>
+  <p class="scope" id="status" role="status">Teaching example, not a reproduction of the paper’s experiments. Quadrature supplies reference data and density plots only.</p>
+  <section class="explanation">
+    <h2>What this lab computes</h2>
+    <div class="explanation-grid">
+      <article><h3>1. An ordinary linear system</h3><p>For p(x) ∝ exp(−Σⱼ λⱼxʲ), the score is s(x) = −Σⱼ jλⱼxʲ⁻¹. The normalizing constant disappears after differentiation. With j,k ∈ {1,2,3,4}, the score-matching system is Aⱼₖ = jkmⱼ₊ₖ₋₂ and dⱼ = j(j−1)mⱼ₋₂. We write the right-hand side as d to distinguish it from the prior’s shape parameter b. A stable, scaled pivoted solve returns λ. <a href="https://arxiv.org/html/2605.16644v1#S3.E8">Paper Eqs. (8)–(9).</a></p></article>
+      <article><h3>2. Higher moments from Stein’s identity</h3><p>For an integer β ≥ 1, λ₁mᵦ + 2λ₂mᵦ₊₁ + 3λ₃mᵦ₊₂ + 4λ₄mᵦ₊₃ = βmᵦ₋₁. With m₀ … m₆ known, β = 4 gives m₇. Then β = 5 gives m₈ using the newly computed m₇. These moments are compared with withheld reference values. This is a scalar illustration of the closure relation, without a dynamical prediction step. <a href="https://arxiv.org/html/2605.16644v1#S4.E12">Paper Eq. (12).</a></p></article>
+      <article><h3>3. Add the likelihood score once</h3><p>For one observation y = x + v, with v ∼ N(0,R), the likelihood score is (y−x)/R. Thus λ₁⁺ = λ₁⁻ − y/R and λ₂⁺ = λ₂⁻ + 1/(2R). The cubic and quartic coefficients stay unchanged. Moving an observation slider recomputes this single update from the prior. <a href="https://arxiv.org/html/2605.16644v1#S5.E13">Paper Eqs. (13)–(14).</a></p></article>
+      <article><h3>Reference calculations are separate</h3><p>Deterministic composite Simpson quadrature with 4,096 intervals creates synthetic input moments and normalizes the plotted prior, fitted family, and posterior. Integration bounds expand until the tails are negligible. Neither score fitting nor Stein closure uses quadrature internally. The displayed posterior mean and variance are reference values from quadrature. The paper’s truncated posterior moment recovery, Eq. (15), and full filter are not implemented here.</p></article>
+    </div>
+  </section>
+  <footer><a href="../" target="_top">The Score Kalman Filter slides</a><span>Independent educational implementation · <a href="https://arxiv.org/abs/2605.16644v1" target="_top">Source paper</a></span></footer>
+  <script type="module" src="./app.js"></script>
+  <script src="../../assets/bento-inline-frame.js"></script>
+</body>
+</html>
