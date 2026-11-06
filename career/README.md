@@ -66,6 +66,16 @@ projects remain distinct from postdocs.
 
 ## Current coverage
 
+- Academic postdocs manually reviewed on 6 November 2026: LTU refs 5207-2026
+  (radar-inertial/multimodal SLAM), 5204-2026 (Arctic sensor fusion), and
+  5206-2026 (shared mapping and communication-aware robot teams); Oxford
+  vacancy 189560 (multimodal perception and manipulation); and ORNL req 16867
+  (robot navigation in Building Technologies). These are dated saved references,
+  not automatically verified feeds. Keep original titles and requirements,
+  including near-term deadlines and PhD completion. ORNL's application route
+  and site-access conditions require confirmation. Broader discovery should
+  revisit the official pages; expired references must not be reported as open.
+
 - Canada: Waabi's official Lever board discovers civilian autonomous-driving
   localization, sensor processing, calibration and PhD research opportunities.
   Ericsson's Canadian search includes ISAC, integrated sensing and communication,
