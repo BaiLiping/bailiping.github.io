@@ -580,7 +580,7 @@
     },
     {
       "id": "abb-sweden",
-      "name": "ABB — Sweden",
+      "name": "ABB, including ABB Robotics — Sweden",
       "company": "ABB",
       "type": "workday",
       "enabled": true,
@@ -610,7 +610,43 @@
       "max_details": 5,
       "max_requests": 9,
       "seed_paths": [],
-      "notes": "Official Workday public search/detail endpoints and Swedish country facet verified. Recheck explicit country on individual details. MSc/BSc thesis projects are excluded. Bounded keyword absence never closes a vacancy. Keep employer visible if no relevant current engineering role matches; preserve any explicit clearance/citizenship conditions without inferring eligibility."
+      "notes": "Official Workday public search/detail endpoints and Swedish country facet verified. Recheck explicit country on individual details. MSc/BSc thesis projects are excluded. Bounded keyword absence never closes a vacancy. Keep employer visible if no relevant current engineering role matches; preserve any explicit clearance/citizenship conditions without inferring eligibility. Includes ABB Robotics industrial and collaborative robotics roles; employer tracking remains visible even when no current role fits."
+    },
+    {
+      "id": "abb-robotics-research",
+      "name": "ABB industrial robotics research — Germany",
+      "company": "ABB",
+      "type": "workday",
+      "enabled": true,
+      "allowed_hosts": [
+        "abb.wd3.myworkdayjobs.com"
+      ],
+      "base_url": "https://abb.wd3.myworkdayjobs.com",
+      "tenant": "abb",
+      "site": "External_Career_Page",
+      "search_url": "https://abb.wd3.myworkdayjobs.com/wday/cxs/abb/External_Career_Page/jobs",
+      "index_url": "https://abb.wd3.myworkdayjobs.com/External_Career_Page?locationCountry=dcc5b7608d8644b3a93716604e78e995",
+      "queries": [
+        "robotics",
+        "perception",
+        "sensor fusion",
+        "localization"
+      ],
+      "applied_facets": {
+        "locationCountry": [
+          "dcc5b7608d8644b3a93716604e78e995"
+        ]
+      },
+      "exclude_student_theses": true,
+      "page_size": 20,
+      "max_pages_per_query": 1,
+      "max_details": 6,
+      "max_requests": 10,
+      "seed_paths": [
+        "/job/Mannheim-Baden-Wurttemberg-Germany/XMLNAME--Senior--Research-Scientist--f-m-d----Industrial-Service-Robotics--80-100--_JR00050079",
+        "/job/Mannheim-Baden-Wurttemberg-Germany/XMLNAME--Senior--Scientist--m-f-d----Industrial-Perception-AI--80---100--_JR00051434"
+      ],
+      "notes": "Official ABB Workday feed, using its Germany country facet to complement the separate Sweden/ABB Robotics source. The seeded roles are at ABB Corporate Research in Mannheim; do not relabel their employer as ABB Robotics Sweden AB. Official job details verified posted=true and canApply=true on 2026-11-06. Keep role-specific experience, language and sponsorship notes. Bounded query absence never establishes closure; thesis projects are excluded."
     },
     {
       "id": "ericsson-sweden",
@@ -1233,6 +1269,30 @@
       },
       "fit_note": "PhD internship covering perception, mapping, localization and controls. Requires current PhD enrollment, a top ML/CV/robotics conference publication and Python/C++. Toronto is an onsite option. Transcripts requested. No French requirement stated; asking about sponsorship in the application does not establish support.",
       "compensation_note": "Employer lists CAD 60–65 per hour for the Canadian internship."
+    },
+    {
+      "job_id": "abb-robotics-research:jr00050079",
+      "eligibility": {
+        "sponsorship": "not_stated",
+        "access": "no_restriction_stated",
+        "work_authorization": "not_stated",
+        "evidence": [],
+        "checked_at": "2026-11-06T07:53:28Z",
+        "method": "manual_review"
+      },
+      "fit_note": "Strong mobile-robotics fit: autonomous navigation, LiDAR/depth-camera perception, sensor fusion, simulation and manipulation/control. PhD plus 3+ years programming and deploying mobile robots; confirm whether applied research experience qualifies. ROS 2 preferred. ABB Corporate Research, Mannheim; hybrid. English required; German beneficial. Employer closing date: 18 Nov 2026."
+    },
+    {
+      "job_id": "abb-robotics-research:jr00051434",
+      "eligibility": {
+        "sponsorship": "not_stated",
+        "access": "no_restriction_stated",
+        "work_authorization": "not_stated",
+        "evidence": [],
+        "checked_at": "2026-11-06T07:53:28Z",
+        "method": "manual_review"
+      },
+      "fit_note": "Strong perception and sensor-fusion research fit: 2D/3D vision, scene understanding, visual reasoning and multimodal models. Relevant degree plus PhD academic experience or strong professional experience; PyTorch, YOLO and SAM experience requested. Robot perception/manipulation is a plus. ABB Corporate Research, Mannheim; hybrid. English required; German beneficial. Employer closing date: 24 Nov 2026."
     }
   ]
 }

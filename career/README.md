@@ -103,7 +103,15 @@ The workflow summary and the page's source-status panel show what happened.
 - Zadar Labs: individual roles on its official careers page.
 - Sweden: Ericsson's public search and detail API; Zenseact's careers index and
   structured job pages; Einride's official Jobylon embed and structured details;
-  and Swedish Workday searches for ABB and Axis Communications.
+  and Swedish Workday searches for ABB (including ABB Robotics) and Axis Communications.
+- ABB industrial robotics research: a separate Germany-filtered Workday source
+  complements the Swedish ABB Robotics coverage with a Germany-filtered search.
+  Seeded Mannheim roles cover Industrial Service Robotics (`JR00050079`)
+  and Industrial Perception AI (`JR00051434`), verified accepting applications
+  through official job details on 6 November 2026. These are ABB Corporate Research
+  roles, not relabeled as ABB Robotics Sweden AB. The cards retain experience and
+  language requirements, closing dates, and sponsorship as not stated. The source
+  discovers additional matching roles during the existing weekly refresh.
 
 ## Civilian-only coverage
 
@@ -286,4 +294,5 @@ Requests are limited by time, count, and response size, with per-source delays,
 timeouts, HTTPS-only host allowlists, and redirect checks. Unsupported URLs or
 unsafe records are rejected. Do not add authentication credentials or personal
 session cookies to the crawler.
+
 
