@@ -2,6 +2,22 @@
 
 GitHub Pages site for `bailiping.com`.
 
+## Homepage
+
+The homepage has one horizontal row of category tabs. Work is selected by
+default; selecting a tab shows only that category's pages. URLs such as
+`/#life` and `/#random-thoughts` restore the selected tab on reload, and browser
+Back/Forward restores earlier selections. Arrow keys, Home, and End navigate
+the tabs. On narrow screens the tab row scrolls horizontally. Without JavaScript,
+the category links jump to the corresponding sections and all pages stay visible.
+
+Work uses research rows with an existing project figure, title, author details,
+and links to public materials. Edit the entries in `index.html`; the homepage
+styles and tab behavior are in `assets/home.css` and `assets/home.js`.
+The small WebP previews in `assets/home/` come from the existing public handover
+figure and the first frame of the nuScenes crossing animation. The full figures
+and animation remain available on their project pages.
+
 ## Edit presentations visually
 
 Open **Bailiping Editor.command** on the Mac desktop, or run
