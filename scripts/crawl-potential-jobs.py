@@ -701,16 +701,40 @@ def region_for(location):
     return "Unknown"
 
 
+POSTDOC_TERM = r"\b(?:post[-\s]?doc(?:toral)?|postdoktor)\b"
+
+
+def is_postdoc_role(title, description="", employment_type=""):
+    """Require an explicit postdoctoral title, type, or appointment statement.
+
+    Working with postdocs or asking for postdoctoral experience does not turn
+    a research-fellow or engineering position into a postdoctoral appointment.
+    """
+    if re.search(POSTDOC_TERM, title + " " + str(employment_type), re.I):
+        return True
+    detail = clean_text(description, 30000)
+    appointment = (
+        r"\b(?:this|the)\s+(?:position|role|appointment|fellowship)\s+"
+        r"(?:is|will be)\s+(?:an?\s+)?"
+        r"(?:(?:one|two|three|[1-9])[- ]year\s+)?"
+        r"(?:(?:full|part)[- ]time\s+)?" + POSTDOC_TERM
+    )
+    return bool(re.search(appointment, detail, re.I) or re.search(
+        r"\b(?:anställningen|tjänsten)\s+(?:är|avser)\s+(?:en\s+)?(?:som\s+)?postdoktor\b",
+        detail, re.I))
+
+
 def classify_job(title, description, location="", employment_type=""):
     """Conservative relevance classification; returned text is fixed evidence labels."""
     title = clean_text(title, 260)
     body = clean_text(description, 30000)
     t, b = title.lower(), body.lower()
+    postdoc = is_postdoc_role(title, body, employment_type)
     if not t or re.search(r"\b(?:recruiter|recruiting|sales|marketing|accountant|payroll|"
                           r"human resources|legal counsel|business development|product manager|"
                           r"program manager|project manager|executive assistant)\b", t):
         return None
-    if not re.search(r"engineer|scientist|research|intern|developer|student|algorithm|ph\.?d|postdoc|"
+    if not postdoc and not re.search(r"engineer|scientist|research|intern|developer|student|algorithm|ph\.?d|"
                      r"ingenjör|utvecklare|forskare|analytiker|doktor(?:and|erad)|technical coordinator|test manager.*isac", t):
         return None
     if re.search(r"(?:anomaly|defect|fault) locali[sz]ation|predictive maintenance", t):
@@ -787,16 +811,16 @@ def classify_job(title, description, location="", employment_type=""):
     elif motion_context and calibration_work and re.search(r"calibration|software|algorithm|research|perception|robot", t):
         category = "robotics-localization"
         reasons = ["Role describes multi-sensor calibration or alignment for robotics"]
-    elif motion_context and re.search(r"software|algorithm|research|scientist|robot", t) and re.search(
+    elif motion_context and (postdoc or re.search(r"software|algorithm|research|scientist|robot", t)) and re.search(
             r"state[- ]estimation|geometric optimi[sz]ation|probabilistic estimation|bundle adjustment|factor[- ]graph", b):
         category = "robotics-localization"
         reasons = ["Role describes geometric or probabilistic estimation for robotic motion"]
-    elif motion_context and re.search(r"research|scientist", t) and re.search(
+    elif motion_context and (postdoc or re.search(r"research|scientist", t)) and re.search(
             r"\bmapping\b(?:\s*[,/&]\s*|\s+and\s+)locali[sz]ation|"
             r"\blocali[sz]ation\b(?:\s*[,/&]\s*|\s+and\s+)mapping", b):
         category = "robotics-localization"
         reasons = ["Role research topics include robotic mapping and localization"]
-    elif (re.search(r"robotics|robotic|autonom(?:ous|y)|perception|research|mapping|tracking|computer vision|"
+    elif (postdoc or re.search(r"robotics|robotic|autonom(?:ous|y)|perception|research|mapping|tracking|computer vision|"
                    r"calibration|analytiker|sensorfusion|signalbehandling", t)
           or (re.search(r"software.*(?:engineer|developer)|(?:algorithm|development) engineer|scientist", t)
               and re.search(r"\brobot(?:ic(?:s)?|s)?\b", b))
@@ -815,7 +839,7 @@ def classify_job(title, description, location="", employment_type=""):
             reasons = ["Role describes multi-sensor calibration or alignment for robotics"]
     if category is None:
         return None
-    kind = "Internship" if re.search(r"intern|co[- ]?op|placement|working student", t + " " + str(employment_type).lower()) else (
+    kind = "Postdoc" if postdoc else "Internship" if re.search(r"intern|co[- ]?op|placement|working student", t + " " + str(employment_type).lower()) else (
         "Full-time" if re.search(r"full[-_ ]?time|regular|heltid", str(employment_type), re.I) else "Unknown")
     requirements = []
     for pattern, label in [
@@ -2003,7 +2027,9 @@ def _public_job(record, source):
            "source_id": source["id"], "company": clean_text(record.get("company") or source["company"], 120),
            "title": title, "url": url, "location": clean_text(record.get("location", ""), 260),
            "region": record.get("region") if record.get("region") in {"US", "Canada", "Europe", "Remote", "Other", "Unknown"} else region_for(record.get("location", "")),
-           "employment_type": record.get("employment_type") if record.get("employment_type") in {"Internship", "Full-time", "Unknown"} else (classification or {}).get("employment_type", "Unknown"),
+           "employment_type": "Postdoc" if (classification or {}).get("employment_type") == "Postdoc" else (
+               record.get("employment_type") if record.get("employment_type") in {"Postdoc", "Internship", "Full-time", "Unknown"}
+               else (classification or {}).get("employment_type", "Unknown")),
            "category": category, "status": record.get("status") if record.get("status") in JOB_STATUSES else "unknown",
            "pinned": bool(record.get("pinned", False)), "score": max(0, min(int(record.get("score", 70)), 150))}
     if "regions" in record:

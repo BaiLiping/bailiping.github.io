@@ -47,6 +47,23 @@ The workflow summary and the page's source-status panel show what happened.
 | `career/potential-jobs/jobs.css` | Job-watch styles, extending the existing Career design |
 | `tests/test_job_crawler.py`, `tests/test_job_page.py` | Network-failure, matching, status, and rendering regressions |
 
+## Postdoctoral discovery
+
+The existing weekly discovery task also searches official university, research
+institute and laboratory openings for postdoctoral appointments in localization,
+SLAM, Bayesian/state estimation, sensor fusion and calibration, multi-object
+tracking, robotics/perception, radar/radio sensing, and ISAC. It preserves the
+current geographic and language preferences and verifies strong leads at their
+official source before adding them. Supported new sources or dated reference
+links can be added through the existing workflow; the fixed employer feeds alone
+are not an exhaustive academic search.
+
+Postdoctoral roles have a separate **Postdocs** role-type filter. Keep appointment
+duration, application deadline, PhD-completion and start-date requirements, and
+stated sponsorship conditions with each verified lead. A research-fellow title
+alone does not establish a postdoctoral appointment. PhD studentships and thesis
+projects remain distinct from postdocs.
+
 ## Current coverage
 
 - Canada: Waabi's official Lever board discovers civilian autonomous-driving
