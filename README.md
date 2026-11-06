@@ -14,8 +14,9 @@ the category links jump to the corresponding sections and all pages stay visible
 Work uses research rows with an existing project figure, title, author details,
 and links to public materials. Edit the entries in `index.html`; the homepage
 styles and tab behavior are in `assets/home.css` and `assets/home.js`.
-The small WebP preview in `assets/home/` comes from the existing public handover
-figure. The nuScenes preview uses the project's existing looping crossing GIF
+The small WebP previews in `assets/home/` come from the existing public
+Extended-Target Handover figure and the Target Handover presentation's coverage
+diagram. The nuScenes preview uses the project's existing looping crossing GIF
 at 2× speed. The full figures and animation remain available on their project pages.
 
 ## Edit presentations visually

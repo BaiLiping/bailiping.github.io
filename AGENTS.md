@@ -8,10 +8,11 @@ GrBP appendix citation and source excerpt. Do not restore that citation,
 manuscript link, source excerpt, or source map in the article, slides, PDF,
 or build metadata. The GrBP explanation and equations remain public.
 Keep their page links in the current browser tab.
-The homepage lists Extended-Target Handover as the entry point. Its linked
-supporting pages (Target Handover, Extended-Target Tracking, Density Fusion,
-BP vs PMBM, and Joint PDF Derivation) remain public but must not have separate
-homepage entries, as requested by the user on September 23, 2026.
+The homepage lists Extended-Target Handover and Target Handover as separate
+Work entries. The user explicitly requested adding Target Handover on
+November 6, 2026. Other linked supporting pages (Extended-Target Tracking,
+Density Fusion, BP vs PMBM, and Joint PDF Derivation) remain public but must
+not have separate homepage entries, as requested on September 23, 2026.
 Other private research pages remain in `BaiLiping/bailiping-private-pages`.
 Content removed at the user's request must not be restored from older branches,
 clones, or archives.
