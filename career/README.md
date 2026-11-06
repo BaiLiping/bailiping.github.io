@@ -73,6 +73,30 @@ projects remain distinct from postdocs.
 
 ## Current coverage
 
+- Canadian ISAC postdoc search reviewed on 6 November 2026: a separate research
+  leads panel in the page template retains Calgary / Hatem Abou-Zeid (cmWave
+  ISAC project marked hiring, with a separate postdoc invitation), York / Hina
+  Tabassum and KAUST (funded joint project, postdoc TBD), Waterloo BBCR / Weihua
+  Zhuang (standing postdoc recruitment in an ISAC-active lab), Manitoba / Amine
+  Mezghani (standing recruitment; joint radar sensing and communications), and
+  Alberta / Chintha Tellambura (broader advertised role; ISAC only one possible
+  topic, approximately three-month initial term, Canadian citizens/PR preferred).
+  These leads are not job records and must not inflate vacancy counts. No dated,
+  project-specific Canadian ISAC postdoc vacancy was confirmed in this search.
+  Revisit the linked primary sources during future Canadian discovery; establish
+  the actual project, current availability, funding, duration, PhD timing,
+  location, language and sponsorship before promoting a lead to a vacancy.
+  York's joint project does not establish a Canada-only work location. Publication
+  topic overlap and a standing recruitment invitation do not establish a funded
+  ISAC appointment. The Tellambura faculty announcement is a lead; use the official
+  university contact route and do not ingest social profiles as automated feeds.
+  Memorial MARLOWC is an additional research group to monitor, with no current
+  specific vacancy verified. The current NRC fellowship project list had no
+  direct ISAC match. Western's ISAC advertisement expired in May 2025 and must
+  not be promoted as current. The existing location and role-selection rules
+  continue to apply. No French/bilingual requirement stated is not equivalent
+  to confirmed English-only eligibility.
+
 - Direct ISAC postdoc references reviewed on 6 November 2026: TU Dortmund
   (one advertisement for two posts; deadline 11 November, advertised January
   2027 start, German C1 required) and Ohio State / Eylem Ekici (immediate
