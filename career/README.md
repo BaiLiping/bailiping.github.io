@@ -49,14 +49,21 @@ The workflow summary and the page's source-status panel show what happened.
 
 ## Postdoctoral discovery
 
-The existing weekly discovery task also searches official university, research
-institute and laboratory openings for postdoctoral appointments in localization,
-SLAM, Bayesian/state estimation, sensor fusion and calibration, multi-object
-tracking, robotics/perception, radar/radio sensing, and ISAC. It preserves the
-current geographic and language preferences and verifies strong leads at their
-official source before adding them. Supported new sources or dated reference
-links can be added through the existing workflow; the fixed employer feeds alone
-are not an exhaustive academic search.
+The weekly postdoctoral search prioritizes **integrated sensing and communication
+(ISAC)**, joint communication and sensing (JCAS), and 6G radio sensing with a
+clear sensing-communications research link. Search official university, research
+institute and laboratory vacancies using these terms and their established
+radar-communications equivalents. Check the actual research duties: an acronym
+alone or a generic robotics, SLAM, vision or standalone radar project is not a
+direct ISAC match. Keep adjacent postdocs clearly secondary instead of filling
+the main shortlist with them. Previously saved broader references remain
+available without being relabeled as ISAC. Industry job and internship coverage
+retains its broader technical scope.
+
+Preserve the current geographic and language preferences and verify strong leads
+at their official source. Supported new sources or dated reference links can be
+added through the existing workflow; the fixed employer feeds alone are not an
+exhaustive academic search.
 
 Postdoctoral roles have a separate **Postdocs** role-type filter. Keep appointment
 duration, application deadline, PhD-completion and start-date requirements, and
@@ -66,7 +73,18 @@ projects remain distinct from postdocs.
 
 ## Current coverage
 
-- Academic postdocs manually reviewed on 6 November 2026: LTU refs 5207-2026
+- Direct ISAC postdoc references reviewed on 6 November 2026: TU Dortmund
+  (one advertisement for two posts; deadline 11 November, advertised January
+  2027 start, German C1 required) and Ohio State / Eylem Ekici (immediate
+  start; current availability, project and appointment terms need confirmation).
+  These are dated manually reviewed references, not automated vacancy feeds.
+  No current direct ISAC postdoc was verified in the bounded Nordic search.
+  Revisit the official KTH Communication Systems, Chalmers Wireless Systems,
+  Tampere Wireless Research Center, Aalto and Oulu CWC vacancy pages in future
+  searches; expired advertisements must not be presented as current openings.
+
+- Secondary academic postdoc references outside the direct ISAC focus,
+  manually reviewed on 6 November 2026: LTU refs 5207-2026
   (radar-inertial/multimodal SLAM), 5204-2026 (Arctic sensor fusion), and
   5206-2026 (shared mapping and communication-aware robot teams); Oxford
   vacancy 189560 (multimodal perception and manipulation); and ORNL req 16867
