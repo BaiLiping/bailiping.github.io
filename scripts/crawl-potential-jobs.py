@@ -192,7 +192,7 @@ class HttpClient:
         self.max_requests = min(max(int(max_requests), 1), 40)
         self.budget = budget or RunBudget()
         self.timeout = min(max(float(timeout), 1), 20)
-        self.delay = min(max(float(delay), 0.1), 2)
+        self.delay = min(max(float(delay), 0.1), 10)
         self.requests = 0
         self.last_request = 0.0
         self.opener = build_opener(SafeRedirectHandler(allowed_hosts))
@@ -1303,6 +1303,8 @@ def _tesla(source, client):
                     and not is_military_role(title, department=department)):
                 result.records.append(dict(pin, id=identity, status="listed", employment_type=employment,
                                            match_reasons=["Requisition and title matched on Tesla's careers board"]))
+            if isinstance(exc, HTTPError) and exc.code in (401, 403, 429, 503):
+                break
     if errors:
         result.status, result.complete = "partial", False
         result.error = "; ".join(dict.fromkeys(errors))[:400]
@@ -2053,6 +2055,9 @@ def validate_config(config):
         for key, maximum in (("page_size", 50), ("max_pages_per_query", 5), ("max_details", 30), ("max_requests", 40)):
             if key in source and (not isinstance(source[key], int) or not 1 <= source[key] <= maximum):
                 raise ValueError(f"Invalid bound for {key}")
+        if "delay_seconds" in source and (type(source["delay_seconds"]) not in (int, float)
+                                           or not 0.1 <= source["delay_seconds"] <= 10):
+            raise ValueError("Invalid delay_seconds")
     for section in ("manual_jobs", "pinned_jobs"):
         if not isinstance(config.get(section, []), list):
             raise ValueError(f"{section} must be an array")
@@ -2361,7 +2366,8 @@ def main(argv=None):
         source["_now"] = now
         source["_pinned_jobs"] = [j for j in config.get("pinned_jobs", []) if j["source_id"] == source["id"]]
         source["_known_jobs"] = [j for j in previous.get("jobs", []) if j.get("source_id") == source["id"] and j.get("status") != "closed"]
-        client = HttpClient(source["allowed_hosts"], source.get("max_requests", 30), budget=budget)
+        client = HttpClient(source["allowed_hosts"], source.get("max_requests", 30),
+                            budget=budget, delay=source.get("delay_seconds", 0.15))
         result = fetch_source(source, client)
         result.checked_at = now
         results.append(result)

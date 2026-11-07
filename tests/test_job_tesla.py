@@ -2,6 +2,7 @@
 import json
 from unittest import TestCase
 from unittest.mock import Mock
+from urllib.error import HTTPError
 
 from test_job_crawler import ROOT, crawler
 
@@ -63,6 +64,15 @@ class TeslaTests(TestCase):
                 self.assertEqual(result.status, "error")
                 self.assertFalse(result.complete)
                 self.assertFalse(result.closed_ids)
+
+    def test_respects_tesla_crawl_delay_and_stops_after_access_denial(self):
+        client = crawler.HttpClient(self.source["allowed_hosts"], delay=self.source["delay_seconds"])
+        self.assertEqual(client.delay, 10)
+        denied = HTTPError(self.source["api_url"], 403, "Forbidden", {}, None)
+        result, client = self.fetch(self.board, denied)
+        self.assertEqual(client.get_json.call_count, 2)
+        self.assertEqual(result.status, "partial")
+        self.assertEqual(result.records[0]["status"], "listed")
 
     def test_detail_budget_prioritizes_pin_and_civilian_screening_still_applies(self):
         self.source["max_details"] = 1
