@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "generated_at": "2026-11-06T08:57:14Z",
+  "generated_at": "2026-11-07T11:01:53Z",
   "sources": [
     {
       "id": "abb-robotics-research",
@@ -211,6 +211,15 @@
       "checked_at": "2026-11-06T08:57:14Z",
       "count": 2,
       "careers_url": "https://jobs.ashbyhq.com/sunday"
+    },
+    {
+      "id": "tesla",
+      "name": "Tesla official careers",
+      "status": "partial",
+      "checked_at": "2026-11-07T11:01:53Z",
+      "count": 1,
+      "error": "Saved requisition verified in Tesla’s careers inventory. The full employer scan and application requirements are pending.",
+      "careers_url": "https://www.tesla.com/careers/search"
     },
     {
       "id": "torc-robotics",
@@ -1112,6 +1121,52 @@
         "method": "manual_review"
       },
       "missing_count": 0
+    },
+    {
+      "id": "tesla:286391",
+      "source_id": "tesla",
+      "company": "Tesla",
+      "title": "Sr. Sensor Hardware Engineer, Sensor Fusion",
+      "url": "https://www.tesla.com/careers/search/job/sr-sensor-hardware-engineer-sensor-fusion-286391",
+      "location": "Palo Alto, California",
+      "region": "US",
+      "employment_type": "Full-time",
+      "category": "robotics-localization",
+      "status": "listed",
+      "pinned": true,
+      "score": 70,
+      "match_reasons": [
+        "Requisition and title matched on Tesla's careers board"
+      ],
+      "requirements": [
+        "Senior/experienced role"
+      ],
+      "summary": "Role text includes robotic localization, mapping, tracking, or sensor fusion.",
+      "requisition_id": "286391",
+      "fit_note": "The team combines in-cabin sensors to assess passenger comfort. The role covers sensor selection, PCB and analog design, and validating fusion algorithms with vehicle data.",
+      "eligibility_posting": {
+        "sponsorship": "unknown",
+        "access": "unknown",
+        "work_authorization": "unknown",
+        "evidence": [],
+        "checked_at": null,
+        "method": "posting_text"
+      },
+      "eligibility": {
+        "sponsorship": "unknown",
+        "access": "unknown",
+        "work_authorization": "unknown",
+        "evidence": [],
+        "checked_at": null,
+        "method": "posting_text"
+      },
+      "missing_count": 0,
+      "first_seen": "2026-11-07T11:01:53Z",
+      "last_seen": "2026-11-07T11:01:53Z",
+      "last_checked": "2026-11-07T11:01:53Z",
+      "last_verified": "2026-11-07T11:01:53Z",
+      "check_status": "ok",
+      "last_detail_attempt": "2026-11-07T11:01:53Z"
     },
     {
       "id": "bedrock-robotics:1f413f83-b897-4938-a19e-ab91bd326c51",

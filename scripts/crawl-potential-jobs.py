@@ -30,7 +30,7 @@ from urllib.request import Request, HTTPRedirectHandler, build_opener
 ROOT = Path(__file__).resolve().parent.parent
 CATEGORIES = {"radio-localization", "radar-sensing", "robotics-localization", "wireless-isac"}
 JOB_STATUSES = {"open", "listed", "unknown", "closed", "saved"}
-SOURCE_TYPES = {"workday", "lever", "greenhouse", "ashby", "html", "amazon", "ericsson"}
+SOURCE_TYPES = {"workday", "lever", "greenhouse", "ashby", "html", "amazon", "ericsson", "tesla"}
 ELIGIBILITY_VALUES = {
     "sponsorship": {"offered", "case_by_case", "not_offered", "not_stated", "unknown"},
     "access": {"no_restriction_stated", "export_review", "us_person", "citizenship_clearance", "unknown"},
@@ -1237,6 +1237,78 @@ def _amazon(source, client):
     return result
 
 
+def _tesla(source, client):
+    board = client.get_json(source["api_url"])
+    lookup = board.get("lookup") if isinstance(board, dict) else None
+    if (not isinstance(lookup, dict) or not all(isinstance(lookup.get(k), dict)
+                                                 for k in ("locations", "departments", "types"))
+            or not isinstance(board.get("listings"), list) or not board["listings"]):
+        raise FetchError("Tesla did not return its careers inventory")
+    pins = {p["requisition_id"]: p for p in source.get("_pinned_jobs", []) if p.get("requisition_id")}
+    queries = tuple(q.casefold() for q in source["queries"])
+    seen, candidates, errors = set(), {}, []
+    for row in board["listings"]:
+        native = str(row.get("id", "")) if isinstance(row, dict) else ""
+        if not re.fullmatch(r"[0-9]{1,12}", native) or not isinstance(row.get("t"), str) or not row["t"].strip():
+            errors.append("Tesla inventory contains a malformed requisition")
+            continue
+        seen.add(stable_job_id(source["id"], native, ""))
+        if native in pins or any(q in row["t"].casefold() for q in queries):
+            candidates[native] = row
+    if not seen:
+        raise FetchError("Tesla inventory contained no valid requisitions")
+
+    # Check pinned requisitions each week. Rotate the remaining detail requests
+    # across matching titles, while retaining every inventory ID for absence checks.
+    selected = [native for native in pins if native in candidates]
+    remaining = sorted(candidates.keys() - pins.keys())
+    slots = max(0, source.get("max_details", 8) - len(selected))
+    if remaining and slots:
+        offset = (_rotation_week(source) * slots) % len(remaining)
+        selected.extend((remaining[offset:] + remaining[:offset])[:slots])
+    result = SourceResult(source["id"], "ok", [], complete=True, seen_ids=sorted(seen))
+    for native in selected[:source.get("max_details", 8)]:
+        row, pin = candidates[native], pins.get(native)
+        title = clean_text(row["t"], 260)
+        identity = stable_job_id(source["id"], native, "")
+        location = lookup["locations"].get(str(row.get("l")))
+        if not isinstance(location, str) or not location.strip():
+            errors.append("Tesla location lookup is incomplete")
+            continue
+        department = lookup["departments"].get(str(row.get("dp")), "")
+        job_type = lookup["types"].get(str(row.get("y")), "")
+        employment = {"fulltime": "Full-time", "intern": "Internship"}.get(job_type, "Unknown")
+        slug = re.sub(r"[^a-z0-9]+", "-", title.lower()).strip("-")
+        url = pin["url"] if pin else source["index_url"].rstrip("/") + f"/job/{slug}-{native}"
+        result.attempted_ids.append(identity)
+        try:
+            detail = client.get_json(urljoin(source["api_url"], f"/cua-api/careers/job/{native}"))
+            if (not isinstance(detail, dict) or str(detail.get("jobId", native)) != native
+                    or not all(isinstance(detail.get(k), str) and detail[k].strip()
+                               for k in ("jobDescription", "jobRequirements"))):
+                raise FetchError("Tesla job details could not be verified")
+            description = "\n".join(detail.get(k) or "" for k in (
+                "jobDescription", "jobResponsibilities", "jobRequirements", "jobCompensationAndBenefits"))
+            job = make_job(source, native, title, url, location, description, employment,
+                           "open", native, department=department)
+            if job:
+                result.records.append(job)
+            else:
+                result.rejected_ids.append(identity)
+        except Exception as exc:
+            errors.append(brief_error(exc))
+            # The inventory can confirm a reviewed pin is still listed even
+            # when its detail page is unavailable. It cannot verify eligibility.
+            if (pin and title == pin["title"] and location == pin.get("location")
+                    and not is_military_role(title, department=department)):
+                result.records.append(dict(pin, id=identity, status="listed", employment_type=employment,
+                                           match_reasons=["Requisition and title matched on Tesla's careers board"]))
+    if errors:
+        result.status, result.complete = "partial", False
+        result.error = "; ".join(dict.fromkeys(errors))[:400]
+    return result
+
+
 def _ericsson_endpoint(base, parameters, source):
     parts = urlsplit(safe_url(base, source["allowed_hosts"]))
     query = dict(parse_qsl(parts.query, keep_blank_values=True))
@@ -1876,7 +1948,8 @@ def _html(source, client):
 def fetch_source(source, client):
     try:
         result = {"workday": _workday, "lever": _lever, "greenhouse": _greenhouse, "ashby": _ashby,
-                  "html": _html, "amazon": _amazon, "ericsson": _ericsson}[source["type"]](source, client)
+                  "html": _html, "amazon": _amazon, "ericsson": _ericsson,
+                  "tesla": _tesla}[source["type"]](source, client)
     except Exception as exc:
         result = SourceResult(source["id"], "error", [], error=brief_error(exc))
     result.requests = getattr(client, "requests", 0)
@@ -1939,13 +2012,16 @@ def validate_config(config):
             for path in source.get("seed_paths", []):
                 if not path.startswith("/job/") or ".." in path:
                     raise ValueError("Invalid Workday seed path")
-        elif source["type"] in {"lever", "greenhouse", "ashby", "amazon", "ericsson"} and not source.get("api_url"):
+        elif source["type"] in {"lever", "greenhouse", "ashby", "amazon", "ericsson", "tesla"} and not source.get("api_url"):
             raise ValueError("API source missing api_url")
         if source["type"] == "ashby":
             endpoint = urlsplit(source["api_url"])
             if endpoint.hostname != "api.ashbyhq.com" or not re.fullmatch(r"/posting-api/job-board/[A-Za-z0-9_-]+/?", endpoint.path):
                 raise ValueError("Ashby source requires an official public posting API endpoint")
-        if source["type"] in {"amazon", "ericsson"}:
+        if source["type"] == "tesla" and (source["api_url"] != "https://www.tesla.com/cua-api/apps/careers/state"
+                or source.get("index_url") != "https://www.tesla.com/careers/search" or not source.get("queries")):
+            raise ValueError("Tesla source requires its official careers inventory, search page and title queries")
+        if source["type"] in {"amazon", "ericsson", "tesla"}:
             queries = source.get("queries", ["SLAM", "localization"])
             if (not isinstance(queries, list) or not 1 <= len(queries) <= 10
                     or any(not isinstance(q, str) or not q.strip() or len(q) > 80 for q in queries)):
@@ -2158,7 +2234,7 @@ def merge_results(previous, results, config, now):
             jobs[current["id"]] = current
             returned.add(current["id"])
             seen.add(current["id"])
-        if source.get("civilian_review_required"):
+        if source.get("civilian_review_required") or source.get("type") == "tesla":
             # A successfully read, now-disallowed role cannot survive merely
             # because it appeared in the previous snapshot. An inventory/search
             # sighting without a successful role check is not such evidence.
@@ -2283,6 +2359,7 @@ def main(argv=None):
             continue
         source = dict(original)
         source["_now"] = now
+        source["_pinned_jobs"] = [j for j in config.get("pinned_jobs", []) if j["source_id"] == source["id"]]
         source["_known_jobs"] = [j for j in previous.get("jobs", []) if j.get("source_id") == source["id"] and j.get("status") != "closed"]
         client = HttpClient(source["allowed_hosts"], source.get("max_requests", 30), budget=budget)
         result = fetch_source(source, client)

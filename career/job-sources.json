@@ -271,6 +271,31 @@
       "notes": "The official Waymo application component links Greenhouse's waymo board. The public complete feed returned 369 postings and meta.total 369 at verification, with full descriptions in approximately 2.93 MB. Board links may use careers.withwaymo.com/jobs?gh_jid=... ."
     },
     {
+      "id": "tesla",
+      "name": "Tesla official careers",
+      "company": "Tesla",
+      "type": "tesla",
+      "enabled": true,
+      "allowed_hosts": [
+        "www.tesla.com"
+      ],
+      "api_url": "https://www.tesla.com/cua-api/apps/careers/state",
+      "index_url": "https://www.tesla.com/careers/search",
+      "queries": [
+        "sensor fusion",
+        "sensor calibration",
+        "localization",
+        "localisation",
+        "state estimation",
+        "odometry",
+        "SLAM",
+        "radar",
+        "ISAC"
+      ],
+      "max_details": 8,
+      "max_requests": 9
+    },
+    {
       "id": "wayve",
       "name": "Wayve official careers",
       "company": "Wayve",
@@ -749,6 +774,19 @@
       "location": "Sunnyvale / Mountain View, California, United States",
       "employment_type": "Full-time",
       "notes": "User-saved high-fit reference on 2026-11-05, originally shared as https://www.linkedin.com/jobs/view/4468199607/. Pin the official listing, deduplicate by requisition, and refresh through the verified Workday detail. Focus: localization, state estimation, sensor calibration, real-time deployment and validation; C++/Python. Hybrid at least three days weekly. L6 requires 2+ years software deployment and 1+ year estimation/calibration; senior consideration requires 3+ years deployment. No sponsorship eligibility inferred."
+    },
+    {
+      "source_id": "tesla",
+      "company": "Tesla",
+      "requisition_id": "286391",
+      "title": "Sr. Sensor Hardware Engineer, Sensor Fusion",
+      "url": "https://www.tesla.com/careers/search/job/sr-sensor-hardware-engineer-sensor-fusion-286391",
+      "location": "Palo Alto, California",
+      "region": "US",
+      "employment_type": "Full-time",
+      "category": "robotics-localization",
+      "requirements": ["Senior/experienced role"],
+      "fit_note": "The team combines in-cabin sensors to assess passenger comfort. The role covers sensor selection, PCB and analog design, and validating fusion algorithms with vehicle data."
     },
     {
       "source_id": "wayve",

@@ -157,6 +157,10 @@ projects remain distinct from postdocs.
   with a separate robotics-context check to exclude unrelated localization and
   general software roles. Search listings remain labeled as employer-listed.
 - FieldAI: official Lever board.
+- Tesla: the weekly check reads Tesla's official careers inventory, rechecks
+  saved requisition 286391, and samples other matching titles for a full
+  posting review. If only the inventory is available, the saved role can
+  show as employer-listed with its application requirements unverified.
 - Wayve: official Ashby posting API, linked from its careers site. The saved
   Staff Robotics Engineer, Localization role covers London and Sunnyvale in one
   requisition. Other relevant roles are discovered during the weekly refresh.
