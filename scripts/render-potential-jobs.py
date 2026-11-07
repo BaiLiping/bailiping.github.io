@@ -406,6 +406,7 @@ def render_page(data: dict, template: str) -> str:
         if template.count(marker) != 1:
             raise ValueError(f"Expected exactly one template marker: {marker}")
     jobs = sorted(data["jobs"], key=lambda j: (
+        j["company"].strip().casefold() != "ericsson",
         effective_status(j) == "closed", not bool(j.get("pinned")),
         effective_status(j) in {"unknown", "saved"},
         -float(j.get("score") or 0), j["company"].lower(), j["title"].lower(), j["id"],
