@@ -71,6 +71,13 @@ stated sponsorship conditions with each verified lead. A research-fellow title
 alone does not establish a postdoctoral appointment. PhD studentships and thesis
 projects remain distinct from postdocs.
 
+The weekly US search also covers research assistants and associates at universities,
+research institutes and national-lab partner programs. Check the hiring lab and
+the actual US worksite. Use **Research staff** for confirmed staff appointments and
+**Graduate assistantship** for funded roles that require enrollment. Record the
+degree requirement and first-time H-1B terms for the specific appointment when
+they are available. Recheck the dated references as part of the weekly discovery.
+
 ## Current coverage
 
 - Canadian ISAC postdoc search reviewed on 6 November 2026: a separate research
@@ -196,6 +203,10 @@ Generic sensing, radar, historical research background, lists of acceptable
 prior industries (including defence as past experience), export controls,
 ordinary background checks, and veteran equal-opportunity notices alone are not
 military evidence. Direct military customers, business units, and duties remain excluded.
+
+The October 2026 Wireless@Virginia Tech MIMO/ISAC postdoc is a specifically
+requested saved reference. Its role note identifies the proposal-funding duties.
+The exception is limited to that appointment.
 
 Mixed-use employers such as FieldAI and Einride have
 `civilian_review_required: true` and default to **no approved job IDs**.

@@ -7,6 +7,25 @@ from test_job_page import page, snapshot
 
 
 class PostdocMatchingTests(unittest.TestCase):
+    def test_us_research_appointment_types_survive_refresh_and_render(self):
+        for title, provider_type, expected in (
+            ("Research Associate in ISAC", "Research staff", "Research staff"),
+            ("Professional Research Assistant in ISAC", "Full-time", "Research staff"),
+            ("Graduate Research Assistant in ISAC", "Full-time", "Graduate assistantship"),
+            ("PhD Position in AI-Native Wireless Networks", "Graduate assistantship", "Graduate assistantship"),
+            ("Postdoctoral Research Associate in ISAC", "Research staff", "Postdoc"),
+            ("Research Assistant in ISAC", "Unknown", "Unknown"),
+        ):
+            with self.subTest(title=title, provider_type=provider_type):
+                settings = source()
+                record = crawler.make_job(settings, "1", title, "https://jobs.lever.co/test/1",
+                                          "United States", "Integrated sensing and communication research.",
+                                          provider_type)
+                self.assertEqual(record["employment_type"], expected)
+                job = crawler._public_job(record, settings)
+                self.assertEqual(job["employment_type"], expected)
+                self.assertIn(f'data-type="{expected}"', page.render_card(job))
+
     def test_explicit_postdoc_titles_override_full_time_and_intern_metadata(self):
         for title in (
             "Postdoc in robot perception",

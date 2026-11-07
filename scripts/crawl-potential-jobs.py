@@ -702,6 +702,8 @@ def region_for(location):
 
 
 POSTDOC_TERM = r"\b(?:post[-\s]?doc(?:toral)?|postdoktor)\b"
+ACADEMIC_TYPES = {"Postdoc", "Research staff", "Graduate assistantship"}
+EMPLOYMENT_TYPES = ACADEMIC_TYPES | {"Internship", "Full-time", "Unknown"}
 
 
 def is_postdoc_role(title, description="", employment_type=""):
@@ -839,8 +841,20 @@ def classify_job(title, description, location="", employment_type=""):
             reasons = ["Role describes multi-sensor calibration or alignment for robotics"]
     if category is None:
         return None
-    kind = "Postdoc" if postdoc else "Internship" if re.search(r"intern|co[- ]?op|placement|working student", t + " " + str(employment_type).lower()) else (
-        "Full-time" if re.search(r"full[-_ ]?time|regular|heltid", str(employment_type), re.I) else "Unknown")
+    if postdoc:
+        kind = "Postdoc"
+    elif employment_type == "Graduate assistantship" or re.search(
+            r"\b(?:graduate|doctoral|ph\.?d\.?)\s+research\s+assistant(?:ship)?s?\b", t):
+        kind = "Graduate assistantship"
+    elif employment_type == "Research staff" or re.search(
+            r"\b(?:staff|professional) research (?:assistant|associate)s?\b(?!\s+professor)", t):
+        kind = "Research staff"
+    elif re.search(r"intern|co[- ]?op|placement|working student", t + " " + str(employment_type).lower()):
+        kind = "Internship"
+    elif re.search(r"full[-_ ]?time|regular|heltid", str(employment_type), re.I):
+        kind = "Full-time"
+    else:
+        kind = "Unknown"
     requirements = []
     for pattern, label in [
         (r"\bpython\b", "Python mentioned"), (r"\bc\+\+", "C++ mentioned"),
@@ -2104,13 +2118,15 @@ def _public_job(record, source):
     category = record.get("category") if record.get("category") in CATEGORIES else (classification or {}).get("category")
     if not category:
         raise ValueError("Job has no supported relevance category")
+    kind = record.get("employment_type")
+    matched_kind = (classification or {}).get("employment_type", "Unknown")
+    if matched_kind in ACADEMIC_TYPES or kind not in EMPLOYMENT_TYPES:
+        kind = matched_kind
     job = {"id": str(record.get("id") or stable_job_id(source["id"], record.get("requisition_id"), url)),
            "source_id": source["id"], "company": clean_text(record.get("company") or source["company"], 120),
            "title": title, "url": url, "location": clean_text(record.get("location", ""), 260),
            "region": record.get("region") if record.get("region") in {"US", "Canada", "Europe", "Remote", "Other", "Unknown"} else region_for(record.get("location", "")),
-           "employment_type": "Postdoc" if (classification or {}).get("employment_type") == "Postdoc" else (
-               record.get("employment_type") if record.get("employment_type") in {"Postdoc", "Internship", "Full-time", "Unknown"}
-               else (classification or {}).get("employment_type", "Unknown")),
+           "employment_type": kind,
            "category": category, "status": record.get("status") if record.get("status") in JOB_STATUSES else "unknown",
            "pinned": bool(record.get("pinned", False)), "score": max(0, min(int(record.get("score", 70)), 150))}
     if "regions" in record:

@@ -33,7 +33,7 @@ STATUS_LABELS = {
     "closed": "Closed",
     "saved": "Saved link · unverified",
 }
-TYPES = {"Postdoc", "Internship", "Full-time", "Unknown"}
+TYPES = {"Postdoc", "Research staff", "Graduate assistantship", "Internship", "Full-time", "Unknown"}
 REGIONS = {"US", "Canada", "Europe", "Remote", "Other", "Unknown"}
 LANGUAGE_LABELS = {
     "unknown": "Language requirements not yet verified",
