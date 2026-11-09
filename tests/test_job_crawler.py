@@ -381,6 +381,23 @@ class StatePreservationTests(unittest.TestCase):
         self.assertFalse(retained.get("last_verified"))
         self.assertEqual(retained["url"], saved["url"])
 
+    def test_saved_reference_host_migration_keeps_original_added_date(self):
+        saved = job("host-migration", "manual", company="Research Institute",
+                    title="Postdoctoral Researcher, Integrated Sensing and Communications",
+                    url="https://old.example.edu/vacancy", status="saved", pinned=True,
+                    category="wireless-isac", employment_type="Postdoc")
+        settings = config()
+        settings["manual_jobs"] = [{
+            "id": "host-migration", "source_id": "manual", "company": "Research Institute",
+            "title": saved["title"], "url": "https://new.example.edu/vacancy",
+            "category": "wireless-isac", "employment_type": "Postdoc", "status": "saved",
+        }]
+        merged = crawler.merge_results(state(saved), [], settings, NOW)
+        retained = by_id(merged, saved["id"])
+        self.assertEqual(retained["first_seen"], EARLIER)
+        self.assertEqual(retained["url"], "https://new.example.edu/vacancy")
+        self.assertEqual(retained["status"], "saved")
+
     def test_nvidia_pin_deduplicates_against_workday_requisition(self):
         nvidia = source("nvidia")
         nvidia["company"] = "NVIDIA"

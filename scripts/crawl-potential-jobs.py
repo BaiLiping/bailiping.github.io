@@ -2208,7 +2208,17 @@ def merge_results(previous, results, config, now):
             record = dict(seed, source_id=sid, pinned=True, status="saved" if sid == "manual" else "unknown")
             record["id"] = stable_job_id(sid, seed.get("requisition_id") or seed.get("id"), seed["url"])
             record.setdefault("category", (classify_job(seed["title"], "", seed.get("location", "")) or {}).get("category", "radio-localization"))
-            record.update(first_seen=now, last_seen=now, last_checked=now, check_status="manual" if sid == "manual" else "partial")
+            # Preserve the date first saved, even when the official reference URL
+            # moves to a different host and the old host is no longer allowlisted.
+            prior = next((old for old in previous.get("jobs", [])
+                          if old.get("id") == record["id"] and old.get("source_id") == sid
+                          and str(old.get("company", "")).casefold() == str(seed.get("company", "")).casefold()), {})
+            first_seen = prior.get("first_seen", now)
+            if not isinstance(first_seen, str) or not re.fullmatch(
+                    r"\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z", first_seen):
+                first_seen = now
+            record.update(first_seen=first_seen, last_seen=now, last_checked=now,
+                          check_status="manual" if sid == "manual" else "partial")
             seed_job = _public_job(record, sources[sid])
             existing = next((j for j in jobs.values() if _same_job(j, seed_job)), None)
             if existing:
