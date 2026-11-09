@@ -390,7 +390,8 @@ def render_sources(data: dict) -> str:
         if source.get("careers_url"):
             name = f'<a href="{escape(https_url(source["careers_url"]))}">{name}</a>'
         matched = source.get("count")
-        count_note = f'<span>{matched} matches in this check</span>' if isinstance(matched, int) and matched >= 0 else ""
+        noun = "match" if matched == 1 else "matches"
+        count_note = f'<span>{matched} {noun} in this check</span>' if isinstance(matched, int) and matched >= 0 else ""
         items.append(f'<li><strong>{name}</strong><span>{escape(label)}</span>{count_note}<span>{escape(display_time(source.get("checked_at")))}</span></li>')
     return '''<details class="source-details"><summary>Employers being tracked and update status</summary>
 <p>Official employer feeds and career pages are checked weekly. New matching roles are added automatically. Each employer remains on this watchlist even when no current role matches the filters. Follow its careers link to browse all openings.</p>

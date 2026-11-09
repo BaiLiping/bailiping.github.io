@@ -78,6 +78,16 @@ the actual US worksite. Use **Research staff** for confirmed staff appointments 
 degree requirement and first-time H-1B terms for the specific appointment when
 they are available. Recheck the dated references as part of the weekly discovery.
 
+9 November 2026 academic review: TU Dortmund's 2 November university announcement
+confirms the two ISAC postdoc positions and their 11 November deadline and
+German C1 teaching requirement. The saved link now points to that official notice.
+The WPI TRAIN Lab's official opening page (last updated September 2026) says no
+new PhD positions are open, despite an external IEEE Information Theory Society
+rolling-funded-studentship advertisement; retain the earlier student reference
+with a clear availability warning, not as a confirmed vacancy. Rutgers posting
+26FA0609 closed on 31 October 2026, and the Chalmers RDT/ISAC postdoc had an
+8 November deadline; neither expired listing is promoted as a new opening.
+
 ## Current coverage
 
 - Canadian ISAC postdoc search reviewed on 6 November 2026: a separate research
