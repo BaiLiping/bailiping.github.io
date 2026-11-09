@@ -273,6 +273,13 @@ process.stdout.write(JSON.stringify(results));
         with self.assertRaises(ValueError):
             page.render_page(data, self.template)
 
+    def test_employer_watchlist_count_uses_singular_for_one_match(self):
+        data = snapshot()
+        data["sources"][0]["count"] = 1
+        result = page.render_sources(data)
+        self.assertIn("1 match in this check", result)
+        self.assertNotIn("1 matches in this check", result)
+
     def test_unsafe_links_and_duplicate_ids_fail_before_rendering(self):
         for bad_url in ("javascript:alert(1)", "http://example.com/job", "https://user:pass@example.com/job", "https://example.com:444/job"):
             with self.subTest(url=bad_url):
