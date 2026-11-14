@@ -64,8 +64,18 @@ export function withAuthoring(html, builderURL) {
   return withSiteAssets(html);
 }
 
+// The Bento runtime renames the page to "<deck title> — bento/slides" when it starts.
+// Put the authored <title> back whenever that happens, so tabs, history and bookmarks show it.
+// Takes the page HTML; returns it with the guard script placed right after </title> (once).
+export function keepTitle(html) {
+  if (html.includes('data-keep-title')) return html;
+  const guard = "<script data-keep-title>(()=>{const title=document.title;new MutationObserver(()=>{if(document.title!==title)document.title=title;}).observe(document.querySelector('title'),{childList:true});})();</script>";
+  return html.replace('</title>', '</title>' + guard);
+}
+
 // Every deck shares the feedback hook and the site typography/presentation frame.
 export function withSiteAssets(html) {
+  html = keepTitle(html);
   if (!html.includes('href="../assets/deck-theme.css"')) html = html.replace('</head>', '<link rel="stylesheet" href="../assets/deck-theme.css">\n</head>');
   if (!html.includes('src="../assets/slide-annotations.js"')) html = html.replace('</body>', '<script src="../assets/slide-annotations.js"></script>\n</body>');
   return html;
