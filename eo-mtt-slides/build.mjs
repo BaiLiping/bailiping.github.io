@@ -287,9 +287,9 @@ slides.push(slide(
   'A partition is a set of disjoint, non-empty cells',
   'A partition covers the measurement set exactly once. Cells can then be assigned to existing objects, new objects, or—in models with Poisson point clutter—individual measurements can be treated as clutter events. The partition count does not yet include those assignment labels.',
   [
-    card('partition-formula-bg', 96, 198, 1088, 118, { fill: C.violetSoft, stroke: '#D9CDEF' }),
+    card('partition-formula-bg', 96, 198, 1088, 132, { fill: C.violetSoft, stroke: '#D9CDEF' }),
     text('partition-formula', 130, 212, 1020, 38, display(raw`Z=\{m_1,\ldots,m_M\}\quad\longrightarrow\quad P=\{C_1,\ldots,C_K\}`), 26, { align: 'center' }),
-    text('partition-conditions', 130, 250, 1020, 54, display(raw`C_i\ne\varnothing,\quad C_i\cap C_j=\varnothing\ (i\ne j),\quad\bigcup_{i=1}^{K}C_i=Z`), 19, { color: C.muted, align: 'center' }),
+    text('partition-conditions', 130, 250, 1020, 68, display(raw`C_i\ne\varnothing,\quad C_i\cap C_j=\varnothing\ (i\ne j),\quad\bigcup_{i=1}^{K}C_i=Z`), 19, { color: C.muted, align: 'center' }),
     card('partition-example', 96, 332, 1088, 244),
     text('partition-example-label', 122, 352, 1040, 28, 'ONE VALID PARTITION OF THE TEN-MEASUREMENT SCENE', 14, { color: C.muted, fontWeight: 700, letterSpacing: 1.7 }),
     card('partition-cell-1', 126, 406, 282, 104, { fill: C.blueSoft, stroke: '#B9C9F2' }),
@@ -480,11 +480,11 @@ slides.push(slide(
     connector('fork-right-line', 640, 278, 934, 372, C.rose, 4),
     card('fork-gibbs', 96, 372, 500, 218, { fill: C.tealSoft, stroke: C.teal, strokeWidth: 2 }),
     text('fork-gibbs-tag', 124, 396, 444, 26, 'GIBBS / STOCHASTIC OPTIMIZATION · [31]', 14, { color: C.teal, fontWeight: 700, letterSpacing: 1.1 }),
-    text('fork-gibbs-title', 124, 446, 444, 52, 'Searches high-weight<br><b>joint hypotheses</b>', 27, { align: 'center', fontWeight: 700, lineHeight: 1.2 }),
+    text('fork-gibbs-title', 124, 446, 444, 66, 'Searches high-weight<br><b>joint hypotheses</b>', 27, { align: 'center', fontWeight: 700, lineHeight: 1.2 }),
     text('fork-gibbs-output', 124, 526, 444, 34, 'Output: sampled / optimized partitions + associations', 16, { color: C.muted, align: 'center' }),
     card('fork-bp', 684, 372, 500, 218, { fill: C.roseSoft, stroke: C.rose, strokeWidth: 2 }),
     text('fork-bp-tag', 712, 396, 444, 26, 'BELIEF PROPAGATION · [32]', 14, { color: C.rose, fontWeight: 700, letterSpacing: 1.3 }),
-    text('fork-bp-title', 712, 446, 444, 52, 'Approximates association<br><b>marginals</b>', 27, { align: 'center', fontWeight: 700, lineHeight: 1.2 }),
+    text('fork-bp-title', 712, 446, 444, 66, 'Approximates association<br><b>marginals</b>', 27, { align: 'center', fontWeight: 700, lineHeight: 1.2 }),
     text('fork-bp-output', 712, 526, 444, 34, 'Output: soft beliefs—without enumerating hypotheses', 16, { color: C.muted, align: 'center' }),
     text('fork-bottom', 96, 616, 1088, 36, '<b>Different objects of approximation → different diagnostics:</b> mixing and mode coverage vs loopy-BP marginal bias.', 18, { align: 'center' })
   ]
