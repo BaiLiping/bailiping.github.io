@@ -510,6 +510,7 @@
         "data-tap-index": tap.index,
         role: "button",
         tabindex: "0",
+        "aria-label": `Select tap ${tap.index}, kernel weight ${contribution.weight.toFixed(3)}`,
       });
       circle.addEventListener("click", () => selectTap(tap.index));
       circle.addEventListener("keydown", (event) => {
@@ -590,12 +591,14 @@
           class: `tap-bar ${tap.index === state.selectedTap ? "selected" : ""}`,
           tabindex: "0",
           role: "button",
+          "aria-label": `Select tap ${tap.index}`,
           "data-tap-index": tap.index,
         });
       } else {
         const group = appendSvg(svg, "g", {
           tabindex: "0",
           role: "button",
+          "aria-label": `Select tap ${tap.index}`,
           "data-tap-index": tap.index,
         });
         appendSvg(group, "line", {

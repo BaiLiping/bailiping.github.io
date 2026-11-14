@@ -165,7 +165,7 @@ footer a{color:var(--ink-soft)}
         <button id="btnPrev" aria-label="previous step">◀ Prev</button>
         <button id="btnNext" class="primary" aria-label="next step">Next ▶</button>
         <button id="btnPlay" aria-label="play all steps">▶ Play all</button>
-        <div class="dots" id="dots" role="tablist" aria-label="animation steps"></div>
+        <div class="dots" id="dots" role="group" aria-label="animation steps"></div>
         <span class="stepnum" id="stepNum">step 1 / 8</span>
       </div>
 
@@ -200,11 +200,11 @@ footer a{color:var(--ink-soft)}
   <div class="fig">
     <div class="body sand">
       <div class="ctl">
-        <label><span>probability of detection p<sub>D</sub></span> <output id="oPd">0.86</output></label>
+        <label for="sPd"><span>probability of detection p<sub>D</sub></span> <output id="oPd">0.86</output></label>
         <input type="range" id="sPd" min="0.50" max="0.99" step="0.01" value="0.86">
-        <label>relative clutter rate λ <output id="oLam">0.32</output></label>
+        <label for="sLam">relative clutter rate λ <output id="oLam">0.32</output></label>
         <input type="range" id="sLam" min="0" max="1" step="0.01" value="0.32">
-        <label>descriptor agreement with m₁ <output id="oDesc">0.78</output></label>
+        <label for="sDesc">descriptor agreement with m₁ <output id="oDesc">0.78</output></label>
         <input type="range" id="sDesc" min="0" max="1" step="0.01" value="0.78">
         <div class="terms" id="terms"></div>
       </div>
@@ -553,7 +553,7 @@ function go(s){
   const ex=document.getElementById("explain");
   ex.className="explain"+(st.side?" "+st.side+"side":"");
   document.getElementById("stepNum").textContent="step "+(step+1)+" / "+STEPS.length;
-  [...dots.children].forEach((d,i)=>d.classList.toggle("on",i===step));
+  [...dots.children].forEach((d,i)=>{d.classList.toggle("on",i===step);d.setAttribute("aria-current",i===step?"step":"false");});
   btnPrev.disabled=step===0; btnNext.disabled=step===STEPS.length-1;
   subHTML(step);
   const dur=reduced?0:st.dur;

@@ -1059,12 +1059,12 @@ function tbControlsHTML(id){
   var st=tbState[id]||{};
   if(id==='hier')return '<div class="mrow"><span style="font-size:13px">linkage:</span><span class="seg" id="tbLink">'+
     ['single','complete','average'].map(function(l){return '<button type="button" data-l="'+l+'" class="'+(st.linkage===l?'on':'')+'">'+l+'</button>';}).join('')+'</span></div>'+
-    '<div class="mrow"><label>threshold d = <b id="tbThrV">'+st.thr.toFixed(1)+'</b></label><input type="range" id="tbThr" min="1" max="40" step="0.5" value="'+st.thr+'" style="flex:1"></div>';
-  if(id==='kmeans')return '<div class="mrow"><label>K = <b id="tbKV">'+st.K+'</b></label><input type="range" id="tbK" min="1" max="6" step="1" value="'+st.K+'" style="flex:1"><button class="btn" id="tbReseed" type="button">Re-seed</button></div>';
-  if(id==='dbscan')return '<div class="mrow"><label>\u03b5 = <b id="tbEpsV">'+st.eps.toFixed(1)+'</b></label><input type="range" id="tbEps" min="3" max="40" step="0.5" value="'+st.eps+'" style="flex:1"></div>'+
-    '<div class="mrow"><label>minPts = <b id="tbMpV">'+st.minPts+'</b></label><input type="range" id="tbMp" min="1" max="5" step="1" value="'+st.minPts+'" style="flex:1"></div>';
-  if(id==='spectral')return '<div class="mrow"><label>clusters K = <b id="tbSKV">'+st.K+'</b></label><input type="range" id="tbSK" min="2" max="5" step="1" value="'+st.K+'" style="flex:1"></div>'+
-    '<div class="mrow"><label>affinity \u03c3 = <b id="tbSigV">'+st.sigma.toFixed(1)+'</b></label><input type="range" id="tbSig" min="2" max="20" step="0.5" value="'+st.sigma+'" style="flex:1"></div>';
+    '<div class="mrow"><label for="tbThr">threshold d = <b id="tbThrV">'+st.thr.toFixed(1)+'</b></label><input type="range" id="tbThr" min="1" max="40" step="0.5" value="'+st.thr+'" style="flex:1"></div>';
+  if(id==='kmeans')return '<div class="mrow"><label for="tbK">K = <b id="tbKV">'+st.K+'</b></label><input type="range" id="tbK" min="1" max="6" step="1" value="'+st.K+'" style="flex:1"><button class="btn" id="tbReseed" type="button">Re-seed</button></div>';
+  if(id==='dbscan')return '<div class="mrow"><label for="tbEps">\u03b5 = <b id="tbEpsV">'+st.eps.toFixed(1)+'</b></label><input type="range" id="tbEps" min="3" max="40" step="0.5" value="'+st.eps+'" style="flex:1"></div>'+
+    '<div class="mrow"><label for="tbMp">minPts = <b id="tbMpV">'+st.minPts+'</b></label><input type="range" id="tbMp" min="1" max="5" step="1" value="'+st.minPts+'" style="flex:1"></div>';
+  if(id==='spectral')return '<div class="mrow"><label for="tbSK">clusters K = <b id="tbSKV">'+st.K+'</b></label><input type="range" id="tbSK" min="2" max="5" step="1" value="'+st.K+'" style="flex:1"></div>'+
+    '<div class="mrow"><label for="tbSig">affinity \u03c3 = <b id="tbSigV">'+st.sigma.toFixed(1)+'</b></label><input type="range" id="tbSig" min="2" max="20" step="0.5" value="'+st.sigma+'" style="flex:1"></div>';
   if(id==='mcmc')return '<div class="mrow"><button class="btn primary" id="tbMhRun" type="button">Run 300 moves</button><button class="btn" id="tbMhStep" type="button">Single move</button><button class="btn" id="tbMhReset" type="button">Reset</button></div>';
   return '';
 }
