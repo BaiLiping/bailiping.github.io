@@ -3,7 +3,7 @@
 Public presentation at <https://bailiping.com/et-handover/>.
 The 27 regular Bento slides include two introduction/live pairs,
 GrBP processing diagrams, the factorization and likelihood functions on page 3,
-an “Intuitive Intepretation” page 4 with the assigned-existing legacy likelihood
+an “Intuitive Interpretation” page 4 with the assigned-existing legacy likelihood
 beside the PDA likelihood ratio from equation (38) of “The Probabilistic Data
 Association Filter” by Bar-Shalom, Daum, and Huang (2009), with matching colored
 boxes around the per-measurement prefactors, target likelihoods, and clutter terms,
@@ -68,7 +68,7 @@ then checks controls, navigation away during loading, revisits, and print previe
   centered Figure 1 is copied unchanged from
   `Drawings/Target Handover.png` at writing revision `7d88f02` to
   `assets/manuscript-figure-1.png`. The central unit depicts the coordinated baseline.
-- The cover link **extention of point-target handover** opens the matching
+- The cover link **extension of point-target handover** opens the matching
   point-target presentation in the same tab.
 - The cover's **Paper · arXiv:2609.25737** link opens
   <https://arxiv.org/abs/2609.25737> in the same tab.
