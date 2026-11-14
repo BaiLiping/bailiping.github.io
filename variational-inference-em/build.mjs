@@ -30,6 +30,8 @@ for(const [i,s] of deck.slides.entries()){
 const pattern=/(<script type="application\/bento\+json" id="bento-doc">\s*)[\s\S]*?(\s*<\/script>)/;
 if(!pattern.test(template))throw new Error('Bento template document not found');
 let html=template.replace(pattern,(_,a,b)=>a+safe(deck)+b);
+// The template deck links a stylesheet that exists only in its own folder.
+html=html.replace(/<link[^>]+href="visual\.css[^"]*"[^>]*>/,'');
 const mapPattern=/<script type="application\/json" id="bento-inline-live-map">[\s\S]*?<\/script>/;
 if(!mapPattern.test(html))throw new Error('Bento inline-live map not found');
 html=html.replace(mapPattern,()=>'<script type="application/json" id="bento-inline-live-map">\n'+safe(inlineLiveMap)+'\n</script>');
