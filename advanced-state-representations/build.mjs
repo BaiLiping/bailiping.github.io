@@ -43,7 +43,8 @@ for(const token of ['tex-svg-full.js','mathjax-dynamic.js','bento-inline-live.js
 await mkdir(resolve(here,'figures'),{recursive:true});for(const demo of Object.keys(Figures.defaults))await writeFile(resolve(here,'figures',demo+'.svg'),Figures.render(demo).svg);
 await writeFile(resolve(here,'index.html'),withAuthoring(html, import.meta.url));
 const studySections=sourceDeck.slides.map((s,index)=>{
- const body=s.elements.filter(e=>!['eyebrow','heading','subtitle'].includes(e.id)&&!e.id.startsWith('footer-')&&e.type==='text').map(e=>`<div class="piece ${e.id.endsWith('-label')?'label':''}">${e.html}</div>`).join('\n');
+ // Rewrite deck slide-route links (#/<id>) to study.html section anchors (#<id>)
+ const body=s.elements.filter(e=>!['eyebrow','heading','subtitle'].includes(e.id)&&!e.id.startsWith('footer-')&&e.type==='text').map(e=>`<div class="piece ${e.id.endsWith('-label')?'label':''}">${e.html.replace(/href="#\//g,'href="#')}</div>`).join('\n');
  const image=s.elements.find(e=>e.id==='model-figure');
  return `<section id="${s.id}"><p class="chapter">${index+1} / ${sourceDeck.slides.length}</p><h2>${escape(s.lessonTitle)}</h2><p class="lead">${escape(s.lessonSubtitle)}</p><div class="lesson">${body}</div>${image?`<figure><img src="${image.src}" alt="${escape(image.alt)}"><figcaption>The same model-generated default figure used in the interactive slide.</figcaption></figure>`:''}<details open><summary>Explanation and assumptions</summary><p>${escape(s.notes)}</p></details><p class="sources">Sources: ${s.sources.map(k=>`<a href="${references[k].url}">${escape(references[k].label)}</a>`).join(' · ')} · <a href="./#/${s.id}">Open this slide</a></p></section>`;
 }).join('\n');
