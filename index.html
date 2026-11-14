@@ -6,12 +6,80 @@
     <meta name="description" content="Bai Liping's research presentations and interactive notes on tracking, SLAM, sensing, communication, and probabilistic inference, plus personal collections.">
     <link rel="canonical" href="https://bailiping.com/">
     <title>Bai Liping</title>
+
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="Bai Liping">
+    <meta property="og:title" content="Bai Liping">
+    <meta property="og:description" content="Bai Liping's research presentations and interactive notes on tracking, SLAM, sensing, communication, and probabilistic inference, plus personal collections.">
+    <meta property="og:url" content="https://bailiping.com/">
+    <meta property="og:image" content="https://bailiping.com/assets/home/social-card.jpg">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:image:alt" content="Bai Liping — multitarget tracking, radio SLAM, and integrated sensing and communication.">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Bai Liping">
+    <meta name="twitter:description" content="Bai Liping's research presentations and interactive notes on tracking, SLAM, sensing, communication, and probabilistic inference, plus personal collections.">
+    <meta name="twitter:image" content="https://bailiping.com/assets/home/social-card.jpg">
+
     <link rel="icon" href="/favicon.ico">
+    <link rel="preload" href="/assets/fonts/source-serif-4-400-700-latin.woff2" as="font" type="font/woff2" crossorigin>
     <link rel="stylesheet" href="/assets/home.css">
+
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Person",
+      "name": "Liping Bai",
+      "alternateName": "Bai Liping",
+      "url": "https://bailiping.com/",
+      "jobTitle": "Doctoral Student",
+      "affiliation": {
+        "@type": "Organization",
+        "name": "Chalmers University of Technology"
+      },
+      "sameAs": [
+        "https://scholar.google.com/citations?user=6IwanCUAAAAJ",
+        "https://github.com/BaiLiping",
+        "https://ieeexplore.ieee.org/author/37089698646",
+        "https://x.com/bai_liping",
+        "https://www.chalmers.se/en/persons/lipingb/"
+      ]
+    }
+    </script>
   </head>
   <body>
     <header class="site-header">
       <h1><a class="brand" href="/">Bai Liping</a></h1>
+      <p class="role-line">
+        Doctoral student, Chalmers University of Technology
+        <span class="role-unit">Communication, Antennas and Optical Networks, Electrical Engineering</span>
+      </p>
+      <nav class="profile-links" aria-label="Profile links">
+        <a class="profile-link" href="mailto:lipingb@chalmers.se">
+          <svg aria-hidden="true" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="3.5" width="14" height="10" rx="1.5"/><path d="m1 5 7 4.5L15 5"/></svg>
+          Email
+        </a>
+        <a class="profile-link" href="https://scholar.google.com/citations?user=6IwanCUAAAAJ">
+          <svg aria-hidden="true" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="m1 6.5 7-3.5 7 3.5-7 3.5z"/><path d="M4.5 8.5v3c0 .8 1.6 1.5 3.5 1.5s3.5-.7 3.5-1.5v-3"/></svg>
+          Google Scholar
+        </a>
+        <a class="profile-link" href="https://github.com/BaiLiping">
+          <svg aria-hidden="true" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="m5.5 4-3.5 4 3.5 4"/><path d="m10.5 4 3.5 4-3.5 4"/></svg>
+          GitHub
+        </a>
+        <a class="profile-link" href="https://ieeexplore.ieee.org/author/37089698646">
+          <svg aria-hidden="true" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3.5 2h6.5l3 3v9h-9.5a1 1 0 01-1-1V3a1 1 0 011-1z"/><path d="M10 2v3h3"/><path d="M6 8.5h5M6 11h3"/></svg>
+          IEEE Xplore
+        </a>
+        <a class="profile-link" href="https://x.com/bai_liping">
+          <svg aria-hidden="true" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="m3.5 3.5 9 9M12.5 3.5l-9 9"/></svg>
+          X
+        </a>
+        <a class="profile-link" href="https://www.chalmers.se/en/persons/lipingb/">
+          <svg aria-hidden="true" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2 14V6l6-3 6 3v8"/><path d="M6 14v-4h4v4"/><line x1="2" y1="14" x2="14" y2="14"/></svg>
+          Chalmers
+        </a>
+      </nav>
       <nav aria-label="Page categories">
         <div class="category-tabs" aria-label="Page categories">
           <a class="category-tab" id="tab-work" href="#work">Work</a>
@@ -27,7 +95,7 @@
     <main>
       <section class="group" id="work" aria-labelledby="group-work">
         <h2 class="group-title" id="group-work">Research</h2>
-        <p class="research-interests"><strong>Research focus:</strong> Multitarget tracking, radio SLAM, Integrated Communication and Sensing (ISAC)</p>
+        <p class="research-interests"><span class="research-label">Research focus</span> Multitarget tracking, radio SLAM, Integrated Sensing and Communication (ISAC)</p>
         <div class="research-list">
           <article class="research-entry">
             <a class="research-preview" href="/et-handover/" aria-label="Extended-Target Handover presentation">
@@ -55,7 +123,7 @@
           </article>
           <article class="research-entry">
             <a class="research-preview" href="/multitarget-tracking/" aria-label="Multitarget Tracking on nuScenes project page">
-              <img src="/multitarget-tracking/assets/playback/figure-06-2x.gif" width="987" height="968" alt="Animated bird’s-eye view of tracked objects and their trajectories in a nuScenes driving scene." decoding="async">
+              <img src="/assets/home/nuscenes-crossing.webp" width="352" height="345" alt="Animated bird’s-eye view of tracked objects and their trajectories in a nuScenes driving scene." loading="lazy" decoding="async">
             </a>
             <div class="research-details">
               <h3><a href="/multitarget-tracking/">Multitarget Tracking on nuScenes</a></h3>
