@@ -235,6 +235,17 @@ process.stdout.write(JSON.stringify(results));
         self.assertIn('href="https://example.com/jobs/Senior-Radar-Perception-Engineer"', result)
         self.assertEqual(data, original)
 
+    def test_public_wording_removes_the_joiner_with_the_word(self):
+        cases = {
+            "Internship - Radar/Sensor Reasoning Models": "Internship - Sensor Reasoning Models",
+            "Radar and ISAC System Engineer": "ISAC System Engineer",
+            "Lidar & Radar Calibration Engineer": "Lidar Calibration Engineer",
+            "Radar Perception and Sensor Fusion Software Engineer": "Perception and Sensor Fusion Software Engineer",
+            "UWB Radar Signal Processing & Algorithms Intern": "UWB Signal Processing & Algorithms Intern",
+        }
+        for source, expected in cases.items():
+            self.assertEqual(page.public_wording(source), expected)
+
     def test_closed_role_hidden_by_default_but_still_filterable(self):
         job = snapshot()["jobs"][0]
         job["status"] = "closed"

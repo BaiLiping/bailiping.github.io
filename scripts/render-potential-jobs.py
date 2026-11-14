@@ -159,7 +159,13 @@ def public_wording(value: object) -> str:
     }
     text = str(value or "")
     text = wording.get(text, text)
-    return " ".join(re.sub(r"\bradar(?:-based)?\b\s*", "", text, flags=re.IGNORECASE).split())
+    term = r"\bradar(?:-based)?\b"
+    # Drop the word together with the joiner that tied it to a neighbour, so
+    # "Radar/Sensor" and "Radar and ISAC" do not leave "/Sensor" or "and ISAC".
+    # A sentence such as "..., or radar-based perception" keeps its "or".
+    text = re.sub(rf"{term}\s*(?:/|&|\band\b)\s*", "", text, flags=re.IGNORECASE)
+    text = re.sub(rf"\s*(?:/|&)\s*{term}", "", text, flags=re.IGNORECASE)
+    return " ".join(re.sub(rf"{term}\s*", "", text, flags=re.IGNORECASE).split())
 
 
 def is_sweden_location(value: object) -> bool:
