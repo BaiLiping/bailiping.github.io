@@ -1,11 +1,22 @@
 /** Original teaching content; same 1280×720 Bento schema as the other Random Thoughts decks. */
 const C={paper:'#F7F5EF',panel:'#FFFEFB',ink:'#203129',muted:'#66756E',rule:'#D8DED7',green:'#2F6B4F',soft:'#E7F0EA',rust:'#A94F2A'};
 const sans="Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif",serif="Georgia, 'Times New Roman', serif",mono="Consolas, monospace",r=String.raw;
-const I=s=>`<span class="math-tex math-inline">\\(${s}\\)</span>`,D=s=>`<span class="math-tex math-display">\\[${s}\\]</span>`;
+// Bento parses element HTML, so a bare < in LaTeX would be read as a tag and swallow the formula.
+const esc=s=>String(s).replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;');
+const I=s=>`<span class="math-tex math-inline">\\(${esc(s)}\\)</span>`,D=s=>`<span class="math-tex math-display">\\[${esc(s)}\\]</span>`;
 const T=(id,x,y,w,h,html,size=20,o={})=>({id,type:'text',x,y,w,h,html,fontSize:size,fontFamily:sans,fontWeight:400,color:C.ink,lineHeight:1.35,align:'left',valign:'top',rotation:0,opacity:1,...o});
 const R=(id,x,y,w,h,fill=C.panel)=>({id,type:'shape',shape:'rect',x,y,w,h,fill,stroke:C.rule,strokeWidth:1,radius:13,rotation:0,opacity:1});
 const E=(id,x,y,w,h,tex,size=26)=>T(id,x,y,w,h,D(tex),size,{align:'center',valign:'middle'});
 const box=(id,x,y,w,h,label,body,size=20,fill=C.panel)=>[R(id+'-bg',x,y,w,h,fill),T(id+'-label',x+22,y+17,w-44,26,label,12,{fontFamily:mono,fontWeight:800,color:C.green}),T(id+'-body',x+22,y+59,w-44,h-76,body,size)];
+// Lay out a small table as positioned cells, because Bento strips <table> markup from text elements.
+// Takes an id prefix, the table box, the header labels, the body rows (strings) and the index of the highlighted column;
+// returns the Bento elements: the column highlight, a rule above each body row, and one text cell per entry.
+const grid=(id,x,y,w,h,head,rows,mark)=>{const cw=w/head.length,hh=56,rh=(h-hh)/rows.length;
+ const cell=(key,c,top,height,html,o)=>T(id+'-'+key,x+c*cw,top,cw,height,html,23,{align:'center',valign:'middle',...o});
+ return [{...R(id+'-mark',x+mark*cw,y,cw,h,C.soft),stroke:'none',strokeWidth:0,radius:0},
+  ...rows.map((_,r)=>({...R(id+'-rule'+r,x,y+hh+r*rh,w,1,C.rule),stroke:'none',strokeWidth:0,radius:0})),
+  ...head.map((label,c)=>cell('h'+c,c,y,hh,label,{fontWeight:700})),
+  ...rows.flatMap((row,r)=>row.map((value,c)=>cell('r'+r+'c'+c,c,y+hh+r*rh,rh,value)))];};
 const call=s=>[R('take-bg',72,585,1136,53,C.soft),T('take',92,599,1096,29,s,16,{color:C.green,fontWeight:600})];
 export const refs={
  density:{label:'Piech · continuous distributions',url:'https://chrispiech.github.io/probabilityForComputerScientists/en/part2/continuous/',title:'Chris Piech, Stanford University. Probability for Computer Scientists: Continuous Distribution.'},
@@ -61,7 +72,7 @@ eq('likelihood','02 · the central distinction','Freeze the data. Let the parame
  'L(theta;y) is not p(theta|y). The semicolon emphasizes that y is fixed. In a frequentist model f_theta(y) is also valid notation; writing a conditional does not by itself give theta a prior distribution. A likelihood can accidentally have unit integral in a particular coordinate without automatically becoming a posterior.');
 add('coin-table','02 · a finite view','Read across for probabilities; down for likelihoods','Illustrative model: two independent coin flips. θ is the chance of heads; K is the number of heads.',[
  R('table-bg',72,187,686,374),
- T('table',100,207,630,329,`<table style="width:100%;border-collapse:collapse;text-align:center;font-size:23px"><thead><tr><th style="padding:13px">θ</th><th>K = 0</th><th>K = 1</th><th style="background:#e7f0ea">K = 2</th></tr></thead><tbody>${[[.2,.64,.32,.04],[.5,.25,.50,.25],[.8,.04,.32,.64]].map(row=>'<tr>'+row.map((x,j)=>`<td style="padding:20px 10px;border-top:1px solid #d8ded7;${j===3?'background:#e7f0ea':''}">${x.toFixed(2)}</td>`).join('')+'</tr>').join('')}</tbody></table>`,22),
+ ...grid('table',100,207,630,329,['θ','K = 0','K = 1','K = 2'],[[.2,.64,.32,.04],[.5,.25,.50,.25],[.8,.04,.32,.64]].map(row=>row.map(x=>x.toFixed(2))),3),
  ...box('table-explain',784,187,424,374,'NOW OBSERVE K = 2','Each <b>row</b> sums to 1.<br><br>The highlighted column gives likelihoods: 0.04, 0.25, 0.64.<br><br>These sum to 0.93—not 1.<br><br>They are not posterior probabilities for the three θ values.',20),
  ...call('Normalizing that column gives a posterior only after assuming equal prior mass on exactly these candidates.')
 ],['mle','bayes'],'The table lists only three possible parameter values, not a prior distribution. If the parameter space is restricted to these three candidates with equal prior mass, the posterior is (4,25,64)/93. A continuous uniform prior on [0,1] is a different model.');
