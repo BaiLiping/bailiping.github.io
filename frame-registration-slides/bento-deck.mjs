@@ -178,7 +178,7 @@ add('pipeline','10 · in practice','Initialize, refine, then independently verif
   ...panel('pipe-b',688,186,520,176,'2 · REFINE, THEN VERIFY','ICP, GICP or NDT refine locally. Then check overlap, geometry, motion consistency and independent support.',{size:20}),
   ...panel('rap',72,380,780,253,'A DIFFERENT ROUTE · LEARNED FLOW','RAP treats registration as conditional generation: a learned point-wise velocity field transports points to a registered scene, with rigidity enforced at test time and a rigid pose read out. It needs no initial pose, but that is <b>not a global correctness guarantee</b>.<br><br>The companion article’s small planar MLP is an analogy, not RAP or its evaluation.',{size:19,fill:C.cool,accent:C.blue}),
   box('verify-bg',876,380,332,253,C.warm,C.rust),
-  text('verify-word',876,430,332,70,'Verify',{fontFamily:serif,fontSize:56,fontWeight:700,color:C.rust,align:'center'}),
+  text('verify-word',876,424,332,84,'Verify',{fontFamily:serif,fontSize:56,fontWeight:700,color:C.rust,align:'center'}),
   text('verify-cap',900,516,284,60,'INITIALIZATION-FREE ≠ FAILURE-FREE',{fontFamily:mono,fontSize:12,fontWeight:800,color:C.rust,align:'center',letterSpacing:.6})
 ],'Global proposal, local refinement and verification is common, but odometry can initialize locally from a motion prediction. KISS-ICP is point-to-point, not point-to-plane. RAP (Pan et al., arXiv:2512.01850) provides learned initialization-free inference, not failure-free registration. Do not infer RAP behaviour from the toy MLP.','KISS-ICP (Vizzo et al. 2023) · RAP (Pan et al. 2025)','Initialize, refine, then independently verify');
 
