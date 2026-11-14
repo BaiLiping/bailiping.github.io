@@ -427,21 +427,21 @@ function elboEquationsSlide() {
 function meanFieldSlide() {
   const elements = [
     ...heading('03 · Structured families', 'Mean field buys tractability with conditional separation', 'Factorize the approximation, then optimize one factor while averaging over the rest.', C.blue),
-    card('mf-factor-card', 72, 180, 1136, 110, C.blueSoft, C.blue, 16),
+    card('mf-factor-card', 72, 180, 1136, 122, C.blueSoft, C.blue, 16),
     text('mf-factor-label', 96, 200, 190, 20, 'FAMILY', { fontSize: 10, fontFamily: MONO, fontWeight: 900, color: C.blue, letterSpacing: 1 }),
-    text('mf-factor-formula', 266, 197, 918, 72, texBlock`q(z)=\prod_{i=1}^{m}q_i(z_i)`, { fontSize: 30, fontFamily: SERIF, fontWeight: 700, align: 'center', valign: 'middle' }),
-    ...panel('mf-update', 72, 318, 552, 228, 'THE COORDINATE OPTIMUM', mathParagraphs(
+    text('mf-factor-formula', 266, 197, 918, 84, texBlock`q(z)=\prod_{i=1}^{m}q_i(z_i)`, { fontSize: 30, fontFamily: SERIF, fontWeight: 700, align: 'center', valign: 'middle' }),
+    ...panel('mf-update', 72, 318, 552, 246, 'THE COORDINATE OPTIMUM', mathParagraphs(
       tex`\log q_i^\star(z_i)=\mathbb E_{q_{-i}}[\log p(x,z)]+\text{constant}`,
       muted(`Hold ${tex`q_{-i}=\prod_{j\ne i}q_j`} fixed, then normalize the resulting factor.`),
       '<b>Conjugate exponential-family models</b> often make this update analytic.'
-    ), { accent: C.violet, fill: C.violetSoft, stroke: C.violet, fontSize: 16, lineHeight: 1.48 }),
-    ...panel('mf-cost', 656, 318, 552, 228, 'THE STRUCTURAL COST', mathParagraphs(
+    ), { accent: C.violet, fill: C.violetSoft, stroke: C.violet, fontSize: 15, lineHeight: 1.43 }),
+    ...panel('mf-cost', 656, 318, 552, 246, 'THE STRUCTURAL COST', mathParagraphs(
       tex`q(z_a,z_b)=q_a(z_a)q_b(z_b)`,
       muted('The variational density cannot retain posterior dependence across the chosen partition.'),
       '<b>The model may still be strongly coupled.</b><br>The independence is an approximation, not a claim about the data-generating process.'
-    ), { accent: C.rust, fill: C.rustSoft, stroke: C.rust, fontSize: 16, lineHeight: 1.48 }),
-    card('mf-observe', 72, 572, 1136, 64, C.panel, C.rule, 12),
-    text('mf-observe-copy', 94, 585, 1092, 39, `A useful partition follows computational structure: retain dependence inside blocks, factorize only where the expected log joint stays manageable.`, { fontSize: 14.5, color: C.muted, align: 'center', valign: 'middle' }),
+    ), { accent: C.rust, fill: C.rustSoft, stroke: C.rust, fontSize: 15, lineHeight: 1.43 }),
+    card('mf-observe', 72, 580, 1136, 64, C.panel, C.rule, 12),
+    text('mf-observe-copy', 94, 593, 1092, 39, `A useful partition follows computational structure: retain dependence inside blocks, factorize only where the expected log joint stays manageable.`, { fontSize: 14.5, color: C.muted, align: 'center', valign: 'middle' }),
     ...chrome('Mean-field inference', C.blue)
   ];
   return {
