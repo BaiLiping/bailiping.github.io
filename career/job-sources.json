@@ -154,6 +154,38 @@
       "notes": "Public Workday search and detail JSON verified HTTP 200. Keyword results are a partial view of the board: absence from a query cannot establish closure. Aerial/ISAC is related to Sionna; do not label it a core Sionna-team opening without explicit evidence."
     },
     {
+      "id": "nvidia-sweden",
+      "name": "NVIDIA — Stockholm / Sweden watch",
+      "company": "NVIDIA",
+      "type": "workday",
+      "enabled": true,
+      "allowed_hosts": [
+        "nvidia.wd5.myworkdayjobs.com",
+        "jobs.nvidia.com"
+      ],
+      "base_url": "https://nvidia.wd5.myworkdayjobs.com",
+      "tenant": "nvidia",
+      "site": "NVIDIAExternalCareerSite",
+      "search_url": "https://nvidia.wd5.myworkdayjobs.com/wday/cxs/nvidia/NVIDIAExternalCareerSite/jobs",
+      "careers_url": "https://nvidia.wd5.myworkdayjobs.com/NVIDIAExternalCareerSite?locationHierarchy1=2fcb99c455831013ea52e6c3067832b4",
+      "queries": [
+        ""
+      ],
+      "applied_facets": {
+        "locationHierarchy1": [
+          "2fcb99c455831013ea52e6c3067832b4"
+        ]
+      },
+      "country_filter": "SE",
+      "exclude_student_theses": true,
+      "page_size": 20,
+      "max_pages_per_query": 2,
+      "max_details": 12,
+      "max_requests": 14,
+      "seed_paths": [],
+      "notes": "Official Workday Sweden location facet verified on 2026-11-15. Scan Swedish postings independently of the global NVIDIA query budget, including Sweden-remote roles; retain the existing relevance filters and explicit hiring-location evidence. Norrsken confirms that Stockholm AI Lab will house NVIDIA's Stockholm office, opening in 2027: https://www.norrsken.org/houses/stockholm-ai-lab . NVIDIA documents Aerial ISAC work, but a Stockholm-based ISAC team or vacancy was not confirmed. JR2011026 is kept separately as a user-saved reference because its official page is unavailable."
+    },
+    {
       "id": "nxp",
       "name": "NXP official careers",
       "company": "NXP",
@@ -825,6 +857,21 @@
     }
   ],
   "manual_jobs": [
+    {
+      "source_id": "manual",
+      "company": "NVIDIA",
+      "requisition_id": "JR2011026",
+      "title": "Senior Software Engineer Aerial Platform",
+      "url": "https://nvidia.wd5.myworkdayjobs.com/NVIDIAExternalCareerSite/job/Sweden-Remote/Senior-Software-Engineer-Aerial-Platform_JR2011026",
+      "location": "Sweden (original link: remote; NVIDIA LinkedIn: Göteborg)",
+      "region": "Europe",
+      "employment_type": "Full-time",
+      "category": "wireless-isac",
+      "score": 70,
+      "status": "saved",
+      "fit_note": "Aerial 5G/6G RAN platform engineering; ISAC is not explicitly stated. NVIDIA's LinkedIn copy lists MS/PhD or equivalent, 8+ years of industry experience, PHY/MAC and C/C++ work; CUDA is useful. Official Workday page displayed page not found on 15 Nov 2026, and requisition search returned no match. Availability and working location need confirmation.",
+      "notes": "User-requested reference saved 2026-11-15. The official URL returns an HTTP 200 application shell, but the rendered page says it does not exist and the job-detail API returns HTTP 403. Do not infer an open vacancy or definitive closure. NVIDIA's employer-posted LinkedIn copy remains readable: https://se.linkedin.com/jobs/view/senior-software-engineer-aerial-platform-at-nvidia-4450956139 . It names Göteborg; the supplied Workday URL names Sweden-Remote. Neither establishes a Stockholm office assignment or direct ISAC research."
+    },
     {
       "source_id": "manual",
       "company": "Qualcomm",
