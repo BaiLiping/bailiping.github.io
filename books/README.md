@@ -100,3 +100,17 @@ Embed documentation: https://developer.spotify.com/documentation/embeds/referenc
 For playback QA, use installed Chrome through Playwright. The bundled Chromium
 test browser showed previews; Chrome displayed full episode timelines, advanced
 playback, and paused successfully. Keep the iframe's `encrypted-media` permission.
+
+## Jensen Huang episode
+
+Added 2026-11-15 as the sixth Podcast entry: **The Joe Rogan Experience · #2422 -
+Jensen Huang**. The supplied `signal-2026-11-15-16-11-56-625_002.jpg` is copied
+unchanged to `assets/podcast-2422.jpg` (719 × 1600). Spotify's official episode
+page and oEmbed metadata confirm the title and episode ID:
+https://open.spotify.com/episode/0yT4ec9M6GobLC5ByN8pX3
+
+The thumbnail, title, and action link open that episode in the same tab at the
+user's requested **1:47:00**, using `?t=6420` (6,420 seconds). The compact embed
+also includes `t=6420`, and the visible action reads "Open in Spotify at 1:47:00".
+The user's description is preserved verbatim: "History of Nvidia and how Jensen
+learned to create a market".
