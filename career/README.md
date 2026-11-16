@@ -88,6 +88,20 @@ with a clear availability warning, not as a confirmed vacancy. Rutgers posting
 26FA0609 closed on 31 October 2026, and the Chalmers RDT/ISAC postdoc had an
 8 November deadline; neither expired listing is promoted as a new opening.
 
+16 November 2026 academic review: the American University of Sharjah ARC
+Research Center published a direct 6G ISAC postdoctoral vacancy on 9 November
+for HAPS-assisted sensing/communications, joint beamforming, AI and resource
+optimization. The official posting requires an already-awarded doctorate
+within the past five years and both wireless and AI/ML research expertise.
+Appointment duration, deadline, start date and sponsorship are not specified.
+It is saved as a dated official reference outside the preferred regions, not as
+an internship or a promise of an appointment after 2028. Princeton's SWAN lab
+continues to advertise a postdoc opening but does not commit that opening to a
+specific ISAC project. NIST CTL's NextG ISAC research associate listing remains
+on the official site; WPI TRAIN's September notice continues to say that no new
+PhD opening is currently available. The Dortmund deadline of 11 November has
+passed, so its dated reference must not be promoted as newly open.
+
 ## Current coverage
 
 - Canadian ISAC postdoc search reviewed on 6 November 2026: a separate research

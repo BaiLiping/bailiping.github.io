@@ -465,6 +465,41 @@ class UntrustedInputAndPersistenceTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             crawler.validate_config(settings)
 
+
+    def test_removed_manual_reference_is_not_kept_from_previous_snapshot(self):
+        settings = config()
+        settings["manual_jobs"] = [{
+            "company": "Example Robotics", "title": "Localization Systems Engineer",
+            "url": "https://jobs.lever.co/test/keep", "requisition_id": "keep",
+            "category": "radio-localization",
+        }]
+        orphan = job("orphan", "manual", company="Example Robotics",
+                     url="https://jobs.lever.co/test/orphan", status="saved")
+        merged = crawler.merge_results(state(orphan), [], settings, NOW)
+        manual_ids = [j["id"] for j in merged["jobs"] if j["source_id"] == "manual"]
+        self.assertEqual(manual_ids, ["manual:keep"])
+
+    def test_edited_manual_reference_metadata_propagates_without_losing_history(self):
+        settings = config()
+        settings["manual_jobs"] = [{
+            "company": "Example Robotics", "title": "Postdoctoral Researcher in ISAC",
+            "url": "https://jobs.lever.co/test/keep", "requisition_id": "keep",
+            "location": "Stockholm, Sweden", "region": "Europe",
+            "category": "wireless-isac", "employment_type": "Postdoc",
+            "score": 117, "fit_note": "Official project reviewed on 16 Nov 2026.",
+        }]
+        previous = job("keep", "manual", company="Example Robotics",
+                       url="https://jobs.lever.co/test/keep", status="saved",
+                       fit_note="Outdated project notes", title="Old Research Role")
+        merged = crawler.merge_results(state(previous), [], settings, NOW)
+        saved = by_id(merged, "manual:keep")
+        self.assertEqual(saved["title"], "Postdoctoral Researcher in ISAC")
+        self.assertEqual(saved["employment_type"], "Postdoc")
+        self.assertEqual(saved["fit_note"], "Official project reviewed on 16 Nov 2026.")
+        self.assertEqual(saved["location"], "Stockholm, Sweden")
+        self.assertEqual(saved["score"], 117)
+        self.assertEqual(saved["first_seen"], EARLIER)
+
     def test_unserializable_payload_does_not_destroy_previous_state(self):
         with tempfile.TemporaryDirectory() as directory:
             destination = Path(directory) / "jobs.json"

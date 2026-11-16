@@ -2192,9 +2192,17 @@ def merge_results(previous, results, config, now):
     sources = {s["id"]: s for s in config["sources"]}
     manual_hosts = {urlsplit(j["url"]).hostname for j in config.get("manual_jobs", [])}
     sources["manual"] = {"id": "manual", "name": "Manually saved references", "company": "", "allowed_hosts": list(manual_hosts)}
+    # The configuration is the authority for saved manual references. Removing
+    # one must also remove its old snapshot entry, rather than keeping it forever.
+    configured_manual_ids = {
+        stable_job_id("manual", seed.get("requisition_id") or seed.get("id"), seed["url"])
+        for seed in config.get("manual_jobs", [])
+    }
     jobs = {}
     for old in previous.get("jobs", []):
         if old.get("source_id") not in sources:
+            continue
+        if old.get("source_id") == "manual" and old.get("id") not in configured_manual_ids:
             continue
         try:
             job = _public_job(old, sources[old["source_id"]])
@@ -2224,6 +2232,15 @@ def merge_results(previous, results, config, now):
             if existing:
                 existing["pinned"] = True
                 existing["url"] = seed_job["url"]
+                if sid == "manual":
+                    # Refresh edited official-reference metadata without losing
+                    # the original first-seen date or reviewed eligibility.
+                    for field in ("title", "location", "region", "regions",
+                                  "employment_type", "category", "fit_note",
+                                  "compensation_note", "posted_at", "score",
+                                  "requisition_id"):
+                        if field in seed_job:
+                            existing[field] = seed_job[field]
             else:
                 jobs[seed_job["id"]] = seed_job
     source_states = {s["id"]: dict(s) for s in previous.get("sources", []) if s.get("id") in sources}
