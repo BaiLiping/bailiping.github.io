@@ -23,7 +23,8 @@
       .video-grid.single.portrait-card { max-width: 480px; }
       .video-grid.single.portrait-card .video-stage { aspect-ratio: 3 / 4; }
       .video-grid.single.short-card { max-width: 360px; }
-      .short-card iframe { display: block; width: 100%; height: auto; aspect-ratio: 9 / 16; border: 0; }
+      .video-grid iframe { display: block; width: 100%; height: auto; aspect-ratio: 16 / 9; border: 0; }
+      .short-card iframe { aspect-ratio: 9 / 16; }
       .video-grid figure { margin: 0; overflow: hidden; border: 1px solid var(--line); border-radius: 8px; background: rgba(255, 255, 255, .88); }
       .video-stage { width: 100%; height: 400px; background: #101610; }
       .video-stage video { display: block; width: 100%; height: 100%; object-fit: contain; }
@@ -140,6 +141,23 @@
             <a href="https://www.youtube.com/watch?v=8HSgfIHWS0Y">Watch the presentation</a>
           </div>
         </div>
+
+        <section class="subexample" id="adaptive-signal-control" aria-labelledby="adaptive-signal-control-heading">
+          <h3 id="adaptive-signal-control-heading">Adaptive signal control from inferred traffic demand</h3>
+          <p class="prose">Where vehicles stop and how quickly they move through an intersection help a signal controller estimate the queue on each approach. If one queue keeps growing while another clears early, the controller can give the busier approach more green time in the next cycle.</p>
+
+          <div class="video-grid single">
+            <figure>
+              <iframe src="https://www.youtube-nocookie.com/embed/JeXV1G7XxkE" title="Adaptive traffic signals responding to queues at an intersection"
+                width="640" height="360" loading="lazy" referrerpolicy="strict-origin-when-cross-origin"
+                allow="encrypted-media; picture-in-picture" allowfullscreen></iframe>
+              <figcaption>
+                <p>In the video’s 100-second cycle, each direction starts with 50 seconds of green. When east–west traffic accounts for 80% of the vehicles, it gets 80 seconds and north–south traffic gets 20.</p>
+                <a href="https://www.youtube.com/watch?v=JeXV1G7XxkE">Watch on YouTube</a>
+              </figcaption>
+            </figure>
+          </div>
+        </section>
       </section>
 
       <section class="example" id="track-initiation" aria-labelledby="track-initiation-heading">
