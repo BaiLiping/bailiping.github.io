@@ -22,6 +22,8 @@
       .video-grid.single .video-stage { height: auto; aspect-ratio: 16 / 9; }
       .video-grid.single.portrait-card { max-width: 480px; }
       .video-grid.single.portrait-card .video-stage { aspect-ratio: 3 / 4; }
+      .video-grid.single.short-card { max-width: 360px; }
+      .short-card iframe { display: block; width: 100%; height: auto; aspect-ratio: 9 / 16; border: 0; }
       .video-grid figure { margin: 0; overflow: hidden; border: 1px solid var(--line); border-radius: 8px; background: rgba(255, 255, 255, .88); }
       .video-stage { width: 100%; height: 400px; background: #101610; }
       .video-stage video { display: block; width: 100%; height: 100%; object-fit: contain; }
@@ -112,6 +114,19 @@
 
         <h3 id="gaode-countdowns">The application: Gaode’s traffic-light countdowns</h3>
         <p class="prose">Gaode (Amap) has already developed this into an established navigation feature: estimating the remaining red-light time and the number of signal cycles a driver may need to wait. A <a href="https://bbs.vivo.com.cn/newbbs/thread/33897390">2022 product update from vivo’s Jovi InCar team</a> documented support across nearly 240 cities and more than 80,000 intersections.</p>
+
+        <div class="video-grid single short-card">
+          <figure>
+            <iframe src="https://www.youtube-nocookie.com/embed/ZHXZ5bKwMVg" title="Gaode shows a one-cycle wait at a traffic light"
+              width="360" height="640" loading="lazy" referrerpolicy="strict-origin-when-cross-origin"
+              allow="encrypted-media; picture-in-picture" allowfullscreen></iframe>
+            <figcaption>
+              <p>On Gaode’s map, <span lang="zh-Hans">“等待 1 轮”</span> means “wait one signal cycle.”</p>
+              <a href="https://www.youtube.com/shorts/ZHXZ5bKwMVg">Watch on YouTube Shorts</a>
+            </figcaption>
+          </figure>
+        </div>
+
         <p class="prose">The inference principle appears in <a href="https://patents.google.com/patent/CN114463969B/en">AutoNavi’s patent on estimating traffic-light cycles</a>: collect trajectories of vehicles waiting at a signal, compare when they start moving, and extract recurring timing patterns to estimate the signal cycle. Drivers’ stop-and-go behavior carries information about the light that a navigation system can recover.</p>
         <p class="prose">Gaode has also <a href="https://kw.beijing.gov.cn/xwdt/kcyx/xwdtcyfz/202312/t20231207_3818080.html">partnered with local traffic authorities to incorporate official signal data</a>. The implicit-information example is specifically the part that reconstructs timing from vehicle behavior.</p>
 
