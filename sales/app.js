@@ -197,7 +197,7 @@
       ].filter(Boolean);
       const card = document.createElement("article");
       card.className = `item-card status-${status}`;
-      card.classList.toggle("has-poster", item.imageType === "poster");
+      card.classList.toggle("has-full-image", ["poster", "product-photo"].includes(item.imageType));
       card.tabIndex = 0;
       card.role = "button";
       card.setAttribute("aria-label", `View details for ${item.title}`);

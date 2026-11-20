@@ -541,6 +541,30 @@ window.SALE_DATA = {
           "images": [
             "./assets/items/hp-omen-17-poster.webp"
           ]
+        },
+        {
+          "id": "wd-my-passport-ssd-4tb",
+          "recordId": "manual-wd-my-passport-ssd-4tb",
+          "title": "WD My Passport SSD 4 TB",
+          "price": "",
+          "status": "later",
+          "quantity": 1,
+          "originalPrice": "",
+          "availableTime": "",
+          "rooms": [
+            "electronics"
+          ],
+          "category": "Electronics",
+          "website": "https://www.sandisk.com/products/ssd/external-ssd/wd-my-passport-usb-3-2-ssd?sku=WDBAGF0040BGY-WESN",
+          "sellingPrice": "",
+          "euroPrice": "",
+          "rmbPrice": "",
+          "description": "Portable 4 TB solid-state drive with USB-C (USB 3.2 Gen 2).",
+          "notes": "Manufacturer photo of the gray version. WD rates this SSD for up to 1,050 MB/s read and 1,000 MB/s write.",
+          "imageType": "product-photo",
+          "images": [
+            "./assets/items/wd-my-passport-ssd-4tb.webp"
+          ]
         }
       ]
     }
