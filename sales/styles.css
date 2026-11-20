@@ -464,6 +464,12 @@ h1 {
   transform: scale(1.025);
 }
 
+.item-card.has-poster .card-image {
+  object-fit: contain;
+  object-position: 80% center;
+  transform: none;
+}
+
 .image-fallback {
   display: grid;
   place-items: center;
@@ -599,6 +605,10 @@ h1 {
 
 .item-dialog::backdrop {
   background: rgba(13, 20, 16, 0.52);
+}
+
+.item-dialog [hidden] {
+  display: none;
 }
 
 .dialog-close {

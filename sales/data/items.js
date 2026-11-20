@@ -516,6 +516,31 @@ window.SALE_DATA = {
           "images": [
             "./assets/items/neiden-bed-frame-luroy.png"
           ]
+        },
+        {
+          "id": "hp-omen-17",
+          "recordId": "manual-hp-omen-17",
+          "title": "HP OMEN 17 Gaming Laptop",
+          "price": "",
+          "status": "later",
+          "quantity": 1,
+          "originalPrice": "",
+          "availableTime": "",
+          "rooms": [
+            "electronics"
+          ],
+          "category": "Electronics",
+          "website": "https://www.hp.com/se-sv/shop/products/laptops/omen-max-gaming-laptop-16-ah0047no-d4pr0ea-uuw",
+          "comparisonModel": "HP OMEN MAX 16",
+          "sellingPrice": "",
+          "euroPrice": "",
+          "rmbPrice": "",
+          "description": "Intel Core i9-12900HX · RTX 3080 Ti (16 GB) · 32 GB RAM · 2 TB SSD",
+          "notes": "Model 17-ck1xxx with a 17.3-inch QHD display (2560 × 1440), DDR5-4800 memory and Ubuntu 24.04.5 LTS.",
+          "imageType": "poster",
+          "images": [
+            "./assets/items/hp-omen-17-poster.webp"
+          ]
         }
       ]
     }

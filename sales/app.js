@@ -197,6 +197,7 @@
       ].filter(Boolean);
       const card = document.createElement("article");
       card.className = `item-card status-${status}`;
+      card.classList.toggle("has-poster", item.imageType === "poster");
       card.tabIndex = 0;
       card.role = "button";
       card.setAttribute("aria-label", `View details for ${item.title}`);
@@ -214,7 +215,7 @@
           ${facts.length ? `<div class="card-facts">${facts.map((fact) => `<span>${escapeHtml(fact)}</span>`).join("")}</div>` : ""}
           <div class="card-meta">
             ${rooms.map((room) => `<span>${escapeHtml(room.charAt(0).toUpperCase() + room.slice(1))}</span>`).join("")}
-            ${item.website ? "<span>Product link</span>" : ""}
+            ${item.website ? `<span>${item.comparisonModel ? "Comparison link" : "Product link"}</span>` : ""}
           </div>
         </div>
       `;
@@ -293,6 +294,7 @@
 
     dialogWebsite.hidden = false;
     dialogWebsite.href = item.website;
+    dialogWebsite.textContent = item.comparisonModel ? `Compare with ${item.comparisonModel}` : "Open product page";
   }
 
   function renderGallery() {
