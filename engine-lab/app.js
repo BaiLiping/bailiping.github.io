@@ -2,10 +2,10 @@
 // stage to turn it, hold the throttle and watch boost arrive late. The model is engine930.glb, built by the
 // script in model/; this file poses it, runs the small engine model in sim.js and wires the keys.
 import * as T from './vendor/three.bundle.min.js';
-import { createStage } from './stage.js';
-import { createSim, step, nudge } from './sim.js';
-import { createFlow, createMotes } from './flow.js';
-import { createSound } from './sound.js';
+import { createStage } from './stage.js?v=6f007a4e69';
+import { createSim, step, nudge } from './sim.js?v=6f007a4e69';
+import { createFlow, createMotes } from './flow.js?v=6f007a4e69';
+import { createSound } from './sound.js?v=6f007a4e69';
 
 const canvas = document.getElementById('stage');
 const statusEl = document.getElementById('status');
@@ -498,8 +498,8 @@ function bind() {
  */
 async function main() {
   statusEl.textContent = 'loading the engine';
-  info = await (await fetch('./engine930.json')).json();
-  stage = await createStage(canvas, './engine930.glb', (f) => { statusEl.textContent = `loading the engine  ${Math.round(f * 100)}%`; });
+  info = await (await fetch('./engine930.json?v=6f007a4e69')).json();
+  stage = await createStage(canvas, './engine930.glb?v=6f007a4e69', (f) => { statusEl.textContent = `loading the engine  ${Math.min(100, Math.round(f * 100))}%`; });
   sim = createSim(info.spec);
   const still = matchMedia('(prefers-reduced-motion: reduce)').matches;
   sim.running = !still;
