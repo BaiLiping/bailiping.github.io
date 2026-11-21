@@ -1201,6 +1201,7 @@
       lid: new THREE.Vector3(-93, 52, -28)
     };
     const FOCUS_INTERIOR = new THREE.Vector3(12, 42, -10);
+    let wasMoving = false;
     let lastShadowTime = -Infinity;
     let shadowDirty = true;
     let motionRatio = Math.min(stillRatio(), 1.25);
@@ -1232,7 +1233,10 @@
       const frameTime = clock.getDelta();
       const dt = Math.min(frameTime, 0.08);
       const t = clock.elapsedTime;
-      const damp = 1.0 - Math.exp(-8.5 * dt);
+      // The wheel integrator is capped above, but an easing transition should
+      // finish in real time even when a slow GPU skips several frames.
+      const transitionTime = wasMoving ? Math.min(frameTime, 0.75) : 1 / 60;
+      const damp = 1.0 - Math.exp(-8.5 * transitionTime);
 
       if (!state.loaded) {
         if (needsRender) {
@@ -1282,14 +1286,15 @@
       const ratio = active ? motionRatio : stillRatio();
       if (renderer.getPixelRatio() !== ratio) renderer.setPixelRatio(ratio);
       if (!active) {
+        wasMoving = false;
         if (shadowDirty) renderer.shadowMap.needsUpdate = true;
         renderer.render(scene, camera); // final full-resolution frame, then sleep
         shadowDirty = false;
         return;
       }
       scheduleFrame();
-      if (frameTime > 0 && frameTime < 0.18) {
-        slowFrames = frameTime > 0.04 ? slowFrames + 1 : 0;
+      if (wasMoving && frameTime > 0) {
+        slowFrames = frameTime > 0.04 ? slowFrames + (frameTime > 0.15 ? 2 : 1) : 0;
         fastFrames = frameTime < 0.021 ? fastFrames + 1 : 0;
         if (now - lastResolutionChange > 900 && (slowFrames >= 4 || fastFrames >= 30)) {
           motionRatio = slowFrames >= 4 ? Math.max(0.75, motionRatio - 0.25) : Math.min(Math.min(stillRatio(), 1.25), motionRatio + 0.25);
@@ -1297,6 +1302,8 @@
           slowFrames = fastFrames = 0;
         }
       }
+
+      wasMoving = true;
 
       // Camera orbit smooth damping
       state.theta += (state.targetTheta - state.theta) * damp;
@@ -1334,7 +1341,7 @@
 
       // Engine RPM dynamics (900 idle -> 9,000 RPM GT3 shriek!)
       if (rpmDelta > 1) {
-        state.rpm += (rpmTarget - state.rpm) * (1.0 - Math.exp(-(state.revving ? 4.5 : 3.0) * dt));
+        state.rpm += (rpmTarget - state.rpm) * (1.0 - Math.exp(-(state.revving ? 4.5 : 3.0) * transitionTime));
         if (state.revving) updateHudText();
       }
       if (!soundMuted && audioCtx && engGain) {
