@@ -127,7 +127,7 @@
   <div id="loader">loading 2025 porsche 911 gt3 (992.2) · 4.0L flat-6 specimen…</div>
   <div id="bar">
     <div id="info">992.2 gt3 · lugano blue (Q5G) · loading…</div>
-    <div id="keys">grab &amp; pull any part · dblclick x-ray · drag orbit · wheel/+ − 0 zoom · e explode · l lid · x xray · s steer · w spin · space rev · r reset · m sound · h hide</div>
+    <div id="keys">click door or d doors · i cabin · c stripe · grab &amp; pull · dblclick x-ray · e explode · l lid · s steer · w spin · space rev · r reset · m sound · h hide</div>
   </div>
 
   <script type="importmap">
@@ -323,7 +323,15 @@
     function describePart(meshName) {
       const n = meshName || 'Component';
       const checks = [
-        [/Rear_PorscheLetter|Rear_GT3Badge/, '3D Rear PORSCHE & GT3 Badges', 'integrated rear lightbar emblem + GT3 script'],
+        [/Door_Shell/, 'Frameless 992.2 Aluminum Door', 'click to open · swings on front jamb hinges (66°)'],
+        [/DoorHinge/, 'Forged Steel Door Hinge & Bolt', 'front A-pillar door jamb pivot assembly'],
+        [/DoorSill_Plate/, 'Brushed Aluminum GT3 Door Sill', 'illuminated motorsport threshold scuff plate'],
+        [/DoorPullStrap/, 'GT3 Fabric Interior Door Pull', 'lightweight Lugano Blue motorsport pull strap'],
+        [/Glass_Door/, 'Frameless Side Door Glass', 'swings open with door · acoustic glazing'],
+        [/Glass_Quarter/, 'Fixed Rear Quarter Glass', 'teardrop 911 daylight opening glass'],
+        [/Rear_PorscheWordmark|Rear_PorscheLetter/, '3D Rear PORSCHE Wordmark', 'extruded metallic lettering inside 992.2 lightbar'],
+        [/Rear_GT3Badge|Dash_GT3Badge|Splitter_Badge|DoorSill_Text/, '3D Extruded GT3 Emblem', 'precision 992.2 GT3 badging'],
+        [/PlenumText/, '4.0L Naturally Aspirated Badge', 'carbon-fiber resonance plenum 4.0 emblem'],
         [/Front_AirCurtain/, '992.2 Front Wheel Air Curtain', 'vertical high-velocity wheel-arch aero duct'],
         [/YStem|YSpoke|Rim.*Barrel/, 'Forged 992.2 5-Y Lattice Center-Lock Wheel', '20" F / 21" R forged satin black motorsport alloy'],
         [/CenterCrestCap/, 'Center-Lock Porsche Crest Cap', 'anodized Stuttgart crest hub medallion'],
@@ -355,7 +363,9 @@
         [/Mirror/, 'Door-Mounted Aero Mirror', 'SportDesign stalked housing · 2,033 mm span'],
         [/Door_Handle/, 'Flush Pop-Out Door Handle', 'recessed aerodynamic latch'],
         [/Wiper/, 'Low-Profile Windshield Wiper', 'aero blade assembly'],
-        [/Nose_Crest/, 'Porsche Stuttgart Crest', 'raised gold hood emblem'],
+        [/Weissach_CenterStripe/, 'Weissach Carbon Center Stripe', 'exposed satin CFRP hood & roof centerline · press c to toggle'],
+        [/Hood_FrontSeam/, 'Front Frunk Shutline Seam', 'precision 992.2 aluminum hood-to-bumper gap'],
+        [/Nose_Crest/, 'Porsche Stuttgart Crest', 'multi-color gold, crimson & black heraldic hood emblem'],
         [/Headlight_DRL/, '4-Point HD-Matrix LED DRL', '992.2 integrated daytime running signature'],
         [/Headlight/, '992.2 HD-Matrix Oval Headlight', 'black housing · integrated turn & high-beam'],
         [/Taillight|Third_Brake/, '992.2 Full-Width LED Light Bar', 'continuous rear blade + high-mount 3rd brake'],
@@ -418,6 +428,12 @@
       // Mechanical parameters (0..1, smoothly spring-damped!)
       explodeTarget: 0.0,
       explode: 0.0,
+      doorLTarget: 0.0,
+      doorL: 0.0,
+      doorRTarget: 0.0,
+      doorR: 0.0,
+      interiorView: false,
+      stripeVisible: true,
       lidTarget: 0.0,
       lid: 0.0,
       xrayTarget: 0.0,
@@ -441,6 +457,7 @@
     // Per-object custom user pull offsets (so you can grab & pull ANY assembly or bolt!)
     const pullOffsets = new Map();       // Object3D -> { cur: Vector3, tgt: Vector3, parked: bool }
     const exteriorBodyMeshes = [];       // Meshes turned translucent in Membrane X-Ray mode
+    const weissachStripeMeshes = [];     // Toggleable dark satin carbon hood & roof center stripe
     const enginePulseMeshes = [];        // Engine & header meshes vibrating/glowing on rev
     const headerMaterials = [];
     const allPickableMeshes = [];
@@ -497,15 +514,28 @@
                 obj.material.clearcoatRoughness = 0.04;
                 obj.material.envMapIntensity = 1.15;
               }
+              if (/Automotive_Glass/.test(obj.material.name)) {
+                obj.material.transparent = true;
+                obj.material.opacity = 0.34;
+                obj.material.roughness = 0.05;
+                obj.material.metalness = 0.1;
+                obj.material.depthWrite = false;
+                obj.userData.origOpacity = 0.34;
+                obj.userData.origTransparent = true;
+                obj.userData.origDepthWrite = false;
+              }
             }
 
             // Identify exterior shell meshes for Membrane X-Ray Cutaway reveal!
             if (
-              /Body_Shell|Fender_Lip|Front_Splitter|Splitter_EndFence|Front_Intake|Front_Grille|Front_Radiator|Front_AirCurtain|Hood_Nostril|Side_Skirt|Rear_Diffuser|Diffuser_Strake|Rear_AirCurtain|Rear_PorscheLetter|Rear_GT3Badge|Mirror|Door_Handle|Wiper|Glass|BPillar|Headlight|Taillight|SideMarker|Reflector|Nose_Crest|Exhaust_Bezel/.test(
+              /Body_Shell|Door_Shell|Fender_Lip|Front_Splitter|Splitter_EndFence|Splitter_Badge|Front_Intake|Front_Grille|Front_Radiator|Front_AirCurtain|Hood_Nostril|Hood_FrontSeam|Weissach_CenterStripe|Side_Skirt|Rear_Diffuser|Diffuser_Strake|Rear_AirCurtain|Rear_Porsche|Rear_GT3Badge|Mirror|Door_Handle|Wiper|Glass|BPillar|Headlight|Taillight|SideMarker|Reflector|Nose_Crest|Exhaust_Bezel/.test(
                 obj.name
               )
             ) {
               exteriorBodyMeshes.push(obj);
+            }
+            if (/Weissach_CenterStripe/.test(obj.name)) {
+              weissachStripeMeshes.push(obj);
             }
             if (/Exh_Header|Exh_Cat|Exh_MidPipe/.test(obj.name) && obj.material) {
               headerMaterials.push(obj.material);
@@ -569,6 +599,7 @@
       const hits = raycaster.intersectObjects(allPickableMeshes, false);
       // In Membrane X-Ray mode, let clicks pass right through ghosted body shell to grab engine/bolts inside!
       for (const h of hits) {
+        if (!h.object.visible) continue;
         if (state.xray > 0.45 && exteriorBodyMeshes.includes(h.object)) continue;
         return h;
       }
@@ -669,8 +700,17 @@
       if (draggingMode === 'pull' && grabbedTarget) {
         const ps = getPullState(grabbedTarget);
         const pullDist = ps.tgt.length();
-        // Just like 09_membrane: gentle tug springs elastically back; hard pull (>38 mm) or Shift parks it detached!
-        if (pullDist > 38.0 || e.shiftKey) {
+        const clickElapsed = performance.now() - downTime;
+        // Quick click on Left/Right Door swings that frameless door open/closed smoothly!
+        if (pullDist < 5.0 && clickElapsed < 320 && grabbedTarget.name === 'Pivot_Door_L') {
+          state.doorLTarget = state.doorLTarget > 0.5 ? 0.0 : 1.0;
+          ps.tgt.set(0, 0, 0);
+          playClickSound(state.doorLTarget > 0.5 ? 580 : 380, 0.06);
+        } else if (pullDist < 5.0 && clickElapsed < 320 && grabbedTarget.name === 'Pivot_Door_R') {
+          state.doorRTarget = state.doorRTarget > 0.5 ? 0.0 : 1.0;
+          ps.tgt.set(0, 0, 0);
+          playClickSound(state.doorRTarget > 0.5 ? 580 : 380, 0.06);
+        } else if (pullDist > 38.0 || e.shiftKey) {
           ps.parked = true;
           playClickSound(420, 0.06);
         } else {
@@ -706,8 +746,40 @@
     // Keyboard controls (exact 09_membrane minimalism!)
     window.addEventListener('keydown', (e) => {
       const k = e.key.toLowerCase();
-      if (k === 'e') {
+      if (k === 'd') {
+        const open = (state.doorLTarget < 0.5 || state.doorRTarget < 0.5) ? 1.0 : 0.0;
+        state.doorLTarget = open;
+        state.doorRTarget = open;
+        playClickSound(open > 0.5 ? 580 : 380, 0.06);
+      } else if (k === '1') {
+        state.doorLTarget = state.doorLTarget > 0.5 ? 0.0 : 1.0;
+        playClickSound(560, 0.05);
+      } else if (k === '2') {
+        state.doorRTarget = state.doorRTarget > 0.5 ? 0.0 : 1.0;
+        playClickSound(560, 0.05);
+      } else if (k === 'i') {
+        // Smooth Interior Cockpit Inspection View: swings driver door open & glides camera inside!
+        state.interiorView = !state.interiorView;
+        if (state.interiorView) {
+          state.explodeTarget = 0.0;
+          state.xrayTarget = 0.0;
+          state.doorLTarget = 1.0;
+          state.targetTheta = -2.18;
+          state.targetPhi = 1.26;
+          state.targetRadius = 152;
+        } else {
+          state.targetTheta = 0.62;
+          state.targetPhi = 1.24;
+          state.targetRadius = 405;
+        }
+        playClickSound(state.interiorView ? 700 : 460, 0.06);
+      } else if (k === 'c') {
+        state.stripeVisible = !state.stripeVisible;
+        for (const sm of weissachStripeMeshes) sm.visible = state.stripeVisible;
+        playClickSound(state.stripeVisible ? 620 : 440, 0.05);
+      } else if (k === 'e') {
         // Cycle assembled -> half explode -> full explode -> assembled
+        state.interiorView = false;
         state.explodeTarget = state.explodeTarget < 0.2 ? 0.55 : (state.explodeTarget < 0.85 ? 1.0 : 0.0);
         playClickSound(state.explodeTarget > 0 ? 640 : 420, 0.06);
       } else if (k === 'l') {
@@ -727,6 +799,11 @@
         state.revving = true;
       } else if (k === 'r') {
         state.explodeTarget = 0.0;
+        state.doorLTarget = 0.0;
+        state.doorRTarget = 0.0;
+        state.interiorView = false;
+        state.stripeVisible = true;
+        for (const sm of weissachStripeMeshes) sm.visible = true;
         state.lidTarget = 0.0;
         state.xrayTarget = 0.0;
         state.steerMode = false;
@@ -781,6 +858,10 @@
         return;
       }
       if (state.xrayTarget > 0.5) tags.push('membrane x-ray');
+      if (state.doorLTarget > 0.5 && state.doorRTarget > 0.5) tags.push('doors open');
+      else if (state.doorLTarget > 0.5) tags.push('driver door open');
+      else if (state.doorRTarget > 0.5) tags.push('passenger door open');
+      if (state.interiorView) tags.push('cabin view');
       if (state.explodeTarget > 0.05) tags.push(`exploded ${Math.round(state.explodeTarget * 100)}%`);
       if (state.lidTarget > 0.5) tags.push('engine bay open');
       if (state.spinMode) tags.push('wheels spinning');
@@ -824,8 +905,16 @@
 
       // Smoothly spring-damp interactive parameters
       state.explode += (state.explodeTarget - state.explode) * damp;
+      state.doorL += (state.doorLTarget - state.doorL) * damp;
+      state.doorR += (state.doorRTarget - state.doorR) * damp;
       state.lid += (state.lidTarget - state.lid) * damp;
       state.xray += (state.xrayTarget - state.xray) * damp;
+
+      // Smoothly glide camera focus point between exterior center & interior cockpit when pressing 'i'
+      const focusTarget = state.interiorView
+        ? new THREE.Vector3(6, 38, -2)
+        : new THREE.Vector3(0, 34, 0);
+      state.targetCenter.lerp(focusTarget, damp);
 
       // Engine RPM dynamics (900 idle -> 9,000 RPM GT3 shriek!)
       const rpmTarget = state.revving ? 9000 : 900;
@@ -896,8 +985,14 @@
         const ev = explodeVecs[pname] || new THREE.Vector3();
         piv.position.copy(rp).add(ev).add(ps.cur);
 
-        if (pname === 'Pivot_Engine_Decklid') {
-          // Open slatted engine decklid + wing smoothly (positive Z rotation in glTF Y-up lifts -X tail!)
+        if (pname === 'Pivot_Door_L') {
+          // Driver left door (-Z in glTF) swings outward by -66 deg around +Y!
+          piv.rotation.set(rr.x, rr.y - state.doorL * 1.15, rr.z);
+        } else if (pname === 'Pivot_Door_R') {
+          // Passenger right door (+Z in glTF) swings outward by +66 deg around +Y!
+          piv.rotation.set(rr.x, rr.y + state.doorR * 1.15, rr.z);
+        } else if (pname === 'Pivot_Engine_Decklid') {
+          // Open slatted engine decklid + wing smoothly (negative Z rotation in glTF Y-up lifts -X tail!)
           piv.rotation.set(rr.x, rr.y, rr.z - state.lid * 0.72);
         } else if (pname === 'Pivot_Corner_FL' || pname === 'Pivot_Corner_FR') {
           piv.rotation.set(rr.x, rr.y + steerRad, rr.z);
