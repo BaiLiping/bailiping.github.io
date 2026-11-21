@@ -393,7 +393,7 @@ export async function createStage(canvas, url, onProgress) {
    * Takes the ghost amount for the gas view (0 to 1). Returns nothing.
    */
   function render(ghost) {
-    if (glow.visible) glow.matrixWorld.copy(glow.userData.follow.matrixWorld);
+    if (glow.visible) { glow.matrix.copy(glow.userData.follow.matrixWorld); glow.matrixWorldNeedsUpdate = true; }
     if (cut) shared.capNormal.value.copy(cut.normal).negate().transformDirection(camera.matrixWorldInverse);
     post.uniforms.uGhost.value = ghost;
     post.uniforms.uProjInv.value.copy(camera.projectionMatrixInverse);

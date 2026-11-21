@@ -226,6 +226,16 @@ function pinchSpan() {
 }
 
 /**
+ * Keep the particles the same size on the page whatever the drawing resolution.
+ * Takes nothing. Returns nothing.
+ */
+function sizeParticles() {
+  const scale = stage.renderer.getPixelRatio() * canvas.clientHeight / 1000 * 3.4;
+  flow.material.uniforms.uScale.value = scale;
+  if (motes) motes.object.material.uniforms.uScale.value = scale;
+}
+
+/**
  * Wire the pointer, wheel and keys.
  * Takes nothing. Returns nothing.
  */
@@ -312,9 +322,9 @@ function bind() {
     b.addEventListener('pointerdown', (e) => { ui.demandTouch = 1; b.setPointerCapture(e.pointerId); });
     for (const ev of ['pointerup', 'pointercancel', 'lostpointercapture']) b.addEventListener(ev, () => { ui.demandTouch = 0; });
     b.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') ui.demandTouch = 1; });
-    b.addEventListener('keyup', () => { ui.demandTouch = 0; });
+    b.addEventListener('keyup', (e) => { if (e.key === 'Enter' || e.key === ' ') ui.demandTouch = 0; });
   }
-  new ResizeObserver(() => stage.resize()).observe(canvas);
+  new ResizeObserver(() => { stage.resize(); sizeParticles(); }).observe(canvas);
 }
 
 /**
@@ -340,14 +350,14 @@ async function main() {
     }
     return { ...c, tag, cum, total: cum[cum.length - 1] };
   });
-  const scale = stage.renderer.getPixelRatio() * canvas.clientHeight / 1000;
-  flow = createFlow(info, stage.overlay, scale * 3.4);
-  motes = still ? null : createMotes(stage.overlay, scale * 3.4);
+  flow = createFlow(info, stage.overlay, 1);
+  motes = still ? null : createMotes(stage.overlay, 1);
   bind();
   act('none');
   aim(0);
   pose();
   stage.calibrate();
+  sizeParticles();
   document.body.classList.add('ready');
   window.engineLab = { stage, sim, ui, view, info, act };          // for the browser checks
   requestAnimationFrame((t) => { last = t; frame(t); });

@@ -24,7 +24,8 @@ Unofficial. Built from published dimensions and photographs studied as reference
 
 `↑` throttle · `x` explode · `c` cutaway (top, side, cross-section, off) · `g` gas flow · `r` reassemble ·
 `space` stop or start the crank · `←` `→` turn it by hand while stopped (shift for one degree) · `m` sound ·
-`h` hide the type · `i` how it works · `+` `−` `0` zoom. Every command is also a button in the hint line.
+`h` hide the type · `i` how it works · `+` `−` zoom · `0` reset the view. The named commands are also buttons in
+the hint line; zoom, reset and turning the crank by hand are keys only (wheel and pinch also zoom).
 
 The crank is drawn at one fortieth of its real speed. Sound follows the real revs.
 

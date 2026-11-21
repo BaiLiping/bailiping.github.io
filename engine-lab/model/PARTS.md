@@ -43,7 +43,7 @@ not the left, and the shroud is black on these engines.
 | Item | Used | Why |
 |---|---|---|
 | Model year | 1978 Europe, 930/60 | It is the engine named in the brief and the one both photograph sets show. The muffler with a wastegate connection and two 44.5 mm tailpipes is listed for 1978 to 1982 [S]. |
-| Cam timing at 1 mm | IO 3° ATDC, IC 37° ABDC, EO 27° BBDC, EC 5° BTDC | Of three quoted sets it is the only one that reproduces the cam grinder's figures: 214°/202° duration and 108° lobe separation [S][D]. The model then gives 0.81 mm intake lift at overlap TDC, inside the factory timing-check range of 0.65 to 0.80 mm, which was not an input. |
+| Cam timing at 1 mm | IO 3° ATDC, IC 37° ABDC, EO 27° BBDC, EC 5° BTDC | Of three quoted sets it is the only one that reproduces the cam grinder's figures: 214°/202° duration and 108° lobe separation [S][D]. The model then gives 0.81 mm intake lift at overlap TDC, which was not an input; the factory timing check is quoted as 0.65 to 0.80 mm, so it lands 0.01 mm above the top of that range. |
 | Main journals | 60 mm | A workshop-manual figure quoted for this crank family and the tech wiki agree; one vendor table says 64 mm [S]. |
 | Rod length | 127.0 mm | Maker's application guide [S]. With the 112.5 mm deck and 85.4 mm barrel it leaves 0.9 mm deck clearance; 127.75 mm would leave 0.15 mm. |
 | Bore | 97.0 mm | 97.0 gives 3,298.8 cm³; one wiki prints 97.6 [S][D]. |
