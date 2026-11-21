@@ -4,8 +4,10 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="description" content="Explore a 2025 Porsche 911 GT3 (992.2) in Lugano Blue. Open its doors, front luggage lid, and rear service flap, or inspect the cockpit and mechanical assemblies." />
-  <link rel="preload" as="image" type="image/webp" media="(orientation: landscape)" href="./gt3-wide.webp" fetchpriority="high">
-  <link rel="preload" as="image" type="image/webp" media="(orientation: portrait)" href="./gt3-tall.webp" fetchpriority="high">
+  <link rel="preload" as="image" type="image/webp" media="(orientation: landscape) and (prefers-reduced-motion: no-preference)" href="./gt3-exploded-wide.webp" fetchpriority="high">
+  <link rel="preload" as="image" type="image/webp" media="(orientation: portrait) and (prefers-reduced-motion: no-preference)" href="./gt3-exploded-tall.webp" fetchpriority="high">
+  <link rel="preload" as="image" type="image/webp" media="(orientation: landscape) and (prefers-reduced-motion: reduce)" href="./gt3-wide.webp" fetchpriority="high">
+  <link rel="preload" as="image" type="image/webp" media="(orientation: portrait) and (prefers-reduced-motion: reduce)" href="./gt3-tall.webp" fetchpriority="high">
   <link rel="modulepreload" href="./vendor/three-r170.js">
   <script>
     const overrideModel = new URLSearchParams(location.search).get('model');
@@ -58,6 +60,12 @@
       z-index: 10;
     }
     #bar.hidden { visibility: hidden; }
+    #drag-hint { color: #263541; font: 500 13px/1.45 system-ui, sans-serif; text-align: center; }
+    #drag-hint .touch { display: none; }
+    @media (pointer: coarse) {
+      #drag-hint .mouse { display: none; }
+      #drag-hint .touch { display: inline; }
+    }
     #tools { display: flex; align-items: stretch; gap: 4px; flex-wrap: wrap; justify-content: center; }
     #tools button, #tools summary {
       pointer-events: auto;
@@ -104,9 +112,12 @@
       #more { position: static; }
       #more div { left: 50%; right: auto; transform: translateX(-50%); }
       #bar { bottom: max(8px, env(safe-area-inset-bottom)); }
-      #more a { color: #194d78; }
-    #info { font-size: 10px; }
+      #info { font-size: 10px; }
       #callout { display: none; }
+    }
+    @media (orientation: landscape) and (max-height: 540px) {
+      #tools { max-width: none; }
+      #bar { gap: 4px; bottom: max(6px, env(safe-area-inset-bottom)); }
     }
     /* Delicate specimen floating callout when hovering/pulling a part */
     #callout {
@@ -180,13 +191,17 @@
   <div id="callout"><span class="title"></span><span class="sub"></span></div>
   <div id="loader">
     <picture>
-      <source media="(orientation: portrait)" srcset="./gt3-tall.webp">
-      <img src="./gt3-wide.webp" width="1280" height="800" fetchpriority="high" alt="Front three-quarter view of the Lugano Blue Porsche 911 GT3">
+      <source media="(prefers-reduced-motion: reduce) and (orientation: portrait)" srcset="./gt3-tall.webp">
+      <source media="(prefers-reduced-motion: reduce)" srcset="./gt3-wide.webp">
+      <source media="(orientation: portrait)" srcset="./gt3-exploded-tall.webp">
+      <img src="./gt3-exploded-wide.webp" width="1280" height="800" fetchpriority="high" alt="Lugano Blue Porsche 911 GT3 interactive model preview">
     </picture>
     <span id="load-status" role="status">Preparing interactive model…</span>
   </div>
   <div id="bar" inert>
+    <p id="drag-hint"><span class="mouse">Drag an assembly to take the car apart. Alt-drag to move a single part.</span><span class="touch">Touch and hold a part, then drag it away to take the car apart.</span></p>
     <div id="tools" role="group" aria-label="Model controls">
+      <button type="button" id="exploded-view" aria-pressed="false">Exploded view</button>
       <button type="button" data-panel="doorL" aria-pressed="false" disabled>Left door</button>
       <button type="button" data-panel="doorR" aria-pressed="false" disabled>Right door</button>
       <button type="button" data-panel="hood" aria-pressed="false" disabled>Front luggage lid</button>
@@ -196,7 +211,8 @@
       <details id="more"><summary>Controls</summary><div>
         Drag the background or right-drag to orbit. Scroll to zoom.<br>
         On touchscreens, drag to orbit and pinch to zoom.<br>
-        Tap a panel to open it. Hold and drag a part to pull it out.<br>
+        Click or tap a door, lid or flap to open it. Pull a part away to leave it detached.<br>
+        Select Exploded view to inspect the assemblies. Reset puts every part back.<br>
         D both doors · 1 / 2 left / right door · F front lid · L rear flap<br>
         I cabin · X x-ray · E explode · C stripe · R reset<br>
         S steer · W spin · Hold Space to rev · M sound · H hide<br>
@@ -543,6 +559,20 @@
     // Map of named Blender pivot groups & rest transforms
     const pivots = {};
     let selectedView = null;
+    const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)');
+    const explosionButton = document.getElementById('exploded-view');
+    const assemblyView = { theta: -1.98, phi: 1.12, compactInset: 0, center: new THREE.Vector3(), points: [] };
+    const introHoldMs = 1400;
+    const introAssemblyMs = 2600;
+    let intro = null;
+
+    function stopIntro() {
+      if (!intro) return;
+      intro = null;
+      state.explodeTarget = state.explode;
+      updateHudText();
+    }
+
     const panels = {
       doorL: { node: 'Pivot_Door_L', axis: 'y', angle: -1.15 },
       doorR: { node: 'Pivot_Door_R', axis: 'y', angle: 1.15 },
@@ -567,9 +597,13 @@
 
     function togglePanel(key, focus = false) {
       if (!pivots[panels[key].node]) return;
+      stopIntro();
       const target = key + 'Target';
       state[target] = 1 - state[target];
-      if (focus && state[target]) facePanel(key);
+      if (focus && state[target]) {
+        state.explodeTarget = 0;
+        facePanel(key);
+      }
       playClickSound(state[target] ? 580 : 380, 0.06);
       updateHudText();
       wake(true);
@@ -580,10 +614,27 @@
     for (const button of document.querySelectorAll('[data-command]')) {
       button.addEventListener('click', () => runCommand(button.dataset.command));
     }
+    explosionButton.addEventListener('click', () => {
+      const assemble = explosionButton.getAttribute('aria-pressed') === 'true';
+      stopIntro();
+      if (assemble) {
+        runCommand('r');
+      } else {
+        selectedView = null;
+        state.interiorView = false;
+        state.explodeTarget = 1;
+        state.targetTheta = assemblyView.theta;
+        state.targetPhi = assemblyView.phi;
+        state.targetRadius = exteriorView.radius;
+        updateHudText();
+        wake(true);
+      }
+    });
     const restPos = new Map();
     const restRot = new Map();
 
     // Per-object custom user pull offsets (so you can grab & pull ANY assembly or bolt!)
+    const explodedParts = new Map();
     const pullOffsets = new Map();       // Object3D -> { cur: Vector3, tgt: Vector3, parked: bool }
     const exteriorBodySet = new Set();   // Fast O(1) lookup during X-ray raycasting
     const exteriorXrayMaterials = [];    // ~12 shared exterior materials updated ONLY when X-ray changes
@@ -616,7 +667,7 @@
         pullOffsets.set(obj, {
           cur: new THREE.Vector3(),
           tgt: new THREE.Vector3(),
-          basePos: obj.position.clone(),
+          basePos: explodedParts.get(obj)?.home || obj.position.clone(),
           parked: false,
         });
       }
@@ -723,6 +774,16 @@
           button.disabled = !pivots[panels[button.dataset.panel].node];
         }
 
+        if (pivots.Pivot_Body_Assembly) {
+          measureExplodedView();
+          if (!reducedMotion.matches) {
+            state.theta = state.targetTheta = assemblyView.theta;
+            state.phi = state.targetPhi = assemblyView.phi;
+            state.explode = state.explodeTarget = 1;
+            intro = { elapsed: 0, previous: null };
+          }
+        }
+        explosionButton.disabled = !pivots.Pivot_Body_Assembly;
         state.loaded = true;
 
         updateHudText();
@@ -842,6 +903,7 @@
 
     canvas.addEventListener('contextmenu', e => e.preventDefault());
     canvas.addEventListener('pointerdown', (e) => {
+      stopIntro();
       canvas.setPointerCapture(e.pointerId);
       if (e.pointerType === 'touch') {
         touches.set(e.pointerId, { x: e.clientX, y: e.clientY });
@@ -901,6 +963,8 @@
         if (Math.hypot(e.clientX - pressX, e.clientY - pressY) < 7) return;
         if (performance.now() - pressTime >= 350) {
           draggingMode = 'pull';
+          grabbedTarget = grabbedMesh;
+          dragObjStartOffset.copy(getPullState(grabbedTarget).cur);
         } else {
           draggingMode = 'orbit';
           grabbedTarget = grabbedMesh = null;
@@ -971,11 +1035,7 @@
         if (clickedPanel && Math.hypot(e.clientX - pressX, e.clientY - pressY) < 7) {
           togglePanel(clickedPanel);
           ps.tgt.copy(dragObjStartOffset);
-        } else if (pullDist < 5.0 && clickElapsed < 320 && grabbedTarget.name === 'Pivot_Door_R') {
-          state.doorRTarget = state.doorRTarget > 0.5 ? 0.0 : 1.0;
-          ps.tgt.set(0, 0, 0);
-          playClickSound(state.doorRTarget > 0.5 ? 580 : 380, 0.06);
-        } else if (pullDist > 38.0 || e.shiftKey) {
+        } else if (e.shiftKey || pullDist > 38 || (pullDist > 3 && Math.hypot(e.clientX - pressX, e.clientY - pressY) >= 12)) {
           ps.parked = true;
           playClickSound(420, 0.06);
         } else {
@@ -1014,13 +1074,15 @@
     // Wheel zoom
     canvas.addEventListener('wheel', (e) => {
       e.preventDefault();
+      stopIntro();
       zoomTo(state.targetRadius * (1 + e.deltaY * 0.001));
       wake(false);
     }, { passive: false });
 
     // Keyboard controls (exact 09_membrane minimalism!)
     function runCommand(k) {
-      if (!state.loaded) return;
+      if (!state.loaded || k.length !== 1 || !'d12lficexswrmh +=-_0'.includes(k)) return;
+      stopIntro();
       if (k === 'd') {
         const open = (state.doorLTarget < 0.5 || state.doorRTarget < 0.5) ? 1.0 : 0.0;
         state.doorLTarget = open;
@@ -1141,7 +1203,18 @@
       wake();
     });
     document.addEventListener('visibilitychange', () => {
+      if (intro) intro.previous = null;
       if (!document.hidden) wake();
+    });
+    reducedMotion.addEventListener('change', () => {
+      if (intro && reducedMotion.matches) {
+        stopIntro();
+        state.explode = state.explodeTarget = 0;
+        state.theta = state.targetTheta = exteriorView.theta;
+        state.phi = state.targetPhi = exteriorView.phi;
+        updateHudText();
+        wake(true);
+      }
     });
     window.addEventListener('keyup', (e) => {
       if (e.code === 'Space') {
@@ -1161,12 +1234,14 @@
       if (!state.loaded) return;
       for (const button of panelButtons) button.setAttribute('aria-pressed', String(!!state[button.dataset.panel + 'Target']));
       document.querySelector('[data-command="i"]').setAttribute('aria-pressed', String(state.interiorView));
+      const showingExplosion = intro ? intro.elapsed <= introHoldMs : state.explodeTarget > 0.05;
+      explosionButton.setAttribute('aria-pressed', String(showingExplosion));
       const tags = [];
       if (draggingMode === 'pull' && grabbedMesh) {
         const info = describePart(grabbedMesh.name);
         const ps = getPullState(grabbedTarget);
         const mm = Math.round(ps.cur.length() * 18); // real-car mm equivalent
-        showPartInfo(info.title, `pulling · ${mm} mm · pull further or shift to park`);
+        showPartInfo(info.title, `pulling · ${mm} mm`);
         return;
       }
       if (hoveredMesh) {
@@ -1179,12 +1254,15 @@
       else if (state.doorLTarget > 0.5) tags.push('driver door open');
       else if (state.doorRTarget > 0.5) tags.push('passenger door open');
       if (state.interiorView) tags.push('cabin view');
-      if (state.explodeTarget > 0.05) tags.push(`exploded ${Math.round(state.explodeTarget * 100)}%`);
+      if (intro) tags.push(intro.elapsed <= introHoldMs ? 'exploded view' : 'assembling');
+      else if (state.explodeTarget > 0.05) tags.push(`exploded ${Math.round(state.explodeTarget * 100)}%`);
       if (state.hoodTarget > 0.5) tags.push('front luggage lid open');
       if (state.lidTarget > 0.5) tags.push(document.querySelector('[data-panel="lid"]').textContent.toLowerCase() + ' open');
       if (state.spinMode) tags.push('wheels spinning');
       if (state.steerMode) tags.push('steering');
       if (state.revving) tags.push(`${Math.round(state.rpm)} rpm`);
+      const detached = [...pullOffsets.values()].filter(part => part.parked).length;
+      if (detached) tags.push(`${detached} detached`);
       if (tags.length === 0) tags.push('assembled');
       if (soundMuted) tags.push('muted');
       infoEl.textContent = `2025 Porsche 911 GT3 · Lugano Blue · ${tags.join(' · ')}`;
@@ -1194,7 +1272,6 @@
     // 9. Zero-Allocation, Demand-Paced 60 FPS Animation Loop!
     // -----------------------------------------------------------------------
     const clock = new THREE.Clock();
-    const SCALE = 1.0 / 18.0;
     const FOCUS_EXTERIOR = new THREE.Vector3(0, 34, 0);
     const PANEL_CENTERS = {
       hood: new THREE.Vector3(38, 34, 0),
@@ -1210,22 +1287,136 @@
     let fastFrames = 0;
     const _ev = new THREE.Vector3();
 
-    function getExplodeOffset(pname, ex, vib, t, out) {
+    // Offsets are in the same 1:18 millimetres as the exported rig. Child
+    // panels inherit the body lift before moving clear of their openings.
+    function getExplodeOffset(name, ex, vibration, time, out) {
       out.set(0, 0, 0);
-      if (ex < 1e-4 && vib < 1e-4) return out;
-      switch (pname) {
-        case 'Pivot_Body_Assembly':      return out.set(0, 760 * SCALE * ex, 0);
-        case 'Pivot_SwanNeck_Wing':      return out.set(-260 * SCALE * ex, 340 * SCALE * ex, 0);
-        case 'Pivot_Flat6_Engine':       return out.set(-560 * SCALE * ex + Math.sin(t * 75) * vib, 180 * SCALE * ex + Math.cos(t * 92) * vib, 0);
-        case 'Pivot_Exhaust_System':     return out.set(-820 * SCALE * ex, -120 * SCALE * ex, 0);
-        case 'Pivot_Drivetrain_Chassis': return out.set(0, -210 * SCALE * ex, 0);
-        case 'Pivot_Interior_Cabin':     return out.set(0, 260 * SCALE * ex, 0);
+      switch (name) {
+        case 'Pivot_Body_Assembly':      out.y = 110; break;
+        case 'Pivot_Front_Lid':          out.set(30, 42, 0); break;
+        case 'Pivot_Service_Flap':       out.set(-5, 24, -12); break;
+        case 'Pivot_SwanNeck_Wing':      out.set(-62, 40, 0); break;
+        case 'Pivot_Door_L':             out.set(-16, -3, -94); break;
+        case 'Pivot_Door_R':             out.set(28, 27, 98); break;
+        case 'Pivot_Flat6_Engine':       out.set(-58, 15, -6); break;
+        case 'Pivot_Exhaust_System':     out.set(-102, 2, 0); break;
+        case 'Pivot_Interior_Cabin':     out.set(160, 52, -58); break;
         case 'Pivot_Corner_FL':
-        case 'Pivot_Corner_RL':          return out.set(0, 0, -450 * SCALE * ex);
-        case 'Pivot_Corner_FR':
-        case 'Pivot_Corner_RR':          return out.set(0, 0, +450 * SCALE * ex);
-        default:                         return out;
+        case 'Pivot_Corner_RL':          out.z = -40; break;
+        case 'Pivot_Corner_FR':          out.set(228, 54, 44); break;
+        case 'Pivot_Corner_RR':          out.set(-112, 0, 45); break;
       }
+      out.multiplyScalar(ex);
+      if (name === 'Pivot_Flat6_Engine' && vibration) {
+        out.x += Math.sin(time * 75) * vibration;
+        out.y += Math.cos(time * 92) * vibration;
+      }
+      return out;
+    }
+
+    function partOffset(mesh) {
+      const name = mesh.name;
+      const parent = mesh.parent.name;
+      const offset = new THREE.Vector3();
+      if (parent.startsWith('Pivot_WheelSpin')) {
+        const side = parent.endsWith('L') ? -1 : 1;
+        if (/Tire/.test(name)) offset.z = side * 43;
+        else if (/CenterCrestCap|CenterLockHub/.test(name)) offset.z = side * 55;
+        else if (/YSpoke/.test(name)) offset.z = side * 16;
+      } else if (parent === 'Pivot_Interior_Cabin') {
+        if (/SteeringWheel|Steering_/.test(name)) offset.set(2, 12, -16);
+        else if (/Dash_|DigitalCluster|PCMScreen|SportChrono|RotaryIgnition|ToggleSwitch/.test(name)) offset.set(15, 7, 0);
+        else if (/Seat_RaceTex_Cushion|Seat_BluePiping/.test(name)) offset.y = 10;
+      } else if (parent === 'Pivot_Drivetrain_Chassis') {
+        if (/PDK_Transaxle|PDK_Bellhousing/.test(name)) offset.set(-22, 12, 0);
+      } else if (parent === 'Pivot_Exhaust_System') {
+        if (/CenterMuffler|Exhaust_Tip/.test(name)) offset.x = -17;
+      } else if (parent === 'Pivot_Flat6_Engine') {
+        if (/IntakePlenum|PlenumText/.test(name)) offset.y = 23;
+        else if (/Butterfly|ITB|FuelRail/.test(name)) offset.y = 10;
+      } else if (parent === 'Pivot_Body_Assembly') {
+        if (/Headlight|Front_Grille|Front_Intake|Front_Air|Front_Expanded/.test(name)) offset.x = 23;
+        else if (/Taillight|Rear_Diffuser|Diffuser_Strake/.test(name)) offset.x = -22;
+        else if (/Glass_Windshield|Glass_Rear|Wiper/.test(name)) offset.y = 16;
+      } else if (parent.startsWith('Pivot_Door_') && /Glass_Door/.test(name)) {
+        offset.y = 16;
+      }
+      return offset;
+    }
+
+    function measureExplodedView() {
+      // Fit the actual exploded meshes, including accessories and the far
+      // wheels. Cache their box corners so resizing needs no geometry traversal.
+      for (const [name, pivot] of Object.entries(pivots))
+        pivot.position.copy(restPos.get(pivot)).add(getExplodeOffset(name, 1, 0, 0, _ev));
+      for (const mesh of allPickableMeshes) {
+        const offset = partOffset(mesh);
+        if (offset.lengthSq()) {
+          explodedParts.set(mesh, { home: mesh.position.clone(), offset });
+          mesh.position.add(offset);
+        }
+      }
+      rootCar.updateMatrixWorld(true);
+      for (const mesh of allPickableMeshes) {
+        if (!mesh.visible) continue;
+        if (!mesh.geometry.boundingBox) mesh.geometry.computeBoundingBox();
+        const {min, max} = mesh.geometry.boundingBox;
+        for (const x of [min.x, max.x]) for (const y of [min.y, max.y]) for (const z of [min.z, max.z])
+          assemblyView.points.push(new THREE.Vector3(x, y, z).applyMatrix4(mesh.matrixWorld));
+      }
+      for (const [pivot, home] of restPos) pivot.position.copy(home);
+      for (const [mesh, part] of explodedParts) mesh.position.copy(part.home);
+      rootCar.updateMatrixWorld(true);
+      fitExplodedCamera();
+    }
+
+    function fitExplodedCamera() {
+      const compact = camera.aspect > 1 ? THREE.MathUtils.clamp((540 - innerHeight) / 120, 0, 1) : 0;
+      assemblyView.compactInset = compact * (barEl.offsetHeight + 24) / innerHeight;
+      if (!assemblyView.points.length) return;
+      const { theta, phi, center } = assemblyView;
+      const eye = new THREE.Vector3(Math.sin(phi)*Math.cos(theta), Math.cos(phi), Math.sin(phi)*Math.sin(theta));
+      const right = new THREE.Vector3().crossVectors(camera.up, eye).normalize();
+      const up = new THREE.Vector3().crossVectors(eye, right);
+      const vertical = Math.tan(THREE.MathUtils.degToRad(15));
+      const side = vertical * camera.aspect * 0.9;
+      const top = vertical * 0.90;
+      const bottom = vertical * THREE.MathUtils.clamp(1 - 2 * (barEl.offsetHeight + 30) / innerHeight, 0.12, 0.85);
+      // Each mesh corner bounds the camera positions that keep it in frame.
+      // Find their common interval, reserving the space occupied by the controls.
+      let leftLimit = Infinity, rightLimit = -Infinity;
+      let lowerLimit = Infinity, upperLimit = -Infinity;
+      let farDepth = Infinity, nearDepth = -Infinity;
+      for (const point of assemblyView.points) {
+        const x = point.dot(right), y = point.dot(up), z = point.dot(eye);
+        leftLimit = Math.min(leftLimit, x - side * z);
+        rightLimit = Math.max(rightLimit, x + side * z);
+        lowerLimit = Math.min(lowerLimit, y - bottom * z);
+        upperLimit = Math.max(upperLimit, y + top * z);
+        farDepth = Math.min(farDepth, z);
+        nearDepth = Math.max(nearDepth, z);
+      }
+      const eyeDepth = Math.max((rightLimit - leftLimit) / (2 * side),
+                                (upperLimit - lowerLimit) / (top + bottom));
+      const centerDepth = (nearDepth + farDepth) / 2;
+      const centerY = (lowerLimit + upperLimit + (bottom - top) * eyeDepth) / 2;
+      center.copy(right).multiplyScalar((leftLimit + rightLimit) / 2)
+        .addScaledVector(up, centerY).addScaledVector(eye, centerDepth);
+      assemblyView.distance = eyeDepth - centerDepth;
+    }
+
+    function advanceIntro(now) {
+      if (!intro) return;
+      const holding = intro.elapsed <= introHoldMs;
+      if (intro.previous !== null) intro.elapsed += Math.max(0, now - intro.previous);
+      intro.previous = now;
+      const progress = THREE.MathUtils.clamp((intro.elapsed - introHoldMs) / introAssemblyMs, 0, 1);
+      const ease = progress * progress * (3 - 2 * progress);
+      state.explode = state.explodeTarget = 1 - ease;
+      state.theta = state.targetTheta = THREE.MathUtils.lerp(assemblyView.theta, exteriorView.theta, ease);
+      state.phi = state.targetPhi = THREE.MathUtils.lerp(assemblyView.phi, exteriorView.phi, ease);
+      if (progress === 1) intro = null;
+      if (!intro || (holding && progress > 0)) updateHudText();
     }
 
     function animate(now) {
@@ -1250,6 +1441,15 @@
           needsRender = false;
         }
         return;
+      }
+
+      const presenting = !!intro;
+      if (presenting) {
+        advanceIntro(now);
+        if (intro && intro.elapsed <= introHoldMs && !needsRender) {
+          scheduleFrame();
+          return;
+        }
       }
 
       // Detect whether camera or any mechanical rig is actively moving
@@ -1280,7 +1480,7 @@
       }
 
       const continuousAnim = state.spinMode || state.steerMode || state.revving || rpmDelta > 5;
-      const geoMoving = mechDelta > 5e-4 || pullActive || continuousAnim;
+      const geoMoving = presenting || mechDelta > 5e-4 || pullActive || continuousAnim;
       const active = needsRender || camDelta > 2e-4 || focusDelta > 1e-3 || xrayDelta > 5e-4 || geoMoving;
 
       const ratio = active ? motionRatio : stillRatio();
@@ -1322,7 +1522,13 @@
       // Preserve horizontal framing on portrait screens.
       state.cabinBlend += (Number(state.interiorView) - state.cabinBlend) * damp;
       const exteriorScale = Math.max(1, 1.42 / camera.aspect);
-      const effRadius = (state.radius + state.explode * 68.0) * THREE.MathUtils.lerp(exteriorScale, 1, state.cabinBlend);
+      const assembledRadius = state.radius * THREE.MathUtils.lerp(exteriorScale, 1, state.cabinBlend);
+      const explodedRadius = state.radius / exteriorView.radius * (assemblyView.distance || 440 * exteriorScale);
+      // The orbit sweeps the front-right tire farther sideways midway through
+      // assembly. Leave room for that arc on a narrow screen.
+      const portraitMargin = THREE.MathUtils.clamp(1.5 - camera.aspect, 0, 1);
+      const turnClearance = 1 + 0.44 * portraitMargin * state.explode * (1 - state.explode);
+      const effRadius = THREE.MathUtils.lerp(assembledRadius, explodedRadius, state.explode) * turnClearance;
       // At the driver's eye point, widen the lens on portrait screens instead of
       // backing the camera out through the seat or the rear glass.
       const cabinFov = Math.max(45, THREE.MathUtils.radToDeg(2 * Math.atan(Math.tan(0.50) / camera.aspect)));
@@ -1331,13 +1537,17 @@
         camera.fov = fov;
         camera.updateProjectionMatrix();
       }
-      const effY = state.targetCenter.y + state.explode * 16.0;
+      const effX = state.targetCenter.x + state.explode * (assemblyView.center.x - FOCUS_EXTERIOR.x);
+      // On short landscape screens, aim the assembled exterior above the toolbar.
+      const compactLift = effRadius * Math.tan(Math.PI / 12) * assemblyView.compactInset * (1 - state.explode) * (1 - state.cabinBlend);
+      const effY = state.targetCenter.y + state.explode * (assemblyView.center.y - FOCUS_EXTERIOR.y) - compactLift;
+      const effZ = state.targetCenter.z + state.explode * (assemblyView.center.z - FOCUS_EXTERIOR.z);
       camera.position.set(
-        state.targetCenter.x + effRadius * Math.sin(state.phi) * Math.cos(state.theta),
+        effX + effRadius * Math.sin(state.phi) * Math.cos(state.theta),
         effY + effRadius * Math.cos(state.phi),
-        state.targetCenter.z + effRadius * Math.sin(state.phi) * Math.sin(state.theta)
+        effZ + effRadius * Math.sin(state.phi) * Math.sin(state.theta)
       );
-      camera.lookAt(state.targetCenter.x, effY, state.targetCenter.z);
+      camera.lookAt(effX, effY, effZ);
 
       // Engine RPM dynamics (900 idle -> 9,000 RPM GT3 shriek!)
       if (rpmDelta > 1) {
@@ -1405,11 +1615,15 @@
           }
         }
 
-        // Update any individually Alt-grabbed single mesh pull offsets
+        for (const [mesh, part] of explodedParts) {
+          mesh.position.copy(part.home).addScaledVector(part.offset, ex);
+        }
+        // A manual pull adds to the part's current assembly position.
         for (const [obj, ps] of pullOffsets.entries()) {
           if (obj.isMesh) {
             ps.cur.lerp(ps.tgt, damp);
-            obj.position.copy(ps.basePos).add(ps.cur);
+            if (!explodedParts.has(obj)) obj.position.copy(ps.basePos);
+            obj.position.add(ps.cur);
           }
         }
         shadowDirty = true;
@@ -1441,6 +1655,7 @@
 
       renderer.render(scene, camera);
       if (!loaderEl.classList.contains('done')) {
+        if (intro) intro.previous = performance.now();
         loaderEl.classList.add('done');
         loaderEl.setAttribute('aria-hidden', 'true');
         barEl.inert = false;
@@ -1453,6 +1668,7 @@
       camera.updateProjectionMatrix();
       renderer.setPixelRatio(stillRatio());
       renderer.setSize(window.innerWidth, window.innerHeight);
+      fitExplodedCamera();
       wake(false);
     });
 
