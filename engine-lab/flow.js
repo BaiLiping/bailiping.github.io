@@ -2,7 +2,7 @@
 // hot boosted air up to the intercooler, cooled charge to the six ports, exhaust pulses to the turbine, and the
 // wastegate's surplus round it. Each cylinder's runner flows only while its valve is open.
 import * as T from './vendor/three.bundle.min.js';
-import { valveOpen } from './sim.js?v=55e5f21d6a';
+import { valveOpen } from './sim.js?v=4f9d651717';
 
 export const KINDS = {
   // kind: colour, particles per metre, base speed in m/s as drawn, point size

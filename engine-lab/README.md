@@ -70,6 +70,9 @@ After changing any script, the stylesheet or the model, run `python3 engine-lab/
 stamp on every asset address from the assets' contents, so a browser that has an older copy cached fetches the
 new files together instead of running old code against a new page.
 
+On a phone the camera stands further back so the engine fits across a narrow screen, the picture is centred in the
+space above the buttons, and the colour key, caption and name tags switch to short forms.
+
 The page makes no third-party requests. It needs WebGL 2. With `prefers-reduced-motion` the crank starts stopped and the opening assembly is skipped.
 `window.engineLab.tick(ms)` steps one frame by hand, for checks in a browser window that is not being painted.
 At start-up it times a few frames and lowers the drawing resolution and shading quality if the graphics chip

@@ -209,6 +209,7 @@ main { position: fixed; inset: 0; }
 
 #legend[hidden] { display: none; }
 #legend li { display: grid; grid-template-columns: 12px 1fr; gap: 8px; align-items: start; }
+.short { display: none; }
 #legend i { width: 11px; height: 11px; margin-top: 2px; border-radius: 50%; }
 
 /* the explainer: the original cutaways, laid over the stage on request */
@@ -253,18 +254,44 @@ body.quiet .home:focus-visible { opacity: 1; }
   white-space: nowrap;
 }
 
-@media (max-width: 640px) {
+/* a phone: short labels, a compact key, smaller buttons, tags as titles only */
+@media (max-width: 640px), (max-height: 500px) {
   .line { font-size: 10.5px; }
   .note { display: none; }
-  .caption { font-size: 11.5px; }
-  .tag { max-width: 150px; font-size: 9.5px; }
-  #tools { max-width: 400px; }
-  #tools button, #tools summary { padding: 0 9px; min-height: 40px; font-size: 11px; }
+  .long { display: none; }
+  .short { display: inline; }
+  #legend {
+    top: max(30px, calc(env(safe-area-inset-top) + 22px));
+    left: 8px;
+    right: 8px;
+    width: auto;
+    grid-template-columns: repeat(auto-fit, minmax(118px, 1fr));
+    gap: 3px 8px;
+    padding: 5px 8px;
+    font-size: 10px;
+  }
+  #legend li { grid-template-columns: 9px 1fr; gap: 5px; align-items: center; }
+  #legend i { width: 9px; height: 9px; margin: 0; }
+  .caption { top: 88px; width: calc(100vw - 16px); font-size: 11px; line-height: 1.4; padding: 4px 8px; }
+  .tag { max-width: 132px; font-size: 9px; padding: 1px 4px; }
+  .tag span { display: none; }
+  #bar { gap: 5px; bottom: max(8px, env(safe-area-inset-bottom)); padding: 0 6px; }
+  #drag-hint { font-size: 12px; }
+  #tools { gap: 3px; }
+  #tools button, #tools summary { padding: 0 8px; min-height: 38px; font-size: 11px; }
   #more { position: static; }
   #more div { left: 50%; right: auto; transform: translateX(-50%); }
   #status { font-size: 10px; }
   #callout { display: none; }
-  #legend { top: 34px; width: min(210px, 58vw); font-size: 10px; gap: 3px; padding: 6px 8px; }
+}
+
+/* a phone on its side: one row of buttons, no room for the caption */
+@media (max-height: 500px) {
+  #drag-hint { font-size: 11px; }
+  #tools { flex-wrap: nowrap; }
+  #tools button, #tools summary { padding: 0 6px; min-height: 32px; font-size: 10.5px; white-space: nowrap; }
+  .caption { display: none; }
+  #legend { grid-template-columns: repeat(auto-fit, minmax(104px, 1fr)); right: auto; width: min(60vw, 460px); }
 }
 
 @media (prefers-reduced-motion: reduce) {

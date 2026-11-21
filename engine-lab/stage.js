@@ -307,6 +307,7 @@ export async function createStage(canvas, url, onProgress) {
   let cut = null;
 
   const quality = { level: 0, scales: [1, 0.8, 0.64, 0.5] };
+  let inset = 0;              // CSS pixels at the bottom of the canvas covered by the control bar
 
   /**
    * Match the drawing buffers to the canvas's size on the page, within a pixel budget.
@@ -324,8 +325,20 @@ export async function createStage(canvas, url, onProgress) {
     post.uniforms.uTexel.value.set(1 / (w * ratio), 1 / (h * ratio));
     post.uniforms.uQuality.value = coarse || quality.level >= 2 ? 0 : 1;
     camera.aspect = w / h;
+    // centre the picture in the part of the canvas the control bar leaves free
+    if (inset > 0) camera.setViewOffset(w, h, 0, inset / 2, w, h); else camera.clearViewOffset();
     camera.updateProjectionMatrix();
     post.uniforms.uAoScale.value = camera.projectionMatrix.elements[5] * 0.5;
+  }
+
+  /**
+   * Say how much of the canvas's bottom the control bar covers.
+   * Takes the height in CSS pixels. Returns nothing.
+   */
+  function setInset(pixels) {
+    if (Math.abs(pixels - inset) < 2) return;
+    inset = pixels;
+    resize();
   }
 
   /**
@@ -449,5 +462,5 @@ export async function createStage(canvas, url, onProgress) {
   }
 
   resize();
-  return { setFocus, screenPoint, renderer, scene, overlay, camera, parts, byName, clip, resize, pick, setCut, setHover, render, calibrate, setLink, commitLinks, quality, coarse, cutNames: Object.keys(CUTS) };
+  return { setFocus, screenPoint, setInset, renderer, scene, overlay, camera, parts, byName, clip, resize, pick, setCut, setHover, render, calibrate, setLink, commitLinks, quality, coarse, cutNames: Object.keys(CUTS) };
 }

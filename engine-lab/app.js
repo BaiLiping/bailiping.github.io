@@ -2,10 +2,10 @@
 // stage to turn it, hold the throttle and watch boost arrive late. The model is engine930.glb, built by the
 // script in model/; this file poses it, runs the small engine model in sim.js and wires the keys.
 import * as T from './vendor/three.bundle.min.js';
-import { createStage } from './stage.js?v=55e5f21d6a';
-import { createSim, step, nudge } from './sim.js?v=55e5f21d6a';
-import { createFlow, createMotes, KINDS } from './flow.js?v=55e5f21d6a';
-import { createSound } from './sound.js?v=55e5f21d6a';
+import { createStage } from './stage.js?v=4f9d651717';
+import { createSim, step, nudge } from './sim.js?v=4f9d651717';
+import { createFlow, createMotes, KINDS } from './flow.js?v=4f9d651717';
+import { createSound } from './sound.js?v=4f9d651717';
 
 const canvas = document.getElementById('stage');
 const statusEl = document.getElementById('status');
@@ -23,20 +23,20 @@ const GROUP_NAMES = { crank: 'crank train', rods: 'crank train', pistons: 'crank
 // What each colour of gas is, for the key shown beside the engine. Entries are [kind, which end of its colour
 // change, text]; the streams inside the turbocharger change colour where they meet their wheel.
 const LEGEND = {
-  ambient: 'fresh air, drawn in through the air cleaner',
-  boost: 'the same air after the compressor: squeezed, and hot',
-  charge: 'that air cooled by the intercooler, going into the cylinders',
-  exhaust: 'exhaust from the cylinders, on its way to the turbine',
-  exhaust_out: 'exhaust that has been through the turbine',
-  wastegate: 'surplus exhaust sent round the turbine by the wastegate, at full boost',
-  recirc: 'boost returned to the inlet when the throttle shuts',
-  cooling: 'cooling air from the fan',
-  turbine_swirl: ['exhaust entering the turbine, hot and fast', 'the same exhaust leaving, its energy spent on the wheel'],
-  compressor_swirl: ['fresh air entering the compressor', 'the same air leaving, compressed'],
+  ambient: [['fresh air, drawn in through the air cleaner', 'fresh air']],
+  boost: [['the same air after the compressor: squeezed, and hot', 'compressed, hot']],
+  charge: [['that air cooled by the intercooler, going into the cylinders', 'cooled charge']],
+  exhaust: [['exhaust from the cylinders, on its way to the turbine', 'exhaust']],
+  exhaust_out: [['exhaust that has been through the turbine', 'after the turbine']],
+  wastegate: [['surplus exhaust sent round the turbine by the wastegate, at full boost', 'wastegate']],
+  recirc: [['boost returned to the inlet when the throttle shuts', 'recirculated']],
+  cooling: [['cooling air from the fan', 'cooling air']],
+  turbine_swirl: [['exhaust entering the turbine, hot and fast', 'exhaust in'], ['the same exhaust leaving, its energy spent on the wheel', 'exhaust out']],
+  compressor_swirl: [['fresh air entering the compressor', 'air in'], ['the same air leaving, compressed', 'air out, compressed']],
 };
 
 // The two exhaust views. Each says what stays solid, what turns to glass, which gas is drawn, where the camera
-// goes, what the caption says and which name tags appear. FOCUS[2] is completed in main(), from the model's data.
+// goes, what the caption says (in full, and in brief for a phone) and which name tags appear. FOCUS[2] is completed in main(), from the model's data.
 const FOCUS = [null, {
   groups: new Set(['exhaust', 'turbo']),
   solid: ['Charge_Pipe', 'Alternator', 'ExhaustValve_1', 'ExhaustValve_2', 'ExhaustValve_3', 'ExhaustValve_4', 'ExhaustValve_5', 'ExhaustValve_6'],
@@ -44,6 +44,7 @@ const FOCUS = [null, {
   kinds: new Set(['exhaust', 'exhaust_out', 'wastegate', 'boost']),
   demand: 0,
   view: { yaw: 4.5, pitch: 0.72, dist: 2.3, target: new T.Vector3(-0.3, -0.08, -0.04) },
+  brief: 'Exhaust from all six cylinders spins the turbine; its shaft drives the compressor. That is boost, not electricity: the alternator makes that.',
   caption: 'Exhaust energy: the hot gas from all six cylinders spins the turbine, and its shaft drives the compressor, which packs more air into the engine. That is boost, not electricity. The electricity comes from the alternator in the fan hub, turned by the belt.',
   tags: [
     ['HeatExchanger_L', 'heat exchanger', 'gathers the exhaust of cylinders 1 to 3'],
@@ -66,6 +67,7 @@ const FOCUS = [null, {
   glass: new Set(['Turbo_Turbine_Housing', 'Turbo_Compressor_Housing', 'Turbo_Centre_Housing', 'Turbine_Inlet_Pipe', 'Turbine_Outlet_Pipe', 'Charge_Pipe']),
   kinds: new Set(['turbine_swirl', 'compressor_swirl']),
   demand: 0.55,                 // enough throttle to keep the rotor turning while it is being looked at
+  brief: 'Exhaust winds round the turbine’s shell and through its wheel. The shaft turns the compressor wheel, which flings fresh air outward at pressure.',
   caption: 'Inside the turbocharger: exhaust enters the turbine’s shell at its wide end and is squeezed round a narrowing passage, so it meets the wheel fast and all the way round. Pushing the blades turns the wheel and costs the gas energy; it leaves along the axis. The shaft turns the compressor wheel at the same speed, and that wheel flings fresh air outward at pressure.',
   tags: [],
 }];
@@ -204,7 +206,9 @@ function endIntro() {
  * Takes nothing. Returns nothing.
  */
 function placeTags() {
-  const w = canvas.clientWidth, sides = { left: [], right: [] };
+  const w = canvas.clientWidth, small = w < 700 || canvas.clientHeight < 500, sides = { left: [], right: [] };
+  const limit = document.getElementById('bar').getBoundingClientRect().top - 6;
+  const top = Math.max(34, small ? document.getElementById('legend').getBoundingClientRect().bottom + 4 : 0);       // clear of the colour key
   for (const t of tags) {
     const p = stage.screenPoint(t.anchor);
     t.p = p;
@@ -215,15 +219,19 @@ function placeTags() {
   for (const [side, list] of Object.entries(sides)) {
     if (!list.length) continue;
     list.sort((a, b) => a.p.y - b.p.y);
-    // one column per side, standing clear of the parts it names
+    // one column per side: standing clear of the parts it names, or at the page's edge on a small screen
     const edge = side === 'left' ? Math.min(...list.map((t) => t.p.x)) - 70 : Math.max(...list.map((t) => t.p.x)) + 70;
     let floor = -1e9;
     for (const t of list) {
-      const y = Math.max(t.p.y - 8, floor);
-      floor = y + t.el.offsetHeight + 6;
-      const x = side === 'left' ? Math.max(8, edge - t.el.offsetWidth) : Math.min(w - t.el.offsetWidth - 8, edge);
+      t.y = Math.max(t.p.y - 8, floor);
+      floor = t.y + t.el.offsetHeight + 5;
+    }
+    const lift = Math.max(0, floor - limit);              // keep the column above the control bar
+    for (const t of list) {
+      const y = Math.max(top, t.y - lift), tw = t.el.offsetWidth;
+      const x = side === 'left' ? (small ? 6 : Math.max(8, edge - tw)) : (small ? w - tw - 6 : Math.min(w - tw - 8, edge));
       t.el.style.transform = `translate(${Math.round(x)}px, ${Math.round(y)}px)`;
-      const lx = side === 'left' ? x + t.el.offsetWidth + 3 : x - 3;
+      const lx = side === 'left' ? x + tw + 3 : x - 3;
       lines += `<line x1="${t.p.x.toFixed(1)}" y1="${t.p.y.toFixed(1)}" x2="${lx.toFixed(1)}" y2="${(y + 9).toFixed(1)}"/><circle cx="${t.p.x.toFixed(1)}" cy="${t.p.y.toFixed(1)}" r="2.6"/>`;
     }
   }
@@ -247,7 +255,8 @@ function aim(dt) {
     if (Math.abs(g.yaw - view.yaw) + Math.abs(g.pitch - view.pitch) + Math.abs(g.dist - view.dist) < 0.004) view.goal = null;
   }
   view.pitch = T.MathUtils.clamp(view.pitch, 0.015, 1.5);
-  const c = Math.cos(view.pitch), dist = view.dist * (1 + 0.32 * ui.spread);         // step back as the parts spread out
+  // step back as the parts spread out, and on a tall narrow screen, where the engine would not fit across
+  const c = Math.cos(view.pitch), dist = view.dist * (1 + 0.32 * ui.spread) * Math.max(1, 1.15 / stage.camera.aspect);
   stage.camera.position.set(view.target.x + dist * c * Math.cos(view.yaw), view.target.y + dist * Math.sin(view.pitch),
     view.target.z + dist * c * Math.sin(view.yaw));
   stage.camera.lookAt(view.target);
@@ -318,13 +327,13 @@ function setFocus(level) {
   tags = (f ? f.tags : []).filter(([at]) => typeof at !== 'string' || stage.byName.has(at)).map(([at, title, text]) => {
     const el = document.createElement('p');
     el.className = 'line tag';
-    el.innerHTML = `<b>${title}</b>${text ? ` ${text}` : ''}`;
+    el.innerHTML = `<b>${title}</b>${text ? ` <span>${text}</span>` : ''}`;
     layer.append(el);
     return { anchor: typeof at === 'string' ? stage.byName.get(at) : at, el };
   });
   layer.hidden = !f;
   caption.hidden = !f;
-  caption.textContent = f ? f.caption : '';
+  caption.innerHTML = f ? `<span class="long">${f.caption}</span><span class="short">${f.brief}</span>` : '';
 }
 
 /**
@@ -339,11 +348,10 @@ function showLegend(kinds) {
   el.hidden = !kinds;
   el.replaceChildren();
   for (const kind of kinds || []) {
-    const texts = [].concat(LEGEND[kind] || []), colours = [KINDS[kind].color, KINDS[kind].to];
-    texts.forEach((text, i) => {
-      const item = document.createElement('li'), dot = document.createElement('i');
-      dot.style.background = colours[i];
-      item.append(dot, text);
+    const colours = [KINDS[kind].color, KINDS[kind].to];
+    (LEGEND[kind] || []).forEach(([long, short], i) => {
+      const item = document.createElement('li');
+      item.innerHTML = `<i style="background:${colours[i]}"></i><span class="long">${long}</span><span class="short">${short}</span>`;
       el.append(item);
     });
   }
@@ -536,7 +544,13 @@ function bind() {
     b.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') ui.demandTouch = 1; });
     b.addEventListener('keyup', (e) => { if (e.key === 'Enter' || e.key === ' ') ui.demandTouch = 0; });
   }
-  new ResizeObserver(() => { stage.resize(); sizeParticles(); }).observe(canvas);
+  const fit = () => {
+    stage.resize();
+    stage.setInset(window.innerHeight - document.getElementById('bar').getBoundingClientRect().top);
+    sizeParticles();
+  };
+  new ResizeObserver(fit).observe(canvas);
+  new ResizeObserver(fit).observe(document.getElementById('bar'));
 }
 
 /**
@@ -545,8 +559,8 @@ function bind() {
  */
 async function main() {
   statusEl.textContent = 'loading the engine';
-  info = await (await fetch('./engine930.json?v=55e5f21d6a')).json();
-  stage = await createStage(canvas, './engine930.glb?v=55e5f21d6a', (f) => { statusEl.textContent = `loading the engine  ${Math.min(100, Math.round(f * 100))}%`; });
+  info = await (await fetch('./engine930.json?v=4f9d651717')).json();
+  stage = await createStage(canvas, './engine930.glb?v=4f9d651717', (f) => { statusEl.textContent = `loading the engine  ${Math.min(100, Math.round(f * 100))}%`; });
   sim = createSim(info.spec);
   const still = matchMedia('(prefers-reduced-motion: reduce)').matches;
   sim.running = !still;
