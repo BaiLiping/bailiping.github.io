@@ -102,9 +102,10 @@ export function createFlow(info, scene, pixelScale) {
 
   /**
    * Move the particles and set how visible each stream is.
-   * Takes the engine state from sim.js, the time step and the overall fade (0 to 1). Returns nothing.
+   * Takes the engine state from sim.js, the time step, the overall fade (0 to 1) and an optional set of gas kinds
+   * to show alone. Returns nothing.
    */
-  function update(sim, dt, fade) {
+  function update(sim, dt, fade, only) {
     object.visible = fade > 0.01;
     if (!object.visible) return;
     const load = 0.3 + 0.7 * (sim.rpm / sim.spec.redline) * (0.4 + 0.6 * sim.throttle + sim.boost);
@@ -133,7 +134,7 @@ export function createFlow(info, scene, pixelScale) {
       along(path, p.s, tmp).add(p.jitter);
       position[i * 3] = tmp.x; position[i * 3 + 1] = tmp.y; position[i * 3 + 2] = tmp.z;
       const ends = Math.min(1, p.s / 0.03, (path.total - p.s) / 0.03);       // fade in and out at the ends
-      color[i * 4 + 3] = alpha * fade * Math.max(0, ends);
+      color[i * 4 + 3] = only && !only.has(path.kind) ? 0 : alpha * fade * Math.max(0, ends);
     }
     geometry.attributes.position.needsUpdate = true;
     geometry.attributes.color.needsUpdate = true;

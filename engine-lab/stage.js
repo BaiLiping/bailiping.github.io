@@ -99,6 +99,9 @@ void main() {
   vec3 ghost = mix(paper, vec3(lum) * 0.6 + paper * 0.5, 0.42);
   if (!sky && !ground) col = mix(col, ghost, uGhost);
   float line = max(edge, crease * 0.42) * mix(0.9, 0.5, uGhost);
+  // lines fade with distance, so the far edge of the floor never draws a horizon
+  float reach = sky ? -max(max(pr.z, pl.z), max(pu.z, pd.z)) : -p.z;
+  line *= 1.0 - smoothstep(uFogNear, uFogFar, reach);
   col = mix(col, uInk, line);
   // haze toward the horizon
   float fog = sky ? 1.0 : smoothstep(uFogNear, uFogFar, -p.z);
@@ -357,6 +360,7 @@ export async function createStage(canvas, url, onProgress) {
     raycaster.setFromCamera(ndc, camera);
     for (const hit of raycaster.intersectObjects(meshes, false)) {
       const part = hit.object.userData.part;
+      if (part.ghost) continue;                                                // faded out by the focus view
       if (cut && part.cut && cut.distanceToPoint(hit.point) < 0) continue;      // that surface has been cut away
       return { part, point: hit.point.clone() };
     }
@@ -407,6 +411,42 @@ export async function createStage(canvas, url, onProgress) {
     renderer.autoClear = true;
   }
 
+  // focus view: the parts of one system stay solid, housings named as clear turn to glass, the rest fades
+  const ghost = new T.MeshBasicMaterial({ color: 0x7d776c, transparent: true, opacity: 0.05, depthWrite: false });
+  const glass = new T.MeshStandardMaterial({ color: 0xd4d8da, metalness: 0.1, roughness: 0.2, transparent: true, opacity: 0.26, depthWrite: false, side: T.DoubleSide });
+
+  /**
+   * Show one system on its own.
+   * Takes the set of part names to keep solid and the set to draw as glass, or null to show everything again.
+   * Returns nothing.
+   */
+  function setFocus(solid, clear) {
+    for (const p of parts) {
+      const mode = !solid ? 'base' : clear.has(p.name) ? 'glass' : solid.has(p.name) ? 'base' : 'ghost';
+      p.ghost = mode === 'ghost';
+      p.mesh.traverse((o) => {
+        if (!o.isMesh) return;
+        o.userData.base ??= o.material;
+        o.material = mode === 'ghost' ? ghost : mode === 'glass' ? glass : o.userData.base;
+        o.castShadow = mode === 'base';
+      });
+    }
+  }
+
+  /**
+   * Where a part is on the page.
+   * Takes a part record. Returns { x, y } in CSS pixels and whether the point is in front of the camera.
+   */
+  function screenPoint(part) {
+    const m = part.mesh, v = new T.Vector3();
+    if (m.geometry) {
+      if (!m.geometry.boundingSphere) m.geometry.computeBoundingSphere();
+      v.copy(m.geometry.boundingSphere.center).applyMatrix4(m.matrixWorld);
+    } else m.getWorldPosition(v);
+    v.project(camera);
+    return { x: (v.x * 0.5 + 0.5) * canvas.clientWidth, y: (-v.y * 0.5 + 0.5) * canvas.clientHeight, front: v.z < 1 };
+  }
+
   resize();
-  return { renderer, scene, overlay, camera, parts, byName, clip, resize, pick, setCut, setHover, render, calibrate, setLink, commitLinks, quality, coarse, cutNames: Object.keys(CUTS) };
+  return { setFocus, screenPoint, renderer, scene, overlay, camera, parts, byName, clip, resize, pick, setCut, setHover, render, calibrate, setLink, commitLinks, quality, coarse, cutNames: Object.keys(CUTS) };
 }

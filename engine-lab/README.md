@@ -22,10 +22,14 @@ Unofficial. Built from published dimensions and photographs studied as reference
 
 ## Keys
 
-`↑` throttle · `x` explode · `c` cutaway (top, side, cross-section, off) · `g` gas flow · `r` reassemble ·
+`↑` throttle · `x` explode · `c` cutaway (top, side, cross-section, off) · `g` gas flow ·
+`e` exhaust energy (the exhaust and turbocharger alone, with name tags) · `r` reassemble ·
 `space` stop or start the crank · `←` `→` turn it by hand while stopped (shift for one degree) · `m` sound ·
 `h` hide the type · `i` how it works · `+` `−` zoom · `0` reset the view. The named commands are also buttons in
 the hint line; zoom, reset and turning the crank by hand are keys only (wheel and pinch also zoom).
+
+The page opens with every part out in the exploded view and assembles the engine, the nearest parts first; any
+key or click cuts that short. A prompt says that parts can be dragged off; it goes once one has been.
 
 The crank is drawn at one fortieth of its real speed. Sound follows the real revs.
 
@@ -48,6 +52,7 @@ python3 -m http.server 8765        # from the repository root, then open http://
 python3 scripts/build-search-index.py --check
 ```
 
-The page makes no third-party requests. It needs WebGL 2. With `prefers-reduced-motion` the crank starts stopped.
+The page makes no third-party requests. It needs WebGL 2. With `prefers-reduced-motion` the crank starts stopped and the opening assembly is skipped.
+`window.engineLab.tick(ms)` steps one frame by hand, for checks in a browser window that is not being painted.
 At start-up it times a few frames and lowers the drawing resolution and shading quality if the graphics chip
 needs it.
