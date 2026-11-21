@@ -1,0 +1,1757 @@
+[
+ {
+  "group": "bottom-end",
+  "facts": [
+   {
+    "item": "Crankshaft main journal diameter (2.7-3.3 L engines)",
+    "value": "64 mm (LN Engineering table); alternatively ~60 mm (59.971-59.990 mm) per forum posts quoting the 964 shop manual, which shares the same crank family",
+    "source_url": "https://docs.lnengineering.com/article/66-vw-and-porsche-main-and-rod-journal-diameters",
+    "source_kind": "vendor_listing",
+    "note": "This is the central unresolved conflict. LN Engineering lists 64 mm for all 2.7-3.3 L engines. The tech-racingcars wiki lists 60 mm for the 1978 3.3 (with '60-55 mm' notation suggesting two sizes). Forum posts quoting a 964 shop manual give 59.97-59.99 mm. See conflicts."
+   },
+   {
+    "item": "Crankshaft rod journal diameter",
+    "value": "55 mm (54.971-54.990 mm tolerance band)",
+    "source_url": "https://rennlist.com/forums/993-forum/253360-993-crank-vs-964-vs-turbo.html",
+    "source_kind": "forum",
+    "note": "Consistent across multiple sources. The 3.2 Carrera, 3.3 Turbo and 3.6 964 share the same rod journal diameter. Paul Frere's book also gives 55 mm."
+   },
+   {
+    "item": "Crankshaft rod journal width",
+    "value": "22 mm (21.8 mm per Frere's book)",
+    "source_url": "https://rennlist.com/forums/993-forum/253360-993-crank-vs-964-vs-turbo.html",
+    "source_kind": "forum",
+    "note": "Rennlist gives 22 mm; Frere's book gives 21.8 mm. The 993 narrowed this to 19 mm. Aftermarket rod vendors list big-end width of 21.74 mm. All three numbers are within 0.3 mm."
+   },
+   {
+    "item": "Number of main bearings",
+    "value": "8 (7 main bearings plus 1 nose bearing #8 at pulley end)",
+    "source_url": "http://tech-racingcars.wikidot.com/porsche-930",
+    "source_kind": "reference_site",
+    "note": "The nose bearing (#8) is a smaller plain bearing supporting the crank snout at the pulley end. Part number 964.101.138.01 covers 911/964/993/996 Turbo."
+   },
+   {
+    "item": "Nose bearing #8 location",
+    "value": "At the pulley (fan) end of the crankshaft; the protruding snout beyond the case on a 3.2 is 60 mm long",
+    "source_url": "https://www.design911.com/p/nose-bearing-no-8-porsche-911-964-993-996-turbo-96410113801/",
+    "source_kind": "vendor_listing",
+    "note": "The nose bearing journal diameter itself was not found in any source. The 60 mm figure is the snout protrusion length from one forum post about a 3.2 Carrera."
+   },
+   {
+    "item": "Crankshaft material",
+    "value": "42CrMo4 or CK45 forged steel",
+    "source_url": "http://tech-racingcars.wikidot.com/porsche-930",
+    "source_kind": "reference_site",
+    "note": "Listed for the 930 Group 3 racing car but the same alloys are standard for Porsche road cranks. The crank is fully counterweighted and forged."
+   },
+   {
+    "item": "Flywheel bolt count",
+    "value": "9 bolts for the 1978-89 3.3 L Turbo (M8 x 1.25 x 80 mm hex-head bolts with wave washers)",
+    "source_url": "https://www.rauchandspiegel.com/product/flywheel-billet-steel-stock-type-240mm-9-bolt/",
+    "source_kind": "vendor_listing",
+    "note": "The earlier 3.0 Turbo (1975-77) used 6 bolts. Multiple vendors consistently list 9 bolts for the 3.3 L flywheel."
+   },
+   {
+    "item": "Crank pulley diameter",
+    "value": "126 mm (non-A/C cars)",
+    "source_url": "https://www.design911.co.uk/porsche/911-1984-89/porsche-crankshafts-and-engine-components/",
+    "source_kind": "vendor_listing",
+    "note": "Design911 lists 126 mm for the 1976-89 911/930 crank pulley without A/C. Cars with A/C use a different, larger pulley arrangement."
+   },
+   {
+    "item": "Crankshaft throws",
+    "value": "6 crankpins arranged in 3 pairs at 120 degrees apart; each pair carries two rods from opposed cylinders on separate but closely adjacent pins",
+    "source_url": "https://kfz-tech.de/Engl/Sechszylinder-Boxermotor.htm",
+    "source_kind": "reference_site",
+    "note": "The page describes 'crankpins in three levels.' In a boxer six, each opposed pair has its own crankpin (not shared like a V6), so there are 6 pins total. The firing order 1-6-2-4-3-5 with 120-degree spacing means pairs are: cyl 1+4, cyl 2+5, cyl 3+6."
+   },
+   {
+    "item": "Crankcase construction",
+    "value": "Vertically split on the crankshaft axis into left and right halves, through-bolted together",
+    "source_url": "https://newsroom.porsche.com/en_US/2023/products/porsche-classic-new-magnesium-crankcases-for-early-911-31513.html",
+    "source_kind": "manufacturer",
+    "note": "This is the standard air-cooled 911 architecture. The crankshaft and rods are installed before the halves are joined."
+   },
+   {
+    "item": "Crankcase through-bolt count",
+    "value": "11 through-bolts, M10 x 1.5 thread",
+    "source_url": "https://lnengineering.com/arp-porsche-911-3-6-3-8-964-993-crankcase-thru-bolt-kit/",
+    "source_kind": "vendor_listing",
+    "note": "ARP kit 204-5405 for 3.0-3.3 L engines includes 11 studs. Design911 also sells through-bolt kits in sets of 11. There are also M8 perimeter nuts around the case joint torqued to 25 Nm. One forum post about a 2.4 engine mentions 13 through-bolts, suggesting the count may vary by era."
+   },
+   {
+    "item": "Crankcase material (3.0 SC / 3.2 Carrera / 3.3 Turbo era)",
+    "value": "Aluminum alloy, die-cast; forum sources say close to A356.0-T6; SAE papers cite Porsche using AlSi17Cu4Mg (alloy 390) for air-cooled 911 blocks",
+    "source_url": "https://saemobilus.sae.org/papers/casting-engine-blocks-gk-al-si-17-cu-4-mg-830003",
+    "source_kind": "reference_site",
+    "note": "Early 911s (1968-1977) used magnesium cases. From the Carrera 3.0 (1976) onward, Porsche switched to aluminum. The 930 Turbo uses an aluminum case. Porsche Classic now sells new magnesium cases for pre-1977 cars only."
+   },
+   {
+    "item": "Crankcase deck height (crank centerline to cylinder spigot top)",
+    "value": "Approximately 112.5 mm",
+    "source_url": "https://forums.pelicanparts.com/911-engine-rebuilding-forum/440853-deck-height.html",
+    "source_kind": "forum",
+    "note": "Forum poster measured 112.4-112.5 mm from crank center to top of cylinder spigot bore. Combined with a cylinder height of ~85.3-85.5 mm gives a total piston-to-crank distance consistent with the computed 197 mm. This is for the SC/3.2 case; the 930 Turbo shares the same case dimensions."
+   },
+   {
+    "item": "Cylinder spigot register diameter",
+    "value": "105 mm (for 3.0-3.3 L engines)",
+    "source_url": "https://www.us.mahle.com/media/usa/motorsports/4-porsche-3-0l-3-2l-3-3l.pdf",
+    "source_kind": "manufacturer",
+    "note": "Mahle lists the 3.0-3.3 L CIS engines as using a 105 mm cylinder case register. Machine-in cylinders for larger bores require boring the register to a larger diameter."
+   },
+   {
+    "item": "Cylinder barrel material and coating",
+    "value": "Aluminum alloy barrels with Nikasil (nickel-silicon carbide) bore coating",
+    "source_url": "http://tech-racingcars.wikidot.com/porsche-930",
+    "source_kind": "reference_site",
+    "note": "Nikasil was standard on all 930 Turbo cylinders. The coating is extremely hard and wear-resistant."
+   },
+   {
+    "item": "Cylinder barrel length (95 mm bore, 3.0 L)",
+    "value": "120 mm length, 113 mm spigot diameter",
+    "source_url": "https://marmotorsport.com/porsche-911-930-3-0-sc-carrera-3-0-turbo-mahle-nikasil-cylinder-95mm/",
+    "source_kind": "vendor_listing",
+    "note": "This is for the 95 mm bore 3.0 L barrel. The 97 mm bore 3.3 L barrel dimensions were not found in any source. The barrel height is likely similar or slightly different."
+   },
+   {
+    "item": "Cylinder barrel cooling fins (930 Turbo)",
+    "value": "Partially finned with asymmetrical fins; the turbo cylinders have smaller fins concentrated on the lower portion, with material filling the gaps between fins on the upper portion",
+    "source_url": "https://rennlist.com/forums/911-turbo-930-forum/123979-cylinder-modification.html",
+    "source_kind": "forum",
+    "note": "This differs from naturally aspirated cylinders which are fully finned around the entire circumference. Forum posts describe this as Porsche filling material into the fin gaps. Exact fin count not found."
+   },
+   {
+    "item": "Head studs total count and arrangement",
+    "value": "24 studs total, 4 per cylinder, M10 x 1.5 thread",
+    "source_url": "http://tech-racingcars.wikidot.com/porsche-930",
+    "source_kind": "reference_site",
+    "note": "The studs screw into the crankcase halves and pass up through the cylinder fins and into the head."
+   },
+   {
+    "item": "Head stud material",
+    "value": "12 upper studs: conventional steel; 12 lower (exhaust-side) studs: Dilavar (a non-magnetic low-expansion steel alloy used in Porsche racing engines since the early 1970s)",
+    "source_url": "http://tech-racingcars.wikidot.com/porsche-930",
+    "source_kind": "reference_site",
+    "note": "Dilavar studs are placed on the exhaust side where thermal cycling is most severe. ARP aftermarket replacement kits use 8740 chromoly steel for all positions."
+   },
+   {
+    "item": "Piston pin diameter",
+    "value": "23 mm",
+    "source_url": "https://www.us.mahle.com/media/usa/motorsports/4-porsche-3-0l-3-2l-3-3l.pdf",
+    "source_kind": "manufacturer",
+    "note": "Confirmed by the Mahle application guide PDF. The earlier 3.0 Turbo (95 mm bore) used a 22 mm pin."
+   },
+   {
+    "item": "Piston ring pack (3.3 L Turbo, 98 mm bore Mahle kit)",
+    "value": "1.2 mm, 1.2 mm, 3.0 mm (top compression, second compression, oil control)",
+    "source_url": "https://www.us.mahle.com/media/usa/motorsports/4-porsche-3-0l-3-2l-3-3l.pdf",
+    "source_kind": "manufacturer",
+    "note": "From the Mahle motorsport application guide. FVD also lists the same ring dimensions: 1.2 / 1.2 / 3.0 mm for the 930 3.3 L at 98 mm."
+   },
+   {
+    "item": "Piston compression height",
+    "value": "32.8 mm",
+    "source_url": "https://www.us.mahle.com/media/usa/motorsports/4-porsche-3-0l-3-2l-3-3l.pdf",
+    "source_kind": "manufacturer",
+    "note": "Confirmed in the Mahle PDF for the 930 Turbo 3.3 L to 3.4 L kit. The 3.0 Turbo (Group 3) used 35.7 mm."
+   },
+   {
+    "item": "Piston crown volume and weight",
+    "value": "Crown volume 14.2 cc, piston weight 436 g, material 4032 forged aluminum alloy",
+    "source_url": "https://www.us.mahle.com/media/usa/motorsports/4-porsche-3-0l-3-2l-3-3l.pdf",
+    "source_kind": "manufacturer",
+    "note": "These are from the Mahle PS98-009 kit (7.7:1 CR, 98 mm bore). The OEM 930 Turbo uses 97 mm bore with 7.0:1 CR; the Mahle kit is a performance replacement with slightly larger bore and higher CR."
+   },
+   {
+    "item": "Connecting rod length",
+    "value": "127 mm center-to-center (some sources give 127.75 mm)",
+    "source_url": "https://www.us.mahle.com/media/usa/motorsports/4-porsche-3-0l-3-2l-3-3l.pdf",
+    "source_kind": "manufacturer",
+    "note": "Mahle PDF lists 127 mm for the 3.3 L 930 Turbo. The 127.75 mm figure appears in aftermarket rod listings and may represent nominal OEM length. The tech-racingcars wiki gives 127.75 mm for the Group 3 car."
+   },
+   {
+    "item": "Connecting rod big-end bore",
+    "value": "58 mm (1978+ 3.3 L Turbo)",
+    "source_url": "http://tech-racingcars.wikidot.com/porsche-930",
+    "source_kind": "reference_site",
+    "note": "Tech-racingcars lists 'big-end bearing tunnel 58 mm' for the 1978 engine, up from 56 mm on the earlier 3.0. Some aftermarket rod vendors list 58.014 mm."
+   },
+   {
+    "item": "Connecting rod bolt size",
+    "value": "3/8 inch (9.525 mm), 69 mm bolt length",
+    "source_url": "https://sportignition.com/product/cp-carrillo-forged-pro-h-beam-connecting-rods-porsche-911-930-turbo-3-2-3-3l/",
+    "source_kind": "vendor_listing",
+    "note": "Listed across multiple aftermarket rod vendors. Standard WMC bolts have 220 ksi UTS; upgraded Carrillo bolts reach 285 ksi."
+   },
+   {
+    "item": "Flywheel and clutch diameter",
+    "value": "240 mm clutch disc, 9-bolt flywheel",
+    "source_url": "https://patrickmotorsports.com/products/flw930102202213pms",
+    "source_kind": "vendor_listing",
+    "note": "Multiple vendors consistently list 240 mm for the 930 Turbo clutch. Patrick Motorsports sells OE-style billet flywheels at 240 mm with 9 bolt pattern."
+   },
+   {
+    "item": "Ring gear tooth count",
+    "value": "135 teeth, internal diameter approximately 230 mm, external diameter approximately 280 mm",
+    "source_url": "https://www.design911.co.uk/porsche/930--911--turbo-3-3l/clutch-ring-gear/",
+    "source_kind": "vendor_listing",
+    "note": "One Design911 listing gives 225 mm internal diameter; another gives 230 mm. The 135 teeth count is consistent. The earlier 3.0 Turbo (1975-77) used a 130-tooth ring gear for the 12V starter."
+   },
+   {
+    "item": "Direction of crankshaft rotation",
+    "value": "Clockwise as viewed from the pulley (rear/fan) end of the engine",
+    "source_url": "https://rennlist.com/forums/911-forum/1380983-which-way-does-it-spin.html",
+    "source_kind": "forum",
+    "note": "Multiple forum sources confirm clockwise rotation viewed from the rear. Pelican Parts and Rennlist posts agree. The distributor (driven at half speed) turns counterclockwise."
+   },
+   {
+    "item": "Redline / maximum permissible speed",
+    "value": "Maximum permissible speed 6700 rpm; governor cutoff 7000 +/- 200 rpm; maximum constant speed 6000 rpm",
+    "source_url": "https://rennlist.com/forums/911-turbo-930-forum/502888-maximum-rpm-for-early-930s.html",
+    "source_kind": "forum",
+    "note": "These figures are attributed to the 1976 930 workshop manual by a Pelican Parts poster. Forum consensus places the practical redline at 6700-6800 rpm. The tachometer has a marked red zone."
+   },
+   {
+    "item": "Idle speed",
+    "value": "900 +/- 50 rpm (warm engine)",
+    "source_url": "https://www.pelicanparts.com/techarticles/101_Projects_Porsche_911/30-Mfi_Info/30-Mfi_Info.htm",
+    "source_kind": "reference_site",
+    "note": "Standard for warm-idle setting on K-Jetronic equipped 930 Turbo engines."
+   },
+   {
+    "item": "Intermediate shaft position and center distance",
+    "value": "Below the crankshaft, center distance approximately 84 mm",
+    "source_url": "https://github.com/josephschneider77-sys/porsche-911sc-engine/pull/20",
+    "source_kind": "reference_site",
+    "note": "The 84 mm center distance comes from a third-party 911 SC engine model (secondary source, cited in the HANDOVER.md). The intermediate shaft runs at half engine speed. It is a long hollow shaft approximately the length of the crankshaft."
+   },
+   {
+    "item": "Intermediate shaft gear and sprocket layout",
+    "value": "One 48-tooth aluminum timing gear (bolted on with lock tabs) driving off the 28-tooth crank gear; two 24-tooth chain sprockets (pressed on, held by snap rings) driving the cam chains",
+    "source_url": "https://joe-engineer.com/porsche-911-intermediate-shaft-rebuild/",
+    "source_kind": "reference_site",
+    "note": "The gear mesh (28/48) combined with the chain ratio (24/28) gives the required 1/2 speed reduction. The oil pump connects to the far end via a splined driveshaft held by a snap ring."
+   },
+   {
+    "item": "Oil pump type and stages",
+    "value": "Dry-sump gear-type oil pump with 4 stages (1 pressure stage + 3 scavenge stages); located at the bottom of the engine",
+    "source_url": "https://automotivetechinfo.com/wp-content/uploads/2018/11/Evolution-of-Porsche-Oiling-System-Part-2.pdf",
+    "source_kind": "reference_site",
+    "note": "Naturally aspirated engines used 3-stage pumps; the turbo engines use a 4-stage pump. The scavenge housing on the 3.3 is cast iron. The pump is driven from the intermediate shaft at half engine speed via a splined driveshaft. Total oil capacity 13 liters."
+   },
+   {
+    "item": "Oil pump shared pressure section",
+    "value": "The pressure section is common to the 935, 930 3.3, 964 Turbo, 993 Turbo, GT3, GT3R and 996 Turbo; the differences lie in the scavenge sections",
+    "source_url": "https://forums.pelicanparts.com/911-930-turbo-super-charging-forum/1056591-996-turbo-oil-pump-1976-930-a-print.html",
+    "source_kind": "forum",
+    "note": "This is a forum claim from an experienced builder. The 3.3 scavenge housing is cast iron while later versions are aluminum."
+   },
+   {
+    "item": "Bore spacing",
+    "value": "118 mm on all Porsche flat-six engines",
+    "source_url": "https://christophorus.porsche.com/en/2020/394/technology-boxer-engine-911-turbo.html",
+    "source_kind": "manufacturer",
+    "note": "Confirmed by Porsche's own Christophorus magazine: 'one thing that all members of the boxer family have in common is their cylinder spacing: invariably 118 millimetres.'"
+   },
+   {
+    "item": "Bank stagger (cylinder offset between left and right banks)",
+    "value": "Approximately 59 mm (half the bore spacing), with the left bank (cylinders 1-2-3) sitting further forward toward the flywheel",
+    "source_url": "",
+    "source_kind": "memory_unverified",
+    "note": "No web source confirms the exact offset in mm. The 59 mm figure (half of 118 mm bore spacing) is geometrically logical for a boxer with adjacent crankpins. A hobby software project cites 59 mm for the 993 flat-six. The handover document also uses this figure as [M]. Needs confirmation from a crankshaft drawing or top-view photo."
+   },
+   {
+    "item": "Engine dry weight (with exhaust, intake, flywheel; without A/C)",
+    "value": "Approximately 419 lbs (190 kg)",
+    "source_url": "https://forums.pelicanparts.com/porsche-911-technical-forum/116398-engine-weights.html",
+    "source_kind": "forum",
+    "note": "A Pelican Parts poster measured a 930/10 engine at 419 lbs dry with exhaust, intake, and flywheel but without A/C, and states this matches the Porsche 'Tech Book.' Another poster measured a 930/02 at the same weight. Wikipedia gives the flat-six family dry weight range as 176-230 kg."
+   },
+   {
+    "item": "Overall engine dimensions (approximate)",
+    "value": "Roughly 700 mm flywheel face to pulley, 770 mm across valve covers, 600-650 mm tall with fan",
+    "source_url": "",
+    "source_kind": "memory_unverified",
+    "note": "No web source gives engine-only envelope dimensions. These figures are from the HANDOVER.md as [M] estimates. All searches returned only whole-car dimensions. Needs measurement from a dimensioned factory drawing or a known-good 3D scan."
+   },
+   {
+    "item": "Crank throw order from flywheel end",
+    "value": "Probably 1, 4, 2, 5, 3, 6 (left bank cylinder first in each pair, moving from flywheel toward pulley)",
+    "source_url": "",
+    "source_kind": "memory_unverified",
+    "note": "No web source gives the throw order explicitly. This follows from the firing order 1-6-2-4-3-5 with the left bank leading (closer to flywheel). The HANDOVER.md lists this as [M]. A crankshaft drawing or top-view photo is needed to confirm which bank leads."
+   },
+   {
+    "item": "Oil pressure sender location",
+    "value": "Screwed into the right side of the crankcase near the oil thermostat and crankcase breather cover, forming a triangle of three components",
+    "source_url": "https://forums.pelicanparts.com/911-930-turbo-super-charging-forum/929150-temp-sensor-id-help-print.html",
+    "source_kind": "forum",
+    "note": "Forum description places the oil pressure sender, oil thermostat, and crankcase breather cover near each other. The sender is the larger unit on a reducer fitting."
+   },
+   {
+    "item": "Head stud length (ARP aftermarket)",
+    "value": "6.750 inches (171.5 mm) overall, M10 x 1.5 threads on both ends, ARP kit 204-4206",
+    "source_url": "https://forums.pelicanparts.com/911-engine-rebuilding-forum/294898-advice-head-studs-930-a.html",
+    "source_kind": "forum",
+    "note": "This is an aftermarket ARP/Inconel 718 stud dimension, not the OEM Dilavar length. The OEM stud length was not found in any source. The ARP kit is listed as a direct replacement for the 1965-1998 air-cooled 911/930."
+   },
+   {
+    "item": "Compression ratio",
+    "value": "7.0:1 (factory specification)",
+    "source_url": "https://www.stuttcars.com/porsche-911-turbo-3-3-930/",
+    "source_kind": "reference_site",
+    "note": "Consistently cited across all sources. One owner measured an actual CR of 6.58:1 with 90.6 cc chambers, suggesting factory specification and actual may differ. The 3.0 Turbo (1975-77) was 6.5:1."
+   }
+  ],
+  "conflicts": [
+   "MAIN JOURNAL DIAMETER (60 mm vs 64 mm): The tech-racingcars wiki [S10] lists main bearing diameter as 60 mm (shown as '60-55 mm' for the 1978 engine). LN Engineering's journal diameter table [S20] lists 64 mm for all 2.7-3.3 L engines. Forum posts quoting the 964/930 shop manual give ~60 mm (59.97-59.99 mm). Earlier 2.0-2.4 L engines used 55 mm mains per LN or ~57 mm per forum sources. TRUST: The LN Engineering table is from a specialist vendor that manufactures Porsche engine bearings, so the 64 mm figure may be the housing bore (outer diameter of the bearing shell) rather than the crank journal diameter. The 60 mm figure likely refers to the crank journal itself. The factory workshop manual (WKD 481 321) is the definitive source; its page 46 was referenced but could not be read due to OCR issues.",
+   "ROD JOURNAL WIDTH (21.74 mm vs 21.8 mm vs 22 mm): Aftermarket rod vendors (Piratamotor, Hench) list 21.74 mm big-end width. Paul Frere's book gives 21.8 mm. Rennlist forum says '55 mm diameter x 22 mm wide.' These are very close and may reflect manufacturing tolerance vs nominal dimension. TRUST: Frere's book (21.8 mm) as a published reference, noting the vendor figure of 21.74 mm may be the actual aftermarket part width.",
+   "ROD LENGTH (127 mm vs 127.75 mm): The Mahle application guide PDF lists 127 mm for the 3.3 L Turbo. The tech-racingcars wiki gives 127.75 mm. Multiple aftermarket rod vendors list 127.75 mm. TRUST: 127.75 mm is probably the more precise OEM figure; 127 mm is a rounded number. Use 127.75 mm for modeling if confirmed by the workshop manual.",
+   "RING GEAR INTERNAL DIAMETER (225 mm vs 230 mm): One Design911 listing gives internal diameter 225 mm; another gives 230 mm. Both list external diameter 280 mm and 135 teeth. TRUST: Cannot determine which is correct without measuring or checking the Porsche parts catalog. The discrepancy may be between the pitch diameter and the actual inner bore.",
+   "BORE (97.0 mm vs 97.6 mm): The tech-racingcars wiki [S10] gives 97.6 mm bore for the 1978 car. Every other source (Stuttcars, Auto-Data, Wikipedia, Mahle) says 97.0 mm. The arithmetic check: pi/4 x 97.0^2 x 74.4 x 6 = 3298.8 cc matches the stated 3299 cc. TRUST: 97.0 mm is correct; 97.6 mm is an error on the wiki.",
+   "PISTON CROWN VOLUME (14.2 cc vs 38.5 cc in Mahle data): The Mahle PDF text extraction shows 14.2 cc for the 930 Turbo 3.3 L to 3.4 L piston (PS98-009), but also shows 38.5 cc in another column. The table layout in the extracted PDF text is garbled. TRUST: 14.2 cc is the most commonly cited figure in vendor listings for this kit. The 38.5 cc figure may belong to a different piston in the table (possibly the higher-compression 3.2 Carrera set)."
+  ],
+  "not_found": [
+   "Crankshaft main journal diameter: definitive factory specification (60 mm vs 64 mm conflict unresolved)",
+   "Nose bearing #8 journal diameter (the crank snout diameter that the bearing rides on)",
+   "Crankshaft web thickness",
+   "Cylinder barrel height/length for the 97 mm bore 3.3 L Turbo (only the 95 mm bore 3.0 L figure of 120 mm was found)",
+   "Exact number of cooling fins on the 930 Turbo cylinder barrels",
+   "Cylinder spigot length (insertion depth into the crankcase)",
+   "Head stud spacing pattern (the rectangular arrangement dimensions of the 4 studs around each cylinder bore)",
+   "OEM head stud length for the original Dilavar studs",
+   "Piston crown shape for the OEM 7.0:1 turbo piston (dished, flat, or with valve reliefs - no source confirms)",
+   "Piston maker for OEM 930 Turbo (Mahle makes the aftermarket replacement, but the original supplier was not confirmed)",
+   "Bank stagger distance confirmed from a factory source or dimensioned drawing",
+   "Crank throw order from the flywheel end confirmed from a factory source",
+   "Overall engine dimensions (flywheel face to pulley, width across valve covers, height) from any verified source",
+   "Engine-only dry weight from a factory specification (only a forum-measured figure of ~419 lbs was found)",
+   "Oil thermostat exact location on the crankcase",
+   "Crankcase breather exact location",
+   "Intermediate shaft center distance confirmed from a factory source (the 84 mm figure comes from a secondary code repository)"
+  ],
+  "visual_refs": [
+   {
+    "url": "https://eurospares.co.uk/Porsche/911/1977_(911_Turbo)/PartDiagrams/101-010/CRANKCASE",
+    "shows": "Eurospares interactive exploded parts diagram of the 1977 930 Turbo crankcase, showing all case components, bolts, gaskets, and mounting points with part numbers"
+   },
+   {
+    "url": "https://eurospares.co.uk/Porsche/911/1977_(911_Turbo)/PartDiagrams/104-000/ENGINE_LUBRICATION",
+    "shows": "Eurospares interactive exploded diagram of the 930 Turbo engine lubrication system, showing oil pump, intermediate shaft connecting shaft, oil lines, thermostat, and filter arrangement"
+   },
+   {
+    "url": "https://eurospares.co.uk/Porsche/911/1965_(911_912)/PartDiagrams/102-005/CRANKSHAFT_-_AND_-_CONNECTING_RODS",
+    "shows": "Eurospares exploded diagram of the early 911 crankshaft and connecting rods, showing throw layout, rod arrangement, bearings, and flywheel attachment (architecture is the same as the 930)"
+   },
+   {
+    "url": "https://eurospares.co.uk/Porsche/911/1977_(911_Turbo)/PartDiagrams/901-000/ENGINE_ELECTRICS",
+    "shows": "Eurospares exploded diagram of 930 Turbo engine electrics including distributor position and spark plug leads, useful for locating the distributor on the engine"
+   },
+   {
+    "url": "http://tech-racingcars.wikidot.com/porsche-930",
+    "shows": "Comprehensive technical specifications page for the Porsche 930 Turbo Group 3, including engine cutaway data, crankshaft specs, piston specs, turbo details, and performance figures"
+   },
+   {
+    "url": "https://joe-engineer.com/porsche-911-intermediate-shaft-rebuild/",
+    "shows": "Detailed rebuild article with photos of the Porsche 911 intermediate shaft disassembly, showing the timing gear, chain sprockets, snap rings, oil gallery plug, and splined oil pump drive connection"
+   },
+   {
+    "url": "https://supercarnostalgia.com/blog/porsche-930",
+    "shows": "Detailed guide to the Porsche 930 3.0 Turbo with engine specifications, historical context, and technical details about the crankcase construction, Nikasil cylinders, and turbocharger"
+   },
+   {
+    "url": "https://www.stuttcars.com/porsche-911-turbo-3-3-930/",
+    "shows": "Stuttcars reference page for the 930 3.3 Turbo with engine specifications including bore, stroke, power, torque, and intercooler details"
+   },
+   {
+    "url": "https://www.us.mahle.com/media/usa/motorsports/4-porsche-3-0l-3-2l-3-3l.pdf",
+    "shows": "Mahle Motorsport application guide PDF for Porsche 3.0-3.3 L air-cooled engines with piston specifications including bore, stroke, rod length, compression height, pin diameter, ring pack, crown volume, and weight"
+   },
+   {
+    "url": "https://www.rauchandspiegel.com/product/flywheel-billet-steel-stock-type-240mm-9-bolt/",
+    "shows": "Rauch and Spiegel 240 mm 9-bolt flywheel product page for the 930 Turbo, showing flywheel dimensions and bolt pattern"
+   },
+   {
+    "url": "https://patrickmotorsports.com/products/flw930102202213pms",
+    "shows": "Patrick Motorsports 9-bolt 240 mm OE-style billet flywheel for the late 930/911 Turbo 3.3 L, with product photos showing the flywheel from both sides"
+   },
+   {
+    "url": "https://automotivetechinfo.com/wp-content/uploads/2018/11/Evolution-of-Porsche-Oiling-System-Part-2.pdf",
+    "shows": "Technical article by Mike Bavaro on the evolution of Porsche oiling systems, covering the air-cooled dry-sump layout with intermediate shaft drive, multi-stage pump configuration, and oil circuit routing"
+   },
+   {
+    "url": "https://www.stoddard.com/porsche-911-930-parts-spares/porsche-911-engine-74-89/crankshaft-main-rod-bearings.html",
+    "shows": "Stoddard parts page for 911 SC and 930 crankshaft, main bearing sets, rod bearing sets, and flywheel components with part numbers and fitment information"
+   }
+  ]
+ },
+ {
+  "group": "valvetrain",
+  "facts": [
+   {
+    "item": "Stock 930 turbo camshaft duration at 1 mm lift",
+    "value": "Intake 214 degrees / Exhaust 202 degrees",
+    "source_url": "https://www.drcamshafts.com/911profiles.htm",
+    "source_kind": "reference_site",
+    "note": "Dougherty Racing Cams profile table for 'Porsche 930 turbo' stock cam, 49 mm journal. These are the most widely cited figures in the 930 community."
+   },
+   {
+    "item": "Stock 930 turbo camshaft duration at 0.050 inch lift",
+    "value": "Intake 208 degrees / Exhaust 197 degrees",
+    "source_url": "https://www.drcamshafts.com/911profiles.htm",
+    "source_kind": "reference_site",
+    "note": "Same Dougherty Racing profile table."
+   },
+   {
+    "item": "Stock 930 turbo cam lobe lift (at cam, before rocker ratio)",
+    "value": "Intake 0.368 inch (9.35 mm) / Exhaust 0.339 inch (8.61 mm)",
+    "source_url": "https://www.drcamshafts.com/911profiles.htm",
+    "source_kind": "reference_site",
+    "note": "Zero lash, theoretical rocker ratio. Actual valve lift = lobe lift x rocker ratio."
+   },
+   {
+    "item": "Stock 930 turbo cam lobe separation angle (LSA)",
+    "value": "108 degrees",
+    "source_url": "https://www.drcamshafts.com/911profiles.htm",
+    "source_kind": "reference_site",
+    "note": "Dougherty Racing table."
+   },
+   {
+    "item": "Stock 930 turbo cam timing overlap-TDC lift setting",
+    "value": "0.65 to 0.80 mm intake valve lift at TDC overlap (with 0.1 mm valve clearance)",
+    "source_url": "https://www.drcamshafts.com/911profiles.htm",
+    "source_kind": "reference_site",
+    "note": "Dougherty lists 0.80 mm; forum sources say 0.65-0.80 mm range. This is the factory timing check value at TDC with 0.1 mm lash set."
+   },
+   {
+    "item": "Stock 930 turbo cam event timing (forum-reported, 930/02 engine code)",
+    "value": "Intake opens 1 deg BTDC, closes 53 deg ABDC; Exhaust opens 43 deg BBDC, closes 3 deg ATDC",
+    "source_url": "http://forums.pelicanparts.com/porsche-911-technical-forum/982228-confusion-published-cam-specs.html",
+    "source_kind": "forum",
+    "note": "Quoted from a published reference on Pelican Parts forum. Engine 930/02, not 930/60. The poster noted these figures do not fully reconcile with the duration and lobe-center values. Conflicts with other forum-reported numbers; treat as approximate."
+   },
+   {
+    "item": "Alternate stock 930 cam event timing (forum-reported, citing Wayne Dempsey book for 1986 930)",
+    "value": "Intake opens 3 deg ATDC, closes 37 deg ABDC; Exhaust opens 27 deg BBDC, closes 5 deg BTDC",
+    "source_url": "http://forums.pelicanparts.com/911-930-turbo-super-charging-forum/512716-stock-930-cam-timing-advance.html",
+    "source_kind": "forum",
+    "note": "Forum poster citing 'Wayne's book' for an 1986 930. These differ from the 930/02 figures, possibly reflecting a different measurement method or cam variant."
+   },
+   {
+    "item": "SC cam on turbo duration at 1 mm lift",
+    "value": "Intake 236 degrees / Exhaust 224 degrees",
+    "source_url": "https://www.drcamshafts.com/911profiles.htm",
+    "source_kind": "reference_site",
+    "note": "SC cam (also used in 911 SC 3.0 and Carrera 3.2) when fitted to a 930 turbo. Overlap TDC setting 1.4-1.7 mm."
+   },
+   {
+    "item": "Rocker arm ratio",
+    "value": "Approximately 1.4:1 average (up to ~1.5:1 at cam nose)",
+    "source_url": "https://elgincams.com/porsche911/",
+    "source_kind": "vendor_listing",
+    "note": "Elgin Cams lists 1.4:1 average rocker arm ratio. Forum sources note ratio varies across the lobe profile, reaching ~1.5:1 at peak lift."
+   },
+   {
+    "item": "Rocker shaft diameter",
+    "value": "18 mm",
+    "source_url": "https://www.design911.co.uk/porsche/930--911--turbo-3-3l/porsche-rocker-arms-cam-followers-and-tappets/",
+    "source_kind": "vendor_listing",
+    "note": "Parts listing gives bushing dimensions: shaft dia 18 mm, housing bore 20 mm, bushing width 26 mm. Fits 911 1965-1989."
+   },
+   {
+    "item": "Rocker arm layout",
+    "value": "12 rocker arms total (one per valve), each on its own individual rocker shaft, with 24 rocker shaft seals. Single cam per bank actuates both intake and exhaust rockers.",
+    "source_url": "https://www.design911.co.uk/p/rocker-arm-set-porsche-911-964-914-6-93010504305/",
+    "source_kind": "vendor_listing",
+    "note": "Parts kit includes 12 rocker arms, 12 rocker shafts, 12 screws, 12 hex nuts, 24 shaft seals. Each rocker shaft is secured in the cam housing by tapered alloy plugs with a central M6 cap-head screw."
+   },
+   {
+    "item": "Valve clearance (intake and exhaust)",
+    "value": "0.10 mm (0.004 inch) cold, both intake and exhaust",
+    "source_url": "https://www.pelicanparts.com/techarticles/911_backside_valveadjust/911_backside_valveadjust.htm",
+    "source_kind": "reference_site",
+    "note": "Pelican Parts technical article for 911 and 914-6 engines 1965 onward. Same clearance for intake and exhaust."
+   },
+   {
+    "item": "Valve included angle (from cylinder axis)",
+    "value": "Intake approx 25-25.5 deg from cylinder axis, exhaust approx 30-30.25 deg; total included angle approx 55-56 degrees",
+    "source_url": "http://forums.pelicanparts.com/911-engine-rebuilding-forum/628563-valve-angle-piston.html",
+    "source_kind": "forum",
+    "note": "Forum measurements on 3.0/3.2 era heads (same family as 930 3.3). Hagerty article quotes 59 degrees total for the original Mezger design which may refer to earlier 2.0-2.7 heads. Values measured from the valve stem to the cylinder bore axis."
+   },
+   {
+    "item": "Valve sizes",
+    "value": "Intake 49 mm head diameter, exhaust 41.5 mm head diameter; both with 9 mm stem diameter",
+    "source_url": "https://www.design911.co.uk/porsche/930--911--turbo-3-3l/porsche-engine-valves-guides-and-springs/",
+    "source_kind": "vendor_listing",
+    "note": "930 Turbo 1978-89. Sodium-cooled exhaust valves."
+   },
+   {
+    "item": "Valve overall length",
+    "value": "Intake 110.1 mm, exhaust 108.4 mm (diameter x stem x overall length: 49 x 9 x 110.1 mm intake, 41.5 x 9 x 108.4 mm exhaust)",
+    "source_url": "https://www.design911.co.uk/porsche/930--911--turbo-3-3l/porsche-engine-valves-guides-and-springs/",
+    "source_kind": "vendor_listing",
+    "note": "Design911 listing for 1978-89 930 Turbo valves."
+   },
+   {
+    "item": "Valve seat angle",
+    "value": "45 degrees",
+    "source_url": "https://www.design911.co.uk/porsche/930--911--turbo-3-3l/porsche-engine-valves-guides-and-springs/",
+    "source_kind": "vendor_listing",
+    "note": "Listed for intake and exhaust valve sets."
+   },
+   {
+    "item": "Number of valve springs per valve",
+    "value": "2 (dual concentric springs with inner damper spring)",
+    "source_url": "https://custom-concepts.nl/en/product/motor-titanium-klepveren-voor-porsche-911-964/",
+    "source_kind": "vendor_listing",
+    "note": "AASCO 9 mm dual spring kit for 930. Aftermarket description confirms factory uses dual springs."
+   },
+   {
+    "item": "Valve spring installed height (factory)",
+    "value": "41.0 +/- 0.5 mm",
+    "source_url": "https://rennlist.com/forums/911-turbo-930-forum/240962-valve-spring-height.html",
+    "source_kind": "forum",
+    "note": "Forum poster quoting Porsche factory service manual specification, measured with Porsche special tool 9138/1."
+   },
+   {
+    "item": "Cylinder head configuration",
+    "value": "One separate cast-aluminum head per cylinder (6 individual heads per engine), each with cooling fins, intake port on upper (inboard) face, exhaust port on lower (outboard) face, single spark plug per cylinder",
+    "source_url": "https://hagerty.com/media/?p=6803",
+    "source_kind": "reference_site",
+    "note": "Hagerty article on the air-cooled flat-six describes separate cylinders, SOHC, two valves per cylinder. Intake top / exhaust bottom orientation is standard for air-cooled 911; confirmed by forum observation that exhaust side runs hotter and is on the underside."
+   },
+   {
+    "item": "Combustion chamber shape",
+    "value": "Domed (hemispherical-type, though technically not a true hemisphere); commonly called 'hemi' but Hagerty article notes this is a misnomer",
+    "source_url": "https://hagerty.com/media/?p=6803",
+    "source_kind": "reference_site",
+    "note": "Mezger designed domed combustion chambers with splayed valves. A true hemisphere would be too deep for good combustion."
+   },
+   {
+    "item": "Intake port diameter (stock 930)",
+    "value": "32 mm",
+    "source_url": "https://rennlist.com/forums/911-turbo-930-forum/107060-cylinder-head-porting-size.html",
+    "source_kind": "forum",
+    "note": "Rennlist forum discussion. Common recommendation is to open to 36 mm for performance."
+   },
+   {
+    "item": "Spark plug thread and specification",
+    "value": "M14 x 1.25 thread, 19 mm (3/4 inch) reach, 21 mm hex. OE type Bosch WR7DC or equivalent; 6 plugs per engine, one per cylinder",
+    "source_url": "https://www.pmbperformance.com/products/bosch-spark-plug-7",
+    "source_kind": "vendor_listing",
+    "note": "Bosch WR7DC listed for 930 Turbo 1977-89 on Design911. Some sources list W3DP for earlier models. Heat range varies by market and model year."
+   },
+   {
+    "item": "Camshaft housing (cam carrier)",
+    "value": "One per bank (2 total), spanning three cylinder heads. Four camshaft bearing journals per housing, 49 mm bore diameter (from 1976 onward on 930 turbo). Oil spray bar running through the housing. Housing bolts down over the three individual heads per bank.",
+    "source_url": "https://forums.pelicanparts.com/911-engine-rebuilding-forum/1149083-can-47mm-cam-tower-bored-49mm-next-thread.html",
+    "source_kind": "forum",
+    "note": "Forum discussion on cam tower bore sizes. 930 turbo engines from 1975/76 onward used 4-bearing, 49 mm bore housings. Earlier 47 mm housings exist but had oiling issues on the fourth journal."
+   },
+   {
+    "item": "Oil spray bar in cam housing",
+    "value": "Central oil spray bar runs through the cam housing, feeds oil to cam journals and rocker arms. Orientation matters during installation.",
+    "source_url": "https://forums.pelicanparts.com/911-engine-rebuilding-forum/550666-strange-cam-spray-bar-issue.html",
+    "source_kind": "forum",
+    "note": "Early engines used center-oiled camshafts, later switched to spray bar because center oiling was inadequate at low RPM. Plugged at each end of housing."
+   },
+   {
+    "item": "Oil return tubes between heads/cam housing and crankcase",
+    "value": "4 per engine (2 per cylinder bank/head pair), telescopic/collapsible design",
+    "source_url": "https://www.mecatechnic.com/en-GB/telescopic-oil-return-tube-for-porsche-911-930-914-and-993_RS10102.htm",
+    "source_kind": "vendor_listing",
+    "note": "MecaTechnic lists 4 per engine (2 per cylinder head). One-piece (OE) or two-piece (aftermarket for in-situ replacement) versions available. Part 93010704001 (two-piece) or 90110735101 (one-piece)."
+   },
+   {
+    "item": "Valve covers",
+    "value": "Upper (intake side) and lower (exhaust side) per bank = 4 covers total. Cast magnesium (original) or aluminium (replacement). Upper cover secured by approximately 6 M8 nylock nuts with washers per cover. Covers have longitudinal ribbing for stiffness.",
+    "source_url": "https://fvd.net/us-en/FVD105911SET/complete-upper-and-lower-valve-cover-set-911-930.html",
+    "source_kind": "vendor_listing",
+    "note": "FVD and LN Engineering describe replacing warped factory magnesium covers. Upper covers sold with 6 washers and 6 self-locking nuts per cover (2 covers per engine). Lower cover nut count not separately confirmed. 34 total nuts reported for a 993 (all 4 covers) on Rennlist; 930 count may differ."
+   },
+   {
+    "item": "Timing chain type",
+    "value": "Duplex (double-row) roller chain, split type with master link. Chain size designation D67ZN, 98 links per chain. Two chains per engine (one per bank).",
+    "source_url": "https://www.design911.co.uk/porsche/964--911--1989-94/porsche-timing-chains-and-tensioners/",
+    "source_kind": "vendor_listing",
+    "note": "Design911 listing for 911 1965-1989 and 964. Part 911-105-529-51 with master link 901-105-530-00. Same chain used across the air-cooled 911 range."
+   },
+   {
+    "item": "Timing chain pitch",
+    "value": "3/8 inch (9.525 mm)",
+    "source_url": "",
+    "source_kind": "memory_unverified",
+    "note": "Standard for duplex D67ZN chains used on the 911 engine family. No web source found confirming this for the 930 specifically."
+   },
+   {
+    "item": "Timing chain guide rails",
+    "value": "6 rails total per engine: 5 black plastic + 1 brown plastic. The brown rail sits on one of the lower positions (sources disagree whether lower-left or lower-right). Longer pointed end of each rail faces toward the nearest sprocket.",
+    "source_url": "https://www.heritagepartscentre.com/us/91110522206-timing-chain-guide-rail-black.html",
+    "source_kind": "vendor_listing",
+    "note": "Heritage Parts Centre lists black rail 91110522206 and brown rail 911.105.222.05. All six should be replaced together. Brown rail is slightly thicker, compensating for chain slack at that position."
+   },
+   {
+    "item": "Timing chain tensioner type",
+    "value": "Mechanical (1965-1983), part 930-105-053-04; hydraulic sealed (from ~1984 on 930 3.3), part 930-105-058-03",
+    "source_url": "https://www.fvd.net/de-en/93010505304/timing-chain-tensioner-911-930-914-6-1965-83-mechanical.html",
+    "source_kind": "vendor_listing",
+    "note": "FVD lists mechanical tensioner for 911/930/914-6 1965-83. Hydraulic versions used from ~1984 on later 930 and 911 Carrera 3.2 models. One tensioner per bank (2 per engine)."
+   },
+   {
+    "item": "Intermediate shaft (IMS) drive arrangement",
+    "value": "Single intermediate shaft running front-to-rear along the engine centerline, driven by a gear on the crankshaft (28-tooth crank gear meshing with 48-tooth IMS gear). IMS has one chain sprocket at each end (24 teeth each); front sprocket drives right bank (cyl 4-5-6) chain, rear sprocket drives left bank (cyl 1-2-3) chain. Cam sprockets have 28 teeth.",
+    "source_url": "https://forums.pelicanparts.com/911-engine-rebuilding-forum/197478-cam-timing-confusion.html",
+    "source_kind": "forum",
+    "note": "Tooth counts from already-established data. The IMS chain drive path: crank gear -> IMS gear (at 1:1.714 ratio); IMS sprocket (24T) -> cam sprocket (28T). Crank turns 2x per 1x cam revolution. Each bank's chain runs at opposite ends of the IMS."
+   },
+   {
+    "item": "Camshaft rotation direction",
+    "value": "Camshafts rotate in the same direction as the crankshaft: clockwise viewed from the pulley/fan end (-X end), counterclockwise viewed from the flywheel/gearbox end (+X end)",
+    "source_url": "",
+    "source_kind": "memory_unverified",
+    "note": "No authoritative web source confirmed this. The chain drive (no idler gear between IMS sprocket and cam sprocket) means the cam sprocket rotates opposite the IMS sprocket, and the IMS gear rotates opposite the crank gear. Net result: cam same direction as crank. Forum posts describe cams turning counterclockwise 'while engine runs' but do not specify viewing direction."
+   },
+   {
+    "item": "Crankshaft rotation direction",
+    "value": "Clockwise viewed from the pulley/fan end (rear bumper side); counterclockwise viewed from the flywheel/gearbox end",
+    "source_url": "https://rennlist.com/forums/928-forum/887051-what-direction-to-rotate-crank.html",
+    "source_kind": "forum",
+    "note": "Rennlist forum confirms standard Porsche engine rotation. All Porsche flat-sixes rotate the same direction."
+   },
+   {
+    "item": "Chain housing / timing cover",
+    "value": "One chain housing per bank (2 total), bolted to the crankcase at the pulley/fan end (-X end) of each bank. Roughly semi-circular covers enclosing the cam chain, sprockets, tensioner, and guide rails. Chain housing gaskets seal between housing and crankcase.",
+    "source_url": "https://eurospares.co.uk/Porsche/911/1977_(911_Turbo)/PartDiagrams/103-005/CHAIN_CASE_-_CAMSHAFT_HOUSING",
+    "source_kind": "reference_site",
+    "note": "Eurospares exploded diagram for 1977 911 Turbo chain case/camshaft housing. Chain housing also carries the chain tensioner mounting."
+   },
+   {
+    "item": "Turbo oil scavenge pump drive",
+    "value": "Driven from the end of the left-bank (driver's side, cylinders 1-2-3) camshaft, via an air pump pulley arrangement with two allen-bolt heads engaging the pump shaft",
+    "source_url": "http://forums.pelicanparts.com/911-930-turbo-super-charging-forum/868934-930-turbo-scavenge-pump-sc-engine.html",
+    "source_kind": "forum",
+    "note": "930 turbo camshafts have a drive boss on the end for the scavenge pump. SC/NA cams lack this boss. The air pump pulley bolts drive the scavenge pump. Located at the sprocket end of the left-bank cam."
+   },
+   {
+    "item": "Power steering pump drive (right bank camshaft)",
+    "value": "Driven from the end of the right-bank (passenger's side, cylinders 4-5-6) camshaft",
+    "source_url": "http://forums.pelicanparts.com/911-930-turbo-super-charging-forum/868934-930-turbo-scavenge-pump-sc-engine.html",
+    "source_kind": "forum",
+    "note": "Forum source describes power steering drive on the passenger side cam end."
+   },
+   {
+    "item": "Distributor location and drive",
+    "value": "Mounted in the crankcase, driven by a helical gear on the crankshaft nose (pulley end). Runs at half crankshaft speed (one revolution per 720 deg crank rotation). Distributor shaft retained by pin, with shims setting ~0.030 inch end play.",
+    "source_url": "https://rennlist.com/forums/911-turbo-930-forum/1031512-distributor-helical-drive-gear-at-crankshaft-install-opposite-direction.html",
+    "source_kind": "forum",
+    "note": "Helical gear meshes with a gear on the crank. The distributor sits on the crankcase below and between the cylinder banks, toward the pulley/fan end."
+   },
+   {
+    "item": "Distributor rotation direction",
+    "value": "US-spec 930 Turbo: counterclockwise (CCW); Euro-spec 930 Turbo: clockwise (CW)",
+    "source_url": "https://permatune.com/wp-content/uploads/2022/02/911sc126-INSTALL-8.pdf",
+    "source_kind": "vendor_listing",
+    "note": "Permatune installation guide. US cars use 6-pin ignition module with CCW distributor; Euro cars use 8-pin module with CW distributor. Direction is critical for correct ignition timing."
+   },
+   {
+    "item": "No idler gear between crank and intermediate shaft",
+    "value": "The crank gear meshes directly with the IMS gear (no idler). The IMS gear therefore rotates opposite the crank gear.",
+    "source_url": "https://rennlist.com/forums/911-forum/463851-what-is-this-part-gear-930-105-136-0r-with-picture.html",
+    "source_kind": "forum",
+    "note": "Rennlist thread shows the intermediate shaft center drive gear that meshes with the crankshaft gear. No intermediate idler gear in the path."
+   },
+   {
+    "item": "Cam sprocket alignment (concave face orientation)",
+    "value": "Left bank (cyl 1-2-3): cam sprocket concave face toward rear bumper (pulley end). Right bank (cyl 4-5-6): cam sprocket concave face toward front bumper (flywheel end).",
+    "source_url": "http://forums.pelicanparts.com/911-engine-rebuilding-forum/1046660-camshaft-sprocket-alignment.html",
+    "source_kind": "forum",
+    "note": "Pelican Parts forum discussion on correct sprocket orientation during assembly."
+   },
+   {
+    "item": "Camshaft housing gasket count",
+    "value": "2 per engine (one per cam housing)",
+    "source_url": "https://fvd.net/us-en/93010590201EQ/valve-cover-gasket-set-911-30l-83-32l-84-89-tt-33l-78-89-965-tt-91-92.html",
+    "source_kind": "vendor_listing",
+    "note": "FVD valve cover gasket set for 930 3.3L includes 2 cam housing gaskets."
+   },
+   {
+    "item": "Exhaust valves are sodium-cooled",
+    "value": "Yes, exhaust valves are sodium-filled for heat dissipation",
+    "source_url": "https://kfz-tech.de/Engl/Buchprojekte/Porsche/911Teil1.htm",
+    "source_kind": "reference_site",
+    "note": "kfz-tech.de article on the 911 engine states 'The exhaust valves are sodium-cooled.'"
+   },
+   {
+    "item": "Cooling fan blower speed ratio",
+    "value": "Fan runs at 1.3x crankshaft speed",
+    "source_url": "https://kfz-tech.de/Engl/Buchprojekte/Porsche/911Teil1.htm",
+    "source_kind": "reference_site",
+    "note": "At 6000 rpm, moves over 80000 liters of air per minute."
+   },
+   {
+    "item": "Rocker shaft seal count and type",
+    "value": "24 rocker shaft seals per engine. Each shaft secured in cam housing by tapered alloy plugs drawn together by a central M6 cap-head screw.",
+    "source_url": "https://www.pressreader.com/uk/911-porsche-world/20190307/282256666807076",
+    "source_kind": "reference_site",
+    "note": "911 Porsche World article describes the rocker shaft retention method."
+   },
+   {
+    "item": "Timing chain idler sprocket",
+    "value": "Each chain has an idler sprocket on a pivoting arm forming part of the tensioner assembly. Wider idler arms are considered best defense against tensioner failure.",
+    "source_url": "https://forums.pelicanparts.com/porsche-911-technical-forum/1101489-chain-tensioner-questions.html",
+    "source_kind": "forum",
+    "note": "Tooth count for the idler sprocket was not found in any source. The idler arm pivots to maintain chain tension."
+   },
+   {
+    "item": "Valve cover gasket material and type",
+    "value": "Paper gasket between cover and cam housing; rubber O-ring or cork gaskets also used depending on model year and application",
+    "source_url": "https://forums.pelicanparts.com/porsche-911-technical-forum/83090-what-torques-use-chain-housing.html",
+    "source_kind": "forum",
+    "note": "Pelican Parts forum notes paper gaskets between cam cover and head, and between chain housing and block."
+   },
+   {
+    "item": "Camshaft end cover (flange cover)",
+    "value": "Part 930-105-196-00 (camshaft flange cover), one per cam, located at the sprocket end. Three M6 bolts under the chain sprocket secure it.",
+    "source_url": "https://www.heritagepartscentre.com/us/porsche/930/engine.html",
+    "source_kind": "vendor_listing",
+    "note": "Heritage Parts Centre listing for 1975-1989 930 models."
+   }
+  ],
+  "conflicts": [
+   "Valve included angle: Hagerty article states 59 degrees total (attributed to Mezger's original design), but Pelican Parts forum measurements on 3.0/3.2 era heads (same family as 930 3.3) give approximately 55-56 degrees (25-25.5 intake + 30-30.25 exhaust). The 59 degree figure may apply to earlier 2.0-2.7 heads. The 3.0+ heads have a wider combustion chamber and larger valves, which one poster says explains the smaller included angle. I trust the forum measurements for the 3.0/3.2/3.3 head, but verify against a machinist's measurement.",
+   "Stock 930 cam event timing degrees: Multiple conflicting sets. (A) 930/02 reference: IO 1 BTDC, IC 53 ABDC, EO 43 BBDC, EC 3 ATDC. (B) Wayne Dempsey book for 1986 930: IO 3 ATDC, IC 37 ABDC, EO 27 BBDC, EC 5 BTDC. (C) 911 Performance Handbook: IO 7 BTDC, IC 47 ABDC, EO 49 BBDC, EC 3 BTDC. These cannot all be correct for the same cam. The discrepancy likely arises from different engine codes (930/02 vs 930/60 vs 930/66), different measurement points (seat-to-seat vs 1 mm lift vs 0.050 inch), or different valve clearance settings. The Dougherty duration figures (214/202 at 1 mm) are the most consistently cited and I trust those over any single set of open/close degrees.",
+   "Stock 930 cam overlap TDC lift setting: Dougherty Racing lists 0.80 mm, forum sources cite a range of 0.65-0.80 mm for stock 930 cams, while SC cams on turbo use 1.4-1.7 mm. The 0.65-0.80 mm range appears most reliable for the stock 930 turbo cam.",
+   "Distributor rotation direction: US-spec 930 uses CCW, Euro-spec uses CW. Some forum posts confuse the two. Permatune installation guide distinguishes them by ignition module pin count (6-pin = CCW/US, 8-pin = CW/Euro). I trust the Permatune document.",
+   "Stock 930 cam lobe lift: Dougherty lists 0.368/0.339 inch. One forum poster gives 0.378/0.343 inch. Another gives Group B at 0.374/0.339 inch. I trust the Dougherty figures as they maintain a consistent profile database.",
+   "Chain guide rail brown position: Sources disagree on whether the brown rail goes on the lower-left or lower-right side of the engine. Check a Porsche workshop manual or parts diagram for the correct position on your specific engine."
+  ],
+  "not_found": [
+   "930/60 specific camshaft timing in crank degrees at 1 mm checking lift (intake opens/closes, exhaust opens/closes): no factory workshop manual data found online for this exact engine code. Only conflicting forum-sourced numbers for other 930 engine variants.",
+   "Exhaust port inside diameter for stock 930 head: one forum source says 35 mm but this was not corroborated.",
+   "Idler sprocket tooth count: not found in any source.",
+   "Timing chain pitch confirmed for 930: widely assumed 3/8 inch for D67ZN chain but no source explicitly stated this.",
+   "Exact number of studs/nuts for lower valve cover per bank: upper cover appears to use 6 nuts per cover, but lower cover fastener count was not specifically confirmed.",
+   "Camshaft journal diameter (actual journal OD, as opposed to the 49 mm housing bore): not found.",
+   "Valve spring free length and compressed height dimensions.",
+   "Cam housing to cylinder head bolt count and pattern.",
+   "930/60 vs 930/66 camshaft differences (if any).",
+   "Exact combustion chamber volume for 930 3.3 heads.",
+   "Chain housing cover bolt count and torque specifications (forum suggested ~18 ft-lb for housing-to-crankcase but unconfirmed).",
+   "Distributor cap orientation and wire routing for 930."
+  ],
+  "visual_refs": [
+   {
+    "url": "https://eurospares.co.uk/Porsche/911/1975_(911_Turbo)/PartDiagrams/103-000/CYLINDER_HEAD",
+    "shows": "Exploded parts diagram of the 1975 911 Turbo cylinder head, showing valves, springs, retainers, guides, rocker arms, and head casting. View from above/side."
+   },
+   {
+    "url": "https://eurospares.co.uk/Porsche/911/1977_(911_Turbo)/PartDiagrams/103-005/CHAIN_CASE_-_CAMSHAFT_HOUSING",
+    "shows": "Exploded parts diagram of the 1977 911 Turbo chain case and camshaft housing, showing housing castings, gaskets, sprockets, chain covers, oil tubes, and tensioner mounting."
+   },
+   {
+    "url": "https://eurospares.co.uk/Porsche/911/911_(1986)/PartDiagrams/103-005/CAMSHAFT_HOUSING_-_CHAIN_CASE",
+    "shows": "Exploded parts diagram of the 1986 911 camshaft housing and chain case (same architecture as 930 3.3), showing cam housing, chain housing covers, and associated hardware."
+   },
+   {
+    "url": "https://rennlist.com/forums/911-turbo-930-forum/282438-the-930-rebuild-beginning-to-end-the-process-in-pictures.html",
+    "shows": "Multi-page photo thread documenting a complete 930 turbo engine rebuild, with photos of the top end, cam housing, cylinders, and assembly process. Rennlist forum."
+   },
+   {
+    "url": "https://rennlist.com/forums/911-turbo-930-forum/149436-79-930-top-end-rebuild-imagineauto-stage-3-upgrade-and-new-clutch-do-it-yourself.html",
+    "shows": "DIY photo thread showing a 1979 930 top-end rebuild with cam housing cleaning, timing chain area, and valvetrain reassembly."
+   },
+   {
+    "url": "https://www.drcamshafts.com/911profiles.htm",
+    "shows": "Dougherty Racing Cams cam profile specification table for all 911/930/964 camshaft grinds, including stock 930 turbo, SC, and performance profiles with duration, lift, and lobe separation data."
+   },
+   {
+    "url": "https://www.pelicanparts.com/techarticles/911_backside_valveadjust/911_backside_valveadjust.htm",
+    "shows": "Pelican Parts technical article with photos showing the valve adjustment procedure on a 911, with views of the rocker arms, valve stems, and upper valve cover area."
+   },
+   {
+    "url": "https://eurospares.co.uk/Porsche/911_Turbo/911_Turbo_(1977)/PartDiagrams/105-000/AIR_COOLING",
+    "shows": "Exploded parts diagram of the 1977 911 Turbo air cooling system, showing the fan shroud, cooling fan, and ducting to cylinders and heads."
+   },
+   {
+    "url": "https://eurospares.co.uk/Porsche/911_Turbo/911_Turbo_(1977)/PartDiagrams/101-005/CRANKCASE",
+    "shows": "Exploded parts diagram of the 1977 911 Turbo crankcase, showing the case halves, intermediate shaft location, bearing positions, and distributor mounting area."
+   },
+   {
+    "url": "https://www.stuttcars.com/porsche-934-cutaway-drawing/",
+    "shows": "Cutaway drawing of the Porsche 934 (racing version of the 930 turbo), showing engine cross-section with cylinder heads, valvetrain, turbo, and intake system layout. The 934 engine architecture is very similar to the 930 road car."
+   },
+   {
+    "url": "https://www.turbosition.com/en/porsche-930-engine-rebuild",
+    "shows": "Turbosition 930 engine rebuild page with photos and video of the 930 3.3 turbo engine disassembly and reassembly process."
+   },
+   {
+    "url": "https://www.clewett.com/index.php?main_page=product_info&products_id=173",
+    "shows": "Clewett Engineering 930 turbo oil scavenge pump product page, showing the pump and its mounting arrangement on the camshaft end, with description of the air pump pulley drive mechanism."
+   }
+  ]
+ },
+ {
+  "group": "turbo-exhaust",
+  "facts": [
+   {
+    "item": "Stock turbo model, 930/66 engine (1986-1989)",
+    "value": "KKK/BorgWarner K27-3070GGD11.11GZATK, BorgWarner part 53279887006, OEM Porsche 930.123.013.03",
+    "source_url": "https://www.invasionautoproducts.com/89pocark27tu.html",
+    "source_kind": "vendor_listing",
+    "note": "Confirmed for the 930-66 3.3L engine. Superseded numbers include 53279707006."
+   },
+   {
+    "item": "Stock turbo model, 930/60 engine (1978-1985)",
+    "value": "KKK 3LDZ (sometimes described as essentially a K26 with different exhaust flange)",
+    "source_url": "https://custom-concepts.nl/en/turbo-revisie-voor-porsche/",
+    "source_kind": "vendor_listing",
+    "note": "Turbo rebuilder lists '3LDZ Turbo (P930 74-89)'. Forum sources conflict on whether this is a K26 variant or an early K27. See conflicts."
+   },
+   {
+    "item": "K27-7006 compressor wheel inducer diameter",
+    "value": "52.5 mm",
+    "source_url": "https://www.invasionautoproducts.com/89pocark27tu.html",
+    "source_kind": "vendor_listing",
+    "note": "Listed for 930-66 application. Rennlist forum measurement gives approximately 52.9 mm (2.0820 inches), consistent."
+   },
+   {
+    "item": "K27-7006 compressor wheel exducer diameter",
+    "value": "76.0 mm",
+    "source_url": "https://www.invasionautoproducts.com/89pocark27tu.html",
+    "source_kind": "vendor_listing",
+    "note": "Rennlist forum measurement gives approximately 75.9 mm (2.990 inches), consistent."
+   },
+   {
+    "item": "K27-7006 compressor wheel blade count",
+    "value": "6+6 blades (6 full + 6 splitter), Superback design",
+    "source_url": "https://www.invasionautoproducts.com/89pocark27tu.html",
+    "source_kind": "vendor_listing"
+   },
+   {
+    "item": "K27-7006 turbine wheel inducer diameter",
+    "value": "64.0 mm",
+    "source_url": "https://www.invasionautoproducts.com/89pocark27tu.html",
+    "source_kind": "vendor_listing"
+   },
+   {
+    "item": "K27-7006 turbine wheel exducer diameter",
+    "value": "76.1 mm",
+    "source_url": "https://www.invasionautoproducts.com/89pocark27tu.html",
+    "source_kind": "vendor_listing"
+   },
+   {
+    "item": "K27-7006 turbine wheel blade count",
+    "value": "12 blades",
+    "source_url": "https://www.invasionautoproducts.com/89pocark27tu.html",
+    "source_kind": "vendor_listing"
+   },
+   {
+    "item": "K27-7006 turbine housing A/R",
+    "value": "1.1 (listed as '11' in vendor notation)",
+    "source_url": "https://www.invasionautoproducts.com/89pocark27tu.html",
+    "source_kind": "vendor_listing"
+   },
+   {
+    "item": "K27-7006 compressor housing angle alpha",
+    "value": "270 degrees",
+    "source_url": "https://www.invasionautoproducts.com/89pocark27tu.html",
+    "source_kind": "vendor_listing",
+    "note": "This is the angular offset of the compressor volute outlet from the reference position."
+   },
+   {
+    "item": "K27-7006 turbine housing angle beta",
+    "value": "335 degrees",
+    "source_url": "https://www.invasionautoproducts.com/89pocark27tu.html",
+    "source_kind": "vendor_listing"
+   },
+   {
+    "item": "K27 turbo weight",
+    "value": "Approximately 9.5 to 9.7 kg",
+    "source_url": "https://www.dencodiesel.com/products/930-123-013-04-turbocharger-k27-porsche-911-turbo",
+    "source_kind": "vendor_listing",
+    "note": "Dencodiesel lists 9.7 kg for K27-7200 (53279887200). FVD lists similar. May include packaging weight."
+   },
+   {
+    "item": "K27 compressor inlet inner diameter",
+    "value": "Approximately 53 mm (2.1 inches)",
+    "source_url": "https://rennlist.com/forums/944-turbo-and-turbo-s-forum/65699-k26-and-k27-compressor-size.html",
+    "source_kind": "forum",
+    "note": "Forum member measurement. The intake pipe OD to the turbo is 2.75 inches (70 mm) per another source, which is the external connection diameter, not the wheel bore."
+   },
+   {
+    "item": "K27 compressor outlet inner diameter",
+    "value": "Approximately 43 mm (1.7 inches)",
+    "source_url": "https://rennlist.com/forums/944-turbo-and-turbo-s-forum/65699-k26-and-k27-compressor-size.html",
+    "source_kind": "forum",
+    "note": "Forum member measurement of outlet ID."
+   },
+   {
+    "item": "K27 turbine inlet flange type",
+    "value": "T3 (6-bolt flange)",
+    "source_url": "https://www.fabspeed.com/porsche-911-turbo-930-k27-turbocharger-upgrade",
+    "source_kind": "vendor_listing",
+    "note": "Fabspeed lists 6-bolt downpipe / T3 flange for the K27 upgrade."
+   },
+   {
+    "item": "K27-7200 upgrade turbo Porsche part numbers",
+    "value": "930.123.013.04 and 930.123.013.05, BorgWarner 53279887200",
+    "source_url": "https://www.dencodiesel.com/products/930-123-013-04-turbocharger-k27-porsche-911-turbo",
+    "source_kind": "vendor_listing",
+    "note": "K27-7200 is a performance upgrade over the 7006; used on 964 Turbo / 965 Turbo S. Larger compressor wheel than 7006."
+   },
+   {
+    "item": "Turbo mounting position in engine bay",
+    "value": "Rear-center of the engine, below the cooling fan shroud, roughly on the engine centerline. Rotor axis approximately transverse (left-right). Compressor side faces toward the left of the car (-X direction, toward the rear bumper/fan end), turbine side toward the right.",
+    "source_url": "",
+    "source_kind": "memory_unverified",
+    "note": "No web source explicitly confirmed the exact mounting position. Forum descriptions mention the turbo is hidden from view, and the intake pipe to the turbo runs a long distance from the air box. The turbo is bolted to a support bracket off the engine case."
+   },
+   {
+    "item": "Turbo oil feed source",
+    "value": "Oil feed line from the rear of the engine crankcase, with an oil flow restrictor ball at the connection point",
+    "source_url": "https://forums.pelicanparts.com/911-930-turbo-super-charging-forum/688570-turbo-oil-line-check-ball-spring.html",
+    "source_kind": "forum",
+    "note": "A restrictor controls oil pressure to the turbo bearing. Matching flow depends on restrictor size, oil source, line size, and oil pressure."
+   },
+   {
+    "item": "Turbo oil drain and catch tank",
+    "value": "Oil drains from turbo bearing into a small catch/drip tank, then a scavenge pump (driven by the left-bank camshaft) returns oil to the main oil tank at the right rear of the car",
+    "source_url": "https://forums.pelicanparts.com/911-930-turbo-super-charging-forum/564118-turbo-oil-tank-what-porsche-thinking.html",
+    "source_kind": "forum",
+    "note": "Inside the main oil tank, the scavenge return port has an internal tube running ~3/4 of the way up to prevent backfeed when the engine is off. The drain tank must be vented with a minimum 5 mm hose."
+   },
+   {
+    "item": "Turbo oil scavenge pump inlet/outlet fittings",
+    "value": "M16x1.5 mm inlet (hollow bolt, bottom, from turbo scavenge pipe), M14x1.5 mm outlet (adapter fitting, top, to tank)",
+    "source_url": "https://forums.pelicanparts.com/911-930-turbo-super-charging-forum/1184688-turbo-oil-scavenger-pump-set-up-options-3-2-turbo.html",
+    "source_kind": "forum",
+    "note": "Forum member measurements. Verify before ordering fittings."
+   },
+   {
+    "item": "Wastegate type and operation",
+    "value": "Fully mechanical poppet valve with spring and diaphragm. Boost pressure on the diaphragm opens the valve against the spring to bypass exhaust around the turbine.",
+    "source_url": "https://christophorus.porsche.com/en/2020/394/turbo-engines.html",
+    "source_kind": "manufacturer",
+    "note": "Porsche Christophorus magazine describes an 'exhaust-gas overpressure valve' (wastegate). Earlier cars had horizontal mounting; later changed to vertical to reduce moisture-related diaphragm failures."
+   },
+   {
+    "item": "Wastegate mounting change, early vs late",
+    "value": "Early 930 wastegates mounted horizontally; Porsche later switched to vertical mounting after moisture caused diaphragm failures",
+    "source_url": "https://rennlist.com/forums/911-turbo-930-forum/547090-wastegate-rebuild.html",
+    "source_kind": "forum"
+   },
+   {
+    "item": "Wastegate exhaust routing, 1978-1982",
+    "value": "Wastegate outlet pipe feeds into the rear muffler; muffler has two inputs (engine exhaust and wastegate). Muffler part 930-111-037-04 has two 44.5 mm tailpipes and a wastegate pipe connection.",
+    "source_url": "https://www.heritagepartscentre.com/us/93011103704-exhaust-rear-silencer-painted-stainless-steel.html",
+    "source_kind": "parts_catalogue",
+    "note": "Heritage Parts Centre OEM replacement listing. Separate wastegate connection pipe also listed (PC1230001 for 1978-82, 930-123-031-00 for 1975-82)."
+   },
+   {
+    "item": "Wastegate exhaust routing, 1983-1989",
+    "value": "Rear muffler (part 930-111-038-06) listed without a wastegate pipe connection",
+    "source_url": "https://www.heritagepartscentre.com/us/porsche/930/exhaust.html",
+    "source_kind": "parts_catalogue",
+    "note": "This suggests a change in wastegate routing for 1983+. Some forum sources say a small separate wastegate muffler was introduced around 1986 for US emissions cars. Best documented layout for modelling: 1983-1989 European spec."
+   },
+   {
+    "item": "Wastegate exhaust: left tailpipe carries wastegate gas",
+    "value": "Exhaust gases only came through the left-hand tailpipe when the turbocharger boost-pressure control valve was open",
+    "source_url": "https://www.porsche.com/usa/accessoriesandservice/classic/models/911-g/911-turbo/",
+    "source_kind": "manufacturer",
+    "note": "From Porsche's official Classic page. This means the left tailpipe is the wastegate dump path."
+   },
+   {
+    "item": "Recommended model year/market to model",
+    "value": "1987 European-spec 930/66 (3.3L). The K27-7006 turbo is well-documented, the vertical wastegate is used, the 1983-89 muffler without integral wastegate pipe simplifies the exhaust layout, and 41mm heat exchangers are fitted.",
+    "source_url": "",
+    "source_kind": "memory_unverified",
+    "note": "This is a recommendation based on synthesizing the research. The 1987 Euro spec avoids US emissions complexities (thermal reactors, catalysts, air injection)."
+   },
+   {
+    "item": "Exhaust heat exchanger tube OD, 1975-1983",
+    "value": "39 mm outside diameter",
+    "source_url": "https://www.design911.co.uk/porsche/930--911--turbo-3-3l/heat-exchangers/?ol=zh",
+    "source_kind": "vendor_listing",
+    "note": "Porsche increased diameter in 1984 to improve exhaust flow."
+   },
+   {
+    "item": "Exhaust heat exchanger tube OD, 1984-1989",
+    "value": "41 mm outside diameter",
+    "source_url": "https://www.heritagepartscentre.com/us/pc2110009-heat-exchanger-stainless-steel-41mm.html",
+    "source_kind": "parts_catalogue",
+    "note": "930-211-029-01 is the 1984-89 part. 930-211-021-03 is the 1975-83 part."
+   },
+   {
+    "item": "Exhaust crossover pipe",
+    "value": "Part 930-111-163-02 (mild steel) or 930-111-163-02/SS (stainless), fits 1975-1989. Connects the two cylinder banks' exhaust systems to balance exhaust pressure.",
+    "source_url": "https://www.heritagepartscentre.com/us/93011116302-exhaust-cross-over-pipe.html",
+    "source_kind": "parts_catalogue",
+    "note": "A separate crossover pipe connector (930-111-157-01) joins sections. Gasket 911-111-189-03 seals the crossover."
+   },
+   {
+    "item": "Exhaust intermediate turbo bypass pipe",
+    "value": "Part 930-111-003-04 (mild steel) or 930-111-003-04/SS (stainless), fits 1975-1989. Routes exhaust from the heat exchangers/crossover to the turbo turbine inlet.",
+    "source_url": "https://www.heritagepartscentre.com/us/93011100304-exhaust-intermediate-turbo-bypass-pipe.html",
+    "source_kind": "parts_catalogue",
+    "note": "Porsche made slightly different shapes over the years under the same part number. Gasket 930-123-192-05 seals the pipe to the turbo."
+   },
+   {
+    "item": "Aftermarket header pipe diameter (reference for stock dimensions)",
+    "value": "1 5/8 inch (41.3 mm) primary tube diameter, 16-gauge 321 stainless steel, mandrel bent",
+    "source_url": "https://www.bbexhaust.com/shop/porsche-911-930-turbo-header-with-heat-exchangers-fpor-0110/",
+    "source_kind": "vendor_listing",
+    "note": "Billy Boat aftermarket replacement header. Factory primaries are likely similar diameter. Aftermarket 3-into-1 pyramidal merge collectors are common."
+   },
+   {
+    "item": "Aftermarket muffler bypass tubing diameter",
+    "value": "3.0 inches / 76.5 mm OD, CNC mandrel bent T304 stainless",
+    "source_url": "https://www.fabspeed.com/porsche-911-turbo-930-supercup-race-exhaust-system/",
+    "source_kind": "vendor_listing",
+    "note": "Fabspeed Supercup race exhaust. Stock muffler outlet diameter likely smaller (factory tailpipes listed at 44.5 mm)."
+   },
+   {
+    "item": "Rear muffler, 1978-1982",
+    "value": "Part 930-111-037-04. Painted stainless steel, with wastegate pipe connection and two 44.5 mm diameter tailpipes.",
+    "source_url": "https://www.heritagepartscentre.com/us/93011103704-exhaust-rear-silencer-painted-stainless-steel.html",
+    "source_kind": "parts_catalogue"
+   },
+   {
+    "item": "Rear muffler, 1983-1989",
+    "value": "Part 930-111-038-06. Painted stainless steel, without integral wastegate pipe.",
+    "source_url": "https://www.heritagepartscentre.com/us/porsche/930/exhaust.html",
+    "source_kind": "parts_catalogue"
+   },
+   {
+    "item": "Intercooler type and introduction",
+    "value": "Air-to-air intercooler, introduced 1978 model year with the 3.3L engine. Sits under the whale-tail rear spoiler (engine lid).",
+    "source_url": "https://en.wikipedia.org/wiki/Porsche_911_(930)",
+    "source_kind": "reference_site",
+    "note": "The rear spoiler was re-profiled and raised slightly to accommodate the intercooler. 1975-1977 3.0L cars had the whale tail but no intercooler."
+   },
+   {
+    "item": "Intercooler core dimensions",
+    "value": "Approximately 279 x 292 x 57 mm (11 x 11.5 x 2.25 inches)",
+    "source_url": "https://parts.turbokraft.com/products/turbocharger-borg-warner-kkk-k27-7200",
+    "source_kind": "vendor_listing",
+    "note": "TurboKraft spec sheet for the factory intercooler. Core surface area approximately 820 sq cm (127 sq in), volume approximately 4670 cc (285 cu in)."
+   },
+   {
+    "item": "Intercooler weight",
+    "value": "Approximately 5.7 kg (12.6 lb)",
+    "source_url": "https://parts.turbokraft.com/products/turbocharger-borg-warner-kkk-k27-7200",
+    "source_kind": "vendor_listing",
+    "note": "TurboKraft listing for factory-size intercooler."
+   },
+   {
+    "item": "Charge pipe, turbo outlet to intercooler inlet",
+    "value": "Aluminum pipe with rubber hose couplers, approximately 70 mm (2.75 inch) OD",
+    "source_url": "https://rennlist.com/forums/911-turbo-930-forum/228542-turbo-hose-help-needed.html",
+    "source_kind": "forum",
+    "note": "Forum description of the metal pipe from turbo compressor outlet going up to the intercooler inlet under the whale tail. do88 aftermarket kit replaces this with silicone hoses."
+   },
+   {
+    "item": "Intercooler outlet angle",
+    "value": "Approximately 35 degrees from horizontal on 3.3L 930 and 964T manifolds",
+    "source_url": "https://forums.pelicanparts.com/911-930-turbo-super-charging-forum/1183381-wtb-intake-manifold-930-110-934-00-a.html",
+    "source_kind": "forum",
+    "note": "Differs from 3.0L manifold angle of approximately 20 degrees."
+   },
+   {
+    "item": "Bypass / recirculation valve location",
+    "value": "Built into the intermediate manifold (cast magnesium) between the intercooler outlet and the intake manifold/throttle body",
+    "source_url": "https://rennlist.com/forums/911-turbo-930-forum/472382-where-is-the-diverter-valve.html",
+    "source_kind": "forum",
+    "note": "Also called diverter valve or blow-off valve. It is a recirculation valve, not an atmospheric vent, because the CIS K-Jetronic fuel system requires metered air to stay in the system."
+   },
+   {
+    "item": "Bypass valve construction",
+    "value": "Piston with spring and plastic seals at each end, inside the intermediate manifold casting. Vacuum on throttle lift overcomes the spring and pulls the piston back to open bypass ports.",
+    "source_url": "https://rennlist.com/forums/911-turbo-930-forum/663090-loss-of-boost-and-power-at-1-bar-in-89-930-please-help.html",
+    "source_kind": "forum",
+    "note": "Plastic seals can decay over time and cause boost leaks. The valve recirculates pressurized air back toward the compressor inlet to prevent compressor surge on throttle lift."
+   },
+   {
+    "item": "Stock boost pressure",
+    "value": "0.8 bar (approximately 11.6 psi)",
+    "source_url": "https://christophorus.porsche.com/en/2020/394/turbo-engines.html",
+    "source_kind": "manufacturer",
+    "note": "Porsche Christophorus magazine confirms 0.8 bar for both the 3.0 and 3.3 versions."
+   },
+   {
+    "item": "Full boost onset RPM",
+    "value": "Approximately 3500 rpm",
+    "source_url": "https://christophorus.porsche.com/en/2020/394/turbo-engines.html",
+    "source_kind": "manufacturer",
+    "note": "Christophorus says 'boost arrives somewhat abruptly at 3,500 rpm'."
+   },
+   {
+    "item": "Overboost safety switch cutoff",
+    "value": "Fuel pump cutoff at approximately 1.1 to 1.3 bar boost",
+    "source_url": "https://rennlist.com/forums/911-turbo-930-forum/289405-930-boost-pressure-switch.html",
+    "source_kind": "forum",
+    "note": "Forum sources disagree on exact threshold. One cites factory manual as 1.1-1.3 bar; another says just above 1.0 bar cuts the rear fuel pump. The switch is a separate safety device from the wastegate."
+   },
+   {
+    "item": "Wastegate spring base pressure",
+    "value": "Approximately 0.7 bar",
+    "source_url": "https://rennlist.com/forums/911-turbo-930-forum/289405-930-boost-pressure-switch.html",
+    "source_kind": "forum",
+    "note": "Forum poster says 'OEM 930 wastegate spring tension is adjusted to about 0.7 bar'. Boost control line from manifold adds to reach 0.8 bar target."
+   },
+   {
+    "item": "Turbine housing material",
+    "value": "Cast iron (gray/rusty appearance)",
+    "source_url": "",
+    "source_kind": "memory_unverified",
+    "note": "Standard for exhaust-side turbo housings. Visible in photos as dark, often rust-colored casting."
+   },
+   {
+    "item": "Compressor housing material",
+    "value": "Cast aluminum (silver/natural finish)",
+    "source_url": "",
+    "source_kind": "memory_unverified",
+    "note": "Standard for compressor-side turbo housings."
+   },
+   {
+    "item": "Intercooler material and finish",
+    "value": "Bare aluminum, typically unpainted",
+    "source_url": "",
+    "source_kind": "memory_unverified",
+    "note": "Visible as bright aluminum in engine bay photos."
+   },
+   {
+    "item": "Heat exchanger material, factory",
+    "value": "Mild steel, painted (grey/dark finish). Aftermarket replacements commonly 321 stainless steel.",
+    "source_url": "https://www.design911.co.uk/porsche/930--911--turbo-3-3l/heat-exchangers/?ol=zh",
+    "source_kind": "vendor_listing"
+   },
+   {
+    "item": "Charge pipe material",
+    "value": "Aluminum pipe with black rubber hose couplers/sleeves at connections",
+    "source_url": "https://forums.pelicanparts.com/911-930-turbo-super-charging-forum/1179138-pressure-pipe-long-neck-i-c-print.html",
+    "source_kind": "forum",
+    "note": "Factory hose is thick black rubber. Aftermarket silicone hoses in various colors (blue, red) are common replacements."
+   },
+   {
+    "item": "Exhaust intermediate pipe material, factory",
+    "value": "Grey painted steel (mild steel). Stainless steel aftermarket replacements available.",
+    "source_url": "https://www.design911.co.uk/p/intermediate-pipe-porsche-930-turbo-dansk-92205s-92205ss-grey-painted/",
+    "source_kind": "vendor_listing"
+   },
+   {
+    "item": "Rear muffler material, factory",
+    "value": "Painted stainless steel (black or dark grey finish)",
+    "source_url": "https://www.heritagepartscentre.com/us/93011103704-exhaust-rear-silencer-painted-stainless-steel.html",
+    "source_kind": "parts_catalogue"
+   },
+   {
+    "item": "Wastegate control line",
+    "value": "8 mm ID / 14 mm OD hose from intake manifold to wastegate diaphragm",
+    "source_url": "https://www.design911.co.uk/porsche/930--911--turbo-3-3l/porsche-air-inlet-hoses-pipes-sleeves/",
+    "source_kind": "vendor_listing",
+    "note": "Design911 lists this hose for wastegate and warm-up regulator. Boost pressure transmitted through this line actuates the wastegate."
+   },
+   {
+    "item": "WLS (Works Performance) option exhaust, 1983+",
+    "value": "330 PS version with quad-pipe (4-pipe) exhaust system and additional front oil cooler",
+    "source_url": "https://www.stuttcars.com/porsche-911-turbo-3-3-930/",
+    "source_kind": "reference_site",
+    "note": "M505 Turbo S package also used four-outlet exhaust. Required remodelled front spoiler."
+   },
+   {
+    "item": "Muffler strap",
+    "value": "Part 930-111-155-00, stainless steel, fits 1975-1989",
+    "source_url": "https://www.heritagepartscentre.com/us/porsche/930/exhaust.html",
+    "source_kind": "parts_catalogue"
+   },
+   {
+    "item": "K27-7200 compressor wheel dimensions (upgrade turbo)",
+    "value": "Inducer approximately 55 mm, exducer approximately 76 mm (larger inducer than 7006)",
+    "source_url": "https://www.qualitec.eu/turbo-475hp-3k-k27-",
+    "source_kind": "vendor_listing",
+    "note": "Qualitec listing gives 55/76 mm compressor, 59/70 mm turbine for the K27/7200. TurboTurbos listing for 53279887200 gives inducer 56.85 mm, exducer 87.03 mm for a K27.2, which appears to be a different variant."
+   },
+   {
+    "item": "Gastket, turbo wastegate",
+    "value": "Part 930-123-194-06, fits 1975-1989",
+    "source_url": "https://www.heritagepartscentre.com/us/porsche/930/exhaust.html",
+    "source_kind": "parts_catalogue"
+   },
+   {
+    "item": "Gasket, turbo wastegate outlet",
+    "value": "Part 930-123-134-04, fits 1975-1982",
+    "source_url": "https://www.heritagepartscentre.com/us/porsche/930/exhaust.html",
+    "source_kind": "parts_catalogue",
+    "note": "Only for 1975-82 suggests the wastegate outlet configuration changed for 1983+."
+   },
+   {
+    "item": "Gasket, intermediate pipe to turbo",
+    "value": "Part 930-123-192-05, fits 1975-1987",
+    "source_url": "https://www.heritagepartscentre.com/us/porsche/930/exhaust.html",
+    "source_kind": "parts_catalogue"
+   },
+   {
+    "item": "Max torque and peak torque RPM",
+    "value": "412 Nm (304 lb-ft) at 4000 rpm",
+    "source_url": "https://en.wikipedia.org/wiki/Porsche_911_(930)",
+    "source_kind": "reference_site",
+    "note": "DIN rating for the 300 PS 3.3L engine."
+   }
+  ],
+  "conflicts": [
+   "Turbo identity on 1978-1985 930/60 engines: Custom Concepts (turbo rebuilder) calls it a '3LDZ' through 1989. Rennlist forum posts describe the 3LDZ as 'basically a K26 with different exhaust flange'. Stuttcars says the 3.3 used 'a larger but lighter' turbo than the 3.0's 3LDZ. The parts listing from InvasionAutoProducts clearly shows K27-3070GGD11.11GZATK (53279887006) for the 930/66 engine (1986-89). It is unclear whether the 1978-1985 930/60 used the same 3LDZ as the 3.0 or an early K27 variant. Trust: Porsche OEM part numbers from Heritage Parts Centre and vendor cross-references, which show separate turbo part numbers by engine code.",
+   "K27-7200 compressor wheel dimensions: Qualitec gives 55/76 mm inducer/exducer. TurboTurbos gives 56.85/87.03 mm for a '53279887200 K27.2'. These are significantly different exducer figures (76 vs 87 mm) and may represent different K27.2 variants or a data error. Trust: neither is authoritative without BorgWarner documentation.",
+   "Overboost safety switch cutoff pressure: One forum poster cites factory manual as '1.1 to 1.3 bar'. Another says 'just beyond 1.0 bar'. A third reports '1.20 bar'. These may reflect different model years or calibration settings. Trust: the factory-manual citation of 1.1-1.3 bar over the other figures.",
+   "Wastegate exhaust routing by year: Parts listings show the 1978-82 muffler (930-111-037-04) with a wastegate pipe connection and the 1983-89 muffler (930-111-038-06) without. Forum posts suggest a separate small wastegate muffler was added around 1986 for US emissions. The exact year of the transition and whether Euro cars were affected is unclear. Trust: Heritage Parts Centre part numbers by year range.",
+   "Whether the stock 1978-1985 turbo is called 3LDZ or K27: The 3LDZ designation comes from KKK's older naming system. Some sources treat the 3LDZ as a K27 family member, others as a K26 variant. The confusion arises because KKK rebranded and renumbered its product lines. For modelling purposes, the physical differences between variants (housing size, wheel dimensions) matter more than the naming."
+  ],
+  "not_found": [
+   "Exact turbo model designation for the 1978-1985 930/60 engine (whether 3LDZ, K26 variant, or early K27)",
+   "Overall turbo dimensions (length, width, height of assembled turbocharger unit) - vendor listings give shipping box sizes, not turbo dimensions",
+   "Exact wastegate poppet valve diameter and spring specifications (rate, preload, free length)",
+   "Wastegate diaphragm housing dimensions",
+   "Bypass/recirculation valve piston diameter and spring dimensions",
+   "Factory stock charge pipe inner diameters (turbo-to-intercooler and intercooler-to-throttle-body sections)",
+   "Intercooler tank shapes (end tank geometry, inlet/outlet pipe diameters and positions)",
+   "Exact intercooler mounting position dimensions relative to the engine (height above crankshaft, offset from centerline)",
+   "Factory muffler body dimensions (length, width, height of the muffler canister)",
+   "Crossover pipe diameter, length, and routing path (which bank crosses to which, and whether it passes in front of or behind the engine)",
+   "Exact turbo mounting bracket dimensions and position relative to the crankshaft axis",
+   "Turbo oil catch/drip tank dimensions and exact mounting position",
+   "Turbo oil feed line length, diameter, and routing",
+   "Exhaust heat exchanger internal tube count per side (3 tubes per bank not confirmed by any source)",
+   "Heat exchanger overall dimensions (length, width)",
+   "Wastegate exhaust pipe diameter",
+   "Hose clamp types and sizes on factory charge pipes",
+   "Differences in charge pipe routing between 1978 and 1989 models"
+  ],
+  "visual_refs": [
+   {
+    "url": "https://www.eurospares.co.uk/Porsche/Replacement_catalogue/Replacement_catalogue_(1980)/PartDiagrams/202-000/EXHAUST_GAS_TURBOCHARGER",
+    "shows": "Exploded parts diagram of the 930 exhaust gas turbocharger assembly (1980 replacement catalogue), showing turbo housing, wastegate, gaskets, and mounting hardware with numbered callouts."
+   },
+   {
+    "url": "https://eurospares.co.uk/Porsche/911/911_(1987)/PartDiagrams/202-016/EXHAUST_GAS_TURBOCHARGER",
+    "shows": "Exploded parts diagram of the 1987 911 Turbo exhaust gas turbocharger assembly, showing K27 turbo, wastegate components, oil lines, and gaskets."
+   },
+   {
+    "url": "https://eurospares.co.uk/Porsche/911/911_(1985)/PartDiagrams/107-040/TURBOCHARGING",
+    "shows": "Parts diagram of the 1985 911 turbocharging system, showing intercooler, charge pipes, bypass valve intermediate manifold, and connections."
+   },
+   {
+    "url": "https://www.eurospares.co.uk/Porsche/911/1983_(911)/PartDiagrams/202-010/EXHAUST_SYSTEM",
+    "shows": "Exploded parts diagram of the 1983 911 Turbo (930/60, 930/66) exhaust system, showing heat exchangers, crossover pipe, intermediate pipe, muffler, and tailpipes."
+   },
+   {
+    "url": "https://www.porsche.com/usa/accessoriesandservice/classic/models/911-g/911-turbo/",
+    "shows": "Porsche official Classic page for the 911 Turbo (930) with engine bay photo showing the whale-tail spoiler, intercooler area, and general engine layout from above/rear."
+   },
+   {
+    "url": "https://www.heritagepartscentre.com/us/porsche/930/exhaust.html",
+    "shows": "Heritage Parts Centre 930 exhaust parts listing with part numbers, fitment years, and descriptions for all exhaust components including heat exchangers, crossover pipe, intermediate pipe, mufflers, and wastegate pipe."
+   },
+   {
+    "url": "https://www.bbexhaust.com/shop/porsche-911-930-turbo-header-with-heat-exchangers-fpor-0110/",
+    "shows": "Billy Boat 930 Turbo header product page with photos of the 3-into-1 header with heat exchangers, turbo oil line routing, and installation detail from underneath/rear."
+   },
+   {
+    "url": "https://www.invasionautoproducts.com/89pocark27tu.html",
+    "shows": "Detailed K27-7006 turbocharger specifications page with compressor and turbine wheel dimensions, blade counts, A/R ratios, and BorgWarner part number cross-references."
+   },
+   {
+    "url": "https://www.fabspeed.com/blog/porsche-930-turbo-full-build-breakdown/",
+    "shows": "Fabspeed 930 Turbo build breakdown with photos of K27 turbo installation, long-neck intercooler, wastegate, and exhaust system in the engine bay."
+   },
+   {
+    "url": "https://www.design911.co.uk/p/intermediate-pipe-porsche-930-turbo-dansk-92205s-92205ss-grey-painted/",
+    "shows": "Design911 listing for the 930 intermediate turbo bypass pipe (Dansk replacement) with product photo showing the pipe shape that routes from heat exchangers to turbo inlet."
+   },
+   {
+    "url": "https://christophorus.porsche.com/en/2020/394/turbo-engines.html",
+    "shows": "Porsche Christophorus magazine article on turbo engine history with 930 engine cutaway illustration, boost pressure specifications (0.8 bar), and turbine operating temperature (1000 degrees C)."
+   },
+   {
+    "url": "https://www.fvd.net/en-us/shop/turbocharger-930-3-3-l-k27-sport-7200-series-fvd123004~p237080",
+    "shows": "FVD K27-7200 Sport turbocharger product page with photos of the assembled turbo unit from multiple angles, showing compressor and turbine housing proportions."
+   },
+   {
+    "url": "https://rennlist.com/forums/911-turbo-930-forum/282438-the-930-rebuild-beginning-to-end-the-process-in-pictures-9.html",
+    "shows": "Rennlist 930 rebuild photo thread (page 9) showing engine disassembly and reassembly with turbo, exhaust, and intake components visible. Multiple angles of the engine bay."
+   }
+  ]
+ },
+ {
+  "group": "induction-cooling-ignition",
+  "facts": [
+   {
+    "item": "Intake air path sequence (930/60 K-Jetronic turbo)",
+    "value": "Air cleaner box (steel, right rear of engine bay) -> K-Jetronic airflow sensor plate (flap metering unit, with fuel distributor mounted on top) -> duct to KKK K27 turbo compressor inlet -> turbo compressor outlet -> charge pipe up to air-to-air intercooler (under rear spoiler) -> intercooler outlet to throttle body -> intake manifold/plenum -> six runners to cylinder heads",
+    "source_url": "https://forums.pelicanparts.com/911-930-turbo-super-charging-forum/1049176-why-doesnt-turbo-inlet-have-filter.html",
+    "source_kind": "forum",
+    "note": "Composite from multiple forum sources. The turbo draws from the fuel/air metering unit which draws from the air box. K-Jetronic pressure housings bridge the intercooler and manifold. Some forum sources note ~5 inch (127 mm) CIS intake diameter."
+   },
+   {
+    "item": "Air cleaner box material and position",
+    "value": "Heavy steel box, sits at the right rear of the engine compartment. Fabspeed calls it a 'Dutch oven 1950s style' unit that heats intake air.",
+    "source_url": "https://www.fabspeed.com/porsche-911-turbo-930-air-intake-system/",
+    "source_kind": "vendor_listing",
+    "note": "Aftermarket vendor description of the stock part. Position confirmed by forum post saying removing the box frees access to the right side of the engine."
+   },
+   {
+    "item": "K-Jetronic airflow sensor and fuel distributor",
+    "value": "Bosch airflow sensor (flap type) part 0 438 120 205 for 3.3L turbo. Fuel distributor mounted on top of the sensor assembly as one unit. Complete assembly sold together.",
+    "source_url": "https://rennlist.com/forums/market/1351039",
+    "source_kind": "forum",
+    "note": "Parts listing for 1978-1985 930 air flow meter - complete, including fuel distributor assembly. The 3.0L used 0 438 120 024."
+   },
+   {
+    "item": "Throttle body bore diameter",
+    "value": "Approximately 68 mm stock bore; maximum practical rebore 70 mm limited by intake manifold flange",
+    "source_url": "https://rennlist.com/forums/performance-modifications-forum/33909-throttle-body-rebore-2.html",
+    "source_kind": "forum",
+    "note": "Forum post, model year not specified. Treat as approximate. Aftermarket 964-style conversions use 74 mm (sometimes called 76 mm) Bosch throttle body."
+   },
+   {
+    "item": "Intake manifold/plenum material and type",
+    "value": "Cast magnesium (per one parts listing) or aluminium. Part number 930 110 034 02 for 3.3L turbo. The manifold is a central plenum with six individual runners to the intake ports.",
+    "source_url": "https://www.classiccollection.fi/product-page/porsche-911-turbo-930-3-3l-inlet-manifold",
+    "source_kind": "vendor_listing",
+    "note": "One vendor lists material as magnesium. Another Rennlist poster says 3.3L intercooler outlet sits at roughly 35 degrees from horizontal. The manifold, plenum and throttle body are separate castings bolted together."
+   },
+   {
+    "item": "Injector location",
+    "value": "Six CIS injectors seat in the intake runners near the cylinder heads with O-rings. Each has an individual fuel line from the fuel distributor. Injector fitting thread is M12x1.5.",
+    "source_url": "https://www.pelicanparts.com/techarticles/bob_tindel/911_inj_nozzle.htm",
+    "source_kind": "reference_site",
+    "note": "Pelican Parts guide. Six separate identical lines from fuel distributor (M10x1.0 banjo at distributor end) to injectors."
+   },
+   {
+    "item": "Fuel line material (K-Jetronic)",
+    "value": "Steel fuel lines from factory. Aftermarket replacements use stainless steel or braided Teflon lines.",
+    "source_url": "http://forums.pelicanparts.com/911-930-turbo-super-charging-forum/598957-making-new-fuel-lines.html",
+    "source_kind": "forum",
+    "note": "Forum post about making new fuel lines. WUR and cold-start fittings are M8x1.0."
+   },
+   {
+    "item": "Warm-up regulator (WUR) location and part number",
+    "value": "Part number 930.606.105.03, Bosch 0 438 140 054. Located on the upper left-hand side of the engine.",
+    "source_url": "https://www.manualslib.com/manual/392505/Porsche-911-Turbo-1989.html?page=113",
+    "source_kind": "workshop_manual",
+    "note": "Part number from the workshop manual test values page. Location from Design911 parts listing description."
+   },
+   {
+    "item": "Auxiliary air valve / regulator (AAR)",
+    "value": "A diaphragm valve connecting from the intercooler to the air intake past the throttle butterfly, with a vacuum connection through a thermal time switch. Open when cold, closed when warm. Hoses from the AAR run to the throttle body and to the air filter box.",
+    "source_url": "https://rennlist.com/forums/911-turbo-930-forum/474853-auxiliary-air-valve-help.html",
+    "source_kind": "forum",
+    "note": "930-specific forum description. The Porsche manual calls this the auxiliary air valve; Bosch terminology calls it an air regulator (AAR). It modulates cold idle air bypass."
+   },
+   {
+    "item": "Cold start valve location",
+    "value": "On or near the fuel distribution head (enrichment device on the back left of the fuel distribution head). Timing controlled by the thermo-time switch.",
+    "source_url": "https://rennlist.com/forums/911-turbo-930-forum/1364803-cold-start-issue.html",
+    "source_kind": "forum",
+    "note": "Forum description; verify against factory manual."
+   },
+   {
+    "item": "Thermo-time switch location",
+    "value": "Mounted in the left-side chain case cover",
+    "source_url": "http://forums.pelicanparts.com/911-930-turbo-super-charging-forum/394873-cold-start-valve.html",
+    "source_kind": "forum",
+    "note": "Sources disagree: one says back of the head, another says left chain case cover. The chain case cover location is specific to the 930."
+   },
+   {
+    "item": "Fuel accumulator",
+    "value": "Porsche part 911 110 197 02 (1978-1989 930), Bosch 0438170009 variant. Maintains fuel pressure after engine shutoff. Some early 930/50 engines had no accumulator.",
+    "source_url": "https://www.heritagepartscentre.com/us/91111019702-fuel-pressure-accumulator.html",
+    "source_kind": "vendor_listing",
+    "note": "Accumulator mounting location not confirmed by any source; it is not on the engine itself. Likely mounted in the body near the fuel tank area."
+   },
+   {
+    "item": "Cooling fan diameter and blade count",
+    "value": "245 mm diameter, 11 blades",
+    "source_url": "https://sierramadrecollection.com/products/porsche-engine-cooling-fan-911-930-74-89-930-106-012-01",
+    "source_kind": "vendor_listing",
+    "note": "Part number 930 106 012 01. Consistent across multiple sources for 930 turbo (1976-1989). Some 1978-79 911 SC had smaller 226 mm fan; not applicable to 930 turbo."
+   },
+   {
+    "item": "Fan drive ratio (crank to fan)",
+    "value": "Approximately 1:1.67 (fan spins 1.67x crank speed)",
+    "source_url": "https://www.manualslib.com/manual/392505/Porsche-911-Turbo-1989.html?page=14",
+    "source_kind": "workshop_manual",
+    "note": "Workshop manual Technical Data page. Air delivery: 1560 l/s at 6000 rpm crankshaft. Some owners upgrade to 1.8:1 ratio with different pulley combination."
+   },
+   {
+    "item": "Fan belt dimensions",
+    "value": "10 x 710 mm (also listed as 9.5 x 710 mm). Some sources list 9.5 x 725 mm for the higher-ratio setup.",
+    "source_url": "https://www.heritagepartscentre.com/us/9991921765A-alternator-belt-10x710.html",
+    "source_kind": "vendor_listing",
+    "note": "Heritage Parts lists 10x713 mm for 930 Turbo 1978-1989. Design911 lists 10x725 for the 930 Turbo application. Forum disagreement on 710 vs 725; 710 is the stock 1.67:1 length."
+   },
+   {
+    "item": "Fan pulley outer diameter",
+    "value": "Approximately 82 mm (outer half of two-piece pulley)",
+    "source_url": "https://www.heritagepartscentre.com/eu/93010620902-alternator-fan-pulley.html",
+    "source_kind": "vendor_listing",
+    "note": "Part 930 106 209 02 for 930 (1975-1989). One listing gives 82 mm diameter. Combined with ~137 mm crank pulley, this gives approximately 1.67:1 ratio."
+   },
+   {
+    "item": "Fan housing shroud ring (die cast)",
+    "value": "245 mm aluminium die cast shroud ring, casting number 930.106.667.4R",
+    "source_url": "https://rennlist.com/forums/911-forum/893603-fan-shroud-interchangability.html",
+    "source_kind": "forum",
+    "note": "Rennlist forum listing of production shroud castings. The casting number, not the part number, identifies the correct shroud for a given car."
+   },
+   {
+    "item": "Fan shroud material and color",
+    "value": "Fiberglass (GRP). The 930 Turbo shroud is reproduced in red. FVD sells a GRP red engine shroud/air duct for the 930 Turbo. Forum consensus suggests red was the factory color for 930 Turbo shrouds.",
+    "source_url": "https://fvd.net/de-en/93010604113GFK/engine-shroud-air-duct-930-turbo-reproduction-grp-red.html",
+    "source_kind": "vendor_listing",
+    "note": "No factory documentation found confirming the exact color. Red is the most commonly cited color for 930 Turbo shrouds in restoration forums. Some sources mention green for 911E models, red for S and Turbo."
+   },
+   {
+    "item": "Alternator output and type",
+    "value": "Bosch 90 amp (1984-1989), 70 amp (1975-1977). 12V, internal regulator (later cars). Overall length 173 mm. Sits inside the fan housing/hub assembly.",
+    "source_url": "https://pmbperformance.com/products/bosch-alternator-1",
+    "source_kind": "vendor_listing",
+    "note": "90A unit part 911 603 120 05 (Bosch AL-401-X) for 1984-89. 70A unit AL9341X for earlier cars. The alternator is concentric within the cooling fan - removing the fan requires removing the alternator."
+   },
+   {
+    "item": "Fan housing strap",
+    "value": "Part 964 106 251 20 (also fits 911/914/930). Steel band with yellow zinc plating (stock finish) that secures the fan housing.",
+    "source_url": "https://www.design911.co.uk/p/alternator-fan-impeller-housing-strap-porsche-911-914-964-96410625120/",
+    "source_kind": "vendor_listing",
+    "note": "Also available in titanium aftermarket version. The strap clamps around the fan housing to hold the two halves together."
+   },
+   {
+    "item": "Engine oil cooler type and position",
+    "value": "Tubular (trombone/snake) type for 1974-1983 (OEM 930 207 050 03); radiator type for 1984-1989 (OEM 930 207 053 02/04). Mounted in right front fender/wheelhouse, in the blower air stream. 15 rows of tubes, 16 rows of fins (OEM spec per CSF).",
+    "source_url": "https://news.csfrace.com/csfs-new-porsche-911-930-turbo-oem-performance-oil-cooler/",
+    "source_kind": "vendor_listing",
+    "note": "CSF replacement has 50 mm core vs OEM 45 mm. The workshop manual confirms: oil cooler mounted on engine block, in blower air stream; cooler coils in front right wheelhouse."
+   },
+   {
+    "item": "Oil cooler thermostat and pressure",
+    "value": "Thermostatically controlled oil cooling. Oil thermostat sits on top of the engine next to the oil pressure switch. Oil pressure at 5500 rpm: approx. 4.0 bar at 80 deg C. Max oil temp: approx. 150 deg C.",
+    "source_url": "https://www.manualslib.com/manual/392505/Porsche-911-Turbo-1989.html?page=14",
+    "source_kind": "workshop_manual",
+    "note": "Workshop manual Technical Data page."
+   },
+   {
+    "item": "Oil pressure sender/switch location",
+    "value": "On top of the engine near the crankcase breather cover, at the bulkhead side. The turbo oil feed comes off the same location as the low oil pressure switch.",
+    "source_url": "https://rennlist.com/forums/911-turbo-930-forum/433794-oil-feed-line.html",
+    "source_kind": "forum",
+    "note": "Forum description. Oil temperature sender is on the right chain housing, vertical portion."
+   },
+   {
+    "item": "Turbo oil feed and scavenge system",
+    "value": "Oil feed from a banjo fitting near the oil pressure switch, with a restrictor ball under the banjo bolt to limit flow. Scavenge pump returns oil from the turbo's oil drip tank. The scavenge tank's breather tube runs up through the engine tray to a hose to the air cleaner box.",
+    "source_url": "https://rennlist.com/forums/911-turbo-930-forum/433794-oil-feed-line.html",
+    "source_kind": "forum",
+    "note": "Composite from Rennlist threads. Factory scavenge pump only falls behind incoming oil below 1500 RPM at idle."
+   },
+   {
+    "item": "Oil filler and breather",
+    "value": "Oil filler neck on top of the crankcase. Crankcase breather cover on top of engine at bulkhead side. Oil tank is in the car body (right rear fender area), not on the engine.",
+    "source_url": "https://www.pelicanparts.com/techarticles/101_Projects_Porsche_911/21-Oil_Leak_Fixes/21-Oil_Leak_Fixes.htm",
+    "source_kind": "reference_site",
+    "note": "Oil system: dry sump, 13 litres total capacity. The oil tank is not part of the engine assembly."
+   },
+   {
+    "item": "Ignition system type",
+    "value": "Transformer-type CDI (capacitive discharge ignition), breakerless, Bosch. Called 'CD!' in workshop manual (OCR error for CDI). 6-pin CDI module used 1978-1989 on the turbo.",
+    "source_url": "https://www.manualslib.com/manual/392505/Porsche-911-Turbo-1989.html?page=14",
+    "source_kind": "workshop_manual",
+    "note": "Workshop manual Technical Data page confirms CDI. Perma-Tune says 6-pin module 1978-1989 on turbo. European 930 uses 8-pin connectors with clockwise distributor per Perma-Tune."
+   },
+   {
+    "item": "Distributor rotation direction",
+    "value": "Counterclockwise (US-spec 930 turbo). European spec uses clockwise rotation with 8-pin CDI connectors.",
+    "source_url": "https://permatune.com/portfolio/porsche-930-911-performance-upgrade-turbo-ignition-module-euro-us-market-227300004-0237302045/",
+    "source_kind": "vendor_listing",
+    "note": "Conflict: Perma-Tune says US=CCW, Euro=CW. Forum posts confirm CCW for most 930 turbos. A 5K ohm resistor in the coil wire is required with 6-pin CDI to prevent damage."
+   },
+   {
+    "item": "Distributor position",
+    "value": "At the left rear of the engine, driven from a gear on the crank nose at half crank speed",
+    "source_url": "",
+    "source_kind": "memory_unverified",
+    "note": "Standard air-cooled 911 architecture. The distributor gear meshes with a gear on the crankshaft or intermediate shaft at the pulley end."
+   },
+   {
+    "item": "Distributor cap and rotor",
+    "value": "Cap part 930 602 904 01 (Bosch, 1976-1989). Rotor part 930 602 901 04 (1976-1989, 7000 rpm cutout).",
+    "source_url": "https://www.stoddard.com/porsche-911-930-parts-spares/engine-electrical/ignition-distributor-cap-rotor.html",
+    "source_kind": "vendor_listing",
+    "note": "Stoddard parts listing. Cap and rotor shared between 911 SC and 930 Turbo."
+   },
+   {
+    "item": "Spark plug type and gap",
+    "value": "Bosch W3DPO (factory fitment for 930 turbo). Gap 0.6 mm (0.024 in). NGK equivalent: BP8EVX (also BP8ES).",
+    "source_url": "https://forums.pelicanparts.com/911-930-turbo-super-charging-forum/312821-spark-plug-gap-yours-3-print.html",
+    "source_kind": "forum",
+    "note": "Forum consensus. W3DPO is very cold. Some owners run one step warmer (W4CS). The W5DPO is listed for 1975-77 911 Turbo (3.0L). Thread size 14 mm, reach 19 mm per Denso cross-reference."
+   },
+   {
+    "item": "Spark plug access and lead routing",
+    "value": "Spark plugs on the upper side of each head, accessed through openings in the engine shroud/tin. Plug leads route along each bank from the distributor at the left rear.",
+    "source_url": "",
+    "source_kind": "memory_unverified",
+    "note": "Standard air-cooled 911 architecture. The spark plug sits between intake and exhaust ports on each head."
+   },
+   {
+    "item": "Ignition lead set (HT wires)",
+    "value": "Beru steel-encased ignition lead harness, part 911 609 010 07, set of six leads plus coil lead. Fits 930 Turbo 1975-1989. Color: black.",
+    "source_url": "https://www.9xxteile.com/en/ignition-cable-set-beru-for-porsche-911-74-83-930-75-89-91160901007-91160901107-91160906107-91160901104-ze746",
+    "source_kind": "vendor_listing",
+    "note": "Design911 listing says 'HT lead set comes in black'. No factory source confirms red or blue leads for the 930 Turbo."
+   },
+   {
+    "item": "Ignition coil location",
+    "value": "Early cars: mounted on the fan housing. Later cars: mounted on the left-side electrical panel in the engine bay. Coil is Bosch type (or Marelli BAE202B on some years).",
+    "source_url": "http://forums.pelicanparts.com/porsche-911-technical-forum/102692-does-my-vin-match-my-engine-next-thread.html",
+    "source_kind": "forum",
+    "note": "Forum post from SC owner describing coil moved from fan housing to left-side panel on later models. CDI box is in the rear engine compartment near the fuses."
+   },
+   {
+    "item": "Ignition timing (Europe, 1978 models)",
+    "value": "29 deg BTDC +/-2 deg at 4000 rpm (manual page 157). At idle 1000+/-50 rpm: approximately 0-2 deg. Advance curve is centrifugal, plotted against distributor shaft speed.",
+    "source_url": "https://www.manualslib.com/manual/392505/Porsche-911-Turbo-1989.html?page=157",
+    "source_kind": "workshop_manual",
+    "note": "USA spec: 5 deg ATDC +/-3 deg at 950+/-50 rpm. Page 165 gives 31 deg +/-4 deg BTDC at 4000 rpm for Europe/California/Japan."
+   },
+   {
+    "item": "Air injection pump (US spec)",
+    "value": "All 930 engines fitted with an air pump to reduce exhaust emissions regardless of destination. US-market 49-state cars (930/61) had thermal reactors. California cars (930/63) had vacuum control. Belt for air injection pump fits 930 Turbo 1978-1989.",
+    "source_url": "https://supercarnostalgia.com/blog/porsche-930-33",
+    "source_kind": "reference_site",
+    "note": "Supercar Nostalgia says all 930s had air pump. Rennlist forum contradicts, saying European cars had no air pump. The workshop manual notes to take care not to damage the secondary air injection pipes during engine removal."
+   },
+   {
+    "item": "A/C compressor type and mounting",
+    "value": "York upright compressor (1978-1979 930 turbo stock). Nippondenso compressor appeared on later cars (from roughly VIN 1000). York operates vertically on 78-79 3.3 930. A/C belt: 13 x 1200 mm (Nippondenso). Belt-driven from the crankshaft.",
+    "source_url": "https://rennlist.com/forums/911-turbo-930-forum/851619-pls-help-wtb-79-930-york-a-c-compressor.html",
+    "source_kind": "forum",
+    "note": "European-market 1978-83 930 turbo: A/C was optional. The compressor is belt-driven on the right side of the engine. No air injection pump on European spec per some forum sources (contradicted by Supercar Nostalgia)."
+   },
+   {
+    "item": "European 1978-83 belt-driven accessories",
+    "value": "Fan/alternator V-belt (always). A/C compressor belt (if equipped, optional). Air injection pump belt (disputed: some sources say all markets, some say US only).",
+    "source_url": "https://supercarnostalgia.com/blog/porsche-930-33",
+    "source_kind": "reference_site",
+    "note": "No power steering pump on the 930 until late models. European cars are simpler; US cars have more emissions equipment."
+   },
+   {
+    "item": "Engine mount crossbar part number",
+    "value": "Engine carrier support cross member bracket: 930 375 011 01. Fabricated steel. Mounts engine/transmission to the chassis at rear. Engine carrier bolts torque: 9.0 mkg (65 ft-lb).",
+    "source_url": "https://patrickmotorsports.com/products/eng93037501101",
+    "source_kind": "vendor_listing",
+    "note": "Workshop manual confirms 9.0 mkg for engine carrier hex head screws. Patrick Motorsports also sells an RSR aluminium replacement. Attached with M12 bolts."
+   },
+   {
+    "item": "Engine mount support bracket",
+    "value": "Rear engine support bracket: 930 115 014 00, fits 930 Turbo 1978-1989. Bolts the engine to the crossbar.",
+    "source_url": "https://www.heritagepartscentre.com/us/93011501400-engine-mount-support-bracket.html",
+    "source_kind": "vendor_listing",
+    "note": "Stoddard lists this as fitting 1978-1989 911 and 911 Turbo."
+   },
+   {
+    "item": "Engine mount rubber",
+    "value": "Part 911 375 043 00 (also 911 375 043 02/03). Rubber transmission/engine mount. Used on all 911/912/930 from 1965-1989.",
+    "source_url": "https://www.stoddard.com/en/parts-porsche-911-turbo-965-1982-ca-3-3-turbo-coupe-manual-gearbox-4-speed/engine-and-fuel-feed-36/engine-support-95/91137504300-sic37504300-engine-and-transmission-mount-for-911-912-1965-1989-90111504300-91137504302-91137504303-96-1372-12718",
+    "source_kind": "vendor_listing",
+    "note": "Stoddard parts listing. This rubber mount sits between the engine bracket and the crossbar."
+   },
+   {
+    "item": "Engine tin/baffles kit (930 3.3L)",
+    "value": "8-piece aluminium baffle kit, parts include 930 106 228 00 (x6), 930 106 023 01 (x4), 930 106 221 01 (x2), 930 106 222 01 (x2). Plus cylinder air baffle kit 930 106 220K. These sit under and around the cylinders to direct cooling air.",
+    "source_url": "https://www.design911.co.uk/p/engine-aluminium-tin-baffle-kit-8-parts-porsche-930-33l-turbo/",
+    "source_kind": "vendor_listing",
+    "note": "OE Match replacement kit. OEM was mild steel; aftermarket upgrades use stainless steel. The tin directs cooling air from the fan shroud down over and under the finned cylinders and heads."
+   },
+   {
+    "item": "Crankcase material and finish",
+    "value": "Cast magnesium alloy (Elektron), natural/bare finish with machined mating surfaces. Aluminium alloy on some later variants.",
+    "source_url": "",
+    "source_kind": "memory_unverified",
+    "note": "Standard air-cooled 911 architecture. The case halves are typically unfinished magnesium/aluminium alloy, grey in appearance."
+   },
+   {
+    "item": "Fan finish",
+    "value": "Cast aluminium or magnesium fan. Factory finish is bare/natural metal (silver/grey). Fan center, pulley and housing strap have yellow zinc plating as stock finish.",
+    "source_url": "https://rennlist.com/forums/911-forum/298-polishing-painting-my-11-blade-fan-and-housing.html",
+    "source_kind": "forum",
+    "note": "Forum poster says fan center, pulley and housing strap are plated in yellow zinc as stock finish. The fan blades themselves are typically bare aluminium."
+   },
+   {
+    "item": "Valve covers (turbo)",
+    "value": "Aluminium (not magnesium like pre-1978). Upper valve covers are unpainted aluminium. They expand at the same rate as cam towers, reducing warpage. Black wrinkle paint is an aftermarket/later finish.",
+    "source_url": "https://www.pelicanparts.com/techarticles/911_turbo_covers/911_turbo_covers.htm",
+    "source_kind": "reference_site",
+    "note": "Pelican Parts article. Pre-1978 covers were magnesium. The turbo aluminium covers look similar but differ in thermal expansion. Some owners paint them in black wrinkle or powder coat."
+   },
+   {
+    "item": "Intercooler appearance",
+    "value": "Air-to-air intercooler, lies flat under the rear spoiler (tea tray). The spoiler was raised and enlarged for 1978 to accommodate it. Visible from above/rear when engine lid is open.",
+    "source_url": "https://supercarnostalgia.com/blog/porsche-930-33",
+    "source_kind": "reference_site",
+    "note": "Intercooler reduced intake temperature from ~140-150 deg C to ~50-60 deg C in testing."
+   },
+   {
+    "item": "Hose colors",
+    "value": "Factory vacuum and coolant hoses: black rubber. Silicone replacement hose kits available in various colors.",
+    "source_url": "https://www.design911.co.uk/p/k-jetronic-hose-kit-porsche-930-turbo-1978-89/",
+    "source_kind": "vendor_listing",
+    "note": "DO88 replacement hose kit for K-Jetronic. OEM hoses are black rubber that becomes brittle with age."
+   },
+   {
+    "item": "Firing order and cylinder numbering",
+    "value": "Firing order 1-6-2-4-3-5. Left bank (car's left, +Y) cylinders 1-2-3, right bank (-Y) cylinders 4-5-6. No. 1 nearest flywheel, No. 6 furthest (pulley end).",
+    "source_url": "https://www.manualslib.com/manual/392505/Porsche-911-Turbo-1989.html?page=14",
+    "source_kind": "workshop_manual",
+    "note": "Workshop manual confirms firing order. Cylinder numbering is standard Porsche convention."
+   },
+   {
+    "item": "Engine overall dimensions (estimate)",
+    "value": "Approximately 700 mm flywheel to pulley (X axis), approximately 770 mm across valve covers (Y axis), approximately 600-650 mm tall with fan (Z axis above crank). With intercooler and exhaust, taller.",
+    "source_url": "",
+    "source_kind": "memory_unverified",
+    "note": "From the HANDOVER.md document section 8. These are sanity-check estimates, not measured values."
+   },
+   {
+    "item": "Engine carrier bolt torque",
+    "value": "9.0 mkg (65 ft-lb) for engine and transmission carrier hex head screws",
+    "source_url": "https://www.manualslib.com/manual/392505/Porsche-911-Turbo-1989.html?page=32",
+    "source_kind": "workshop_manual",
+    "note": "Workshop manual page 32 (installation notes). Drive shaft flange capscrews: 8.3 mkg (60 ft-lb)."
+   },
+   {
+    "item": "K-Jetronic control pressure values",
+    "value": "Control pressure warm: 6.0-6.7 bar (test), 6.2-6.5 bar (adjusting). Cold: temperature-dependent, approximately 2.9-3.65 bar. Injector opening pressure: 2.1 +/-0.1 bar. Control circuit delivery rate: 160-240 cm3/min.",
+    "source_url": "https://www.manualslib.com/manual/392505/Porsche-911-Turbo-1989.html?page=113",
+    "source_kind": "workshop_manual",
+    "note": "Workshop manual page 113 test/adjusting values. OCR somewhat garbled; verify against scanned page."
+   },
+   {
+    "item": "Electric fuel pump delivery",
+    "value": "Both pumps together: at least 1170 cm3/30 sec",
+    "source_url": "https://www.manualslib.com/manual/392505/Porsche-911-Turbo-1989.html?page=113",
+    "source_kind": "workshop_manual",
+    "note": "Two fuel pumps: one near the fuel tank at front, one at rear near gearbox/engine."
+   },
+   {
+    "item": "Rear engine crossbar description",
+    "value": "Fabricated steel cross member, spans the rear of the engine bay. Inner and outer parts available separately (DANSK). The crossbar bolts to the body at both ends and the engine/transmission mounts to it via rubber mounts and brackets.",
+    "source_url": "https://www.mecatechnic.com/en-GB/p/dansk-complete-rear-cross-member-for-porsche-912-911-and-930-1974-1989_RS12035",
+    "source_kind": "vendor_listing",
+    "note": "No dimensions found. Some cars have aluminium replacement cross members which require additional mounting brackets (911 341 031 01). Patrick Motorsports sells an RSR-style steel replacement."
+   },
+   {
+    "item": "US vs Euro engine differences summary",
+    "value": "Euro 930/60: 300 PS, K-Jetronic, red shroud. US 930/61 (49-state): 265 HP, thermal reactors, different emissions equipment. US 930/63 (California): 265 HP, vacuum control. 1986+ US 930/68: 282 HP, LE-Jetronic with DME, Lambda sensors, 3-way catalytic converter.",
+    "source_url": "https://supercarnostalgia.com/blog/porsche-930-33",
+    "source_kind": "reference_site",
+    "note": "1986 US cars switched from K-Jetronic to LE-Jetronic with DME engine management. The European model kept K-Jetronic until end of production."
+   },
+   {
+    "item": "930 Turbo engine type codes by year",
+    "value": "930/60 (Euro, from 1978), 930/61 (US 49-state), 930/62 (Japan), 930/63 (California), 930/66 (Euro from ~1983). 1986+ US: 930/68.",
+    "source_url": "https://www.manualslib.com/manual/392505/Porsche-911-Turbo-1989.html?page=17",
+    "source_kind": "workshop_manual",
+    "note": "Workshop manual general specifications page. The 930/66 is essentially the same engine with minor updates (new warm-up regulator 1983, revised chain tensioners 1984)."
+   }
+  ],
+  "conflicts": [
+   "Distributor rotation: Perma-Tune says US-spec 930 is counterclockwise, Euro-spec is clockwise (8-pin). Multiple forum posts say the 930 turbo distributor is counterclockwise. The Bentley manual also states counterclockwise for the 911 family. Trust the CCW direction for most 930 turbos; the Euro clockwise claim from Perma-Tune may refer to a specific aftermarket replacement.",
+   "Air injection pump: Supercar Nostalgia says all 930 engines had an air pump regardless of destination. Rennlist forum posts say European cars had no air pump system. The workshop manual mentions secondary air injection pipes, suggesting the pump exists on the car being documented. Trust the reference site (Supercar Nostalgia) over forum claims, but verify against a European-spec parts catalog.",
+   "Fan belt dimensions: Sources disagree between 9.5x710, 10x710, 10x713, and 9.5x725 mm. The 710 mm length appears to be stock for 1.67:1 ratio; 725 mm is for the upgraded 1.8:1 ratio with different pulleys. Heritage Parts Centre lists 10x713 mm for 930 Turbo 1978-1989. Trust Heritage Parts for the production belt.",
+   "Fan shroud color: No factory documentation found. FVD sells a red GRP reproduction for the 930 Turbo. Forum posts mention red for S and Turbo models, green for E models, but these are anecdotal. Without factory confirmation, red is the best available answer for the 930 Turbo.",
+   "Intake manifold material: One vendor listing says magnesium, others imply aluminium. The 930 Turbo manifold (part 930 110 034 02) may be either depending on production date. No factory specification found.",
+   "Alternator rating by year: 70A for 1975-1977, but the 1978-1983 turbo rating is unclear -- could be 70A or 90A. 90A is confirmed only for 1984-1989. Some aftermarket listings suggest all 1978+ 930 turbos used 90A."
+  ],
+  "not_found": [
+   "Crank pulley outer diameter in mm for the 930 turbo (needed to calculate fan drive ratio from pulley diameters)",
+   "Fan housing inside diameter or depth in mm",
+   "Alternator body diameter in mm",
+   "Intake manifold plenum volume or shape cross-section dimensions",
+   "Intake runner inside diameter and length in mm",
+   "Engine oil cooler external dimensions (height x width x depth)",
+   "Engine crossbar (930 375 011 01) dimensions and shape detail",
+   "Engine mount bracket dimensions",
+   "Fuel accumulator mounting location on the car",
+   "Exact factory paint/color codes for fan shroud, valve covers, intake manifold",
+   "Factory stock plug wire color (red, blue, or black) from factory documentation",
+   "CDI box exact mounting position (some sources say near fuses in engine compartment, no definitive location)",
+   "Ignition coil exact part number and location for 1978-1983 930 turbo from factory documentation",
+   "930/60 camshaft timing (intake open/close, exhaust open/close degrees) -- needed for animation",
+   "Stock valve lift in mm for the road 930/60 engine",
+   "Detailed description of the fan shroud shape -- how it ducts air to left and right cylinder banks, dimensions of the upper air guides",
+   "Engine tin individual piece dimensions and coverage (which cylinders each piece covers)",
+   "Turbo scavenge pump dimensions and drive mechanism detail",
+   "Air cleaner box dimensions",
+   "K-Jetronic sensor-to-turbo duct dimensions and routing"
+  ],
+  "visual_refs": [
+   {
+    "url": "https://rennlist.com/forums/911-turbo-930-forum/282438-the-930-rebuild-beginning-to-end-the-process-in-pictures.html",
+    "shows": "Multi-page 930 Turbo engine rebuild photo thread on Rennlist (2006), showing teardown, case halves, cylinders, heads, and reassembly from various angles. Best available multi-angle photo reference."
+   },
+   {
+    "url": "https://eurospares.co.uk/Porsche/911/1977_(911_Turbo)/PartDiagrams/107-000/MIXTURE_CONTROL_UNIT_-_AIR_CLEANER",
+    "shows": "Eurospares interactive exploded parts diagram for the 930 turbo mixture control unit and air cleaner assembly with numbered part references. Shows the K-Jetronic airflow sensor, fuel distributor, air box and their relationships."
+   },
+   {
+    "url": "https://eurospares.co.uk/Porsche/911_Turbo/911_Turbo_(1977)/PartDiagrams/105-000/AIR_COOLING",
+    "shows": "Eurospares exploded parts diagram for the 930 turbo air cooling system: fan, fan housing, shroud, alternator, and ducting arrangement."
+   },
+   {
+    "url": "https://eurospares.co.uk/Porsche/911_Turbo/911_Turbo_(1977)/PartDiagrams/101-005/CRANKCASE",
+    "shows": "Eurospares exploded parts diagram for the 930 turbo crankcase, showing case halves, through-bolts, main bearings, and intermediate shaft position."
+   },
+   {
+    "url": "https://eurospares.co.uk/Porsche/911/1977_(911_Turbo)/PartDiagrams/901-000/ENGINE_ELECTRICS",
+    "shows": "Eurospares exploded parts diagram for 930 turbo engine electrics: distributor, cap, rotor, plug wires, CDI unit positions."
+   },
+   {
+    "url": "https://www.fabspeed.com/blog/porsche-930-turbo-full-build-breakdown/",
+    "shows": "Fabspeed 1985 Euro 930 Turbo full build breakdown with engine bay photos showing intake system, turbo, exhaust, intercooler plumbing, and fan shroud in context."
+   },
+   {
+    "url": "https://news.csfrace.com/csfs-new-porsche-911-930-turbo-oem-performance-oil-cooler/",
+    "shows": "CSF oil cooler product page with detailed photos of the right-fender-mounted oil cooler, showing row count, fittings (M30x1.5, M22x1.5), and comparison with OEM 45 mm core."
+   },
+   {
+    "url": "https://www.design911.co.uk/porsche/930--911--turbo-3-3l/porsche-engine-tinware-cooling-panels-and-shrouds/",
+    "shows": "Design911 engine tinware catalog page for the 930 3.3L Turbo with numbered parts diagrams showing under-cylinder baffles, air guides, and shroud components. Click 'Zoom in' on diagrams."
+   },
+   {
+    "url": "https://permatune.com/portfolio/porsche-930-911-performance-upgrade-turbo-ignition-module-euro-us-market-227300004-0237302045/",
+    "shows": "Perma-Tune page showing the 930 turbo distributor (US and Euro variants), CDI module, and coil with photos. Shows counterclockwise (US) and clockwise (Euro) distributor orientation."
+   },
+   {
+    "url": "https://www.pelicanparts.com/techarticles/Porsche_911/05-FUEL-Injector_O-Ring_and_Sleeve_Replacement/05-FUEL-Injector_O-Ring_and_Sleeve_Replacement.htm",
+    "shows": "Pelican Parts tech article showing CIS injector location in the intake runner, O-ring and sleeve detail, and runner-to-injector interface on the air-cooled 911."
+   },
+   {
+    "url": "https://members.rennlist.com/rmdanie/chapter3.html",
+    "shows": "Personal 930 rebuild account with staged engine photos including right half-case assembly, component positions visible. Good for understanding part spatial relationships."
+   },
+   {
+    "url": "https://www.manualslib.com/manual/392505/Porsche-911-Turbo-1989.html",
+    "shows": "Porsche 911 Turbo 1989 workshop manual on ManualsLib (177 pages). Contains technical data, ignition timing curves, K-Jetronic test values, engine removal procedures. Key pages: 14 (tech data), 17 (general specs), 113 (K-Jetronic values), 157-165 (ignition timing)."
+   },
+   {
+    "url": "https://silodrome.com/porsche-911-turbo-model-engine-kit/",
+    "shows": "Silodrome article about a 1:3 scale 930 Turbo engine model kit designed from Porsche's original engineering drawings. Shows cutaway-style views of the engine from multiple angles including internal components."
+   },
+   {
+    "url": "https://eurospares.co.uk/Porsche/911/1975_(911_Turbo)/PartDiagrams/103-000/CYLINDER_HEAD",
+    "shows": "Eurospares exploded parts diagram for the 930 turbo cylinder head, showing valve arrangement, springs, retainers, spark plug position, and head-to-cylinder interface."
+   }
+  ]
+ }
+]

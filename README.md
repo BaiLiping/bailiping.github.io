@@ -96,7 +96,7 @@ Jobs under the Career heading.
 
 - `/latent-field-tracking/` is a paper walkthrough of Wei, Rao and Meyer, arXiv:2610.38898v1, with embedded complex-array likelihood and online power-field learning demos. It is listed under Random thoughts. The browser examples are simplified teaching models, distinct from the paper's tracker and benchmark experiments. Build instructions and numerical checks are in `latent-field-tracking/README.md`.
 
-- `/engine-lab/` compares how exhaust drives turbines in jet and turbocharged car engines, with animated cutaways, a four-stroke walkthrough, and gas-flow and shaft-power diagrams. It is listed under Random thoughts.
+- `/engine-lab/` is an interactive 3D model of the Porsche 911 Turbo 3.3 (930) engine, Type 930/60: 547 parts built by a Blender script, with a running crank train, exploded and cutaway views, gas-flow particles, a small boost model and synthesised sound. Three.js is self-hosted in `engine-lab/vendor/`. The earlier illustrated explainer of jet and turbocharged engines is kept at `/engine-lab/how-it-works/` and opens from the model page. It is listed under Random thoughts. Build and check commands are in `engine-lab/README.md`; dimensions and sources in `engine-lab/model/PARTS.md`.
 
 - `/cramer-rao-bound/` is a 23-slide offline-capable presentation on the Cramér–Rao Bound, with live Gaussian-sampling, bias–variance, and localization-geometry labs, presenter notes, PDF and PowerPoint downloads. It is listed under Random thoughts and is separate from the radio-measurements CRB deck. Build and test commands are in `cramer-rao-bound/README.md`.
 
