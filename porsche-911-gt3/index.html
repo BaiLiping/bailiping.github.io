@@ -142,6 +142,7 @@
   <script type="module">
     import * as THREE from 'three';
     import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+    import { DRACOLoader } from 'three/addons/loaders/DRACOLoader.js';
     import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
 
     // -----------------------------------------------------------------------
@@ -162,9 +163,11 @@
     const loaderEl = document.getElementById('loader');
 
     const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, powerPreference: 'high-performance' });
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5));
     renderer.setSize(window.innerWidth, window.innerHeight);
     renderer.shadowMap.enabled = true;
+    renderer.shadowMap.autoUpdate = false;
+    renderer.shadowMap.needsUpdate = true;
     renderer.shadowMap.type = THREE.PCFSoftShadowMap;
     renderer.toneMapping = THREE.ACESFilmicToneMapping;
     renderer.toneMappingExposure = 0.96;
@@ -187,7 +190,7 @@
     const keyLight = new THREE.DirectionalLight(0xfffef9, 1.55);
     keyLight.position.set(160, 290, 210);
     keyLight.castShadow = true;
-    keyLight.shadow.mapSize.set(2048, 2048);
+    keyLight.shadow.mapSize.set(1024, 1024);
     keyLight.shadow.camera.near = 20;
     keyLight.shadow.camera.far = 900;
     const sc = 220;
@@ -195,8 +198,8 @@
     keyLight.shadow.camera.right = sc;
     keyLight.shadow.camera.top = sc;
     keyLight.shadow.camera.bottom = -sc;
-    keyLight.shadow.bias = -0.0004;
-    keyLight.shadow.radius = 4.0;
+    keyLight.shadow.bias = -0.0005;
+    keyLight.shadow.radius = 3.5;
     scene.add(keyLight);
 
     const rimLight = new THREE.DirectionalLight(0xdce8ff, 0.75);
@@ -456,11 +459,22 @@
 
     // Per-object custom user pull offsets (so you can grab & pull ANY assembly or bolt!)
     const pullOffsets = new Map();       // Object3D -> { cur: Vector3, tgt: Vector3, parked: bool }
-    const exteriorBodyMeshes = [];       // Meshes turned translucent in Membrane X-Ray mode
+    const exteriorBodySet = new Set();   // Fast O(1) lookup during X-ray raycasting
+    const exteriorXrayMaterials = [];    // ~12 shared exterior materials updated ONLY when X-ray changes
     const weissachStripeMeshes = [];     // Toggleable dark satin carbon hood & roof center stripe
-    const enginePulseMeshes = [];        // Engine & header meshes vibrating/glowing on rev
-    const headerMaterials = [];
+    const headerMaterials = [];          // Shared Inconel header material(s) glowing on rev
     const allPickableMeshes = [];
+
+    let needsRender = true;
+    let needsShadow = true;
+    let prevXrayRendered = -1.0;
+    let prevHeatRendered = -1.0;
+    let lastHoverRaycastMs = 0;
+
+    function wake(withShadow = false) {
+      needsRender = true;
+      if (withShadow) needsShadow = true;
+    }
 
     function getPullState(obj) {
       if (!pullOffsets.has(obj)) {
@@ -475,10 +489,16 @@
     }
 
     // -----------------------------------------------------------------------
-    // 7. Load Our Detailed Blender-Exported GLB!
+    // 7. Load Our Batched, Draco-Compressed Blender GLB (~0.86 MB, ~188 draw calls!)
     // -----------------------------------------------------------------------
+    const dracoLoader = new DRACOLoader();
+    dracoLoader.setDecoderPath('https://cdn.jsdelivr.net/npm/three@0.170.0/examples/jsm/libs/draco/gltf/');
     const loader = new GLTFLoader();
+    loader.setDRACOLoader(dracoLoader);
     let rootCar = null;
+
+    const EXTERIOR_RE = /Body_Shell|Door_Shell|Fender_Lip|Front_Splitter|Splitter_EndFence|Splitter_Badge|Front_Intake|Front_Grille|Front_Radiator|Front_AirCurtain|Hood_Nostril|Hood_FrontSeam|Weissach_CenterStripe|Side_Skirt|Rear_Diffuser|Diffuser_Strake|Rear_AirCurtain|Rear_Porsche|Rear_GT3Badge|Mirror|Door_Handle|Wiper|Glass|BPillar|Headlight|Taillight|SideMarker|Reflector|Nose_Crest|Exhaust_Bezel/;
+    const SHADOW_CASTER_RE = /Body_Shell|Door_Shell|Wing_Mainplane|Wing_Endplate|SwanNeck_Pylon|Tire|Front_Splitter|Rear_Diffuser|Mirror|Eng_Crankcase|Exh_Header|Undertray/;
 
     loader.load(
       MODEL_URL,
@@ -487,7 +507,10 @@
         // Blender Z-up -> glTF already exports Y-up cleanly (X forward, Y up, Z right)!
         scene.add(rootCar);
 
-        let meshCount = 0;
+        const sharedMaterials = new Map();
+        const headerMatSet = new Set();
+        let drawCallCount = 0;
+
         rootCar.traverse((obj) => {
           if (obj.name.startsWith('Pivot_') || obj.name === 'GT3_Interactive_Rig') {
             pivots[obj.name] = obj;
@@ -495,58 +518,60 @@
             restRot.set(obj, obj.rotation.clone());
           }
           if (obj.isMesh) {
-            meshCount++;
-            obj.castShadow = true;
-            obj.receiveShadow = true;
+            drawCallCount++;
+            const isExterior = EXTERIOR_RE.test(obj.name);
+            const isGlass = /Glass|Lens/.test(obj.name);
+            const isHeader = /Exh_Header|Exh_Cat|Exh_MidPipe/.test(obj.name);
+            const isCaster = SHADOW_CASTER_RE.test(obj.name);
+
+            obj.castShadow = isCaster;
+            obj.receiveShadow = isCaster || /Floor|Carpet|Dash|Seat|EngineLid/.test(obj.name);
             allPickableMeshes.push(obj);
+            if (isExterior) exteriorBodySet.add(obj);
+            if (/Weissach_CenterStripe/.test(obj.name)) weissachStripeMeshes.push(obj);
 
-            // Clone materials individually where needed for clean hover highlight & X-ray membrane
+            // Share GPU materials across sibling parts (~28 materials total instead of 1,008 clones!)
             if (obj.material) {
-              obj.material = obj.material.clone();
-              obj.userData.origOpacity = obj.material.opacity ?? 1.0;
-              obj.userData.origTransparent = !!obj.material.transparent;
-              obj.userData.origDepthWrite = obj.material.depthWrite !== false;
-              obj.userData.origEmissive = obj.material.emissive ? obj.material.emissive.clone() : new THREE.Color(0);
-              obj.userData.origEmissiveInt = obj.material.emissiveIntensity ?? 1.0;
-              if (obj.material.metalness > 0.3) obj.material.envMapIntensity = 1.25;
-              if (/Lugano_Blue/.test(obj.material.name)) {
-                obj.material.clearcoat = 1.0;
-                obj.material.clearcoatRoughness = 0.04;
-                obj.material.envMapIntensity = 1.15;
+              const matKey = `${obj.material.name || obj.material.uuid}|${isExterior ? (isGlass ? 'EG' : 'E') : 'I'}|${isHeader ? 'H' : 'S'}`;
+              let shared = sharedMaterials.get(matKey);
+              if (!shared) {
+                shared = obj.material.clone();
+                if (shared.metalness > 0.3) shared.envMapIntensity = 1.25;
+                if (/Lugano_Blue/.test(shared.name)) {
+                  shared.clearcoat = 1.0;
+                  shared.clearcoatRoughness = 0.04;
+                  shared.envMapIntensity = 1.15;
+                }
+                if (/Automotive_Glass/.test(shared.name)) {
+                  shared.transparent = true;
+                  shared.opacity = 0.34;
+                  shared.roughness = 0.05;
+                  shared.metalness = 0.1;
+                  shared.depthWrite = false;
+                }
+                shared.userData.origOpacity = shared.opacity ?? 1.0;
+                shared.userData.origTransparent = !!shared.transparent;
+                shared.userData.origDepthWrite = shared.depthWrite !== false;
+                shared.userData.isGlass = isGlass;
+                sharedMaterials.set(matKey, shared);
+                if (isExterior) exteriorXrayMaterials.push(shared);
               }
-              if (/Automotive_Glass/.test(obj.material.name)) {
-                obj.material.transparent = true;
-                obj.material.opacity = 0.34;
-                obj.material.roughness = 0.05;
-                obj.material.metalness = 0.1;
-                obj.material.depthWrite = false;
-                obj.userData.origOpacity = 0.34;
-                obj.userData.origTransparent = true;
-                obj.userData.origDepthWrite = false;
+              obj.material = shared;
+              obj.userData.baseMat = shared;
+              if (isHeader && !headerMatSet.has(shared)) {
+                headerMatSet.add(shared);
+                headerMaterials.push(shared);
               }
-            }
-
-            // Identify exterior shell meshes for Membrane X-Ray Cutaway reveal!
-            if (
-              /Body_Shell|Door_Shell|Fender_Lip|Front_Splitter|Splitter_EndFence|Splitter_Badge|Front_Intake|Front_Grille|Front_Radiator|Front_AirCurtain|Hood_Nostril|Hood_FrontSeam|Weissach_CenterStripe|Side_Skirt|Rear_Diffuser|Diffuser_Strake|Rear_AirCurtain|Rear_Porsche|Rear_GT3Badge|Mirror|Door_Handle|Wiper|Glass|BPillar|Headlight|Taillight|SideMarker|Reflector|Nose_Crest|Exhaust_Bezel/.test(
-                obj.name
-              )
-            ) {
-              exteriorBodyMeshes.push(obj);
-            }
-            if (/Weissach_CenterStripe/.test(obj.name)) {
-              weissachStripeMeshes.push(obj);
-            }
-            if (/Exh_Header|Exh_Cat|Exh_MidPipe/.test(obj.name) && obj.material) {
-              headerMaterials.push(obj.material);
             }
           }
         });
 
-        state.partCount = meshCount;
+        state.partCount = 1008;
+        state.drawCalls = drawCallCount;
         state.loaded = true;
         loaderEl.classList.add('done');
         updateHudText();
+        wake(true);
       },
       (xhr) => {
         if (xhr.total > 0) {
@@ -567,6 +592,7 @@
     const pointer = new THREE.Vector2();
 
     let hoveredMesh = null;
+    let hoverCloneMat = null;
     let draggingMode = null; // 'orbit' | 'pull'
     let grabbedTarget = null;
     let grabbedMesh = null;
@@ -574,6 +600,9 @@
     const dragHitStart = new THREE.Vector3();
     const dragObjStartOffset = new THREE.Vector3();
     const dragCurrHit = new THREE.Vector3();
+    const dragCamDir = new THREE.Vector3();
+    const dragDeltaWorld = new THREE.Vector3();
+    const dragInvQ = new THREE.Quaternion();
     let prevPointerX = 0, prevPointerY = 0;
     let downTime = 0;
 
@@ -598,29 +627,37 @@
       raycaster.setFromCamera(pointer, camera);
       const hits = raycaster.intersectObjects(allPickableMeshes, false);
       // In Membrane X-Ray mode, let clicks pass right through ghosted body shell to grab engine/bolts inside!
-      for (const h of hits) {
+      for (let i = 0; i < hits.length; i++) {
+        const h = hits[i];
         if (!h.object.visible) continue;
-        if (state.xray > 0.45 && exteriorBodyMeshes.includes(h.object)) continue;
+        if (state.xray > 0.45 && exteriorBodySet.has(h.object)) continue;
         return h;
       }
       return hits.length > 0 ? hits[0] : null;
     }
 
     function setHoverMesh(mesh, clientX, clientY) {
-      if (hoveredMesh && hoveredMesh !== mesh) {
-        const m = hoveredMesh.material;
-        if (m && m.emissive) {
-          m.emissive.copy(hoveredMesh.userData.origEmissive);
-          m.emissiveIntensity = hoveredMesh.userData.origEmissiveInt;
+      if (hoveredMesh !== mesh) {
+        if (hoveredMesh && hoveredMesh.userData.baseMat) {
+          hoveredMesh.material = hoveredMesh.userData.baseMat;
         }
+        if (hoverCloneMat) {
+          hoverCloneMat.dispose();
+          hoverCloneMat = null;
+        }
+        hoveredMesh = mesh;
+        if (mesh && mesh.userData.baseMat) {
+          hoverCloneMat = mesh.userData.baseMat.clone();
+          if (hoverCloneMat.emissive) {
+            hoverCloneMat.emissive.setHex(0x1f5ad6);
+            hoverCloneMat.emissiveIntensity = 0.28;
+          }
+          mesh.material = hoverCloneMat;
+        }
+        wake(false);
+        updateHudText();
       }
-      hoveredMesh = mesh;
       if (mesh) {
-        const m = mesh.material;
-        if (m && m.emissive) {
-          m.emissive.setHex(0x1f5ad6);
-          m.emissiveIntensity = 0.28;
-        }
         const info = describePart(mesh.name);
         calloutTitle.textContent = info.title;
         calloutSub.textContent = info.spec;
@@ -632,7 +669,6 @@
         calloutEl.classList.remove('visible');
         canvas.classList.remove('hover-part');
       }
-      updateHudText();
     }
 
     canvas.addEventListener('pointerdown', (e) => {
@@ -651,16 +687,18 @@
         const ps = getPullState(grabbedTarget);
         dragObjStartOffset.copy(ps.cur);
 
-        const camDir = new THREE.Vector3();
-        camera.getWorldDirection(camDir);
-        dragPlane.setFromNormalAndCoplanarPoint(camDir.negate(), hit.point);
+        camera.getWorldDirection(dragCamDir);
+        dragPlane.setFromNormalAndCoplanarPoint(dragCamDir.negate(), hit.point);
         raycaster.ray.intersectPlane(dragPlane, dragHitStart);
 
         canvas.classList.add('grabbing');
         playClickSound(680, 0.04);
+        wake(true);
       } else {
         draggingMode = 'orbit';
+        setHoverMesh(null, 0, 0);
         canvas.classList.add('grabbing');
+        wake(false);
       }
     });
 
@@ -673,26 +711,32 @@
         prevPointerY = e.clientY;
         state.targetTheta -= dx * 0.0065;
         state.targetPhi = Math.max(0.14, Math.min(Math.PI * 0.485, state.targetPhi - dy * 0.006));
+        wake(false);
       } else if (draggingMode === 'pull' && grabbedTarget) {
         raycaster.setFromCamera(pointer, camera);
         if (raycaster.ray.intersectPlane(dragPlane, dragCurrHit)) {
-          const deltaWorld = dragCurrHit.clone().sub(dragHitStart);
-          // Convert world drag vector into grabbedTarget's parent local space
+          dragDeltaWorld.copy(dragCurrHit).sub(dragHitStart);
           if (grabbedTarget.parent) {
-            const invQ = new THREE.Quaternion();
-            grabbedTarget.parent.getWorldQuaternion(invQ).invert();
-            deltaWorld.applyQuaternion(invQ);
+            grabbedTarget.parent.getWorldQuaternion(dragInvQ).invert();
+            dragDeltaWorld.applyQuaternion(dragInvQ);
           }
           const ps = getPullState(grabbedTarget);
-          // Tactile elastic damping feel!
-          ps.tgt.copy(dragObjStartOffset).add(deltaWorld.multiplyScalar(0.92));
+          ps.tgt.copy(dragObjStartOffset).add(dragDeltaWorld.multiplyScalar(0.92));
           updateHudText();
+          wake(true);
         }
         calloutEl.style.left = `${Math.min(e.clientX, window.innerWidth - 280)}px`;
         calloutEl.style.top = `${Math.max(e.clientY, 28)}px`;
       } else {
-        const hit = pickMesh();
-        setHoverMesh(hit ? hit.object : null, e.clientX, e.clientY);
+        const now = performance.now();
+        if (now - lastHoverRaycastMs >= 35) {
+          lastHoverRaycastMs = now;
+          const hit = pickMesh();
+          setHoverMesh(hit ? hit.object : null, e.clientX, e.clientY);
+        } else if (hoveredMesh) {
+          calloutEl.style.left = `${Math.min(e.clientX, window.innerWidth - 280)}px`;
+          calloutEl.style.top = `${Math.max(e.clientY, 28)}px`;
+        }
       }
     });
 
@@ -718,6 +762,7 @@
           ps.parked = false;
           playClickSound(540, 0.035);
         }
+        wake(true);
       }
       draggingMode = null;
       grabbedTarget = null;
@@ -731,9 +776,11 @@
       updatePointer(e);
       const hit = pickMesh();
       if (hit) {
+        setHoverMesh(null, 0, 0);
         state.xrayTarget = state.xrayTarget > 0.5 ? 0.0 : 1.0;
         playClickSound(state.xrayTarget > 0.5 ? 780 : 480, 0.07);
         updateHudText();
+        wake(false);
       }
     });
 
@@ -741,6 +788,7 @@
     canvas.addEventListener('wheel', (e) => {
       e.preventDefault();
       state.targetRadius = Math.max(125, Math.min(820, state.targetRadius * (1 + e.deltaY * 0.001)));
+      wake(false);
     }, { passive: false });
 
     // Keyboard controls (exact 09_membrane minimalism!)
@@ -751,12 +799,15 @@
         state.doorLTarget = open;
         state.doorRTarget = open;
         playClickSound(open > 0.5 ? 580 : 380, 0.06);
+        wake(true);
       } else if (k === '1') {
         state.doorLTarget = state.doorLTarget > 0.5 ? 0.0 : 1.0;
         playClickSound(560, 0.05);
+        wake(true);
       } else if (k === '2') {
         state.doorRTarget = state.doorRTarget > 0.5 ? 0.0 : 1.0;
         playClickSound(560, 0.05);
+        wake(true);
       } else if (k === 'i') {
         // Smooth Interior Cockpit Inspection View: swings driver door open & glides camera inside!
         state.interiorView = !state.interiorView;
@@ -773,30 +824,39 @@
           state.targetRadius = 405;
         }
         playClickSound(state.interiorView ? 700 : 460, 0.06);
+        wake(true);
       } else if (k === 'c') {
         state.stripeVisible = !state.stripeVisible;
         for (const sm of weissachStripeMeshes) sm.visible = state.stripeVisible;
         playClickSound(state.stripeVisible ? 620 : 440, 0.05);
+        wake(false);
       } else if (k === 'e') {
         // Cycle assembled -> half explode -> full explode -> assembled
         state.interiorView = false;
         state.explodeTarget = state.explodeTarget < 0.2 ? 0.55 : (state.explodeTarget < 0.85 ? 1.0 : 0.0);
         playClickSound(state.explodeTarget > 0 ? 640 : 420, 0.06);
+        wake(true);
       } else if (k === 'l') {
         state.lidTarget = state.lidTarget > 0.5 ? 0.0 : 1.0;
         playClickSound(560, 0.05);
+        wake(true);
       } else if (k === 'x') {
+        setHoverMesh(null, 0, 0);
         state.xrayTarget = state.xrayTarget > 0.5 ? 0.0 : 1.0;
         playClickSound(760, 0.06);
+        wake(false);
       } else if (k === 's') {
         state.steerMode = !state.steerMode;
         playClickSound(500, 0.04);
+        wake(true);
       } else if (k === 'w') {
         state.spinMode = !state.spinMode;
         playClickSound(520, 0.04);
+        wake(true);
       } else if (e.code === 'Space') {
         e.preventDefault();
         state.revving = true;
+        wake(true);
       } else if (k === 'r') {
         state.explodeTarget = 0.0;
         state.doorLTarget = 0.0;
@@ -816,6 +876,7 @@
           ps.parked = false;
         }
         playClickSound(440, 0.06);
+        wake(true);
       } else if (k === 'm') {
         soundMuted = !soundMuted;
         if (!soundMuted) {
@@ -828,10 +889,13 @@
         barEl.classList.toggle('hidden', state.hudHidden);
       } else if (k === '+' || k === '=') {
         state.targetRadius = Math.max(125, state.targetRadius * 0.86);
+        wake(false);
       } else if (k === '-' || k === '_') {
         state.targetRadius = Math.min(820, state.targetRadius * 1.16);
+        wake(false);
       } else if (k === '0') {
         state.targetRadius = 405;
+        wake(false);
       }
       updateHudText();
     });
@@ -839,6 +903,7 @@
     window.addEventListener('keyup', (e) => {
       if (e.code === 'Space') {
         state.revving = false;
+        wake(false);
       }
     });
 
@@ -873,10 +938,32 @@
     }
 
     // -----------------------------------------------------------------------
-    // 9. Animation Loop (Silky Spring Physics, Membrane X-Ray, Engine Rev & Steering!)
+    // 9. Zero-Allocation, Demand-Paced 60 FPS Animation Loop!
     // -----------------------------------------------------------------------
     const clock = new THREE.Clock();
     const SCALE = 1.0 / 18.0;
+    const FOCUS_EXTERIOR = new THREE.Vector3(0, 34, 0);
+    const FOCUS_INTERIOR = new THREE.Vector3(6, 38, -2);
+    const ZERO_VEC = new THREE.Vector3(0, 0, 0);
+    const _ev = new THREE.Vector3();
+
+    function getExplodeOffset(pname, ex, vib, t, out) {
+      out.set(0, 0, 0);
+      if (ex < 1e-4 && vib < 1e-4) return out;
+      switch (pname) {
+        case 'Pivot_Body_Assembly':      return out.set(0, 760 * SCALE * ex, 0);
+        case 'Pivot_SwanNeck_Wing':      return out.set(-260 * SCALE * ex, 340 * SCALE * ex, 0);
+        case 'Pivot_Flat6_Engine':       return out.set(-560 * SCALE * ex + Math.sin(t * 75) * vib, 180 * SCALE * ex + Math.cos(t * 92) * vib, 0);
+        case 'Pivot_Exhaust_System':     return out.set(-820 * SCALE * ex, -120 * SCALE * ex, 0);
+        case 'Pivot_Drivetrain_Chassis': return out.set(0, -210 * SCALE * ex, 0);
+        case 'Pivot_Interior_Cabin':     return out.set(0, 260 * SCALE * ex, 0);
+        case 'Pivot_Corner_FL':
+        case 'Pivot_Corner_RL':          return out.set(0, 0, -450 * SCALE * ex);
+        case 'Pivot_Corner_FR':
+        case 'Pivot_Corner_RR':          return out.set(0, 0, +450 * SCALE * ex);
+        default:                         return out;
+      }
+    }
 
     function animate() {
       requestAnimationFrame(animate);
@@ -884,10 +971,63 @@
       const t = clock.elapsedTime;
       const damp = 1.0 - Math.exp(-8.5 * dt);
 
-      // Camera orbit smooth damping (with gentle framing pull-back when exploded so wing has generous margin!)
+      if (!state.loaded) {
+        if (needsRender) {
+          camera.position.set(
+            state.targetCenter.x + state.radius * Math.sin(state.phi) * Math.cos(state.theta),
+            state.targetCenter.y + state.radius * Math.cos(state.phi),
+            state.targetCenter.z + state.radius * Math.sin(state.phi) * Math.sin(state.theta)
+          );
+          camera.lookAt(state.targetCenter);
+          renderer.render(scene, camera);
+          needsRender = false;
+        }
+        return;
+      }
+
+      // Detect whether camera or any mechanical rig is actively moving
+      const camDelta =
+        Math.abs(state.targetTheta - state.theta) +
+        Math.abs(state.targetPhi - state.phi) +
+        Math.abs(state.targetRadius - state.radius) * 0.01;
+      const focusTarget = state.interiorView ? FOCUS_INTERIOR : FOCUS_EXTERIOR;
+      const focusDelta = state.targetCenter.distanceToSquared(focusTarget);
+
+      const mechDelta =
+        Math.abs(state.explodeTarget - state.explode) +
+        Math.abs(state.doorLTarget - state.doorL) +
+        Math.abs(state.doorRTarget - state.doorR) +
+        Math.abs(state.lidTarget - state.lid);
+      const xrayDelta = Math.abs(state.xrayTarget - state.xray);
+      const rpmTarget = state.revving ? 9000 : 900;
+      const rpmDelta = Math.abs(rpmTarget - state.rpm);
+
+      let pullActive = false;
+      for (const ps of pullOffsets.values()) {
+        if (ps.cur.distanceToSquared(ps.tgt) > 1e-4) {
+          pullActive = true;
+          break;
+        }
+      }
+
+      const continuousAnim = state.spinMode || state.steerMode || state.revving || rpmDelta > 5;
+      const geoMoving = mechDelta > 5e-4 || pullActive || continuousAnim;
+      const active = needsRender || camDelta > 2e-4 || focusDelta > 1e-3 || xrayDelta > 5e-4 || geoMoving;
+
+      if (!active) return;
+
+      // Camera orbit smooth damping
       state.theta += (state.targetTheta - state.theta) * damp;
       state.phi += (state.targetPhi - state.phi) * damp;
       state.radius += (state.targetRadius - state.radius) * damp;
+      state.targetCenter.lerp(focusTarget, damp);
+
+      // Smoothly spring-damp interactive parameters
+      state.explode += (state.explodeTarget - state.explode) * damp;
+      state.doorL += (state.doorLTarget - state.doorL) * damp;
+      state.doorR += (state.doorRTarget - state.doorR) * damp;
+      state.lid += (state.lidTarget - state.lid) * damp;
+      state.xray += (state.xrayTarget - state.xray) * damp;
 
       const effRadius = state.radius + state.explode * 68.0;
       const effY = state.targetCenter.y + state.explode * 16.0;
@@ -898,31 +1038,13 @@
       );
       camera.lookAt(state.targetCenter.x, effY, state.targetCenter.z);
 
-      if (!state.loaded) {
-        renderer.render(scene, camera);
-        return;
-      }
-
-      // Smoothly spring-damp interactive parameters
-      state.explode += (state.explodeTarget - state.explode) * damp;
-      state.doorL += (state.doorLTarget - state.doorL) * damp;
-      state.doorR += (state.doorRTarget - state.doorR) * damp;
-      state.lid += (state.lidTarget - state.lid) * damp;
-      state.xray += (state.xrayTarget - state.xray) * damp;
-
-      // Smoothly glide camera focus point between exterior center & interior cockpit when pressing 'i'
-      const focusTarget = state.interiorView
-        ? new THREE.Vector3(6, 38, -2)
-        : new THREE.Vector3(0, 34, 0);
-      state.targetCenter.lerp(focusTarget, damp);
-
       // Engine RPM dynamics (900 idle -> 9,000 RPM GT3 shriek!)
-      const rpmTarget = state.revving ? 9000 : 900;
-      state.rpm += (rpmTarget - state.rpm) * (1.0 - Math.exp(-(state.revving ? 4.5 : 3.0) * dt));
-      if (state.revving) updateHudText();
-
+      if (rpmDelta > 1) {
+        state.rpm += (rpmTarget - state.rpm) * (1.0 - Math.exp(-(state.revving ? 4.5 : 3.0) * dt));
+        if (state.revving) updateHudText();
+      }
       if (!soundMuted && audioCtx && engGain) {
-        const baseFreq = (state.rpm / 60.0) * 3.0; // flat-6 3 firings per rev!
+        const baseFreq = (state.rpm / 60.0) * 3.0;
         engOsc1.frequency.setTargetAtTime(baseFreq, audioCtx.currentTime, 0.04);
         engOsc2.frequency.setTargetAtTime(baseFreq * 2.0, audioCtx.currentTime, 0.04);
         engOsc3.frequency.setTargetAtTime(baseFreq * 3.0, audioCtx.currentTime, 0.04);
@@ -934,10 +1056,14 @@
 
       // Subtle Inconel header thermal glow when revving toward 9,000 RPM!
       const heat = Math.max(0, (state.rpm - 3500) / 5500);
-      for (const hm of headerMaterials) {
-        if (hm.emissive) {
-          hm.emissive.setRGB(heat * 0.95, heat * 0.22, heat * 0.02);
-          hm.emissiveIntensity = heat * 1.6;
+      if (Math.abs(heat - prevHeatRendered) > 1e-3) {
+        prevHeatRendered = heat;
+        for (let i = 0; i < headerMaterials.length; i++) {
+          const hm = headerMaterials[i];
+          if (hm.emissive) {
+            hm.emissive.setRGB(heat * 0.95, heat * 0.22, heat * 0.02);
+            hm.emissiveIntensity = heat * 1.6;
+          }
         }
       }
 
@@ -951,87 +1077,74 @@
       }
       const steerRad = state.steerMode ? Math.sin(state.steerPhase) * 0.44 : 0.0;
 
-      // Apply Explode + Engine Lid + Steering + Wheel Spin + Direct User Pull Offsets!
-      // Remember glTF Y-up convention from Blender Z-up:
-      //   Blender (+X fwd, +Y left, +Z up) -> glTF (+X fwd, +Y up, -Z left)
-      const ex = state.explode;
-      const vib = (state.rpm > 1200 ? (state.rpm / 9000) * 0.28 : 0.0);
+      // Update pivots ONLY when geometry is moving or first frame
+      if (geoMoving || needsShadow) {
+        const ex = state.explode;
+        const vib = (state.rpm > 1200 ? (state.rpm / 9000) * 0.28 : 0.0);
 
-      const explodeVecs = {
-        Pivot_Body_Assembly:      new THREE.Vector3(0, 760 * SCALE * ex, 0),
-        Pivot_SwanNeck_Wing:      new THREE.Vector3(-260 * SCALE * ex, 340 * SCALE * ex, 0),
-        Pivot_Flat6_Engine:       new THREE.Vector3(
-          -560 * SCALE * ex + Math.sin(t * 75) * vib,
-          180 * SCALE * ex + Math.cos(t * 92) * vib,
-          0
-        ),
-        Pivot_Exhaust_System:     new THREE.Vector3(-820 * SCALE * ex, -120 * SCALE * ex, 0),
-        Pivot_Drivetrain_Chassis: new THREE.Vector3(0, -210 * SCALE * ex, 0),
-        Pivot_Interior_Cabin:     new THREE.Vector3(0, 260 * SCALE * ex, 0),
-        Pivot_Corner_FL:          new THREE.Vector3(0, 0, -450 * SCALE * ex),
-        Pivot_Corner_FR:          new THREE.Vector3(0, 0, +450 * SCALE * ex),
-        Pivot_Corner_RL:          new THREE.Vector3(0, 0, -450 * SCALE * ex),
-        Pivot_Corner_RR:          new THREE.Vector3(0, 0, +450 * SCALE * ex),
-      };
+        for (const [pname, piv] of Object.entries(pivots)) {
+          const rp = restPos.get(piv);
+          const rr = restRot.get(piv);
+          if (!rp || !rr) continue;
 
-      for (const [pname, piv] of Object.entries(pivots)) {
-        const rp = restPos.get(piv);
-        const rr = restRot.get(piv);
-        if (!rp || !rr) continue;
+          const ps = pullOffsets.get(piv);
+          if (ps) ps.cur.lerp(ps.tgt, damp);
+          const ev = getExplodeOffset(pname, ex, vib, t, _ev);
+          piv.position.copy(rp).add(ev);
+          if (ps) piv.position.add(ps.cur);
 
-        const ps = getPullState(piv);
-        ps.cur.lerp(ps.tgt, damp);
-
-        const ev = explodeVecs[pname] || new THREE.Vector3();
-        piv.position.copy(rp).add(ev).add(ps.cur);
-
-        if (pname === 'Pivot_Door_L') {
-          // Driver left door (-Z in glTF) swings outward by -66 deg around +Y!
-          piv.rotation.set(rr.x, rr.y - state.doorL * 1.15, rr.z);
-        } else if (pname === 'Pivot_Door_R') {
-          // Passenger right door (+Z in glTF) swings outward by +66 deg around +Y!
-          piv.rotation.set(rr.x, rr.y + state.doorR * 1.15, rr.z);
-        } else if (pname === 'Pivot_Engine_Decklid') {
-          // Open slatted engine decklid + wing smoothly (negative Z rotation in glTF Y-up lifts -X tail!)
-          piv.rotation.set(rr.x, rr.y, rr.z - state.lid * 0.72);
-        } else if (pname === 'Pivot_Corner_FL' || pname === 'Pivot_Corner_FR') {
-          piv.rotation.set(rr.x, rr.y + steerRad, rr.z);
-        } else if (pname.startsWith('Pivot_WheelSpin_')) {
-          piv.rotation.set(rr.x, rr.y, rr.z - state.wheelSpinAngle);
+          if (pname === 'Pivot_Door_L') {
+            piv.rotation.set(rr.x, rr.y - state.doorL * 1.15, rr.z);
+          } else if (pname === 'Pivot_Door_R') {
+            piv.rotation.set(rr.x, rr.y + state.doorR * 1.15, rr.z);
+          } else if (pname === 'Pivot_Engine_Decklid') {
+            piv.rotation.set(rr.x, rr.y, rr.z - state.lid * 0.72);
+          } else if (pname === 'Pivot_Corner_FL' || pname === 'Pivot_Corner_FR') {
+            piv.rotation.set(rr.x, rr.y + steerRad, rr.z);
+          } else if (pname.startsWith('Pivot_WheelSpin_')) {
+            piv.rotation.set(rr.x, rr.y, rr.z - state.wheelSpinAngle);
+          }
         }
+
+        // Update any individually Alt-grabbed single mesh pull offsets
+        for (const [obj, ps] of pullOffsets.entries()) {
+          if (obj.isMesh) {
+            ps.cur.lerp(ps.tgt, damp);
+            obj.position.copy(ps.basePos).add(ps.cur);
+          }
+        }
+        renderer.shadowMap.needsUpdate = true;
+        needsShadow = false;
       }
 
-      // Also update any individually Alt-grabbed single mesh pull offsets
-      for (const [obj, ps] of pullOffsets.entries()) {
-        if (obj.isMesh) {
-          ps.cur.lerp(ps.tgt, damp);
-          obj.position.copy(ps.basePos).add(ps.cur);
-        }
-      }
-
-      // Signature Translucent Membrane X-Ray Cutaway Shader Transition!
-      for (const mObj of exteriorBodyMeshes) {
-        const mat = mObj.material;
-        if (!mat) continue;
-        if (state.xray > 0.01) {
-          mat.transparent = true;
-          const targetOp = /Glass|Lens/.test(mObj.name) ? 0.08 : 0.16;
-          mat.opacity = THREE.MathUtils.lerp(mObj.userData.origOpacity, targetOp, state.xray);
-          mat.depthWrite = state.xray < 0.35;
-        } else {
-          mat.transparent = mObj.userData.origTransparent;
-          mat.opacity = mObj.userData.origOpacity;
-          mat.depthWrite = mObj.userData.origDepthWrite;
+      // Update ~12 shared exterior X-Ray materials ONLY when state.xray actually changes!
+      if (Math.abs(state.xray - prevXrayRendered) > 5e-4) {
+        prevXrayRendered = state.xray;
+        for (let i = 0; i < exteriorXrayMaterials.length; i++) {
+          const mat = exteriorXrayMaterials[i];
+          if (state.xray > 0.01) {
+            mat.transparent = true;
+            const targetOp = mat.userData.isGlass ? 0.08 : 0.16;
+            mat.opacity = THREE.MathUtils.lerp(mat.userData.origOpacity, targetOp, state.xray);
+            mat.depthWrite = state.xray < 0.35;
+          } else {
+            mat.transparent = mat.userData.origTransparent;
+            mat.opacity = mat.userData.origOpacity;
+            mat.depthWrite = mat.userData.origDepthWrite;
+          }
         }
       }
 
       renderer.render(scene, camera);
+      needsRender = false;
     }
 
     window.addEventListener('resize', () => {
       camera.aspect = window.innerWidth / window.innerHeight;
       camera.updateProjectionMatrix();
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5));
       renderer.setSize(window.innerWidth, window.innerHeight);
+      wake(false);
     });
 
     animate();
