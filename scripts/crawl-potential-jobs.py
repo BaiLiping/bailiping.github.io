@@ -30,7 +30,7 @@ from urllib.request import Request, HTTPRedirectHandler, build_opener
 ROOT = Path(__file__).resolve().parent.parent
 CATEGORIES = {"radio-localization", "radar-sensing", "robotics-localization", "wireless-isac"}
 JOB_STATUSES = {"open", "listed", "unknown", "closed", "saved"}
-SOURCE_TYPES = {"workday", "lever", "greenhouse", "ashby", "html", "amazon", "ericsson", "tesla"}
+SOURCE_TYPES = {"workday", "lever", "greenhouse", "ashby", "html", "amazon", "ericsson", "eightfold", "tesla"}
 ELIGIBILITY_VALUES = {
     "sponsorship": {"offered", "case_by_case", "not_offered", "not_stated", "unknown"},
     "access": {"no_restriction_stated", "export_review", "us_person", "citizenship_clearance", "unknown"},
@@ -130,6 +130,10 @@ class SourceResult:
     # Fresh role data was successfully screened and excluded. Search-card
     # sightings and failed detail requests are not rejection evidence.
     rejected_ids: list[str] = field(default_factory=list)
+    # A missing posting is not proof of closure. Offer the employer's careers
+    # page while retaining the original URL and dates for later rechecking.
+    unavailable_ids: list[str] = field(default_factory=list)
+    verified_urls: dict[str, str] = field(default_factory=dict)
 
 
 class FetchError(RuntimeError):
@@ -1325,7 +1329,7 @@ def _tesla(source, client):
     return result
 
 
-def _ericsson_endpoint(base, parameters, source):
+def _eightfold_endpoint(base, parameters, source):
     parts = urlsplit(safe_url(base, source["allowed_hosts"]))
     query = dict(parse_qsl(parts.query, keep_blank_values=True))
     query.update(parameters)
@@ -1333,68 +1337,68 @@ def _ericsson_endpoint(base, parameters, source):
                                urlencode(query), "")), source["allowed_hosts"])
 
 
-def _ericsson_payload(response, label):
+def _eightfold_payload(response, label):
     if not isinstance(response, dict) or response.get("status") != 200:
-        raise FetchError(f"Ericsson {label} did not return a successful JSON response")
+        raise FetchError(f"Eightfold {label} did not return a successful JSON response")
     if not isinstance(response.get("data"), dict):
-        raise FetchError(f"Ericsson {label} data object is missing")
+        raise FetchError(f"Eightfold {label} data object is missing")
     error = response.get("error")
     if isinstance(error, dict) and (error.get("message") or error.get("body")):
-        raise FetchError(f"Ericsson {label} returned an error payload")
+        raise FetchError(f"Eightfold {label} returned an error payload")
     if error and not isinstance(error, dict):
-        raise FetchError(f"Ericsson {label} returned an error payload")
+        raise FetchError(f"Eightfold {label} returned an error payload")
     if isinstance(response.get("metadata"), dict) and response["metadata"].get("isFallback"):
-        raise FetchError(f"Ericsson {label} returned fallback data")
+        raise FetchError(f"Eightfold {label} returned fallback data")
     return response["data"]
 
 
-def _ericsson_position_id(value):
+def _eightfold_position_id(value):
     if isinstance(value, bool) or not isinstance(value, (str, int)):
-        raise FetchError("Ericsson position id is missing or malformed")
+        raise FetchError("Eightfold position id is missing or malformed")
     value = str(value)
     if not re.fullmatch(r"[0-9]{1,24}", value):
-        raise FetchError("Ericsson position id is missing or malformed")
+        raise FetchError("Eightfold position id is missing or malformed")
     return value
 
 
-def _ericsson_native_id(entry, position_id):
+def _eightfold_native_id(entry, position_id):
     value = entry.get("displayJobId") or entry.get("atsJobId") or position_id
     if isinstance(value, bool) or not isinstance(value, (str, int)):
-        raise FetchError("Ericsson requisition id is malformed")
+        raise FetchError("Eightfold requisition id is malformed")
     value = str(value)
     if not re.fullmatch(r"[A-Za-z0-9._-]{1,100}", value):
-        raise FetchError("Ericsson requisition id is malformed")
+        raise FetchError("Eightfold requisition id is malformed")
     return value
 
 
-def _ericsson_location(entry):
+def _eightfold_location(entry):
     locations = entry.get("locations")
     if locations is not None:
         if not isinstance(locations, list) or any(not isinstance(x, str) for x in locations):
-            raise FetchError("Ericsson locations array is malformed")
+            raise FetchError("Eightfold locations array is malformed")
         location = " / ".join(x.strip() for x in locations if x.strip())
     else:
         location = entry.get("location", "")
         if not isinstance(location, str):
-            raise FetchError("Ericsson location is malformed")
+            raise FetchError("Eightfold location is malformed")
     if not clean_text(location, 500):
-        raise FetchError("Ericsson job location is missing")
+        raise FetchError("Eightfold job location is missing")
     return location
 
 
-def _ericsson_job_url(source, position_id, entry):
+def _eightfold_job_url(source, position_id, entry):
     value = entry.get("publicUrl") or entry.get("positionUrl") or f"/careers/job/{position_id}"
     if not isinstance(value, str):
-        raise FetchError("Ericsson job URL is malformed")
+        raise FetchError("Eightfold job URL is malformed")
     url = safe_url(urljoin(source["api_url"], value), source["allowed_hosts"])
     parts = urlsplit(url)
     if (parts.hostname != urlsplit(source["api_url"]).hostname
             or not re.match(r"^/careers/job/" + re.escape(position_id) + r"(?:$|[-/])", parts.path)):
-        raise FetchError("Ericsson job URL does not identify the requested posting")
+        raise FetchError("Eightfold job URL does not identify the requested posting")
     return url
 
 
-def _ericsson(source, client):
+def _eightfold(source, client):
     """Discover bounded search results and verify descriptions individually.
 
     Even completed keyword searches are not the complete employer inventory;
@@ -1405,62 +1409,93 @@ def _ericsson(source, client):
     queries = source.get("queries", ["ISAC", "sensing", "radar", "positioning"])
     if (not isinstance(queries, list) or not 1 <= len(queries) <= 10
             or any(not isinstance(q, str) or len(q) > 80 for q in queries)):
-        raise FetchError("Ericsson queries must be a bounded string array")
+        raise FetchError("Eightfold queries must be a bounded string array")
     max_pages = min(max(int(source.get("max_pages_per_query", 2)), 1), 5)
     max_details = min(max(int(source.get("max_details", 12)), 1), 30)
     domain = source.get("domain", "ericsson.com")
     location = source.get("search_location", "Sweden")
     if not isinstance(domain, str) or not re.fullmatch(r"[a-z0-9.-]{1,100}", domain):
-        raise FetchError("Ericsson domain setting is invalid")
+        raise FetchError("Eightfold domain setting is invalid")
     if not isinstance(location, str) or len(location) > 120:
-        raise FetchError("Ericsson search location setting is invalid")
+        raise FetchError("Eightfold search location setting is invalid")
     safe_url(source["api_url"], source["allowed_hosts"])
     safe_url(source["detail_url"], source["allowed_hosts"])
     errors, candidates, seen, known_order = [], {}, set(), {}
 
     for value in source.get("seed_ids", [])[:max_details]:
-        pid = _ericsson_position_id(value)
+        pid = _eightfold_position_id(value)
         candidates[pid] = {"id": pid, "_priority": 0}
     for old in source.get("_known_jobs", []):
         parts = urlsplit(old.get("url", ""))
         match = re.match(r"^/careers/job/([0-9]{1,24})(?:$|[-/])", parts.path)
         if parts.hostname != urlsplit(source["api_url"]).hostname or not match:
+            # Resolve legacy ATS URLs using an exact requisition match. The
+            # search service can return fuzzy matches for a missing ID.
+            native = old.get("requisition_id", "")
+            if not isinstance(native, str) or not re.fullmatch(r"[A-Za-z0-9._-]{1,100}", native):
+                continue
+            identity = stable_job_id(source["id"], native, old["url"])
+            result.attempted_ids.append(identity)
+            try:
+                endpoint = _eightfold_endpoint(source["api_url"], {
+                    "domain": domain, "query": native, "start": 0}, source)
+                data = _eightfold_payload(client.get_json(endpoint), "requisition search")
+                entries, count = data.get("positions"), data.get("count")
+                if (not isinstance(entries, list) or len(entries) > 100
+                        or type(count) is not int or count < len(entries)):
+                    raise FetchError("Eightfold requisition search is malformed")
+                exact = [entry for entry in entries if isinstance(entry, dict)
+                         and native == _eightfold_native_id(entry, _eightfold_position_id(entry.get("id")))]
+                if not exact:
+                    if count <= len(entries):
+                        result.unavailable_ids.append(identity)
+                    raise FetchError(f"No exact current posting found for {native}; availability not established")
+                if len(exact) != 1:
+                    raise FetchError("Eightfold requisition search returned ambiguous matches")
+                entry = exact[0]
+                pid = _eightfold_position_id(entry["id"])
+                _eightfold_job_url(source, pid, entry)
+                candidates[pid] = dict(entry, _priority=1)
+                known_order[pid] = old.get("last_detail_attempt") or old.get("last_verified", "")
+            except Exception as exc:
+                errors.append(brief_error(exc))
             continue
         pid = match.group(1)
         candidates.setdefault(pid, {"id": pid, "name": old.get("title", ""),
                                     "displayJobId": old.get("requisition_id", ""), "_priority": 1})
+        candidates[pid].setdefault("displayJobId", old.get("requisition_id", ""))
         known_order[pid] = old.get("last_detail_attempt") or old.get("last_verified") or old.get("last_seen", "")
 
     for query in queries:
         offset, expected, query_done, query_ids = 0, None, False, set()
         for _page in range(max_pages):
             try:
-                endpoint = _ericsson_endpoint(source["api_url"], {
+                endpoint = _eightfold_endpoint(source["api_url"], {
                     "domain": domain, "query": query, "location": location,
                     "start": offset, "sort_by": "relevance"}, source)
-                data = _ericsson_payload(client.get_json(endpoint), "search")
+                data = _eightfold_payload(client.get_json(endpoint), "search")
                 count, entries = data.get("count"), data.get("positions")
                 if (not isinstance(count, int) or isinstance(count, bool) or count < 0
                         or not isinstance(entries, list) or len(entries) > 100):
-                    raise FetchError("Ericsson search count or positions array is malformed")
+                    raise FetchError("Eightfold search count or positions array is malformed")
                 if expected is not None and count != expected:
-                    raise FetchError("Ericsson results changed during pagination")
+                    raise FetchError("Eightfold results changed during pagination")
                 expected = count
                 if (not entries and offset < count) or offset + len(entries) > count:
-                    raise FetchError("Ericsson pagination returned an inconsistent page")
+                    raise FetchError("Eightfold pagination returned an inconsistent page")
                 for entry in entries:
                     if not isinstance(entry, dict):
-                        raise FetchError("Ericsson search job entry is malformed")
-                    pid = _ericsson_position_id(entry.get("id"))
+                        raise FetchError("Eightfold search job entry is malformed")
+                    pid = _eightfold_position_id(entry.get("id"))
                     if pid in query_ids:
-                        raise FetchError("Ericsson pagination repeated a posting")
+                        raise FetchError("Eightfold pagination repeated a posting")
                     query_ids.add(pid)
                     title = entry.get("name")
                     if not isinstance(title, str) or not clean_text(title, 260):
-                        raise FetchError("Ericsson search job title is missing")
-                    _ericsson_location(entry)
-                    job_url = _ericsson_job_url(source, pid, entry)
-                    native = _ericsson_native_id(entry, pid)
+                        raise FetchError("Eightfold search job title is missing")
+                    _eightfold_location(entry)
+                    job_url = _eightfold_job_url(source, pid, entry)
+                    native = _eightfold_native_id(entry, pid)
                     seen.add(stable_job_id(source["id"], native, job_url))
                     priority = 2 if re.search(r"\bisac\b|\bradar\b|\bslam\b|locali[sz]ation|"
                                               r"positioning|sensor fusion|sensing", title, re.I) else 4
@@ -1497,32 +1532,33 @@ def _ericsson(source, client):
 
     for pid, entry in selected:
         try:
-            old_native = _ericsson_native_id(entry, pid)
-            old_url = _ericsson_job_url(source, pid, entry)
+            old_native = _eightfold_native_id(entry, pid)
+            old_url = _eightfold_job_url(source, pid, entry)
             old_identity = stable_job_id(source["id"], old_native, old_url)
             result.attempted_ids.append(old_identity)
-            endpoint = _ericsson_endpoint(source["detail_url"], {
+            endpoint = _eightfold_endpoint(source["detail_url"], {
                 "position_id": pid, "domain": domain, "hl": "en"}, source)
-            detail = _ericsson_payload(client.get_json(endpoint), "detail")
-            if _ericsson_position_id(detail.get("id")) != pid:
-                raise FetchError("Ericsson returned details for a different posting")
+            detail = _eightfold_payload(client.get_json(endpoint), "detail")
+            if _eightfold_position_id(detail.get("id")) != pid:
+                raise FetchError("Eightfold returned details for a different posting")
             title, description = detail.get("name"), detail.get("jobDescription")
             if not isinstance(title, str) or not clean_text(title, 260):
-                raise FetchError("Ericsson detail job title is missing")
+                raise FetchError("Eightfold detail job title is missing")
             if (not isinstance(description, str) or len(clean_text(description, 30000)) < 80
                     or CHALLENGE.search(description)):
-                raise FetchError("Ericsson full job description is missing or blocked")
-            job_location = _ericsson_location(detail)
-            url = _ericsson_job_url(source, pid, detail)
-            native = _ericsson_native_id(detail, pid)
+                raise FetchError("Eightfold full job description is missing or blocked")
+            job_location = _eightfold_location(detail)
+            url = _eightfold_job_url(source, pid, detail)
+            native = _eightfold_native_id(detail, pid)
             if native == pid and old_native != pid:
                 native = old_native
             elif old_native != pid and native != old_native:
-                raise FetchError("Ericsson requisition identity changed between search and detail")
+                raise FetchError("Eightfold requisition identity changed between search and detail")
             identity = stable_job_id(source["id"], native, url)
             if identity not in result.attempted_ids:
                 result.attempted_ids.append(identity)
             seen.add(identity)
+            result.verified_urls[identity] = url
             status = "listed"
             actions = detail.get("positionUserActions") or {}
             apply_action = actions.get("applyAction") if isinstance(actions, dict) else None
@@ -1532,7 +1568,7 @@ def _ericsson(source, client):
                 try:
                     safe_url(apply_action.get("applyUrl", ""), source["allowed_hosts"])
                 except ValueError:
-                    errors.append("Ericsson application destination is not in the configured allowlist")
+                    errors.append("Eightfold application destination is not in the configured allowlist")
                 else:
                     status = "open"
             posted = None
@@ -1541,8 +1577,11 @@ def _ericsson(source, client):
                     posted = datetime.fromtimestamp(detail["postedTs"], timezone.utc).strftime("%Y-%m-%d")
                 except (ValueError, OverflowError, OSError):
                     pass
+            employment_type = detail.get("employmentType") or detail.get("efcustomTextTimeType", [])
+            if isinstance(employment_type, list):
+                employment_type = " / ".join(x for x in employment_type if isinstance(x, str))
             job = make_job(source, native, title, url, job_location, description,
-                           detail.get("employmentType", ""), status, native, posted,
+                           employment_type, status, native, posted,
                            department=" / ".join(str(detail.get(key) or "") for key in (
                                "department", "departmentName", "jobFamily", "businessUnit")))
             if job:
@@ -1550,6 +1589,8 @@ def _ericsson(source, client):
             else:
                 result.rejected_ids.append(identity)
         except Exception as exc:
+            if isinstance(exc, HTTPError) and exc.code == 404:
+                result.unavailable_ids.append(old_identity)
             errors.append(brief_error(exc))
 
     result.seen_ids = sorted(seen)
@@ -1964,7 +2005,7 @@ def _html(source, client):
 def fetch_source(source, client):
     try:
         result = {"workday": _workday, "lever": _lever, "greenhouse": _greenhouse, "ashby": _ashby,
-                  "html": _html, "amazon": _amazon, "ericsson": _ericsson,
+                  "html": _html, "amazon": _amazon, "ericsson": _eightfold, "eightfold": _eightfold,
                   "tesla": _tesla}[source["type"]](source, client)
     except Exception as exc:
         result = SourceResult(source["id"], "error", [], error=brief_error(exc))
@@ -2028,7 +2069,7 @@ def validate_config(config):
             for path in source.get("seed_paths", []):
                 if not path.startswith("/job/") or ".." in path:
                     raise ValueError("Invalid Workday seed path")
-        elif source["type"] in {"lever", "greenhouse", "ashby", "amazon", "ericsson", "tesla"} and not source.get("api_url"):
+        elif source["type"] in {"lever", "greenhouse", "ashby", "amazon", "ericsson", "eightfold", "tesla"} and not source.get("api_url"):
             raise ValueError("API source missing api_url")
         if source["type"] == "ashby":
             endpoint = urlsplit(source["api_url"])
@@ -2037,24 +2078,25 @@ def validate_config(config):
         if source["type"] == "tesla" and (source["api_url"] != "https://www.tesla.com/cua-api/apps/careers/state"
                 or source.get("index_url") != "https://www.tesla.com/careers/search" or not source.get("queries")):
             raise ValueError("Tesla source requires its official careers inventory, search page and title queries")
-        if source["type"] in {"amazon", "ericsson", "tesla"}:
+        if source["type"] in {"amazon", "ericsson", "eightfold", "tesla"}:
             queries = source.get("queries", ["SLAM", "localization"])
             if (not isinstance(queries, list) or not 1 <= len(queries) <= 10
-                    or any(not isinstance(q, str) or not q.strip() or len(q) > 80 for q in queries)):
+                    or any(not isinstance(q, str) or len(q) > 80
+                           or (not q.strip() and source["type"] != "eightfold") for q in queries)):
                 raise ValueError("Search queries must be a bounded nonempty string array")
-            if source["type"] == "ericsson":
+            if source["type"] in {"ericsson", "eightfold"}:
                 if not source.get("detail_url"):
-                    raise ValueError("Ericsson source missing detail_url")
+                    raise ValueError("Eightfold source missing detail_url")
                 if not re.fullmatch(r"[a-z0-9.-]{1,100}", source.get("domain", "ericsson.com")):
-                    raise ValueError("Invalid Ericsson search domain")
+                    raise ValueError("Invalid Eightfold search domain")
                 location = source.get("search_location", "Sweden")
                 if not isinstance(location, str) or len(location) > 120:
-                    raise ValueError("Invalid Ericsson search location")
+                    raise ValueError("Invalid Eightfold search location")
                 seeds = source.get("seed_ids", [])
                 if (not isinstance(seeds, list) or len(seeds) > 30
                         or any(not isinstance(seed, str) or not re.fullmatch(r"[0-9]{1,24}", seed)
                                for seed in seeds)):
-                    raise ValueError("Invalid Ericsson seed IDs")
+                    raise ValueError("Invalid Eightfold seed IDs")
         elif source["type"] == "html":
             if not source.get("index_url"):
                 raise ValueError("HTML source missing index_url")
@@ -2148,6 +2190,9 @@ def _public_job(record, source):
         "wireless-isac": "Role text connects wireless systems with integrated sensing and communications.",
     }
     job["summary"] = templates[category]
+    if record.get("posting_unavailable") is True:
+        job["posting_unavailable"] = True
+        job["careers_url"] = safe_url(record["careers_url"], source["allowed_hosts"])
     for key in ("requisition_id", "posted_at", "first_seen", "last_seen", "last_checked", "last_verified", "last_detail_attempt", "check_status", "last_check_error"):
         if record.get(key):
             job[key] = clean_text(record[key], 220 if key == "last_check_error" else 100)
@@ -2231,7 +2276,8 @@ def merge_results(previous, results, config, now):
             existing = next((j for j in jobs.values() if _same_job(j, seed_job)), None)
             if existing:
                 existing["pinned"] = True
-                existing["url"] = seed_job["url"]
+                if sources[sid].get("type") != "eightfold":
+                    existing["url"] = seed_job["url"]
                 if sid == "manual":
                     # Refresh edited official-reference metadata without losing
                     # the original first-seen date or reviewed eligibility.
@@ -2269,7 +2315,7 @@ def merge_results(previous, results, config, now):
                 _carry_eligibility(current, existing)
                 if (existing.get("language_review") and current.get("language_review", {}).get("status") == "unknown"):
                     current["language_review"] = existing["language_review"]
-                if existing.get("pinned"):
+                if existing.get("pinned") and source.get("type") != "eightfold":
                     current["url"] = existing["url"]
                 if existing["id"] != current["id"]:
                     del jobs[existing["id"]]
@@ -2282,6 +2328,16 @@ def merge_results(previous, results, config, now):
             jobs[current["id"]] = current
             returned.add(current["id"])
             seen.add(current["id"])
+        # A known listing may no longer pass discovery's topic classifier.
+        # Its verified canonical link can still replace an obsolete ATS URL;
+        # this does not refresh eligibility or assert it is an open vacancy.
+        for identity, url in result.verified_urls.items():
+            job = jobs.get(identity)
+            if job and job["source_id"] == result.source_id and (
+                    source.get("type") == "eightfold" or not job.get("pinned")):
+                job["url"] = safe_url(url, source["allowed_hosts"])
+                job.pop("posting_unavailable", None)
+                job.pop("careers_url", None)
         if source.get("civilian_review_required") or source.get("type") == "tesla":
             # A successfully read, now-disallowed role cannot survive merely
             # because it appeared in the previous snapshot. An inventory/search
@@ -2305,6 +2361,10 @@ def merge_results(previous, results, config, now):
             if job["id"] in result.closed_ids:
                 job.update(status="closed", check_status="ok", last_verified=now)
                 job.pop("last_check_error", None)
+            elif job["id"] in result.unavailable_ids and _careers_url(source):
+                job.update(status="unknown", check_status="partial", posting_unavailable=True,
+                           careers_url=_careers_url(source),
+                           last_check_error="Original posting unavailable; current vacancy not confirmed")
             elif result.status == "ok" and source_state["status"] == "ok" and result.complete and job["id"] not in seen:
                 job["missing_count"] = job.get("missing_count", 0) + 1
                 if job["missing_count"] >= 2:

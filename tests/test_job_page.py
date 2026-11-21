@@ -32,6 +32,24 @@ def snapshot():
 
 
 class JobPageTests(unittest.TestCase):
+    def test_unavailable_posting_uses_careers_link_with_honest_labels(self):
+        job = snapshot()["jobs"][0]
+        job.update(posting_unavailable=True, careers_url="https://example.com/careers",
+                   status="unknown", check_status="partial")
+        card = page.render_card(job)
+        self.assertIn('href="https://example.com/careers">Search employer jobs</a>', card)
+        self.assertIn("Original posting unavailable", card)
+        self.assertNotIn(job["url"], card)
+        self.assertNotIn("View posting", card)
+        self.assertNotIn("Check the original posting", card)
+        self.assertNotIn('Open at last check', card)
+
+    def test_unavailable_posting_cannot_introduce_an_unsafe_careers_link(self):
+        data = snapshot()
+        data["jobs"][0].update(posting_unavailable=True, careers_url="javascript:alert(1)")
+        with self.assertRaises(ValueError):
+            page.validate_snapshot(data)
+
     @classmethod
     def setUpClass(cls):
         cls.template = (ROOT / "career/potential-jobs/template.html").read_text()

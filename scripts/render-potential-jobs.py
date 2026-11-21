@@ -125,10 +125,11 @@ def render_eligibility(job: dict) -> str:
             evidence = "<p>No explicit sponsorship promise or access restriction was identified in the reviewed text.</p>"
     conflict = job.get("eligibility_conflict")
     conflict_note = f'<p><strong>Recheck:</strong> {escape(conflict)}</p>' if conflict else ""
+    source_label = "Check current employer openings" if job.get("posting_unavailable") else "Check the original posting"
     return f'''<section class="application-panel application-{group}" aria-label="Application requirements">
     <p class="application-outlook">{escape(outlook)}</p>
     <dl>{definitions}</dl>
-    <details class="eligibility-evidence"><summary>Evidence and review date</summary>{evidence}<p>{escape(review)}</p>{conflict_note}<p><a href="{escape(https_url(job['url']))}">Check the original posting</a></p></details>
+    <details class="eligibility-evidence"><summary>Evidence and review date</summary>{evidence}<p>{escape(review)}</p>{conflict_note}<p><a href="{escape(posting_destination(job))}">{source_label}</a></p></details>
   </section>'''
 
 
@@ -142,7 +143,7 @@ def render_language_review(job: dict) -> str:
     review = f" {method}: {stamp}." if stamp != "not recorded" else ""
     return (f'<p class="career-note language-note"><strong>Language:</strong> {escape(label)}.'
             f'{escape(review)} Confirm the working language with the employer. '
-            f'<a href="{escape(https_url(job["url"]))}">Source posting</a></p>')
+            f'<a href="{escape(posting_destination(job))}">{"Employer careers" if job.get("posting_unavailable") else "Source posting"}</a></p>')
 
 
 def escape(value: object) -> str:
@@ -239,6 +240,11 @@ def effective_status(job: dict) -> str:
     return status
 
 
+def posting_destination(job: dict) -> str:
+    """Avoid sending readers to a posting already confirmed unavailable."""
+    return https_url(job["careers_url"] if job.get("posting_unavailable") else job["url"])
+
+
 def job_regions(job: dict) -> list[str]:
     """Preserve a legacy region and any explicitly supplied hiring regions."""
     primary = job.get("region", "Unknown")
@@ -268,6 +274,9 @@ def validate_snapshot(data: dict) -> None:
             raise ValueError(f"Duplicate job id: {job['id']}")
         seen.add(job["id"])
         https_url(job["url"])
+        if "posting_unavailable" in job and type(job["posting_unavailable"]) is not bool:
+            raise ValueError("Invalid posting availability flag")
+        posting_destination(job)
         if job.get("category") not in CATEGORIES:
             raise ValueError("Invalid job category")
         if job.get("employment_type", "Unknown") not in TYPES:
@@ -319,7 +328,11 @@ def render_card(job: dict) -> str:
     regions = " ".join(job_regions(job))
     key = hashlib.sha256(job["id"].encode()).hexdigest()[:16]
     title_id = "job-" + key
-    url = escape(https_url(job["url"]))
+    url = escape(posting_destination(job))
+    link_label = "Search employer jobs" if job.get("posting_unavailable") else "View posting"
+    title_html = escape(job["title"])
+    if not job.get("posting_unavailable"):
+        title_html = f'<a href="{url}">{title_html}</a>'
     metadata = [job.get("location") or "Location not specified"]
     if kind != "Unknown":
         metadata.append(kind)
@@ -360,18 +373,20 @@ def render_card(job: dict) -> str:
         date_note = f"Employer listing observed {display_time(job.get('last_seen') or job.get('last_checked'))}."
     else:
         date_note = f"Verified {display_time(job.get('last_verified') or job.get('last_seen'))}."
+    if job.get("posting_unavailable"):
+        date_note = "Original posting unavailable; this link opens the employer’s current jobs. Availability of this role is unconfirmed."
     added_date, added_at, added_label = added_time(job.get("first_seen"))
     added_note = (f'Added to list <time datetime="{escape(added_at)}">{escape(added_label)}</time>'
                   if added_at else "Date added not recorded")
     hidden = " hidden" if status == "closed" else ""
     return f'''<article class="{classes}" data-job="{escape(job['id'])}" data-category="{category}" data-type="{escape(kind)}" data-region="{escape(region)}" data-regions="{escape(regions)}" data-sweden="{sweden}" data-status="{status}" data-sponsorship="{eligibility['sponsorship']}" data-application="{application}" data-added-date="{escape(added_date)}" data-added-at="{escape(added_at)}" data-search="{escape(search.lower())}" aria-labelledby="{title_id}"{hidden}>
   <div class="card-top"><p class="company">{escape(job['company'])}</p>{saved}</div>
-  <h3 id="{title_id}"><a href="{url}">{escape(job['title'])}</a></h3>
+  <h3 id="{title_id}">{title_html}</h3>
   <p class="job-meta">{escape(' · '.join(metadata))}</p>
   <div class="job-tags"><span class="tag">{escape(CATEGORIES[category])}</span><span class="tag status-{status}">{STATUS_LABELS[status]}</span></div>
   {summary}{evidence}{requirements}
   {application_html}{language_html}{career_notes}
-  <div class="job-card-bottom"><a class="job-link" href="{url}">View posting</a><p class="added-date">{added_note}</p><p class="checked-date">{escape(date_note)}</p></div>
+  <div class="job-card-bottom"><a class="job-link" href="{url}">{link_label}</a><p class="added-date">{added_note}</p><p class="checked-date">{escape(date_note)}</p></div>
 </article>'''
 
 
