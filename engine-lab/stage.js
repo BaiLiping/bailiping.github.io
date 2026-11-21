@@ -434,12 +434,13 @@ export async function createStage(canvas, url, onProgress) {
   }
 
   /**
-   * Where a part is on the page.
-   * Takes a part record. Returns { x, y } in CSS pixels and whether the point is in front of the camera.
+   * Where a part, or a point in the scene, is on the page.
+   * Takes a part record or a Vector3. Returns { x, y } in CSS pixels and whether it is in front of the camera.
    */
-  function screenPoint(part) {
-    const m = part.mesh, v = new T.Vector3();
-    if (m.geometry) {
+  function screenPoint(what) {
+    const m = what.mesh, v = new T.Vector3();
+    if (what.isVector3) v.copy(what);
+    else if (m.geometry) {
       if (!m.geometry.boundingSphere) m.geometry.computeBoundingSphere();
       v.copy(m.geometry.boundingSphere.center).applyMatrix4(m.matrixWorld);
     } else m.getWorldPosition(v);

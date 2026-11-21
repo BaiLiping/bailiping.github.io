@@ -14,6 +14,9 @@ const KINDS = {
   wastegate: { color: '#e6b43c', density: 200, speed: 0.9, size: 9 },
   recirc: { color: '#7d6fd0', density: 240, speed: 0.9, size: 8 },
   cooling: { color: '#9fb4bd', density: 55, speed: 0.5, size: 14 },
+  // inside the turbocharger: each stream changes colour where it meets its wheel
+  turbine_swirl: { color: '#e2491f', to: '#8f6a58', at: 0.62, density: 230, speed: 0.3, size: 2.5 },
+  compressor_swirl: { color: '#4f9fd0', to: '#e09a2b', at: 0.3, density: 230, speed: 0.3, size: 2.5 },
 };
 
 const VERT = /* glsl */`
@@ -51,8 +54,10 @@ function preparePath(path) {
 
 /**
  * Point at a distance along a prepared path.
- * Takes the path, the distance and a Vector3 to write into. Returns that vector.
+ * Takes the path, the distance and a Vector3 to write into. Returns that vector, and leaves the segment it
+ * fell in and the fraction along it in `seg` for the caller.
  */
+const seg = { lo: 0, hi: 0, f: 0 };
 function along(path, s, out) {
   let lo = 0, hi = path.cum.length - 1;
   while (hi - lo > 1) {
@@ -60,15 +65,40 @@ function along(path, s, out) {
     if (path.cum[mid] <= s) lo = mid; else hi = mid;
   }
   const f = (s - path.cum[lo]) / Math.max(1e-6, path.cum[hi] - path.cum[lo]);
-  return out.copy(path.pts[lo]).lerp(path.pts[hi], Math.min(1, Math.max(0, f)));
+  seg.lo = lo; seg.hi = hi; seg.f = Math.min(1, Math.max(0, f));
+  return out.copy(path.pts[lo]).lerp(path.pts[hi], seg.f);
+}
+
+/**
+ * Find, for every point of a gas path, the part the gas is inside there, so the stream can move with that part
+ * when it is pulled off or the engine is exploded.
+ * Takes the prepared paths and the part records (with the engine assembled). Returns nothing.
+ */
+function findCarriers(paths, parts) {
+  const groups = new Set(['induction', 'intercooler', 'turbo', 'exhaust', 'heads', 'cooling']);
+  const boxes = parts.filter((p) => groups.has(p.group) && p.mesh.geometry).map((p) => {
+    const box = new T.Box3().setFromObject(p.mesh).expandByScalar(0.012), size = box.getSize(new T.Vector3());
+    return { part: p, box, volume: size.x * size.y * size.z };
+  }).sort((a, b) => a.volume - b.volume);
+  for (const path of paths) {
+    path.carriers = path.pts.map((pt) => {
+      const inside = boxes.find((b) => b.box.containsPoint(pt));           // the smallest part that holds the point
+      if (inside) return inside.part;
+      let best = null, near = 0.08;
+      for (const b of boxes) { const d = b.box.distanceToPoint(pt); if (d < near) { near = d; best = b.part; } }
+      return best;
+    });
+  }
 }
 
 /**
  * Build the particle system.
- * Takes the info from engine930.json and the scene to add the points to. Returns { update, setVisible, object }.
+ * Takes the info from engine930.json, the scene to add the points to, the pixel scale and the part records.
+ * Returns { update, object, material, count }.
  */
-export function createFlow(info, scene, pixelScale) {
+export function createFlow(info, scene, pixelScale, parts) {
   const paths = info.gas.map(preparePath);
+  findCarriers(paths, parts);
   const cyls = new Map(info.cylinders.map((c) => [c.n, c]));
   const particles = [];
   for (const path of paths) {
@@ -83,6 +113,8 @@ export function createFlow(info, scene, pixelScale) {
   const n = particles.length;
   const position = new Float32Array(n * 3), color = new Float32Array(n * 4), size = new Float32Array(n);
   const tint = new T.Color();
+  const tones = {};
+  for (const [name, k] of Object.entries(KINDS)) tones[name] = [new T.Color(k.color), k.to ? new T.Color(k.to) : null];
   particles.forEach((p, i) => {
     tint.set(p.kind.color);
     color.set([tint.r, tint.g, tint.b, 0], i * 4);
@@ -102,8 +134,8 @@ export function createFlow(info, scene, pixelScale) {
 
   /**
    * Move the particles and set how visible each stream is.
-   * Takes the engine state from sim.js, the time step, the overall fade (0 to 1) and an optional set of gas kinds
-   * to show alone. Returns nothing.
+   * Takes the engine state from sim.js, the time step, the overall fade (0 to 1) and the set of gas kinds to
+   * show. Returns nothing.
    */
   function update(sim, dt, fade, only) {
     object.visible = fade > 0.01;
@@ -128,13 +160,20 @@ export function createFlow(info, scene, pixelScale) {
         rate *= 0.6 + sim.boost; alpha = 0.45 + 0.6 * Math.min(1, sim.boost / sim.spec.boost_bar);
       } else if (path.kind === 'cooling') {
         rate = (0.25 + sim.rpm / sim.spec.redline) * moving; alpha = 0.3;
+      } else if (p.kind.to) {
+        rate = (0.35 + 1.5 * Math.min(1.2, sim.turboSpeed)) * moving; alpha = 0.85;
+        const [from, to] = tones[path.kind], u = Math.min(1, Math.max(0, (p.s / path.total - p.kind.at) * 9 + 0.5));
+        color[i * 4] = from.r + (to.r - from.r) * u; color[i * 4 + 1] = from.g + (to.g - from.g) * u; color[i * 4 + 2] = from.b + (to.b - from.b) * u;
       }
       p.s += p.kind.speed * p.pace * rate * dt;
       if (p.s > path.total) p.s -= path.total;
       along(path, p.s, tmp).add(p.jitter);
+      const a = path.carriers[seg.lo], b = path.carriers[seg.hi];             // the gas goes where its pipe goes
+      if (a) tmp.addScaledVector(a.offset, 1 - seg.f);
+      if (b) tmp.addScaledVector(b.offset, seg.f);
       position[i * 3] = tmp.x; position[i * 3 + 1] = tmp.y; position[i * 3 + 2] = tmp.z;
       const ends = Math.min(1, p.s / 0.03, (path.total - p.s) / 0.03);       // fade in and out at the ends
-      color[i * 4 + 3] = only && !only.has(path.kind) ? 0 : alpha * fade * Math.max(0, ends);
+      color[i * 4 + 3] = only.has(path.kind) ? alpha * fade * Math.max(0, ends) : 0;
     }
     geometry.attributes.position.needsUpdate = true;
     geometry.attributes.color.needsUpdate = true;

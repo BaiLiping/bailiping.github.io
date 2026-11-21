@@ -1,4 +1,4 @@
-# Engine lab: Porsche 911 Turbo 3.3 (930), Type 930/60
+# Turbo Engine: Porsche 911 Turbo 3.3 (930), Type 930/60
 
 An interactive model of the air-cooled, turbocharged flat-six. The page is the canvas: grab a part and pull it,
 drag the empty stage to turn the engine, hold the throttle and watch boost arrive late.
@@ -20,16 +20,28 @@ Unofficial. Built from published dimensions and photographs studied as reference
 | `vendor/` | Three.js r187, only the parts used, bundled into one self-hosted file (MIT, licence beside it) |
 | `how-it-works/` | the earlier illustrated explainer (jet engine and turbocharged car cutaways), opened from the page with `i` |
 
-## Keys
+## Controls
 
-`↑` throttle · `x` explode · `c` cutaway (top, side, cross-section, off) · `g` gas flow ·
-`e` exhaust energy (the exhaust and turbocharger alone, with name tags) · `r` reassemble ·
-`space` stop or start the crank · `←` `→` turn it by hand while stopped (shift for one degree) · `m` sound ·
-`h` hide the type · `i` how it works · `+` `−` zoom · `0` reset the view. The named commands are also buttons in
-the hint line; zoom, reset and turning the crank by hand are keys only (wheel and pinch also zoom).
+The bar at the bottom follows the site's Porsche 911 GT3 page: one line of instruction, a row of buttons, one line
+of readout. A small callout beside the pointer names the part under it.
+
+| Button | Key | What |
+|---|---|---|
+| Exploded view | `x` | every part out; the gas flow shows too, each stream moving with its part |
+| Cutaway | `c` | steps through three sections: from above, from the side, across, off |
+| Gas flow | `g` | the engine fades to a line drawing and the gas runs through it |
+| Exhaust energy | `e` | the exhaust system and turbocharger alone, with name tags |
+| Inside the turbo | `t` | close on the rotor in glass housings: exhaust round the turbine, air through the compressor |
+| Hold to rev | `↑` | throttle |
+| Sound | `m` | synthesised engine and turbo |
+| How it works | `i` | the earlier illustrated explainer, over the stage |
+| Reset | `r` | every part home, views off, camera home |
+
+Keys only: `space` stops or starts the crank, `←` `→` turn it by hand while stopped (shift for one degree), `h`
+hides the interface, `+` `−` zoom, `0` returns the camera home. Wheel and pinch also zoom.
 
 The page opens with every part out in the exploded view and assembles the engine, the nearest parts first; any
-key or click cuts that short. A prompt says that parts can be dragged off; it goes once one has been.
+key or click cuts that short.
 
 The crank is drawn at one fortieth of its real speed. Sound follows the real revs.
 

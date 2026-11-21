@@ -3,8 +3,8 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <title>Porsche 911 Turbo 3.3 Engine, Type 930/60 | Bai Liping</title>
-  <meta name="description" content="An interactive model of the Porsche 911 Turbo 3.3 (930) engine. Pull parts off the air-cooled flat-six, cut it open, hold the throttle and watch exhaust spin the turbo until boost arrives.">
+  <title>Turbo Engine | Bai Liping</title>
+  <meta name="description" content="An interactive model of the Porsche 911 Turbo 3.3 (930) engine. Pull parts off the air-cooled flat-six, cut it open, and watch the exhaust spin the turbine that drives the compressor.">
   <meta name="theme-color" content="#f7f5ef">
   <link rel="canonical" href="https://bailiping.com/engine-lab/">
   <link rel="icon" href="/favicon.ico">
@@ -14,30 +14,37 @@
 </head>
 <body>
   <main>
-    <h1 class="visually-hidden">Porsche 911 Turbo 3.3 engine, Type 930/60: an interactive model</h1>
+    <h1 class="visually-hidden">Turbo Engine: an interactive model of the Porsche 911 Turbo 3.3 engine, Type 930/60</h1>
     <canvas id="stage" tabindex="0" aria-label="A three-dimensional model of the Porsche 930/60 turbocharged flat-six. Drag a part to pull it off, drag the background to turn the engine."></canvas>
     <a class="line home" href="/#group-random-thoughts">bailiping.com</a>
     <p class="line note">an unofficial model, built from published dimensions; not affiliated with Porsche</p>
-    <p id="coach" class="line coach">Every part comes off. <strong>Drag any part</strong> to pull it away from the engine, double click to take it straight off, press <strong>r</strong> to put it all back.</p>
+    <div id="callout"><span class="title"></span><span class="sub"></span></div>
     <div id="tags" class="tags" hidden>
       <svg id="leaders" aria-hidden="true"></svg>
     </div>
-    <p id="caption" class="line caption" hidden>Exhaust energy: the hot gas from all six cylinders spins the turbine, and its shaft drives the compressor, which packs more air into the engine. That is boost, not electricity. The electricity comes from the alternator in the fan hub, turned by the belt.</p>
-    <div class="foot">
-      <p id="status" class="line status" role="status" aria-live="off"></p>
-      <p class="line hint">
-        drag any part to pull it off · double click takes it straight off · drag around the engine to turn it · wheel, pinch or + − to zoom · 0 resets the view ·
-        <button type="button" data-act="throttle">↑ throttle</button> ·
-        <button type="button" data-act="explode" aria-pressed="false">x explode</button> ·
-        <button type="button" data-act="cut" aria-pressed="false">c cut</button> ·
-        <button type="button" data-act="gas" aria-pressed="false">g gas</button> ·
-        <button type="button" data-act="exhaust" aria-pressed="false">e exhaust energy</button> ·
-        <button type="button" data-act="reassemble">r reassemble</button> ·
-        <button type="button" data-act="pause" aria-pressed="false">space stop</button> ·
-        <button type="button" data-act="sound" aria-pressed="false">m sound</button> ·
-        <button type="button" data-act="hide">h hide</button> ·
-        <button type="button" data-act="explain" aria-expanded="false" aria-controls="explain">i how it works</button>
-      </p>
+    <p id="caption" class="caption" hidden></p>
+    <div id="bar">
+      <p id="drag-hint"><span class="mouse">Drag any part to pull it off the engine. Double click takes it straight off.</span><span class="touch">Touch a part and drag it away to take the engine apart.</span></p>
+      <div id="tools" role="group" aria-label="Model controls">
+        <button type="button" data-act="explode" aria-pressed="false">Exploded view</button>
+        <button type="button" data-act="cut" aria-pressed="false">Cutaway</button>
+        <button type="button" data-act="gas" aria-pressed="false">Gas flow</button>
+        <button type="button" data-act="exhaust" aria-pressed="false">Exhaust energy</button>
+        <button type="button" data-act="turbo" aria-pressed="false">Inside the turbo</button>
+        <button type="button" data-act="throttle">Hold to rev</button>
+        <button type="button" data-act="sound" aria-pressed="false">Sound</button>
+        <button type="button" data-act="explain" aria-expanded="false" aria-controls="explain">How it works</button>
+        <button type="button" data-act="reset">Reset</button>
+        <details id="more"><summary>Controls</summary><div>
+          Drag a part to pull it off; pull it far and it stays off. Double click takes a part straight off.<br>
+          Drag the background to turn the engine. Scroll or pinch to zoom.<br>
+          Cutaway steps through three sections: from above, from the side, across.<br>
+          X explode · C cutaway · G gas flow · E exhaust energy · T inside the turbo<br>
+          Hold ↑ to rev · Space stop or start · ← → turn the crank by hand while stopped<br>
+          M sound · I how it works · R reset · H hide · + − zoom · 0 home view
+        </div></details>
+      </div>
+      <p id="status" role="status" aria-live="off">Porsche 911 Turbo 3.3 · Type 930/60</p>
     </div>
     <section id="explain" class="sheet" hidden aria-label="How a turbocharged engine works">
       <p class="line sheet-bar">
