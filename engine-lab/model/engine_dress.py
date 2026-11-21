@@ -416,14 +416,19 @@ def build_airbox(E):
 # ---------------------------------------------------------------------------------------------------------------
 # turbocharger
 # ---------------------------------------------------------------------------------------------------------------
-def scroll(g, centre, R, r0, r1, start_deg, n=30, m=14):
+SWEEP = 334.0               # degrees a volute winds round its wheel
+
+
+def scroll(g, centre, R, r0, r1, start_deg, grows=-1, n=30, m=14):
     """Add a volute to a Geo: a tube wound once round the X axis whose section grows from r0 to r1.  Takes the
-    Geo, the centre, the winding radius, the two section radii, the angle where the big end sits and the
-    segment counts.  Returns the point and direction where the big end opens."""
+    Geo, the centre, the winding radius, the two section radii, the angle where the big end sits, the sense in
+    which the section grows (+1 with rising angle, as a compressor's must for a rotor turning that way; -1
+    for a turbine's, which narrows in the direction the gas and the wheel turn) and the segment counts.
+    Returns the point and direction where the big end opens."""
     pts, sc = [], []
     for i in range(n + 1):
         f = i / n
-        a = math.radians(start_deg + 334.0 * (1 - f))
+        a = math.radians(start_deg - grows * SWEEP * (1 - f))
         rr = R - (r1 - (r0 + (r1 - r0) * f)) * 0.5
         pts.append(V((centre[0], centre[1] + rr * math.cos(a), centre[2] + rr * math.sin(a))))
         sc.append((r0 + (r1 - r0) * f) / r1)
@@ -438,7 +443,7 @@ def build_turbo(E):
     xc, xt = TURBO['x_comp'], TURBO['x_turb']
     # compressor housing: inlet toward the engine, outlet up toward the intercooler
     g = Geo()
-    end, d = scroll(g, (xc, ty, tz), 52, 12, 23, 20)
+    end, d = scroll(g, (xc, ty, tz), 52, 12, 23, 0, grows=+1)
     g.tube(end, end + d * 22, 34, 25, n=22)
     g.at(frame((xc, ty, tz), z=(1, 0, 0), x=(0, 1, 0)))
     g.lathe([(27, 20), (36, 20), (36, 6), (52, 2), (52, -12), (44, -22), (27, -22)], n=44, closed=True)
@@ -455,7 +460,7 @@ def build_turbo(E):
     E.add('Turbo_Centre_Housing', g, 'iron_cast', 'turbo', 'Bearing housing', ex=(-250, 190, -60))
     # turbine housing: inlet underneath from the manifold pipe, outlet rearward into the muffler
     g = Geo()
-    end, d = scroll(g, (xt, ty, tz), 50, 14, 27, -160)
+    end, d = scroll(g, (xt, ty, tz), 50, 14, 27, 0, grows=-1)
     g.tube(end, end + d * 26, 33, 24, n=20)
     g.at(basis(end + d * 26, d.cross(V((1, 0, 0))), (1, 0, 0))).prism(rounded_rect(84, 70, 8, 3), 0, 9, holes=[circle(24, 20)])
     g.at(frame((xt, ty, tz), z=(-1, 0, 0), x=(0, 1, 0)))
@@ -469,6 +474,32 @@ def build_turbo(E):
     E.add('Turbo_Turbine_Housing', g, 'iron_cast', 'turbo', 'Turbine housing', ex=(-340, 190, -60), sharp=40)
     E.tmp_turbine_in = end + d * 35
     E.tmp_turbine_dir = d
+
+    def ring(x, r, a):
+        """Point at radius r and angle a (degrees, from +Y toward +Z) round the rotor axis at station x."""
+        return V((x, ty + r * math.cos(math.radians(a)), tz + r * math.sin(math.radians(a))))
+    # how the gas goes through: for the close-up view.  Exhaust enters the turbine's wide end, runs round the
+    # narrowing shell, turns in through the wheel and leaves along the axis; fresh air enters the compressor
+    # along the axis, is flung outward and collected by a shell that widens toward its outlet.
+    x_out, x_in = TURBO['x_out'], TURBO['x_in']
+    for k in range(9):
+        leave = 40.0 + 280.0 * k / 8.0
+        path = [ring(xt, 50, 0) + V((0, 0, -95)), ring(xt, 50, 0) + V((0, 0, -40))]
+        path += [ring(xt, 50, a) for a in range(0, int(leave) + 1, 12)]
+        for j in range(1, 9):       # in through the blades, turning with the wheel
+            path.append(ring(xt - 3.0 * j, 50 - 3.6 * j, leave + 16.0 * j))
+        for j in range(1, 8):       # and out along the axis, still swirling a little
+            path.append(ring(xt - 24 - 14.0 * j, 21 - 0.8 * j, leave + 128 + 9.0 * j))
+        gas(E, 'turbine_swirl_%d' % k, 'turbine_swirl', path, r=7)
+        enter = 30.0 + 290.0 * k / 8.0
+        path = [ring(x_in + 70 - 12.0 * j, 13 + (k % 3) * 4, enter - 150) for j in range(6)]
+        for j in range(1, 9):       # flung outward by the wheel
+            path.append(ring(xc + 14 - 2.0 * j, 17 + 4.4 * j, enter - 150 + 18.0 * j))
+        path += [ring(xc, 52, a) for a in range(int(enter), 361, 12)]
+        path += [ring(xc, 52, 0) + V((0, 0, 30)), ring(xc, 56, 0) + V((0, 0, 110))]
+        gas(E, 'compressor_swirl_%d' % k, 'compressor_swirl', path, r=7)
+    E.turbo = dict(y=ty, z=tz, x_comp=xc, x_turb=xt, x_in=x_in, x_out=x_out,
+                   turbine_in=[xt, ty + 50, tz - 60], compressor_out=[xc, ty + 52, tz + 70])
     # rotor: compressor wheel, shaft, turbine wheel, turning as one piece
     g = Geo()
     g.at(frame((0, 0, 0), z=(1, 0, 0), x=(0, 1, 0)))
@@ -552,8 +583,8 @@ def build_exhaust(E):
     ty, tz = TURBO['y'], TURBO['z']
     tin, tdir = E.tmp_turbine_in, E.tmp_turbine_dir
     # left exchanger straight into the turbine's inlet pipe; the right one crosses over behind the crankcase
-    left = [outlets[+1], V((-330, 238, -172)), V((-420, 232, -192)), tin - tdir * 70 + V((0, 0, -6)), tin]
-    lpath = fillet_path(left, [70, 60, 50])
+    left = [outlets[+1], V((-330, 238, -172)), V((-420, 236, -196)), tin + tdir * 62, tin]
+    lpath = fillet_path(left, [70, 50, 34])
     g = Geo()
     g.pipe(lpath, 30, 26, n=20)
     g.at(basis(tin, tdir.cross(V((1, 0, 0))), (1, 0, 0))).prism(rounded_rect(84, 70, 8, 3), -9, 0, holes=[circle(26, 20)])

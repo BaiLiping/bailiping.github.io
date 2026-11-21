@@ -338,7 +338,7 @@ def main():
                             intake=[c['fire'] + S._valve_window('in')[0] - S._full_half('in'), c['fire'] + S._valve_window('in')[0] + S._full_half('in')],
                             exhaust=[c['fire'] + S._valve_window('ex')[0] - S._full_half('ex'), c['fire'] + S._valve_window('ex')[0] + S._full_half('ex')])
                        for c in S.CYLS],
-            chains=E.chains, gas=E.gas, drive=E.drive, margins=margins,
+            chains=E.chains, gas=E.gas, drive=E.drive, margins=margins, turbo=getattr(E, 'turbo', {}),
             groups={k: dict(parts=v[0], unique_tris=v[1], drawn_tris=v[2]) for k, v in groups.items()},
             bounds=dict(min=[round(v, 1) for v in lo], max=[round(v, 1) for v in hi]), unique_tris=E.unique_tris, drawn_tris=drawn)
         glb = export(E, info)

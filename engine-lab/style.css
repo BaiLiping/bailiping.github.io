@@ -51,41 +51,141 @@ main { position: fixed; inset: 0; }
 .home:hover, .home:focus-visible { color: var(--accent); text-decoration: underline; }
 .note { right: max(16px, env(safe-area-inset-right)); text-align: right; max-width: 60vw; }
 
-.foot {
+/* the control bar, after the site's Porsche 911 GT3 page: a plain instruction, real buttons, one line of readout */
+#bar {
   position: absolute;
-  left: max(16px, env(safe-area-inset-left));
-  right: max(16px, env(safe-area-inset-right));
-  bottom: max(16px, env(safe-area-inset-bottom));
-  display: flex;
-  align-items: flex-end;
-  justify-content: space-between;
-  gap: 8px 32px;
-  flex-wrap: wrap-reverse;
+  inset: auto 0 max(14px, env(safe-area-inset-bottom));
+  display: grid;
+  justify-items: center;
+  gap: 8px;
+  padding: 0 12px;
   pointer-events: none;
+  z-index: 2;
+  font-family: ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+  transition: opacity 0.4s ease;
 }
 
-.status { color: var(--type-strong); font-variant-numeric: tabular-nums; white-space: pre-wrap; flex: 1 1 320px; }
-.hint { text-align: right; max-width: 760px; flex: 1 1 420px; pointer-events: auto; }
+#drag-hint { margin: 0; color: #263541; font: 500 13px/1.45 system-ui, sans-serif; text-align: center; }
+#drag-hint .touch { display: none; }
+@media (pointer: coarse) {
+  #drag-hint .mouse { display: none; }
+  #drag-hint .touch { display: inline; }
+}
 
-.hint button {
-  font: inherit;
-  letter-spacing: inherit;
-  color: var(--type-strong);
-  background: none;
-  border: 0;
-  padding: 2px 0;
-  margin: 0;
+#tools { display: flex; align-items: stretch; gap: 4px; flex-wrap: wrap; justify-content: center; }
+
+#tools button, #tools summary {
+  pointer-events: auto;
+  appearance: none;
+  font: 600 12px/1.2 system-ui, sans-serif;
+  color: #28323b;
+  background: rgba(251, 252, 253, 0.96);
+  border: 1px solid #b6bdc4;
+  border-radius: 6px;
+  padding: 0 12px;
+  min-height: 42px;
   cursor: pointer;
-  border-bottom: 1px dotted rgba(58, 54, 47, 0.45);
+  display: grid;
+  place-items: center;
   touch-action: manipulation;
   -webkit-user-select: none;
   user-select: none;
 }
 
-.hint button:hover, .hint button:focus-visible { color: var(--accent); border-bottom-color: var(--accent); outline: none; }
-.hint button[aria-pressed="true"] { color: var(--accent); border-bottom-style: solid; border-bottom-color: var(--accent); }
+#tools button:hover, #tools summary:hover { border-color: #536674; }
+#tools button[aria-pressed="true"] { background: #194d78; color: white; border-color: #194d78; }
+#tools button:focus-visible, #tools summary:focus-visible { outline: 3px solid #327db3; outline-offset: 2px; }
+#tools summary::-webkit-details-marker { display: none; }
+#tools summary { list-style: none; }
+#more { position: relative; }
 
-.fallback { position: absolute; left: 16px; right: 16px; top: 40%; max-width: 62ch; margin: 0 auto; text-align: center; font-size: 13px; }
+#more div {
+  pointer-events: auto;
+  position: absolute;
+  bottom: calc(100% + 8px);
+  right: 0;
+  width: max-content;
+  max-width: calc(100vw - 24px);
+  padding: 12px 15px;
+  font-size: 12px;
+  line-height: 1.65;
+  border: 1px solid #b6bdc4;
+  border-radius: 8px;
+  color: #28323b;
+  background: #fcfdfe;
+  box-shadow: 0 4px 16px #2222;
+}
+
+#status {
+  margin: 0;
+  font-size: 11px;
+  font-variant-numeric: tabular-nums;
+  color: #39444c;
+  background: rgba(244, 243, 238, 0.92);
+  padding: 2px 8px;
+  border-radius: 4px;
+  text-align: center;
+  min-height: 14px;
+  max-width: 96vw;
+}
+
+/* a small floating name beside the pointer when it is over a part, or pulling one */
+#callout {
+  position: fixed;
+  left: 0;
+  top: 0;
+  pointer-events: none;
+  z-index: 2;
+  padding: 4px 8px;
+  font: 10.5px/1.4 ui-sans-serif, system-ui, sans-serif;
+  letter-spacing: 0.02em;
+  color: #2f343a;
+  background: rgba(247, 245, 239, 0.9);
+  border: 1px solid rgba(79, 83, 88, 0.18);
+  border-radius: 3px;
+  opacity: 0;
+  transition: opacity 0.16s ease;
+  white-space: nowrap;
+}
+
+#callout.visible { opacity: 1; }
+#callout .sub { color: #6c727a; font-size: 9.5px; margin-left: 6px; }
+
+/* name tags of the exhaust views */
+.tags { position: absolute; inset: 0; pointer-events: none; overflow: hidden; }
+.tags[hidden], .caption[hidden] { display: none; }
+.tags svg { position: absolute; inset: 0; width: 100%; height: 100%; }
+.tags line { stroke: var(--type-strong); stroke-width: 0.8; opacity: 0.55; }
+.tags circle { fill: #194d78; }
+
+.tag {
+  position: absolute;
+  top: 0;
+  left: 0;
+  max-width: 230px;
+  padding: 1px 6px;
+  background: rgba(247, 245, 239, 0.88);
+  border-left: 2px solid #194d78;
+  transition: none;
+}
+
+.tag b { font-weight: 400; color: var(--type-strong); text-transform: uppercase; letter-spacing: 0.06em; }
+
+.caption {
+  position: absolute;
+  top: max(46px, calc(env(safe-area-inset-top) + 36px));
+  left: 50%;
+  width: min(94vw, 780px);
+  margin: 0;
+  transform: translateX(-50%);
+  text-align: center;
+  font: 500 13px/1.5 system-ui, sans-serif;
+  color: #263541;
+  pointer-events: none;
+  padding: 6px 12px;
+  background: rgba(247, 245, 239, 0.86);
+  border-radius: 6px;
+}
 
 /* the explainer: the original cutaways, laid over the stage on request */
 .sheet {
@@ -116,8 +216,8 @@ main { position: fixed; inset: 0; }
 .sheet iframe { flex: 1; width: 100%; border: 0; background: transparent; }
 
 /* h hides the type; the way home stays reachable by keyboard */
-body.quiet main > .line, body.quiet .foot .line { opacity: 0; }
-body.quiet .hint, body.quiet .home { pointer-events: none; }
+body.quiet main > .line, body.quiet #bar, body.quiet .tags, body.quiet .caption { opacity: 0; }
+body.quiet #bar *, body.quiet .home { pointer-events: none; }
 body.quiet .home:focus-visible { opacity: 1; }
 
 .visually-hidden {
@@ -132,7 +232,14 @@ body.quiet .home:focus-visible { opacity: 1; }
 @media (max-width: 640px) {
   .line { font-size: 10.5px; }
   .note { display: none; }
-  .hint { text-align: left; }
+  .caption { font-size: 11.5px; }
+  .tag { max-width: 150px; font-size: 9.5px; }
+  #tools { max-width: 400px; }
+  #tools button, #tools summary { padding: 0 9px; min-height: 40px; font-size: 11px; }
+  #more { position: static; }
+  #more div { left: 50%; right: auto; transform: translateX(-50%); }
+  #status { font-size: 10px; }
+  #callout { display: none; }
 }
 
 @media (prefers-reduced-motion: reduce) {
