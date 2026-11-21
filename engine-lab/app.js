@@ -2,10 +2,10 @@
 // stage to turn it, hold the throttle and watch boost arrive late. The model is engine930.glb, built by the
 // script in model/; this file poses it, runs the small engine model in sim.js and wires the keys.
 import * as T from './vendor/three.bundle.min.js';
-import { createStage } from './stage.js?v=6f007a4e69';
-import { createSim, step, nudge } from './sim.js?v=6f007a4e69';
-import { createFlow, createMotes } from './flow.js?v=6f007a4e69';
-import { createSound } from './sound.js?v=6f007a4e69';
+import { createStage } from './stage.js?v=55e5f21d6a';
+import { createSim, step, nudge } from './sim.js?v=55e5f21d6a';
+import { createFlow, createMotes, KINDS } from './flow.js?v=55e5f21d6a';
+import { createSound } from './sound.js?v=55e5f21d6a';
 
 const canvas = document.getElementById('stage');
 const statusEl = document.getElementById('status');
@@ -19,6 +19,21 @@ const GROUP_NAMES = { crank: 'crank train', rods: 'crank train', pistons: 'crank
   valves: 'valve gear', rockers: 'valve gear', cams: 'valve gear', camhousing: 'valve gear', covers: 'valve gear', timing: 'timing drive', chain: 'timing drive',
   chainhousing: 'timing drive', cooling: 'cooling', oil: 'lubrication', mounts: 'engine mount', induction: 'induction', intercooler: 'charge air',
   fuel: 'K-Jetronic fuel injection', turbo: 'turbocharger', exhaust: 'exhaust', ignition: 'ignition' };
+
+// What each colour of gas is, for the key shown beside the engine. Entries are [kind, which end of its colour
+// change, text]; the streams inside the turbocharger change colour where they meet their wheel.
+const LEGEND = {
+  ambient: 'fresh air, drawn in through the air cleaner',
+  boost: 'the same air after the compressor: squeezed, and hot',
+  charge: 'that air cooled by the intercooler, going into the cylinders',
+  exhaust: 'exhaust from the cylinders, on its way to the turbine',
+  exhaust_out: 'exhaust that has been through the turbine',
+  wastegate: 'surplus exhaust sent round the turbine by the wastegate, at full boost',
+  recirc: 'boost returned to the inlet when the throttle shuts',
+  cooling: 'cooling air from the fan',
+  turbine_swirl: ['exhaust entering the turbine, hot and fast', 'the same exhaust leaving, its energy spent on the wheel'],
+  compressor_swirl: ['fresh air entering the compressor', 'the same air leaving, compressed'],
+};
 
 // The two exhaust views. Each says what stays solid, what turns to glass, which gas is drawn, where the camera
 // goes, what the caption says and which name tags appear. FOCUS[2] is completed in main(), from the model's data.
@@ -266,7 +281,9 @@ function advance(dt) {
     pickAt = null;
   }
   // the gas shows in its own view, in the exhaust views, and whenever the parts are spread out
-  flow.update(sim, dt, Math.max(ui.gas, ui.focusFade, ui.spread), ui.focus ? FOCUS[ui.focus].kinds : GAS_KINDS);
+  const gasShown = Math.max(ui.gas, ui.focusFade, ui.spread), gasKinds = ui.focus ? FOCUS[ui.focus].kinds : GAS_KINDS;
+  flow.update(sim, dt, gasShown, gasKinds);
+  showLegend(gasShown > 0.4 ? gasKinds : null);
   if (motes) { motes.object.visible = ui.focus !== 2; motes.update(performance.now() / 1000); }     // dust would read as gas in the close-up
   if (ui.sound && ui.soundOn) ui.sound.update(sim);
   if (!ui.explain) stage.render(ui.gas);          // the explainer covers the stage while it is open
@@ -311,6 +328,28 @@ function setFocus(level) {
 }
 
 /**
+ * Show the key to the gas colours for the streams now on screen, or hide it when no gas is drawn.
+ * Takes the set of gas kinds being drawn, or null for none. Returns nothing.
+ */
+function showLegend(kinds) {
+  const el = document.getElementById('legend');
+  const key = kinds ? [...kinds].join() : '';
+  if (el.dataset.key === key) return;
+  el.dataset.key = key;
+  el.hidden = !kinds;
+  el.replaceChildren();
+  for (const kind of kinds || []) {
+    const texts = [].concat(LEGEND[kind] || []), colours = [KINDS[kind].color, KINDS[kind].to];
+    texts.forEach((text, i) => {
+      const item = document.createElement('li'), dot = document.createElement('i');
+      dot.style.background = colours[i];
+      item.append(dot, text);
+      el.append(item);
+    });
+  }
+}
+
+/**
  * Show, move or hide the small name that floats beside the pointer.
  * Takes the part under the pointer (or null) and the pointer's position on the page. Returns nothing.
  */
@@ -347,6 +386,14 @@ function act(name) {
     document.body.classList.toggle('quiet', ui.hidden);
   }
   if (name === 'home') { view.goal = null; Object.assign(view, HOME_VIEW); view.target.copy(HOME_TARGET); }
+  if (name === 'explain') {
+    ui.explain = !ui.explain;
+    const sheet = document.getElementById('explain'), frameEl = sheet.querySelector('iframe');
+    if (ui.explain && !frameEl.getAttribute('src')) frameEl.src = frameEl.dataset.src;       // loaded the first time it is asked for
+    sheet.hidden = !ui.explain;
+    for (const b of document.querySelectorAll('[data-act="explain"][aria-expanded]')) b.setAttribute('aria-expanded', String(ui.explain));
+    (ui.explain ? sheet.querySelector('button') : canvas).focus();
+  }
   if (name === 'exhaust') setFocus(ui.focus === 1 ? 0 : 1);
   if (name === 'turbo') setFocus(ui.focus === 2 ? 0 : 2);
   if (name === 'reset') {
@@ -498,8 +545,8 @@ function bind() {
  */
 async function main() {
   statusEl.textContent = 'loading the engine';
-  info = await (await fetch('./engine930.json?v=6f007a4e69')).json();
-  stage = await createStage(canvas, './engine930.glb?v=6f007a4e69', (f) => { statusEl.textContent = `loading the engine  ${Math.min(100, Math.round(f * 100))}%`; });
+  info = await (await fetch('./engine930.json?v=55e5f21d6a')).json();
+  stage = await createStage(canvas, './engine930.glb?v=55e5f21d6a', (f) => { statusEl.textContent = `loading the engine  ${Math.min(100, Math.round(f * 100))}%`; });
   sim = createSim(info.spec);
   const still = matchMedia('(prefers-reduced-motion: reduce)').matches;
   sim.running = !still;
