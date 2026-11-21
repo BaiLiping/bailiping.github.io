@@ -2,8 +2,22 @@
 <html lang="en">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
-  <meta name="description" content="Interactive 3D specimen of the 2025 Porsche 911 GT3 (992.2) in Lugano Blue (Q5G) featuring a detailed 4.0L flat-6 engine, 6 ITBs, Inconel headers, double-wishbone suspension, yellow PCCB brakes, and sculpted cockpit." />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Explore a 2025 Porsche 911 GT3 (992.2) in Lugano Blue. Open its doors, front luggage lid, and rear service flap, or inspect the cockpit and mechanical assemblies." />
+  <link rel="preload" as="image" type="image/webp" media="(orientation: landscape)" href="./gt3-wide.webp" fetchpriority="high">
+  <link rel="preload" as="image" type="image/webp" media="(orientation: portrait)" href="./gt3-tall.webp" fetchpriority="high">
+  <link rel="modulepreload" href="./vendor/three-r170.js">
+  <script>
+    const overrideModel = new URLSearchParams(location.search).get('model');
+    if (overrideModel) document.documentElement.classList.add('custom-model');
+    const modelFile = overrideModel || './porsche_911_gt3_992_2.glb?v=bd157c71';
+    const preload = document.createElement('link');
+    preload.rel = 'preload';
+    preload.as = 'fetch';
+    preload.crossOrigin = 'anonymous';
+    preload.href = modelFile;
+    document.head.append(preload);
+  </script>
   <link rel="canonical" href="https://bailiping.com/porsche-911-gt3/" />
   <link rel="icon" href="/favicon.ico" />
   <title>2025 Porsche 911 GT3 (992.2) — Interactive 3D Specimen</title>
@@ -33,48 +47,67 @@
     #stage.grabbing { cursor: grabbing; }
     #stage.hover-part { cursor: grab; }
 
-    /* Minimalist 09_membrane-inspired fixed 34px bottom bar */
     #bar {
       position: fixed;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      height: 34px;
-      padding: 0 16px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 16px;
-      font-size: 11px;
-      letter-spacing: 0.015em;
-      color: #4f5358;
+      inset: auto 0 max(14px, env(safe-area-inset-bottom));
+      display: grid;
+      justify-items: center;
+      gap: 8px;
+      padding: 0 12px;
       pointer-events: none;
       z-index: 10;
-      transition: opacity 0.35s ease;
     }
-    #bar.hidden { opacity: 0; }
-    #info {
-      opacity: 0.80;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      max-width: 44vw;
+    #bar.hidden { visibility: hidden; }
+    #tools { display: flex; align-items: stretch; gap: 4px; flex-wrap: wrap; justify-content: center; }
+    #tools button, #tools summary {
+      pointer-events: auto;
+      appearance: none;
+      font: 600 12px/1.2 system-ui, sans-serif;
+      color: #28323b;
+      background: rgba(251,252,253,.96);
+      border: 1px solid #b6bdc4;
+      border-radius: 6px;
+      padding: 0 12px;
+      min-height: 42px;
+      cursor: pointer;
+      display: grid;
+      place-items: center;
     }
-    #info .accent {
-      color: #0154a6;
-      font-weight: 500;
+    #tools button:hover, #tools summary:hover { border-color: #536674; }
+    #tools button[aria-pressed="true"] { background: #194d78; color: white; border-color: #194d78; }
+    #tools button:focus-visible, #tools summary:focus-visible { outline: 3px solid #327db3; outline-offset: 2px; }
+    #tools button:disabled { color: #858d94; cursor: wait; }
+    #tools summary::-webkit-details-marker { display: none; }
+    #more { position: relative; }
+    #more div {
+      pointer-events: auto;
+      position: absolute;
+      bottom: calc(100% + 8px);
+      right: 0;
+      width: max-content;
+      max-width: calc(100vw - 24px);
+      padding: 12px 15px;
+      font-size: 12px;
+      line-height: 1.65;
+      border: 1px solid #b6bdc4;
+      border-radius: 8px;
+      color: #28323b;
+      background: #fcfdfe;
+      box-shadow: 0 4px 16px #2222;
     }
-    #keys {
-      opacity: 0.48;
-      white-space: nowrap;
-      text-align: right;
-      font-size: 10.5px;
+    #more a { color: #194d78; }
+    #info { font-size: 11px; color: #39444c; background: rgba(240,243,245,.92); padding: 2px 8px; border-radius: 4px; text-align: center; min-height: 14px; max-width: 96vw; }
+    #info .accent { color: #0154a6; font-weight: 500; }
+    @media (max-width: 640px) {
+      #tools { max-width: 380px; }
+      #tools button, #tools summary { padding: 0 10px; min-height: 44px; }
+      #more { position: static; }
+      #more div { left: 50%; right: auto; transform: translateX(-50%); }
+      #bar { bottom: max(8px, env(safe-area-inset-bottom)); }
+      #more a { color: #194d78; }
+    #info { font-size: 10px; }
+      #callout { display: none; }
     }
-    @media (max-width: 900px) {
-      #keys { display: none; }
-      #info { max-width: 94vw; }
-    }
-
     /* Delicate specimen floating callout when hovering/pulling a part */
     #callout {
       position: fixed;
@@ -113,7 +146,28 @@
       font-size: 11px;
       letter-spacing: 0.06em;
       z-index: 20;
-      transition: opacity 0.5s ease;
+      transition: opacity .16s ease-out;
+    }
+    #loader picture, #loader img { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+    #loader img { object-fit: contain; }
+    .custom-model #loader picture { display: none; }
+    #load-status {
+      position: absolute;
+      bottom: max(30px, env(safe-area-inset-bottom));
+      left: 50%;
+      transform: translateX(-50%);
+      max-width: calc(100% - 24px);
+      width: max-content;
+      background: rgba(250,252,253,.94);
+      border: 1px solid #bec7ce;
+      border-radius: 6px;
+      color: #384650;
+      padding: 8px 12px;
+      text-align: center;
+      font: 500 12px/1.35 system-ui,sans-serif;
+    }
+    @media (prefers-reduced-motion: reduce) {
+      #loader { transition: none; }
     }
     #loader.done {
       opacity: 0;
@@ -122,34 +176,43 @@
   </style>
 </head>
 <body>
-  <canvas id="stage"></canvas>
+  <canvas id="stage" aria-label="Interactive 3D model of a Porsche 911 GT3"></canvas>
   <div id="callout"><span class="title"></span><span class="sub"></span></div>
-  <div id="loader">loading 2025 porsche 911 gt3 (992.2) · 4.0L flat-6 specimen…</div>
-  <div id="bar">
-    <div id="info">992.2 gt3 · lugano blue (Q5G) · loading…</div>
-    <div id="keys">click door or d doors · i cabin · c stripe · grab &amp; pull · dblclick x-ray · e explode · l lid · s steer · w spin · space rev · r reset · m sound · h hide</div>
+  <div id="loader">
+    <picture>
+      <source media="(orientation: portrait)" srcset="./gt3-tall.webp">
+      <img src="./gt3-wide.webp" width="1280" height="800" fetchpriority="high" alt="Front three-quarter view of the Lugano Blue Porsche 911 GT3">
+    </picture>
+    <span id="load-status" role="status">Preparing interactive model…</span>
   </div>
-
-  <script type="importmap">
-    {
-      "imports": {
-        "three": "https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js",
-        "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.170.0/examples/jsm/"
-      }
-    }
-  </script>
-
+  <div id="bar" inert>
+    <div id="tools" role="group" aria-label="Model controls">
+      <button type="button" data-panel="doorL" aria-pressed="false" disabled>Left door</button>
+      <button type="button" data-panel="doorR" aria-pressed="false" disabled>Right door</button>
+      <button type="button" data-panel="hood" aria-pressed="false" disabled>Front luggage lid</button>
+      <button type="button" data-panel="lid" aria-pressed="false" disabled>Rear service flap</button>
+      <button type="button" data-command="i" aria-pressed="false">Cabin view</button>
+      <button type="button" data-command="r">Reset</button>
+      <details id="more"><summary>Controls</summary><div>
+        Drag the background or right-drag to orbit. Scroll to zoom.<br>
+        On touchscreens, drag to orbit and pinch to zoom.<br>
+        Tap a panel to open it. Hold and drag a part to pull it out.<br>
+        D both doors · 1 / 2 left / right door · F front lid · L rear flap<br>
+        I cabin · X x-ray · E explode · C stripe · R reset<br>
+        S steer · W spin · Hold Space to rev · M sound · H hide<br>
+        <a href="https://newsroom.porsche.com/dam/jcr%3A07bedb19-4e20-474e-905c-9cbcb2f9d940/2025%20Porsche_911_GT3%20U.S.%20press%20kit.pdf">2025 GT3 press kit · Porsche (PDF)</a>
+      </div></details>
+    </div>
+    <div id="info">2025 Porsche 911 GT3 · Lugano Blue</div>
+  </div>
   <script type="module">
-    import * as THREE from 'three';
-    import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
-    import { DRACOLoader } from 'three/addons/loaders/DRACOLoader.js';
-    import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
+    import * as THREE from './vendor/three-r170.js';
+    const { GLTFLoader, DRACOLoader, RoomEnvironment } = THREE;
 
     // -----------------------------------------------------------------------
     // 1. Model Path (works inside Porsche911_3D_Print/web/ or standalone deploy)
     // -----------------------------------------------------------------------
-    const params = new URLSearchParams(window.location.search);
-    const MODEL_URL = params.get('model') || './porsche_911_gt3_992_2.glb';
+    const MODEL_URL = modelFile;
 
     // -----------------------------------------------------------------------
     // 2. Renderer, Luminous Gallery Scene & Atmospheric Horizon Fog (09_membrane style)
@@ -161,34 +224,45 @@
     const calloutTitle = calloutEl.querySelector('.title');
     const calloutSub = calloutEl.querySelector('.sub');
     const loaderEl = document.getElementById('loader');
+    const loadStatus = document.getElementById('load-status');
 
-    const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, powerPreference: 'high-performance' });
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5));
+    let renderer;
+    try {
+      renderer = new THREE.WebGLRenderer({ canvas, antialias: true, powerPreference: 'high-performance' });
+    } catch (error) {
+      loadStatus.textContent = 'This viewer requires WebGL 2. Enable graphics acceleration or try another browser.';
+      throw error;
+    }
+    const stillRatio = () => Math.min(window.devicePixelRatio, 1.75);
+    renderer.setPixelRatio(stillRatio());
     renderer.setSize(window.innerWidth, window.innerHeight);
     renderer.shadowMap.enabled = true;
     renderer.shadowMap.autoUpdate = false;
     renderer.shadowMap.needsUpdate = true;
     renderer.shadowMap.type = THREE.PCFSoftShadowMap;
     renderer.toneMapping = THREE.ACESFilmicToneMapping;
-    renderer.toneMappingExposure = 0.96;
+    renderer.toneMappingExposure = 0.93;
 
     const scene = new THREE.Scene();
     const BG_HEX = 0xeceeef;
     scene.background = new THREE.Color(BG_HEX);
-    scene.fog = new THREE.FogExp2(BG_HEX, 0.0012);
+    scene.fog = new THREE.FogExp2(BG_HEX, 0.00024);
 
     const pmrem = new THREE.PMREMGenerator(renderer);
-    scene.environment = pmrem.fromScene(new RoomEnvironment(), 0.04).texture;
-    scene.environmentIntensity = 0.58;
+    const room = new RoomEnvironment();
+    scene.environment = pmrem.fromScene(room, 0.04).texture;
+    room.dispose();
+    pmrem.dispose();
+    scene.environmentIntensity = 0.52;
 
-    const camera = new THREE.PerspectiveCamera(34, window.innerWidth / window.innerHeight, 1.0, 4000);
+    const camera = new THREE.PerspectiveCamera(30, window.innerWidth / window.innerHeight, 1.0, 4000);
 
     // Balanced neutral overcast daylight studio lighting so Lugano Blue (Q5G) stays rich & vivid!
     const hemi = new THREE.HemisphereLight(0xf6f8fb, 0xd0d5dc, 0.72);
     scene.add(hemi);
 
     const keyLight = new THREE.DirectionalLight(0xfffef9, 1.55);
-    keyLight.position.set(160, 290, 210);
+    keyLight.position.set(160, 290, -130);
     keyLight.castShadow = true;
     keyLight.shadow.mapSize.set(1024, 1024);
     keyLight.shadow.camera.near = 20;
@@ -203,17 +277,17 @@
     scene.add(keyLight);
 
     const rimLight = new THREE.DirectionalLight(0xdce8ff, 0.75);
-    rimLight.position.set(-220, 140, -190);
+    rimLight.position.set(-220, 140, 190);
     scene.add(rimLight);
 
     // -----------------------------------------------------------------------
-    // 3. Procedural Stuttgart Specimen Slide Floor (09_membrane organic slide ethos!)
+    // 3. Studio floor
     // -----------------------------------------------------------------------
     function buildSpecimenFloor() {
       const c = document.createElement('canvas');
-      c.width = 2048;
-      c.height = 2048;
+      c.width = c.height = 1024;
       const ctx = c.getContext('2d');
+      ctx.scale(0.5, 0.5);
       ctx.fillStyle = '#eceeef';
       ctx.fillRect(0, 0, 2048, 2048);
 
@@ -236,24 +310,26 @@
       ctx.stroke();
       ctx.setLineDash([]);
 
-      // Delicate engineering calibration ticks
-      ctx.fillStyle = 'rgba(79, 83, 88, 0.24)';
-      ctx.font = '14px ui-monospace, SFMono-Regular, monospace';
-      ctx.fillText('992.2 GT3 · WB 2457 MM · TRACK 1601 / 1553 MM · 1:18', 760, 1465);
-
-      // Subtle ambient studio specks (echoing 09_membrane's organic slide texture)
-      let seed = 911992;
-      const rand = () => { seed = (seed * 16807) % 2147483647; return (seed - 1) / 2147483646; };
-      for (let i = 0; i < 240; i++) {
-        const x = rand() * 2048;
-        const y = rand() * 2048;
-        const r = 0.8 + rand() * 2.2;
-        ctx.fillStyle = `rgba(92, 102, 118, ${0.03 + rand() * 0.06})`;
-        ctx.beginPath(); ctx.arc(x, y, r, 0, Math.PI * 2); ctx.fill();
+      // Soft contact beneath the chassis and tire patches, in the floor's UV space.
+      function contactShadow(cx, cy, rx, ry, opacity) {
+        ctx.save();
+        ctx.translate(cx, cy);
+        ctx.scale(rx, ry);
+        const gradient = ctx.createRadialGradient(0, 0, 0, 0, 0, 1);
+        gradient.addColorStop(0, `rgba(24,29,35,${opacity})`);
+        gradient.addColorStop(0.58, `rgba(24,29,35,${opacity * 0.72})`);
+        gradient.addColorStop(1, 'rgba(24,29,35,0)');
+        ctx.fillStyle = gradient;
+        ctx.fillRect(-1, -1, 2, 2);
+        ctx.restore();
+      }
+      contactShadow(1024, 1024, 121, 55, 0.55);
+      for (const axle of [-58, 58]) {
+        for (const side of [-37, 37]) contactShadow(1024 + axle, 1024 + side, 17, 9, 0.64);
       }
 
       const tex = new THREE.CanvasTexture(c);
-      tex.anisotropy = 8;
+      tex.anisotropy = Math.min(4, renderer.capabilities.getMaxAnisotropy());
       tex.colorSpace = THREE.SRGBColorSpace;
       const geo = new THREE.PlaneGeometry(2400, 2400);
       const mat = new THREE.MeshStandardMaterial({
@@ -326,18 +402,25 @@
     function describePart(meshName) {
       const n = meshName || 'Component';
       const checks = [
-        [/Door_Shell/, 'Frameless 992.2 Aluminum Door', 'click to open · swings on front jamb hinges (66°)'],
-        [/DoorHinge/, 'Forged Steel Door Hinge & Bolt', 'front A-pillar door jamb pivot assembly'],
-        [/DoorSill_Plate/, 'Brushed Aluminum GT3 Door Sill', 'illuminated motorsport threshold scuff plate'],
-        [/DoorPullStrap/, 'GT3 Fabric Interior Door Pull', 'lightweight Lugano Blue motorsport pull strap'],
-        [/Glass_Door/, 'Frameless Side Door Glass', 'swings open with door · acoustic glazing'],
+        [/ServiceFlap|Service_Flap/, 'Rear service flap', 'click to open or close · fluid fillers below'],
+        [/Service_?Cap|Service_?Well|Service_?Oil|Service_?Coolant/, 'Rear service access', 'fluid filler compartment'],
+        [/FrunkLid|Frunk_Lid|FrontLid|Front_Lid|Hood_Panel/, 'Front luggage lid', 'click to open or close'],
+        [/Frunk|Luggage/, 'Front luggage compartment', 'lining and surrounding trim'],
+        [/Door_Shell/, 'Frameless 992.2 Aluminum Door', 'click to open or close · front-hinged'],
+        [/DoorHinge/, 'Door hinge and bolt', 'front A-pillar door jamb pivot assembly'],
+        [/DoorSill_Plate/, 'GT3 door sill', 'threshold scuff plate'],
+        [/DoorPullStrap/, 'Interior door pull', 'interior door trim'],
+        [/Glass_Door/, 'Frameless Side Door Glass', 'swings open with door · frameless glazing'],
         [/Glass_Quarter/, 'Fixed Rear Quarter Glass', 'teardrop 911 daylight opening glass'],
         [/Rear_PorscheWordmark|Rear_PorscheLetter/, '3D Rear PORSCHE Wordmark', 'extruded metallic lettering inside 992.2 lightbar'],
         [/Rear_GT3Badge|Dash_GT3Badge|Splitter_Badge|DoorSill_Text/, '3D Extruded GT3 Emblem', 'precision 992.2 GT3 badging'],
         [/PlenumText/, '4.0L Naturally Aspirated Badge', 'carbon-fiber resonance plenum 4.0 emblem'],
+        [/Front_Expanded|Front_Grille/, 'Front intake grille', 'mesh screen across the cooling inlet'],
+        [/Front_Air_Blade|Front_Air_Guide|Front_Duct_Support/, 'Front air guide', 'channels air into the front cooling ducts'],
+        [/Rear_License|License_Plate/, 'Rear number plate', 'recess above the exhaust outlets'],
         [/Front_AirCurtain/, '992.2 Front Wheel Air Curtain', 'vertical high-velocity wheel-arch aero duct'],
         [/YStem|YSpoke|Rim.*Barrel/, 'Forged 992.2 5-Y Lattice Center-Lock Wheel', '20" F / 21" R forged satin black motorsport alloy'],
-        [/CenterCrestCap/, 'Center-Lock Porsche Crest Cap', 'anodized Stuttgart crest hub medallion'],
+        [/CenterCrestCap/, 'Center-lock cap', 'central wheel fastening assembly'],
         [/BrassButterfly/, 'ITB Brass Butterfly Throttle', 'individual precision throttle body valve'],
         [/CaseBolt|CrankBalancerBolt|PortStud|CVBolt|MountBolt/, 'Engine / Chassis Hex Fastener', 'precision motorsport hex bolt & washer'],
         [/O2Sensor/, 'Exhaust Lambda O2 Sensor', 'wideband exhaust air-fuel probe'],
@@ -347,65 +430,67 @@
         [/RotaryIgnition/, 'Physical Rotary Ignition Switch', '992.2 GT3 left-hand motorsport start dial'],
         [/ToggleSwitch/, 'Machined Aluminum Toggle Switch', 'center console aero/ESC/lift control'],
         [/DriveModeDial/, 'Rotary Drive Mode Selector', 'Normal · Sport · Track steering wheel dial'],
-        [/HarnessEyelet|CFRP_Shell|RaceTex_Cushion|BluePiping/, 'CFRP Lightweight Folding Bucket Seat', 'ergonomic carbon shell · Race-Tex · Lugano Blue piping'],
-        [/Body_Shell|Fender_Lip/, '992.2 GT3 Body Shell', 'aluminum/CFRP monocoque · Lugano Blue (Q5G)'],
-        [/Wing_Mainplane/, 'Swan-Neck Rear Wing Mainplane', 'inverted cambered airfoil · 8.5° AoA'],
-        [/Wing_EndplateBolt/, 'Wing Endplate Hex Bolt', 'stainless M8 fastener · 18 Nm'],
+        [/HarnessEyelet|CFRP_Shell|RaceTex_Cushion|BluePiping/, 'Sport bucket seat', 'shell, cushions and shoulder openings'],
+        [/Body_Shell|Fender_Lip/, '992.2 GT3 Body Shell', 'Lugano Blue (Q5G)'],
+        [/Wing_Mainplane/, 'Swan-Neck Rear Wing Mainplane', 'top-mounted rear aerofoil'],
+        [/Wing_EndplateBolt/, 'Wing endplate bolt', 'fastener at the end of the wing'],
         [/Wing_Endplate/, '992.2 Angled Winglet Endplate', '2025 992.2 flared aero sideplate'],
-        [/SwanNeck_Pylon/, 'Swan-Neck Wing Upright', 'CNC-pocketed top-mounted aluminum pylon'],
-        [/Wing_SaddleBolt|Wing_BaseBolt/, 'Swan-Neck Mounting Bolt', 'high-tensile M8 hex flange bolt'],
+        [/SwanNeck_Pylon/, 'Swan-Neck Wing Upright', 'supports the wing from above'],
+        [/Wing_SaddleBolt|Wing_BaseBolt/, 'Swan-Neck Mounting Bolt', 'fastens the wing to its supports'],
         [/Wing_Saddle|Wing_BaseFlange/, 'Swan-Neck Mount Bracket', 'top-surface aero clamping saddle'],
-        [/EngineLid/, 'Slatted Rear Engine Decklid', 'vented intake grille hatch · openable'],
+        [/EngineLid/, 'Rear engine grille', 'fixed grille beneath the rear wing'],
         [/Front_Splitter|Splitter_EndFence/, 'GT3 Front Chin Splitter', 'matte aero lip · underbody downforce'],
         [/Front_Intake_Divider/, '992.2 Front Intake Cheek Blade', 'body-colored radiator/brake duct divider'],
         [/Front_Grille|Front_Radiator/, 'Front Motorsport Radiator Grille', 'center + outboard heat exchanger intake'],
-        [/Hood_Nostril/, 'Twin 992.2 Hood Nostrils', 'CFRP frunk radiator air extractor ducts'],
+        [/Hood_Nostril/, 'Twin 992.2 Hood Nostrils', 'twin air outlets in the front luggage lid'],
         [/Side_Skirt/, 'Lower Rocker Aero Blade', 'underbody airflow seal'],
-        [/Rear_Diffuser|Diffuser_Strake/, 'Multi-Fin GT3 Rear Diffuser', '6 vertical aero strakes · underbody venturi'],
+        [/Rear_Diffuser|Diffuser_Strake/, 'Multi-Fin GT3 Rear Diffuser', 'vertical fins guide airflow beneath the rear bumper'],
         [/Rear_AirCurtain/, '992.2 Rear Corner Air Curtain', 'wheel-well wake extraction slit'],
-        [/Mirror/, 'Door-Mounted Aero Mirror', 'SportDesign stalked housing · 2,033 mm span'],
+        [/Mirror/, 'Door-Mounted Aero Mirror', 'painted housing on a door-mounted stalk'],
         [/Door_Handle/, 'Flush Pop-Out Door Handle', 'recessed aerodynamic latch'],
         [/Wiper/, 'Low-Profile Windshield Wiper', 'aero blade assembly'],
-        [/Weissach_CenterStripe/, 'Weissach Carbon Center Stripe', 'exposed satin CFRP hood & roof centerline · press c to toggle'],
-        [/Hood_FrontSeam/, 'Front Frunk Shutline Seam', 'precision 992.2 aluminum hood-to-bumper gap'],
+        [/Weissach_CenterStripe/, 'Optional carbon-look center stripe', 'hood and roof centerline · press C to toggle'],
+        [/Hood_FrontSeam/, 'Front Frunk Shutline Seam', 'gap between the front luggage lid and bumper'],
         [/Nose_Crest/, 'Porsche Stuttgart Crest', 'multi-color gold, crimson & black heraldic hood emblem'],
-        [/Headlight_DRL/, '4-Point HD-Matrix LED DRL', '992.2 integrated daytime running signature'],
-        [/Headlight/, '992.2 HD-Matrix Oval Headlight', 'black housing · integrated turn & high-beam'],
+        [/Headlight_DRL/, 'Four-point running lights', '992.2 integrated daytime running signature'],
+        [/Headlight/, '992.2 oval LED headlamp', 'projector and running lights in a common housing'],
         [/Taillight|Third_Brake/, '992.2 Full-Width LED Light Bar', 'continuous rear blade + high-mount 3rd brake'],
         [/SideMarker/, 'US-Spec Front Side Marker', 'amber bumper corner marker'],
         [/Reflector/, 'Rear Bumper Reflector', 'flush horizontal safety lens'],
-        [/Glass|BPillar/, 'Flush Automotive Glass & Trim', 'low-weight noise-insulated glazing'],
-        [/Tire/, 'Staggered Cup 2 Tire', '255/35 ZR20 front · 315/30 ZR21 rear'],
+        [/Glass|BPillar/, 'Flush Automotive Glass & Trim', 'windshield, rear window and side glazing'],
+        [/Tire/, 'Staggered GT3 tires', '255/35 ZR20 front · 315/30 ZR21 rear'],
         [/Rim.*Spoke|Rim.*Barrel/, 'Forged 992.2 Center-Lock Wheel', '10-spoke Y-split forged satin black alloy'],
-        [/LockNut|CenterLockHub/, 'GT3 Center-Lock Hub Nut', 'single splined motorsport nut · 600 Nm'],
+        [/LockNut|CenterLockHub/, 'GT3 Center-Lock Hub Nut', 'single central wheel fastener'],
         [/CaliperBolt/, 'PCCB Caliper Bridge Hex Bolt', 'monobloc tie bolt · stainless fastener'],
         [/Caliper/, 'Yellow PCCB Brake Caliper', '6-piston front / 4-piston rear · inboard mounted'],
         [/DrillDot|PCCB_Rotor|Bobbin/, 'PCCB Carbon-Ceramic Rotor', 'cross-drilled 410 mm F / 390 mm R floating disc'],
-        [/Eng_ITBBolt/, 'ITB Flange Hex Bolt', 'intake manifold fastener · M6'],
+        [/Eng_ITBBolt/, 'ITB Flange Hex Bolt', 'intake manifold fastener'],
         [/Eng_ITB/, 'Individual Throttle Body (ITB)', '1 of 6 motorsport butterfly throttles · 9,000 rpm'],
-        [/Eng_Injector|Eng_FuelRail/, 'Direct-Port Fuel Rail & Injector', 'high-pressure 4.0L flat-6 fuel delivery'],
-        [/Eng_IntakePlenum|Eng_Crossover|Eng_Airbox/, 'Carbon Resonance Intake Plenum', 'dual butterfly variable acoustic chamber'],
+        [/Eng_Injector|Eng_FuelRail/, 'Fuel rail and injector', 'high-pressure 4.0L flat-6 fuel delivery'],
+        [/Eng_IntakePlenum|Eng_Crossover|Eng_Airbox/, 'Intake plenum', 'intake air distribution chamber'],
         [/Eng_ValveBolt|Eng_SumpBolt|Eng_AirboxBolt|Eng_PulleyBolt/, 'Flat-6 Engine Hex Bolt', 'precision engine casing fastener'],
-        [/Eng_ValveCover|Eng_CoilPack/, 'Flat-6 Cam Cover & Coil Pack', '4-valve DOHC per cylinder · rigid rocker arms'],
-        [/Eng_Cylinder|Eng_CylHead|Eng_Crankcase|Eng_DrySump|Eng_BlockRib/, '4.0L NA Flat-6 (MA2.75)', '502 hp / 369 kW · 9,000 rpm dry-sump boxer'],
+        [/Eng_ValveCover|Eng_CoilPack/, 'Flat-6 Cam Cover & Coil Pack', 'housing atop the cylinder bank and ignition components'],
+        [/Eng_Cylinder|Eng_CylHead|Eng_Crankcase|Eng_DrySump|Eng_BlockRib/, '4.0-liter flat-six', 'naturally aspirated, horizontally opposed six-cylinder engine'],
         [/Eng_Pulley|Eng_Serpentine/, 'Rear Serpentine Belt Drive', 'crank, alternator & water-pump pulleys'],
         [/Eng_OilFiller|Eng_Coolant/, 'Engine Bay Service Cap', 'dry-sump oil & coolant access'],
-        [/Exh_Header/, '6-into-2 Inconel Exhaust Header', 'equal-length tubular motorsport manifold'],
+        [/Exh_Header/, 'Flat-six exhaust manifold', 'collects exhaust from each cylinder bank'],
         [/Exh_FlangeBolt|Exh_Flange/, 'Exhaust Flange Bolt Assembly', 'high-temp stainless collector flange'],
-        [/Exh_Cat|Exh_MidPipe|Exh_CenterMuffler/, 'Titanium GT3 Exhaust & Cats', 'lightweight center-exit silencer box'],
-        [/Exhaust_Tip/, 'Twin Center GT3 Exhaust Tips', 'dual circular 98 mm titanium tailpipes'],
-        [/PDK_BellhousingBolt/, 'PDK Bellhousing Hex Bolt', 'transaxle-to-block structural M10 bolt'],
+        [/Exh_Cat|Exh_MidPipe|Exh_CenterMuffler/, 'GT3 sports exhaust', 'silencer and center-exit exhaust pipes'],
+        [/Exhaust_Tip/, 'Twin Center GT3 Exhaust Tips', 'central pair of circular tailpipes'],
+        [/PDK_BellhousingBolt/, 'PDK Bellhousing Hex Bolt', 'fastens the transmission housing to the engine'],
         [/PDK_Transaxle|Rear_DriveAxle|Rear_CVBoot/, '7-Speed PDK Transaxle & CV Axles', 'motorsport dual-clutch + electronic diff'],
-        [/Front_UpperWishbone|Front_LowerWishbone|Front_Knuckle|Steering_Rack|TieRod/, 'GT3 Front Double-Wishbone Suspension', 'motorsport ball-jointed A-arms · zero strut flex'],
+        [/Front_UpperWishbone|Front_LowerWishbone|Front_Knuckle|Steering_Rack|TieRod/, 'GT3 Front Double-Wishbone Suspension', 'upper and lower suspension links'],
         [/Rear_ControlArm|Rear_Knuckle|Subframe/, 'GT3 Rear Multi-Link Suspension', 'rear-axle steering & rigid subframe'],
-        [/Bolt/, 'Chassis Structural Hex Bolt', 'torque-rated suspension & undertray fastener'],
+        [/Bolt/, 'Chassis Structural Hex Bolt', 'fastener in the chassis assembly'],
         [/Spring|Damper|TowerHat|StrutBrace/, 'GT3 Coilover & Strut Tower Brace', 'helical motorsport spring + carbon brace'],
         [/SwayBar/, 'Adjustable Anti-Roll Bar', 'motorsport stabilizer blade'],
         [/Undertray/, 'Flat Aerodynamic Underbody', 'venturi floorpan with front strakes'],
-        [/Seat|RailBolt/, 'Carbon Bucket Seat & Rail', 'CFRP shell · Race-Tex bolsters · lugano blue stitch'],
-        [/Steering|ShiftPaddle/, 'GT Sport Steering Wheel', 'Race-Tex rim · aluminum PDK shift paddles'],
+        [/Seat|RailBolt/, 'Carbon Bucket Seat & Rail', 'seat shell, bolsters and mounting rails'],
+        [/Steering|ShiftPaddle/, 'GT Sport steering wheel', 'Race-Tex rim · aluminum PDK shift paddles'],
         [/SportChrono/, 'Sport Chrono Stopwatch', 'dash-top lap timer pod'],
         [/PDK_Lever|PDK_Knob|CenterConsole/, 'GT3 PDK Gear Selector', 'manual-gate style mechanical selector'],
+        [/DisplayFace|ClusterDisplay|Cluster_Display/, 'Digital instrument cluster', 'Track Screen · static instrument artwork'],
+        [/SeatBelt|Seat_Belt/, 'Seat belt', 'seat-belt webbing and fittings'],
         [/DigitalCluster|PCMScreen|Dash/, '992.2 All-Digital Cockpit', 'curved 12.6" track-screen instrument binnacle'],
         [/Pedal/, 'Brushed Aluminum Sport Pedals', 'motorsport pedal box'],
       ];
@@ -418,25 +503,29 @@
     // -----------------------------------------------------------------------
     // 6. State & Mechanical Rig Controllers
     // -----------------------------------------------------------------------
+    const exteriorView = { theta: -0.94, phi: 1.44, radius: 372 };
     const state = {
       // Spherical orbit camera around target
-      theta: 0.62,      // azimuth (front 3/4 initial angle)
-      phi: 1.24,        // polar from +Y up
-      radius: 405,
-      targetTheta: 0.62,
-      targetPhi: 1.24,
-      targetRadius: 405,
+      theta: exteriorView.theta,      // azimuth (front 3/4 initial angle)
+      phi: exteriorView.phi,        // polar from +Y up
+      radius: exteriorView.radius,
+      targetTheta: exteriorView.theta,
+      targetPhi: exteriorView.phi,
+      targetRadius: exteriorView.radius,
       targetCenter: new THREE.Vector3(0, 34, 0),
 
       // Mechanical parameters (0..1, smoothly spring-damped!)
       explodeTarget: 0.0,
       explode: 0.0,
+      hoodTarget: 0.0,
+      hood: 0.0,
       doorLTarget: 0.0,
       doorL: 0.0,
       doorRTarget: 0.0,
       doorR: 0.0,
       interiorView: false,
-      stripeVisible: true,
+      cabinBlend: 0,
+      stripeVisible: false,
       lidTarget: 0.0,
       lid: 0.0,
       xrayTarget: 0.0,
@@ -448,12 +537,49 @@
       revving: false,
       rpm: 900,
       hudHidden: false,
-      partCount: 0,
       loaded: false,
     };
 
     // Map of named Blender pivot groups & rest transforms
     const pivots = {};
+    let selectedView = null;
+    const panels = {
+      doorL: { node: 'Pivot_Door_L', axis: 'y', angle: -1.15 },
+      doorR: { node: 'Pivot_Door_R', axis: 'y', angle: 1.15 },
+      hood: { node: 'Pivot_Front_Lid', axis: 'z', angle: Math.PI / 3 },
+      lid: { node: 'Pivot_Service_Flap', axis: 'x', angle: 72 * Math.PI / 180 }
+    };
+    const panelByNode = Object.fromEntries(Object.entries(panels).map(([key, panel]) => [panel.node, key]));
+    const panelButtons = [...document.querySelectorAll('[data-panel]')];
+    function facePanel(key) {
+      const views = {
+        doorL: [-1.1, 1.39, 355], doorR: [1.1, 1.39, 355],
+        hood: [-0.58, 1.01, 315], lid: [-1.68, 0.59, 135]
+      };
+      const [theta, phi, radius] = views[key];
+      const turn = theta - state.theta;
+      state.targetTheta = state.theta + Math.atan2(Math.sin(turn), Math.cos(turn));
+      selectedView = key;
+      state.targetPhi = phi;
+      state.targetRadius = radius;
+      state.interiorView = false;
+    }
+
+    function togglePanel(key, focus = false) {
+      if (!pivots[panels[key].node]) return;
+      const target = key + 'Target';
+      state[target] = 1 - state[target];
+      if (focus && state[target]) facePanel(key);
+      playClickSound(state[target] ? 580 : 380, 0.06);
+      updateHudText();
+      wake(true);
+    }
+    for (const button of panelButtons) {
+      button.addEventListener('click', () => togglePanel(button.dataset.panel, true));
+    }
+    for (const button of document.querySelectorAll('[data-command]')) {
+      button.addEventListener('click', () => runCommand(button.dataset.command));
+    }
     const restPos = new Map();
     const restRot = new Map();
 
@@ -464,6 +590,7 @@
     const weissachStripeMeshes = [];     // Toggleable dark satin carbon hood & roof center stripe
     const headerMaterials = [];          // Shared Inconel header material(s) glowing on rev
     const allPickableMeshes = [];
+    const hits = [];
 
     let needsRender = true;
     let needsShadow = true;
@@ -471,7 +598,15 @@
     let prevHeatRendered = -1.0;
     let lastHoverRaycastMs = 0;
 
+    let framePending = false;
+    function scheduleFrame() {
+      if (framePending || document.hidden) return;
+      framePending = true;
+      requestAnimationFrame(animate);
+    }
+
     function wake(withShadow = false) {
+      scheduleFrame();
       needsRender = true;
       if (withShadow) needsShadow = true;
     }
@@ -489,16 +624,18 @@
     }
 
     // -----------------------------------------------------------------------
-    // 7. Load Our Batched, Draco-Compressed Blender GLB (~0.86 MB, ~188 draw calls!)
+    // 7. Load the articulated glTF model
     // -----------------------------------------------------------------------
     const dracoLoader = new DRACOLoader();
-    dracoLoader.setDecoderPath('https://cdn.jsdelivr.net/npm/three@0.170.0/examples/jsm/libs/draco/gltf/');
+    dracoLoader.setDecoderPath('./vendor/');
+    dracoLoader.setWorkerLimit(Math.min(4, navigator.hardwareConcurrency || 2));
+    dracoLoader.preload();
     const loader = new GLTFLoader();
     loader.setDRACOLoader(dracoLoader);
     let rootCar = null;
 
-    const EXTERIOR_RE = /Body_Shell|Door_Shell|Fender_Lip|Front_Splitter|Splitter_EndFence|Splitter_Badge|Front_Intake|Front_Grille|Front_Radiator|Front_AirCurtain|Hood_Nostril|Hood_FrontSeam|Weissach_CenterStripe|Side_Skirt|Rear_Diffuser|Diffuser_Strake|Rear_AirCurtain|Rear_Porsche|Rear_GT3Badge|Mirror|Door_Handle|Wiper|Glass|BPillar|Headlight|Taillight|SideMarker|Reflector|Nose_Crest|Exhaust_Bezel/;
-    const SHADOW_CASTER_RE = /Body_Shell|Door_Shell|Wing_Mainplane|Wing_Endplate|SwanNeck_Pylon|Tire|Front_Splitter|Rear_Diffuser|Mirror|Eng_Crankcase|Exh_Header|Undertray/;
+    const EXTERIOR_RE = /FrontLid|Front_Lid|FrunkLid|ServiceFlap|Service_Flap|EngineLid|Body_Shell|Door_Shell|Fender_Lip|Front_Splitter|Splitter_EndFence|Splitter_Badge|Front_Intake|Front_Grille|Front_Radiator|Front_AirCurtain|Hood_Nostril|Hood_FrontSeam|Weissach_CenterStripe|Side_Skirt|Rear_Diffuser|Diffuser_Strake|Rear_AirCurtain|Rear_Porsche|Rear_GT3Badge|Mirror|Door_Handle|Wiper|Glass|BPillar|Headlight|Taillight|SideMarker|Reflector|Nose_Crest|Exhaust_Bezel/;
+    const SHADOW_CASTER_RE = /FrontLid|Front_Lid|FrunkLid|ServiceFlap|Service_Flap|Body_Shell|Door_Shell|Wing_Mainplane|Wing_Endplate|SwanNeck_Pylon|Tire|Front_Splitter|Rear_Diffuser|Mirror|Eng_Crankcase|Exh_Header|Undertray/;
 
     loader.load(
       MODEL_URL,
@@ -509,7 +646,7 @@
 
         const sharedMaterials = new Map();
         const headerMatSet = new Set();
-        let drawCallCount = 0;
+
 
         rootCar.traverse((obj) => {
           if (obj.name.startsWith('Pivot_') || obj.name === 'GT3_Interactive_Rig') {
@@ -518,8 +655,8 @@
             restRot.set(obj, obj.rotation.clone());
           }
           if (obj.isMesh) {
-            drawCallCount++;
-            const isExterior = EXTERIOR_RE.test(obj.name);
+
+            const isExterior = EXTERIOR_RE.test(obj.name) || /GT3_Front_(Expanded|Intake|Screen|Bumper|Side|Cheek|Air_|Duct_)/.test(obj.name);
             const isGlass = /Glass|Lens/.test(obj.name);
             const isHeader = /Exh_Header|Exh_Cat|Exh_MidPipe/.test(obj.name);
             const isCaster = SHADOW_CASTER_RE.test(obj.name);
@@ -528,25 +665,32 @@
             obj.receiveShadow = isCaster || /Floor|Carpet|Dash|Seat|EngineLid/.test(obj.name);
             allPickableMeshes.push(obj);
             if (isExterior) exteriorBodySet.add(obj);
-            if (/Weissach_CenterStripe/.test(obj.name)) weissachStripeMeshes.push(obj);
+            if (/Weissach_CenterStripe/.test(obj.name)) {
+              weissachStripeMeshes.push(obj);
+              obj.visible = state.stripeVisible;
+            }
 
-            // Share GPU materials across sibling parts (~28 materials total instead of 1,008 clones!)
+            // Share materials across siblings with the same highlighting and x-ray behavior.
             if (obj.material) {
               const matKey = `${obj.material.name || obj.material.uuid}|${isExterior ? (isGlass ? 'EG' : 'E') : 'I'}|${isHeader ? 'H' : 'S'}`;
               let shared = sharedMaterials.get(matKey);
               if (!shared) {
                 shared = obj.material.clone();
                 if (shared.metalness > 0.3) shared.envMapIntensity = 1.25;
-                if (/Lugano_Blue/.test(shared.name)) {
-                  shared.clearcoat = 1.0;
-                  shared.clearcoatRoughness = 0.04;
-                  shared.envMapIntensity = 1.15;
+
+                // Blended glazing preserves the view into the cabin and avoids the
+                // offscreen scene pass that physical transmission requests on each frame.
+                if (shared.transmission > 0) {
+                  shared.transmission = 0;
+                  shared.transparent = true;
+                  shared.opacity = 0.22;
+                  shared.depthWrite = false;
+                  shared.forceSinglePass = true;
                 }
                 if (/Automotive_Glass/.test(shared.name)) {
                   shared.transparent = true;
-                  shared.opacity = 0.34;
-                  shared.roughness = 0.05;
-                  shared.metalness = 0.1;
+                  shared.opacity = Math.min(shared.opacity, 0.22);
+                  shared.forceSinglePass = true;
                   shared.depthWrite = false;
                 }
                 shared.userData.origOpacity = shared.opacity ?? 1.0;
@@ -566,22 +710,33 @@
           }
         });
 
-        state.partCount = 1008;
-        state.drawCalls = drawCallCount;
+        // Earlier downloadable versions rigged the complete rear deck as a single lid.
+        if (!pivots[panels.lid.node] && pivots.Pivot_Engine_Decklid) {
+          panels.lid.node = 'Pivot_Engine_Decklid';
+          panels.lid.axis = 'z';
+          panels.lid.angle = -0.72;
+          panelByNode.Pivot_Engine_Decklid = 'lid';
+          document.querySelector('[data-panel="lid"]').textContent = 'Rear decklid';
+        }
+        dracoLoader.dispose();
+        for (const button of panelButtons) {
+          button.disabled = !pivots[panels[button.dataset.panel].node];
+        }
+
         state.loaded = true;
-        loaderEl.classList.add('done');
+
         updateHudText();
         wake(true);
       },
       (xhr) => {
         if (xhr.total > 0) {
           const pct = Math.round((xhr.loaded / xhr.total) * 100);
-          loaderEl.textContent = `loading 2025 porsche 911 gt3 (992.2) · ${pct}%`;
+          loadStatus.textContent = pct === 100 ? 'Preparing interactive model…' : `Loading interactive model · ${pct}%`;
         }
       },
       (err) => {
         console.error(err);
-        loaderEl.textContent = `could not load ${MODEL_URL} — serve this folder via HTTP (e.g. python3 -m http.server)`;
+        loadStatus.textContent = 'The 3D model could not be loaded. Reload to try again.';
       }
     );
 
@@ -593,7 +748,7 @@
 
     let hoveredMesh = null;
     let hoverCloneMat = null;
-    let draggingMode = null; // 'orbit' | 'pull'
+    let draggingMode = null; // 'orbit' | 'pull' | 'touchPart'
     let grabbedTarget = null;
     let grabbedMesh = null;
     const dragPlane = new THREE.Plane();
@@ -604,7 +759,20 @@
     const dragDeltaWorld = new THREE.Vector3();
     const dragInvQ = new THREE.Quaternion();
     let prevPointerX = 0, prevPointerY = 0;
-    let downTime = 0;
+    let pressX = 0, pressY = 0, pressTime = 0;
+    let primaryPointer = null;
+    const touches = new Map();
+    let pinchStart = null;
+    function pinchDistance() {
+      const [a, b] = touches.values();
+      return Math.hypot(a.x - b.x, a.y - b.y);
+    }
+    function clearDrag() {
+      draggingMode = null;
+      grabbedTarget = null;
+      grabbedMesh = null;
+      canvas.classList.remove('grabbing');
+    }
 
     function getAssemblyPivotForMesh(mesh, singlePartMode) {
       if (singlePartMode) return mesh;
@@ -625,7 +793,8 @@
     function pickMesh() {
       if (!state.loaded) return null;
       raycaster.setFromCamera(pointer, camera);
-      const hits = raycaster.intersectObjects(allPickableMeshes, false);
+      hits.length = 0;
+      raycaster.intersectObjects(allPickableMeshes, false, hits);
       // In Membrane X-Ray mode, let clicks pass right through ghosted body shell to grab engine/bolts inside!
       for (let i = 0; i < hits.length; i++) {
         const h = hits[i];
@@ -633,7 +802,7 @@
         if (state.xray > 0.45 && exteriorBodySet.has(h.object)) continue;
         return h;
       }
-      return hits.length > 0 ? hits[0] : null;
+      return null;
     }
 
     function setHoverMesh(mesh, clientX, clientY) {
@@ -671,17 +840,32 @@
       }
     }
 
+    canvas.addEventListener('contextmenu', e => e.preventDefault());
     canvas.addEventListener('pointerdown', (e) => {
       canvas.setPointerCapture(e.pointerId);
+      if (e.pointerType === 'touch') {
+        touches.set(e.pointerId, { x: e.clientX, y: e.clientY });
+        if (touches.size === 2) {
+          if (grabbedTarget) getPullState(grabbedTarget).tgt.copy(dragObjStartOffset);
+          clearDrag();
+          pinchStart = { distance: pinchDistance(), radius: state.targetRadius };
+          wake(true);
+          return;
+        }
+      }
+      if (primaryPointer !== null) return;
+      primaryPointer = e.pointerId;
       updatePointer(e);
       prevPointerX = e.clientX;
       prevPointerY = e.clientY;
-      downTime = performance.now();
+      pressTime = performance.now();
+      pressX = e.clientX;
+      pressY = e.clientY;
 
       const hit = pickMesh();
-      if (hit && e.button === 0) {
+      if (hit && e.button === 0 && (!state.interiorView || e.altKey)) {
         // Grab & pull assembly (hold Alt to grab any individual bolt/part!)
-        draggingMode = 'pull';
+        draggingMode = e.pointerType === 'touch' ? 'touchPart' : 'pull';
         grabbedMesh = hit.object;
         grabbedTarget = getAssemblyPivotForMesh(hit.object, e.altKey);
         const ps = getPullState(grabbedTarget);
@@ -703,14 +887,36 @@
     });
 
     canvas.addEventListener('pointermove', (e) => {
+      if (touches.has(e.pointerId)) touches.set(e.pointerId, { x: e.clientX, y: e.clientY });
+      if (pinchStart) {
+        if (touches.size >= 2) {
+          zoomTo(pinchStart.radius * pinchStart.distance / Math.max(1, pinchDistance()));
+          wake();
+        }
+        return;
+      }
+      if (primaryPointer !== null && primaryPointer !== e.pointerId) return;
       updatePointer(e);
+      if (draggingMode === 'touchPart') {
+        if (Math.hypot(e.clientX - pressX, e.clientY - pressY) < 7) return;
+        if (performance.now() - pressTime >= 350) {
+          draggingMode = 'pull';
+        } else {
+          draggingMode = 'orbit';
+          grabbedTarget = grabbedMesh = null;
+        }
+      }
       if (draggingMode === 'orbit') {
         const dx = e.clientX - prevPointerX;
         const dy = e.clientY - prevPointerY;
         prevPointerX = e.clientX;
         prevPointerY = e.clientY;
         state.targetTheta -= dx * 0.0065;
-        state.targetPhi = Math.max(0.14, Math.min(Math.PI * 0.485, state.targetPhi - dy * 0.006));
+        state.targetPhi = THREE.MathUtils.clamp(state.targetPhi - dy * 0.006, 0.14, Math.PI * 0.485);
+        if (state.interiorView) {
+          state.targetTheta = THREE.MathUtils.clamp(state.targetTheta, -3.55, -2.42);
+          state.targetPhi = THREE.MathUtils.clamp(state.targetPhi, 0.94, 1.49);
+        }
         wake(false);
       } else if (draggingMode === 'pull' && grabbedTarget) {
         raycaster.setFromCamera(pointer, camera);
@@ -740,16 +946,31 @@
       }
     });
 
+    canvas.addEventListener('pointercancel', e => {
+      touches.delete(e.pointerId);
+      if (!touches.size) pinchStart = null;
+      if (primaryPointer !== e.pointerId) return;
+      if (grabbedTarget) getPullState(grabbedTarget).tgt.copy(dragObjStartOffset);
+      clearDrag();
+      primaryPointer = null;
+      updateHudText();
+      wake(true);
+    });
+    canvas.addEventListener('pointerleave', () => {
+      if (primaryPointer === null) setHoverMesh(null, 0, 0);
+    });
     canvas.addEventListener('pointerup', (e) => {
-      if (draggingMode === 'pull' && grabbedTarget) {
+      touches.delete(e.pointerId);
+      if (!touches.size) pinchStart = null;
+      if (e.pointerId !== primaryPointer) return;
+      primaryPointer = null;
+      if ((draggingMode === 'pull' || draggingMode === 'touchPart') && grabbedTarget) {
         const ps = getPullState(grabbedTarget);
         const pullDist = ps.tgt.length();
-        const clickElapsed = performance.now() - downTime;
-        // Quick click on Left/Right Door swings that frameless door open/closed smoothly!
-        if (pullDist < 5.0 && clickElapsed < 320 && grabbedTarget.name === 'Pivot_Door_L') {
-          state.doorLTarget = state.doorLTarget > 0.5 ? 0.0 : 1.0;
-          ps.tgt.set(0, 0, 0);
-          playClickSound(state.doorLTarget > 0.5 ? 580 : 380, 0.06);
+        const clickedPanel = Object.keys(panels).find(key => panels[key].node === grabbedTarget.name);
+        if (clickedPanel && Math.hypot(e.clientX - pressX, e.clientY - pressY) < 7) {
+          togglePanel(clickedPanel);
+          ps.tgt.copy(dragObjStartOffset);
         } else if (pullDist < 5.0 && clickElapsed < 320 && grabbedTarget.name === 'Pivot_Door_R') {
           state.doorRTarget = state.doorRTarget > 0.5 ? 0.0 : 1.0;
           ps.tgt.set(0, 0, 0);
@@ -784,44 +1005,45 @@
       }
     });
 
+    function zoomTo(radius) {
+      state.targetRadius = state.interiorView
+        ? THREE.MathUtils.clamp(radius, 21, 47)
+        : THREE.MathUtils.clamp(radius, 125, 820);
+    }
+
     // Wheel zoom
     canvas.addEventListener('wheel', (e) => {
       e.preventDefault();
-      state.targetRadius = Math.max(125, Math.min(820, state.targetRadius * (1 + e.deltaY * 0.001)));
+      zoomTo(state.targetRadius * (1 + e.deltaY * 0.001));
       wake(false);
     }, { passive: false });
 
     // Keyboard controls (exact 09_membrane minimalism!)
-    window.addEventListener('keydown', (e) => {
-      const k = e.key.toLowerCase();
+    function runCommand(k) {
+      if (!state.loaded) return;
       if (k === 'd') {
         const open = (state.doorLTarget < 0.5 || state.doorRTarget < 0.5) ? 1.0 : 0.0;
         state.doorLTarget = open;
         state.doorRTarget = open;
         playClickSound(open > 0.5 ? 580 : 380, 0.06);
         wake(true);
-      } else if (k === '1') {
-        state.doorLTarget = state.doorLTarget > 0.5 ? 0.0 : 1.0;
-        playClickSound(560, 0.05);
-        wake(true);
-      } else if (k === '2') {
-        state.doorRTarget = state.doorRTarget > 0.5 ? 0.0 : 1.0;
-        playClickSound(560, 0.05);
-        wake(true);
+      } else if (k === '1' || k === '2' || k === 'l' || k === 'f') {
+        togglePanel({ '1': 'doorL', '2': 'doorR', l: 'lid', f: 'hood' }[k]);
       } else if (k === 'i') {
+        selectedView = null;
         // Smooth Interior Cockpit Inspection View: swings driver door open & glides camera inside!
         state.interiorView = !state.interiorView;
         if (state.interiorView) {
           state.explodeTarget = 0.0;
           state.xrayTarget = 0.0;
           state.doorLTarget = 1.0;
-          state.targetTheta = -2.18;
-          state.targetPhi = 1.26;
-          state.targetRadius = 152;
+          state.targetTheta = -2.90;
+          state.targetPhi = 1.22;
+          state.targetRadius = 43;
         } else {
-          state.targetTheta = 0.62;
-          state.targetPhi = 1.24;
-          state.targetRadius = 405;
+          state.targetTheta = exteriorView.theta;
+          state.targetPhi = exteriorView.phi;
+          state.targetRadius = exteriorView.radius;
         }
         playClickSound(state.interiorView ? 700 : 460, 0.06);
         wake(true);
@@ -831,14 +1053,16 @@
         playClickSound(state.stripeVisible ? 620 : 440, 0.05);
         wake(false);
       } else if (k === 'e') {
+        selectedView = null;
         // Cycle assembled -> half explode -> full explode -> assembled
+        if (state.interiorView) {
+          state.targetTheta = exteriorView.theta;
+          state.targetPhi = exteriorView.phi;
+          state.targetRadius = exteriorView.radius;
+        }
         state.interiorView = false;
         state.explodeTarget = state.explodeTarget < 0.2 ? 0.55 : (state.explodeTarget < 0.85 ? 1.0 : 0.0);
         playClickSound(state.explodeTarget > 0 ? 640 : 420, 0.06);
-        wake(true);
-      } else if (k === 'l') {
-        state.lidTarget = state.lidTarget > 0.5 ? 0.0 : 1.0;
-        playClickSound(560, 0.05);
         wake(true);
       } else if (k === 'x') {
         setHoverMesh(null, 0, 0);
@@ -853,24 +1077,26 @@
         state.spinMode = !state.spinMode;
         playClickSound(520, 0.04);
         wake(true);
-      } else if (e.code === 'Space') {
-        e.preventDefault();
+      } else if (k === ' ') {
         state.revving = true;
         wake(true);
       } else if (k === 'r') {
+        selectedView = null;
         state.explodeTarget = 0.0;
         state.doorLTarget = 0.0;
         state.doorRTarget = 0.0;
         state.interiorView = false;
-        state.stripeVisible = true;
-        for (const sm of weissachStripeMeshes) sm.visible = true;
-        state.lidTarget = 0.0;
+        state.stripeVisible = false;
+        for (const sm of weissachStripeMeshes) sm.visible = state.stripeVisible;
+        state.hoodTarget = state.lidTarget = 0.0;
         state.xrayTarget = 0.0;
         state.steerMode = false;
         state.spinMode = false;
-        state.targetTheta = 0.62;
-        state.targetPhi = 1.24;
-        state.targetRadius = 405;
+        state.wheelSpinAngle = state.steerPhase = 0;
+        state.revving = false;
+        state.targetTheta = exteriorView.theta;
+        state.targetPhi = exteriorView.phi;
+        state.targetRadius = exteriorView.radius;
         for (const ps of pullOffsets.values()) {
           ps.tgt.set(0, 0, 0);
           ps.parked = false;
@@ -879,6 +1105,7 @@
         wake(true);
       } else if (k === 'm') {
         soundMuted = !soundMuted;
+        wake();
         if (!soundMuted) {
           initAudio();
           if (audioCtx.state === 'suspended') audioCtx.resume();
@@ -888,18 +1115,34 @@
         state.hudHidden = !state.hudHidden;
         barEl.classList.toggle('hidden', state.hudHidden);
       } else if (k === '+' || k === '=') {
-        state.targetRadius = Math.max(125, state.targetRadius * 0.86);
+        zoomTo(state.targetRadius * 0.86);
         wake(false);
       } else if (k === '-' || k === '_') {
-        state.targetRadius = Math.min(820, state.targetRadius * 1.16);
+        zoomTo(state.targetRadius * 1.16);
         wake(false);
       } else if (k === '0') {
-        state.targetRadius = 405;
+        state.targetRadius = state.interiorView ? 43 : exteriorView.radius;
         wake(false);
       }
       updateHudText();
+    }
+
+    window.addEventListener('keydown', e => {
+      if (e.altKey || e.ctrlKey || e.metaKey || e.repeat) return;
+      if (e.code === 'Space') {
+        if (e.target.closest('button, summary')) return;
+        e.preventDefault();
+      }
+      runCommand(e.key.toLowerCase());
     });
 
+    window.addEventListener('blur', () => {
+      state.revving = false;
+      wake();
+    });
+    document.addEventListener('visibilitychange', () => {
+      if (!document.hidden) wake();
+    });
     window.addEventListener('keyup', (e) => {
       if (e.code === 'Space') {
         state.revving = false;
@@ -907,19 +1150,28 @@
       }
     });
 
+    function showPartInfo(title, detail) {
+      const accent = document.createElement('span');
+      accent.className = 'accent';
+      accent.textContent = title;
+      infoEl.replaceChildren(accent, ' · ' + detail);
+    }
+
     function updateHudText() {
       if (!state.loaded) return;
+      for (const button of panelButtons) button.setAttribute('aria-pressed', String(!!state[button.dataset.panel + 'Target']));
+      document.querySelector('[data-command="i"]').setAttribute('aria-pressed', String(state.interiorView));
       const tags = [];
       if (draggingMode === 'pull' && grabbedMesh) {
         const info = describePart(grabbedMesh.name);
         const ps = getPullState(grabbedTarget);
         const mm = Math.round(ps.cur.length() * 18); // real-car mm equivalent
-        infoEl.innerHTML = `pulling <span class="accent">${info.title.toLowerCase()}</span> · ${mm} mm · pull further or shift to park`;
+        showPartInfo(info.title, `pulling · ${mm} mm · pull further or shift to park`);
         return;
       }
       if (hoveredMesh) {
         const info = describePart(hoveredMesh.name);
-        infoEl.innerHTML = `<span class="accent">${info.title.toLowerCase()}</span> · ${info.spec}`;
+        showPartInfo(info.title, info.spec);
         return;
       }
       if (state.xrayTarget > 0.5) tags.push('membrane x-ray');
@@ -928,13 +1180,14 @@
       else if (state.doorRTarget > 0.5) tags.push('passenger door open');
       if (state.interiorView) tags.push('cabin view');
       if (state.explodeTarget > 0.05) tags.push(`exploded ${Math.round(state.explodeTarget * 100)}%`);
-      if (state.lidTarget > 0.5) tags.push('engine bay open');
+      if (state.hoodTarget > 0.5) tags.push('front luggage lid open');
+      if (state.lidTarget > 0.5) tags.push(document.querySelector('[data-panel="lid"]').textContent.toLowerCase() + ' open');
       if (state.spinMode) tags.push('wheels spinning');
       if (state.steerMode) tags.push('steering');
       if (state.revving) tags.push(`${Math.round(state.rpm)} rpm`);
       if (tags.length === 0) tags.push('assembled');
       if (soundMuted) tags.push('muted');
-      infoEl.innerHTML = `992.2 gt3 · lugano blue (Q5G) · ${state.partCount} parts · ${tags.join(' · ')}`;
+      infoEl.textContent = `2025 Porsche 911 GT3 · Lugano Blue · ${tags.join(' · ')}`;
     }
 
     // -----------------------------------------------------------------------
@@ -943,8 +1196,17 @@
     const clock = new THREE.Clock();
     const SCALE = 1.0 / 18.0;
     const FOCUS_EXTERIOR = new THREE.Vector3(0, 34, 0);
-    const FOCUS_INTERIOR = new THREE.Vector3(6, 38, -2);
-    const ZERO_VEC = new THREE.Vector3(0, 0, 0);
+    const PANEL_CENTERS = {
+      hood: new THREE.Vector3(38, 34, 0),
+      lid: new THREE.Vector3(-93, 52, -28)
+    };
+    const FOCUS_INTERIOR = new THREE.Vector3(12, 42, -10);
+    let lastShadowTime = -Infinity;
+    let shadowDirty = true;
+    let motionRatio = Math.min(stillRatio(), 1.25);
+    let lastResolutionChange = 0;
+    let slowFrames = 0;
+    let fastFrames = 0;
     const _ev = new THREE.Vector3();
 
     function getExplodeOffset(pname, ex, vib, t, out) {
@@ -965,9 +1227,10 @@
       }
     }
 
-    function animate() {
-      requestAnimationFrame(animate);
-      const dt = Math.min(clock.getDelta(), 0.05);
+    function animate(now) {
+      framePending = false;
+      const frameTime = clock.getDelta();
+      const dt = Math.min(frameTime, 0.08);
       const t = clock.elapsedTime;
       const damp = 1.0 - Math.exp(-8.5 * dt);
 
@@ -989,14 +1252,16 @@
       const camDelta =
         Math.abs(state.targetTheta - state.theta) +
         Math.abs(state.targetPhi - state.phi) +
-        Math.abs(state.targetRadius - state.radius) * 0.01;
-      const focusTarget = state.interiorView ? FOCUS_INTERIOR : FOCUS_EXTERIOR;
+        Math.abs(state.targetRadius - state.radius) * 0.01 +
+        Math.abs(Number(state.interiorView) - state.cabinBlend);
+      const focusTarget = state.interiorView ? FOCUS_INTERIOR : (PANEL_CENTERS[selectedView] || FOCUS_EXTERIOR);
       const focusDelta = state.targetCenter.distanceToSquared(focusTarget);
 
       const mechDelta =
         Math.abs(state.explodeTarget - state.explode) +
         Math.abs(state.doorLTarget - state.doorL) +
         Math.abs(state.doorRTarget - state.doorR) +
+        Math.abs(state.hoodTarget - state.hood) +
         Math.abs(state.lidTarget - state.lid);
       const xrayDelta = Math.abs(state.xrayTarget - state.xray);
       const rpmTarget = state.revving ? 9000 : 900;
@@ -1014,7 +1279,24 @@
       const geoMoving = mechDelta > 5e-4 || pullActive || continuousAnim;
       const active = needsRender || camDelta > 2e-4 || focusDelta > 1e-3 || xrayDelta > 5e-4 || geoMoving;
 
-      if (!active) return;
+      const ratio = active ? motionRatio : stillRatio();
+      if (renderer.getPixelRatio() !== ratio) renderer.setPixelRatio(ratio);
+      if (!active) {
+        if (shadowDirty) renderer.shadowMap.needsUpdate = true;
+        renderer.render(scene, camera); // final full-resolution frame, then sleep
+        shadowDirty = false;
+        return;
+      }
+      scheduleFrame();
+      if (frameTime > 0 && frameTime < 0.18) {
+        slowFrames = frameTime > 0.04 ? slowFrames + 1 : 0;
+        fastFrames = frameTime < 0.021 ? fastFrames + 1 : 0;
+        if (now - lastResolutionChange > 900 && (slowFrames >= 4 || fastFrames >= 30)) {
+          motionRatio = slowFrames >= 4 ? Math.max(0.75, motionRatio - 0.25) : Math.min(Math.min(stillRatio(), 1.25), motionRatio + 0.25);
+          lastResolutionChange = now;
+          slowFrames = fastFrames = 0;
+        }
+      }
 
       // Camera orbit smooth damping
       state.theta += (state.targetTheta - state.theta) * damp;
@@ -1026,10 +1308,22 @@
       state.explode += (state.explodeTarget - state.explode) * damp;
       state.doorL += (state.doorLTarget - state.doorL) * damp;
       state.doorR += (state.doorRTarget - state.doorR) * damp;
+      state.hood += (state.hoodTarget - state.hood) * damp;
       state.lid += (state.lidTarget - state.lid) * damp;
       state.xray += (state.xrayTarget - state.xray) * damp;
 
-      const effRadius = state.radius + state.explode * 68.0;
+      // Preserve horizontal framing on portrait screens.
+      state.cabinBlend += (Number(state.interiorView) - state.cabinBlend) * damp;
+      const exteriorScale = Math.max(1, 1.42 / camera.aspect);
+      const effRadius = (state.radius + state.explode * 68.0) * THREE.MathUtils.lerp(exteriorScale, 1, state.cabinBlend);
+      // At the driver's eye point, widen the lens on portrait screens instead of
+      // backing the camera out through the seat or the rear glass.
+      const cabinFov = Math.max(45, THREE.MathUtils.radToDeg(2 * Math.atan(Math.tan(0.50) / camera.aspect)));
+      const fov = THREE.MathUtils.lerp(30, cabinFov, state.cabinBlend);
+      if (Math.abs(camera.fov - fov) > 0.002) {
+        camera.fov = fov;
+        camera.updateProjectionMatrix();
+      }
       const effY = state.targetCenter.y + state.explode * 16.0;
       camera.position.set(
         state.targetCenter.x + effRadius * Math.sin(state.phi) * Math.cos(state.theta),
@@ -1093,12 +1387,10 @@
           piv.position.copy(rp).add(ev);
           if (ps) piv.position.add(ps.cur);
 
-          if (pname === 'Pivot_Door_L') {
-            piv.rotation.set(rr.x, rr.y - state.doorL * 1.15, rr.z);
-          } else if (pname === 'Pivot_Door_R') {
-            piv.rotation.set(rr.x, rr.y + state.doorR * 1.15, rr.z);
-          } else if (pname === 'Pivot_Engine_Decklid') {
-            piv.rotation.set(rr.x, rr.y, rr.z - state.lid * 0.72);
+          const panelKey = panelByNode[pname];
+          if (panelKey) {
+            const { axis, angle } = panels[panelKey];
+            piv.rotation[axis] = rr[axis] + state[panelKey] * angle;
           } else if (pname === 'Pivot_Corner_FL' || pname === 'Pivot_Corner_FR') {
             piv.rotation.set(rr.x, rr.y + steerRad, rr.z);
           } else if (pname.startsWith('Pivot_WheelSpin_')) {
@@ -1113,7 +1405,12 @@
             obj.position.copy(ps.basePos).add(ps.cur);
           }
         }
-        renderer.shadowMap.needsUpdate = true;
+        shadowDirty = true;
+        if (now - lastShadowTime > 100) {
+          renderer.shadowMap.needsUpdate = true;
+          lastShadowTime = now;
+          shadowDirty = false;
+        }
         needsShadow = false;
       }
 
@@ -1136,18 +1433,23 @@
       }
 
       renderer.render(scene, camera);
+      if (!loaderEl.classList.contains('done')) {
+        loaderEl.classList.add('done');
+        loaderEl.setAttribute('aria-hidden', 'true');
+        barEl.inert = false;
+      }
       needsRender = false;
     }
 
     window.addEventListener('resize', () => {
       camera.aspect = window.innerWidth / window.innerHeight;
       camera.updateProjectionMatrix();
-      renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5));
+      renderer.setPixelRatio(stillRatio());
       renderer.setSize(window.innerWidth, window.innerHeight);
       wake(false);
     });
 
-    animate();
+    wake();
   </script>
 </body>
 </html>
