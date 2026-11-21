@@ -187,6 +187,30 @@ main { position: fixed; inset: 0; }
   border-radius: 6px;
 }
 
+/* the key to the gas colours, shown whenever gas is drawn */
+#legend {
+  position: absolute;
+  left: max(14px, env(safe-area-inset-left));
+  top: max(46px, calc(env(safe-area-inset-top) + 36px));
+  width: min(250px, 30vw);
+  margin: 0;
+  padding: 8px 10px;
+  list-style: none;
+  display: grid;
+  gap: 6px;
+  font: 500 11.5px/1.35 system-ui, sans-serif;
+  color: #263541;
+  background: rgba(247, 245, 239, 0.88);
+  border: 1px solid rgba(79, 83, 88, 0.18);
+  border-radius: 6px;
+  pointer-events: none;
+  z-index: 1;
+}
+
+#legend[hidden] { display: none; }
+#legend li { display: grid; grid-template-columns: 12px 1fr; gap: 8px; align-items: start; }
+#legend i { width: 11px; height: 11px; margin-top: 2px; border-radius: 50%; }
+
 /* the explainer: the original cutaways, laid over the stage on request */
 .sheet {
   position: absolute;
@@ -216,7 +240,7 @@ main { position: fixed; inset: 0; }
 .sheet iframe { flex: 1; width: 100%; border: 0; background: transparent; }
 
 /* h hides the type; the way home stays reachable by keyboard */
-body.quiet main > .line, body.quiet #bar, body.quiet .tags, body.quiet .caption { opacity: 0; }
+body.quiet main > .line, body.quiet #bar, body.quiet .tags, body.quiet .caption, body.quiet #legend { opacity: 0; }
 body.quiet #bar *, body.quiet .home { pointer-events: none; }
 body.quiet .home:focus-visible { opacity: 1; }
 
@@ -240,6 +264,7 @@ body.quiet .home:focus-visible { opacity: 1; }
   #more div { left: 50%; right: auto; transform: translateX(-50%); }
   #status { font-size: 10px; }
   #callout { display: none; }
+  #legend { top: 34px; width: min(210px, 58vw); font-size: 10px; gap: 3px; padding: 6px 8px; }
 }
 
 @media (prefers-reduced-motion: reduce) {
