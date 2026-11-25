@@ -41,10 +41,24 @@ a { color: inherit; text-underline-offset: .2em; }
 #stage { display: block; touch-action: none; cursor: grab; }
 #stage.grabbing { cursor: grabbing; }
 #stage.hover-part { cursor: pointer; }
-#loader { background: var(--surface); z-index: 15; transition: opacity .18s; }
-#loader img { width: 100%; height: 100%; object-fit: contain; }
-.load-rear #loader { background: var(--surface) url('./mr2-rear.webp?v=2') center/contain no-repeat; }
-.load-rear #loader picture, .custom-model #loader picture { visibility: hidden; }
+#loader { overflow: hidden; background: #87888c; z-index: 15; transition: opacity .28s ease, visibility 0s linear .28s; }
+/* The live camera fits the car by width in portrait and by height on wide screens. */
+#loader picture { position: absolute; top: 50%; left: 50%; width: min(100%, 160vh); transform: translate(-50%, -50%); }
+#loader img { display: block; width: 100%; height: auto; }
+.load-rear #loader { --rear-poster: url('./mr2-rear.webp?v=3ca46f55'); background: linear-gradient(#87888c 40%, #e4e4e9 65%, #e4e4e9 74%, #898b90 98%); }
+.load-rear #loader::before { content: ''; position: absolute; top: 50%; left: 50%; width: min(100%, 160vh); aspect-ratio: 8/5; transform: translate(-50%, -50%); background: var(--rear-poster) center/100% 100%; }
+@media (orientation: portrait) {
+  .load-rear #loader::before { mask-image: linear-gradient(to bottom, transparent, black 7%, black 85%, transparent); }
+}
+@media (aspect-ratio > 8/5) {
+  #loader { background: linear-gradient(#87888c 28%, #83868a 40%, #c6c7cb 65%, #dedee2 92%); }
+  #loader picture, .load-rear #loader::before { mask-image: linear-gradient(to right, transparent, black 4%, black 96%, transparent); }
+  .load-rear #loader { background: #87888c var(--rear-poster) center/100% 100% no-repeat; }
+}
+@media (aspect-ratio > 8/5) and (min-height: 540px) and (prefers-reduced-motion: no-preference) {
+  #loader picture { width: min(100%, 174vh); }
+}
+.load-rear #loader picture, .custom-model #loader picture, .load-detail #loader picture { visibility: hidden; }
 #loader.done { opacity: 0; pointer-events: none; visibility: hidden; }
 #load-status { position: absolute; bottom: 30px; left: 50%; transform: translateX(-50%); max-width: 88%; padding: 8px 14px; border-radius: 6px; background: white; font-size: 13px; text-align: center; }
 

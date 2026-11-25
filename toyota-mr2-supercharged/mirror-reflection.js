@@ -1,4 +1,4 @@
-import * as THREE from './vendor/three-r170.js?v=1d65f356';
+import * as THREE from './vendor/three-r170.js?v=31c84364';
 
 // The reflection camera is behind the glass. Its off-axis frustum passes
 // through the glass boundaries, so each surface point samples its reflected

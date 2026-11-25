@@ -3,17 +3,21 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <link rel="preload" as="image" type="image/webp" media="(prefers-reduced-motion: no-preference) and (orientation: landscape)" href="./mr2-exploded-wide.webp?v=2" fetchpriority="high">
-  <link rel="preload" as="image" type="image/webp" media="(prefers-reduced-motion: no-preference) and (orientation: portrait)" href="./mr2-exploded-tall.webp?v=2" fetchpriority="high">
-  <link rel="preload" as="image" type="image/webp" media="(prefers-reduced-motion: reduce) and (orientation: landscape)" href="./mr2-wide.webp?v=2" fetchpriority="high">
-  <link rel="preload" as="image" type="image/webp" media="(prefers-reduced-motion: reduce) and (orientation: portrait)" href="./mr2-tall.webp?v=2" fetchpriority="high">
-  <link rel="modulepreload" href="./vendor/three-r170.js?v=1d65f356">
+  <link rel="preload" as="image" type="image/webp" media="(prefers-reduced-motion: no-preference) and (orientation: landscape)" href="./mr2-exploded-wide.webp?v=a397cd6b" fetchpriority="high">
+  <link rel="preload" as="image" type="image/webp" media="(prefers-reduced-motion: no-preference) and (orientation: portrait)" href="./mr2-exploded-tall.webp?v=acea0262" fetchpriority="high">
+  <link rel="preload" as="image" type="image/webp" media="(prefers-reduced-motion: reduce) and (orientation: landscape)" href="./mr2-wide.webp?v=220d81fd" fetchpriority="high">
+  <link rel="preload" as="image" type="image/webp" media="(prefers-reduced-motion: reduce) and (orientation: portrait)" href="./mr2-tall.webp?v=f1b58a47" fetchpriority="high">
+  <link rel="modulepreload" href="./vendor/three-r170.js?v=31c84364">
+  <link rel="preload" as="image" href="./studio-environment.png" crossorigin="anonymous">
   <script>
     if (location.hash === '#mr2-views') document.documentElement.classList.add('show-photos');
     if (location.hash === '#rear') document.documentElement.classList.add('load-rear');
+    if (location.hash && !['#model', '#assembly', '#rear', '#mr2-views'].includes(location.hash)) {
+      document.documentElement.classList.add('load-detail');
+    }
     const overrideModel = new URLSearchParams(location.search).get('model');
     if (overrideModel) document.documentElement.classList.add('custom-model');
-    const modelFile = overrideModel || './toyota_mr2_aw11_sc.glb?v=2';
+    const modelFile = overrideModel || './toyota_mr2_aw11_sc.glb?v=8c3ffd13';
     const preload = document.createElement('link');
     preload.rel = 'preload';
     preload.as = 'fetch';
@@ -24,7 +28,7 @@
   <link rel="canonical" href="https://bailiping.com/toyota-mr2-supercharged/" />
   <link rel="icon" href="/favicon.ico" />
   <title>1988 Toyota MR2 Supercharged (AW11) — Super Red</title>
-  <link rel="stylesheet" href="./studio.css?v=3">
+  <link rel="stylesheet" href="./studio.css?v=3064fabd">
   <script type="module" src="./studio.js?v=2"></script>
 </head>
 <body>
@@ -57,10 +61,10 @@
   <div id="loader">
     <!-- The car opens exploded and then assembles; reduced-motion visitors see it assembled. -->
     <picture>
-      <source media="(prefers-reduced-motion: no-preference) and (orientation: portrait)" srcset="./mr2-exploded-tall.webp?v=2">
-      <source media="(prefers-reduced-motion: no-preference)" srcset="./mr2-exploded-wide.webp?v=2">
-      <source media="(orientation: portrait)" srcset="./mr2-tall.webp?v=2">
-      <img src="./mr2-wide.webp?v=2" width="1280" height="800" fetchpriority="high" alt="Super Red 1988 Toyota MR2 Supercharged preview">
+      <source media="(prefers-reduced-motion: no-preference) and (orientation: portrait)" srcset="./mr2-exploded-tall.webp?v=acea0262">
+      <source media="(prefers-reduced-motion: no-preference)" srcset="./mr2-exploded-wide.webp?v=a397cd6b">
+      <source media="(orientation: portrait)" srcset="./mr2-tall.webp?v=f1b58a47">
+      <img src="./mr2-wide.webp?v=220d81fd" width="1280" height="800" fetchpriority="high" alt="Super Red 1988 Toyota MR2 Supercharged preview">
     </picture>
     <span id="load-status" role="status">Preparing interactive model…</span>
   </div>
@@ -104,8 +108,10 @@
     </div>
   </div>
   <script type="module">
-    import * as THREE from './vendor/three-r170.js?v=1d65f356';
-    import { createPlanarMirror } from './mirror-reflection.js';
+    import * as THREE from './vendor/three-r170.js?v=31c84364';
+    import { createStudioFloor } from './studio-floor.js?v=a830d31e';
+    import { applyStudioVisibility } from './studio-visibility.js?v=616fb3a0';
+    import { createPlanarMirror } from './mirror-reflection.js?v=cd0eff4a';
     const { GLTFLoader, DRACOLoader } = THREE;
 
     // -----------------------------------------------------------------------
@@ -137,57 +143,110 @@
       loadStatus.append(' ', viewsLink);
       throw error;
     }
-    const stillRatio = () => Math.min(window.devicePixelRatio, 1.75);
-    renderer.setPixelRatio(stillRatio());
+    // Small trim, wires and gear teeth benefit from supersampling on 1× displays.
+    // Bound the drawing buffer as well as the ratio on large, high-DPI monitors.
+    function targetPixelRatio() {
+      const pixelBudget = 4500000 / (window.innerWidth * window.innerHeight);
+      return Math.min(Math.max(1.5, window.devicePixelRatio), 2.25, Math.sqrt(pixelBudget));
+    }
+    let fullRatio = targetPixelRatio();
+    renderer.setPixelRatio(fullRatio);
     renderer.setSize(window.innerWidth, window.innerHeight);
     renderer.shadowMap.enabled = true;
     renderer.shadowMap.autoUpdate = false;
     renderer.shadowMap.needsUpdate = true;
     renderer.shadowMap.type = THREE.PCFSoftShadowMap;
-    renderer.toneMapping = THREE.ACESFilmicToneMapping;
-    renderer.toneMappingExposure = 0.94;
+    renderer.toneMapping = THREE.NeutralToneMapping;
+    renderer.toneMappingExposure = 2 ** -0.22; // Matches the Cycles studio camera.
 
     const scene = new THREE.Scene();
-    const BG_HEX = 0xe2e5e7;
+    const BG_HEX = 0x87888c;
     const studioFogDensity = 0.00014;
     scene.background = new THREE.Color(BG_HEX);
     scene.fog = new THREE.FogExp2(BG_HEX, studioFogDensity);
+    const groundReady = createStudioFloor(scene, renderer, BG_HEX);
 
     const pmrem = new THREE.PMREMGenerator(renderer);
-    // Large rectangular studio softboxes give the origami wedge panels and glass continuous reflections.
-    const studio = new THREE.Scene();
-    studio.background = new THREE.Color().setScalar(0.27);
-    function softbox(position, width, height, luminance) {
-      const surface = new THREE.MeshStandardMaterial({
-        color: 0x000000, emissive: 0xffffff, emissiveIntensity: luminance,
-      });
-      const panel = new THREE.Mesh(new THREE.PlaneGeometry(width, height), surface);
-      panel.position.set(...position);
-      panel.lookAt(0, 0, 0);
-      studio.add(panel);
-    }
-    softbox([0, 9, -11], 37, 5, 5.4);
-    softbox([-5, 8, 10], 25, 6, 3.8);
-    softbox([12, 7, 4], 12, 5, 3.3);
-    softbox([-16, 3, -7], 14, 2.4, 3.6);
-    softbox([-5, 14, 6], 14, 1.7, 4.1);
-    scene.environment = pmrem.fromScene(studio, 0.016).texture;
-    scene.environmentRotation.y = .35;
-    for (const panel of studio.children) {
-      panel.geometry.dispose();
-      panel.material.dispose();
+    // The probe contains the actual Cycles softboxes and the illuminated studio
+    // floor. Its sRGB PNG stores 1/16 linear radiance to retain HDR highlights.
+    let probeIntensity = 16;
+    try {
+      const probe = await new THREE.TextureLoader().loadAsync('./studio-environment.png');
+      probe.colorSpace = THREE.SRGBColorSpace;
+      probe.mapping = THREE.EquirectangularReflectionMapping;
+      scene.environment = pmrem.fromEquirectangular(probe).texture;
+      probe.dispose();
+    } catch {
+      const room = new THREE.RoomEnvironment();
+      scene.environment = pmrem.fromScene(room).texture;
+      room.dispose();
+      probeIntensity = 1;
     }
     pmrem.dispose();
-    scene.environmentIntensity = 0.52;
+    scene.environmentIntensity = probeIntensity;
+
+    // The softboxes are a few metres from the car. A roof panel and a wheel
+    // see them at different angles. Project each reflected ray onto the
+    // studio bounds before looking it up in the probe captured at cabin height.
+    const studioReflections = THREE.ShaderChunk.envmap_physical_pars_fragment.replace(
+      'reflectVec = inverseTransformDirection( reflectVec, viewMatrix );',
+      `reflectVec = inverseTransformDirection( reflectVec, viewMatrix );
+       vec3 studioMin = vec3(-4100.0, 0.0, -4400.0) / 18.0;
+       vec3 studioMax = vec3(3900.0, 3400.0, 3000.0) / 18.0;
+       vec3 surface = cameraPosition - (vec4(vViewPosition, 0.0) * viewMatrix).xyz;
+       #ifdef MR2_DECK_REFLECTION
+         // Project the world ray into the articulated engine lid. Dimensions
+         // are the panel and 14 left louver vanes from scripts/closures.py.
+         vec3 lidNormal = normalize(engineLidWorld[1].xyz);
+         vec3 lidOrigin = engineLidWorld[3].xyz;
+         float angle = dot(reflectVec, lidNormal);
+         float distanceToLid = dot(lidOrigin - surface - .65 * lidNormal, lidNormal) / max(angle, .00001);
+         mat3 toLid = transpose(mat3(engineLidWorld));
+         vec3 point = toLid * (surface + distanceToLid * reflectVec - lidOrigin);
+         vec2 edge = min(vec2(point.x + 37.22, point.z + 28.33), vec2(.45 - point.x, 28.33 - point.z));
+         float feather = max(.65, distanceToLid * max(.04, roughness));
+         float lidCoverage = step(.15, distanceToLid) * step(.001, angle)
+                           * smoothstep(-feather, feather, min(edge.x, edge.y)) * opacity;
+         vec2 vent = point.xz * 18.0 + (toLid * reflectVec).xz * 35.0 / max(angle, .01);
+         vec2 ventEdge = min(vent - vec2(-581.0, -418.0), vec2(-129.0, -82.0) - vent);
+         float slots = abs(fract((vent.x + 140.0) / (430.0 / 13.0) + .5) - .5);
+         lidCoverage *= 1.0 - .35 * smoothstep(0.0, 9.0, min(ventEdge.x, ventEdge.y))
+                                  * smoothstep(.22, .45, slots);
+       #endif
+       surface = clamp(surface, studioMin + 0.01, studioMax - 0.01);
+       vec3 t = (mix(studioMin, studioMax, step(vec3(0.0), reflectVec)) - surface)
+                / (sign(reflectVec) * max(abs(reflectVec), vec3(0.00001)) + vec3(1e-8));
+       vec3 hit = surface + reflectVec * min(t.x, min(t.y, t.z));
+       reflectVec = normalize(hit - vec3(0.0, 560.0 / 18.0, 0.0));`
+    ).replace('return envMapColor.rgb * envMapIntensity;', `
+       vec3 studioRadiance = envMapColor.rgb * envMapIntensity;
+       #ifdef MR2_DECK_REFLECTION
+         studioRadiance = mix(studioRadiance, vec3(.23, .018, .014), lidCoverage);
+       #endif
+       return studioRadiance;`);
+    function projectStudioReflections(material, reflectsLid) {
+      if (probeIntensity === 1 || !material.isMeshStandardMaterial) return;
+      const previousCompile = material.onBeforeCompile;
+      const previousKey = material.customProgramCacheKey();
+      material.onBeforeCompile = function(shader, renderer) {
+        previousCompile.call(this, shader, renderer);
+        if (reflectsLid && pivots.Pivot_Engine_Lid) {
+          shader.uniforms.engineLidWorld = { value: pivots.Pivot_Engine_Lid.matrixWorld };
+          shader.fragmentShader = '#define MR2_DECK_REFLECTION\nuniform mat4 engineLidWorld;\n' + shader.fragmentShader;
+        }
+        shader.fragmentShader = shader.fragmentShader.replace(
+          '#include <envmap_physical_pars_fragment>', studioReflections
+        );
+      };
+      material.customProgramCacheKey = () => previousKey + (reflectsLid ? '|deck-projection' : '|studio-projection');
+    }
 
     const camera = new THREE.PerspectiveCamera(30, window.innerWidth / window.innerHeight, 1.0, 4000);
 
-    // Balanced overcast daylight studio lighting so Toyota Super Red (3E5) stays vivid & true.
-    const hemi = new THREE.HemisphereLight(0xf6f8fb, 0xd0d5dc, 0.72);
-    scene.add(hemi);
-
-    const keyLight = new THREE.DirectionalLight(0xfffef9, 1.52);
-    keyLight.position.set(170, 310, -75);
+    // Most light is already in the probe. A soft contribution from the studio's
+    // front-left key lets geometry occlude the light falling on nearby parts.
+    const keyLight = new THREE.DirectionalLight(0xfcfcff, 0.12);
+    keyLight.position.set(3900 / 18, 2200 / 18, -3300 / 18);
     keyLight.castShadow = true;
     keyLight.shadow.mapSize.set(2048, 2048);
     keyLight.shadow.camera.near = 20;
@@ -202,74 +261,11 @@
     keyLight.shadow.radius = 3.5;
     scene.add(keyLight);
 
-    const rimLight = new THREE.DirectionalLight(0xdce8ff, 0.76);
-    rimLight.position.set(-100, 240, 225);
-    scene.add(rimLight);
-
     // -----------------------------------------------------------------------
-    // 3. Studio floor (contact shadow calibrated to 2320 mm wheelbase / 1440 mm track at 1:18)
+    // 3. Cycles studio illumination and geometry-aware ground shadows
     // -----------------------------------------------------------------------
-    function buildSpecimenFloor() {
-      const c = document.createElement('canvas');
-      c.width = c.height = 1024;
-      const ctx = c.getContext('2d');
-      ctx.scale(0.5, 0.5);
-      ctx.fillStyle = '#c4c8cb';
-      ctx.fillRect(0, 0, 2048, 2048);
-
-      // Soft contact beneath the AW11 chassis and four 185/60 R14 tire patches.
-      // 1 tile = 2400 world mm across 2048 logical px -> 0.8533 px per 1:18 mm.
-      function contactShadow(cx, cy, rx, ry, opacity) {
-        ctx.save();
-        ctx.translate(cx, cy);
-        ctx.scale(rx, ry);
-        const gradient = ctx.createRadialGradient(0, 0, 0, 0, 0, 1);
-        gradient.addColorStop(0, `rgba(24,29,35,${opacity})`);
-        gradient.addColorStop(0.58, `rgba(24,29,35,${opacity * 0.72})`);
-        gradient.addColorStop(1, 'rgba(24,29,35,0)');
-        ctx.fillStyle = gradient;
-        ctx.fillRect(-1, -1, 2, 2);
-        ctx.restore();
-      }
-      contactShadow(1024, 1024, 130, 59, 0.65);
-      contactShadow(1024, 1024, 103, 40, 0.84);
-      contactShadow(1088, 1024, 38, 34, 0.86);
-      contactShadow(960, 1024, 40, 35, 0.86);
-      // Half-wheelbase = 64.44 mm -> 55 px; half-track = 40.00 mm -> 34 px.
-      for (const axle of [-55, 55]) {
-        for (const side of [-34, 34]) contactShadow(1024 + axle, 1024 + side, 14, 7, 0.94);
-      }
-
-      const tex = new THREE.CanvasTexture(c);
-      tex.anisotropy = Math.min(4, renderer.capabilities.getMaxAnisotropy());
-      tex.colorSpace = THREE.SRGBColorSpace;
-      // Extend the neutral edge of the texture into the distance to meet the backdrop.
-      const geo = new THREE.PlaneGeometry(24000, 24000);
-      tex.repeat.set(10, 10);
-      tex.offset.set(-4.5, -4.5);
-      const mat = new THREE.MeshStandardMaterial({
-        map: tex,
-        roughness: 0.90,
-        metalness: 0.02,
-      });
-      // Fade the distant floor into the cyclorama while keeping tire contact solid at every zoom.
-      mat.onBeforeCompile = shader => {
-        shader.vertexShader = 'varying vec2 vGround;\n' + shader.vertexShader.replace(
-          '#include <begin_vertex>', '#include <begin_vertex>\nvGround = position.xy;'
-        );
-        shader.fragmentShader = 'varying vec2 vGround;\n' + shader.fragmentShader.replace(
-          '#include <fog_fragment>',
-          'gl_FragColor.rgb = mix(gl_FragColor.rgb, fogColor, smoothstep(140.0, 1450.0, length(vGround)));'
-        );
-      };
-      const floor = new THREE.Mesh(geo, mat);
-      floor.rotation.x = -Math.PI / 2;
-      floor.position.y = -0.1;
-      floor.receiveShadow = true;
-      scene.add(floor);
-      return floor;
-    }
-    const showroomFloor = buildSpecimenFloor();
+    const groundShadows = await groundReady;
+    const showroomFloor = groundShadows.floor;
 
     // -----------------------------------------------------------------------
     // 4. Procedural 4A-GZE 1.6L Inline-4 + SC12 Roots Supercharger Web Audio Synth (muted until 'm')
@@ -640,6 +636,8 @@
     const exteriorXrayMaterials = [];    // Shared exterior materials updated only when X-ray changes
     const headerMaterials = [];          // Shared exhaust header material(s) glowing on rev
     const allPickableMeshes = [];
+    const cabinEnclosure = { value: new THREE.Vector2() };
+    const engineEnclosure = { value: new THREE.Vector2() };
     const hits = [];
     let rearMirror, cabinMirror;
     let mirrorDirty = true;
@@ -713,9 +711,11 @@
               /^Mat_(Automotive_Glass|TTop_Smoked_Glass|Rear_Visor_Smoke|Headlight_Clear_Lens)$/.test(obj.material?.name || '');
             const isHeadlightLens = obj.material?.name === 'Mat_Headlight_Clear_Lens';
             const isHeader = /Exh_Header|Exh_Pipe/.test(obj.name);
-            const isCaster = SHADOW_CASTER_RE.test(obj.name);
+            const isCaster = !isGlass && (SHADOW_CASTER_RE.test(obj.name) ||
+              /Transaxle_E51|Teardrop_Rim|Subframe|Suspension_Arm|Chassis_FuelTank|MR2_Seat_/.test(obj.name));
 
             obj.castShadow = isCaster;
+            if (isCaster) groundShadows.addCaster(obj);
             obj.receiveShadow = isCaster || /Floor|Carpet|Dash|Seat|EngineLid|Trunk|Frunk/.test(obj.name);
             if (isHeadlightLens) obj.renderOrder = 2;
             allPickableMeshes.push(obj);
@@ -727,7 +727,12 @@
                 : obj.name.startsWith('MR2_Glass_RearBulkhead') ? 'GR'
                 : obj.name.startsWith('MR2_Glass_Quarter') ? 'GQ'
                 : obj.name.startsWith('MR2_Glass_Windshield') ? 'GW' : '';
-              const matKey = `${obj.material.name || obj.material.uuid}|${isExterior ? (isGlass ? 'EG' : 'E') : 'I'}|${glassKind}${isHeader ? 'H' : 'S'}`;
+              // The GLB loader makes distinct materials for batches with baked vertex
+              // occlusion. Those variants share a name, but must keep their own shader.
+              const enclosure = obj.geometry.hasAttribute('_studio_visibility')
+                ? (/Interior_Cabin|Pivot_Door_/.test(obj.parent.name) ? 'cabin' : 'engine') : '';
+              const reflectsLid = obj.name === 'MR2_Trunk_Lid_Super_Red_3E5';
+              const matKey = `${obj.material.uuid}|${isExterior ? (isGlass ? 'EG' : 'E') : 'I'}|${glassKind}${isHeader ? 'H' : 'S'}|${enclosure}|${reflectsLid}`;
               let shared = sharedMaterials.get(matKey);
               if (!shared) {
                 shared = obj.material.clone();
@@ -737,19 +742,10 @@
                     if (texture) texture.anisotropy = filtering;
                   }
                 }
-                if (shared.metalness > 0.3) shared.envMapIntensity = 1.2;
                 if (shared.name === 'Mat_Super_Red_3E5') {
-                  shared.color.setRGB(.52, .008, .0045);
-                  shared.envMapIntensity = 0.67;
-                  shared.clearcoat = 0.74;
-                  shared.clearcoatRoughness = 0.095;
-                  shared.roughness = 0.21;
-                  shared.specularIntensity = 0.76;
-                }
-                if (shared.name === 'Mat_Wheel_Machined_Silver') {
-                  shared.envMapIntensity = 1.35;
-                  shared.clearcoat = 0.55;
-                  shared.clearcoatRoughness = 0.06;
+                  // Match the diffuse paint in the front and rear Cycles views
+                  // while keeping the authored clearcoat and specular response.
+                  shared.color.multiplyScalar(.82);
                 }
                 // Blended glazing preserves the view into the cabin and avoids extra transmission passes.
                 if (shared.transmission > 0) {
@@ -764,23 +760,27 @@
                   const rearVisor = shared.name === 'Mat_Rear_Visor_Smoke';
                   const rearBulk = glassKind === 'GR';
                   const doorPane = glassKind === 'GD';
-                  const quarter = glassKind === 'GQ';
                   shared.transparent = true;
                   shared.depthWrite = false;
-                  shared.color.setRGB(
-                    rearVisor ? 0.020 : 0.013,
-                    rearVisor ? 0.024 : 0.020,
-                    rearVisor ? 0.034 : 0.024
-                  );
-                  shared.opacity = ttopGlass ? 0.62 : rearVisor ? 0.52 : rearBulk ? 0.28 : quarter ? 0.32 : doorPane ? 0.24 : 0.38;
-                  shared.roughness = ttopGlass ? 0.05 : rearVisor ? 0.07 : 0.08;
-                  shared.clearcoat = ttopGlass ? 0.52 : rearVisor ? 0.42 : 0.28;
-                  shared.clearcoatRoughness = 0.04;
-                  shared.specularIntensity = ttopGlass ? 0.64 : 0.52;
-                  shared.userData.cabinOpacity = ttopGlass ? 0.28 : rearVisor ? 0.20 : rearBulk ? 0.14 : 0.17;
-                  shared.envMap = scene.environment;
-                  shared.envMapRotation.copy(scene.environmentRotation);
-                  shared.envMapIntensity = ttopGlass ? 0.42 : rearVisor ? 0.34 : 0.24;
+                  shared.opacity = ttopGlass ? .76 : rearVisor ? .55 : rearBulk ? .34 : doorPane ? .30 : .44;
+                  shared.userData.cabinOpacity = ttopGlass ? .34 : rearVisor ? .20 : rearBulk ? .14 : .17;
+                  if (ttopGlass) {
+                    // In a display-space alpha blend, fixed coverage caps an
+                    // HDR glint at the glass opacity. Let bright softboxes fill
+                    // the pane while preserving its premultiplied linear energy.
+                    shared.customProgramCacheKey = () => 'mr2-smoked-roof';
+                    shared.onBeforeCompile = shader => {
+                      shader.fragmentShader = shader.fragmentShader.replace(
+                        '#include <opaque_fragment>',
+                        `float lightLevel = max(outgoingLight.r, max(outgoingLight.g, outgoingLight.b));
+                         float reflection = smoothstep(.32, 1.6, lightLevel) * smoothstep(.16, .66, diffuseColor.a);
+                         float coverage = mix(diffuseColor.a, 1.0, reflection);
+                         outgoingLight *= diffuseColor.a / max(coverage, .001);
+                         diffuseColor.a = coverage;
+                         #include <opaque_fragment>`
+                      );
+                    };
+                  }
                   shared.forceSinglePass = true;
                 }
                 if (shared.name === 'Mat_Headlight_Clear_Lens') {
@@ -798,9 +798,6 @@
                   shared.ior = 1.54;
                   shared.reflectivity = 1.0;
                   shared.specularIntensity = 0.90;
-                  shared.envMap = scene.environment;
-                  shared.envMapRotation.copy(scene.environmentRotation);
-                  shared.envMapIntensity = 1.12;
                   shared.customProgramCacheKey = () => 'mr2-headlight-clear-cover-v1';
                   shared.onBeforeCompile = (shader) => {
                     shader.fragmentShader = shader.fragmentShader.replace(
@@ -815,6 +812,10 @@
                       gl_FragColor = vec4( coverColor, coverAlpha );`
                     );
                   };
+                }
+                projectStudioReflections(shared, reflectsLid);
+                if (enclosure && shared.isMeshStandardMaterial) {
+                  applyStudioVisibility(shared, enclosure === 'cabin' ? cabinEnclosure : engineEnclosure);
                 }
                 shared.userData.origOpacity = shared.opacity ?? 1.0;
                 shared.userData.origTransparent = !!shared.transparent;
@@ -965,6 +966,8 @@
         hoveredMesh = mesh;
         if (mesh && mesh.userData.baseMat) {
           hoverCloneMat = mesh.userData.baseMat.clone();
+          hoverCloneMat.onBeforeCompile = mesh.userData.baseMat.onBeforeCompile;
+          hoverCloneMat.customProgramCacheKey = mesh.userData.baseMat.customProgramCacheKey;
           if (hoverCloneMat.emissive) {
             hoverCloneMat.emissive.setHex(0xd93829);
             hoverCloneMat.emissiveIntensity = 0.26;
@@ -1547,7 +1550,17 @@
     let wasMoving = false;
     let lastShadowTime = -Infinity;
     let shadowDirty = true;
-    let motionRatio = Math.min(stillRatio(), 1.25);
+
+    function updateGroundLighting() {
+      let displacement = Math.max(state.explode, state.doorL, state.doorR, state.hood,
+        state.ttop, state.engineLid, state.trunk, state.popups, state.fuel);
+      for (const part of pullOffsets.values()) {
+        displacement = Math.max(displacement, part.cur.length() / 40);
+      }
+      const closedWeight = overrideModel ? 0 : 1 - THREE.MathUtils.smoothstep(displacement, 0, .35);
+      groundShadows.update(closedWeight);
+    }
+    let motionRatio = fullRatio;
     let lastResolutionChange = 0;
     let slowFrames = 0;
     let fastFrames = 0;
@@ -1776,21 +1789,31 @@
       const geoMoving = presenting || mechDelta > 5e-4 || pullActive || continuousAnim;
       const active = needsRender || camDelta > 2e-4 || focusDelta > 1e-3 || xrayDelta > 5e-4 || geoMoving;
 
-      const ratio = active ? motionRatio : stillRatio();
+      const ratio = active ? motionRatio : fullRatio;
       if (renderer.getPixelRatio() !== ratio) renderer.setPixelRatio(ratio);
       if (!active) {
         wasMoving = false;
-        if (shadowDirty) renderer.shadowMap.needsUpdate = true;
+        if (shadowDirty) {
+          renderer.shadowMap.needsUpdate = true;
+          updateGroundLighting();
+        }
         renderer.render(scene, camera); // final full-resolution frame, then sleep
         shadowDirty = false;
         return;
       }
       scheduleFrame();
-      if (wasMoving && frameTime > 0) {
-        slowFrames = frameTime > 0.04 ? slowFrames + (frameTime > 0.15 ? 2 : 1) : 0;
-        fastFrames = frameTime < 0.021 ? fastFrames + 1 : 0;
-        if (now - lastResolutionChange > 900 && (slowFrames >= 4 || fastFrames >= 30)) {
-          motionRatio = slowFrames >= 4 ? Math.max(0.75, motionRatio - 0.25) : Math.min(Math.min(stillRatio(), 1.25), motionRatio + 0.25);
+      if (!wasMoving) {
+        slowFrames = fastFrames = 0;
+      } else if (frameTime > 0) {
+        // Ignore isolated shader compilation or input stalls. Sustained slow motion
+        // can trade resolution for responsiveness, then recover on faster frames.
+        slowFrames = frameTime > 0.036 ? slowFrames + 1 : Math.max(0, slowFrames - 1);
+        fastFrames = frameTime < 0.022 ? fastFrames + 1 : 0;
+        if (now - lastResolutionChange > 650 && (slowFrames >= 8 || fastFrames >= 40)) {
+          const floor = Math.min(fullRatio, 0.75);
+          motionRatio = slowFrames >= 8
+            ? Math.max(floor, motionRatio - 0.25)
+            : Math.min(fullRatio, motionRatio + 0.25);
           lastResolutionChange = now;
           slowFrames = fastFrames = 0;
         }
@@ -1819,9 +1842,6 @@
 
       // Preserve horizontal framing on portrait screens.
       state.cabinBlend += (Number(state.interiorView) - state.cabinBlend) * damp;
-      rimLight.intensity = 0.76 + 1.15 * state.cabinBlend;
-      scene.environmentIntensity = 0.52 + 0.14 * state.cabinBlend;
-      renderer.toneMappingExposure = 0.94 + 0.14 * state.cabinBlend;
       state.frontLens = presenting ? 1 - state.explode : state.frontLens + (frontLensTarget() - state.frontLens) * damp;
       state.rearLens += (Number(selectedView === 'rear') - state.rearLens) * damp;
 
@@ -1968,6 +1988,7 @@
         shadowDirty = true;
         if (now - lastShadowTime > 100) {
           renderer.shadowMap.needsUpdate = true;
+          updateGroundLighting();
           lastShadowTime = now;
           shadowDirty = false;
         }
@@ -1999,6 +2020,19 @@
         }
       }
 
+      // Isolated parts see the whole studio. Relax enclosure shading as a
+      // mechanic pulls an assembly clear, removes the body, or opens a panel.
+      let cabinPull = 0, enginePull = 0;
+      for (const [object, pull] of pullOffsets) {
+        const assembly = object.isMesh ? object.parent.name : object.name;
+        const release = THREE.MathUtils.smoothstep(pull.cur.length(), 0, 45);
+        if (/Body_Assembly|Interior_Cabin|Door_|TTop_/.test(assembly)) cabinPull = Math.max(cabinPull, release);
+        if (/Body_Assembly|Engine_|Transaxle/.test(assembly)) enginePull = Math.max(enginePull, release);
+      }
+      const enclosed = lastIsolation ? 0 : (1 - state.xray) * (1 - THREE.MathUtils.smoothstep(state.explode, 0, 0.55));
+      const cabinOpen = state.doorL * 0.25 + state.doorR * 0.25 + state.ttop * 0.5;
+      cabinEnclosure.value.set(1 - cabinOpen, cabinOpen).multiplyScalar(enclosed * (1 - cabinPull));
+      engineEnclosure.value.set(1 - state.engineLid, state.engineLid).multiplyScalar(enclosed * (1 - enginePull));
       updateCabinMirror(geoMoving);
       renderer.render(scene, camera);
       if (!loaderEl.classList.contains('done')) {
@@ -2022,7 +2056,10 @@
     window.addEventListener('resize', () => {
       camera.aspect = window.innerWidth / window.innerHeight;
       camera.updateProjectionMatrix();
-      renderer.setPixelRatio(stillRatio());
+      fullRatio = targetPixelRatio();
+      motionRatio = fullRatio;
+      slowFrames = fastFrames = 0;
+      renderer.setPixelRatio(fullRatio);
       renderer.setSize(window.innerWidth, window.innerHeight);
       fitExplodedCamera();
       wake(false);
