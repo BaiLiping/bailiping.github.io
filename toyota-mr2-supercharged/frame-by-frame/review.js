@@ -1,6 +1,8 @@
 // Preserve bookmarks to the previously published overhead frame.
 function resolveOverheadBookmark() {
-  if (location.hash === '#photo-overhead-t-tops-off') location.replace('#photo-overhead-fixed-roof');
+  if (['#photo-overhead-t-tops-off', '#photo-overhead-fixed-roof'].includes(location.hash)) {
+    location.replace('#photo-overhead-supercharged');
+  }
 }
 resolveOverheadBookmark();
 window.addEventListener('hashchange', resolveOverheadBookmark);

@@ -6,9 +6,9 @@ export const powertrainPhotoViews = {
     panels: { engineLid: 0.95433 },
   },
   "Engine bay and raised vented lid": {
-    theta: -3.08923, phi: 0.60454, roll: 0.00069,
-    distance: 71.6951, fov: 37.0368, center: [-58.721, 47.9751, -2.5103],
-    panels: { engineLid: 0.93673 },
+    theta: 2.2330314, phi: 1.1584642, roll: -0.1781647,
+    distance: 147.715269, fov: 19.224273, center: [-65.179288, 50.888889, 11.52199],
+    panels: { engineLid: 1 },
   },
   "Intercooler and clamped charge hoses": {
     theta: -2.35619, phi: 0.80285, roll: -0.18694,

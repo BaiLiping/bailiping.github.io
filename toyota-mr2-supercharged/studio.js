@@ -27,12 +27,7 @@ function showAngle() {
   error.hidden = true;
   photo.hidden = false;
   photo.alt = option.dataset.alt || option.label + ' on the reference 1988 Toyota MR2 Supercharged';
-  document.getElementById('photo-credit').textContent = option.dataset.credit || 'JWeston listing photograph via Bring a Trailer';
-  const listing = document.getElementById('photo-listing');
-  listing.hidden = Boolean(option.dataset.credit);
-  const fallback = error.querySelector('a');
-  fallback.href = option.dataset.credit ? option.dataset.original : listing.querySelector('a').href;
-  fallback.textContent = option.dataset.credit ? 'Open the supplied image' : 'View the Bring a Trailer listing';
+  document.getElementById('photo-credit').textContent = option.dataset.credit || 'JWeston listing via Bring a Trailer';
   const fullPhoto = document.getElementById('full-photo');
   fullPhoto.href = option.dataset.original || option.value;
   fullPhoto.hidden = false;
@@ -71,7 +66,7 @@ async function loadAngles() {
     return;
   }
   try {
-    sourcePromise ??= fetch('./mr2-views.json?v=0b4d32aa8d').then(response => {
+    sourcePromise ??= fetch('./mr2-views.json?v=e2f0f19573').then(response => {
       if (!response.ok) throw new Error('Camera list unavailable');
       return response.json();
     });
@@ -82,7 +77,7 @@ async function loadAngles() {
       group.label = groupName;
       for (const view of sources.filter(item => item.group === groupName)) {
         const option = new Option(view.label, view.preview || view.image);
-        option.dataset.original = view.image;
+        option.dataset.original = view.original || view.image;
         if (view.credit) option.dataset.credit = view.credit;
         if (view.alt) option.dataset.alt = view.alt;
         option.dataset.photoView = view.photoView;

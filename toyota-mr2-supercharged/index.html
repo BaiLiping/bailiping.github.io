@@ -6,13 +6,15 @@
   <link rel="modulepreload" href="./vendor/three-r170.js?v=31c84364">
   <script>
     function resolveOverheadBookmark() {
-      if (location.hash === '#photo-overhead-t-tops-off') history.replaceState(null, '', '#photo-overhead-fixed-roof');
+      if (['#photo-overhead-t-tops-off', '#photo-overhead-fixed-roof'].includes(location.hash)) {
+        history.replaceState(null, '', '#photo-overhead-supercharged');
+      }
     }
     resolveOverheadBookmark();
     window.addEventListener('hashchange', resolveOverheadBookmark);
     if (location.hash === '#mr2-views') document.documentElement.classList.add('show-photos');
     const overrideModel = new URLSearchParams(location.search).get('model');
-    const modelFile = overrideModel || './toyota_mr2_aw11_sc.glb?v=bd65369561';
+    const modelFile = overrideModel || './toyota_mr2_aw11_sc.glb?v=fd4efb4bda';
     const preload = document.createElement('link');
     preload.rel = 'preload';
     preload.as = 'fetch';
@@ -24,7 +26,7 @@
   <link rel="icon" href="/favicon.ico" />
   <title>1988 Toyota MR2 Supercharged (AW11) — Super Red</title>
   <link rel="stylesheet" href="./studio.css?v=24f829ea3e">
-  <script type="module" src="./studio.js?v=a1c4f17f62"></script>
+  <script type="module" src="./studio.js?v=ed351a8b4a"></script>
 </head>
 <body>
   <noscript><p style="position:fixed;inset:0;z-index:30;background:#eceeef;padding:2em">The interactive 1988 Toyota MR2 Supercharged viewer requires JavaScript. <a href="https://bringatrailer.com/listing/1988-toyota-mr2-supercharged-31/">View the reference listing</a>.</p></noscript>
@@ -48,7 +50,7 @@
         <button id="next-view" type="button" aria-label="Next view">›</button>
         <button id="match-view" type="button" disabled>Match in 3D</button>
       </div>
-      <p><span id="photo-credit">JWeston listing photograph via Bring a Trailer</span><span id="photo-listing"> · <a href="https://bringatrailer.com/listing/1988-toyota-mr2-supercharged-31/">View listing</a></span> · <a id="full-photo" href="#" target="_blank" rel="noopener" hidden>Full-size photo</a></p>
+      <p><span id="photo-credit">JWeston listing via Bring a Trailer</span><span id="photo-listing"> · <a href="https://bringatrailer.com/listing/1988-toyota-mr2-supercharged-31/">View listing</a></span> · <a id="full-photo" href="#" target="_blank" rel="noopener" hidden>Full-size photo</a></p>
     </div>
   </section>
   <div id="photo-tools-3d">
@@ -93,9 +95,9 @@
             <p>I cabin · E explode · X x-ray · R reset · S steer · W spin · Space rev · M sound · H hide controls</p>
           </details>
           <details class="notes"><summary>Model references</summary><div class="sources">
-            <p>Photo-based 1988 AW11 Supercharged reconstruction in Toyota Super Red (3E5) over black leather. The supplied overhead image guides the fixed roof and vented engine lid. The listing photographs document the Super Red five-speed and its TRD exhaust header. The gearbox layout follows Toyota’s E51 repair drawings. Concealed dimensions, cable runs and gear tooth profiles are approximate.</p>
-            <a href="https://bringatrailer.com/listing/1988-toyota-mr2-supercharged-31/">38k-mile 1988 MR2 Supercharged (Super Red) · Bring a Trailer</a><br>
-            <a href="#photo-overhead-fixed-roof">Overhead view</a> · <a href="#rear">Rear three-quarter view</a> · <a href="#mr2-views">Compare with reference photos</a><br>
+            <p>Photo-based 1988 AW11 Supercharged reconstruction in Toyota Super Red (3E5) over black leather. The engine lid follows the overhead, rear-quarter and open-lid photographs of the Super Red five-speed. The model has a fixed roof. The photographed car has removable T-bar panels and a TRD exhaust header. The gearbox layout follows Toyota’s E51 repair drawings. Concealed dimensions, cable runs and gear tooth profiles are approximate.</p>
+            <a href="https://bringatrailer.com/listing/1988-toyota-mr2-supercharged-31/">38k-mile 1988 MR2 Supercharged (Super Red) · Bring a Trailer</a> · <a href="https://xr793.com/wp-content/uploads/2024/12/1988-Toyota-MR2.pdf#page=6">1988 Toyota brochure, equipment specifications</a><br>
+            <a href="#photo-supercharged-engine-lid">Supercharged engine lid</a> · <a href="#photo-overhead-supercharged">Overhead view</a> · <a href="#rear">Rear three-quarter view</a> · <a href="#mr2-views">Compare with reference photos</a><br>
             <a href="https://commons.wikimedia.org/wiki/Category:Toyota_MR2_(W10)">Toyota MR2 (AW11) photography · Wikimedia Commons</a><br>
             <a href="https://svkworks.com/resources/1988%20Toyota%20MR2%20AW11.pdf#page=454">Toyota repair manual · E51 transmission drawings</a><br>
             <a href="https://svkworks.com/resources/1988%20Toyota%20MR2%20AW11.pdf#page=516">Toyota repair manual · Shift lever and control cables</a><br>
@@ -114,9 +116,9 @@
     import { applyStudioVisibility } from './studio-visibility.js?v=616fb3a0';
     import { createPlanarMirror } from './mirror-reflection.js?v=cd0eff4a';
     import { interiorPhotoViews } from './interior-photo-views.js?v=fb8c2032a3';
-    import { powertrainPhotoViews } from './powertrain-photo-views.js?v=c72ceb883a';
+    import { powertrainPhotoViews } from './powertrain-photo-views.js?v=b9530df784';
     const [photoSources, exteriorCameras, frontCameras] = await Promise.all(
-      ['./mr2-views.json?v=0b4d32aa8d', './exterior-photo-cameras.json?v=e165214058', './front-photo-cameras.json?v=3e384a9813']
+      ['./mr2-views.json?v=e2f0f19573', './exterior-photo-cameras.json?v=2d9980838a', './front-photo-cameras.json?v=3e384a9813']
         .map(url => fetch(url).then(response => response.json()))
     );
     const fittedCameras = { ...exteriorCameras, ...frontCameras, ...interiorPhotoViews, ...powertrainPhotoViews };
@@ -212,7 +214,7 @@
       `reflectVec = inverseTransformDirection( reflectVec, viewMatrix );
        vec3 surface = cameraPosition - (vec4(vViewPosition, 0.0) * viewMatrix).xyz;
        // Project the world ray into the articulated engine lid. Dimensions
-       // follow the punched panel and the left-hand intercooler openings.
+       // follow the raised louver pads and the through-duct on the driver side.
        vec3 lidNormal = normalize(engineLidWorld[1].xyz);
        vec3 lidOrigin = engineLidWorld[3].xyz;
        float angle = dot(reflectVec, lidNormal);
@@ -223,13 +225,12 @@
        float feather = max(.65, distanceToLid * max(.04, roughness));
        float lidCoverage = step(.15, distanceToLid) * step(.001, angle)
                          * smoothstep(-feather, feather, min(edge.x, edge.y)) * opacity;
-       float skinHeight = mix(30.7, 23.7, smoothstep(303., 326., abs(point.z * 18.0)));
-       vec2 vent = point.xz * 18.0 + (toLid * reflectVec).xz * skinHeight / max(angle, .01);
+       vec2 vent = point.xz * 18.0 + (toLid * reflectVec).xz * 73.7 / max(angle, .01);
        float side = -vent.y;
-       float bank = min(abs(side - 253.0), abs(side - 407.0));
-       float pitch = 182.0 / 9.0;
-       float slot = abs(fract((vent.x + 274.0) / pitch + .5) - .5) * pitch;
-       float opening = min(min(vent.x + 460.5, -269.5 - vent.x), min(56.5 - bank, 4.5 - slot));
+       float pitch = 284.0 / 14.0;
+       float slot = abs(fract((vent.x + 130.0) / pitch + .5) - .5) * pitch;
+       float opening = min(min(vent.x + 421.0, -123.0 - vent.x), min(164.0 - abs(side - 302.0), 6.0 - slot));
+       opening = min(opening, abs(side - 293.0) - 5.0);
        lidCoverage *= 1.0 - .35 * smoothstep(-1.5, 1.5, opening);
        // A ray from the painted luggage lid can see the underside of the
        // raised rear wing in place of the studio ceiling.
@@ -401,7 +402,7 @@
         [/Frunk_StrutBrace/, 'Front strut tower brace', 'factory AW11 chassis cross-brace'],
         [/Frunk_Coolant/, 'Brake master cylinder reservoir', 'front luggage bay fluid service'],
         [/Frunk/, 'Front luggage compartment', 'molded tub, walls and perimeter seal'],
-        [/EngineLid/, 'Vented engine lid', 'four banks of punched slots · click or press L'],
+        [/EngineLid/, 'Supercharged engine lid', 'twin raised louvers · left intercooler duct · click or press L'],
         [/EngineBay_Weatherseal/, 'Engine bay weatherseal', 'perimeter rubber gasket around 4A-GZE bay'],
         [/Trunk_HarnessRelay/, 'Rear compartment connector assembly', 'blue relay housing, plugs and wiring loom'],
         [/Trunk_Hinge|Trunk_LidHingeArm/, 'Rear trunk hinge', 'plated bracket and articulated hinge arm'],
