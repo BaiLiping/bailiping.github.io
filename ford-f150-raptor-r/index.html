@@ -1,0 +1,2642 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="modulepreload" href="./vendor/three-r170.js">
+  <script>
+    const initParams = new URLSearchParams(location.search);
+    if (initParams.get('capture') === '1') {
+      document.documentElement.classList.add('hide-hud');
+      if (initParams.get('outline') === '1') {
+        document.documentElement.style.background = 'transparent';
+      }
+    } else if (location.hash === '#raptor-views') {
+      document.documentElement.classList.add('show-photos');
+    }
+    const overrideModel = initParams.get('model');
+    const modelFile = overrideModel || './ford_f150_raptor_r.glb';
+    const preload = document.createElement('link');
+    preload.rel = 'preload';
+    preload.as = 'fetch';
+    preload.crossOrigin = 'anonymous';
+    preload.href = modelFile;
+    document.head.append(preload);
+  </script>
+  <link rel="icon" href="/favicon.ico" />
+  <title>2024 Ford F-150 Raptor R — Shelter Green</title>
+  <link rel="stylesheet" href="./studio.css">
+  <script type="module" src="./studio.js"></script>
+</head>
+<body>
+  <noscript><p style="position:fixed;inset:0;z-index:30;background:#eceeef;padding:2em">The interactive 2024 Ford F-150 Raptor R viewer requires JavaScript. <a href="https://bringatrailer.com/listing/2024-ford-f-150-raptor-r-18/">View the reference listing</a>.</p></noscript>
+  <header id="studio-header">
+    <div class="identity"><h1>F-150 Raptor R</h1><span class="finish"><i aria-hidden="true"></i><span>Shelter Green</span></span></div>
+    <nav class="mode-switch" aria-label="Views">
+      <a href="#model" aria-current="true">3D model</a>
+      <a href="#raptor-views">Raptor R views</a>
+      <a id="compare-frames" href="./frame-by-frame/">Compare photos</a>
+    </nav>
+  </header>
+  <section id="photo-room" aria-label="2024 Ford F-150 Raptor R reference photographs" hidden>
+    <figure>
+      <img id="photo" width="2048" height="1365" alt="">
+      <p id="photo-error" role="status" hidden>This view is unavailable. <a class="config-link" href="https://bringatrailer.com/listing/2024-ford-f-150-raptor-r-18/">View the Bring a Trailer listing</a></p>
+    </figure>
+    <div id="photo-footer">
+      <div class="photo-tools">
+        <button id="previous-view" type="button" aria-label="Previous view">‹</button>
+        <select id="photo-angle" aria-label="Camera angle"></select>
+        <button id="next-view" type="button" aria-label="Next view">›</button>
+        <button id="match-view" type="button" disabled>Match in 3D</button>
+      </div>
+      <p>2024 Ford F-150 Raptor R (Shelter Green) · 710HP listing photos via Bring a Trailer (Lot #181,611) · <a href="https://bringatrailer.com/listing/2024-ford-f-150-raptor-r-18/">View listing</a> · <a id="full-photo" href="#" target="_blank" rel="noopener" hidden>Full-size photo</a></p>
+    </div>
+  </section>
+  <div id="photo-tools-3d">
+    <a href="#raptor-views" id="detail-photo" hidden>Reference photo</a>
+    <button id="overlay-toggle" type="button" aria-pressed="false" hidden>Overlay photo</button>
+    <input id="overlay-opacity" type="range" min="0" max="100" value="50" aria-label="Reference photo opacity" hidden>
+    <span id="overlay-error" role="status" hidden>Photo unavailable</span>
+  </div>
+  <img id="reference-overlay" alt="" hidden>
+  <canvas id="stage" aria-label="Interactive 3D model of a 2024 Ford F-150 Raptor R"></canvas>
+  <div id="callout"><span class="title"></span><span class="sub"></span></div>
+  <div id="loader">
+    <span id="load-status" role="status">Preparing interactive model…</span>
+  </div>
+  <div id="bar" inert>
+    <p id="drag-hint"><span class="mouse">Drag the background to orbit · Scroll to zoom</span><span class="touch">Drag to orbit · Pinch to zoom</span><span class="cabin-hint mouse">Drag to look around · Scroll to zoom</span><span class="cabin-hint touch">Drag to look around · Pinch to zoom</span></p>
+    <div id="tools" role="group" aria-label="Model controls">
+      <button type="button" id="exploded-view" aria-pressed="false">Exploded view</button>
+      <button type="button" data-command="i" aria-pressed="false">Cabin view</button>
+      <details id="more"><summary>Controls</summary>
+        <section class="controls-panel" aria-label="Additional model controls">
+          <h2>Body panels</h2>
+          <div class="panel-buttons">
+            <button type="button" data-panel="doorFL" aria-pressed="false" aria-keyshortcuts="1" disabled>Front left door</button>
+            <button type="button" data-panel="doorFR" aria-pressed="false" aria-keyshortcuts="2" disabled>Front right door</button>
+            <button type="button" data-panel="doorRL" aria-pressed="false" aria-keyshortcuts="3" disabled>Rear left door</button>
+            <button type="button" data-panel="doorRR" aria-pressed="false" aria-keyshortcuts="4" disabled>Rear right door</button>
+            <button type="button" data-panel="hood" aria-pressed="false" aria-keyshortcuts="F" disabled>Power Dome hood</button>
+            <button type="button" data-panel="tailgate" aria-pressed="false" aria-keyshortcuts="T" disabled>Power tailgate</button>
+            <button type="button" data-panel="fuel" aria-pressed="false" aria-keyshortcuts="G" disabled>Fuel door</button>
+          </div>
+          <h2>Inspection views</h2>
+          <div class="view-links">
+            <a href="#exterior">Exterior</a>
+            <a href="#rear">Rear 3/4</a>
+            <a href="#engine">Power Dome &amp; V8 engine bay</a>
+            <a href="#cabin">Cabin cockpit</a>
+            <a href="#seats">Recaro seats</a>
+            <a href="#console">Center stack</a>
+            <a href="#underbody">Underbody &amp; FOX shocks</a>
+            <a href="#assembly">Replay assembly</a>
+          </div>
+          <div class="controls-meta">
+            <p id="info">2024 Ford F-150 Raptor R · Shelter Green</p>
+            <p class="shortcuts">
+              Click any door, hood, tailgate or fuel door to toggle. Drag an assembly to detach (<kbd>Alt</kbd>+drag moves a single part); double-click for X-ray.<br>
+              <kbd>D</kbd> all doors · <kbd>1</kbd>–<kbd>4</kbd> doors · <kbd>F</kbd> hood · <kbd>T</kbd> tailgate · <kbd>G</kbd> fuel · <kbd>I</kbd> cabin · <kbd>E</kbd> explode · <kbd>X</kbd> x-ray · <kbd>S</kbd> steer · <kbd>W</kbd> spin · <kbd>Space</kbd> rev 5.2L V8 · <kbd>M</kbd> sound · <kbd>H</kbd> HUD · <kbd>R</kbd> reset
+            </p>
+            <details class="refs"><summary>Credits &amp; references</summary><div>
+              <p>Photo-matched 2024 Ford F-150 Raptor R (803A, Shelter Green over black Recaro leather &amp; Alcantara, 37" BFGoodrich KO2 package, Exterior Graphics, Dual-Panel Moonroof, 5.2L supercharged Predator V8 — 720 hp / 640 lb-ft). Modeled at true 1:1 real-world meter scale (5.91 m length, 3.693 m wheelbase, 2.20 m widebody track, 2.05 m height).</p>
+              <a href="https://bringatrailer.com/listing/2024-ford-f-150-raptor-r-18/">2024 Ford F-150 Raptor R (Shelter Green) · 710HP via Bring a Trailer (Lot #181,611)</a><br>
+              <a href="#raptor-views">Browse all 22 reference photographs</a> · <a href="./frame-by-frame/">Frame-by-frame verification</a>
+            </div></details>
+          </div>
+        </section>
+      </details>
+      <button type="button" data-command="r">Reset</button>
+    </div>
+  </div>
+  <script type="module">
+    import * as THREE from './vendor/three-r170.js';
+    import { createStudioFloor } from './studio-floor.js';
+    import { applyStudioVisibility } from './studio-visibility.js';
+    import { createPlanarMirror } from './mirror-reflection.js';
+
+    const urlParams = new URLSearchParams(location.search);
+    const captureMode = urlParams.get('capture') === '1';
+    let outlineMode = urlParams.get('outline') === '1';
+    if (captureMode) {
+      document.documentElement.classList.add('hide-hud');
+      if (outlineMode) {
+        document.documentElement.style.background = 'transparent';
+        document.body.style.background = 'transparent';
+      }
+    }
+
+    const [photoSources, exteriorCameras] = await Promise.all(
+      ['./raptor-views.json', './exterior-photo-cameras.json']
+        .map(url => fetch(url).then(response => response.json()))
+    );
+    const orbitRadius = pose => pose.distance * Math.tan(pose.fov * Math.PI / 360) / Math.tan(Math.PI / 12);
+    const { GLTFLoader, DRACOLoader } = THREE;
+
+    // -----------------------------------------------------------------------
+    // 1. Model Path (real-world SI meters: 1 unit = 1.0 m)
+    // -----------------------------------------------------------------------
+    const MODEL_URL = modelFile;
+
+    // -----------------------------------------------------------------------
+    // 2. Renderer, Luminous Gallery Scene & Atmospheric Horizon Fog (Meters)
+    // -----------------------------------------------------------------------
+    const canvas = document.getElementById('stage');
+    const infoEl = document.getElementById('info');
+    const barEl = document.getElementById('bar');
+    const calloutEl = document.getElementById('callout');
+    const calloutTitle = calloutEl.querySelector('.title');
+    const calloutSub = calloutEl.querySelector('.sub');
+    const loaderEl = document.getElementById('loader');
+    const loadStatus = document.getElementById('load-status');
+
+    let renderer;
+    try {
+      renderer = new THREE.WebGLRenderer({
+        canvas,
+        antialias: true,
+        alpha: outlineMode || captureMode,
+        preserveDrawingBuffer: captureMode,
+        powerPreference: 'high-performance',
+      });
+    } catch (error) {
+      document.getElementById('match-view').disabled = true;
+      loadStatus.textContent = 'This viewer requires WebGL 2. Enable graphics acceleration or try another browser.';
+      const viewsLink = document.createElement('a');
+      viewsLink.href = '#raptor-views';
+      viewsLink.textContent = 'Browse Raptor R reference views';
+      loadStatus.append(' ', viewsLink);
+      throw error;
+    }
+
+    function targetPixelRatio() {
+      if (captureMode) return 1;
+      const pixelBudget = 4500000 / Math.max(1, window.innerWidth * window.innerHeight);
+      return Math.min(Math.max(1.5, window.devicePixelRatio || 1), 2.25, Math.sqrt(pixelBudget));
+    }
+    let fullRatio = targetPixelRatio();
+    renderer.setPixelRatio(fullRatio);
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.shadowMap.enabled = true;
+    renderer.shadowMap.autoUpdate = false;
+    renderer.shadowMap.needsUpdate = true;
+    renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+    renderer.toneMapping = THREE.ACESFilmicToneMapping;
+    renderer.toneMappingExposure = 0.96;
+
+    const scene = new THREE.Scene();
+    const BG_HEX = 0xf1f2f3;
+    const studioFogDensity = 0.0045;
+    scene.background = new THREE.Color(BG_HEX);
+    scene.fog = new THREE.FogExp2(BG_HEX, studioFogDensity);
+
+    // Luminous horizontal side light banks read cleanly across Shelter Green metallic panels.
+    const pmrem = new THREE.PMREMGenerator(renderer);
+    const panorama = document.createElement('canvas');
+    panorama.width = 256;
+    panorama.height = 128;
+    const context = panorama.getContext('2d');
+    const pixels = context.createImageData(panorama.width, panorama.height);
+    const radiance = pixels.data;
+    for (let y = 0; y < panorama.height; y++) {
+      const elevation = (0.5 - (y + 0.5) / panorama.height) * Math.PI;
+      const band = THREE.MathUtils.smoothstep(elevation, 0.14, 0.42)
+        * (1 - THREE.MathUtils.smoothstep(elevation, 0.60, 1.12));
+      const floor = 0.72 * THREE.MathUtils.smoothstep(-elevation, 0.20, 0.65);
+      for (let x = 0; x < panorama.width; x++) {
+        const azimuth = ((x + 0.5) / panorama.width - 0.5) * Math.PI * 2;
+        const sides = 0.5 - 0.5 * Math.cos(2 * (azimuth + 0.18));
+        const bank = 0.45 + 3.6 * sides + 0.90 * Math.max(0, Math.cos(azimuth - 0.48));
+        const luminance = 0.16 + floor + bank * band;
+        const offset = 4 * (y * panorama.width + x);
+        radiance[offset] = radiance[offset + 1] = radiance[offset + 2] = Math.min(255, Math.round(255 * luminance / 4));
+        radiance[offset + 3] = 255;
+      }
+    }
+    context.putImageData(pixels, 0, 0);
+    const studio = new THREE.CanvasTexture(panorama);
+    scene.environment = pmrem.fromEquirectangular(studio).texture;
+    studio.dispose();
+    pmrem.dispose();
+    scene.environmentIntensity = 1.60;
+
+    // Camera in real-world meters (near 0.05 m, far 160 m)
+    const camera = new THREE.PerspectiveCamera(30, window.innerWidth / window.innerHeight, 0.05, 160);
+
+    const studioFill = new THREE.HemisphereLight(0xf6f8fb, 0xb8b5b2, 0.98);
+    const keyLight = new THREE.DirectionalLight(0xfffefa, 0.55);
+    keyLight.position.set(6.0, 11.0, -3.0);
+    keyLight.castShadow = true;
+    keyLight.shadow.mapSize.set(2048, 2048);
+    keyLight.shadow.camera.near = 1.0;
+    keyLight.shadow.camera.far = 32.0;
+    const sc = 5.0;
+    keyLight.shadow.camera.left = -sc;
+    keyLight.shadow.camera.right = sc;
+    keyLight.shadow.camera.top = sc;
+    keyLight.shadow.camera.bottom = -sc;
+    keyLight.shadow.bias = -0.0004;
+    keyLight.shadow.intensity = 0.42;
+    keyLight.shadow.radius = 3.2;
+    const rimLight = new THREE.DirectionalLight(0xe0e7f3, 0.34);
+    rimLight.position.set(-4.0, 8.0, 8.0);
+    const detailFill = new THREE.DirectionalLight(0xf4f1ed, 0);
+    detailFill.position.set(2.4, -3.2, 2.8);
+    scene.add(studioFill, keyLight, rimLight, detailFill);
+
+    // -----------------------------------------------------------------------
+    // 3. Studio Floor & Meter-Scale Contact Occlusion Shadows
+    // -----------------------------------------------------------------------
+    const groundShadows = createStudioFloor(scene, renderer, BG_HEX);
+    const showroomFloor = groundShadows.floor;
+
+    // -----------------------------------------------------------------------
+    // 4. Transparent Cyan Mesh-Outline Renderer (?capture=1&outline=1)
+    //    0.0-pixel aligned Sobel depth + octahedral normal + part-ID pass.
+    // -----------------------------------------------------------------------
+    let outlinePipeline = null;
+    function ensureOutlinePipeline() {
+      const w = Math.max(1, Math.round(window.innerWidth * renderer.getPixelRatio()));
+      const h = Math.max(1, Math.round(window.innerHeight * renderer.getPixelRatio()));
+      if (outlinePipeline) {
+        if (outlinePipeline.width !== w || outlinePipeline.height !== h) {
+          outlinePipeline.width = w;
+          outlinePipeline.height = h;
+          outlinePipeline.geomTarget.setSize(w, h);
+          outlinePipeline.idTarget.setSize(w, h);
+          outlinePipeline.edgeMat.uniforms.uResolution.value.set(w, h);
+        }
+        return outlinePipeline;
+      }
+
+      const geomTarget = new THREE.WebGLRenderTarget(w, h, {
+        depthBuffer: true,
+        stencilBuffer: false,
+        generateMipmaps: false,
+      });
+      const idTarget = new THREE.WebGLRenderTarget(w, h, {
+        depthBuffer: true,
+        stencilBuffer: false,
+        generateMipmaps: false,
+      });
+
+      const normalDepthMat = new THREE.ShaderMaterial({
+        side: THREE.DoubleSide,
+        toneMapped: false,
+        uniforms: {
+          uNear: { value: 0.05 },
+          uFar: { value: 160.0 },
+        },
+        vertexShader: `
+          varying vec3 vNormalView;
+          varying float vLinDepth;
+          void main() {
+            vec4 mv = modelViewMatrix * vec4(position, 1.0);
+            vNormalView = normalize(normalMatrix * normal);
+            vLinDepth = max(-mv.z, 0.001);
+            gl_Position = projectionMatrix * mv;
+          }
+        `,
+        fragmentShader: `
+          uniform float uNear;
+          uniform float uFar;
+          varying vec3 vNormalView;
+          varying float vLinDepth;
+          vec2 encodeOct(vec3 n) {
+            n /= (abs(n.x) + abs(n.y) + abs(n.z) + 1e-6);
+            if (n.z < 0.0) {
+              vec2 s = vec2(n.x >= 0.0 ? 1.0 : -1.0, n.y >= 0.0 ? 1.0 : -1.0);
+              n.xy = (1.0 - abs(n.yx)) * s;
+            }
+            return n.xy * 0.5 + 0.5;
+          }
+          void main() {
+            vec3 n = normalize(vNormalView);
+            if (!gl_FrontFacing) n = -n;
+            vec2 oct = encodeOct(n);
+            float logD = clamp(log2(max(vLinDepth, uNear) / uNear) / log2(uFar / uNear), 0.0, 1.0);
+            gl_FragColor = vec4(oct, logD, 1.0);
+          }
+        `,
+      });
+
+      const edgeMat = new THREE.ShaderMaterial({
+        transparent: true,
+        depthTest: false,
+        depthWrite: false,
+        toneMapped: false,
+        uniforms: {
+          tGeom: { value: geomTarget.texture },
+          tId: { value: idTarget.texture },
+          uResolution: { value: new THREE.Vector2(w, h) },
+        },
+        vertexShader: `
+          void main() {
+            gl_Position = vec4(position.xy, 0.0, 1.0);
+          }
+        `,
+        fragmentShader: `
+          uniform sampler2D tGeom;
+          uniform sampler2D tId;
+          uniform vec2 uResolution;
+
+          vec3 decodeOct(vec2 e) {
+            vec2 f = e * 2.0 - 1.0;
+            vec3 n = vec3(f.x, f.y, 1.0 - abs(f.x) - abs(f.y));
+            if (n.z < 0.0) {
+              vec2 s = vec2(n.x >= 0.0 ? 1.0 : -1.0, n.y >= 0.0 ? 1.0 : -1.0);
+              n.xy = (1.0 - abs(n.yx)) * s;
+            }
+            return normalize(n);
+          }
+
+          vec4 sampleGeom(vec2 offset) {
+            vec2 uv = clamp((gl_FragCoord.xy + offset) / uResolution, vec2(0.5) / uResolution, vec2(1.0) - vec2(0.5) / uResolution);
+            return texture2D(tGeom, uv);
+          }
+          vec4 sampleId(vec2 offset) {
+            vec2 uv = clamp((gl_FragCoord.xy + offset) / uResolution, vec2(0.5) / uResolution, vec2(1.0) - vec2(0.5) / uResolution);
+            return texture2D(tId, uv);
+          }
+
+          void main() {
+            vec4 gC = sampleGeom(vec2(0.0, 0.0));
+            vec4 gL = sampleGeom(vec2(-1.0, 0.0));
+            vec4 gR = sampleGeom(vec2( 1.0, 0.0));
+            vec4 gU = sampleGeom(vec2( 0.0, 1.0));
+            vec4 gD = sampleGeom(vec2( 0.0,-1.0));
+            vec4 gUL = sampleGeom(vec2(-1.0, 1.0));
+            vec4 gUR = sampleGeom(vec2( 1.0, 1.0));
+            vec4 gDL = sampleGeom(vec2(-1.0,-1.0));
+            vec4 gDR = sampleGeom(vec2( 1.0,-1.0));
+
+            // 1. Silhouette edge (object vs empty background)
+            float aC = step(0.5, gC.a);
+            float aMin = min(min(min(gL.a, gR.a), min(gU.a, gD.a)), min(min(gUL.a, gUR.a), min(gDL.a, gDR.a)));
+            float aMax = max(max(max(gL.a, gR.a), max(gU.a, gD.a)), max(max(gUL.a, gUR.a), max(gDL.a, gDR.a)));
+            float sil = (aC > 0.5 && aMin < 0.5) ? 1.0 : 0.0;
+            float outerSil = (aC < 0.5 && aMax > 0.5) ? 0.55 : 0.0;
+
+            float edge = max(sil, outerSil);
+
+            if (aC > 0.5) {
+              vec3 nC = decodeOct(gC.rg);
+              float ndotv = max(abs(nC.z), 0.22);
+
+              // 2. Depth discontinuity (attenuated at grazing angles to avoid flat-surface banding)
+              float gx = (gUR.b + 2.0 * gR.b + gDR.b) - (gUL.b + 2.0 * gL.b + gDL.b);
+              float gy = (gUL.b + 2.0 * gU.b + gUR.b) - (gDL.b + 2.0 * gD.b + gDR.b);
+              float dGrad = length(vec2(gx, gy)) * ndotv;
+              float depthEdge = smoothstep(0.012, 0.032, dGrad);
+
+              // 3. Normal hard-edge creases (~30+ deg dihedral angle)
+              float nDiff = 0.0;
+              if (gL.a > 0.5) nDiff = max(nDiff, 1.0 - dot(nC, decodeOct(gL.rg)));
+              if (gR.a > 0.5) nDiff = max(nDiff, 1.0 - dot(nC, decodeOct(gR.rg)));
+              if (gU.a > 0.5) nDiff = max(nDiff, 1.0 - dot(nC, decodeOct(gU.rg)));
+              if (gD.a > 0.5) nDiff = max(nDiff, 1.0 - dot(nC, decodeOct(gD.rg)));
+              float normalEdge = smoothstep(0.14, 0.34, nDiff);
+
+              // 4. Panel/part seam boundaries via unique mesh ID colors
+              vec4 idC = sampleId(vec2(0.0, 0.0));
+              vec4 idL = sampleId(vec2(-1.0, 0.0));
+              vec4 idR = sampleId(vec2( 1.0, 0.0));
+              vec4 idU = sampleId(vec2( 0.0, 1.0));
+              vec4 idD = sampleId(vec2( 0.0,-1.0));
+              float idDiff = 0.0;
+              if (gL.a > 0.5) idDiff = max(idDiff, length(idC.rgb - idL.rgb));
+              if (gR.a > 0.5) idDiff = max(idDiff, length(idC.rgb - idR.rgb));
+              if (gU.a > 0.5) idDiff = max(idDiff, length(idC.rgb - idU.rgb));
+              if (gD.a > 0.5) idDiff = max(idDiff, length(idC.rgb - idD.rgb));
+              float seamEdge = step(0.015, idDiff) * 0.78;
+
+              edge = max(edge, max(depthEdge * 0.95, max(normalEdge * 0.88, seamEdge)));
+            }
+
+            if (edge < 0.04) discard;
+            gl_FragColor = vec4(0.0, 0.898, 1.0, clamp(edge, 0.0, 1.0));
+          }
+        `,
+      });
+
+      const quadScene = new THREE.Scene();
+      const quadCam = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1);
+      const quad = new THREE.Mesh(new THREE.PlaneGeometry(2, 2), edgeMat);
+      quadScene.add(quad);
+
+      outlinePipeline = { width: w, height: h, geomTarget, idTarget, normalDepthMat, edgeMat, quadScene, quadCam };
+      return outlinePipeline;
+    }
+
+    function renderOutlinePass() {
+      const pipe = ensureOutlinePipeline();
+      pipe.normalDepthMat.uniforms.uNear.value = Math.max(0.01, camera.near);
+      pipe.normalDepthMat.uniforms.uFar.value = Math.max(10.0, camera.far);
+
+      const savedBg = scene.background;
+      const savedFog = scene.fog;
+      const savedOverride = scene.overrideMaterial;
+      const savedFloorVis = showroomFloor.visible;
+      const savedTarget = renderer.getRenderTarget();
+      const savedClearColor = new THREE.Color();
+      renderer.getClearColor(savedClearColor);
+      const savedClearAlpha = renderer.getClearAlpha();
+      const savedShadowUpdate = renderer.shadowMap.needsUpdate;
+
+      // Temporarily hide flat decal overlay quads & clear headlamp covers so real 3D geometry outlines cleanly
+      const hiddenForOutline = [];
+      const savedMats = [];
+      for (const mesh of allPickableMeshes) {
+        if (!mesh.visible) continue;
+        const mname = mesh.userData.baseMat?.name || mesh.material?.name || '';
+        if (/^Mat_(Graphic_|Headlight_Clear_Lens)/.test(mname)) {
+          mesh.visible = false;
+          hiddenForOutline.push(mesh);
+        }
+      }
+
+      try {
+        showroomFloor.visible = false;
+        scene.background = null;
+        scene.fog = null;
+        renderer.shadowMap.needsUpdate = false;
+
+        // Pass 1A: view-space octahedral normals + log depth
+        scene.overrideMaterial = pipe.normalDepthMat;
+        renderer.setClearColor(0x000000, 0);
+        renderer.setRenderTarget(pipe.geomTarget);
+        renderer.clear(true, true, false);
+        renderer.render(scene, camera);
+
+        // Pass 1B: unique per-mesh IDs for crisp coplanar panel seams
+        scene.overrideMaterial = null;
+        for (const mesh of allPickableMeshes) {
+          if (!mesh.visible) continue;
+          savedMats.push([mesh, mesh.material]);
+          mesh.material = mesh.userData.outlineIdMat;
+        }
+        renderer.setRenderTarget(pipe.idTarget);
+        renderer.clear(true, true, false);
+        renderer.render(scene, camera);
+
+        for (const [mesh, mat] of savedMats) mesh.material = mat;
+
+        // Pass 2: Sobel + normal + seam cyan edge composite on transparent background
+        renderer.setRenderTarget(null);
+        renderer.setClearColor(0x000000, 0);
+        renderer.clear(true, true, false);
+        renderer.render(pipe.quadScene, pipe.quadCam);
+      } finally {
+        for (const mesh of hiddenForOutline) mesh.visible = true;
+        scene.background = savedBg;
+        scene.fog = savedFog;
+        scene.overrideMaterial = savedOverride;
+        showroomFloor.visible = savedFloorVis;
+        renderer.shadowMap.needsUpdate = savedShadowUpdate;
+        renderer.setRenderTarget(savedTarget);
+        renderer.setClearColor(savedClearColor, savedClearAlpha);
+      }
+    }
+
+    function renderActiveScene() {
+      if (outlineMode) renderOutlinePass();
+      else renderer.render(scene, camera);
+    }
+
+    // -----------------------------------------------------------------------
+    // 5. Procedural 5.2L Supercharged Predator V8 + Eaton TVS R2650 Audio Synth
+    //    Deep cross-plane 90-deg V8 burble/roar + 4-lobe supercharger whine.
+    // -----------------------------------------------------------------------
+    let audioCtx = null;
+    let soundMuted = true;
+    let engOsc1 = null, engOsc2 = null, engOsc3 = null, engOsc4 = null, engFilter = null, engGain = null;
+    let scOsc1 = null, scOsc2 = null, scFilter = null, scGain = null;
+
+    function initAudio() {
+      if (audioCtx) return;
+      audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+
+      engGain = audioCtx.createGain();
+      engGain.gain.value = 0.0;
+      engFilter = audioCtx.createBiquadFilter();
+      engFilter.type = 'lowpass';
+      engFilter.frequency.value = 540;
+      engFilter.Q.value = 2.2;
+
+      // Cross-plane 5.2L Predator V8 harmonic stack:
+      // 2nd-order uneven-bank V8 lope + 4th-order firing fundamental + 6th & 8th exhaust bark
+      engOsc1 = audioCtx.createOscillator(); engOsc1.type = 'sawtooth'; // 2nd-order V8 burble
+      engOsc2 = audioCtx.createOscillator(); engOsc2.type = 'sawtooth'; // 4th-order V8 fundamental
+      engOsc3 = audioCtx.createOscillator(); engOsc3.type = 'triangle'; // 6th-order midrange
+      engOsc4 = audioCtx.createOscillator(); engOsc4.type = 'sawtooth'; // 8th-order Baja bark
+      engOsc1.frequency.value = 24;
+      engOsc2.frequency.value = 48;
+      engOsc3.frequency.value = 72;
+      engOsc4.frequency.value = 96;
+
+      const g1 = audioCtx.createGain(); g1.gain.value = 0.72;
+      const g2 = audioCtx.createGain(); g2.gain.value = 0.85;
+      const g3 = audioCtx.createGain(); g3.gain.value = 0.42;
+      const g4 = audioCtx.createGain(); g4.gain.value = 0.30;
+      engOsc1.connect(g1); g1.connect(engFilter);
+      engOsc2.connect(g2); g2.connect(engFilter);
+      engOsc3.connect(g3); g3.connect(engFilter);
+      engOsc4.connect(g4); g4.connect(engFilter);
+      engFilter.connect(engGain);
+      engGain.connect(audioCtx.destination);
+
+      // Eaton TVS R2650 2.65L supercharger high-pitched whine
+      scGain = audioCtx.createGain();
+      scGain.gain.value = 0.0;
+      scFilter = audioCtx.createBiquadFilter();
+      scFilter.type = 'bandpass';
+      scFilter.frequency.value = 1200;
+      scFilter.Q.value = 5.4;
+
+      scOsc1 = audioCtx.createOscillator(); scOsc1.type = 'sawtooth';
+      scOsc2 = audioCtx.createOscillator(); scOsc2.type = 'sine';
+      scOsc1.frequency.value = 440;
+      scOsc2.frequency.value = 880;
+
+      const scG2 = audioCtx.createGain(); scG2.gain.value = 0.55;
+      scOsc1.connect(scFilter);
+      scOsc2.connect(scG2); scG2.connect(scFilter);
+      scFilter.connect(scGain);
+      scGain.connect(audioCtx.destination);
+
+      engOsc1.start(); engOsc2.start(); engOsc3.start(); engOsc4.start();
+      scOsc1.start(); scOsc2.start();
+    }
+
+    function playClickSound(pitch = 620, dur = 0.045) {
+      if (soundMuted) return;
+      initAudio();
+      if (audioCtx.state === 'suspended') audioCtx.resume();
+      const osc = audioCtx.createOscillator();
+      const g = audioCtx.createGain();
+      osc.type = 'triangle';
+      osc.frequency.setValueAtTime(pitch, audioCtx.currentTime);
+      osc.frequency.exponentialRampToValueAtTime(pitch * 0.45, audioCtx.currentTime + dur);
+      g.gain.setValueAtTime(0.055, audioCtx.currentTime);
+      g.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + dur);
+      osc.connect(g); g.connect(audioCtx.destination);
+      osc.start();
+      osc.stop(audioCtx.currentTime + dur);
+    }
+
+    // -----------------------------------------------------------------------
+    // 6. Part Metadata Catalog (2024 Ford F-150 Raptor R · Shelter Green)
+    // -----------------------------------------------------------------------
+    function getPivotAncestorName(obj) {
+      let cur = obj;
+      while (cur) {
+        if (cur.name && cur.name.startsWith('Pivot_')) return cur.name;
+        cur = cur.parent;
+      }
+      return '';
+    }
+
+    function describePart(meshOrName) {
+      const isObj = typeof meshOrName === 'object' && meshOrName !== null;
+      const n = (isObj ? meshOrName.name : meshOrName) || 'Component';
+      const matName = isObj ? (meshOrName.userData?.baseMat?.name || meshOrName.material?.name || '') : '';
+      const pivName = isObj ? getPivotAncestorName(meshOrName) : '';
+
+      const checks = [
+        // Hood & Power Dome
+        [/Hood_Extractor|Hood_Vent|Heat_Extractor|PowerDome_Vent/i, 'Power Dome heat extractor vent', 'Matte-black 6-slot extractor · vents 5.2L V8 heat'],
+        [/Hood_Graphic|Hood_Stripe|PowerDome_Decal/i, 'Raptor R Power Dome hood graphic', 'Charcoal center stripe with twin Code Orange pinstripes'],
+        [/Hood|PowerDome/i, 'Raised Power Dome aluminum hood', 'Shelter Green · 1" taller for TVS R2650 · click or press F'],
+
+        // Front grille, lighting & bumper
+        [/Grille_Letter|FORD_Letter|Grille_FORD/i, 'F-O-R-D block grille lettering', 'Matte-black sculpted Raptor R heritage block letters'],
+        [/Clearance|Amber_Marker|Grille_Light|Marker_Light/i, 'Raptor amber clearance & marker lamps', '3 grille LEDs + outer widebody fender markers (86.6" width)'],
+        [/Grille_R_Badge|R_Badge|Badge_R/i, 'Code Orange Raptor R badge', 'Signature 2024 Raptor R V8 edition emblem'],
+        [/Grille/i, 'Deep matte-black honeycomb grille', 'High-airflow Raptor R front cooling aperture'],
+        [/Headlight_DRL|DRL|C_Clamp|Amber_DRL/i, '2024 amber C-clamp LED DRL', 'Wrap-around signature Raptor R daytime running light'],
+        [/Headlight_Projector|Projector|Headlight_Lens|Headlight/i, '2024 stacked dual-projector LED headlamp', 'Dynamic bending LED beam with amber C-clamp DRL'],
+        [/Fog|Rigid/i, 'Rigid Industries LED fog lamps', 'Recessed off-road bumper pocket auxiliary lighting'],
+        [/TowHook|Tow_Hook|Recovery/i, 'Code Orange front tow hooks', 'Frame-mounted forged steel recovery loops'],
+        [/Skid|BashPlate|Bash_Plate/i, 'Heavy-duty brushed silver skid plate', 'High-strength steel front & underbody armor · 33.1° approach'],
+        [/Front_Bumper|Bumper_Front|Bumper_F/i, '2024 modular heavy-duty steel front bumper', 'Removable endcaps · high-clearance off-road approach'],
+
+        // Doors, cab, glass & mirrors
+        [/DoorCard|Door_Card|Door_Trim|Armrest|Door_Speaker/i, 'Raptor R interior door trim', 'Black leather, Alcantara, carbon inlay & B&O Unleashed grille'],
+        [/Door_Handle/i, 'Color-matched exterior door handle', 'Shelter Green keyless SuperCrew latch'],
+        [/Door_FL|Front_Left_Door/i, 'SuperCrew front left door', 'Aluminum-alloy body · click or press 1 to open'],
+        [/Door_FR|Front_Right_Door/i, 'SuperCrew front right door', 'Aluminum-alloy body · click or press 2 to open'],
+        [/Door_RL|Rear_Left_Door/i, 'SuperCrew rear left door', 'Full-size 4-door SuperCrew · click or press 3 to open'],
+        [/Door_RR|Rear_Right_Door/i, 'SuperCrew rear right door', 'Full-size 4-door SuperCrew · click or press 4 to open'],
+        [/Mirror_Cabin|Rearview/i, 'Auto-dimming rearview mirror', 'Live planar reflection in Cabin view (I)'],
+        [/Mirror/i, 'Power-folding Shelter Green side mirror', '96.0" overall width incl. mirrors · puddle & spot LEDs'],
+        [/Moonroof|Sunroof/i, 'Twin-panel panoramic moonroof', 'Smoked power glass over both SuperCrew rows'],
+        [/Windshield/i, 'Acoustic laminated front windshield', 'Raked F-150 SoundScreen safety glass'],
+        [/Wiper/i, 'Front windshield wipers', 'Twin heavy-duty all-weather blades'],
+        [/Glass|Window/i, 'SuperCrew cabin glazing', 'Front clear acoustic / rear factory privacy tint'],
+        [/RunningBoard|Running_Board|SideStep|Side_Step/i, 'Cast-aluminum Raptor running boards', 'Textured matte-black heavy-duty side steps'],
+        [/Fender_Vent|Fender_Extractor|Side_Vent/i, 'Functional widebody fender extractor', 'Satin-black front fender vent with Code Orange accent'],
+        [/Flare|Arch/i, 'Widebody satin-black fender flare', '86.6" overall body width framing 37" KO2 tires'],
+        [/Graphic_Bedside|Bedside_Graphic|Graphic_Fender|Fender_Graphic/i, '2024 Raptor R exterior graphics', 'Matte charcoal fade stripes with Code Orange striped R'],
+        [/Fuel_Door|Fuel_Flap|Fuel_Cap/i, '36-gallon fuel filler door', 'Driver-side bedside · click or press G to open'],
+
+        // Bed, tailgate & rear
+        [/Tailgate_Applique|Applique|Tailgate_FORD/i, 'Tailgate F-O-R-D black applique', 'Sculpted satin-black panel with Code Orange Raptor R badge'],
+        [/Tailgate/i, 'Power drop tailgate', '5.5-ft cargo box access · click or press T to lower'],
+        [/Bedliner|Bed_Floor|Bed_Wall|Cargo_Bed|Bed_Box/i, '5.5-ft spray-in ribbed cargo bed', '67.1" length · 50.6" between wheelhouses · 21.4" depth'],
+        [/Taillight|Tail_Light/i, '2024 Raptor R LED taillight', 'Refreshed signature red/clear rear lamp housing'],
+        [/CHMSL|Third_Brake|HighMount/i, 'High-mount center brake & cargo lamp', 'Cab-roof LED CHMSL with bed illumination'],
+        [/LicensePlate|License_Plate|Plate/i, 'Minnesota ZEK 734 blackout plate', 'Reference vehicle plate (BaT Lot #181,611)'],
+        [/Rear_Bumper|Bumper_Rear|Bumper_R|Hitch/i, 'Heavy-duty steel rear bumper & hitch', 'Integrated dual exhaust cutouts, tow hooks & Class IV receiver'],
+
+        // Wheels, 37" tires & brakes
+        [/Spare/i, 'Full-size 37" underbody spare tire', 'Under-bed mounted BFGoodrich KO2 spare'],
+        [/Tire|Tread|Sidewall|KO2/i, '37×12.50R17 BFGoodrich All-Terrain T/A KO2', '36.5" OD · standard Raptor R 37" off-road tire'],
+        [/Beadlock|Wheel|Rim|Hub|Lug/i, '17" forged beadlock-capable wheel', '6-split-spoke dark gray forged aluminum with machined ring'],
+        [/Rotor|Disc/i, 'Ventilated heavy-duty brake rotor', '13.8" four-wheel hydraulic disc braking'],
+        [/Caliper/i, 'Dual-piston floating brake caliper', 'Heavy-duty off-road braking assembly'],
+
+        // Suspension, chassis & exhaust
+        [/FOX|Shock|Damper|Reservoir|LiveValve|Coil/i, 'FOX 3.1" Dual Live Valve shock & coil', 'Electronically controlled internal bypass · 14" F / 15" R travel'],
+        [/Rear5Link|ControlArm|Control_Arm|UpperArm|LowerArm|Trailing|Panhard|Axle|Diff|FrontArms|FrontDrive/i, 'Long-travel off-road suspension & axle', '5-link coil-sprung rear with Panhard rod · e-locking diff'],
+        [/MidSkid|Skid|BashPlate|Bash_Plate/i, 'Heavy-duty brushed silver skid plate', 'High-strength steel front & underbody armor · 33.1° approach'],
+        [/Frame|Chassis|Crossmember|Rail|TransferCase|Driveshaft/i, 'Fully boxed high-strength steel frame', '145.4" wheelbase · 13.1" ground clearance · 10-speed & 4A'],
+        [/Exhaust_Tip|Tailpipe_Tip/i, 'Dual satin-black active exhaust tips', '4-mode active valve (Quiet / Normal / Sport / Baja)'],
+        [/Exhaust|Muffler|Header|Pipe|Catalytic/i, 'Dual active-valve stainless exhaust', 'Trombone-loop equal-length 5.2L V8 exhaust system'],
+
+        // 5.2L Supercharged Predator V8
+        [/Supercharger|Blower|TVS|R2650/i, 'Eaton TVS R2650 2.65L supercharger', '720 hp @ 6,650 rpm · 640 lb-ft · Code Orange Raptor plaque'],
+        [/Intake|Airbox|Air_Filter|Plenum/i, 'High-flow Raptor R cold-air intake', 'Wide-mouth conical filter ducting for 5.2L Predator V8'],
+        [/ValveCover|Valve_Cover|CamCover/i, '5.2L Predator DOHC 32-valve covers', 'Cast aluminum cylinder heads · forged internals'],
+        [/Coolant|Reservoir|Radiator|Battery|Intercooler|Hose|BayStructure/i, 'Predator V8 cooling & electrical bay', 'Oversized radiator, intercooler circuit & AGM battery'],
+        [/Engine|Predator|Block|V8/i, '5.2L supercharged Predator V8 engine', '720 hp · 640 lb-ft · 10-speed SelectShift automatic'],
+
+        // Interior cabin
+        [/OverheadAux|Upfitter/i, 'Overhead 6-switch auxiliary upfitter panel', 'Factory pre-wired off-road lighting & accessory switches'],
+        [/GrabHandle/i, 'A-pillar & cab assist grab handles', 'Heavy-duty sculpted entry handles'],
+        [/SunVisor/i, 'Pivoting cabin sun visors', 'Dark charcoal headliner-matched visors'],
+        [/Seatbelt/i, 'Three-point seatbelts with pretensioners', 'SuperCrew 5-passenger safety restraint system'],
+        [/Seat|Recaro|Headrest|Bench/i, 'Recaro leather & Alcantara sport seats', 'Sculpted bolsters, Code Orange stitching & RAPTOR R backrest'],
+        [/SteeringWheel|Steering_Wheel|Paddle/i, 'Flat-bottom Raptor R steering wheel', 'Code Orange 12-o\'clock mark, magnesium paddles & R button'],
+        [/Cluster|Gauge|Instrument/i, '12" digital instrument cluster', 'Configurable Raptor R Baja telemetry, boost & FOX readout'],
+        [/SYNC4|Sync4|Screen|Touchscreen|Infotainment/i, '12" SYNC 4 landscape touchscreen', 'Off-road pitch/roll display, 360° camera & B&O Unleashed'],
+        [/DashCarbon|Carbon/i, '2×2 twill carbon-fiber interior trim', 'Genuine carbon weave dash, console & door inlays'],
+        [/ClimateControl/i, 'Dual-zone HVAC, Pro Trailer & 4WD dials', 'Physical climate knobs, Terrain Management & e-locker switch'],
+        [/Shifter|Console|Armrest|Cupholder/i, 'Center console & stowable shifter', 'Carbon-fiber trim, V8 embossed armrest & drive mode dial'],
+        [/Dash|HVAC|Vent|Glovebox/i, 'Raptor R instrument panel & carbon trim', '2×2 twill carbon-fiber accents & dual-zone climate controls'],
+        [/Pedal/i, 'Alloy-trimmed accelerator & brake pedals', 'Adjustable driver footbox with all-weather Raptor mat'],
+        [/Headliner|Carpet|Floor|Pillars|Firewall|RearBulkhead/i, 'SuperCrew dark charcoal cabin trim', 'Black headliner, all-weather floor mats & 14-speaker B&O'],
+        [/WheelCap/i, 'FORD center wheel cap & 6×135 lugs', 'Forged beadlock wheel hub hardware'],
+        [/Body|Cab|Bed|Fender|Roof|Quarter/i, '2024 Ford F-150 Raptor R widebody shell', 'Military-grade aluminum alloy · Shelter Green metallic'],
+      ];
+
+      for (const [re, title, spec] of checks) {
+        if (re.test(n)) return { title, spec };
+      }
+
+      // Smart fallback by material name or ancestor pivot
+      if (matName === 'Mat_FOX_LiveValve_Blue' || matName === 'Mat_FOX_Coil_Spring') {
+        return { title: 'FOX 3.1" Dual Live Valve suspension', spec: 'Electronically controlled damping · 14" front / 15" rear travel' };
+      }
+      if (matName === 'Mat_Code_Orange_Accent') {
+        return { title: 'Ford Code Orange R accent', spec: 'Signature Raptor R V8 visual detail' };
+      }
+      if (matName === 'Mat_Skid_Plate_Silver') {
+        return { title: 'Heavy-duty brushed silver skid plate', spec: 'High-strength steel underbody armor' };
+      }
+      if (matName === 'Mat_Interior_Carbon_Fiber') {
+        return { title: '2×2 twill carbon-fiber trim', spec: 'Genuine carbon weave · standard on Raptor R' };
+      }
+      if (matName === 'Mat_Screen_SYNC4') {
+        return { title: '12" SYNC 4 touchscreen', spec: 'Off-road telemetry, navigation & B&O Unleashed' };
+      }
+      if (matName === 'Mat_Screen_Digital_Cluster') {
+        return { title: '12" digital instrument cluster', spec: 'Raptor R tachometer, boost & Baja mode display' };
+      }
+      if (matName === 'Mat_Cabin_Rearview') {
+        return { title: 'Auto-dimming rearview mirror', spec: 'Live planar reflection in Cabin view (I)' };
+      }
+      if (pivName === 'Pivot_Hood') return { title: 'Power Dome aluminum hood', spec: 'Shelter Green · click or press F to open' };
+      if (pivName === 'Pivot_Tailgate') return { title: 'Power drop tailgate', spec: '5.5-ft bed access · click or press T to lower' };
+      if (pivName === 'Pivot_Fuel_Door') return { title: 'Fuel filler door', spec: 'Driver bedside · click or press G to open' };
+      if (pivName.startsWith('Pivot_Door_')) return { title: 'SuperCrew aluminum door', spec: 'Shelter Green · click to open or close' };
+      if (pivName === 'Pivot_Engine_Predator') return { title: '5.2L supercharged Predator V8', spec: '720 hp · 640 lb-ft · Eaton TVS R2650' };
+      if (pivName === 'Pivot_Exhaust_System') return { title: 'Active-valve dual exhaust', spec: 'Stainless steel with satin-black rear tips' };
+      if (pivName === 'Pivot_Chassis_Frame') return { title: 'Boxed steel frame & FOX chassis', spec: '145.4" wheelbase · 13.1" ground clearance' };
+      if (pivName.startsWith('Pivot_Corner_') || pivName.startsWith('Pivot_WheelSpin_')) {
+        return { title: '37" KO2 & 17" beadlock wheel assembly', spec: 'BFGoodrich All-Terrain T/A KO2 on forged aluminum rim' };
+      }
+      if (pivName === 'Pivot_Interior_Cabin') return { title: 'SuperCrew Raptor R cabin', spec: 'Black leather/Alcantara Recaro interior with carbon trim' };
+
+      return { title: n.replace(/^RaptorR?_?/i, '').replace(/_/g, ' '), spec: '2024 Ford F-150 Raptor R component' };
+    }
+
+    // -----------------------------------------------------------------------
+    // 7. State & Articulated Mechanical Rig Controllers (Meters)
+    // -----------------------------------------------------------------------
+    function parsePanelState(panelState, explicitPanels) {
+      if (explicitPanels && Object.keys(explicitPanels).length) return { ...explicitPanels };
+      switch (panelState) {
+        case 'hood-open': return { hood: 1 };
+        case 'tailgate-open': return { tailgate: 1 };
+        case 'door-fl-open': return { doorFL: 1 };
+        case 'door-fr-open': return { doorFR: 1 };
+        case 'door-rl-open': return { doorRL: 1 };
+        case 'door-rr-open': return { doorRR: 1 };
+        case 'fuel-open': return { fuel: 1 };
+        default: return undefined;
+      }
+    }
+
+    const heroCam = exteriorCameras['front-three-quarter-left'] || exteriorCameras['Front three-quarter (left)'] || {
+      theta: -0.68, phi: 1.49, distance: 8.65, fov: 27.5, center: [0.10, 0.96, 0.0], roll: 0,
+    };
+    const rearCam = exteriorCameras['rear-three-quarter-right'] || exteriorCameras['Rear three-quarter'] || {
+      theta: 2.38, phi: 1.49, distance: 8.45, fov: 27.5, center: [-0.28, 0.98, 0.0], roll: 0,
+    };
+    const exteriorView = { ...heroCam, radius: orbitRadius(heroCam) };
+    const rearView = { ...rearCam, radius: orbitRadius(rearCam) };
+
+    // Driver eye at (0.02, 1.62, -0.48) looking forward toward (1.05, 1.44, -0.34)
+    const FOCUS_INTERIOR = new THREE.Vector3(1.05, 1.44, -0.34);
+    const cabinView = { theta: -3.0065, phi: 1.39932, radius: 1.05494 };
+    const cabinRadius = cabinView.radius;
+
+    const state = {
+      theta: exteriorView.theta,
+      phi: exteriorView.phi,
+      radius: exteriorView.radius,
+      targetTheta: exteriorView.theta,
+      targetPhi: exteriorView.phi,
+      targetRadius: exteriorView.radius,
+      targetCenter: new THREE.Vector3(...exteriorView.center),
+
+      // Mechanical parameters (0..1, spring-damped)
+      explodeTarget: 0.0,
+      explode: 0.0,
+      doorFLTarget: 0.0,
+      doorFL: 0.0,
+      doorFRTarget: 0.0,
+      doorFR: 0.0,
+      doorRLTarget: 0.0,
+      doorRL: 0.0,
+      doorRRTarget: 0.0,
+      doorRR: 0.0,
+      hoodTarget: 0.0,
+      hood: 0.0,
+      tailgateTarget: 0.0,
+      tailgate: 0.0,
+      fuelTarget: 0.0,
+      fuel: 0.0,
+
+      interiorView: false,
+      cabinBlend: 0,
+      rearLens: 0,
+      frontLens: 1,
+      cabinYaw: 0,
+      cabinPitch: 0,
+      xrayTarget: 0.0,
+      xray: 0.0,
+      steerMode: false,
+      spinMode: false,
+      wheelSpinAngle: 0.0,
+      steerPhase: 0.0,
+      revving: false,
+      rpm: 720,
+      hudHidden: captureMode,
+      loaded: false,
+    };
+    window.__raptorState = state;
+    window.__raptorCamera = camera;
+
+    const pivots = {};
+    let selectedView = null;
+    let customCapturePose = null;
+    const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)');
+    const carHidden = () => !captureMode && document.documentElement.classList.contains('show-photos');
+    const detailPhoto = document.getElementById('detail-photo');
+    const isDetailView = name => Boolean(referenceViews.get(name)?.label);
+    let lastIsolation;
+    let lastVisibilityPose = null;
+
+    const overlay = document.getElementById('reference-overlay');
+    const overlayToggle = document.getElementById('overlay-toggle');
+    const overlayOpacity = document.getElementById('overlay-opacity');
+    const overlayError = document.getElementById('overlay-error');
+    function closeOverlay() {
+      overlay.hidden = overlayOpacity.hidden = overlayError.hidden = true;
+      overlayToggle.setAttribute('aria-pressed', 'false');
+    }
+    overlayToggle.addEventListener('click', () => {
+      if (!overlay.hidden) return closeOverlay();
+      const pose = referenceViews.get(selectedView);
+      if (!pose?.photo) return;
+      matchRaptorView(selectedView);
+      overlay.dataset.fallbackUsed = '';
+      overlay.src = pose.preview || pose.image;
+      overlay.style.opacity = overlayOpacity.value / 100;
+      overlay.hidden = overlayOpacity.hidden = false;
+      overlayError.hidden = true;
+      overlayToggle.setAttribute('aria-pressed', 'true');
+    });
+    overlayOpacity.addEventListener('input', () => { overlay.style.opacity = overlayOpacity.value / 100; });
+    overlay.addEventListener('error', () => {
+      const pose = referenceViews.get(selectedView);
+      if (pose?.image && !overlay.dataset.fallbackUsed && overlay.src !== pose.image) {
+        overlay.dataset.fallbackUsed = '1';
+        overlay.src = pose.image;
+        return;
+      }
+      closeOverlay();
+      overlayError.hidden = false;
+    });
+    canvas.addEventListener('pointerdown', closeOverlay);
+    canvas.addEventListener('wheel', closeOverlay, { passive: true });
+    window.addEventListener('studio-mode-change', closeOverlay);
+
+    const explosionButton = document.getElementById('exploded-view');
+    const assemblyView = { theta: -0.68, phi: 1.44, fov: 25.0, compactInset: 0, center: new THREE.Vector3(0, 1.15, 0), points: [] };
+    const introHoldMs = 700;
+    const introAssemblyMs = 2600;
+    let intro = null;
+
+    function stopIntro() {
+      if (!intro) return;
+      intro = null;
+      state.explodeTarget = state.explode;
+      updateHudText();
+    }
+
+    function frameAssembly() {
+      selectedView = 'assembly';
+      customCapturePose = null;
+      state.interiorView = false;
+      state.theta = state.targetTheta = assemblyView.theta;
+      state.phi = state.targetPhi = assemblyView.phi;
+      state.radius = state.targetRadius = exteriorView.radius;
+      state.targetCenter.copy(assemblyView.center);
+      state.frontLens = 1;
+      state.rearLens = state.cabinBlend = 0;
+    }
+
+    // Articulated 2024 Raptor R panels (Three.js Y-up: +X forward, +Y up, -Z driver-left, +Z passenger-right).
+    const panels = {
+      doorFL:   { nodes: ['Pivot_Door_FL'],   axis: 'y', angle: -62 * Math.PI / 180 },
+      doorFR:   { nodes: ['Pivot_Door_FR'],   axis: 'y', angle:  62 * Math.PI / 180 },
+      doorRL:   { nodes: ['Pivot_Door_RL'],   axis: 'y', angle: -62 * Math.PI / 180 },
+      doorRR:   { nodes: ['Pivot_Door_RR'],   axis: 'y', angle:  62 * Math.PI / 180 },
+      hood:     { nodes: ['Pivot_Hood'],      axis: 'z', angle:  48 * Math.PI / 180 },
+      tailgate: { nodes: ['Pivot_Tailgate'],  axis: 'z', angle:  88 * Math.PI / 180 },
+      fuel:     { nodes: ['Pivot_Fuel_Door'], axis: 'y', angle: -80 * Math.PI / 180 },
+    };
+    const panelByNode = {};
+    for (const [key, panel] of Object.entries(panels)) {
+      for (const node of panel.nodes) panelByNode[node] = key;
+    }
+    const panelAvailable = key => panels[key].nodes.some(node => pivots[node]);
+    const panelButtons = [...document.querySelectorAll('[data-panel]')];
+
+    function facePanel(key) {
+      const views = {
+        doorFL:   [-1.08, 1.42, 7.2],
+        doorFR:   [ 1.08, 1.42, 7.2],
+        doorRL:   [-1.85, 1.42, 7.2],
+        doorRR:   [ 1.85, 1.42, 7.2],
+        hood:     [-0.52, 1.16, 6.2],
+        tailgate: [ 2.68, 1.24, 6.4],
+        fuel:     [-1.74, 1.38, 2.8],
+      };
+      const [theta, phi, radius] = views[key];
+      const turn = theta - state.theta;
+      state.targetTheta = state.theta + Math.atan2(Math.sin(turn), Math.cos(turn));
+      selectedView = key;
+      customCapturePose = null;
+      state.targetPhi = phi;
+      state.targetRadius = radius;
+      state.interiorView = false;
+    }
+
+    function togglePanel(key, focus = false) {
+      if (!panelAvailable(key)) return;
+      closeOverlay();
+      stopIntro();
+      customCapturePose = null;
+      const target = key + 'Target';
+      state[target] = 1 - state[target];
+      if (focus && state[target]) {
+        state.explodeTarget = 0;
+        facePanel(key);
+      }
+      playClickSound(state[target] ? 560 : 360, 0.06);
+      updateHudText();
+      wake(true);
+    }
+
+    for (const button of panelButtons) {
+      button.addEventListener('click', () => togglePanel(button.dataset.panel, true));
+    }
+    for (const button of document.querySelectorAll('[data-command]')) {
+      button.addEventListener('click', () => runCommand(button.dataset.command));
+    }
+    explosionButton.addEventListener('click', () => {
+      const assemble = explosionButton.getAttribute('aria-pressed') === 'true';
+      stopIntro();
+      if (assemble) {
+        runCommand('r', selectedView === 'assembly');
+      } else {
+        if (selectedView !== 'assembly') frameAssembly();
+        state.explodeTarget = 1;
+      }
+      updateHudText();
+      wake(true);
+    });
+
+    const restPos = new Map();
+    const restRot = new Map();
+    const explodedParts = new Map();
+    const pullOffsets = new Map();
+    const exteriorBodySet = new Set();
+    const exteriorXrayMaterials = [];
+    const headerMaterials = [];
+    const allPickableMeshes = [];
+    const cabinEnclosure = { value: new THREE.Vector2() };
+    const trimEnclosure = { value: new THREE.Vector2(1, 0) };
+    const engineEnclosure = { value: new THREE.Vector2() };
+    const hits = [];
+    let rearMirror = null, cabinMirror = null;
+    let mirrorDirty = true;
+
+    let needsRender = true;
+    let needsShadow = true;
+    let prevXrayRendered = -1.0, prevGlazingBlend = -1.0;
+    let prevHeatRendered = -1.0;
+    let lastHoverRaycastMs = 0;
+
+    let framePending = false;
+    function scheduleFrame() {
+      if (framePending || document.hidden) return;
+      framePending = true;
+      requestAnimationFrame(animate);
+    }
+
+    function wake(withShadow = false) {
+      if (withShadow) mirrorDirty = true;
+      scheduleFrame();
+      needsRender = true;
+      if (withShadow) needsShadow = true;
+    }
+
+    function getPullState(obj) {
+      if (!pullOffsets.has(obj)) {
+        pullOffsets.set(obj, {
+          cur: new THREE.Vector3(),
+          tgt: new THREE.Vector3(),
+          basePos: explodedParts.get(obj)?.home || obj.position.clone(),
+          parked: false,
+        });
+      }
+      return pullOffsets.get(obj);
+    }
+
+    // -----------------------------------------------------------------------
+    // 8. Load the Articulated Draco GLB Model
+    // -----------------------------------------------------------------------
+    const dracoLoader = new DRACOLoader();
+    dracoLoader.setDecoderPath('./vendor/');
+    dracoLoader.setWorkerLimit(Math.min(4, navigator.hardwareConcurrency || 2));
+    dracoLoader.preload();
+    const loader = new GLTFLoader();
+    loader.setDRACOLoader(dracoLoader);
+    let rootCar = null;
+
+    function isExteriorMesh(obj, pivName) {
+      const mname = obj.material?.name || '';
+      if (pivName === 'Pivot_Interior_Cabin' || pivName === 'Pivot_Engine_Predator' || pivName === 'Pivot_Chassis_Frame' || pivName === 'Pivot_Exhaust_System') return false;
+      if (/^Mat_Interior_|^Mat_Screen_|^Mat_Cabin_Rearview/.test(mname)) return false;
+      if (/^RaptorR_(Int_|Mirror_Cabin|Eng_|Chassis_|Susp_|FOX_|Exhaust_|Brake|Tire|Rim|WheelCap|Spare)/i.test(obj.name)) return false;
+      if (/DoorCard|Door_Card|Door_Trim|Armrest|Speaker|Seat|Dash|Cluster|SYNC4|Console|Steering|Pedal|Headliner|Carpet|Rearview/i.test(obj.name)) return false;
+      return /^(Pivot_Body_Assembly|Pivot_Hood|Pivot_Door_|Pivot_Tailgate|Pivot_Fuel_Door)/.test(pivName)
+        || /Body|Cab|Bed|Fender|Flare|Hood|Door|Tailgate|Grille|Bumper|Headlight|Taillight|Mirror|Windshield|Glass|Moonroof|RunningBoard|Wiper|Fuel_Door|Graphic/i.test(obj.name);
+    }
+
+    const loadModel = () => loader.load(
+      MODEL_URL,
+      (gltf) => {
+        rootCar = gltf.scene;
+        scene.add(rootCar);
+
+        const sharedMaterials = new Map();
+        const headerMatSet = new Set();
+        let meshIndex = 0;
+
+        rootCar.traverse((obj) => {
+          if (obj.name.startsWith('Pivot_') || obj.name === 'RaptorR_Interactive_Rig') {
+            pivots[obj.name] = obj;
+            restPos.set(obj, obj.position.clone());
+            restRot.set(obj, obj.rotation.clone());
+          }
+          if (obj.isMesh) {
+            meshIndex += 1;
+            const pivName = getPivotAncestorName(obj);
+            const rawMatName = obj.material?.name || '';
+            if (rawMatName === 'Mat_Cabin_Rearview' || /Rearview/i.test(obj.name)) rearMirror = obj;
+
+            const isExterior = isExteriorMesh(obj, pivName);
+            const isDecal = /^Mat_Graphic_/.test(rawMatName);
+            const isGlass = /^Mat_(Automotive_Glass|Privacy_Glass|Moonroof_Smoked_Glass|Headlight_Clear_Lens)$/.test(rawMatName)
+              || (/Glass|Windshield|Moonroof|Headlight_Lens/i.test(obj.name) && !/Mirror/i.test(obj.name));
+            const isHeadlightLens = rawMatName === 'Mat_Headlight_Clear_Lens';
+            const isHeader = rawMatName === 'Mat_Exhaust_Stainless' || /Exh|Exhaust|Header|Pipe/i.test(obj.name);
+            const isCaster = !isGlass && !isDecal;
+
+            obj.castShadow = isCaster;
+            if (isCaster) groundShadows.addCaster(obj);
+            obj.receiveShadow = !isGlass;
+            if (isHeadlightLens) obj.renderOrder = 2;
+            if (isDecal) obj.renderOrder = 1;
+            allPickableMeshes.push(obj);
+            if (isExterior) exteriorBodySet.add(obj);
+
+            // Deterministic unique RGB ID for crisp panel seams in ?capture=1&outline=1
+            const h1 = ((meshIndex * 73) % 239) + 16;
+            const h2 = ((meshIndex * 151) % 239) + 16;
+            const h3 = ((meshIndex * 211) % 239) + 16;
+            obj.userData.outlineIdMat = new THREE.MeshBasicMaterial({
+              color: (h1 << 16) | (h2 << 8) | h3,
+              side: THREE.DoubleSide,
+              fog: false,
+              toneMapped: false,
+            });
+
+            if (obj.material) {
+              const glassKind = rawMatName === 'Mat_Moonroof_Smoked_Glass' ? 'GM'
+                : rawMatName === 'Mat_Privacy_Glass' ? 'GP'
+                : /Windshield/i.test(obj.name) ? 'GW'
+                : /Door/i.test(pivName) ? 'GD' : '';
+              const enclosure = !obj.geometry.hasAttribute('_studio_visibility') ? ''
+                : /Interior_Cabin|Pivot_Door_/.test(pivName) ? 'cabin'
+                : /Pivot_Engine_Predator/.test(pivName) ? 'engine' : 'exterior';
+              const matKey = `${obj.material.uuid}|${isExterior ? (isGlass ? 'EG' : 'E') : 'I'}|${glassKind}${isHeader ? 'H' : 'S'}|${enclosure}`;
+              let shared = sharedMaterials.get(matKey);
+              if (!shared) {
+                shared = obj.material.clone();
+
+                // Crisp anisotropic filtering on textured cabin, graphic, and plate materials
+                if (/Mat_(Interior|Screen|Graphic|License_Plate|Tire)/.test(shared.name)) {
+                  const filtering = Math.min(8, renderer.capabilities.getMaxAnisotropy());
+                  for (const texture of [shared.map, shared.normalMap, shared.emissiveMap]) {
+                    if (texture) texture.anisotropy = filtering;
+                  }
+                }
+
+                // Enhance metallic speculars under procedural studio PMREM
+                if (/^Mat_(Wheel_Machined|Wheel_Forged|Skid_Plate|FOX_LiveValve|Chrome|Aluminum|Exhaust)/.test(shared.name)) {
+                  shared.envMap = scene.environment;
+                  shared.envMapIntensity = shared.name.startsWith('Mat_Wheel_Machined') ? 2.4 : 1.85;
+                }
+                if (shared.name === 'Mat_Shelter_Green_Paint') {
+                  shared.color.setRGB(0.145, 0.142, 0.042);
+                  shared.metalness = 0.46;
+                  shared.roughness = 0.16;
+                  shared.clearcoat = 1.0;
+                  shared.clearcoatRoughness = 0.032;
+                  shared.envMap = scene.environment;
+                  shared.envMapIntensity = 1.85;
+                }
+                if (shared.name === 'Mat_Amber_LED_DRL') {
+                  shared.color.setRGB(1.0, 0.32, 0.0);
+                  shared.emissive.setRGB(1.0, 0.28, 0.0);
+                  shared.emissiveIntensity = 1.45;
+                }
+                if (shared.name === 'Mat_Taillight_Red_Lens') {
+                  shared.color.setRGB(0.38, 0.004, 0.004);
+                  shared.emissive.setRGB(0.75, 0.008, 0.004);
+                  shared.emissiveIntensity = 0.95;
+                }
+                if (shared.name === 'Mat_Taillight_Clear_Accent') {
+                  shared.color.setRGB(0.42, 0.44, 0.48);
+                  shared.emissive.setRGB(0, 0, 0);
+                  shared.emissiveIntensity = 0;
+                  shared.metalness = 0.28;
+                  shared.roughness = 0.26;
+                }
+                if (shared.name === 'Mat_FORD_Letter_Face') {
+                  shared.color.setRGB(0.115, 0.122, 0.130);
+                  shared.metalness = 0.25;
+                  shared.roughness = 0.34;
+                  shared.envMap = scene.environment;
+                  shared.envMapIntensity = 1.6;
+                }
+                if (isDecal) {
+                  shared.transparent = true;
+                  shared.depthWrite = false;
+                  shared.polygonOffset = true;
+                  shared.polygonOffsetFactor = -1;
+                  shared.polygonOffsetUnits = -1;
+                }
+                if (shared.transmission > 0) {
+                  shared.transmission = 0;
+                  shared.transparent = true;
+                  shared.opacity = 0.28;
+                  shared.depthWrite = false;
+                  shared.forceSinglePass = true;
+                }
+                if (/^Mat_(Automotive_Glass|Privacy_Glass|Moonroof_Smoked_Glass)$/.test(shared.name)) {
+                  const isMoonroof = shared.name === 'Mat_Moonroof_Smoked_Glass';
+                  const isPrivacy = shared.name === 'Mat_Privacy_Glass';
+                  shared.transparent = true;
+                  shared.depthWrite = false;
+                  shared.opacity = isMoonroof ? 0.72 : isPrivacy ? 0.62 : glassKind === 'GD' ? 0.30 : 0.38;
+                  shared.userData.cabinOpacity = isMoonroof ? 0.28 : isPrivacy ? 0.22 : 0.14;
+                  shared.color.setRGB(0.015, 0.026, 0.024);
+                  shared.roughness = 0.06;
+                  shared.clearcoat = 0.72;
+                  shared.clearcoatRoughness = 0.04;
+                  shared.specularIntensity = 0.88;
+                  shared.envMap = scene.environment;
+                  shared.envMapIntensity = 1.05;
+                  shared.customProgramCacheKey = () => 'raptor-window-fresnel';
+                  shared.onBeforeCompile = shader => {
+                    shader.fragmentShader = shader.fragmentShader.replace('#include <opaque_fragment>', `
+                      float facing = saturate(abs(dot(geometryNormal, geometryViewDir)));
+                      float grazing = pow(1.0 - facing, 5.0);
+                      float paneAlpha = mix(diffuseColor.a, 1.0, grazing * smoothstep(0.1, 0.4, diffuseColor.a));
+                      vec3 reflection = totalSpecular + clearcoatSpecularDirect + clearcoatSpecularIndirect;
+                      vec3 transmittedTint = totalDiffuse * diffuseColor.a;
+                      gl_FragColor = vec4((transmittedTint + reflection * smoothstep(0.05, 0.30, diffuseColor.a)) /
+                        max(paneAlpha, 0.05), paneAlpha);
+                    `);
+                  };
+                  shared.forceSinglePass = true;
+                }
+                if (shared.name === 'Mat_Headlight_Clear_Lens') {
+                  shared.transmission = 0;
+                  shared.transparent = true;
+                  shared.depthWrite = false;
+                  shared.side = THREE.FrontSide;
+                  shared.forceSinglePass = true;
+                  shared.color.setRGB(0.03, 0.04, 0.05);
+                  shared.opacity = 0.12;
+                  shared.roughness = 0.025;
+                  shared.metalness = 0.0;
+                  shared.clearcoat = 1.0;
+                  shared.clearcoatRoughness = 0.02;
+                  shared.ior = 1.54;
+                  shared.specularIntensity = 0.92;
+                  shared.customProgramCacheKey = () => 'raptor-headlight-clear-cover-v1';
+                  shared.onBeforeCompile = (shader) => {
+                    shader.fragmentShader = shader.fragmentShader.replace(
+                      '#include <opaque_fragment>',
+                      `float lensNdotV = saturate( dot( geometryNormal, geometryViewDir ) );
+                      float lensFresnel = pow( 1.0 - lensNdotV, 3.2 );
+                      vec3 lensSpec = totalSpecular + clearcoatSpecularDirect + clearcoatSpecularIndirect;
+                      float specLuma = max( max( lensSpec.r, lensSpec.g ), lensSpec.b );
+                      float xrayScale = smoothstep( 0.0, 0.08, diffuseColor.a );
+                      float coverAlpha = clamp( diffuseColor.a + ( 0.26 * lensFresnel + 0.50 * specLuma ) * xrayScale, diffuseColor.a, 0.80 );
+                      vec3 coverColor = ( totalDiffuse * diffuseColor.a + ( lensSpec * 0.76 + vec3( 0.76, 0.82, 0.88 ) * ( 0.14 * lensFresnel ) ) * xrayScale ) / max( coverAlpha, 0.06 );
+                      gl_FragColor = vec4( coverColor, coverAlpha );`
+                    );
+                  };
+                }
+                if (enclosure && shared.isMeshStandardMaterial) {
+                  const weight = enclosure === 'exterior' ? trimEnclosure : enclosure === 'cabin' ? cabinEnclosure : engineEnclosure;
+                  applyStudioVisibility(shared, weight);
+                }
+                shared.userData.origOpacity = shared.opacity ?? 1.0;
+                shared.userData.origTransparent = !!shared.transparent;
+                shared.userData.origDepthWrite = shared.depthWrite !== false;
+                shared.userData.isGlass = isGlass;
+                sharedMaterials.set(matKey, shared);
+                if (isExterior) exteriorXrayMaterials.push(shared);
+              }
+              obj.material = shared;
+              obj.userData.baseMat = shared;
+              if (isHeader && !headerMatSet.has(shared)) {
+                headerMatSet.add(shared);
+                headerMaterials.push(shared);
+              }
+            }
+          }
+        });
+
+        dracoLoader.dispose();
+        for (const button of panelButtons) {
+          button.disabled = !panelAvailable(button.dataset.panel);
+        }
+
+        rootCar.updateMatrixWorld(true);
+        if (pivots.Pivot_Body_Assembly) {
+          measureExplodedView();
+        }
+
+        const hashView = captureMode ? '' : location.hash.slice(1);
+        if (hashView === 'assembly' && !reducedMotion.matches) {
+          startAssembly();
+        } else if (hashView === 'rear') {
+          showRearView(true);
+        } else if (isDetailView(hashView) && !overrideModel) {
+          document.documentElement.dataset.matchView = hashView;
+        } else {
+          // Frame the assembled Raptor R crisply at the Front three-quarter hero angle (zero intro lag).
+          selectedView = null;
+          state.explode = state.explodeTarget = 0;
+          state.theta = state.targetTheta = exteriorView.theta;
+          state.phi = state.targetPhi = exteriorView.phi;
+          state.radius = state.targetRadius = exteriorView.radius;
+          state.targetCenter.copy(FOCUS_EXTERIOR);
+          state.frontLens = 1;
+          state.rearLens = state.cabinBlend = 0;
+        }
+
+        explosionButton.disabled = !pivots.Pivot_Body_Assembly;
+        state.loaded = true;
+        if (document.documentElement.dataset.matchView) {
+          matchRaptorView(document.documentElement.dataset.matchView);
+        }
+        document.documentElement.dataset.modelReady = overrideModel ? 'custom' : 'stock';
+        window.dispatchEvent(new Event('model-ready'));
+
+        updateHudText();
+        wake(true);
+      },
+      (xhr) => {
+        if (xhr.total > 0) {
+          const pct = Math.round((xhr.loaded / xhr.total) * 100);
+          loadStatus.textContent = pct === 100 ? 'Preparing interactive model…' : `Loading interactive model · ${pct}%`;
+        }
+      },
+      (err) => {
+        console.error(err);
+        loadStatus.textContent = 'The 3D model could not be loaded. ';
+        const viewsLink = document.createElement('a');
+        viewsLink.href = '#raptor-views';
+        viewsLink.textContent = 'Browse Raptor R reference views';
+        loadStatus.append(viewsLink);
+      }
+    );
+    loadModel();
+
+    // -----------------------------------------------------------------------
+    // 9. Direct 3D Tactile Interaction (Grab & Pull Parts, X-Ray, Orbit)
+    // -----------------------------------------------------------------------
+    const raycaster = new THREE.Raycaster();
+    const pointer = new THREE.Vector2();
+
+    let hoveredMesh = null;
+    let hoverCloneMat = null;
+    let draggingMode = null; // 'orbit' | 'pull' | 'touchPart'
+    let grabbedTarget = null;
+    let grabbedMesh = null;
+    const dragPlane = new THREE.Plane();
+    const dragHitStart = new THREE.Vector3();
+    const dragObjStartOffset = new THREE.Vector3();
+    const dragCurrHit = new THREE.Vector3();
+    const dragCamDir = new THREE.Vector3();
+    const dragDeltaWorld = new THREE.Vector3();
+    const dragInvQ = new THREE.Quaternion();
+    let prevPointerX = 0, prevPointerY = 0;
+    let pressX = 0, pressY = 0, pressTime = 0;
+    let primaryPointer = null;
+    const touches = new Map();
+    let pinchStart = null;
+    function pinchDistance() {
+      const [a, b] = touches.values();
+      return Math.hypot(a.x - b.x, a.y - b.y);
+    }
+    function clearDrag() {
+      draggingMode = null;
+      grabbedTarget = null;
+      grabbedMesh = null;
+      canvas.classList.remove('grabbing');
+    }
+
+    function getAssemblyPivotForMesh(mesh, singlePartMode) {
+      if (singlePartMode) return mesh;
+      let cur = mesh;
+      while (cur && cur.parent) {
+        if (cur.name && cur.name.startsWith('Pivot_')) return cur;
+        cur = cur.parent;
+      }
+      return mesh;
+    }
+
+    function updatePointer(e) {
+      const rect = canvas.getBoundingClientRect();
+      pointer.x = ((e.clientX - rect.left) / rect.width) * 2 - 1;
+      pointer.y = -((e.clientY - rect.top) / rect.height) * 2 + 1;
+    }
+
+    function pickMesh() {
+      if (!state.loaded) return null;
+      raycaster.setFromCamera(pointer, camera);
+      hits.length = 0;
+      raycaster.intersectObjects(allPickableMeshes, false, hits);
+      for (let i = 0; i < hits.length; i++) {
+        const h = hits[i];
+        if (!h.object.visible) continue;
+        let hiddenAncestor = false;
+        for (let p = h.object.parent; p; p = p.parent) {
+          if (!p.visible) { hiddenAncestor = true; break; }
+        }
+        if (hiddenAncestor) continue;
+        if (state.xray > 0.45 && exteriorBodySet.has(h.object)) continue;
+        return h;
+      }
+      return null;
+    }
+
+    function setHoverMesh(mesh, clientX, clientY) {
+      if (hoveredMesh !== mesh) {
+        if (hoveredMesh && hoveredMesh.userData.baseMat) {
+          hoveredMesh.material = hoveredMesh.userData.baseMat;
+        }
+        if (hoverCloneMat) {
+          hoverCloneMat.dispose();
+          hoverCloneMat = null;
+        }
+        hoveredMesh = mesh;
+        if (mesh && mesh.userData.baseMat) {
+          hoverCloneMat = mesh.userData.baseMat.clone();
+          hoverCloneMat.onBeforeCompile = mesh.userData.baseMat.onBeforeCompile;
+          hoverCloneMat.customProgramCacheKey = mesh.userData.baseMat.customProgramCacheKey;
+          if (hoverCloneMat.emissive) {
+            hoverCloneMat.emissive.setHex(0xe04a1b);
+            hoverCloneMat.emissiveIntensity = 0.24;
+          }
+          mesh.material = hoverCloneMat;
+        }
+        wake(false);
+        updateHudText();
+      }
+      if (mesh && !captureMode) {
+        const info = describePart(mesh);
+        calloutTitle.textContent = info.title;
+        calloutSub.textContent = info.spec;
+        calloutEl.style.left = `${Math.min(clientX, window.innerWidth - 280)}px`;
+        calloutEl.style.top = `${Math.max(clientY, 28)}px`;
+        calloutEl.classList.add('visible');
+        canvas.classList.add('hover-part');
+      } else {
+        calloutEl.classList.remove('visible');
+        canvas.classList.remove('hover-part');
+      }
+    }
+
+    canvas.addEventListener('contextmenu', e => e.preventDefault());
+    canvas.addEventListener('pointerdown', (e) => {
+      stopIntro();
+      customCapturePose = null;
+      canvas.setPointerCapture(e.pointerId);
+      if (e.pointerType === 'touch') {
+        touches.set(e.pointerId, { x: e.clientX, y: e.clientY });
+        if (touches.size === 2) {
+          if (grabbedTarget) getPullState(grabbedTarget).tgt.copy(dragObjStartOffset);
+          clearDrag();
+          pinchStart = { distance: pinchDistance(), radius: state.targetRadius };
+          wake(true);
+          return;
+        }
+      }
+      if (primaryPointer !== null) return;
+      primaryPointer = e.pointerId;
+      updatePointer(e);
+      prevPointerX = e.clientX;
+      prevPointerY = e.clientY;
+      pressTime = performance.now();
+      pressX = e.clientX;
+      pressY = e.clientY;
+
+      const hit = pickMesh();
+      if (hit && e.button === 0 && (!state.interiorView || e.altKey)) {
+        draggingMode = e.pointerType === 'touch' ? 'touchPart' : 'pull';
+        grabbedMesh = hit.object;
+        grabbedTarget = getAssemblyPivotForMesh(hit.object, e.altKey);
+        const ps = getPullState(grabbedTarget);
+        dragObjStartOffset.copy(ps.cur);
+
+        camera.getWorldDirection(dragCamDir);
+        dragPlane.setFromNormalAndCoplanarPoint(dragCamDir.negate(), hit.point);
+        raycaster.ray.intersectPlane(dragPlane, dragHitStart);
+
+        canvas.classList.add('grabbing');
+        playClickSound(660, 0.04);
+        wake(true);
+      } else {
+        draggingMode = 'orbit';
+        setHoverMesh(null, 0, 0);
+        canvas.classList.add('grabbing');
+        wake(false);
+      }
+    });
+
+    canvas.addEventListener('pointermove', (e) => {
+      if (touches.has(e.pointerId)) touches.set(e.pointerId, { x: e.clientX, y: e.clientY });
+      if (pinchStart) {
+        if (touches.size >= 2) {
+          zoomTo(pinchStart.radius * pinchStart.distance / Math.max(1, pinchDistance()));
+          wake();
+        }
+        return;
+      }
+      if (primaryPointer !== null && primaryPointer !== e.pointerId) return;
+      updatePointer(e);
+      if (draggingMode === 'touchPart') {
+        if (Math.hypot(e.clientX - pressX, e.clientY - pressY) < 7) return;
+        if (performance.now() - pressTime >= 350) {
+          draggingMode = 'pull';
+          grabbedTarget = grabbedMesh;
+          dragObjStartOffset.copy(getPullState(grabbedTarget).cur);
+        } else {
+          draggingMode = 'orbit';
+          grabbedTarget = grabbedMesh = null;
+        }
+      }
+      if (draggingMode === 'orbit') {
+        const dx = e.clientX - prevPointerX;
+        const dy = e.clientY - prevPointerY;
+        prevPointerX = e.clientX;
+        prevPointerY = e.clientY;
+        if (state.interiorView) {
+          state.cabinYaw = THREE.MathUtils.clamp(state.cabinYaw + dx * 0.005, -Math.PI, Math.PI);
+          state.cabinPitch = THREE.MathUtils.clamp(state.cabinPitch + dy * 0.004, -0.95, 1.15);
+        } else {
+          state.targetTheta -= dx * 0.0065;
+          const pose = referenceViews.get(selectedView);
+          const maxPhi = (pose?.hideFloor || pose?.phi > Math.PI * 0.5)
+            ? Math.PI - 0.025
+            : Math.max(Math.PI * 0.495, (pose?.phi ?? 0) + 0.02);
+          state.targetPhi = THREE.MathUtils.clamp(state.targetPhi - dy * 0.006, 0.02, maxPhi);
+        }
+        wake(false);
+      } else if (draggingMode === 'pull' && grabbedTarget) {
+        raycaster.setFromCamera(pointer, camera);
+        if (raycaster.ray.intersectPlane(dragPlane, dragCurrHit)) {
+          dragDeltaWorld.copy(dragCurrHit).sub(dragHitStart);
+          if (grabbedTarget.parent) {
+            grabbedTarget.parent.getWorldQuaternion(dragInvQ).invert();
+            dragDeltaWorld.applyQuaternion(dragInvQ);
+          }
+          const ps = getPullState(grabbedTarget);
+          ps.tgt.copy(dragObjStartOffset).add(dragDeltaWorld.multiplyScalar(0.92));
+          if (ps.tgt.length() > 3.2) ps.tgt.setLength(3.2);
+          updateHudText();
+          wake(true);
+        }
+        calloutEl.style.left = `${Math.min(e.clientX, window.innerWidth - 280)}px`;
+        calloutEl.style.top = `${Math.max(e.clientY, 28)}px`;
+      } else {
+        if ((state.interiorView && !e.altKey) || captureMode) {
+          if (hoveredMesh) setHoverMesh(null, 0, 0);
+          return;
+        }
+        const now = performance.now();
+        if (now - lastHoverRaycastMs >= 35) {
+          lastHoverRaycastMs = now;
+          const hit = pickMesh();
+          setHoverMesh(hit ? hit.object : null, e.clientX, e.clientY);
+        } else if (hoveredMesh) {
+          calloutEl.style.left = `${Math.min(e.clientX, window.innerWidth - 280)}px`;
+          calloutEl.style.top = `${Math.max(e.clientY, 28)}px`;
+        }
+      }
+    });
+
+    canvas.addEventListener('pointercancel', e => {
+      touches.delete(e.pointerId);
+      if (!touches.size) pinchStart = null;
+      if (primaryPointer !== e.pointerId) return;
+      if (grabbedTarget) getPullState(grabbedTarget).tgt.copy(dragObjStartOffset);
+      clearDrag();
+      primaryPointer = null;
+      updateHudText();
+      wake(true);
+    });
+    canvas.addEventListener('pointerleave', () => {
+      if (primaryPointer === null) setHoverMesh(null, 0, 0);
+    });
+    canvas.addEventListener('pointerup', (e) => {
+      touches.delete(e.pointerId);
+      if (!touches.size) pinchStart = null;
+      if (e.pointerId !== primaryPointer) return;
+      primaryPointer = null;
+      if ((draggingMode === 'pull' || draggingMode === 'touchPart') && grabbedTarget) {
+        const ps = getPullState(grabbedTarget);
+        const pullDist = ps.tgt.length();
+        const clickedPanel = panelByNode[grabbedTarget.name];
+        if (clickedPanel && Math.hypot(e.clientX - pressX, e.clientY - pressY) < 7) {
+          togglePanel(clickedPanel);
+          ps.tgt.copy(dragObjStartOffset);
+        } else if (e.shiftKey || pullDist > 0.35 || (pullDist > 0.06 && Math.hypot(e.clientX - pressX, e.clientY - pressY) >= 12)) {
+          ps.parked = true;
+          playClickSound(420, 0.06);
+        } else {
+          ps.tgt.set(0, 0, 0);
+          ps.parked = false;
+          playClickSound(540, 0.035);
+        }
+        wake(true);
+      }
+      clearDrag();
+      updateHudText();
+    });
+
+    canvas.addEventListener('dblclick', (e) => {
+      updatePointer(e);
+      const hit = pickMesh();
+      if (hit) {
+        setHoverMesh(null, 0, 0);
+        state.xrayTarget = state.xrayTarget > 0.5 ? 0.0 : 1.0;
+        playClickSound(state.xrayTarget > 0.5 ? 780 : 480, 0.07);
+        updateHudText();
+        wake(false);
+      }
+    });
+
+    function zoomTo(radius) {
+      const detail = isDetailView(selectedView);
+      const pose = referenceViews.get(selectedView);
+      const closeView = detail || selectedView === 'fuel';
+      const minR = state.interiorView
+        ? 0.45
+        : detail ? Math.min(0.35, (pose?.radius ?? 1.2) * 0.3)
+        : closeView ? 0.75 : 1.4;
+      const maxR = state.interiorView ? cabinRadius : 24.0;
+      state.targetRadius = THREE.MathUtils.clamp(radius, minR, maxR);
+    }
+
+    canvas.addEventListener('wheel', (e) => {
+      e.preventDefault();
+      stopIntro();
+      customCapturePose = null;
+      zoomTo(state.targetRadius * (1 + e.deltaY * 0.001));
+      wake(false);
+    }, { passive: false });
+
+    function matchRaptorView(name) {
+      const pose = referenceViews.get(name);
+      if (!pose || overrideModel) return;
+      if (!state.loaded) {
+        document.documentElement.dataset.matchView = name;
+        return;
+      }
+      delete document.documentElement.dataset.matchView;
+      customCapturePose = null;
+      runCommand('r');
+      selectedView = name;
+      if (isDetailView(name) && !captureMode) history.replaceState(null, '', '#' + name);
+      state.explode = state.explodeTarget = state.xray = state.xrayTarget = 0;
+      for (const key of Object.keys(panels)) state[key] = state[key + 'Target'] = 0;
+      for (const offset of pullOffsets.values()) offset.cur.copy(offset.tgt);
+
+      if (pose.cabin && !pose.photo) {
+        state.interiorView = true;
+        state.cabinBlend = 1;
+        state.frontLens = state.rearLens = 0;
+        state.cabinYaw = state.cabinPitch = 0;
+        state.theta = state.targetTheta = cabinView.theta;
+        state.phi = state.targetPhi = cabinView.phi;
+        state.radius = state.targetRadius = cabinRadius;
+        state.targetCenter.copy(FOCUS_INTERIOR);
+      } else {
+        state.interiorView = false;
+        state.cabinBlend = 0;
+        state.frontLens = 1;
+        state.rearLens = 0;
+        state.theta = state.targetTheta = pose.theta;
+        state.phi = state.targetPhi = pose.phi;
+        state.radius = state.targetRadius = pose.radius;
+        state.targetCenter.copy(pose.center);
+      }
+
+      if (pose.panels) {
+        for (const [key, val] of Object.entries(pose.panels)) {
+          if (key in panels) state[key] = state[key + 'Target'] = val;
+        }
+      }
+      updateHudText();
+      wake(true);
+    }
+
+    detailPhoto.addEventListener('click', () => {
+      if (detailPhoto.hash === '#raptor-views') document.documentElement.dataset.photoPreset = detailPhoto.dataset.preset;
+    });
+    window.addEventListener('match-raptor-view', event => matchRaptorView(event.detail));
+
+    function showRearView(immediate = false) {
+      stopIntro();
+      customCapturePose = null;
+      selectedView = 'rear';
+      state.interiorView = false;
+      state.explodeTarget = state.xrayTarget = 0;
+      state.targetTheta = rearView.theta;
+      state.targetPhi = rearView.phi;
+      state.targetRadius = rearView.radius;
+      if (immediate) {
+        state.theta = state.targetTheta;
+        state.phi = state.targetPhi;
+        state.radius = state.targetRadius;
+        state.rearLens = 1;
+        state.targetCenter.copy(PANEL_CENTERS.rear);
+      }
+      updateHudText();
+      wake(true);
+    }
+
+    function startAssembly() {
+      if (!pivots.Pivot_Body_Assembly) return;
+      runCommand('r');
+      frameAssembly();
+      if (reducedMotion.matches || captureMode) {
+        state.explode = state.explodeTarget = 0;
+        updateHudText();
+        wake(true);
+        return;
+      }
+      state.explode = state.explodeTarget = 1;
+      intro = { elapsed: 0, previous: null };
+      wake(true);
+    }
+
+    document.querySelectorAll('.view-links a').forEach(link => {
+      link.addEventListener('click', () => {
+        document.getElementById('more').open = false;
+        const h = link.getAttribute('href').slice(1);
+        if (!state.loaded) return;
+        if (h === 'assembly' && location.hash === '#assembly') startAssembly();
+        else if (h === 'rear' && location.hash === '#rear') showRearView();
+        else if (h === 'exterior') runCommand('r');
+        else if (isDetailView(h) && location.hash === '#' + h) matchRaptorView(h);
+      });
+    });
+
+    window.addEventListener('hashchange', () => {
+      if (!state.loaded || captureMode) return;
+      const h = location.hash.slice(1);
+      if (h === 'exterior') runCommand('r');
+      else if (h === 'assembly') startAssembly();
+      else if (h === 'rear') showRearView();
+      else if (isDetailView(h)) matchRaptorView(h);
+    });
+
+    // Keyboard controls
+    function runCommand(k, keepAssemblyCamera = false) {
+      if (!state.loaded || k.length !== 1 || !'d1234ftgiesxwr mh+=-_0'.includes(k)) return;
+      if (k !== 'm' && k !== 'h') closeOverlay();
+      stopIntro();
+      customCapturePose = null;
+
+      if (k === 'd') {
+        const anyClosed = state.doorFLTarget < 0.5 || state.doorFRTarget < 0.5 || state.doorRLTarget < 0.5 || state.doorRRTarget < 0.5;
+        const open = anyClosed ? 1.0 : 0.0;
+        state.doorFLTarget = state.doorFRTarget = state.doorRLTarget = state.doorRRTarget = open;
+        playClickSound(open > 0.5 ? 560 : 360, 0.06);
+        wake(true);
+      } else if ('1234ftg'.includes(k)) {
+        const keyMap = {
+          '1': 'doorFL',
+          '2': 'doorFR',
+          '3': 'doorRL',
+          '4': 'doorRR',
+          f: 'hood',
+          t: 'tailgate',
+          g: 'fuel',
+        };
+        togglePanel(keyMap[k], k === 'g');
+      } else if (k === 'i') {
+        selectedView = null;
+        state.interiorView = !state.interiorView;
+        if (state.interiorView) {
+          state.explodeTarget = 0.0;
+          state.xrayTarget = 0.0;
+          state.cabinYaw = state.cabinPitch = 0;
+          state.targetTheta = cabinView.theta;
+          state.targetPhi = cabinView.phi;
+          state.targetRadius = cabinRadius;
+        } else {
+          state.targetTheta = exteriorView.theta;
+          state.targetPhi = exteriorView.phi;
+          state.targetRadius = exteriorView.radius;
+        }
+        playClickSound(state.interiorView ? 700 : 460, 0.06);
+        wake(true);
+      } else if (k === 'e') {
+        if (selectedView !== 'assembly') frameAssembly();
+        state.explodeTarget = state.explodeTarget < 0.2 ? 0.55 : (state.explodeTarget < 0.85 ? 1.0 : 0.0);
+        playClickSound(state.explodeTarget > 0 ? 640 : 420, 0.06);
+        wake(true);
+      } else if (k === 'x') {
+        setHoverMesh(null, 0, 0);
+        state.xrayTarget = state.xrayTarget > 0.5 ? 0.0 : 1.0;
+        playClickSound(760, 0.06);
+        wake(false);
+      } else if (k === 's') {
+        state.steerMode = !state.steerMode;
+        playClickSound(500, 0.04);
+        wake(true);
+      } else if (k === 'w') {
+        state.spinMode = !state.spinMode;
+        playClickSound(520, 0.04);
+        wake(true);
+      } else if (k === ' ') {
+        state.revving = true;
+        wake(true);
+      } else if (k === 'r') {
+        if (!keepAssemblyCamera) {
+          selectedView = null;
+          state.targetTheta = exteriorView.theta;
+          state.targetPhi = exteriorView.phi;
+          state.targetRadius = exteriorView.radius;
+        }
+        state.explodeTarget = 0.0;
+        state.doorFLTarget = state.doorFRTarget = state.doorRLTarget = state.doorRRTarget = 0.0;
+        state.hoodTarget = state.tailgateTarget = state.fuelTarget = 0.0;
+        state.interiorView = false;
+        state.xrayTarget = 0.0;
+        state.steerMode = false;
+        state.spinMode = false;
+        state.wheelSpinAngle = state.steerPhase = 0;
+        state.revving = false;
+        for (const ps of pullOffsets.values()) {
+          ps.tgt.set(0, 0, 0);
+          ps.parked = false;
+        }
+        playClickSound(440, 0.06);
+        wake(true);
+      } else if (k === 'm') {
+        soundMuted = !soundMuted;
+        wake();
+        if (!soundMuted) {
+          initAudio();
+          if (audioCtx.state === 'suspended') audioCtx.resume();
+          playClickSound(680, 0.05);
+        }
+      } else if (k === 'h') {
+        state.hudHidden = !state.hudHidden;
+        document.documentElement.classList.toggle('hide-hud', state.hudHidden);
+      } else if (k === '+' || k === '=') {
+        zoomTo(state.targetRadius * 0.86);
+        wake(false);
+      } else if (k === '-' || k === '_') {
+        zoomTo(state.targetRadius * 1.16);
+        wake(false);
+      } else if (k === '0') {
+        state.targetRadius = state.interiorView ? cabinRadius : exteriorView.radius;
+        wake(false);
+      }
+      updateHudText();
+    }
+
+    window.addEventListener('keydown', e => {
+      if (carHidden() || captureMode || e.altKey || e.ctrlKey || e.metaKey || e.repeat) return;
+      if (e.code === 'Space') {
+        if (e.target.closest('a, button, summary, select, input')) return;
+        e.preventDefault();
+      }
+      runCommand(e.key.toLowerCase());
+    });
+
+    window.addEventListener('blur', () => {
+      state.revving = false;
+      wake();
+    });
+    document.addEventListener('visibilitychange', () => {
+      if (intro) intro.previous = null;
+      if (!document.hidden) wake();
+    });
+    reducedMotion.addEventListener('change', () => {
+      if (intro && reducedMotion.matches) {
+        stopIntro();
+        state.explode = state.explodeTarget = 0;
+        updateHudText();
+        wake(true);
+      }
+    });
+    window.addEventListener('keyup', (e) => {
+      if (e.code === 'Space') {
+        state.revving = false;
+        wake(false);
+      }
+    });
+
+    function showPartInfo(title, detail) {
+      const accent = document.createElement('span');
+      accent.className = 'accent';
+      accent.textContent = title;
+      infoEl.replaceChildren(accent, ' · ' + detail);
+    }
+
+    function updateHudText() {
+      if (!state.loaded) return;
+      for (const button of panelButtons) {
+        button.setAttribute('aria-pressed', String(!!state[button.dataset.panel + 'Target']));
+      }
+      const detail = isDetailView(selectedView) ? selectedView : state.interiorView ? 'cabin' : '';
+      if (!captureMode && !detail && isDetailView(location.hash.slice(1))) history.replaceState(null, '', '#model');
+      const currentPhoto = referenceViews.get(detail);
+      if (!carHidden() && !captureMode) {
+        document.getElementById('compare-frames').href = './frame-by-frame/' + (currentPhoto?.photo ? '#' + detail : '');
+      }
+      overlayToggle.hidden = captureMode || !currentPhoto?.photo || !!overrideModel;
+      if (overlayToggle.hidden || overlayToggle.dataset.view !== detail) closeOverlay();
+      overlayToggle.dataset.view = detail;
+      detailPhoto.dataset.preset = detail;
+      detailPhoto.hidden = captureMode || !detail || !!overrideModel;
+      detailPhoto.textContent = 'Reference photo';
+      detailPhoto.href = '#raptor-views';
+      detailPhoto.target = '_self';
+
+      applyInspectionVisibility(customCapturePose || referenceViews.get(selectedView));
+      barEl.classList.toggle('in-cabin', state.interiorView);
+      document.querySelector('[data-command="i"]').setAttribute('aria-pressed', String(state.interiorView));
+      const showingExplosion = intro ? intro.elapsed <= introHoldMs : state.explodeTarget > 0.05;
+      explosionButton.setAttribute('aria-pressed', String(showingExplosion));
+
+      const tags = [];
+      if (draggingMode === 'pull' && grabbedMesh) {
+        const info = describePart(grabbedMesh);
+        const ps = getPullState(grabbedTarget);
+        const cm = Math.round(ps.cur.length() * 100);
+        showPartInfo(info.title, `pulling · ${cm >= 100 ? (cm / 100).toFixed(2) + ' m' : cm + ' cm'}`);
+        return;
+      }
+      if (hoveredMesh) {
+        const info = describePart(hoveredMesh);
+        showPartInfo(info.title, info.spec);
+        return;
+      }
+      if (detail) tags.push(referenceViews.get(detail).label);
+      if (state.xrayTarget > 0.5) tags.push('membrane x-ray');
+      const openDoors = [state.doorFLTarget, state.doorFRTarget, state.doorRLTarget, state.doorRRTarget].filter(v => v > 0.5).length;
+      if (openDoors === 4) tags.push('all doors open');
+      else if (openDoors > 0) tags.push(`${openDoors} door${openDoors > 1 ? 's' : ''} open`);
+      if (intro) tags.push(intro.elapsed <= introHoldMs ? 'exploded view' : 'assembling');
+      else if (state.explodeTarget > 0.05) tags.push(`exploded ${Math.round(state.explodeTarget * 100)}%`);
+      if (state.hoodTarget > 0.5) tags.push('Power Dome hood open');
+      if (state.tailgateTarget > 0.5) tags.push('tailgate down');
+      if (state.fuelTarget > 0.5) tags.push('fuel door open');
+      if (state.spinMode) tags.push('37" wheels spinning');
+      if (state.steerMode) tags.push('steering');
+      if (state.revving) tags.push(`${Math.round(state.rpm)} rpm`);
+      const detached = [...pullOffsets.values()].filter(part => part.parked).length;
+      if (detached) tags.push(`${detached} detached`);
+      if (tags.length === 0) tags.push('assembled');
+      if (soundMuted) tags.push('muted');
+      infoEl.textContent = `2024 Ford F-150 Raptor R · Shelter Green · ${tags.join(' · ')}`;
+    }
+
+    // -----------------------------------------------------------------------
+    // 10. Views, Inspection Presets & Exploded Choreography (Meters)
+    // -----------------------------------------------------------------------
+    const clock = new THREE.Clock();
+    function frontLensTarget() {
+      return Number(selectedView === 'assembly' || ((!selectedView || referenceViews.has(selectedView)) && !state.interiorView && state.explodeTarget === 0 && !intro));
+    }
+
+    const FOCUS_EXTERIOR = new THREE.Vector3(...exteriorView.center);
+    const PANEL_CENTERS = {
+      assembly: assemblyView.center,
+      doorFL:   new THREE.Vector3(0.48, 1.12, -0.82),
+      doorFR:   new THREE.Vector3(0.48, 1.12,  0.82),
+      doorRL:   new THREE.Vector3(-0.58, 1.12, -0.82),
+      doorRR:   new THREE.Vector3(-0.58, 1.12,  0.82),
+      hood:     new THREE.Vector3(1.88, 1.32,  0.00),
+      tailgate: new THREE.Vector3(-2.65, 1.02, 0.00),
+      fuel:     new THREE.Vector3(-1.62, 1.15, -1.02),
+      rear:     new THREE.Vector3(...rearView.center),
+    };
+
+    const ISOLATE_PRESETS = {
+      cabin: /Pivot_Interior_Cabin|RaptorR_Int_|RaptorR_Mirror_Cabin|DoorCard|Door_Card|Seat|Dash|Cluster|SYNC4|Console|Steering|Pedal|Headliner|Carpet|SunVisor|Overhead|GrabHandle|Seatbelt/i,
+      engine: /Pivot_Engine_Predator|RaptorR_Eng_|Supercharger|Predator|Intake|Airbox|Coolant|Battery/i,
+      chassis: /Pivot_Chassis_Frame|Pivot_Exhaust_System|Pivot_Corner_|Pivot_WheelSpin_|Skid|FOX|Shock|Frame|Susp_|Exhaust|Tire|Rim|Wheel|Brake/i,
+      underbody: /Pivot_Chassis_Frame|Pivot_Exhaust_System|Pivot_Corner_|Pivot_WheelSpin_|Skid|FOX|Shock|Frame|Susp_|Exhaust|Tire|Rim|Wheel|Brake/i,
+    };
+    function resolveFilterPattern(spec) {
+      if (!spec) return null;
+      if (spec instanceof RegExp) return spec;
+      if (typeof spec === 'string') return ISOLATE_PRESETS[spec.toLowerCase()] || new RegExp(spec, 'i');
+      return null;
+    }
+
+    function applyInspectionVisibility(pose) {
+      if (lastVisibilityPose === pose) return;
+      lastVisibilityPose = pose;
+      scene.background = outlineMode ? null : new THREE.Color(pose?.background ?? BG_HEX);
+      const isolate = resolveFilterPattern(pose?.isolate);
+      const hidden = resolveFilterPattern(pose?.hide);
+      lastIsolation = isolate;
+      showroomFloor.visible = !outlineMode && !isolate && !pose?.hideFloor && !(pose?.phi > Math.PI * 0.62);
+      for (const mesh of allPickableMeshes) {
+        const matchIso = !isolate || isolate.test(mesh.name) || isolate.test(getPivotAncestorName(mesh));
+        const matchHide = hidden && (hidden.test(mesh.name) || hidden.test(getPivotAncestorName(mesh)));
+        mesh.visible = matchIso && !matchHide;
+      }
+      setHoverMesh(null, 0, 0);
+      needsShadow = true;
+    }
+
+    // Named inspection views (accessible via #cabin, #engine, #seats, #console, #underbody, etc.)
+    const referenceViews = new Map([
+      ['cabin',     { label: 'Cabin cockpit', cabin: true, group: 'Interior' }],
+      ['engine',    { label: 'Power Dome & 5.2L Predator V8', group: 'Powertrain', theta: -0.45, phi: 1.02, distance: 2.35, fov: 38, radius: orbitRadius({ distance: 2.35, fov: 38 }), center: new THREE.Vector3(1.85, 1.15, 0.0), panels: { hood: 1 } }],
+      ['seats',     { label: 'Recaro seats', group: 'Interior', theta: -1.12, phi: 1.32, distance: 1.85, fov: 46, radius: orbitRadius({ distance: 1.85, fov: 46 }), center: new THREE.Vector3(-0.08, 1.24, -0.18), panels: { doorFL: 1 } }],
+      ['console',   { label: 'Center stack & SYNC 4', group: 'Interior', theta: 3.12, phi: 1.54, distance: 0.82, fov: 44, radius: orbitRadius({ distance: 0.82, fov: 44 }), center: new THREE.Vector3(0.98, 1.38, 0.02) }],
+      ['underbody', { label: 'Underbody & FOX Live Valve shocks', group: 'Powertrain', theta: -0.42, phi: 1.72, distance: 3.15, fov: 40, radius: orbitRadius({ distance: 3.15, fov: 40 }), center: new THREE.Vector3(1.15, 0.48, 0.0), hideFloor: true }],
+    ]);
+
+    // Map all 22 photo-matched views from raptor-views.json + exterior-photo-cameras.json
+    const photoViewById = new Map();
+    for (const view of photoSources) {
+      const fit = exteriorCameras[view.id] || exteriorCameras[view.label] || exteriorCameras[view.photoView];
+      if (!fit) continue;
+      const panelOverrides = parsePanelState(fit.panel_state || view.panelState, fit.panels);
+      const pose = {
+        ...fit,
+        id: view.id,
+        label: view.label,
+        group: view.group,
+        photo: true,
+        image: view.image,
+        preview: view.preview,
+        aspect: view.aspect || 1.500366,
+        panels: panelOverrides,
+        center: new THREE.Vector3(...fit.center),
+        radius: orbitRadius(fit),
+      };
+      referenceViews.set(view.photoView, pose);
+      photoViewById.set(view.id, pose);
+      photoViewById.set(view.photoView, pose);
+      photoViewById.set(view.label, pose);
+    }
+
+    const landingPhoto = referenceViews.get('photo-front-three-quarter-left');
+    const rearPhoto = referenceViews.get('photo-rear-three-quarter-right');
+    const galleryFigure = document.querySelector('#photo-room figure');
+    let galleryRect = galleryFigure.getBoundingClientRect();
+    new ResizeObserver(() => {
+      galleryRect = galleryFigure.getBoundingClientRect();
+      Object.assign(overlay.style, {
+        top: galleryRect.top + 'px',
+        left: galleryRect.left + 'px',
+        width: galleryRect.width + 'px',
+        height: galleryRect.height + 'px',
+      });
+      wake(true);
+    }).observe(galleryFigure);
+
+    const cabinUp = new THREE.Vector3(0, 1, 0);
+    let wasMoving = false;
+    let lastShadowTime = -Infinity;
+    let shadowDirty = true;
+    const _ev = new THREE.Vector3();
+
+    // Real-world meter exploded offsets
+    function getExplodeOffset(name, ex, vibration, time, out) {
+      out.set(0, 0, 0);
+      switch (name) {
+        case 'Pivot_Body_Assembly':   out.set( 0.00,  1.45,  0.00); break;
+        case 'Pivot_Hood':            out.set( 0.55,  0.65,  0.00); break;
+        case 'Pivot_Door_FL':         out.set( 0.15,  0.05, -1.15); break;
+        case 'Pivot_Door_FR':         out.set( 0.15,  0.05,  1.15); break;
+        case 'Pivot_Door_RL':         out.set(-0.20,  0.05, -1.15); break;
+        case 'Pivot_Door_RR':         out.set(-0.20,  0.05,  1.15); break;
+        case 'Pivot_Tailgate':        out.set(-0.85,  0.15,  0.00); break;
+        case 'Pivot_Fuel_Door':       out.set( 0.00,  0.06, -0.32); break;
+        case 'Pivot_Corner_FL':       out.set( 0.55,  0.00, -0.75); break;
+        case 'Pivot_Corner_FR':       out.set( 0.55,  0.00,  0.75); break;
+        case 'Pivot_Corner_RL':       out.set(-0.55,  0.00, -0.75); break;
+        case 'Pivot_Corner_RR':       out.set(-0.55,  0.00,  0.75); break;
+        case 'Pivot_Engine_Predator': out.set( 0.65,  0.55,  0.00); break;
+        case 'Pivot_Chassis_Frame':   out.set( 0.00, -0.45,  0.00); break;
+        case 'Pivot_Exhaust_System':  out.set(-0.75, -0.35,  0.00); break;
+        case 'Pivot_Interior_Cabin':  out.set( 0.25,  0.55,  0.00); break;
+      }
+      out.multiplyScalar(ex);
+      if (name === 'Pivot_Engine_Predator' && vibration) {
+        out.x += Math.sin(time * 78) * vibration;
+        out.y += Math.cos(time * 95) * vibration;
+      }
+      return out;
+    }
+
+    function partOffset(mesh) {
+      const name = mesh.name;
+      const parent = mesh.parent?.name || '';
+      const offset = new THREE.Vector3();
+      if (parent.startsWith('Pivot_WheelSpin_')) {
+        const side = parent.endsWith('L') ? -1 : 1;
+        if (/Tire|Tread|Sidewall|KO2/i.test(name)) offset.z = side * 0.36;
+        else if (/Rim|Wheel|Beadlock/i.test(name)) offset.z = side * 0.16;
+      } else if (parent === 'Pivot_Interior_Cabin') {
+        if (/Steering/i.test(name)) offset.set(0.14, 0.14, -0.12);
+        else if (/Dash|Cluster|SYNC4|Screen/i.test(name)) offset.set(0.22, 0.12, 0);
+        else if (/Seat/i.test(name)) offset.y = 0.16;
+      } else if (parent === 'Pivot_Engine_Predator') {
+        if (/Supercharger|Blower|TVS/i.test(name)) offset.set(0, 0.28, 0);
+        else if (/Intake|Airbox/i.test(name)) offset.set(0.16, 0.18, -0.18);
+      } else if (parent === 'Pivot_Body_Assembly') {
+        if (/Front_Bumper|Bumper_Front|Grille|Skid|TowHook/i.test(name)) offset.x = 0.36;
+        else if (/Rear_Bumper|Bumper_Rear|Taillight|License/i.test(name)) offset.x = -0.34;
+        else if (/Windshield|Moonroof|Wiper/i.test(name)) offset.y = 0.26;
+      } else if (parent.startsWith('Pivot_Door_') && /Glass|Window/i.test(name)) {
+        offset.y = 0.24;
+      }
+      return offset;
+    }
+
+    function measureExplodedView() {
+      for (const [name, pivot] of Object.entries(pivots)) {
+        pivot.position.copy(restPos.get(pivot)).add(getExplodeOffset(name, 1, 0, 0, _ev));
+      }
+      for (const mesh of allPickableMeshes) {
+        const offset = partOffset(mesh);
+        if (offset.lengthSq()) {
+          explodedParts.set(mesh, { home: mesh.position.clone(), offset });
+          mesh.position.add(offset);
+        }
+      }
+      rootCar.updateMatrixWorld(true);
+      for (const mesh of allPickableMeshes) {
+        if (!mesh.visible) continue;
+        if (!mesh.geometry.boundingBox) mesh.geometry.computeBoundingBox();
+        const { min, max } = mesh.geometry.boundingBox;
+        for (const x of [min.x, max.x]) for (const y of [min.y, max.y]) for (const z of [min.z, max.z]) {
+          assemblyView.points.push(new THREE.Vector3(x, y, z).applyMatrix4(mesh.matrixWorld));
+        }
+      }
+      for (const [pivot, home] of restPos) pivot.position.copy(home);
+      for (const [mesh, part] of explodedParts) mesh.position.copy(part.home);
+      rootCar.updateMatrixWorld(true);
+      fitExplodedCamera();
+    }
+
+    function updateCabinMirror(sceneMoving = false) {
+      if (!rearMirror) return;
+      if (!state.interiorView || outlineMode) {
+        cabinMirror?.restore();
+        return;
+      }
+      if (state.cabinBlend < 0.99) return;
+      cabinMirror ??= createPlanarMirror(rearMirror, renderer);
+      cabinMirror.update(scene, camera.position, mirrorDirty || sceneMoving, camera.far);
+      mirrorDirty = false;
+    }
+
+    function fitExplodedCamera() {
+      const compact = camera.aspect > 1 ? THREE.MathUtils.clamp((540 - innerHeight) / 120, 0, 1) : 0;
+      const headerHeight = captureMode ? 0 : document.getElementById('studio-header').offsetHeight;
+      const footerHeight = captureMode ? 0 : (barEl.offsetHeight + 24);
+      assemblyView.compactInset = compact * (footerHeight - headerHeight) / Math.max(1, innerHeight);
+      assemblyView.availableHeight = Math.max(0.18, 1 - compact * (footerHeight + headerHeight + 18) / Math.max(1, innerHeight));
+      if (!state.loaded) state.targetCenter.copy(FOCUS_EXTERIOR);
+      if (!assemblyView.points.length) return;
+      const { theta, phi, center } = assemblyView;
+      const eye = new THREE.Vector3(Math.sin(phi) * Math.cos(theta), Math.cos(phi), Math.sin(phi) * Math.sin(theta));
+      const right = new THREE.Vector3().crossVectors(camera.up, eye).normalize();
+      const up = new THREE.Vector3().crossVectors(eye, right);
+      const vertical = Math.tan(THREE.MathUtils.degToRad(assemblyView.fov / 2));
+      const side = vertical * camera.aspect * 0.9;
+      const top = vertical * Math.min(0.90, 1 - 2 * (headerHeight + 8) / Math.max(1, innerHeight));
+      const bottom = vertical * THREE.MathUtils.clamp(1 - 2 * (footerHeight + 6) / Math.max(1, innerHeight), 0.12, 0.85);
+      let leftLimit = Infinity, rightLimit = -Infinity;
+      let lowerLimit = Infinity, upperLimit = -Infinity;
+      let farDepth = Infinity, nearDepth = -Infinity;
+      for (const point of assemblyView.points) {
+        const x = point.dot(right), y = point.dot(up), z = point.dot(eye);
+        leftLimit = Math.min(leftLimit, x - side * z);
+        rightLimit = Math.max(rightLimit, x + side * z);
+        lowerLimit = Math.min(lowerLimit, y - bottom * z);
+        upperLimit = Math.max(upperLimit, y + top * z);
+        farDepth = Math.min(farDepth, z);
+        nearDepth = Math.max(nearDepth, z);
+      }
+      const eyeDepth = Math.max((rightLimit - leftLimit) / (2 * side), (upperLimit - lowerLimit) / (top + bottom));
+      const centerDepth = (nearDepth + farDepth) / 2;
+      const centerY = (lowerLimit + upperLimit + (bottom - top) * eyeDepth) / 2;
+      center.copy(right).multiplyScalar((leftLimit + rightLimit) / 2)
+        .addScaledVector(up, centerY).addScaledVector(eye, centerDepth);
+      assemblyView.distance = (eyeDepth - centerDepth) * vertical / Math.tan(Math.PI / 12);
+      if (selectedView === 'assembly') state.targetCenter.copy(center);
+    }
+
+    function advanceIntro(now) {
+      if (!intro) return;
+      const holding = intro.elapsed <= introHoldMs;
+      if (intro.previous !== null) intro.elapsed += Math.max(0, now - intro.previous);
+      intro.previous = now;
+      const progress = THREE.MathUtils.clamp((intro.elapsed - introHoldMs) / introAssemblyMs, 0, 1);
+      const ease = progress * progress * (3 - 2 * progress);
+      state.explode = state.explodeTarget = 1 - ease;
+      if (progress === 1) intro = null;
+      if (!intro || (holding && progress > 0)) updateHudText();
+    }
+
+    const exteriorLighting = {
+      sky: studioFill.intensity, key: keyLight.intensity, rim: rimLight.intensity, lower: 0,
+      environment: scene.environmentIntensity, exposure: renderer.toneMappingExposure, ground: studioFill.groundColor.clone(),
+    };
+    const cabinLighting = {
+      sky: 1.05, key: 1.45, rim: 1.65, lower: 0.35,
+      environment: 1.75, exposure: 1.08, ground: exteriorLighting.ground,
+    };
+    const engineLighting = {
+      sky: 0.72, key: 1.95, rim: 1.15, lower: 0.25,
+      environment: 1.30, exposure: 1.02, ground: new THREE.Color(0x454d58),
+    };
+    const undersideLighting = {
+      sky: 0.65, key: 1.40, rim: 1.10, lower: 2.40,
+      environment: 1.65, exposure: 1.06, ground: new THREE.Color(0x606670),
+    };
+    const liftFillPosition = detailFill.position.clone();
+    const driverDoorFillPosition = new THREE.Vector3(-1.8, 1.5, -2.6);
+
+    function updateInspectionLighting(pose) {
+      let lighting = exteriorLighting;
+      if (pose?.group === 'Interior' || selectedView === 'seats' || selectedView === 'console' || selectedView === 'cabin') {
+        lighting = cabinLighting;
+      } else if (pose?.group === 'Powertrain' || selectedView === 'engine' || selectedView === 'underbody') {
+        const isUnderside = pose?.hideFloor || pose?.phi > 1.58 || selectedView === 'underbody';
+        lighting = isUnderside ? undersideLighting : engineLighting;
+      }
+
+      const t = state.cabinBlend;
+      const lerp = THREE.MathUtils.lerp;
+      studioFill.intensity = lerp(lighting.sky, cabinLighting.sky, t);
+      studioFill.groundColor.lerpColors(lighting.ground, cabinLighting.ground, t);
+      keyLight.intensity = lerp(lighting.key, cabinLighting.key, t);
+      rimLight.intensity = lerp(lighting.rim, cabinLighting.rim, t);
+      detailFill.position.copy(lighting === cabinLighting ? driverDoorFillPosition : liftFillPosition);
+      detailFill.intensity = lerp(lighting.lower, cabinLighting.lower, t);
+      scene.environmentIntensity = lerp(lighting.environment, cabinLighting.environment, t);
+      renderer.toneMappingExposure = lerp(lighting.exposure, cabinLighting.exposure, t);
+    }
+
+    function applyAllPivots(damp, t, vib, steerRad) {
+      const ex = state.explode;
+      for (const [pname, piv] of Object.entries(pivots)) {
+        const rp = restPos.get(piv);
+        const rr = restRot.get(piv);
+        if (!rp || !rr) continue;
+
+        const ps = pullOffsets.get(piv);
+        if (ps) {
+          if (damp >= 1) ps.cur.copy(ps.tgt);
+          else ps.cur.lerp(ps.tgt, damp);
+        }
+        const ev = getExplodeOffset(pname, ex, vib, t, _ev);
+        piv.position.copy(rp).add(ev);
+        if (ps) piv.position.add(ps.cur);
+
+        const panelKey = panelByNode[pname];
+        if (panelKey) {
+          const panel = panels[panelKey];
+          piv.rotation[panel.axis] = rr[panel.axis] + state[panelKey] * panel.angle;
+        } else if (pname === 'Pivot_Corner_FL' || pname === 'Pivot_Corner_FR') {
+          piv.rotation.set(rr.x, rr.y + steerRad, rr.z);
+        } else if (pname.startsWith('Pivot_WheelSpin_')) {
+          piv.rotation.set(rr.x, rr.y, rr.z - state.wheelSpinAngle);
+        }
+      }
+
+      for (const [mesh, part] of explodedParts) {
+        mesh.position.copy(part.home).addScaledVector(part.offset, ex);
+      }
+      for (const [obj, ps] of pullOffsets.entries()) {
+        if (obj.isMesh) {
+          if (damp >= 1) ps.cur.copy(ps.tgt);
+          else ps.cur.lerp(ps.tgt, damp);
+          if (!explodedParts.has(obj)) obj.position.copy(ps.basePos);
+          obj.position.add(ps.cur);
+        }
+      }
+    }
+
+    function updateEnclosureWeights() {
+      let cabinPull = 0, enginePull = 0;
+      for (const [object, pull] of pullOffsets) {
+        const assembly = object.isMesh ? (object.parent?.name || '') : object.name;
+        const release = THREE.MathUtils.smoothstep(pull.cur.length(), 0, 1.2);
+        if (/Body_Assembly|Interior_Cabin|Door_/.test(assembly)) cabinPull = Math.max(cabinPull, release);
+        if (/Body_Assembly|Engine_Predator|Hood/.test(assembly)) enginePull = Math.max(enginePull, release);
+      }
+      const enclosed = lastIsolation ? 0 : (1 - state.xray) * (1 - THREE.MathUtils.smoothstep(state.explode, 0, 0.55));
+      const cabinOpen = Math.min(1, (state.doorFL + state.doorFR + state.doorRL + state.doorRR) * 0.35);
+      cabinEnclosure.value.set(1 - cabinOpen, cabinOpen).multiplyScalar(enclosed * (1 - cabinPull));
+      engineEnclosure.value.set(1 - state.hood, state.hood).multiplyScalar(enclosed * (1 - enginePull));
+    }
+
+    // -----------------------------------------------------------------------
+    // 11. Headless Capture & Calibration API (zero-damping synchronous snap)
+    // -----------------------------------------------------------------------
+    function applyExactPoseNow(pose) {
+      if (!state.loaded) return false;
+      stopIntro();
+      closeOverlay();
+      setHoverMesh(null, 0, 0);
+
+      if (typeof pose.outline === 'boolean') {
+        outlineMode = pose.outline;
+        document.documentElement.style.background = outlineMode ? 'transparent' : '';
+        document.body.style.background = outlineMode ? 'transparent' : '';
+      }
+
+      customCapturePose = pose;
+      state.explode = state.explodeTarget = 0;
+      state.xray = state.xrayTarget = 0;
+      state.interiorView = false;
+      state.cabinBlend = 0;
+      state.spinMode = false;
+      state.steerMode = false;
+      state.revving = false;
+      state.wheelSpinAngle = state.steerPhase = 0;
+
+      for (const key of Object.keys(panels)) state[key] = state[key + 'Target'] = 0;
+      for (const ps of pullOffsets.values()) {
+        ps.cur.set(0, 0, 0);
+        ps.tgt.set(0, 0, 0);
+        ps.parked = false;
+      }
+
+      const panelOverrides = parsePanelState(pose.panel_state || pose.panelState, pose.panels);
+      if (panelOverrides) {
+        for (const [key, val] of Object.entries(panelOverrides)) {
+          if (key in panels) state[key] = state[key + 'Target'] = val;
+        }
+      }
+
+      const cArr = Array.isArray(pose.center) ? pose.center : [pose.center.x, pose.center.y, pose.center.z];
+      const cx = cArr[0], cy = cArr[1], cz = cArr[2];
+      const theta = pose.theta;
+      const phi = pose.phi;
+      const dist = pose.distance;
+      const fov = pose.fov ?? 28;
+      const roll = pose.roll ?? 0;
+
+      state.theta = state.targetTheta = theta;
+      state.phi = state.targetPhi = phi;
+      state.radius = state.targetRadius = orbitRadius({ distance: dist, fov });
+      state.targetCenter.set(cx, cy, cz);
+
+      camera.aspect = window.innerWidth / Math.max(1, window.innerHeight);
+      camera.fov = fov;
+      camera.near = pose.group && pose.group !== 'Exterior' ? 0.02 : 0.05;
+      camera.far = Math.max(160, dist + 80);
+      camera.updateProjectionMatrix();
+      camera.position.set(
+        cx + dist * Math.sin(phi) * Math.cos(theta),
+        cy + dist * Math.cos(phi),
+        cz + dist * Math.sin(phi) * Math.sin(theta)
+      );
+      camera.lookAt(cx, cy, cz);
+      if (roll) camera.rotateZ(roll);
+
+      scene.fog.density = outlineMode ? 0 : studioFogDensity;
+      applyInspectionVisibility(pose);
+      updateInspectionLighting(pose);
+      applyAllPivots(1, 0, 0, 0);
+      updateEnclosureWeights();
+      rootCar.updateMatrixWorld(true);
+
+      if (!outlineMode) {
+        renderer.shadowMap.needsUpdate = true;
+        groundShadows.update();
+      }
+      renderActiveScene();
+      needsRender = false;
+      needsShadow = false;
+      shadowDirty = false;
+      return true;
+    }
+
+    window.__setPose = (poseObj) => {
+      if (!poseObj) return false;
+      selectedView = null;
+      return applyExactPoseNow(poseObj);
+    };
+
+    window.__setCaptureFrame = (frameId) => {
+      const pose = photoViewById.get(frameId) || referenceViews.get(frameId) || exteriorCameras[frameId];
+      if (!pose) {
+        console.warn('[capture] Unknown frameId:', frameId);
+        return false;
+      }
+      selectedView = pose.id ? ('photo-' + pose.id) : frameId;
+      return applyExactPoseNow(pose);
+    };
+
+    window.__setOutlineMode = (enabled) => {
+      outlineMode = Boolean(enabled);
+      document.documentElement.style.background = outlineMode ? 'transparent' : '';
+      document.body.style.background = outlineMode ? 'transparent' : '';
+      lastVisibilityPose = null;
+      applyInspectionVisibility(customCapturePose || referenceViews.get(selectedView));
+      if (customCapturePose) applyExactPoseNow(customCapturePose);
+      else {
+        needsRender = true;
+        renderActiveScene();
+      }
+      return outlineMode;
+    };
+
+    // -----------------------------------------------------------------------
+    // 12. Demand-Paced 60 FPS Animation Loop
+    // -----------------------------------------------------------------------
+    function animate(now) {
+      framePending = false;
+      if (carHidden()) return;
+      const frameTime = clock.getDelta();
+      const dt = Math.min(frameTime, 0.08);
+      const t = clock.elapsedTime;
+      const transitionTime = wasMoving ? Math.min(frameTime, 0.75) : 1 / 60;
+      const damp = (captureMode || reducedMotion.matches) ? 1.0 : (1.0 - Math.exp(-8.5 * transitionTime));
+
+      if (!state.loaded) {
+        if (needsRender) {
+          camera.position.set(
+            state.targetCenter.x + state.radius * Math.sin(state.phi) * Math.cos(state.theta),
+            state.targetCenter.y + state.radius * Math.cos(state.phi),
+            state.targetCenter.z + state.radius * Math.sin(state.phi) * Math.sin(state.theta)
+          );
+          camera.lookAt(state.targetCenter);
+          renderActiveScene();
+          needsRender = false;
+        }
+        return;
+      }
+
+      // If capture script locked an exact pose, hold it cleanly without damping overrides.
+      if (customCapturePose) {
+        if (needsRender) {
+          applyExactPoseNow(customCapturePose);
+        }
+        if (!loaderEl.classList.contains('done')) {
+          loaderEl.classList.add('done');
+          loaderEl.setAttribute('aria-hidden', 'true');
+          barEl.inert = false;
+        }
+        return;
+      }
+
+      const presenting = !!intro;
+      if (presenting) {
+        advanceIntro(now);
+        if (intro && intro.elapsed <= introHoldMs && !needsRender) {
+          scheduleFrame();
+          return;
+        }
+      }
+
+      const camDelta =
+        Math.abs(state.targetTheta - state.theta) +
+        Math.abs(state.targetPhi - state.phi) +
+        Math.abs(state.targetRadius - state.radius) * 0.25 +
+        Math.abs(Number(state.interiorView) - state.cabinBlend) +
+        Math.abs(Number(selectedView === 'rear') - state.rearLens) +
+        Math.abs(frontLensTarget() - state.frontLens);
+      const photoPose = referenceViews.get(selectedView) ||
+        (selectedView === 'rear' ? rearPhoto : !selectedView && !state.interiorView ? landingPhoto : undefined);
+      const focusTarget = state.interiorView ? FOCUS_INTERIOR : (photoPose?.center || PANEL_CENTERS[selectedView] || FOCUS_EXTERIOR);
+      const focusDelta = state.targetCenter.distanceToSquared(focusTarget);
+
+      const mechDelta =
+        Math.abs(state.explodeTarget - state.explode) +
+        Math.abs(state.doorFLTarget - state.doorFL) +
+        Math.abs(state.doorFRTarget - state.doorFR) +
+        Math.abs(state.doorRLTarget - state.doorRL) +
+        Math.abs(state.doorRRTarget - state.doorRR) +
+        Math.abs(state.hoodTarget - state.hood) +
+        Math.abs(state.tailgateTarget - state.tailgate) +
+        Math.abs(state.fuelTarget - state.fuel);
+      const xrayDelta = Math.abs(state.xrayTarget - state.xray);
+      const rpmTarget = state.revving ? 7000 : 720;
+      const rpmDelta = Math.abs(rpmTarget - state.rpm);
+
+      let pullActive = false;
+      for (const ps of pullOffsets.values()) {
+        if (ps.cur.distanceToSquared(ps.tgt) > 1e-6) {
+          pullActive = true;
+          break;
+        }
+      }
+
+      const continuousAnim = state.spinMode || state.steerMode || state.revving || rpmDelta > 5;
+      const geoMoving = presenting || mechDelta > 5e-4 || pullActive || continuousAnim;
+      const active = needsRender || camDelta > 2e-4 || focusDelta > 1e-6 || xrayDelta > 5e-4 || geoMoving;
+
+      if (!active) {
+        wasMoving = false;
+        if (shadowDirty && !outlineMode) {
+          renderer.shadowMap.needsUpdate = true;
+          groundShadows.update();
+        }
+        renderActiveScene();
+        shadowDirty = false;
+        return;
+      }
+      scheduleFrame();
+      wasMoving = true;
+
+      state.theta += (state.targetTheta - state.theta) * damp;
+      state.phi += (state.targetPhi - state.phi) * damp;
+      state.radius += (state.targetRadius - state.radius) * damp;
+      state.targetCenter.lerp(focusTarget, damp);
+
+      state.explode += (state.explodeTarget - state.explode) * damp;
+      state.doorFL += (state.doorFLTarget - state.doorFL) * damp;
+      state.doorFR += (state.doorFRTarget - state.doorFR) * damp;
+      state.doorRL += (state.doorRLTarget - state.doorRL) * damp;
+      state.doorRR += (state.doorRRTarget - state.doorRR) * damp;
+      state.hood += (state.hoodTarget - state.hood) * damp;
+      state.tailgate += (state.tailgateTarget - state.tailgate) * damp;
+      state.fuel += (state.fuelTarget - state.fuel) * damp;
+      state.xray += (state.xrayTarget - state.xray) * damp;
+
+      state.cabinBlend += (Number(state.interiorView) - state.cabinBlend) * damp;
+      state.frontLens += (frontLensTarget() - state.frontLens) * damp;
+      state.rearLens += (Number(selectedView === 'rear') - state.rearLens) * damp;
+
+      const assemblyFramed = selectedView === 'assembly';
+      const exteriorFov = assemblyFramed ? assemblyView.fov : THREE.MathUtils.lerp(30, photoPose?.fov ?? 27.5, Math.min(1, state.frontLens + state.rearLens));
+      const lensTangent = Math.tan(THREE.MathUtils.degToRad(exteriorFov / 2));
+      const dolly = Math.tan(Math.PI / 12) / lensTangent;
+      const availableHeight = assemblyView.availableHeight || 1;
+      const rearScale = Math.max(1, 1.56 / camera.aspect, 0.76 / availableHeight);
+      const portraitMargin = THREE.MathUtils.clamp(1.5 - camera.aspect, 0, 1);
+      const closeUp = isDetailView(selectedView) || selectedView === 'fuel';
+      const minimumAspect = closeUp ? 1.05 : 1.52 + 0.06 * portraitMargin;
+      const exteriorScale = THREE.MathUtils.lerp(Math.max(1, minimumAspect / camera.aspect, 0.76 / availableHeight), rearScale, state.rearLens);
+      scene.fog.density = outlineMode ? 0 : studioFogDensity / THREE.MathUtils.lerp(1, dolly * exteriorScale, Math.min(1, state.frontLens + state.rearLens));
+
+      const assembledRadius = THREE.MathUtils.lerp(state.radius * exteriorScale * dolly, cabinRadius, state.cabinBlend);
+      const explodedRadius = state.radius / exteriorView.radius * (assemblyView.distance || 12.5 * exteriorScale) * dolly;
+      const turnClearance = 1 + 0.45 * portraitMargin * state.explode * (1 - state.explode);
+      let effRadius = assemblyFramed ? explodedRadius : THREE.MathUtils.lerp(assembledRadius, explodedRadius, state.explode) * turnClearance;
+
+      const cabinLens = Math.max(Math.tan(THREE.MathUtils.degToRad(62 / 2)), Math.tan(0.60) / camera.aspect);
+      const cabinFov = THREE.MathUtils.radToDeg(2 * Math.atan(cabinLens * Math.min(1, state.radius / cabinRadius)));
+      let fov = THREE.MathUtils.lerp(exteriorFov, cabinFov, state.cabinBlend);
+
+      const match = (!captureMode && photoPose?.photo) ? (1 - state.cabinBlend) * (1 - state.explode) : 0;
+      let offsetX = 0, offsetY = 0;
+      if (match > 0 && galleryRect.height && galleryRect.width) {
+        const imageHeight = Math.min(galleryRect.height, galleryRect.width / photoPose.aspect);
+        const screenTan = Math.tan(photoPose.fov * Math.PI / 360) * innerHeight / imageHeight;
+        effRadius = THREE.MathUtils.lerp(effRadius, state.radius * photoPose.distance / photoPose.radius, match);
+        fov = THREE.MathUtils.lerp(fov, THREE.MathUtils.radToDeg(2 * Math.atan(screenTan)), match);
+        offsetX = (1 - 2 * (galleryRect.x + galleryRect.width / 2) / innerWidth) * match;
+        offsetY = (2 * (galleryRect.y + galleryRect.height / 2) / innerHeight - 1) * match;
+      }
+
+      const near = (state.interiorView || (photoPose?.group && photoPose.group !== 'Exterior')) ? 0.02 : 0.05;
+      const far = Math.max(160, effRadius + 80);
+      if (Math.abs(camera.fov - fov) > 0.002 || Math.abs(camera.far - far) > 0.5 || camera.near !== near) {
+        camera.fov = fov;
+        camera.far = far;
+        camera.near = near;
+        camera.updateProjectionMatrix();
+      }
+      if (camera.projectionMatrix.elements[8] !== offsetX || camera.projectionMatrix.elements[9] !== offsetY) {
+        camera.projectionMatrix.elements[8] = offsetX;
+        camera.projectionMatrix.elements[9] = offsetY;
+        camera.projectionMatrixInverse.copy(camera.projectionMatrix).invert();
+      }
+
+      const cameraExplosion = assemblyFramed ? 0 : state.explode;
+      const effX = state.targetCenter.x + cameraExplosion * (assemblyView.center.x - FOCUS_EXTERIOR.x);
+      const compactLift = assemblyFramed ? 0 : effRadius * lensTangent * assemblyView.compactInset * (1 - state.explode) * (1 - state.cabinBlend);
+      const effY = state.targetCenter.y + cameraExplosion * (assemblyView.center.y - FOCUS_EXTERIOR.y) - compactLift * (1 - match);
+      const effZ = state.targetCenter.z + cameraExplosion * (assemblyView.center.z - FOCUS_EXTERIOR.z);
+      camera.position.set(
+        effX + effRadius * Math.sin(state.phi) * Math.cos(state.theta),
+        effY + effRadius * Math.cos(state.phi),
+        effZ + effRadius * Math.sin(state.phi) * Math.sin(state.theta)
+      );
+      camera.lookAt(effX, effY, effZ);
+      if (match && photoPose.roll) camera.rotateZ(photoPose.roll * match);
+      updateInspectionLighting(photoPose);
+      if (state.cabinBlend > 0.0001) {
+        camera.rotateOnWorldAxis(cabinUp, state.cabinYaw * state.cabinBlend);
+        const portraitTilt = THREE.MathUtils.clamp(1 - camera.aspect, 0, 1) * 0.14;
+        camera.rotateX((state.cabinPitch - portraitTilt) * state.cabinBlend);
+      }
+
+      // 5.2L Predator V8 RPM dynamics (720 idle -> 7,000 RPM redline + Eaton TVS R2650 whine)
+      if (rpmDelta > 1) {
+        state.rpm += (rpmTarget - state.rpm) * (1.0 - Math.exp(-(state.revving ? 4.6 : 2.9) * transitionTime));
+        if (state.revving) updateHudText();
+      }
+      if (!soundMuted && audioCtx && engGain && scGain) {
+        const crankHz = state.rpm / 60.0;
+        engOsc1.frequency.setTargetAtTime(crankHz * 2.0, audioCtx.currentTime, 0.035);
+        engOsc2.frequency.setTargetAtTime(crankHz * 4.0, audioCtx.currentTime, 0.035);
+        engOsc3.frequency.setTargetAtTime(crankHz * 6.0, audioCtx.currentTime, 0.035);
+        engOsc4.frequency.setTargetAtTime(crankHz * 8.0, audioCtx.currentTime, 0.035);
+        engFilter.frequency.setTargetAtTime(420 + (state.rpm / 7000) * 1850, audioCtx.currentTime, 0.05);
+        const vol = state.revving ? 0.062 : 0.016;
+        engGain.gain.setTargetAtTime(vol, audioCtx.currentTime, 0.06);
+
+        // Eaton TVS R2650 4-lobe high-helix blower whine ramps aggressively under boost
+        const scFreq = 420 + (state.rpm / 7000) * 2650;
+        scOsc1.frequency.setTargetAtTime(scFreq, audioCtx.currentTime, 0.035);
+        scOsc2.frequency.setTargetAtTime(scFreq * 2.0, audioCtx.currentTime, 0.035);
+        scFilter.frequency.setTargetAtTime(scFreq * 1.12, audioCtx.currentTime, 0.035);
+        const boost = state.revving ? THREE.MathUtils.clamp((state.rpm - 1300) / 5200, 0, 1) : 0;
+        scGain.gain.setTargetAtTime(boost * 0.022, audioCtx.currentTime, 0.045);
+      } else if (engGain && scGain && audioCtx) {
+        engGain.gain.setTargetAtTime(0.0, audioCtx.currentTime, 0.05);
+        scGain.gain.setTargetAtTime(0.0, audioCtx.currentTime, 0.05);
+      }
+
+      // Subtle stainless exhaust thermal glow when revving toward 7,000 RPM
+      const heat = Math.max(0, (state.rpm - 3000) / 4000);
+      if (Math.abs(heat - prevHeatRendered) > 1e-3) {
+        prevHeatRendered = heat;
+        for (let i = 0; i < headerMaterials.length; i++) {
+          const hm = headerMaterials[i];
+          if (hm.emissive) {
+            hm.emissive.setRGB(heat * 0.88, heat * 0.20, heat * 0.02);
+            hm.emissiveIntensity = heat * 1.35;
+          }
+        }
+      }
+
+      // Wheel spin & steering phase
+      if (state.spinMode) state.wheelSpinAngle += 2.4 * dt;
+      if (state.steerMode) state.steerPhase += 1.35 * dt;
+      const steerRad = state.steerMode ? Math.sin(state.steerPhase) * 0.42 : 0.0;
+
+      if (geoMoving || needsShadow) {
+        const vib = (state.rpm > 1100 ? (state.rpm / 7000) * 0.006 : 0.0);
+        applyAllPivots(damp, t, vib, steerRad);
+        shadowDirty = true;
+        if (!outlineMode && (damp >= 1.0 || now - lastShadowTime > 100)) {
+          renderer.shadowMap.needsUpdate = true;
+          groundShadows.update();
+          lastShadowTime = now;
+          shadowDirty = false;
+        }
+        needsShadow = false;
+      }
+
+      // Update shared exterior X-Ray materials only when X-ray or cabin glazing changes
+      if (Math.abs(state.xray - prevXrayRendered) > 5e-4 || Math.abs(state.cabinBlend - prevGlazingBlend) > 5e-4) {
+        mirrorDirty = true;
+        prevXrayRendered = state.xray;
+        prevGlazingBlend = state.cabinBlend;
+        for (let i = 0; i < exteriorXrayMaterials.length; i++) {
+          const mat = exteriorXrayMaterials[i];
+          const opacity = THREE.MathUtils.lerp(
+            mat.userData.origOpacity,
+            mat.userData.cabinOpacity ?? mat.userData.origOpacity,
+            state.cabinBlend
+          );
+          if (state.xray > 0.01) {
+            mat.transparent = true;
+            const targetOp = mat.userData.isGlass ? 0.08 : 0.16;
+            mat.opacity = THREE.MathUtils.lerp(opacity, targetOp, state.xray);
+            mat.depthWrite = state.xray < 0.35;
+          } else {
+            mat.transparent = mat.userData.origTransparent;
+            mat.opacity = opacity;
+            mat.depthWrite = mat.userData.origDepthWrite;
+          }
+        }
+      }
+
+      updateEnclosureWeights();
+      updateCabinMirror(geoMoving);
+      renderActiveScene();
+
+      if (!loaderEl.classList.contains('done')) {
+        if (intro) intro.previous = performance.now();
+        loaderEl.classList.add('done');
+        loaderEl.setAttribute('aria-hidden', 'true');
+        barEl.inert = false;
+      }
+      needsRender = false;
+    }
+
+    window.addEventListener('studio-mode-change', () => {
+      state.hudHidden = captureMode;
+      setHoverMesh(null, 0, 0);
+      state.revving = false;
+      if (intro) intro.previous = null;
+      if (engGain && audioCtx) engGain.gain.setTargetAtTime(0, audioCtx.currentTime, 0.04);
+      if (scGain && audioCtx) scGain.gain.setTargetAtTime(0, audioCtx.currentTime, 0.04);
+      wake();
+    });
+    window.addEventListener('resize', () => {
+      camera.aspect = window.innerWidth / Math.max(1, window.innerHeight);
+      camera.updateProjectionMatrix();
+      fullRatio = targetPixelRatio();
+      renderer.setPixelRatio(fullRatio);
+      renderer.setSize(window.innerWidth, window.innerHeight);
+      fitExplodedCamera();
+      if (customCapturePose) applyExactPoseNow(customCapturePose);
+      else wake(false);
+    });
+
+    wake();
+  </script>
+</body>
+</html>
