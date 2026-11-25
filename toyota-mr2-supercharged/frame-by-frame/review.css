@@ -18,7 +18,8 @@ h1 { font-size:clamp(38px,5.8vw,78px); letter-spacing:-.055em; margin:clamp(28px
 .display { gap:0; }
 .display button { font:inherit; font-size:.87rem; border:1px solid #acb1b3; padding:4px 12px; background:transparent; cursor:pointer; }
 .display button:first-child { border-radius:5px 0 0 5px; }
-.display button:last-child { border-radius:0 5px 5px 0; border-left:0; }
+.display button + button { border-left:0; }
+.display button:last-child { border-radius:0 5px 5px 0; }
 .display button[aria-pressed=true] { background:#23292c;color:#fff; }
 section { margin-bottom:56px; }
 h2 { font-size:clamp(26px,3vw,44px); letter-spacing:-.045em; margin:40px 0 25px; }
@@ -31,10 +32,17 @@ h3 span { font-size:.75em; color:#676c70; font-variant-numeric:tabular-nums; fon
 .pair { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
 figure { min-width:0; }
 figure img { width:100%; height:auto; display:block; background:#e8ebed; }
+.image-layer { position:relative; }
+.shape-trace { display:none; }
+.shape-mode .pair { display:block; max-width:1050px; margin:auto; }
+.shape-mode .pair figure:last-child, .shape-mode figcaption { display:none; }
+.shape-mode .shape-trace { display:block; position:absolute; inset:0; background:transparent; opacity:var(--trace-opacity,.85); pointer-events:none; }
 figcaption { margin:5px 0 0; color:#495057; font-size:.83rem; }
 .note { margin-top:12px; max-width:92ch; }
 .links { margin-top:7px; }
-.wiper, [hidden] { display:none !important; }
+.wiper, .trace-control, [hidden] { display:none !important; }
+.shape-mode .trace-control { display:flex !important; align-items:center; gap:12px; margin-top:8px; font-size:.83rem; }
+.trace-control input { width:min(220px,45%); accent-color:#157181; }
 .wipe-mode .wiper { display:flex !important; align-items:center; gap:12px; margin-top:8px; font-size:.83rem; }
 .wiper input { width:min(260px,55%); accent-color:#9f1e2c; }
 .wipe-mode .pair { position:relative; display:block; max-width:1050px; margin:auto; cursor:ew-resize; touch-action:pan-y; user-select:none; }
