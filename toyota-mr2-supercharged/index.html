@@ -24,7 +24,7 @@
   <link rel="canonical" href="https://bailiping.com/toyota-mr2-supercharged/" />
   <link rel="icon" href="/favicon.ico" />
   <title>1988 Toyota MR2 Supercharged (AW11) — Super Red</title>
-  <link rel="stylesheet" href="./studio.css?v=2">
+  <link rel="stylesheet" href="./studio.css?v=3">
   <script type="module" src="./studio.js?v=2"></script>
 </head>
 <body>
@@ -51,29 +51,7 @@
       <p>1988 Toyota MR2 Supercharged · JWeston listing photos via Bring a Trailer · <a href="https://bringatrailer.com/listing/1988-toyota-mr2-supercharged-31/">View listing</a> · <a id="full-photo" href="#" target="_blank" rel="noopener" hidden>Full-size photo</a></p>
     </div>
   </section>
-  <div id="detail-tools" hidden>
-    <label for="inspect-detail">Inspect</label>
-    <select id="inspect-detail">
-      <option value="">Whole car</option>
-      <optgroup label="Interior">
-        <option value="cabin">Driver’s view</option>
-        <option value="cluster">Instruments</option>
-        <option value="console">Center stack</option>
-        <option value="shifter">Gearshift</option>
-        <option value="seats">Leather seats</option>
-        <option value="door">Door trim</option>
-        <option value="pedals">Pedal box</option>
-      </optgroup>
-      <optgroup label="Powertrain">
-        <option value="engine">Engine bay</option>
-        <option value="wiring">Ignition and wiring</option>
-        <option value="loom">Engine harness</option>
-        <option value="transmission">E51 transaxle</option>
-        <option value="gearset">E51 internal gears</option>
-      </optgroup>
-    </select>
-    <a href="#mr2-views" id="detail-photo" hidden>Reference photo</a>
-  </div>
+  <a href="#mr2-views" id="detail-photo" hidden>Reference photo</a>
   <canvas id="stage" aria-label="Interactive 3D model of a 1988 Toyota MR2 Supercharged"></canvas>
   <div id="callout"><span class="title"></span><span class="sub"></span></div>
   <div id="loader">
@@ -558,10 +536,8 @@
     const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)');
     // MR2 views cover the car; it neither renders nor takes shortcuts meanwhile.
     const carHidden = () => document.documentElement.classList.contains('show-photos');
-    const detailSelect = document.getElementById('inspect-detail');
-    const detailTools = document.getElementById('detail-tools');
     const detailPhoto = document.getElementById('detail-photo');
-    const detailIds = new Set([...detailSelect.options].map(option => option.value).filter(Boolean));
+    const isDetailView = name => Boolean(referenceViews.get(name)?.label);
     let lastIsolation = null;
     const explosionButton = document.getElementById('exploded-view');
     const capLift = new THREE.Vector3();
@@ -871,7 +847,7 @@
         if (pivots.Pivot_Body_Assembly) {
           measureExplodedView();
           const detail = location.hash.slice(1);
-          if (detailIds.has(detail) && !overrideModel) {
+          if (isDetailView(detail) && !overrideModel) {
             document.documentElement.dataset.matchView = detail;
           } else if (location.hash === '#rear') {
             showRearView(true);
@@ -883,7 +859,6 @@
         explosionButton.disabled = !pivots.Pivot_Body_Assembly;
         state.loaded = true;
         if (document.documentElement.dataset.matchView) matchMr2View(document.documentElement.dataset.matchView);
-        detailTools.hidden = !!overrideModel;
         document.documentElement.dataset.modelReady = overrideModel ? 'custom' : 'stock';
         window.dispatchEvent(new Event('model-ready'));
 
@@ -1183,10 +1158,10 @@
     });
 
     function zoomTo(radius) {
-      const closeView = detailIds.has(selectedView) || selectedView === '14" Teardrop wheel' || selectedView === '4A-GZE Supercharged engine' || selectedView === 'fuel';
+      const closeView = isDetailView(selectedView) || selectedView === '14" Teardrop wheel' || selectedView === '4A-GZE Supercharged engine' || selectedView === 'fuel';
       state.targetRadius = state.interiorView
         ? THREE.MathUtils.clamp(radius, 18, cabinRadius)
-        : THREE.MathUtils.clamp(radius, detailIds.has(selectedView) ? 10 : closeView ? 38 : 115, 780);
+        : THREE.MathUtils.clamp(radius, isDetailView(selectedView) ? 10 : closeView ? 38 : 115, 780);
     }
 
     // Wheel zoom
@@ -1207,7 +1182,7 @@
       delete document.documentElement.dataset.matchView;
       runCommand('r');
       selectedView = name;
-      if (detailIds.has(name)) history.replaceState(null, '', '#' + name);
+      if (isDetailView(name)) history.replaceState(null, '', '#' + name);
       state.explode = state.explodeTarget = state.xray = state.xrayTarget = 0;
       for (const key of Object.keys(panels)) state[key] = state[key + 'Target'] = 0;
       for (const offset of pullOffsets.values()) offset.cur.copy(offset.tgt);
@@ -1240,13 +1215,8 @@
       updateHudText();
       wake(true);
     }
-    detailSelect.addEventListener('change', () => {
-      if (detailSelect.value) matchMr2View(detailSelect.value);
-      else runCommand('r');
-      history.replaceState(null, '', detailSelect.value ? '#' + detailSelect.value : '#model');
-    });
     detailPhoto.addEventListener('click', () => {
-      if (detailPhoto.hash === '#mr2-views') document.documentElement.dataset.photoPreset = detailSelect.value;
+      if (detailPhoto.hash === '#mr2-views') document.documentElement.dataset.photoPreset = detailPhoto.dataset.preset;
     });
     window.addEventListener('match-mr2-view', event => matchMr2View(event.detail));
 
@@ -1291,7 +1261,7 @@
       if (state.loaded && location.hash === '#rear') showRearView();
     });
     window.addEventListener('hashchange', () => {
-      if (state.loaded && detailIds.has(location.hash.slice(1))) matchMr2View(location.hash.slice(1));
+      if (state.loaded && isDetailView(location.hash.slice(1))) matchMr2View(location.hash.slice(1));
       if (state.loaded && location.hash === '#assembly') startAssembly();
       if (state.loaded && location.hash === '#rear') showRearView();
     });
@@ -1410,7 +1380,7 @@
     }
 
     window.addEventListener('keydown', e => {
-      if (e.target === detailSelect || carHidden() || e.altKey || e.ctrlKey || e.metaKey || e.repeat) return;
+      if (carHidden() || e.altKey || e.ctrlKey || e.metaKey || e.repeat) return;
       if (e.code === 'Space') {
         if (e.target.closest('a, button, summary, select, input')) return;
         e.preventDefault();
@@ -1455,10 +1425,10 @@
       for (const button of panelButtons) {
         button.setAttribute('aria-pressed', String(!!state[button.dataset.panel + 'Target']));
       }
-      const detail = detailIds.has(selectedView) ? selectedView : state.interiorView ? 'cabin' : '';
-      if (!detail && detailIds.has(location.hash.slice(1))) history.replaceState(null, '', '#model');
-      detailSelect.value = detail;
-      detailPhoto.hidden = !detail;
+      const detail = isDetailView(selectedView) ? selectedView : state.interiorView ? 'cabin' : '';
+      if (!detail && isDetailView(location.hash.slice(1))) history.replaceState(null, '', '#model');
+      detailPhoto.dataset.preset = detail;
+      detailPhoto.hidden = !detail || !!overrideModel;
       const useDrawing = detail === 'gearset' || detail === 'loom';
       detailPhoto.textContent = useDrawing ? 'Factory drawing' : 'Reference photo';
       detailPhoto.href = useDrawing
@@ -1484,7 +1454,7 @@
         showPartInfo(info.title, info.spec);
         return;
       }
-      if (detail) tags.push(detailSelect.selectedOptions[0].textContent);
+      if (detail) tags.push(referenceViews.get(detail).label);
       if (state.xrayTarget > 0.5) tags.push('membrane x-ray');
       if (state.doorLTarget > 0.5 && state.doorRTarget > 0.5) tags.push('doors open');
       else if (state.doorLTarget > 0.5) tags.push('driver door open');
@@ -1553,18 +1523,18 @@
       ['Rear',                               { theta:  Math.PI, phi: 1.51, radius: 252, fov: 22, center: new THREE.Vector3(-12, 24, 0) }],
       ['Overhead (T-tops off)',              { theta: -Math.PI / 2, phi: 0.07, radius: 325, fov: 22, center: new THREE.Vector3(0, 30, 0), panels: { ttop: 1 } }],
       ['14" Teardrop wheel',                 { theta: -Math.PI / 2, phi: 1.56, radius: 88,  fov: 26, center: new THREE.Vector3(64.44, 15.2, -38.0) }],
-      ['cabin',        { cabin: true }],
-      ['seats',        { theta: -0.92, phi: 0.97, radius: 150, fov: 32, center: new THREE.Vector3(-11, 34, -2), isolate: /MR2_(Seat|CenterConsole|Handbrake|Shifter|Int_Cabin_Floor)/ }],
-      ['console',      { theta: -2.98, phi: 1.32, radius: 46, fov: 38, center: new THREE.Vector3(22, 36, 0), isolate: cabinParts }],
-      ['shifter',      { theta: -2.50, phi: 0.69, radius: 48, fov: 37, center: new THREE.Vector3(4, 26, 1), isolate: cabinParts }],
-      ['door',         { theta: 1.42, phi: 1.37, radius: 112, fov: 32, center: new THREE.Vector3(5, 30, -40), isolate: /MR2_DoorCard_L/ }],
-      ['pedals',       { theta: -2.916, phi: 1.30, radius: 46, fov: 41, center: new THREE.Vector3(30.5, 20.9, -23.6), isolate: /MR2_Pedal/ }],
-      ['cluster',      { theta: -Math.PI, phi: 1.42, radius: 48, fov: 32, center: new THREE.Vector3(22, 44, -20), isolate: /MR2_(InstrumentCluster|SwitchPod|Dashboard)/ }],
-      ['engine',       { theta: Math.PI, phi: 0.56, radius: 111, fov: 31, center: new THREE.Vector3(-55, 42, 0), panels: { engineLid: 1 } }],
-      ['wiring',       { theta: 2.48, phi: 0.56, radius: 66, fov: 34, center: new THREE.Vector3(-55, 39, 9), isolate: /MR2_Eng_/ }],
-      ['loom',         { theta: 2.86, phi: .61, radius: 115, fov: 31, center: new THREE.Vector3(-53, 37, 2), isolate: /MR2_Eng_(Harness|Ignition|Battery)/ }],
-      ['gearset',      { theta: -2.32, phi: .68, radius: 42, fov: 29, center: new THREE.Vector3(-60.0, 21.7, -11.7), isolate: /MR2_Transaxle_Internal/ }],
-      ['transmission', { theta: -2.23, phi: 1.13, radius: 91, fov: 31, center: new THREE.Vector3(-60, 20, -9), isolate: gearboxParts }],
+      ['cabin',        { label: 'Driver’s view', cabin: true }],
+      ['seats',        { label: 'Leather seats', theta: -0.92, phi: 0.97, radius: 150, fov: 32, center: new THREE.Vector3(-11, 34, -2), isolate: /MR2_(Seat|CenterConsole|Handbrake|Shifter|Int_Cabin_Floor)/ }],
+      ['console',      { label: 'Center stack', theta: -2.98, phi: 1.32, radius: 46, fov: 38, center: new THREE.Vector3(22, 36, 0), isolate: cabinParts }],
+      ['shifter',      { label: 'Gearshift', theta: -2.50, phi: 0.69, radius: 48, fov: 37, center: new THREE.Vector3(4, 26, 1), isolate: cabinParts }],
+      ['door',         { label: 'Door trim', theta: 1.42, phi: 1.37, radius: 112, fov: 32, center: new THREE.Vector3(5, 30, -40), isolate: /MR2_DoorCard_L/ }],
+      ['pedals',       { label: 'Pedal box', theta: -2.916, phi: 1.30, radius: 46, fov: 41, center: new THREE.Vector3(30.5, 20.9, -23.6), isolate: /MR2_Pedal/ }],
+      ['cluster',      { label: 'Instruments', theta: -Math.PI, phi: 1.42, radius: 48, fov: 32, center: new THREE.Vector3(22, 44, -20), isolate: /MR2_(InstrumentCluster|SwitchPod|Dashboard)/ }],
+      ['engine',       { label: 'Engine bay', theta: Math.PI, phi: 0.56, radius: 111, fov: 31, center: new THREE.Vector3(-55, 42, 0), panels: { engineLid: 1 } }],
+      ['wiring',       { label: 'Ignition and wiring', theta: 2.48, phi: 0.56, radius: 66, fov: 34, center: new THREE.Vector3(-55, 39, 9), isolate: /MR2_Eng_/ }],
+      ['loom',         { label: 'Engine harness', theta: 2.86, phi: .61, radius: 115, fov: 31, center: new THREE.Vector3(-53, 37, 2), isolate: /MR2_Eng_(Harness|Ignition|Battery)/ }],
+      ['gearset',      { label: 'E51 internal gears', theta: -2.32, phi: .68, radius: 42, fov: 29, center: new THREE.Vector3(-60.0, 21.7, -11.7), isolate: /MR2_Transaxle_Internal/ }],
+      ['transmission', { label: 'E51 transaxle', theta: -2.23, phi: 1.13, radius: 91, fov: 31, center: new THREE.Vector3(-60, 20, -9), isolate: gearboxParts }],
       ['Cockpit',                            { cabin: true }],
       ['4A-GZE Supercharged engine',         { theta:  Math.PI, phi: 0.78, radius: 136, fov: 26, center: new THREE.Vector3(-55, 37, 0), panels: { engineLid: 1 } }],
     ]);
@@ -1861,7 +1831,7 @@
       const availableHeight = assemblyView.availableHeight || 1;
       const rearScale = Math.max(1, 1.56 / camera.aspect, .76 / availableHeight);
       const portraitMargin = THREE.MathUtils.clamp(1.5 - camera.aspect, 0, 1);
-      const closeUp = detailIds.has(selectedView) || selectedView === '14" Teardrop wheel' || selectedView === '4A-GZE Supercharged engine' || selectedView === 'fuel';
+      const closeUp = isDetailView(selectedView) || selectedView === '14" Teardrop wheel' || selectedView === '4A-GZE Supercharged engine' || selectedView === 'fuel';
       const minimumAspect = ['transmission', 'gearset', 'seats', 'loom', 'door'].includes(selectedView) ? 1.47 : closeUp ? 1.02 : 1.52 + .06 * portraitMargin;
       const exteriorScale = THREE.MathUtils.lerp(Math.max(1, minimumAspect / camera.aspect, .76 / availableHeight), rearScale, state.rearLens);
       scene.fog.density = studioFogDensity / THREE.MathUtils.lerp(1, dolly * exteriorScale, Math.min(1, state.frontLens + state.rearLens));
