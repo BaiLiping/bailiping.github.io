@@ -13,13 +13,16 @@ const comparison = document.getElementById('comparison-controls');
 const split = document.getElementById('comparison-split');
 function matchAngle() {
   const option = angles.selectedOptions[0];
-  if (option) window.dispatchEvent(new CustomEvent('match-porsche-view', {detail: option.label}));
+  if (!option) return;
+  document.documentElement.dataset.matchView = option.label;
+  window.dispatchEvent(new CustomEvent('match-porsche-view', {detail: option.label}));
 }
 function setComparison(enabled) {
   compareButton.setAttribute('aria-pressed', String(enabled));
   comparison.hidden = !enabled;
   document.documentElement.classList.toggle('compare-photos', enabled);
   if (enabled) matchAngle();
+  else delete document.documentElement.dataset.matchView;
 }
 compareButton.addEventListener('click', () => {
   if (angles.selectedIndex >= 0) setComparison(comparison.hidden);
@@ -78,14 +81,21 @@ document.getElementById('next-view').addEventListener('click', () => moveAngle(1
 async function loadAngles() {
   if (angles.length) return;
   try {
-    sourcePromise ??= fetch('./porsche-views.json?v=surface-studio-r4').then(response => {
+    sourcePromise ??= fetch('./porsche-views.json?v=planform-r5').then(response => {
       if (!response.ok) throw new Error('Camera list unavailable');
       return response.json();
     });
     const sources = await sourcePromise;
     if (angles.length) return;
     for (const [name, src] of Object.entries(sources)) angles.add(new Option(name, src));
+    const query = new URLSearchParams(location.search);
+    const frame = query.get('frame');
+    const validFrame = frame !== null && /^\d+$/.test(frame) && Number(frame) < angles.length;
+    if (validFrame) angles.selectedIndex = Number(frame);
     showAngle();
+    if (validFrame && query.has('compare') && !query.has('model') && location.hash === '#porsche-views') {
+      setComparison(true);
+    }
   } catch {
     sourcePromise = undefined;
     photo.hidden = true;

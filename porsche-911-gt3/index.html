@@ -9,7 +9,7 @@
     if (location.hash === '#porsche-views') document.documentElement.classList.add('show-photos');
     if (labTab) document.documentElement.classList.add('show-lab');
     const overrideModel = new URLSearchParams(location.search).get('model');
-    const modelFile = overrideModel || './porsche_911_gt3_992_2.glb?v=surface-studio-r4';
+    const modelFile = overrideModel || './porsche_911_gt3_992_2.glb?v=planform-r5';
     // A page opened on a lab tab fetches the car when the 3D model is first shown.
     if (!labTab) {
       const preload = document.createElement('link');
@@ -25,7 +25,7 @@
   <title>2025 911 GT3 (992.2) — Six-speed manual</title>
   <link rel="stylesheet" href="./transmission.css?v=23aa01ea">
   <link rel="stylesheet" href="./studio.css?v=surface-studio-r4">
-  <script type="module" src="./studio.js?v=surface-studio-r4"></script>
+  <script type="module" src="./studio.js?v=planform-r5"></script>
 </head>
 <body>
   <noscript><p style="position:fixed;inset:0;z-index:30;background:#eceeef;padding:2em">The interactive car requires JavaScript. <a href="./manual-cutaway-4k.webp?v=60742a3d">Open the 4K transmission cutaway</a>.</p></noscript>
@@ -1513,15 +1513,15 @@
       ['Right side profile',        { theta:  1.5281, phi: 1.4987, radius: 312.67, fov: 20.908, center: new THREE.Vector3( 3.32, 37.51, -0.03) }],
       ['Front-right 65°',           { theta:  1.1470, phi: 1.4752, radius: 310.00, fov: 21.043, center: new THREE.Vector3( 3.04, 36.62,  0.71) }],
       ['Front-right three-quarter', { theta:  0.9148, phi: 1.4627, radius: 310.55, fov: 21.140, center: new THREE.Vector3( 4.17, 36.61,  1.35) }],
-      ['Front-right 30°',           { theta:  0.5108, phi: 1.5097, radius: 311.55, fov: 22.580, center: new THREE.Vector3( 4.05, 38.44,  3.22) }],
-      ['Front-right 15°',           { theta:  0.2478, phi: 1.4930, radius: 309.63, fov: 22.060, center: new THREE.Vector3( 4.29, 37.88,  1.92) }],
-      ['Front',                     { theta:  0.0035, phi: 1.4919, radius: 317.00, fov: 22.019, center: new THREE.Vector3(-8.23, 37.16,  0.56) }],
-      ['Front-left 15°',            { theta: -0.1961, phi: 1.4908, radius: 312.10, fov: 21.847, center: new THREE.Vector3( 1.02, 38.17,  0.16) }],
-      ['Front-left 30°',            { theta: -0.4194, phi: 1.4963, radius: 309.22, fov: 22.587, center: new THREE.Vector3( 5.09, 38.08, -1.84) }],
-      ['High right 25°',            { theta:  1.4848, phi: 1.1508, radius: 304.56, fov: 19.747, center: new THREE.Vector3( 3.74, 33.58, -0.92) }],
-      ['High right 36°',                  { theta:  1.5037, phi: 0.9466, radius: 306.02, fov: 20.169, center: new THREE.Vector3( 3.76, 32.76, -1.48) }],
-      ['Near-overhead 81°',                  { theta:  1.6537, phi: 0.1618, radius: 306.34, fov: 19.239, center: new THREE.Vector3( 3.18, 37.00,  1.32) }],
-      ['Overhead reference 79°',                  { theta:  1.5098, phi: 0.1903, radius: 306.22, fov: 20.235, center: new THREE.Vector3( 3.07, 37.00,  1.12) }],
+      ['Front-right 30°',           { theta:  0.5260, phi: 1.5001, radius: 311.51, fov: 22.239, center: new THREE.Vector3( 4.16, 37.95,  3.09) }],
+      ['Front-right 15°',           { theta:  0.2520, phi: 1.4902, radius: 309.63, fov: 22.058, center: new THREE.Vector3( 4.29, 37.87,  1.92) }],
+      ['Front',                     { theta:  0.0031, phi: 1.4825, radius: 317.19, fov: 20.361, center: new THREE.Vector3(-8.16, 36.33,  0.64) }],
+      ['Front-left 15°',            { theta: -0.1994, phi: 1.4887, radius: 312.10, fov: 21.837, center: new THREE.Vector3( 1.02, 38.15,  0.16) }],
+      ['Front-left 30°',            { theta: -0.4412, phi: 1.4769, radius: 305.99, fov: 19.259, center: new THREE.Vector3( 5.26, 37.29, -1.60) }],
+      ['High right 23°',            { theta:  1.4895, phi: 1.1721, radius: 307.28, fov: 23.107, center: new THREE.Vector3( 3.55, 34.36, -1.25) }],
+      ['High right 34°',                  { theta:  1.5091, phi: 0.9708, radius: 307.51, fov: 21.644, center: new THREE.Vector3( 3.56, 33.59, -2.06) }],
+      ['Near-overhead 80°',                  { theta:  1.6569, phi: 0.1771, radius: 305.56, fov: 18.800, center: new THREE.Vector3( 3.36, 37.05,  1.04) }],
+      ['Overhead reference 79°',                  { theta:  1.5153, phi: 0.1888, radius: 305.09, fov: 18.678, center: new THREE.Vector3( 3.43, 37.07,  0.71) }],
     ]);
     const FOCUS_INTERIOR = new THREE.Vector3(12, 41, -4.5);
     const cabinRadius = 47;
