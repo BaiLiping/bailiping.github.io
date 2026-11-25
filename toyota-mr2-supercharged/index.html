@@ -7,7 +7,7 @@
   <script>
     if (location.hash === '#mr2-views') document.documentElement.classList.add('show-photos');
     const overrideModel = new URLSearchParams(location.search).get('model');
-    const modelFile = overrideModel || './toyota_mr2_aw11_sc.glb?v=e6a5147425';
+    const modelFile = overrideModel || './toyota_mr2_aw11_sc.glb?v=c53478408c';
     const preload = document.createElement('link');
     preload.rel = 'preload';
     preload.as = 'fetch';
@@ -112,7 +112,7 @@
     import { interiorPhotoViews } from './interior-photo-views.js?v=fb8c2032a3';
     import { powertrainPhotoViews } from './powertrain-photo-views.js?v=c72ceb883a';
     const [photoSources, exteriorCameras, frontCameras] = await Promise.all(
-      ['./mr2-views.json?v=7a4f443772', './exterior-photo-cameras.json?v=6880513d35', './front-photo-cameras.json?v=495fb9b678']
+      ['./mr2-views.json?v=7a4f443772', './exterior-photo-cameras.json?v=03bf1f17cb', './front-photo-cameras.json?v=3e384a9813']
         .map(url => fetch(url).then(response => response.json()))
     );
     const fittedCameras = { ...exteriorCameras, ...frontCameras, ...interiorPhotoViews, ...powertrainPhotoViews };
