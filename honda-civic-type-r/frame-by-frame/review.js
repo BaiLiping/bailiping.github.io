@@ -14,7 +14,7 @@ function showLayout(layout) {
     option.setAttribute('aria-pressed', String(option.dataset.layout === layout));
   }
 }
-showLayout('shape');
+showLayout('pairs');
 display.addEventListener('click', event => {
   const button = event.target.closest('button');
   if (button) showLayout(button.dataset.layout);

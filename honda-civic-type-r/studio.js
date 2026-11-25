@@ -1,4 +1,4 @@
-import { loadCivicViews } from './civic-views.js';
+import { loadCivicViews } from './civic-views.js?v=74bae4f433';
 
 const room = document.getElementById('photo-room');
 const photo = document.getElementById('photo');
@@ -31,7 +31,7 @@ function showAngle() {
   if (!option) return;
   error.hidden = true;
   photo.hidden = false;
-  photo.alt = option.label + ' on the reference 2025 Honda Civic Type R (FL5)';
+  photo.alt = option.label + ' on the Championship White reference 2025 Honda Civic Type R (FL5)';
   const fullPhoto = document.getElementById('full-photo');
   const fullUrl = option.dataset.original || option.value;
   if (fullUrl) {

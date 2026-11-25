@@ -1,15 +1,15 @@
 import * as THREE from './vendor/three-r170.js?v=31c84364';
 
-export const VIEWS_URL = './civic-views.json';
+export const VIEWS_URL = './civic-views.json?v=3db436e91a';
 
 // Default 1:1 metric studio cameras (glTF Y-up: +X forward, +Y up, -Z driver left, +Z passenger right).
 export const DEFAULT_CAMERAS = {
   exterior: {
     theta: -0.78,
-    phi: 1.40,
-    distance: 7.35,
+    phi: 1.33,
+    distance: 7.65,
     fov: 25.0,
-    center: [0.02, 0.65, 0.0],
+    center: [0.17, 0.66, 0.0],
     roll: 0,
     shiftX: 0,
     shiftY: 0,

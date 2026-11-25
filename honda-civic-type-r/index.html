@@ -9,7 +9,7 @@
     const params = new URLSearchParams(location.search);
     if (params.get('capture') === '1' || params.get('hud') === '0') document.documentElement.classList.add('hide-hud');
     const overrideModel = params.get('model');
-    const modelFile = overrideModel || './honda_civic_type_r.glb';
+    const modelFile = overrideModel || './honda_civic_type_r.glb?v=495d188d86';
     const preload = document.createElement('link');
     preload.rel = 'preload';
     preload.as = 'fetch';
@@ -19,15 +19,15 @@
   </script>
   <link rel="canonical" href="https://bailiping.com/honda-civic-type-r/" />
   <link rel="icon" href="/favicon.ico" />
-  <title>2025 Honda Civic Type R (FL5) — Championship White</title>
-  <meta name="description" content="Interactive 3D 2025 Honda Civic Type R (FL5) studio viewer in Championship White (NH-0) with articulated doors, hood, rear hatch, X-ray cutaway, exploded assembly, cabin view, and calibrated photo comparisons." />
-  <link rel="stylesheet" href="./studio.css">
-  <script type="module" src="./studio.js"></script>
+  <title>2025 Honda Civic Type R (FL5) — Crystal Black Pearl</title>
+  <meta name="description" content="Interactive 3D 2025 Honda Civic Type R (FL5) studio viewer in Crystal Black Pearl (NH-731P) with articulated doors, hood, rear hatch, X-ray cutaway, exploded assembly, cabin view, and calibrated photo comparisons." />
+  <link rel="stylesheet" href="./studio.css?v=d4bba94613">
+  <script type="module" src="./studio.js?v=24fac5d8b1"></script>
 </head>
 <body>
   <noscript><p style="position:fixed;inset:0;z-index:30;background:#eceeef;padding:2em">The interactive 2025 Honda Civic Type R viewer requires JavaScript. <a href="https://bringatrailer.com/listing/2025-honda-civic-type-r-3/">View the reference listing</a> or <a href="./frame-by-frame/">open the frame-by-frame photo comparison</a>.</p></noscript>
   <header id="studio-header">
-    <div class="identity"><h1>Civic Type R</h1><span class="finish"><i aria-hidden="true"></i><span id="finish-name">Championship White</span></span></div>
+    <div class="identity"><h1>Civic Type R</h1><span class="finish"><i aria-hidden="true"></i><span id="finish-name">Crystal Black Pearl</span><span class="reference-finish">Championship White</span></span></div>
     <nav class="mode-switch" aria-label="Views">
       <a href="#model" aria-current="true">3D model</a>
       <a href="#civic-views">Civic views</a>
@@ -46,7 +46,7 @@
         <button id="next-view" type="button" aria-label="Next view">›</button>
         <button id="match-view" type="button" disabled>Match in 3D</button>
       </div>
-      <p>2025 Honda Civic Type R (#R-41430) · <span id="photo-credit">Bruno Silie / Maison Throne via Bring a Trailer</span> · <a href="https://bringatrailer.com/listing/2025-honda-civic-type-r-3/">View listing</a> · <a id="full-photo" href="#" target="_blank" rel="noopener" hidden>Full-size photo</a></p>
+      <p>Championship White reference car (#R-41430) · <span id="photo-credit">Bruno Silie / Maison Throne via Bring a Trailer</span> · <a href="https://bringatrailer.com/listing/2025-honda-civic-type-r-3/">View listing</a> · <a id="full-photo" href="#" target="_blank" rel="noopener" hidden>Full-size photo</a></p>
     </div>
   </section>
   <div id="photo-tools-3d">
@@ -80,8 +80,9 @@
             <button type="button" data-panel="hatch" aria-pressed="false" aria-keyshortcuts="K" disabled>Rear hatch</button>
             <button type="button" data-panel="fuel" aria-pressed="false" aria-keyshortcuts="G" hidden disabled>Fuel filler</button>
           </div>
-          <p id="info">2025 Honda Civic Type R (FL5) · Championship White (NH-0)</p>
+          <p id="info">2025 Honda Civic Type R (FL5) · Crystal Black Pearl (NH-731P)</p>
           <p class="quick-links">
+            <a href="#photo-fl5-front-high-nose">Closed hood</a>
             <a href="#rear">Rear three-quarter</a>
             <a href="#engine">Engine bay</a>
             <a href="#seats">Type R seats</a>
@@ -94,7 +95,7 @@
             <p>I cabin · E explode · X x-ray · R reset · S steer · W spin · Space rev · M sound · H hide controls</p>
           </details>
           <details class="notes"><summary>Model references</summary><div class="sources" id="model-sources">
-            <p>Photo-matched 1:1 metric 2025 Honda Civic Type R (FL5) reconstruction in Championship White (NH-0) over red suede-effect sport bucket seats. The photographs document stock USDM serial #R-41430 (1,100 miles, K20C1 2.0L VTEC Turbo, 6-speed manual). Concealed under-trim structure and fastener details remain approximate.</p>
+            <p>The 3D model shows the 2025 Civic Type R in Crystal Black Pearl with red sport seats. The reference photos show a Championship White US-market car, serial #R-41430. Body surfaces and internal parts are approximations based on photographs and Honda’s published dimensions.</p>
             <a href="https://bringatrailer.com/listing/2025-honda-civic-type-r-3/">2025 Honda Civic Type R #R-41430 (Championship White) · Bring a Trailer Lot #231,834</a><br>
             <a href="#civic-views">Browse calibrated reference photos</a> · <a href="./frame-by-frame/">Frame-by-frame comparison</a><br>
             <a href="https://hondanews.com/en-US/honda-automobiles/releases/release-a0290fb377b9a07ba1686b65910857e4-2025-honda-civic-type-r-specifications-features">2025 Civic Type R Specifications &amp; Features · Honda News US</a><br>
@@ -111,7 +112,7 @@
     import { createStudioFloor } from './studio-floor.js';
     import { applyStudioVisibility } from './studio-visibility.js';
     import { createPlanarMirror } from './mirror-reflection.js';
-    import { DEFAULT_CAMERAS, orbitRadius, normalizeCameraPose, buildReferenceViews, loadCivicViews } from './civic-views.js';
+    import { DEFAULT_CAMERAS, orbitRadius, normalizeCameraPose, buildReferenceViews, loadCivicViews } from './civic-views.js?v=74bae4f433';
 
     const { GLTFLoader, DRACOLoader } = THREE;
     const MODEL_URL = modelFile;
@@ -193,21 +194,23 @@
     // Long side softbox banks reflect cleanly along body flanks and roof shoulders.
     const pmrem = new THREE.PMREMGenerator(renderer);
     const panorama = document.createElement('canvas');
-    panorama.width = 256;
-    panorama.height = 128;
+    panorama.width = 512;
+    panorama.height = 256;
     const context = panorama.getContext('2d');
     const pixels = context.createImageData(panorama.width, panorama.height);
     const radiance = pixels.data;
     for (let y = 0; y < panorama.height; y++) {
       const elevation = (0.5 - (y + 0.5) / panorama.height) * Math.PI;
-      const band = THREE.MathUtils.smoothstep(elevation, 0.14, 0.41)
-        * (1 - THREE.MathUtils.smoothstep(elevation, 0.58, 1.10));
-      const floor = 0.75 * THREE.MathUtils.smoothstep(-elevation, 0.20, 0.65);
+      const smooth = THREE.MathUtils.smoothstep;
+      const softbox = smooth(elevation, 0.27, 0.39) * (1 - smooth(elevation, 0.60, 0.81));
+      const sideStrip = smooth(elevation, -0.15, -0.07) * (1 - smooth(elevation, 0.06, 0.17));
+      const ceiling = smooth(elevation, 0.98, 1.44);
       for (let x = 0; x < panorama.width; x++) {
         const azimuth = ((x + 0.5) / panorama.width - 0.5) * Math.PI * 2;
-        const sides = 0.5 - 0.5 * Math.cos(2 * (azimuth + 0.18));
-        const bank = 0.40 + 3.7 * sides + 0.85 * Math.max(0, Math.cos(azimuth - 0.50));
-        const luminance = 0.13 + floor + bank * band;
+        const sides = Math.abs(Math.sin(azimuth + 0.20));
+        const bank = smooth(sides, 0.42, 0.86);
+        const luminance = 0.14 + 0.23 * ceiling + 0.15 * smooth(-elevation, 0.25, 0.8)
+          + softbox * (0.24 + 2.65 * bank) + sideStrip * (0.20 + 1.65 * bank);
         const offset = 4 * (y * panorama.width + x);
         radiance[offset] = radiance[offset + 1] = radiance[offset + 2] = Math.round(255 * luminance / 4);
         radiance[offset + 3] = 255;
@@ -223,7 +226,7 @@
     const camera = new THREE.PerspectiveCamera(30, window.innerWidth / window.innerHeight, 0.02, 120);
 
     const studioFill = new THREE.HemisphereLight(0xf4f6fa, 0xb6b3b1, 0.95);
-    const keyLight = new THREE.DirectionalLight(0xfffefa, 0.02);
+    const keyLight = new THREE.DirectionalLight(0xfffbf2, 0.82);
     keyLight.position.set(3.2, 5.8, -1.5);
     keyLight.castShadow = true;
     keyLight.shadow.mapSize.set(2048, 2048);
@@ -237,7 +240,7 @@
     keyLight.shadow.bias = -0.0004;
     keyLight.shadow.intensity = 0.44;
     keyLight.shadow.radius = 3.5;
-    const rimLight = new THREE.DirectionalLight(0xe0e7f3, 0.01);
+    const rimLight = new THREE.DirectionalLight(0xe0e7f3, 0.65);
     rimLight.position.set(-2.0, 4.5, 4.2);
     const detailFill = new THREE.DirectionalLight(0xf4f1ed, 0);
     detailFill.position.set(1.2, -2.2, 1.8);
@@ -733,9 +736,9 @@
                   const doorPane = glassKind === 'GD';
                   shared.transparent = true;
                   shared.depthWrite = false;
-                  shared.opacity = privacy ? 0.56 : doorPane ? 0.30 : 0.48;
+                  shared.opacity = privacy ? 0.88 : doorPane ? 0.62 : 0.70;
                   shared.userData.cabinOpacity = privacy ? 0.24 : 0.16;
-                  shared.color.setRGB(0.013, 0.022, 0.028);
+                  shared.color.setRGB(0.012, 0.028, 0.039);
                   shared.roughness = 0.08;
                   shared.clearcoat = 0.62;
                   shared.clearcoatRoughness = 0.04;
@@ -1276,6 +1279,8 @@
     for (const quick of document.querySelectorAll('.quick-links a')) {
       quick.addEventListener('click', () => {
         document.getElementById('more').open = false;
+        const view = quick.hash.slice(1);
+        if (location.hash === quick.hash && isDetailView(view)) matchCivicView(view, { skipHash: true });
       });
     }
     window.addEventListener('hashchange', () => {
@@ -1466,6 +1471,7 @@
       if (intro) tags.push(intro.elapsed <= introHoldMs ? 'exploded view' : 'assembling');
       else if (state.explodeTarget > 0.05) tags.push(`exploded ${Math.round(state.explodeTarget * 100)}%`);
       if (state.hoodTarget > 0.5) tags.push('hood open');
+      else if (state.hoodTarget > 0) tags.push('hood on safety catch');
       if (state.hatchTarget > 0.5) tags.push('hatch open');
       if (state.fuelTarget > 0.5) tags.push('fuel flap open');
       if (state.spinMode) tags.push('wheels spinning');
@@ -1476,7 +1482,7 @@
       if (tags.length === 0) tags.push('assembled');
       if (soundMuted) tags.push('muted');
       const carName = vehicleMeta.subtitle || '2025 Honda Civic Type R (FL5)';
-      const finish = vehicleMeta.finish || 'Championship White';
+      const finish = vehicleMeta.finish || 'Crystal Black Pearl';
       infoEl.textContent = `${carName} · ${finish} · ${tags.join(' · ')}`;
     }
 
@@ -1669,7 +1675,8 @@
       environment: 1.20, exposure: 0.98, ground: new THREE.Color(0x39414c),
     };
     const undersideLighting = {
-      ...engineLighting, key: 1.5, lower: 2.4, environment: 1.70, exposure: 1.05,
+      ...engineLighting, key: 1.5, lower: 3.3, environment: 1.70, exposure: 1.12,
+      ground: new THREE.Color(0xa2a9af),
     };
 
     function updateInspectionLighting(pose) {
@@ -1677,7 +1684,7 @@
       if (pose?.group === 'Interior' || selectedView === 'seats') {
         lighting = cabinLighting;
       } else if (pose?.group === 'Powertrain' || selectedView === 'engine') {
-        lighting = pose?.hideFloor ? undersideLighting : engineLighting;
+        lighting = pose?.phi > Math.PI / 2 ? undersideLighting : engineLighting;
       }
       const t = state.cabinBlend;
       const lerp = THREE.MathUtils.lerp;

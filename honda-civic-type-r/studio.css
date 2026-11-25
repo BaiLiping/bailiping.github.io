@@ -2,7 +2,7 @@
   --ink: #191c20;
   --line: #d9dcdd;
   --accent: #c8102e;
-  --swatch-color: #f2efe6;
+  --swatch-color: #202329;
   --header-height: 76px;
   --edge: clamp(16px, 3vw, 54px);
   --surface: #f0f1f2;
@@ -33,6 +33,9 @@ a { color: inherit; text-underline-offset: .2em; }
 .finish { border-left: 1px solid #afb4b6; padding-left: clamp(14px, 2vw, 32px); gap: 9px; font-size: 15px; font-weight: 500; min-width: 0; white-space: nowrap; }
 .finish i { flex-shrink: 0; width: 17px; height: 17px; border-radius: 50%; background: var(--swatch-color); box-shadow: inset 0 0 0 1px #0003; }
 .finish span { overflow: hidden; text-overflow: ellipsis; }
+.reference-finish, .show-photos #finish-name { display: none; }
+.show-photos .reference-finish { display: inline; }
+.show-photos .finish i { background: #f2efe6; }
 .mode-switch { align-items: stretch; border: 1px solid var(--line); border-radius: 8px; overflow: hidden; flex-shrink: 0; }
 .mode-switch a { min-height: 40px; display: grid; place-items: center; padding: 0 clamp(14px, 1.8vw, 28px); font-weight: 550; font-size: 14px; line-height: 1.15; text-align: center; text-decoration: none; }
 .mode-switch a + a { border-left: 1px solid var(--line); }
