@@ -41,7 +41,7 @@ export async function createStudioFloor(scene, renderer, backgroundColor) {
   const span = { value: 440 };
   const loader = new THREE.TextureLoader();
   const [illumination, assembled] = await Promise.all(
-    ['./studio-floor.webp?v=331e17c02f', './studio-contact.webp?v=f9a3b8cdbb'].map(url => loader.loadAsync(url).catch(() => null))
+    ['./studio-floor.webp?v=331e17c02f', './studio-contact.webp?v=4fe5b6c9cc'].map(url => loader.loadAsync(url).catch(() => null))
   );
   for (const texture of [illumination, assembled]) {
     if (texture) texture.colorSpace = THREE.SRGBColorSpace;

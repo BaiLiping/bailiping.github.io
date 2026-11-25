@@ -8,7 +8,7 @@
   <script>
     if (location.hash === '#mr2-views') document.documentElement.classList.add('show-photos');
     const overrideModel = new URLSearchParams(location.search).get('model');
-    const modelFile = overrideModel || './toyota_mr2_aw11_sc.glb?v=a358f7dc9b';
+    const modelFile = overrideModel || './toyota_mr2_aw11_sc.glb?v=87c7786c0a';
     const preload = document.createElement('link');
     preload.rel = 'preload';
     preload.as = 'fetch';
@@ -20,7 +20,7 @@
   <link rel="icon" href="/favicon.ico" />
   <title>1988 Toyota MR2 Supercharged (AW11) — Super Red</title>
   <link rel="stylesheet" href="./studio.css?v=24f829ea3e">
-  <script type="module" src="./studio.js?v=7a81d1d436"></script>
+  <script type="module" src="./studio.js?v=e2a8023145"></script>
 </head>
 <body>
   <noscript><p style="position:fixed;inset:0;z-index:30;background:#eceeef;padding:2em">The interactive 1988 Toyota MR2 Supercharged viewer requires JavaScript. <a href="https://bringatrailer.com/listing/1988-toyota-mr2-supercharged-31/">View the reference listing</a>.</p></noscript>
@@ -29,6 +29,7 @@
     <nav class="mode-switch" aria-label="Views">
       <a href="#model" aria-current="true">3D model</a>
       <a href="#mr2-views">MR2 views</a>
+      <a id="compare-frames" href="./frame-by-frame/">Compare photos</a>
     </nav>
   </header>
   <section id="photo-room" aria-label="1988 Toyota MR2 Supercharged reference photographs" hidden>
@@ -106,13 +107,13 @@
   </div>
   <script type="module">
     import * as THREE from './vendor/three-r170.js?v=31c84364';
-    import { createStudioFloor } from './studio-floor.js?v=dffc9cdccb';
+    import { createStudioFloor } from './studio-floor.js?v=ebdd83e145';
     import { applyStudioVisibility } from './studio-visibility.js?v=616fb3a0';
     import { createPlanarMirror } from './mirror-reflection.js?v=cd0eff4a';
-    import { interiorPhotoViews } from './interior-photo-views.js?v=9007816c76';
-    import { powertrainPhotoViews } from './powertrain-photo-views.js?v=3b08a7425a';
+    import { interiorPhotoViews } from './interior-photo-views.js?v=fb8c2032a3';
+    import { powertrainPhotoViews } from './powertrain-photo-views.js?v=c72ceb883a';
     const [photoSources, exteriorCameras, frontCameras] = await Promise.all(
-      ['./mr2-views.json?v=7a4f443772', './exterior-photo-cameras.json?v=db7dd8fa63', './front-photo-cameras.json?v=4a5f761158']
+      ['./mr2-views.json?v=7a4f443772', './exterior-photo-cameras.json?v=db7dd8fa63', './front-photo-cameras.json?v=4e1d847e42']
         .map(url => fetch(url).then(response => response.json()))
     );
     const fittedCameras = { ...exteriorCameras, ...frontCameras, ...interiorPhotoViews, ...powertrainPhotoViews };
@@ -172,33 +173,41 @@
     const groundReady = createStudioFloor(scene, renderer, BG_HEX);
 
     const pmrem = new THREE.PMREMGenerator(renderer);
-    // The probe contains the actual Cycles softboxes and the illuminated studio
-    // floor. Its sRGB PNG stores 1/16 linear radiance to retain HDR highlights.
-    let probeIntensity = 16;
-    try {
-      const probe = await new THREE.TextureLoader().loadAsync('./studio-environment.png?v=dec308a802');
-      probe.colorSpace = THREE.SRGBColorSpace;
-      probe.mapping = THREE.EquirectangularReflectionMapping;
-      scene.environment = pmrem.fromEquirectangular(probe).texture;
-      probe.dispose();
-    } catch {
+    // Each probe uses an sRGB image with a separate linear radiance scale.
+    // All views are ready before the first visible frame.
+    const maps = await Promise.all([
+      './studio-environment.png?v=dec308a802', './cabin-environment.png?v=47c8ce785e',
+      './road-environment.webp?v=de98241b57', './treeline-environment.webp?v=cee30ab0a7',
+    ].map(url => new THREE.TextureLoader().loadAsync(url).catch(() => null)));
+    const [studioMap, cabinMap] = maps.slice(0, 2).map(map => {
+      if (!map) return null;
+      map.colorSpace = THREE.SRGBColorSpace;
+      map.mapping = THREE.EquirectangularReflectionMapping;
+      const texture = pmrem.fromEquirectangular(map).texture;
+      map.dispose();
+      return texture;
+    });
+    let studioEnvironment = studioMap;
+    if (!studioEnvironment) {
       const room = new THREE.RoomEnvironment();
-      scene.environment = pmrem.fromScene(room).texture;
+      studioEnvironment = pmrem.fromScene(room).texture;
       room.dispose();
-      probeIntensity = 1;
     }
-    let cabinEnvironment = scene.environment;
-    let cabinRadiance = probeIntensity;
-    try {
-      const windowMap = await new THREE.TextureLoader().loadAsync('./cabin-environment.png?v=47c8ce785e');
-      windowMap.colorSpace = THREE.SRGBColorSpace;
-      windowMap.mapping = THREE.EquirectangularReflectionMapping;
-      cabinEnvironment = pmrem.fromEquirectangular(windowMap).texture;
-      cabinRadiance = 8;
-      windowMap.dispose();
-    } catch { /* The exterior probe also illuminates the upholstery if this map fails. */ }
-    pmrem.dispose();
+    const probeIntensity = studioMap ? 16 : 1;
+    const cabinEnvironment = cabinMap || studioEnvironment;
+    const cabinRadiance = cabinMap ? 8 : probeIntensity;
+    const [roadMap, treeMap] = maps.slice(2);
+    for (const daylight of [roadMap, treeMap]) {
+      if (!daylight) continue;
+      daylight.colorSpace = THREE.SRGBColorSpace;
+      daylight.wrapS = THREE.RepeatWrapping;
+    }
+    const outdoorProbe = { value: treeMap || roadMap };
+    const outdoorRadiance = { value: 0 };
+    const outdoorRotation = { value: new THREE.Vector2(1, 0) };
+    scene.environment = studioEnvironment;
     scene.environmentIntensity = probeIntensity;
+    pmrem.dispose();
 
     // The softboxes are a few metres from the car. A roof panel and a wheel
     // see them at different angles. Project each reflected ray onto the
@@ -206,6 +215,7 @@
     const studioReflections = THREE.ShaderChunk.envmap_physical_pars_fragment.replace(
       'reflectVec = inverseTransformDirection( reflectVec, viewMatrix );',
       `reflectVec = inverseTransformDirection( reflectVec, viewMatrix );
+       vec3 outdoorRay = reflectVec;
        vec3 studioMin = vec3(-4100.0, 0.0, -4400.0) / 18.0;
        vec3 studioMax = vec3(3900.0, 3400.0, 3000.0) / 18.0;
        vec3 surface = cameraPosition - (vec4(vViewPosition, 0.0) * viewMatrix).xyz;
@@ -248,6 +258,19 @@
        reflectVec = normalize(mix(reflectVec, normalize(hit - vec3(0.0, 560.0 / 18.0, 0.0)), .46));`
     ).replace('return envMapColor.rgb * envMapIntensity;', `
        vec3 studioRadiance = envMapColor.rgb * envMapIntensity;
+       #ifdef MR2_DAYLIGHT_FINISH
+         if (mr2OutdoorRadiance > 0.) {
+           // A polished clearcoat preserves finer branches than the rough paint
+           // beneath it. Mip filtering also keeps the reflections stable in motion.
+           vec3 ray = vec3(mr2OutdoorRotation.x*outdoorRay.x - mr2OutdoorRotation.y*outdoorRay.z,
+                           outdoorRay.y, mr2OutdoorRotation.y*outdoorRay.x + mr2OutdoorRotation.x*outdoorRay.z);
+           vec2 uv = equirectUv(ray);
+           float level = log2(1.0 + 480.0*roughness*roughness);
+           vec3 radiance = textureLod(mr2OutdoorProbe, uv, level).rgb * mr2OutdoorRadiance;
+           float blend = 1.0 - .84 * smoothstep(.08, .42, roughness);
+           studioRadiance = mix(studioRadiance, radiance, blend);
+         }
+       #endif
        #ifdef MR2_DECK_REFLECTION
          studioRadiance = mix(studioRadiance, vec3(.23, .018, .014), lidCoverage);
          studioRadiance = mix(studioRadiance, vec3(.080, .006, .004), wingCoverage);
@@ -259,6 +282,10 @@
       const previousKey = material.customProgramCacheKey();
       material.onBeforeCompile = function(shader, renderer) {
         previousCompile.call(this, shader, renderer);
+        shader.uniforms.mr2OutdoorProbe = outdoorProbe;
+        shader.uniforms.mr2OutdoorRadiance = outdoorRadiance;
+        shader.uniforms.mr2OutdoorRotation = outdoorRotation;
+        shader.fragmentShader = 'uniform sampler2D mr2OutdoorProbe;\nuniform vec2 mr2OutdoorRotation;\nuniform float mr2OutdoorRadiance;\n' + shader.fragmentShader;
         const wing = reflectsLid && rootCar.getObjectByName('MR2_Rear_Spoiler_Super_Red_3E5');
         if (wing && pivots.Pivot_Engine_Lid) {
           shader.uniforms.engineLidWorld = { value: pivots.Pivot_Engine_Lid.matrixWorld };
@@ -843,9 +870,9 @@
                 if (shared.name === 'Mat_Super_Red_3E5') {
                   shared.color.g *= .42;
                   shared.color.b *= .52;
-                  shared.roughness = .25;
-                  shared.clearcoat = .65;
-                  shared.clearcoatRoughness = .065;
+                  shared.roughness = .255;
+                  shared.clearcoat = .88;
+                  shared.clearcoatRoughness = .032;
                   shared.specularIntensity = .52;
                 }
                 // Blended glazing preserves the view into the cabin and avoids extra transmission passes.
@@ -863,7 +890,7 @@
                   const doorPane = glassKind === 'GD';
                   shared.transparent = true;
                   shared.depthWrite = false;
-                  shared.opacity = ttopGlass ? .70 : rearVisor ? .53 : rearBulk ? .44 : doorPane ? .26 : .41;
+                  shared.opacity = ttopGlass ? .78 : rearVisor ? .63 : rearBulk ? .60 : doorPane ? .48 : glassKind === 'GQ' ? .72 : .50;
                   shared.userData.cabinOpacity = ttopGlass ? .34 : rearVisor ? .20 : rearBulk ? .14 : .17;
                   shared.color.setRGB(.013, .025, .031);
                   shared.roughness = ttopGlass ? .073 : .09;
@@ -927,7 +954,7 @@
                     );
                   };
                 }
-                if (/Mat_(Interior_Black_Leather|Cabin_Perforated_Leather|Cabin_Leather_Welt|Interior_Vinyl)/.test(shared.name)) {
+                if (/Mat_(Interior_Black_Leather|Cabin_Perforated_Leather|Cabin_Leather_Welt|Interior_(?:Matte_)?Vinyl)/.test(shared.name)) {
                   shared.envMap = cabinEnvironment;
                   shared.envMapIntensity = cabinRadiance * 1.25;
                   if (/Leather/.test(shared.name)) {
@@ -935,6 +962,9 @@
                     shared.color.multiplyScalar(.73);
                   }
                 } else {
+                  if (isExterior && (isGlass || /Super_Red|Aluminum|Machined|Smoked|Ruby|Amber/.test(shared.name))) {
+                    shared.defines = { ...shared.defines, MR2_DAYLIGHT_FINISH: 1 };
+                  }
                   projectStudioReflections(shared, reflectsLid);
                 }
                 if (enclosure && shared.isMeshStandardMaterial) {
@@ -1561,6 +1591,7 @@
       const detail = isDetailView(selectedView) ? selectedView : state.interiorView ? 'cabin' : '';
       if (!detail && isDetailView(location.hash.slice(1))) history.replaceState(null, '', '#model');
       const currentPhoto = referenceViews.get(detail);
+      if (!carHidden()) document.getElementById('compare-frames').href = './frame-by-frame/' + (currentPhoto?.photo ? '#' + detail : '');
       overlayToggle.hidden = !currentPhoto?.photo || !!overrideModel;
       if (overlayToggle.hidden || overlayToggle.dataset.view !== detail) closeOverlay();
       overlayToggle.dataset.view = detail;
@@ -1636,7 +1667,29 @@
 
     // Hide surrounding sheet metal when an inspection angle looks through it.
     // Individual meshes keep their original parents for drag and explosion.
+    // The listing alternates between a wooded drive and the open road.
+    // Azimuth is in radians. Exposure restores the captured sky radiance.
+    const photoLight = {
+      'Front three-quarter':                [treeMap, 4.15, 6.4],
+      'Front three-quarter (pop-ups open)': [roadMap, .65, 2.7],
+      'Front':                              [roadMap, 5.25, 2.25],
+      'Front (pop-ups open)':               [roadMap, 5.25, 2.8],
+      'Side profile (left)':                [treeMap, 1.2, 6.4],
+      'Side profile (right)':               [roadMap, 3.0, 3.6],
+      'Rear three-quarter':                 [treeMap, 1.15, 7.8],
+      'Rear':                               [roadMap, 3.15, 3.9],
+      'Overhead (T-tops off)':              [roadMap, .6, 1.7],
+      '14" Teardrop wheel':                 [treeMap, 1.05, 7.0],
+      'Right engine air intake':            [treeMap, 2.1, 7.5],
+      'Rear pillar vent':                   [treeMap, 2.4, 5.2],
+    };
+
     function applyInspectionVisibility(pose) {
+      const setting = pose ? photoLight[pose.label] : !state.interiorView && photoLight['Front three-quarter'];
+      const [map, turn, radiance] = setting || [null, 0, 0];
+      outdoorProbe.value = map || treeMap || roadMap;
+      outdoorRadiance.value = map ? radiance : 0;
+      outdoorRotation.value.set(Math.cos(turn), Math.sin(turn));
       if (lastVisibilityPose === pose) return;
       lastVisibilityPose = pose;
       scene.background.setHex(pose?.background ?? BG_HEX);

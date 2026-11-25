@@ -1,14 +1,14 @@
 // Camera poses in the photo’s native frame. Coordinates use the exported glTF axes.
 export const powertrainPhotoViews = {
   "4A-GZE Supercharged engine": {
-    theta: -3.08923, phi: 0.74228, roll: 0.0414,
-    distance: 68.2512, fov: 32.728, center: [-54.4503, 56.596, 0.5835],
-    panels: { engineLid: 0.62212 },
+    theta: -3.08923, phi: 0.62207, roll: -0.00333,
+    distance: 111.3951, fov: 21.0, center: [-54.7632, 56.1281, 0.1389],
+    panels: { engineLid: 0.95433 },
   },
   "Engine bay and raised vented lid": {
-    theta: -3.08923, phi: 0.71432, roll: 0.00966,
-    distance: 61.3575, fov: 42.9663, center: [-58.4974, 48.1002, -2.0052],
-    panels: { engineLid: 0.60357 },
+    theta: -3.08923, phi: 0.60454, roll: 0.00069,
+    distance: 71.6951, fov: 37.0368, center: [-58.721, 47.9751, -2.5103],
+    panels: { engineLid: 0.93673 },
   },
   "Intercooler and clamped charge hoses": {
     theta: -2.35619, phi: 0.80285, roll: -0.18694,
@@ -36,8 +36,8 @@ export const powertrainPhotoViews = {
     hideFloor: true, hide: /^MR2_(?:Body_Shell_Unibody|SwayBar)_/,
   },
   "Transaxle output and rear CV axle": {
-    theta: 0.86, phi: 2.15, roll: -0.20,
-    distance: 33.0, fov: 48.0, center: [-67, 17, -22],
+    theta: 0.89, phi: 2.12, roll: -0.06,
+    distance: 33.0, fov: 48.0, center: [-68.9, 17.5, -20.1],
     hideFloor: true, hide: /^MR2_(?:Body_Shell_Unibody|SwayBar)_/,
   },
   "Rear drivetrain viewed from below": {

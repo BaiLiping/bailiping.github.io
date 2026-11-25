@@ -31,6 +31,7 @@ function showAngle() {
   fullPhoto.href = option.dataset.original || option.value;
   fullPhoto.hidden = false;
   updateMatch();
+  document.getElementById('compare-frames').href = './frame-by-frame/#' + option.dataset.photoView;
   photo.src = option.value;
 }
 
