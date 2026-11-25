@@ -26,7 +26,7 @@ function showAngle() {
   if (!option) return;
   error.hidden = true;
   photo.hidden = false;
-  photo.alt = option.label + ' on the reference Ford F-150 Raptor R';
+  photo.alt = option.label + ' on the 2024 Ford F-150 Raptor R reference vehicle (Shelter Green)';
   const fullPhoto = document.getElementById('full-photo');
   fullPhoto.href = option.dataset.original || option.value;
   fullPhoto.hidden = false;

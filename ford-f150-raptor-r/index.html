@@ -24,14 +24,14 @@
     document.head.append(preload);
   </script>
   <link rel="icon" href="/favicon.ico" />
-  <title>2024 Ford F-150 Raptor R — Shelter Green</title>
+  <title>2024 Ford F-150 Raptor R — Rapid Red Metallic</title>
   <link rel="stylesheet" href="./studio.css">
   <script type="module" src="./studio.js"></script>
 </head>
 <body>
   <noscript><p style="position:fixed;inset:0;z-index:30;background:#eceeef;padding:2em">The interactive 2024 Ford F-150 Raptor R viewer requires JavaScript. <a href="https://bringatrailer.com/listing/2024-ford-f-150-raptor-r-18/">View the reference listing</a>.</p></noscript>
   <header id="studio-header">
-    <div class="identity"><h1>F-150 Raptor R</h1><span class="finish"><i aria-hidden="true"></i><span>Shelter Green</span></span></div>
+    <div class="identity"><h1>F-150 Raptor R</h1><span class="finish"><i aria-hidden="true"></i><span>Rapid Red Metallic</span></span></div>
     <nav class="mode-switch" aria-label="Views">
       <a href="#model" aria-current="true">3D model</a>
       <a href="#raptor-views">Raptor R views</a>
@@ -50,7 +50,7 @@
         <button id="next-view" type="button" aria-label="Next view">›</button>
         <button id="match-view" type="button" disabled>Match in 3D</button>
       </div>
-      <p>2024 Ford F-150 Raptor R (Shelter Green) · 710HP listing photos via Bring a Trailer (Lot #181,611) · <a href="https://bringatrailer.com/listing/2024-ford-f-150-raptor-r-18/">View listing</a> · <a id="full-photo" href="#" target="_blank" rel="noopener" hidden>Full-size photo</a></p>
+      <p>3D finish: Rapid Red Metallic (D4) · 2024 Shelter Green reference vehicle photos by 710HP via Bring a Trailer (Lot #181,611) · <a href="https://bringatrailer.com/listing/2024-ford-f-150-raptor-r-18/">View listing</a> · <a id="full-photo" href="#" target="_blank" rel="noopener" hidden>Full-size photo</a></p>
     </div>
   </section>
   <div id="photo-tools-3d">
@@ -87,21 +87,22 @@
             <a href="#exterior">Exterior</a>
             <a href="#rear">Rear 3/4</a>
             <a href="#engine">Power Dome &amp; V8 engine bay</a>
+            <a href="#drivetrain">4WD drivetrain &amp; gears</a>
             <a href="#cabin">Cabin cockpit</a>
             <a href="#seats">Recaro seats</a>
             <a href="#console">Center stack</a>
             <a href="#underbody">Underbody &amp; FOX shocks</a>
-            <a href="#assembly">Replay assembly</a>
+            <a href="#assembly">Replay assembly animation</a>
           </div>
           <div class="controls-meta">
-            <p id="info">2024 Ford F-150 Raptor R · Shelter Green</p>
+            <p id="info">2024 F-150 Raptor R · Rapid Red Metallic</p>
             <p class="shortcuts">
               Click any door, hood, tailgate or fuel door to toggle. Drag an assembly to detach (<kbd>Alt</kbd>+drag moves a single part); double-click for X-ray.<br>
               <kbd>D</kbd> all doors · <kbd>1</kbd>–<kbd>4</kbd> doors · <kbd>F</kbd> hood · <kbd>T</kbd> tailgate · <kbd>G</kbd> fuel · <kbd>I</kbd> cabin · <kbd>E</kbd> explode · <kbd>X</kbd> x-ray · <kbd>S</kbd> steer · <kbd>W</kbd> spin · <kbd>Space</kbd> rev 5.2L V8 · <kbd>M</kbd> sound · <kbd>H</kbd> HUD · <kbd>R</kbd> reset
             </p>
             <details class="refs"><summary>Credits &amp; references</summary><div>
-              <p>Photo-matched 2024 Ford F-150 Raptor R (803A, Shelter Green over black Recaro leather &amp; Alcantara, 37" BFGoodrich KO2 package, Exterior Graphics, Dual-Panel Moonroof, 5.2L supercharged Predator V8 — 720 hp / 640 lb-ft). Modeled at true 1:1 real-world meter scale (5.91 m length, 3.693 m wheelbase, 2.20 m widebody track, 2.05 m height).</p>
-              <a href="https://bringatrailer.com/listing/2024-ford-f-150-raptor-r-18/">2024 Ford F-150 Raptor R (Shelter Green) · 710HP via Bring a Trailer (Lot #181,611)</a><br>
+              <p>Photo-matched 2024 Ford F-150 Raptor R (803A, Rapid Red Metallic (D4) over black Recaro leather &amp; Alcantara, solid aluminum roof, 37" BFGoodrich KO2 package, Exterior Graphics, 5.2L supercharged Predator V8 — 720 hp / 640 lb-ft — with full 10R80 &amp; 2-speed 4WD drivetrain). Modeled at true 1:1 real-world meter scale (5.91 m length, 3.693 m wheelbase, 2.20 m widebody track, 2.05 m height).</p>
+              <a href="https://bringatrailer.com/listing/2024-ford-f-150-raptor-r-18/">Reference vehicle: 2024 Ford F-150 Raptor R (Shelter Green) · 710HP via Bring a Trailer (Lot #181,611)</a><br>
               <a href="#raptor-views">Browse all 22 reference photographs</a> · <a href="./frame-by-frame/">Frame-by-frame verification</a>
             </div></details>
           </div>
@@ -191,7 +192,7 @@
     scene.background = new THREE.Color(BG_HEX);
     scene.fog = new THREE.FogExp2(BG_HEX, studioFogDensity);
 
-    // Luminous horizontal side light banks read cleanly across Shelter Green metallic panels.
+    // Luminous horizontal side light banks read cleanly across Rapid Red Metallic panels.
     const pmrem = new THREE.PMREMGenerator(renderer);
     const panorama = document.createElement('canvas');
     panorama.width = 256;
@@ -586,7 +587,7 @@
     }
 
     // -----------------------------------------------------------------------
-    // 6. Part Metadata Catalog (2024 Ford F-150 Raptor R · Shelter Green)
+    // 6. Part Metadata Catalog (2024 Ford F-150 Raptor R · Rapid Red Metallic)
     // -----------------------------------------------------------------------
     function getPivotAncestorName(obj) {
       let cur = obj;
@@ -604,13 +605,29 @@
       const pivName = isObj ? getPivotAncestorName(meshOrName) : '';
 
       const checks = [
+        // Full 4WD mechanical drivetrain & meshed gears (matched first for specificity)
+        [/Drivetrain_Trans10R80/i, '10R80 10-speed SelectShift transmission', 'Cutaway cast-aluminum housing · heavy-duty torque converter'],
+        [/Drivetrain_TransGears/i, '10R80 planetary & helical gearset', 'Precision machined-steel 10-speed gear stack & bronze clutch rings'],
+        [/Drivetrain_TransferCase/i, '2-speed Torque-On-Demand transfer case', 'Cutaway BorgWarner 4A/4H/4L mechanical locking transfer case'],
+        [/Drivetrain_TcaseGear_Main/i, 'Transfer case main input gear', '20-tooth machined-steel spur gear · spins live at 3.73× wheel speed'],
+        [/Drivetrain_TcaseGear_Idler/i, 'Transfer case counter-rotating idler gear', '18-tooth meshed steel transfer idler · counter-rotates with input gear'],
+        [/Drivetrain_TcaseGear_Front/i, 'Transfer case front-output driven gear', '18-tooth meshed steel gear driving the front 4WD shaft'],
+        [/Drivetrain_FrontDriveshaft/i, 'Front 4WD steel driveshaft', 'Universal-jointed propeller shaft linking transfer case to front diff'],
+        [/Drivetrain_RearDriveshaft/i, 'Spun-aluminum rear driveshaft', 'Balanced rear driveshaft tube with machined slip yoke & U-joints'],
+        [/Drivetrain_FrontDiffCase/i, 'Front Torsen limited-slip differential housing', 'Cutaway aluminum front carrier · helical gear-driven 4WD LSD'],
+        [/Drivetrain_FrontDiffGears/i, 'Front Torsen ring, pinion & worm gears', 'Meshed machined-steel bevel pinion & helical Torsen gearset'],
+        [/Drivetrain_FrontCVAxles/i, 'Front heavy-duty CV half-shafts', 'Twin machined-steel axle shafts with ribbed CV boots to front hubs'],
+        [/Drivetrain_RearDiffCase/i, 'Rear 9.75" electronic-locking diff housing', 'Cutaway heavy-duty rear differential carrier & e-locker actuator'],
+        [/Drivetrain_RearDiffGears/i, 'Rear 9.75" hypoid ring, pinion & spider gears', '28-tooth machined-steel ring gear & meshed bevel drive pinion'],
+        [/Drivetrain_RearAxleShafts/i, 'Heavy-duty rear axle half-shafts', 'Forged steel rear shafts connecting locking diff to both 37" hubs'],
+
         // Hood & Power Dome
-        [/Hood_Extractor|Hood_Vent|Heat_Extractor|PowerDome_Vent/i, 'Power Dome heat extractor vent', 'Matte-black 6-slot extractor · vents 5.2L V8 heat'],
+        [/Hood_Extractor|Hood_Vent|Heat_Extractor|PowerDome_Vent/i, 'Power Dome heat extractor vent', 'Matte-black 4-pod extractor · vents 5.2L V8 heat'],
         [/Hood_Graphic|Hood_Stripe|PowerDome_Decal/i, 'Raptor R Power Dome hood graphic', 'Charcoal center stripe with twin Code Orange pinstripes'],
-        [/Hood|PowerDome/i, 'Raised Power Dome aluminum hood', 'Shelter Green · 1" taller for TVS R2650 · click or press F'],
+        [/Hood|PowerDome/i, 'Raised Power Dome aluminum hood', 'Rapid Red Metallic (D4) · 1" taller for TVS R2650 · click or press F'],
 
         // Front grille, lighting & bumper
-        [/Grille_Letter|FORD_Letter|Grille_FORD/i, 'F-O-R-D block grille lettering', 'Matte-black sculpted Raptor R heritage block letters'],
+        [/Grille_Letter|FORD_Letter|Grille_FORD/i, 'F-O-R-D block grille lettering', 'Satin-charcoal sculpted Raptor R heritage block letters'],
         [/Clearance|Amber_Marker|Grille_Light|Marker_Light/i, 'Raptor amber clearance & marker lamps', '3 grille LEDs + outer widebody fender markers (86.6" width)'],
         [/Grille_R_Badge|R_Badge|Badge_R/i, 'Code Orange Raptor R badge', 'Signature 2024 Raptor R V8 edition emblem'],
         [/Grille/i, 'Deep matte-black honeycomb grille', 'High-airflow Raptor R front cooling aperture'],
@@ -621,16 +638,18 @@
         [/Skid|BashPlate|Bash_Plate/i, 'Heavy-duty brushed silver skid plate', 'High-strength steel front & underbody armor · 33.1° approach'],
         [/Front_Bumper|Bumper_Front|Bumper_F/i, '2024 modular heavy-duty steel front bumper', 'Removable endcaps · high-clearance off-road approach'],
 
-        // Doors, cab, glass & mirrors
+        // Doors, cab, glass, solid roof & mirrors
         [/DoorCard|Door_Card|Door_Trim|Armrest|Door_Speaker/i, 'Raptor R interior door trim', 'Black leather, Alcantara, carbon inlay & B&O Unleashed grille'],
-        [/Door_Handle/i, 'Color-matched exterior door handle', 'Shelter Green keyless SuperCrew latch'],
+        [/Door_Handle/i, 'Color-matched exterior door handle', 'Rapid Red Metallic (D4) keyless SuperCrew latch'],
         [/Door_FL|Front_Left_Door/i, 'SuperCrew front left door', 'Aluminum-alloy body · click or press 1 to open'],
         [/Door_FR|Front_Right_Door/i, 'SuperCrew front right door', 'Aluminum-alloy body · click or press 2 to open'],
         [/Door_RL|Rear_Left_Door/i, 'SuperCrew rear left door', 'Full-size 4-door SuperCrew · click or press 3 to open'],
         [/Door_RR|Rear_Right_Door/i, 'SuperCrew rear right door', 'Full-size 4-door SuperCrew · click or press 4 to open'],
         [/Mirror_Cabin|Rearview/i, 'Auto-dimming rearview mirror', 'Live planar reflection in Cabin view (I)'],
-        [/Mirror/i, 'Power-folding Shelter Green side mirror', '96.0" overall width incl. mirrors · puddle & spot LEDs'],
-        [/Moonroof|Sunroof/i, 'Twin-panel panoramic moonroof', 'Smoked power glass over both SuperCrew rows'],
+        [/Mirror/i, 'Power-folding Rapid Red Metallic side mirror', '96.0" overall width incl. mirrors · puddle & spot LEDs'],
+        [/Roof_Antennas|SharkFin|Antenna/i, 'Twin rear roof antenna pods', 'Satellite navigation, SiriusXM & 5G telemetry pods'],
+        [/Roof_ChannelStrip|RoofRail|RoofTrim|Ditch|Drip/i, 'Roof ditch-channel moldings', 'Satin-black structural roof seam trim strips'],
+        [/RoofPanel|Roof_Panel|Cab_Roof/i, 'Solid stamped aluminum cab roof', 'Rapid Red Metallic (D4) · factory longitudinal stiffening ribs'],
         [/Windshield/i, 'Acoustic laminated front windshield', 'Raked F-150 SoundScreen safety glass'],
         [/Wiper/i, 'Front windshield wipers', 'Twin heavy-duty all-weather blades'],
         [/Glass|Window/i, 'SuperCrew cabin glazing', 'Front clear acoustic / rear factory privacy tint'],
@@ -644,7 +663,7 @@
         [/Tailgate_Applique|Applique|Tailgate_FORD/i, 'Tailgate F-O-R-D black applique', 'Sculpted satin-black panel with Code Orange Raptor R badge'],
         [/Tailgate/i, 'Power drop tailgate', '5.5-ft cargo box access · click or press T to lower'],
         [/Bedliner|Bed_Floor|Bed_Wall|Cargo_Bed|Bed_Box/i, '5.5-ft spray-in ribbed cargo bed', '67.1" length · 50.6" between wheelhouses · 21.4" depth'],
-        [/Taillight|Tail_Light/i, '2024 Raptor R LED taillight', 'Refreshed signature red/clear rear lamp housing'],
+        [/Taillight|Tail_Light/i, '2024 Raptor R LED taillight', 'Refreshed signature ruby-red/smoked-clear rear lamp housing'],
         [/CHMSL|Third_Brake|HighMount/i, 'High-mount center brake & cargo lamp', 'Cab-roof LED CHMSL with bed illumination'],
         [/LicensePlate|License_Plate|Plate/i, 'Minnesota ZEK 734 blackout plate', 'Reference vehicle plate (BaT Lot #181,611)'],
         [/Rear_Bumper|Bumper_Rear|Bumper_R|Hitch/i, 'Heavy-duty steel rear bumper & hitch', 'Integrated dual exhaust cutouts, tow hooks & Class IV receiver'],
@@ -664,12 +683,15 @@
         [/Exhaust_Tip|Tailpipe_Tip/i, 'Dual satin-black active exhaust tips', '4-mode active valve (Quiet / Normal / Sport / Baja)'],
         [/Exhaust|Muffler|Header|Pipe|Catalytic/i, 'Dual active-valve stainless exhaust', 'Trombone-loop equal-length 5.2L V8 exhaust system'],
 
-        // 5.2L Supercharged Predator V8
+        // 5.2L Supercharged Predator V8 & Engine Bay
         [/Supercharger|Blower|TVS|R2650/i, 'Eaton TVS R2650 2.65L supercharger', '720 hp @ 6,650 rpm · 640 lb-ft · Code Orange Raptor plaque'],
+        [/Eng_Block_V8|Eng_Block/i, '5.2L Predator V8 cast-aluminum block & DOHC heads', '720 hp · 640 lb-ft · twin 32V heads, coil packs, headers & serpentine belt'],
         [/Intake|Airbox|Air_Filter|Plenum/i, 'High-flow Raptor R cold-air intake', 'Wide-mouth conical filter ducting for 5.2L Predator V8'],
         [/ValveCover|Valve_Cover|CamCover/i, '5.2L Predator DOHC 32-valve covers', 'Cast aluminum cylinder heads · forged internals'],
-        [/Coolant|Reservoir|Radiator|Battery|Intercooler|Hose|BayStructure/i, 'Predator V8 cooling & electrical bay', 'Oversized radiator, intercooler circuit & AGM battery'],
-        [/Engine|Predator|Block|V8/i, '5.2L supercharged Predator V8 engine', '720 hp · 640 lb-ft · 10-speed SelectShift automatic'],
+        [/Eng_Radiator|Radiator|Intercooler|CoolingFan|CoreSupport|FanShroud/i, 'High-capacity radiator & intercooler core', 'Twin electric cooling fans & charge-air exchanger for 5.2L V8'],
+        [/Eng_BayStructure|BayStructure|EngineBay|Apron/i, 'Engine bay aprons & foil firewall shield', 'Thermal-insulated structural enclosure framing the 5.2L V8'],
+        [/Coolant|Reservoir|Battery|Hose/i, 'Predator V8 cooling & electrical bay', '5-lobe expansion tank, intercooler bottle & AGM 12V battery'],
+        [/Engine|Predator|Block|V8/i, '5.2L supercharged Predator V8 engine', '720 hp · 640 lb-ft · twin DOHC banks & 10-speed automatic'],
 
         // Interior cabin
         [/OverheadAux|Upfitter/i, 'Overhead 6-switch auxiliary upfitter panel', 'Factory pre-wired off-road lighting & accessory switches'],
@@ -685,9 +707,10 @@
         [/Shifter|Console|Armrest|Cupholder/i, 'Center console & stowable shifter', 'Carbon-fiber trim, V8 embossed armrest & drive mode dial'],
         [/Dash|HVAC|Vent|Glovebox/i, 'Raptor R instrument panel & carbon trim', '2×2 twill carbon-fiber accents & dual-zone climate controls'],
         [/Pedal/i, 'Alloy-trimmed accelerator & brake pedals', 'Adjustable driver footbox with all-weather Raptor mat'],
-        [/Headliner|Carpet|Floor|Pillars|Firewall|RearBulkhead/i, 'SuperCrew dark charcoal cabin trim', 'Black headliner, all-weather floor mats & 14-speaker B&O'],
+        [/Int_Headliner|Headliner/i, 'Solid charcoal cloth cabin headliner', 'Continuous dark acoustic ceiling with dome lamps & 6 AUX switches'],
+        [/Carpet|Floor|Pillars|Firewall|RearBulkhead/i, 'SuperCrew dark charcoal cabin trim', 'Solid charcoal cloth trim, all-weather mats & 14-speaker B&O'],
         [/WheelCap/i, 'FORD center wheel cap & 6×135 lugs', 'Forged beadlock wheel hub hardware'],
-        [/Body|Cab|Bed|Fender|Roof|Quarter/i, '2024 Ford F-150 Raptor R widebody shell', 'Military-grade aluminum alloy · Shelter Green metallic'],
+        [/Body|Cab|Bed|Fender|Roof|Quarter/i, '2024 Ford F-150 Raptor R widebody shell', 'Military-grade aluminum alloy · Rapid Red Metallic (D4)'],
       ];
 
       for (const [re, title, spec] of checks) {
@@ -695,6 +718,12 @@
       }
 
       // Smart fallback by material name or ancestor pivot
+      if (matName === 'Mat_Gear_Machined_Steel' || matName === 'Mat_Gear_Hardened_Steel' || matName === 'Mat_Gear_Bronze_Alloy') {
+        return { title: 'Precision meshed 4WD drivetrain gearset', spec: 'Machined steel & bronze 10R80 / transfer case / differential gears' };
+      }
+      if (matName === 'Mat_Driveshaft_Spun_Aluminum') {
+        return { title: 'Spun-aluminum 4WD driveshaft', spec: 'Balanced propeller shaft with U-joint yokes' };
+      }
       if (matName === 'Mat_FOX_LiveValve_Blue' || matName === 'Mat_FOX_Coil_Spring') {
         return { title: 'FOX 3.1" Dual Live Valve suspension', spec: 'Electronically controlled damping · 14" front / 15" rear travel' };
       }
@@ -716,11 +745,19 @@
       if (matName === 'Mat_Cabin_Rearview') {
         return { title: 'Auto-dimming rearview mirror', spec: 'Live planar reflection in Cabin view (I)' };
       }
-      if (pivName === 'Pivot_Hood') return { title: 'Power Dome aluminum hood', spec: 'Shelter Green · click or press F to open' };
+      if (pivName === 'Pivot_Hood') return { title: 'Power Dome aluminum hood', spec: 'Rapid Red Metallic (D4) · click or press F to open' };
       if (pivName === 'Pivot_Tailgate') return { title: 'Power drop tailgate', spec: '5.5-ft bed access · click or press T to lower' };
       if (pivName === 'Pivot_Fuel_Door') return { title: 'Fuel filler door', spec: 'Driver bedside · click or press G to open' };
-      if (pivName.startsWith('Pivot_Door_')) return { title: 'SuperCrew aluminum door', spec: 'Shelter Green · click to open or close' };
-      if (pivName === 'Pivot_Engine_Predator') return { title: '5.2L supercharged Predator V8', spec: '720 hp · 640 lb-ft · Eaton TVS R2650' };
+      if (pivName.startsWith('Pivot_Door_')) return { title: 'SuperCrew aluminum door', spec: 'Rapid Red Metallic (D4) · click to open or close' };
+      if (pivName === 'Pivot_Drivetrain_4WD' || pivName.startsWith('Pivot_Spin_')) {
+        return { title: '4WD mechanical drivetrain & meshed gears', spec: '10R80 trans · 2-speed transfer case · front Torsen & rear e-locker' };
+      }
+      if (pivName === 'Pivot_Engine_Supercharger') return { title: 'Eaton TVS R2650 2.65L supercharger', spec: '720 hp @ 6,650 rpm · ribbed intercooler lid & Code Orange plaque' };
+      if (pivName === 'Pivot_Engine_Intake') return { title: 'High-flow Raptor R cold-air intake', spec: 'Driver-side conical airbox, ram-air scoop & accordion duct' };
+      if (pivName === 'Pivot_Engine_Auxiliaries') return { title: 'Predator V8 cooling & electrical auxiliaries', spec: '5-lobe coolant tank, intercooler bottle, 12V AGM battery & fuse box' };
+      if (pivName === 'Pivot_Engine_Radiator') return { title: 'Radiator, intercooler & dual electric fans', spec: 'High-capacity Predator V8 cooling stack & upper core support' };
+      if (pivName === 'Pivot_Engine_BayCasing') return { title: 'Engine bay fender aprons & foil firewall', spec: 'Thermal-insulated structural enclosure framing the 5.2L V8' };
+      if (pivName === 'Pivot_Engine_Predator') return { title: '5.2L supercharged Predator V8', spec: '720 hp · 640 lb-ft · twin 32V DOHC banks & forged internals' };
       if (pivName === 'Pivot_Exhaust_System') return { title: 'Active-valve dual exhaust', spec: 'Stainless steel with satin-black rear tips' };
       if (pivName === 'Pivot_Chassis_Frame') return { title: 'Boxed steel frame & FOX chassis', spec: '145.4" wheelbase · 13.1" ground clearance' };
       if (pivName.startsWith('Pivot_Corner_') || pivName.startsWith('Pivot_WheelSpin_')) {
@@ -800,6 +837,7 @@
       steerMode: false,
       spinMode: false,
       wheelSpinAngle: 0.0,
+      revDriveAngle: 0.0,
       steerPhase: 0.0,
       revving: false,
       rpm: 720,
@@ -808,6 +846,12 @@
     };
     window.__raptorState = state;
     window.__raptorCamera = camera;
+    window.__getIntroState = () => ({
+      intro: Boolean(intro),
+      elapsed: intro?.elapsed ?? null,
+      explode: state.explode,
+      explodeTarget: state.explodeTarget,
+    });
 
     const pivots = {};
     let selectedView = null;
@@ -855,7 +899,7 @@
     window.addEventListener('studio-mode-change', closeOverlay);
 
     const explosionButton = document.getElementById('exploded-view');
-    const assemblyView = { theta: -0.68, phi: 1.44, fov: 25.0, compactInset: 0, center: new THREE.Vector3(0, 1.15, 0), points: [] };
+    const assemblyView = { theta: -0.68, phi: 1.28, fov: 25.0, compactInset: 0, center: new THREE.Vector3(0, 1.15, 0), points: [] };
     const introHoldMs = 700;
     const introAssemblyMs = 2600;
     let intro = null;
@@ -863,6 +907,7 @@
     function stopIntro() {
       if (!intro) return;
       intro = null;
+      if (selectedView === 'assembly') selectedView = null;
       state.explodeTarget = state.explode;
       updateHudText();
     }
@@ -942,7 +987,7 @@
       const assemble = explosionButton.getAttribute('aria-pressed') === 'true';
       stopIntro();
       if (assemble) {
-        runCommand('r', selectedView === 'assembly');
+        runCommand('r', false);
       } else {
         if (selectedView !== 'assembly') frameAssembly();
         state.explodeTarget = 1;
@@ -1011,12 +1056,19 @@
 
     function isExteriorMesh(obj, pivName) {
       const mname = obj.material?.name || '';
-      if (pivName === 'Pivot_Interior_Cabin' || pivName === 'Pivot_Engine_Predator' || pivName === 'Pivot_Chassis_Frame' || pivName === 'Pivot_Exhaust_System') return false;
-      if (/^Mat_Interior_|^Mat_Screen_|^Mat_Cabin_Rearview/.test(mname)) return false;
-      if (/^RaptorR_(Int_|Mirror_Cabin|Eng_|Chassis_|Susp_|FOX_|Exhaust_|Brake|Tire|Rim|WheelCap|Spare)/i.test(obj.name)) return false;
+      if (
+        pivName === 'Pivot_Interior_Cabin' ||
+        pivName.startsWith('Pivot_Engine_') ||
+        pivName === 'Pivot_Drivetrain_4WD' ||
+        pivName.startsWith('Pivot_Spin_') ||
+        pivName === 'Pivot_Chassis_Frame' ||
+        pivName === 'Pivot_Exhaust_System'
+      ) return false;
+      if (/^Mat_(Interior_|Screen_|Cabin_Rearview|Gear_|Driveshaft_|Drivetrain_)/.test(mname)) return false;
+      if (/^RaptorR_(Int_|Mirror_Cabin|Eng_|Drivetrain_|Chassis_|Susp_|FOX_|Exhaust_|Brake|Tire|Rim|WheelCap|Spare)/i.test(obj.name)) return false;
       if (/DoorCard|Door_Card|Door_Trim|Armrest|Speaker|Seat|Dash|Cluster|SYNC4|Console|Steering|Pedal|Headliner|Carpet|Rearview/i.test(obj.name)) return false;
       return /^(Pivot_Body_Assembly|Pivot_Hood|Pivot_Door_|Pivot_Tailgate|Pivot_Fuel_Door)/.test(pivName)
-        || /Body|Cab|Bed|Fender|Flare|Hood|Door|Tailgate|Grille|Bumper|Headlight|Taillight|Mirror|Windshield|Glass|Moonroof|RunningBoard|Wiper|Fuel_Door|Graphic/i.test(obj.name);
+        || /Body|Cab|Bed|Fender|Flare|Hood|Door|Tailgate|Grille|Bumper|Headlight|Taillight|Mirror|Windshield|Glass|RunningBoard|Wiper|Fuel_Door|Graphic/i.test(obj.name);
     }
 
     const loadModel = () => loader.load(
@@ -1043,8 +1095,8 @@
 
             const isExterior = isExteriorMesh(obj, pivName);
             const isDecal = /^Mat_Graphic_/.test(rawMatName);
-            const isGlass = /^Mat_(Automotive_Glass|Privacy_Glass|Moonroof_Smoked_Glass|Headlight_Clear_Lens)$/.test(rawMatName)
-              || (/Glass|Windshield|Moonroof|Headlight_Lens/i.test(obj.name) && !/Mirror/i.test(obj.name));
+            const isGlass = /^Mat_(Automotive_Glass|Privacy_Glass|Headlight_Clear_Lens)$/.test(rawMatName)
+              || (/Glass|Windshield|Headlight_Lens/i.test(obj.name) && !/Mirror/i.test(obj.name));
             const isHeadlightLens = rawMatName === 'Mat_Headlight_Clear_Lens';
             const isHeader = rawMatName === 'Mat_Exhaust_Stainless' || /Exh|Exhaust|Header|Pipe/i.test(obj.name);
             const isCaster = !isGlass && !isDecal;
@@ -1069,13 +1121,12 @@
             });
 
             if (obj.material) {
-              const glassKind = rawMatName === 'Mat_Moonroof_Smoked_Glass' ? 'GM'
-                : rawMatName === 'Mat_Privacy_Glass' ? 'GP'
+              const glassKind = rawMatName === 'Mat_Privacy_Glass' ? 'GP'
                 : /Windshield/i.test(obj.name) ? 'GW'
                 : /Door/i.test(pivName) ? 'GD' : '';
               const enclosure = !obj.geometry.hasAttribute('_studio_visibility') ? ''
                 : /Interior_Cabin|Pivot_Door_/.test(pivName) ? 'cabin'
-                : /Pivot_Engine_Predator/.test(pivName) ? 'engine' : 'exterior';
+                : /^Pivot_Engine_/.test(pivName) ? 'engine' : 'exterior';
               const matKey = `${obj.material.uuid}|${isExterior ? (isGlass ? 'EG' : 'E') : 'I'}|${glassKind}${isHeader ? 'H' : 'S'}|${enclosure}`;
               let shared = sharedMaterials.get(matKey);
               if (!shared) {
@@ -1090,18 +1141,41 @@
                 }
 
                 // Enhance metallic speculars under procedural studio PMREM
-                if (/^Mat_(Wheel_Machined|Wheel_Forged|Skid_Plate|FOX_LiveValve|Chrome|Aluminum|Exhaust)/.test(shared.name)) {
+                if (/^Mat_(Wheel_Machined|Wheel_Forged|Skid_Plate|FOX_LiveValve|Chrome|Aluminum|Exhaust|Engine_Supercharger)/.test(shared.name)) {
                   shared.envMap = scene.environment;
                   shared.envMapIntensity = shared.name.startsWith('Mat_Wheel_Machined') ? 2.4 : 1.85;
                 }
-                if (shared.name === 'Mat_Shelter_Green_Paint') {
-                  shared.color.setRGB(0.145, 0.142, 0.042);
-                  shared.metalness = 0.46;
-                  shared.roughness = 0.16;
+                if (shared.name === 'Mat_Rapid_Red_Paint' || shared.name === 'Mat_Shelter_Green_Paint') {
+                  shared.color.setRGB(0.46, 0.010, 0.016);
+                  shared.metalness = 0.48;
+                  shared.roughness = 0.14;
                   shared.clearcoat = 1.0;
-                  shared.clearcoatRoughness = 0.032;
+                  shared.clearcoatRoughness = 0.028;
+                  shared.specularIntensity = 0.85;
                   shared.envMap = scene.environment;
-                  shared.envMapIntensity = 1.85;
+                  shared.envMapIntensity = 2.0;
+                }
+                if (shared.name === 'Mat_Gear_Machined_Steel') {
+                  shared.envMap = scene.environment;
+                  shared.envMapIntensity = 2.5;
+                  shared.roughness = 0.16;
+                  shared.metalness = 0.96;
+                }
+                if (shared.name === 'Mat_Gear_Hardened_Steel') {
+                  shared.envMap = scene.environment;
+                  shared.envMapIntensity = 2.1;
+                  shared.roughness = 0.22;
+                  shared.metalness = 0.92;
+                }
+                if (shared.name === 'Mat_Gear_Bronze_Alloy') {
+                  shared.envMap = scene.environment;
+                  shared.envMapIntensity = 2.4;
+                  shared.roughness = 0.20;
+                  shared.metalness = 0.94;
+                }
+                if (shared.name === 'Mat_Driveshaft_Spun_Aluminum' || shared.name === 'Mat_Drivetrain_Cast_Case') {
+                  shared.envMap = scene.environment;
+                  shared.envMapIntensity = 2.2;
                 }
                 if (shared.name === 'Mat_Amber_LED_DRL') {
                   shared.color.setRGB(1.0, 0.32, 0.0);
@@ -1141,13 +1215,12 @@
                   shared.depthWrite = false;
                   shared.forceSinglePass = true;
                 }
-                if (/^Mat_(Automotive_Glass|Privacy_Glass|Moonroof_Smoked_Glass)$/.test(shared.name)) {
-                  const isMoonroof = shared.name === 'Mat_Moonroof_Smoked_Glass';
+                if (/^Mat_(Automotive_Glass|Privacy_Glass)$/.test(shared.name)) {
                   const isPrivacy = shared.name === 'Mat_Privacy_Glass';
                   shared.transparent = true;
                   shared.depthWrite = false;
-                  shared.opacity = isMoonroof ? 0.72 : isPrivacy ? 0.62 : glassKind === 'GD' ? 0.30 : 0.38;
-                  shared.userData.cabinOpacity = isMoonroof ? 0.28 : isPrivacy ? 0.22 : 0.14;
+                  shared.opacity = isPrivacy ? 0.62 : glassKind === 'GD' ? 0.30 : 0.38;
+                  shared.userData.cabinOpacity = isPrivacy ? 0.22 : 0.14;
                   shared.color.setRGB(0.015, 0.026, 0.024);
                   shared.roughness = 0.06;
                   shared.clearcoat = 0.72;
@@ -1229,15 +1302,11 @@
           measureExplodedView();
         }
 
+        explosionButton.disabled = !pivots.Pivot_Body_Assembly;
+        state.loaded = true;
+
         const hashView = captureMode ? '' : location.hash.slice(1);
-        if (hashView === 'assembly' && !reducedMotion.matches) {
-          startAssembly();
-        } else if (hashView === 'rear') {
-          showRearView(true);
-        } else if (isDetailView(hashView) && !overrideModel) {
-          document.documentElement.dataset.matchView = hashView;
-        } else {
-          // Frame the assembled Raptor R crisply at the Front three-quarter hero angle (zero intro lag).
+        if (captureMode) {
           selectedView = null;
           state.explode = state.explodeTarget = 0;
           state.theta = state.targetTheta = exteriorView.theta;
@@ -1246,13 +1315,27 @@
           state.targetCenter.copy(FOCUS_EXTERIOR);
           state.frontLens = 1;
           state.rearLens = state.cabinBlend = 0;
+        } else if (document.documentElement.dataset.matchView) {
+          matchRaptorView(document.documentElement.dataset.matchView);
+        } else if (hashView === 'rear') {
+          showRearView(true);
+        } else if (isDetailView(hashView) && !overrideModel) {
+          matchRaptorView(hashView);
+        } else if (location.hash === '#raptor-views') {
+          // Stay cleanly assembled behind the photo gallery (no wasted intro while hidden)
+          selectedView = null;
+          state.explode = state.explodeTarget = 0;
+          state.theta = state.targetTheta = exteriorView.theta;
+          state.phi = state.targetPhi = exteriorView.phi;
+          state.radius = state.targetRadius = exteriorView.radius;
+          state.targetCenter.copy(FOCUS_EXTERIOR);
+          state.frontLens = 1;
+          state.rearLens = state.cabinBlend = 0;
+        } else {
+          // Normal initial load (/, #model, #assembly): open exploded and converge smoothly into assembled view
+          startAssembly();
         }
 
-        explosionButton.disabled = !pivots.Pivot_Body_Assembly;
-        state.loaded = true;
-        if (document.documentElement.dataset.matchView) {
-          matchRaptorView(document.documentElement.dataset.matchView);
-        }
         document.documentElement.dataset.modelReady = overrideModel ? 'custom' : 'stock';
         window.dispatchEvent(new Event('model-ready'));
 
@@ -1645,15 +1728,27 @@
     function startAssembly() {
       if (!pivots.Pivot_Body_Assembly) return;
       runCommand('r');
-      frameAssembly();
       if (reducedMotion.matches || captureMode) {
+        selectedView = null;
+        customCapturePose = null;
         state.explode = state.explodeTarget = 0;
+        state.theta = state.targetTheta = exteriorView.theta;
+        state.phi = state.targetPhi = exteriorView.phi;
+        state.radius = state.targetRadius = exteriorView.radius;
+        state.targetCenter.copy(FOCUS_EXTERIOR);
+        state.frontLens = 1;
+        state.rearLens = state.cabinBlend = 0;
         updateHudText();
         wake(true);
         return;
       }
+      frameAssembly();
+      // Keep targetCenter anchored at FOCUS_EXTERIOR during intro so cameraExplosion smoothly
+      // interpolates effCenter from assemblyView.center (explode=1) -> FOCUS_EXTERIOR (explode=0).
+      state.targetCenter.copy(FOCUS_EXTERIOR);
       state.explode = state.explodeTarget = 1;
       intro = { elapsed: 0, previous: null };
+      updateHudText();
       wake(true);
     }
 
@@ -1722,6 +1817,12 @@
       } else if (k === 'e') {
         if (selectedView !== 'assembly') frameAssembly();
         state.explodeTarget = state.explodeTarget < 0.2 ? 0.55 : (state.explodeTarget < 0.85 ? 1.0 : 0.0);
+        if (state.explodeTarget === 0.0) {
+          selectedView = null;
+          state.targetTheta = exteriorView.theta;
+          state.targetPhi = exteriorView.phi;
+          state.targetRadius = exteriorView.radius;
+        }
         playClickSound(state.explodeTarget > 0 ? 640 : 420, 0.06);
         wake(true);
       } else if (k === 'x') {
@@ -1754,7 +1855,7 @@
         state.xrayTarget = 0.0;
         state.steerMode = false;
         state.spinMode = false;
-        state.wheelSpinAngle = state.steerPhase = 0;
+        state.wheelSpinAngle = state.revDriveAngle = state.steerPhase = 0;
         state.revving = false;
         for (const ps of pullOffsets.values()) {
           ps.tgt.set(0, 0, 0);
@@ -1839,8 +1940,9 @@
       overlayToggle.hidden = captureMode || !currentPhoto?.photo || !!overrideModel;
       if (overlayToggle.hidden || overlayToggle.dataset.view !== detail) closeOverlay();
       overlayToggle.dataset.view = detail;
+      const hasRefPhoto = detail && (currentPhoto?.photo || ['cabin', 'engine', 'seats', 'console', 'underbody'].includes(detail));
       detailPhoto.dataset.preset = detail;
-      detailPhoto.hidden = captureMode || !detail || !!overrideModel;
+      detailPhoto.hidden = captureMode || !hasRefPhoto || !!overrideModel;
       detailPhoto.textContent = 'Reference photo';
       detailPhoto.href = '#raptor-views';
       detailPhoto.target = '_self';
@@ -1874,14 +1976,14 @@
       if (state.hoodTarget > 0.5) tags.push('Power Dome hood open');
       if (state.tailgateTarget > 0.5) tags.push('tailgate down');
       if (state.fuelTarget > 0.5) tags.push('fuel door open');
-      if (state.spinMode) tags.push('37" wheels spinning');
+      if (state.spinMode) tags.push('37" wheels & 4WD gears spinning');
       if (state.steerMode) tags.push('steering');
       if (state.revving) tags.push(`${Math.round(state.rpm)} rpm`);
       const detached = [...pullOffsets.values()].filter(part => part.parked).length;
       if (detached) tags.push(`${detached} detached`);
       if (tags.length === 0) tags.push('assembled');
       if (soundMuted) tags.push('muted');
-      infoEl.textContent = `2024 Ford F-150 Raptor R · Shelter Green · ${tags.join(' · ')}`;
+      infoEl.textContent = `2024 F-150 Raptor R · Rapid Red Metallic · ${tags.join(' · ')}`;
     }
 
     // -----------------------------------------------------------------------
@@ -1907,9 +2009,10 @@
 
     const ISOLATE_PRESETS = {
       cabin: /Pivot_Interior_Cabin|RaptorR_Int_|RaptorR_Mirror_Cabin|DoorCard|Door_Card|Seat|Dash|Cluster|SYNC4|Console|Steering|Pedal|Headliner|Carpet|SunVisor|Overhead|GrabHandle|Seatbelt/i,
-      engine: /Pivot_Engine_Predator|RaptorR_Eng_|Supercharger|Predator|Intake|Airbox|Coolant|Battery/i,
-      chassis: /Pivot_Chassis_Frame|Pivot_Exhaust_System|Pivot_Corner_|Pivot_WheelSpin_|Skid|FOX|Shock|Frame|Susp_|Exhaust|Tire|Rim|Wheel|Brake/i,
-      underbody: /Pivot_Chassis_Frame|Pivot_Exhaust_System|Pivot_Corner_|Pivot_WheelSpin_|Skid|FOX|Shock|Frame|Susp_|Exhaust|Tire|Rim|Wheel|Brake/i,
+      engine: /Pivot_Engine_|RaptorR_Eng_|Supercharger|Predator|Intake|Airbox|Coolant|Battery|Radiator/i,
+      drivetrain: /Pivot_Drivetrain_4WD|Pivot_Spin_|RaptorR_(Drivetrain_|Eng_Block|Eng_Supercharger|Tire_|Rim_|WheelCap_|Brake)/i,
+      chassis: /Pivot_Chassis_Frame|Pivot_Drivetrain_4WD|Pivot_Spin_|Pivot_Exhaust_System|Pivot_Corner_|Pivot_WheelSpin_|RaptorR_Drivetrain_|Skid|FOX|Shock|Frame|Susp_|Exhaust|Tire|Rim|Wheel|Brake/i,
+      underbody: /Pivot_Chassis_Frame|Pivot_Drivetrain_4WD|Pivot_Spin_|Pivot_Exhaust_System|Pivot_Corner_|Pivot_WheelSpin_|RaptorR_Drivetrain_|Skid|FOX|Shock|Frame|Susp_|Exhaust|Tire|Rim|Wheel|Brake/i,
     };
     function resolveFilterPattern(spec) {
       if (!spec) return null;
@@ -1925,7 +2028,8 @@
       const isolate = resolveFilterPattern(pose?.isolate);
       const hidden = resolveFilterPattern(pose?.hide);
       lastIsolation = isolate;
-      showroomFloor.visible = !outlineMode && !isolate && !pose?.hideFloor && !(pose?.phi > Math.PI * 0.62);
+      const keepFloor = pose?.hideFloor === false;
+      showroomFloor.visible = !outlineMode && (keepFloor || (!isolate && !pose?.hideFloor && !(pose?.phi > Math.PI * 0.62)));
       for (const mesh of allPickableMeshes) {
         const matchIso = !isolate || isolate.test(mesh.name) || isolate.test(getPivotAncestorName(mesh));
         const matchHide = hidden && (hidden.test(mesh.name) || hidden.test(getPivotAncestorName(mesh)));
@@ -1935,13 +2039,16 @@
       needsShadow = true;
     }
 
-    // Named inspection views (accessible via #cabin, #engine, #seats, #console, #underbody, etc.)
+    // Named inspection views (accessible via #cabin, #engine, #drivetrain, #seats, #console, #underbody, etc.)
+    const drivetrainFov = 28;
+    const drivetrainRadius = 6.4;
     const referenceViews = new Map([
-      ['cabin',     { label: 'Cabin cockpit', cabin: true, group: 'Interior' }],
-      ['engine',    { label: 'Power Dome & 5.2L Predator V8', group: 'Powertrain', theta: -0.45, phi: 1.02, distance: 2.35, fov: 38, radius: orbitRadius({ distance: 2.35, fov: 38 }), center: new THREE.Vector3(1.85, 1.15, 0.0), panels: { hood: 1 } }],
-      ['seats',     { label: 'Recaro seats', group: 'Interior', theta: -1.12, phi: 1.32, distance: 1.85, fov: 46, radius: orbitRadius({ distance: 1.85, fov: 46 }), center: new THREE.Vector3(-0.08, 1.24, -0.18), panels: { doorFL: 1 } }],
-      ['console',   { label: 'Center stack & SYNC 4', group: 'Interior', theta: 3.12, phi: 1.54, distance: 0.82, fov: 44, radius: orbitRadius({ distance: 0.82, fov: 44 }), center: new THREE.Vector3(0.98, 1.38, 0.02) }],
-      ['underbody', { label: 'Underbody & FOX Live Valve shocks', group: 'Powertrain', theta: -0.42, phi: 1.72, distance: 3.15, fov: 40, radius: orbitRadius({ distance: 3.15, fov: 40 }), center: new THREE.Vector3(1.15, 0.48, 0.0), hideFloor: true }],
+      ['cabin',      { label: 'Cabin cockpit', cabin: true, group: 'Interior' }],
+      ['engine',     { label: 'Power Dome & 5.2L Predator V8', group: 'Powertrain', theta: -0.45, phi: 1.02, distance: 2.35, fov: 38, radius: orbitRadius({ distance: 2.35, fov: 38 }), center: new THREE.Vector3(1.85, 1.15, 0.0), panels: { hood: 1 } }],
+      ['drivetrain', { label: '4WD drivetrain & meshed gears', group: 'Powertrain', isolate: 'drivetrain', theta: -0.78, phi: 1.02, fov: drivetrainFov, radius: drivetrainRadius, distance: drivetrainRadius * Math.tan(Math.PI / 12) / Math.tan(drivetrainFov * Math.PI / 360), center: new THREE.Vector3(0.15, 0.58, 0.0), hideFloor: false }],
+      ['seats',      { label: 'Recaro seats', group: 'Interior', theta: -1.12, phi: 1.32, distance: 1.85, fov: 46, radius: orbitRadius({ distance: 1.85, fov: 46 }), center: new THREE.Vector3(-0.08, 1.24, -0.18), panels: { doorFL: 1 } }],
+      ['console',    { label: 'Center stack & SYNC 4', group: 'Interior', theta: 3.12, phi: 1.54, distance: 0.82, fov: 44, radius: orbitRadius({ distance: 0.82, fov: 44 }), center: new THREE.Vector3(0.98, 1.38, 0.02) }],
+      ['underbody',  { label: 'Underbody & FOX Live Valve shocks', group: 'Powertrain', theta: -0.42, phi: 1.72, distance: 3.15, fov: 40, radius: orbitRadius({ distance: 3.15, fov: 40 }), center: new THREE.Vector3(1.15, 0.48, 0.0), hideFloor: true }],
     ]);
 
     // Map all 22 photo-matched views from raptor-views.json + exterior-photo-cameras.json
@@ -1990,29 +2097,35 @@
     let shadowDirty = true;
     const _ev = new THREE.Vector3();
 
-    // Real-world meter exploded offsets
+    // Real-world meter exploded offsets (showcasing unboxed 5.2L V8 & full 4WD drivetrain + meshed gears)
     function getExplodeOffset(name, ex, vibration, time, out) {
       out.set(0, 0, 0);
       switch (name) {
-        case 'Pivot_Body_Assembly':   out.set( 0.00,  1.45,  0.00); break;
-        case 'Pivot_Hood':            out.set( 0.55,  0.65,  0.00); break;
-        case 'Pivot_Door_FL':         out.set( 0.15,  0.05, -1.15); break;
-        case 'Pivot_Door_FR':         out.set( 0.15,  0.05,  1.15); break;
-        case 'Pivot_Door_RL':         out.set(-0.20,  0.05, -1.15); break;
-        case 'Pivot_Door_RR':         out.set(-0.20,  0.05,  1.15); break;
-        case 'Pivot_Tailgate':        out.set(-0.85,  0.15,  0.00); break;
-        case 'Pivot_Fuel_Door':       out.set( 0.00,  0.06, -0.32); break;
-        case 'Pivot_Corner_FL':       out.set( 0.55,  0.00, -0.75); break;
-        case 'Pivot_Corner_FR':       out.set( 0.55,  0.00,  0.75); break;
-        case 'Pivot_Corner_RL':       out.set(-0.55,  0.00, -0.75); break;
-        case 'Pivot_Corner_RR':       out.set(-0.55,  0.00,  0.75); break;
-        case 'Pivot_Engine_Predator': out.set( 0.65,  0.55,  0.00); break;
-        case 'Pivot_Chassis_Frame':   out.set( 0.00, -0.45,  0.00); break;
-        case 'Pivot_Exhaust_System':  out.set(-0.75, -0.35,  0.00); break;
-        case 'Pivot_Interior_Cabin':  out.set( 0.25,  0.55,  0.00); break;
+        case 'Pivot_Body_Assembly':       out.set( 0.00,  1.88,  0.00); break;
+        case 'Pivot_Hood':                out.set( 0.55,  0.62,  0.00); break;
+        case 'Pivot_Door_FL':             out.set( 0.15,  0.05, -1.15); break;
+        case 'Pivot_Door_FR':             out.set( 0.15,  0.05,  1.15); break;
+        case 'Pivot_Door_RL':             out.set(-0.20,  0.05, -1.15); break;
+        case 'Pivot_Door_RR':             out.set(-0.20,  0.05,  1.15); break;
+        case 'Pivot_Tailgate':            out.set(-0.85,  0.15,  0.00); break;
+        case 'Pivot_Fuel_Door':           out.set( 0.00,  0.06, -0.32); break;
+        case 'Pivot_Interior_Cabin':      out.set( 0.18,  0.86, -0.35); break;
+        case 'Pivot_Engine_Predator':     out.set( 0.28,  0.30,  0.00); break;
+        case 'Pivot_Engine_Supercharger': out.set( 0.32,  0.78,  0.00); break;
+        case 'Pivot_Engine_BayCasing':    out.set(-0.06,  1.56,  0.00); break;
+        case 'Pivot_Engine_Radiator':     out.set( 1.02,  0.26,  0.00); break;
+        case 'Pivot_Engine_Intake':       out.set( 0.36,  0.58, -0.58); break;
+        case 'Pivot_Engine_Auxiliaries':  out.set( 0.40,  0.52,  0.58); break;
+        case 'Pivot_Drivetrain_4WD':      out.set( 0.00,  0.22,  0.00); break;
+        case 'Pivot_Chassis_Frame':       out.set( 0.00, -0.34,  0.00); break;
+        case 'Pivot_Exhaust_System':      out.set(-0.55, -0.44,  0.16); break;
+        case 'Pivot_Corner_FL':           out.set( 0.28,  0.00, -0.62); break;
+        case 'Pivot_Corner_FR':           out.set( 0.28,  0.00,  0.62); break;
+        case 'Pivot_Corner_RL':           out.set(-0.28,  0.00, -0.62); break;
+        case 'Pivot_Corner_RR':           out.set(-0.28,  0.00,  0.62); break;
       }
       out.multiplyScalar(ex);
-      if (name === 'Pivot_Engine_Predator' && vibration) {
+      if ((name === 'Pivot_Engine_Predator' || (name === 'Pivot_Engine_Supercharger' && ex < 0.05)) && vibration) {
         out.x += Math.sin(time * 78) * vibration;
         out.y += Math.cos(time * 95) * vibration;
       }
@@ -2031,13 +2144,16 @@
         if (/Steering/i.test(name)) offset.set(0.14, 0.14, -0.12);
         else if (/Dash|Cluster|SYNC4|Screen/i.test(name)) offset.set(0.22, 0.12, 0);
         else if (/Seat/i.test(name)) offset.y = 0.16;
-      } else if (parent === 'Pivot_Engine_Predator') {
-        if (/Supercharger|Blower|TVS/i.test(name)) offset.set(0, 0.28, 0);
-        else if (/Intake|Airbox/i.test(name)) offset.set(0.16, 0.18, -0.18);
+      } else if (parent === 'Pivot_Engine_Predator' && !pivots.Pivot_Engine_Supercharger) {
+        // Fallback sub-part separation if loading an older single-pivot engine GLB
+        if (/Supercharger|Blower|TVS/i.test(name)) offset.set(0.02, 0.48, 0);
+        else if (/Intake|Airbox|ColdAir/i.test(name)) offset.set(0.08, 0.24, -0.48);
+        else if (/Battery|Coolant/i.test(name)) offset.set(0.14, 0.20, 0.46);
+        else if (/BayStructure|Apron|Firewall/i.test(name)) offset.set(-0.36, 0.66, 0);
       } else if (parent === 'Pivot_Body_Assembly') {
         if (/Front_Bumper|Bumper_Front|Grille|Skid|TowHook/i.test(name)) offset.x = 0.36;
         else if (/Rear_Bumper|Bumper_Rear|Taillight|License/i.test(name)) offset.x = -0.34;
-        else if (/Windshield|Moonroof|Wiper/i.test(name)) offset.y = 0.26;
+        else if (/Windshield|Wiper/i.test(name)) offset.y = 0.26;
       } else if (parent.startsWith('Pivot_Door_') && /Glass|Window/i.test(name)) {
         offset.y = 0.24;
       }
@@ -2116,7 +2232,7 @@
       center.copy(right).multiplyScalar((leftLimit + rightLimit) / 2)
         .addScaledVector(up, centerY).addScaledVector(eye, centerDepth);
       assemblyView.distance = (eyeDepth - centerDepth) * vertical / Math.tan(Math.PI / 12);
-      if (selectedView === 'assembly') state.targetCenter.copy(center);
+      if (selectedView === 'assembly' && !intro) state.targetCenter.copy(center);
     }
 
     function advanceIntro(now) {
@@ -2127,7 +2243,17 @@
       const progress = THREE.MathUtils.clamp((intro.elapsed - introHoldMs) / introAssemblyMs, 0, 1);
       const ease = progress * progress * (3 - 2 * progress);
       state.explode = state.explodeTarget = 1 - ease;
-      if (progress === 1) intro = null;
+      // Smoothly glide camera angles from assemblyView -> assembled exteriorView hero pose
+      state.theta = state.targetTheta = THREE.MathUtils.lerp(assemblyView.theta, exteriorView.theta, ease);
+      state.phi = state.targetPhi = THREE.MathUtils.lerp(assemblyView.phi, exteriorView.phi, ease);
+      state.radius = state.targetRadius = exteriorView.radius;
+      if (progress === 1) {
+        intro = null;
+        selectedView = null;
+        state.targetCenter.copy(FOCUS_EXTERIOR);
+        state.frontLens = 1;
+        state.rearLens = state.cabinBlend = 0;
+      }
       if (!intro || (holding && progress > 0)) updateHudText();
     }
 
@@ -2143,6 +2269,10 @@
       sky: 0.72, key: 1.95, rim: 1.15, lower: 0.25,
       environment: 1.30, exposure: 1.02, ground: new THREE.Color(0x454d58),
     };
+    const drivetrainLighting = {
+      sky: 0.92, key: 2.15, rim: 1.55, lower: 0.75,
+      environment: 1.85, exposure: 1.06, ground: new THREE.Color(0x525862),
+    };
     const undersideLighting = {
       sky: 0.65, key: 1.40, rim: 1.10, lower: 2.40,
       environment: 1.65, exposure: 1.06, ground: new THREE.Color(0x606670),
@@ -2152,7 +2282,9 @@
 
     function updateInspectionLighting(pose) {
       let lighting = exteriorLighting;
-      if (pose?.group === 'Interior' || selectedView === 'seats' || selectedView === 'console' || selectedView === 'cabin') {
+      if (selectedView === 'drivetrain') {
+        lighting = drivetrainLighting;
+      } else if (pose?.group === 'Interior' || selectedView === 'seats' || selectedView === 'console' || selectedView === 'cabin') {
         lighting = cabinLighting;
       } else if (pose?.group === 'Powertrain' || selectedView === 'engine' || selectedView === 'underbody') {
         const isUnderside = pose?.hideFloor || pose?.phi > 1.58 || selectedView === 'underbody';
@@ -2173,6 +2305,7 @@
 
     function applyAllPivots(damp, t, vib, steerRad) {
       const ex = state.explode;
+      const shaftSpin = state.wheelSpinAngle * 3.73 + state.revDriveAngle;
       for (const [pname, piv] of Object.entries(pivots)) {
         const rp = restPos.get(piv);
         const rr = restRot.get(piv);
@@ -2193,8 +2326,14 @@
           piv.rotation[panel.axis] = rr[panel.axis] + state[panelKey] * panel.angle;
         } else if (pname === 'Pivot_Corner_FL' || pname === 'Pivot_Corner_FR') {
           piv.rotation.set(rr.x, rr.y + steerRad, rr.z);
-        } else if (pname.startsWith('Pivot_WheelSpin_')) {
+        } else if (pname.startsWith('Pivot_WheelSpin_') || pname === 'Pivot_Spin_Gear_Diff_F' || pname === 'Pivot_Spin_Gear_Diff_R') {
           piv.rotation.set(rr.x, rr.y, rr.z - state.wheelSpinAngle);
+        } else if (pname === 'Pivot_Spin_Driveshaft_R' || pname === 'Pivot_Spin_Driveshaft_F' || pname === 'Pivot_Spin_Gear_Tcase_Main') {
+          piv.rotation.set(rr.x + shaftSpin, rr.y, rr.z);
+        } else if (pname === 'Pivot_Spin_Gear_Tcase_Idler') {
+          piv.rotation.set(rr.x - 1.05 * shaftSpin, rr.y, rr.z);
+        } else if (pname === 'Pivot_Spin_Gear_Tcase_Front') {
+          piv.rotation.set(rr.x + 1.05 * shaftSpin, rr.y, rr.z);
         }
       }
 
@@ -2217,7 +2356,7 @@
         const assembly = object.isMesh ? (object.parent?.name || '') : object.name;
         const release = THREE.MathUtils.smoothstep(pull.cur.length(), 0, 1.2);
         if (/Body_Assembly|Interior_Cabin|Door_/.test(assembly)) cabinPull = Math.max(cabinPull, release);
-        if (/Body_Assembly|Engine_Predator|Hood/.test(assembly)) enginePull = Math.max(enginePull, release);
+        if (/Body_Assembly|Engine_|Hood/.test(assembly)) enginePull = Math.max(enginePull, release);
       }
       const enclosed = lastIsolation ? 0 : (1 - state.xray) * (1 - THREE.MathUtils.smoothstep(state.explode, 0, 0.55));
       const cabinOpen = Math.min(1, (state.doorFL + state.doorFR + state.doorRL + state.doorRR) * 0.35);
@@ -2248,7 +2387,7 @@
       state.spinMode = false;
       state.steerMode = false;
       state.revving = false;
-      state.wheelSpinAngle = state.steerPhase = 0;
+      state.wheelSpinAngle = state.revDriveAngle = state.steerPhase = 0;
 
       for (const key of Object.keys(panels)) state[key] = state[key + 'Target'] = 0;
       for (const ps of pullOffsets.values()) {
@@ -2394,7 +2533,7 @@
         Math.abs(Number(selectedView === 'rear') - state.rearLens) +
         Math.abs(frontLensTarget() - state.frontLens);
       const photoPose = referenceViews.get(selectedView) ||
-        (selectedView === 'rear' ? rearPhoto : !selectedView && !state.interiorView ? landingPhoto : undefined);
+        (selectedView === 'rear' ? rearPhoto : ((!selectedView || (selectedView === 'assembly' && presenting)) && !state.interiorView) ? landingPhoto : undefined);
       const focusTarget = state.interiorView ? FOCUS_INTERIOR : (photoPose?.center || PANEL_CENTERS[selectedView] || FOCUS_EXTERIOR);
       const focusDelta = state.targetCenter.distanceToSquared(focusTarget);
 
@@ -2455,8 +2594,9 @@
       state.frontLens += (frontLensTarget() - state.frontLens) * damp;
       state.rearLens += (Number(selectedView === 'rear') - state.rearLens) * damp;
 
-      const assemblyFramed = selectedView === 'assembly';
-      const exteriorFov = assemblyFramed ? assemblyView.fov : THREE.MathUtils.lerp(30, photoPose?.fov ?? 27.5, Math.min(1, state.frontLens + state.rearLens));
+      const assemblyFramed = selectedView === 'assembly' && !presenting;
+      const baseExteriorFov = THREE.MathUtils.lerp(30, photoPose?.fov ?? 27.5, Math.min(1, state.frontLens + state.rearLens));
+      const exteriorFov = assemblyFramed ? assemblyView.fov : presenting ? THREE.MathUtils.lerp(baseExteriorFov, assemblyView.fov, state.explode) : baseExteriorFov;
       const lensTangent = Math.tan(THREE.MathUtils.degToRad(exteriorFov / 2));
       const dolly = Math.tan(Math.PI / 12) / lensTangent;
       const availableHeight = assemblyView.availableHeight || 1;
@@ -2560,8 +2700,9 @@
         }
       }
 
-      // Wheel spin & steering phase
+      // Wheel spin, live 4WD gear spin (plus subtle torque-converter rev spin), & steering phase
       if (state.spinMode) state.wheelSpinAngle += 2.4 * dt;
+      if (state.rpm > 850) state.revDriveAngle += ((state.rpm - 720) / 6280) * 4.5 * dt;
       if (state.steerMode) state.steerPhase += 1.35 * dt;
       const steerRad = state.steerMode ? Math.sin(state.steerPhase) * 0.42 : 0.0;
 
