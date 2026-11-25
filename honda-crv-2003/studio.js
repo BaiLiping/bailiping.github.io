@@ -26,7 +26,9 @@ function showAngle() {
   if (!option) return;
   error.hidden = true;
   photo.hidden = false;
-  photo.alt = option.label + ' on the reference 2003 Honda CR-V EX 4WD (Chianti Red Pearl)';
+  const subject = option.dataset.subject || 'Second-generation Honda CR-V';
+  photo.alt = subject + ' — ' + option.label;
+  document.getElementById('photo-subject').textContent = subject;
   const fullPhoto = document.getElementById('full-photo');
   const originalUrl = option.dataset.original || option.value;
   if (originalUrl) {
@@ -39,6 +41,8 @@ function showAngle() {
   if (sourceLink && option.dataset.source) {
     sourceLink.href = option.dataset.source;
     sourceLink.hidden = false;
+  } else if (sourceLink) {
+    sourceLink.hidden = true;
   }
   const creditEl = document.getElementById('photo-credit');
   if (creditEl && option.dataset.credit) {
@@ -84,7 +88,7 @@ async function loadAngles() {
     return;
   }
   try {
-    sourcePromise ??= fetch('./crv-views.json').then(response => {
+    sourcePromise ??= fetch('./crv-views.json?v=aeb94960c6').then(response => {
       if (!response.ok) throw new Error('Camera list unavailable');
       return response.json();
     });
@@ -101,6 +105,7 @@ async function loadAngles() {
       group.label = groupName;
       for (const view of items) {
         const option = new Option(view.label, view.preview || view.image || '');
+        option.dataset.subject = view.subject || '';
         option.dataset.original = view.image || '';
         option.dataset.photoView = view.photoView;
         option.dataset.preset = view.preset || '';

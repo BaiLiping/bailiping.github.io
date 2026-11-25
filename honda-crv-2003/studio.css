@@ -4,9 +4,9 @@
   --header-height: 76px;
   --edge: clamp(16px, 3vw, 54px);
   --surface: #f0f1f2;
-  /* 2003 Honda CR-V EX 4WD — Chianti Red Pearl (R-517P) */
-  --swatch: #6e1b24;
-  --accent: #7a1f28;
+  /* 2003 Honda CR-V EX 4WD — Eternal Blue Pearl (B-96P) */
+  --swatch: #254376;
+  --accent: #244c83;
   font: 15px/1.45 -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
   color: var(--ink);
   -webkit-font-smoothing: antialiased;
@@ -126,7 +126,7 @@ a { color: inherit; text-underline-offset: .2em; }
 @media (max-width: 640px) {
   #bar { bottom: max(14px, env(safe-area-inset-bottom)); gap: 7px; padding: 0 6px; }
   #tools { max-width: 100%; }
-  #tools > button, #more > summary { padding: 0 clamp(10px, 3vw, 18px); font-size: 13px; min-width: 0; }
+  #tools > button, #more > summary { padding: 0 clamp(5px, 1.8vw, 12px); font-size: 13px; min-width: 0; }
   #drag-hint { font-size: 12px; }
 }
 /* Below 800 px on portrait screens, give the mode switch its own clean row. */

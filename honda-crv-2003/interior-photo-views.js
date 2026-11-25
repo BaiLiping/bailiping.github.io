@@ -16,4 +16,5 @@ export const interiorPhotoViews = {
   "Instrument cluster gauges": { theta: -3.1416, phi: 1.56, distance: 18.2, fov: 26.0, center: [32.8, 56.8, -21.2], roll: 0.0, isolate: clusterOnly, background: 0x181b20 },
   "Driver door card (Saddle)": { theta: 1.57, phi: 1.42, distance: 27.5, fov: 34.0, center: [16.5, 45.8, -40.5], roll: -0.28, isolate: doorCardFL, background: 0x181b20 },
   "Cargo bay and stowed picnic floor": { theta: -2.76529, phi: 1.415158, distance: 162.554549, fov: 28.0, center: [-81.093932, 49.380831, 14.42459], roll: 0.01623, panels: {"tailgate": 1} },
+  "Black cloth · dashboard and seats": {"theta": -3.108349, "phi": 1.020724, "distance": 99.430303, "fov": 24.986197, "center": [20.640211, 44.032901, -3.083971], "roll": -0.057856, isolate: cabin, background: 0x181b20 },
 };

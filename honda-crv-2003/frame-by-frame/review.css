@@ -2,7 +2,7 @@
 * { box-sizing:border-box; }
 body { margin:0; }
 a { color:inherit; text-underline-offset:.19em; }
-a:focus-visible, button:focus-visible, input:focus-visible { outline:3px solid #7a1f28; outline-offset:4px; }
+a:focus-visible, button:focus-visible, input:focus-visible { outline:3px solid #244c83; outline-offset:4px; }
 header.site, main, footer { width:min(1480px,100%); margin:auto; padding-inline:clamp(16px,4vw,72px); }
 header.site { min-height:58px; display:flex; gap:20px; align-items:center; justify-content:space-between; font-size:.91rem; }
 header.site strong { font-size:1rem; }
@@ -44,7 +44,7 @@ figcaption { margin:5px 0 0; color:#495057; font-size:.83rem; }
 .shape-mode .trace-control { display:flex !important; align-items:center; gap:12px; margin-top:8px; font-size:.83rem; }
 .trace-control input { width:min(220px,45%); accent-color:#157181; }
 .wipe-mode .wiper { display:flex !important; align-items:center; gap:12px; margin-top:8px; font-size:.83rem; }
-.wiper input { width:min(260px,55%); accent-color:#6e1b24; }
+.wiper input { width:min(260px,55%); accent-color:#254376; }
 .wipe-mode .pair { position:relative; display:block; max-width:1050px; margin:auto; cursor:ew-resize; touch-action:pan-y; user-select:none; }
 .wipe-mode .pair img { pointer-events:none; }
 .wipe-mode .pair figure:last-child { position:absolute; inset:0; clip-path:inset(0 0 0 var(--wipe,50%)); }
