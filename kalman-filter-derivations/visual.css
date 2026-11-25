@@ -1,0 +1,70 @@
+/* Shared finishing layer for this deck only. No external font dependency. */
+.bento-slide .bento-text-inner { text-rendering: optimizeLegibility; }
+.bento-slide a:focus-visible { outline: 3px solid #496E87; outline-offset: 4px; }
+.bento-slide .math-tex mjx-container { padding: 0.04em 0; }
+@media (prefers-reduced-motion: reduce) {
+  .bento-slide, .bento-slide * { scroll-behavior: auto !important; }
+}
+
+/* The five new experiments share the slides' editorial light theme. */
+body.kf-family-lab {
+  --paper: #F8F6F0;
+  --ink: #20372F;
+  --muted: #61756B;
+  --line: #DCE3DB;
+  --a: #2F6B4F;
+  --tint: #E7F0EA;
+  -webkit-font-smoothing: antialiased;
+}
+body[data-family="mse"] { --a: #496E87; --tint: #E7EEF3; }
+body[data-family="wls"] { --a: #A94F2A; --tint: #F5E8DF; }
+body[data-family="kl"] { --a: #71638B; --tint: #ECE9F2; }
+body[data-family="graphs"] { --a: #287A78; --tint: #E4F1EF; }
+.kf-family-lab #app { grid-template-columns: 272px minmax(0,1fr); gap: 13px; padding: 10px; }
+.kf-family-lab aside { padding: 15px 16px 12px; background: #FFFEFB; border-radius: 13px; border-top: 3px solid var(--a); }
+.kf-family-lab .stage { padding: 14px 17px; border-radius: 13px; gap: 10px; }
+.kf-family-lab h1 { font-size: 23px; letter-spacing: -.035em; margin: 9px 0 12px; }
+.kf-family-lab h2 { font-weight: 700; font-size: 15px; letter-spacing: -.01em; }
+.kf-family-lab .eyebrow { letter-spacing: .065em; color: var(--a); }
+.kf-family-lab .toolbar { min-height: 24px; border-bottom: 1px solid var(--line); padding-bottom: 8px; }
+.kf-family-lab .toolbar > .eyebrow { font-size: 9px; white-space: nowrap; }
+.kf-family-lab .intro { font-size: 12.5px; line-height: 1.42; }
+.kf-family-lab .ctrl { padding-top: 4px; margin: 7px 0; }
+.kf-family-lab .ctrl label { font-size: 12px; }
+.kf-family-lab .ctrl output { font-family: ui-monospace, monospace; color: var(--a); font-weight: 750; }
+.kf-family-lab .ctrl select { background: #FAFBF8; padding: 8px 9px; border-radius: 7px; }
+.kf-family-lab input[type="range"] { cursor: pointer; height: 16px; margin: 5px 0; }
+.kf-family-lab button { font-size: 12px; border-radius: 7px; padding: 7px 10px; transition: background .12s, border-color .12s; }
+.kf-family-lab button:hover { border-color: var(--a); background: var(--tint); }
+.kf-family-lab button.primary { background: var(--a); color: white; border-color: var(--a); }
+.kf-family-lab button:disabled { opacity: .5; cursor: default; }
+.kf-family-lab .buttons { gap: 6px; }
+.kf-family-lab .metric { padding: 10px 11px; border-radius: 9px; background: #FAFBF8; border-color: var(--line); }
+.kf-family-lab .metric small { font-size: 10.5px; line-height: 1.3; }
+.kf-family-lab .metric strong { font-size: 20px; letter-spacing: -.035em; color: var(--ink); font-variant-numeric: tabular-nums; }
+.kf-family-lab .metrics > :last-child { border-color: var(--a); background: var(--tint); }
+.kf-family-lab .explain { background: var(--tint); font-size: 12px; padding: 10px 12px; border-radius: 8px; border-left: 3px solid var(--a); }
+.kf-family-lab .note { line-height: 1.38; }
+.kf-family-lab footer { padding-top: 9px; border-top: 1px solid var(--line); }
+.kf-family-lab footer button { font-size: 10.5px; padding: 5px 8px; }
+.kf-family-lab .matrix { background: #FAFBF8; }
+.kf-family-lab .graph-extra { justify-content: space-between; gap: 9px; }
+.kf-family-lab .graph-stage .plot { height: 143px; }
+.kf-family-lab .graph-stage .metric { padding: 6px 9px; }
+.kf-family-lab .graph-stage .explain { padding: 8px 10px; font-size: 11.5px; }
+.kf-family-lab.embed aside h1 { font-size: 18px; line-height: 1.15; margin: 7px 0 11px; }
+.kf-family-lab.embed aside .intro { display: none; }
+.kf-family-lab.embed .plot { height: 204px; }
+.kf-family-lab.embed .graph-stage .plot { height: 136px; }
+@media (max-width: 650px) {
+  .kf-family-lab #app { grid-template-columns: 1fr; }
+  .kf-family-lab .stage { overflow: visible; }
+  .kf-family-lab .plot, .kf-family-lab.embed .plot { height: 220px; }
+  .kf-family-lab .metrics { gap: 6px; }
+  .kf-family-lab .metric { padding: 7px; }
+  .kf-family-lab .metric strong { font-size: 17px; }
+  .kf-family-lab .toolbar > .eyebrow { display: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .kf-family-lab * { transition: none !important; }
+}

@@ -1,0 +1,20 @@
+html.incidence-points-construction .unknown-case-tabs a[aria-selected="false"]{background:#fff;border-color:#d7dee5}
+html.incidence-points-construction .unknown-case-tabs a[aria-selected="true"]{background:#e3f2ef;border-color:#0e8f7e}
+#udouble.incidence-corner .corner-stage{display:grid;grid-template-rows:minmax(0,1fr) 32px 46px;gap:7px;min-width:0;min-height:0;background:#fff}
+#udouble.incidence-corner #corner-scene{width:100%;height:100%;min-height:0;touch-action:none}
+#udouble.incidence-corner .corner-steps,#udouble.incidence-corner .corner-measurements{display:flex;gap:5px}
+#udouble.incidence-corner .corner-steps button,#udouble.incidence-corner .corner-measurements button{flex:1;min-width:0;min-height:30px;padding:5px 6px;border:1px solid #d7dee5;border-radius:4px;background:#fff;color:#51606e;font:600 12px/1.2 var(--sans);cursor:pointer}
+#udouble.incidence-corner button[aria-pressed="true"]{background:#e3f2ef;border-color:#0e8f7e;color:#086b5d}
+#udouble.incidence-corner #corner-caption{margin:0;padding:0 8px;font:12px/1.45 var(--sans);color:#51606e}
+#udouble.incidence-corner .ctl label:not(:first-child){margin-top:8px}
+#udouble.incidence-corner #corner-aod{accent-color:#1874b8}
+#udouble.incidence-corner #corner-aoa{accent-color:#0e8f7e}
+#udouble.incidence-corner .corner-result{padding:9px 10px;border:1px solid #b9dbd4;border-radius:5px;background:#e3f2ef;color:#0a6b5e;font:12px/1.4 var(--sans)}
+#udouble.incidence-corner .corner-result strong{display:block;margin-bottom:3px;font-size:13px}
+#udouble.incidence-corner .corner-result.is-warning{background:#fff6e9;border-color:#ead4b6;color:#89520e}
+#udouble.incidence-corner .rail label.ck{font-size:11px}
+html.mpc-live-region #udouble.incidence-corner .ctl label{font-size:11px}
+html.mpc-live-region #udouble.incidence-corner button.reset{min-height:30px;font-size:11px}
+html.mpc-live-region #udouble.incidence-corner .hint{font-size:11px;line-height:1.35}
+html:not(.mpc-live-region) #udouble.incidence-corner .corner-stage{min-height:420px}
+@media(max-width:760px){#udouble.incidence-corner .corner-stage{min-height:350px;grid-template-rows:minmax(220px,1fr) auto auto}#udouble.incidence-corner #corner-caption{padding-bottom:8px}}

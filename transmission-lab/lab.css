@@ -1,0 +1,336 @@
+@font-face {
+  font-family: "Barlow Condensed";
+  src: url("/assets/fonts/barlow-condensed-600-latin.woff2") format("woff2");
+  font-weight: 600;
+  font-display: swap;
+}
+@font-face {
+  font-family: "IBM Plex Mono";
+  src: url("/assets/fonts/ibm-plex-mono-400-latin.woff2") format("woff2");
+  font-weight: 400;
+  font-display: swap;
+}
+:root {
+  color-scheme: light;
+  --paper: #f7f5ef;
+  --plate: #f1f0e9;
+  --ink: #282e2a;
+  --muted: #525b54;
+  --rule: #c6c9bf;
+  --soft-rule: #d8dbd2;
+  --dark: #303d36;
+  --copper: #944b34;
+  --teal: #25675f;
+  --display: "Barlow Condensed", "Arial Narrow", system-ui, sans-serif;
+  --mono: "IBM Plex Mono", ui-monospace, monospace;
+  --gutter: clamp(15px, 1.8vw, 30px);
+}
+* { box-sizing: border-box; }
+body { margin: 0; color: var(--ink); background: var(--paper); font: 16px/1.5 system-ui, sans-serif; }
+main { width: min(100%, 1580px); margin: 0 auto; padding: 0 clamp(15px, 4.1vw, 72px) 35px; }
+a { color: inherit; text-underline-offset: 3px; }
+a:hover { color: #175c54; }
+button, input { font: inherit; }
+button {
+  color: var(--ink); cursor: pointer;
+  border: 1px solid #aeb5aa; border-radius: 4px; background-color: transparent;
+  min-height: 38px; padding: 6px 13px; font-size: .855rem; touch-action: manipulation;
+}
+button:hover { border-color: #708276; background-color: #e9ebe3; }
+.play {
+  background: var(--dark); border-color: var(--dark); color: #fff;
+}
+.play:hover { background: #24332b; color: white; }
+button:disabled { opacity: .48; cursor: default; }
+:is(button, input, select, a, [tabindex]):focus-visible { outline: 2px solid #176482; outline-offset: 3px; }
+[hidden], .interactive { display: none !important; }
+[data-enhanced] .interactive { display: flex !important; }
+.lab-nav {
+  display: flex; align-items: center; gap: 12px; padding: 15px 0 14px;
+  border-bottom: 1px solid var(--rule); font: .75rem/1.5 var(--mono);
+}
+.lab-nav a { text-decoration: none; }
+.lab-nav a:hover { text-decoration: underline; }
+.lab-nav span { color: var(--muted); }
+.lab-nav .sibling { margin-left: auto; text-decoration: underline; }
+.lab-heading { padding-block: clamp(14px, 2.1vh, 26px); }
+.kicker, .specimen-type, .readout dt, #valve-circuits label > span {
+  font: .74rem/1.45 var(--mono);
+}
+.kicker, .specimen-type { margin: 0; letter-spacing: .075em; text-transform: uppercase; }
+.kicker { color: var(--muted); }
+h1, h2, h3 { font-family: var(--display); font-weight: 600; line-height: 1.05; }
+h1 { margin: 3px 0 0; font-size: clamp(2.35rem, 4.15vw, 3.95rem); }
+.transport {
+  border-top: 1px solid var(--rule); padding: 10px 0 13px;
+  align-items: center; justify-content: space-between; gap: 10px 20px;
+}
+.drive-state { display: flex; align-items: baseline; flex-wrap: wrap; gap: 2px 16px; }
+.drive-state strong { font: 600 clamp(1.15rem, 1.8vw, 1.5rem)/1.15 var(--display); }
+.drive-state span { color: var(--muted); font: .78rem/1.45 var(--mono); }
+.view-options, #angle-control { display: flex; align-items: center; gap: 8px; }
+.view-options { margin-left: auto; }
+#angle-control { font: .75rem/1.4 var(--mono); color: var(--muted); }
+#view-angle {
+  min-height: 38px; max-width: 100%; font: .84rem/1.4 system-ui, sans-serif; color: var(--ink);
+  background-color: var(--paper); border: 1px solid #aeb5aa; border-radius: 4px; padding: 5px;
+}
+#assembly-action { display: inline-flex; align-items: center; gap: 7px; white-space: nowrap; }
+#assembly-action::before {
+  content: ""; width: 21px; height: 12px; border: 1px solid #78857b; border-radius: 9px;
+  background: radial-gradient(circle at 5.5px 50%, #657369 3.5px, transparent 4px);
+}
+#assembly-action[aria-pressed="true"] { color: #174c45; background: #deebe3; border-color: var(--teal); }
+#assembly-action[aria-pressed="true"]::before {
+  border-color: var(--teal); background: radial-gradient(circle at 15px 50%, white 3.5px, transparent 4px) var(--teal);
+}
+.play { display: inline-flex; align-items: center; justify-content: center; gap: 9px; white-space: nowrap; min-width: 130px; }
+.play-icon { width: 0; height: 0; border-style: solid; border-width: 5px 0 5px 8px; border-color: transparent transparent transparent currentColor; }
+[data-playing] .play-icon { height: 10px; width: 8px; border-width: 0 3px; border-color: currentColor; }
+[data-queued] .play-icon { height: 10px; width: 8px; border-width: 0 3px; border-color: currentColor; }
+.paired-stage {
+  display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); background: var(--plate); border-block: 1px solid var(--rule);
+}
+.manual { --accent: var(--copper); }
+.pdk { --accent: var(--teal); }
+.specimen { min-width: 0; padding: var(--gutter) 0 14px; display: flex; flex-direction: column; }
+.specimen + .specimen { border-left: 1px solid var(--rule); }
+.specimen-head { padding: 0 var(--gutter); }
+.specimen-type { display: flex; align-items: center; gap: 9px; color: var(--accent); }
+.specimen-type::before { content: ""; width: 22px; height: 2px; background: currentColor; }
+.specimen h2 { margin: 4px 0 3px; font-size: clamp(2rem, 3vw, 3rem); }
+.spec-line { color: var(--muted); font: .76rem/1.6 var(--mono); margin: 0; }
+.spec-line span { margin: 0 2px; }
+.figure {
+  position: relative; min-width: 0; margin: 0 4px;
+  height: clamp(245px, min(39vh, 26vw), 390px);
+}
+.figure > .cutaway { display: block; width: 100%; height: 100%; }
+.figure .cutaway { position: relative; touch-action: pan-y; border-radius: 3px; cursor: grab; }
+.figure .cutaway:active { cursor: grabbing; }
+.figure .cutaway:focus-visible { outline-offset: -4px; }
+.cutaway canvas { display: block; width: 100%; height: 100%; }
+.poster { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; }
+[data-models="ready"] .poster { display: none; }
+[data-models="static"] .cutaway { cursor: default; }
+@media screen and (scripting: enabled) {
+  .lab .transport[inert] { display: flex !important; }
+}
+.readout {
+  margin: 0 var(--gutter); padding: 7px 0; border-block: 1px solid var(--soft-rule);
+  display: flex; align-items: baseline; justify-content: flex-start; gap: 8px clamp(14px, 2.8vw, 46px); flex-wrap: wrap;
+}
+.readout > :is(div, label) { display: flex; align-items: baseline; gap: 8px; }
+.readout dt, #valve-circuits label > span { color: var(--muted); }
+.readout :is(dd, strong) { margin: 0; color: var(--ink); font: 600 .88rem/1.45 system-ui, sans-serif; }
+#valve-circuits { display: grid; grid-template-columns: repeat(auto-fit, min(100%, 13rem)); gap: 2px 16px; padding-block: 4px; }
+#valve-circuits label { align-items: center; min-height: 26px; }
+#valve-circuits input { display: none; margin: 0; accent-color: var(--teal); align-self: center; }
+[data-enhanced] #valve-circuits input { display: block; }
+[data-enhanced] #valve-circuits label { cursor: pointer; }
+.model-notes { margin: 0 var(--gutter); padding: 6px 0 8px; }
+.control-line { display: flex; align-items: center; gap: 6px 13px; }
+.control-line { align-items: baseline; flex-wrap: wrap; }
+.control-line > :first-child, .sensor-state { font: .74rem/1.5 var(--mono); color: var(--muted); }
+.control-line > :last-child { font-size: .88rem; color: var(--ink); }
+.sensor-state { margin: 3px 0; }
+.factory-link { color: var(--muted); font-size: .75rem; }
+.view-tools { align-items: center; gap: 8px 13px; padding: 5px 0 9px; border-top: 1px solid var(--soft-rule); }
+.view-tools p { margin: 0; color: var(--muted); font-size: .85rem; }
+.view-tools button { min-height: 32px; font-size: .8rem; padding-block: 4px; }
+#camera-tools { margin-left: auto; display: flex; gap: 4px; align-items: center; flex-wrap: wrap; }
+#camera-tools [aria-label] { font-size: 1rem; min-width: 32px; padding-inline: 5px; }
+.model-diagrams {
+  min-width: 0; margin-inline: var(--gutter); container-type: inline-size;
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 16.25rem), 1fr));
+  align-content: start; column-gap: 16px;
+}
+.linkage-figure { min-width: 0; margin: 0; padding: 10px 0; border-top: 1px solid var(--rule); scroll-margin-top: 12px; }
+.linkage-figure h3 { margin: 0 0 7px; font-size: clamp(1.22rem, 1.4vw, 1.43rem); text-wrap: balance; }
+.linkage-figure > p { margin: 0 0 7px; font-size: .93rem; }
+.linkage-figure > svg {
+  display: block; width: min(100%, 20rem); width: min(100%, clamp(16rem, 78cqi, 20rem));
+  height: auto; margin-inline: auto;
+}
+.link-labels { fill: var(--ink); font: 600 20px var(--display); }
+.drawing-note { fill: var(--teal); font: 16px var(--mono); text-anchor: middle; }
+.shaft-ends { fill: var(--muted); font: 16px var(--mono); }
+.link-machine { stroke-linecap: round; stroke-linejoin: round; }
+.link-machine .light-metal, .link-machine .chamber, .link-machine .shaft-metal, .link-machine .plate-metal {
+  fill: #c9cfc4; stroke: #546358; stroke-width: 1.6;
+}
+.link-machine .shaft-metal { fill: #adb6ab; }
+.link-machine .dark-metal { fill: #526055; stroke: #34433a; stroke-width: 1.4; }
+.link-machine .fittings, .link-machine .pushrod, .link-machine .pedal-ridges, .link-machine .bearing-mark,
+.link-machine .fluid-pipe, .link-machine .fluid-pipe-outer, .link-machine .diaphragm, .torque-stroke, .link-leaders {
+  fill: none; stroke-linejoin: round; stroke-linecap: round;
+}
+.pushrod { stroke: #68766b; stroke-width: 4; }
+.pedal-ridges, .bearing-mark { stroke: #d8dfd4; stroke-width: 1.2; }
+.fluid-pipe-outer { stroke: #608379; stroke-width: 5.6; }
+.fluid-pipe { stroke: #b2c6b7; stroke-width: 2.4; }
+.fluid-fill { fill: #adc3b3; }
+.link-machine .fluid-pipe { stroke: color-mix(in srgb, #b2c6b7, #19675c var(--pressure, 0%)); }
+.link-machine .fluid-fill { fill: color-mix(in srgb, #adc3b3, #39786c var(--pressure, 0%)); }
+.fittings, .seal { stroke: #4a6559; stroke-width: 2; }
+.splines { fill: none; stroke: #748276; stroke-width: 1.1; }
+.disc-core, .hub { fill: #c89368; stroke: #7b5034; stroke-width: 1.4; }
+.lining { fill: #68574a; stroke: #534738; stroke-width: 1; }
+.diaphragm { stroke: #5c6b61; stroke-width: 4; }
+.pivot { fill: #727e72; }
+.piston-sleeve { fill: #98aa9c; stroke: #57695c; stroke-width: 1.3; }
+.torque-stroke { stroke: var(--copper); stroke-width: 3; }
+[data-grip="open"] .torque-out { visibility: hidden; }
+[data-grip="slipping"] .torque-out { stroke-dasharray: 4 5; }
+.link-leaders { stroke: #778477; stroke-width: 1.25; }
+.diagram-key { display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 2px 10px; margin-top: 3px; font: .69rem/1.5 var(--mono); color: var(--muted); }
+#valve-context { color: var(--teal); }
+.fluid-key::before, .torque-key::before { content: ""; display: inline-block; vertical-align: middle; width: 16px; height: 3px; margin-right: 5px; background: var(--teal); }
+.torque-key::before { background: var(--copper); }
+.sources { display: flex; flex-wrap: wrap; gap: 2px 14px; margin-top: 6px; font-size: .75rem; color: var(--muted); }
+
+#stick-drawing { stroke-linejoin: round; stroke-linecap: round; }
+.gate-plate { fill: #e5e7dd; stroke: #97a297; }
+.gate-slot { fill: none; stroke: #78857b; stroke-width: 5; }
+.gate-numbers, .rail-pair text { fill: var(--ink); font: 600 17px var(--mono); }
+.gate-numbers { text-anchor: middle; }
+#stick-knob circle:first-child { fill: var(--dark); stroke: var(--paper); stroke-width: 1.5; }
+#stick-knob circle + circle { fill: #d5a480; }
+.select-cable, .select-label { color: var(--teal); }
+.shift-cable, .shift-label { color: var(--copper); }
+.link-labels :is(.select-label, .shift-label) { fill: currentColor; }
+.cable-core, .cable-outer, .cable-bore, .cable-fittings, .selector-arms { fill: none; }
+.cable-core, .cable-fittings, .selector-arms path { stroke: currentColor; stroke-width: 2; }
+.cable-outer { stroke: #546358; stroke-width: 8; }
+.cable-bore { stroke: #c2cabd; stroke-width: 4; }
+.cable-fittings { stroke-width: 4; }
+:is(.select-cable, .shift-cable) circle { fill: currentColor; stroke: var(--plate); stroke-width: 1; }
+.rail-pair use { fill: #cbd0c5; stroke: #768277; stroke-width: 1.2; }
+.rail-pair[data-active] use { fill: #9ab9a9; stroke: var(--teal); stroke-width: 1.8; }
+.rail-pair[data-active] text { fill: var(--teal); font-weight: bold; }
+#selector-finger { fill: none; stroke: var(--dark); stroke-width: 3.5; }
+.stick-divider { stroke: var(--rule); }
+.gear-wheel, .dog-teeth, .stick-hub, .stick-shaft { fill: #c7cdc2; stroke: #536458; stroke-width: 1.5; }
+.gear-hatching, .sleeve-splines, .shaft-detail { fill: none; stroke: #7d8c80; stroke-width: 1.3; }
+.stick-shaft { fill: #b3beb3; }
+.stick-hub { fill: #89988b; }
+.stick-sleeve { fill: #d2a580; stroke: #714933; stroke-width: 1.6; }
+.sleeve-splines { stroke: #885b3f; }
+.stick-fork { fill: #a36b50; stroke: #65452f; stroke-width: 1.5; }
+.fork-rail { fill: #9ab9a9; stroke: var(--teal); stroke-width: 1.2; }
+.fork-pin { fill: var(--plate); }
+.ring-left, .ring-right { fill: #c4ad78; stroke: #78673f; stroke-width: 1.4; }
+[data-stage="sync"][data-toward="left"] .ring-left, [data-stage="sync"][data-toward="right"] .ring-right { fill: #ecc26e; stroke: #74531a; stroke-width: 2.5; }
+[data-coupled="left"] .wheel-left, [data-coupled="right"] .wheel-right { --gear-fill: #c99a77; --gear-stroke: #794c35; }
+#stick-gear :is(.gear-wheel, .dog-teeth) { fill: var(--gear-fill, #c7cdc2); stroke: var(--gear-stroke, #536458); }
+
+#solenoid-drawing {
+  stroke-linejoin: round; stroke-linecap: round;
+  --spool: 0px; --spring-scale: 1; --piston: 0px; --chamber-scale: 1; --gap: 0px;
+  --coil: #d39368; --pressure-oil: #509386;
+}
+#solenoid-drawing[data-state="apply"] { --spool: 18px; --spring-scale: .7534; --coil: #d77e4f; --pressure-oil: #79ab9f; }
+#solenoid-drawing[data-state="release"] { --spool: -18px; --spring-scale: 1.2466; --coil: #b68a71; --pressure-oil: #a1bdb4; }
+#solenoid-drawing[data-state="vented"] {
+  --spool: -18px; --spring-scale: 1.2466; --piston: -29px; --chamber-scale: .396; --gap: 5px;
+  --coil: #ada599; --pressure-oil: #d3dfd6;
+}
+.valve-shell { fill: #c6cec3; stroke: #596a60; stroke-width: 1.6; }
+.valve-bore { fill: #e1e8de; stroke: #85958a; stroke-width: 1; }
+.valve-coil { fill: var(--coil); stroke: #79533f; }
+.valve-wire { fill: none; stroke: #8b593f; stroke-width: 2; }
+.valve-terminal { fill: #bf8c5d; stroke: #594337; }
+.valve-moving { transform: translateX(var(--spool)); }
+.valve-rod, .valve-armature, .valve-spool, .valve-piston { stroke: #48594e; stroke-width: 1.5; }
+.valve-rod { fill: #aab5aa; }
+.valve-armature { fill: #718477; }
+.valve-spool { fill: #a3afa3; }
+.valve-grooves { fill: none; stroke: #6a796d; stroke-width: 1.3; }
+.valve-spring {
+  fill: none; stroke: #6b6656; stroke-width: 2.6; transform-origin: 455px 110px; transform: scaleX(var(--spring-scale));
+}
+.valve-tank, .valve-pump { stroke: #5c786e; stroke-width: 2; }
+.valve-tank { fill: none; }
+.valve-pump { fill: #e2e8db; }
+.valve-ports { fill: none; stroke: #bbc8bd; stroke-width: 8; stroke-linecap: butt; }
+.valve-feedback { fill: none; stroke: var(--pressure-oil); stroke-width: 3.5; }
+.valve-oil { fill: var(--pressure-oil); }
+.valve-work-line { stroke: var(--pressure-oil); }
+.valve-chamber { fill: var(--pressure-oil); transform-origin: 347px 253px; transform: scaleX(var(--chamber-scale)); }
+.valve-piston { fill: #6a7d70; transform: translateX(var(--piston)); }
+.valve-plates path { fill: #bd865e; stroke: #76533d; stroke-width: 1; transform: translateX(calc(-1 * var(--intervals, 0) * var(--gap))); }
+.valve-plates path:nth-child(even) { fill: #9aa79b; stroke: #55665a; }
+.valve-flow { opacity: 0; fill: none; stroke-width: 2.5; stroke: var(--teal); }
+.valve-drain { stroke: #425e7a; }
+.valve-arrows { stroke-width: 2.8; }
+[data-state="apply"] .valve-feed, [data-state="release"] .valve-drain { opacity: 1; }
+.valve-readings { font: 16px var(--mono); fill: var(--muted); }
+.valve-readings :is(#valve-current, #valve-pressure) { font: 600 22px var(--display); fill: var(--ink); }
+@media (prefers-reduced-motion: no-preference) {
+  #solenoid-drawing[data-animate] :is(.valve-moving, .valve-spring, .valve-piston, .valve-plates path, .valve-chamber) { transition: transform .32s ease-in-out; }
+  #solenoid-drawing[data-animate][data-state="apply"] .valve-feed,
+  #solenoid-drawing[data-animate][data-state="release"] .valve-drain { transition: opacity .12s .22s; }
+}
+
+@supports (grid-template-rows: subgrid) {
+  .manual .linkage-figure { display: grid; grid-template-rows: subgrid; grid-row: span 3; align-items: start; }
+  @media (min-width: 721px) {
+    /* Align the models and the schematics even when their readouts wrap. */
+    .specimen { display: grid; grid-template-rows: subgrid; grid-row: span 5; }
+  }
+}
+@media (max-width: 1100px) {
+  .transport { flex-wrap: wrap; align-items: center; gap: 8px 14px; }
+}
+@media (max-width: 720px) {
+  .model-diagrams { margin-inline: 4px; }
+  .linkage-figure h3, .linkage-figure > p, .sources { margin-inline: calc(var(--gutter) - 4px); }
+  main { padding-inline: 13px; }
+  .lab-nav { padding-block: 10px; gap: 7px; }
+  .lab-heading { padding-block: 13px; }
+  .paired-stage { grid-template-columns: 1fr; }
+  .specimen + .specimen { border-left: 0; border-top: 1px solid var(--rule); }
+  .specimen { padding-top: 15px; }
+  .specimen h2 { font-size: 1.95rem; }
+  .spec-line { font-size: .72rem; }
+  .figure { height: clamp(198px, 57vw, 320px); }
+  .view-tools { flex-wrap: wrap; }
+  .view-tools p { flex-basis: 100%; }
+  #camera-tools { margin-left: 0; }
+  .drive-state { display: grid; }
+  .view-options { order: 1; flex-basis: 100%; margin: 0; flex-wrap: wrap; }
+  .transport .play { margin-left: auto; }
+  .readout { gap: 3px 17px; }
+  .readout > :is(div, label) { gap: 6px; }
+}
+@media (max-width: 370px) {
+  .lab-nav { gap: 5px; padding-block: 7px; font-size: .65rem; white-space: nowrap; }
+  .lab-heading { padding-block: 10px; }
+  .kicker { font-size: .65rem; }
+  h1 { font-size: clamp(1.65rem, 8.65vw, 2rem); }
+  .transport { gap: 6px; padding-block: 6px; }
+  .view-options, #angle-control { gap: 5px; }
+  #view-angle, #assembly-action { min-height: 35px; font-size: .78rem; padding-inline: 5px; }
+  .play { flex: 0 0 auto; min-width: 0; min-height: 33px; padding: 4px 7px; margin-left: 0; font-size: .77rem; }
+  .specimen { padding-top: 10px; }
+  .spec-line { font-size: .68rem; line-height: 1.4; }
+  .readout dt, #valve-circuits label > span { font-size: .69rem; }
+  .readout :is(dd, strong) { font-size: .79rem; }
+}
+@media (max-height: 530px) and (orientation: landscape) {
+  .lab-nav { padding-block: 5px; }
+  .lab-heading { padding-block: 6px; }
+  h1 { font-size: clamp(1.6rem, 3.6vw, 2rem); }
+  .transport { padding-block: 4px; gap: 3px 8px; }
+  .specimen { padding-top: 8px; }
+  .specimen h2 { font-size: 1.7rem; margin: 1px 0; }
+  .figure { height: clamp(150px, 45vh, 230px); }
+}
+@media print {
+  main { width: 100%; padding: 0; }
+  .linkage-figure { break-inside: avoid; }
+  [data-enhanced] .interactive, #valve-circuits input, .cutaway canvas, .cutaway svg { display: none !important; }
+  [data-models="ready"] .poster { display: block; }
+  .paired-stage { grid-template-columns: 1fr 1fr; }
+  body { print-color-adjust: exact; }
+}

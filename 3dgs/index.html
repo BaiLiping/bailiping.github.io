@@ -1,0 +1,937 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="An interactive explanation of 3D Gaussian Splatting, from fixed-camera training to visual SLAM and unknown-UE radio multipath optimization."
+    />
+    <meta name="theme-color" content="#f4f6f8" />
+    <title>3DGS | Bai Liping</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <a class="skip-link" href="#main">Skip to the explainer</a>
+
+    <header class="site-header" data-header>
+      <a class="brand" href="#top" aria-label="3DGS explainer home">
+        <span class="brand-mark" aria-hidden="true">
+          <i></i><i></i><i></i>
+        </span>
+        <span>GS / 03</span>
+      </a>
+
+      <nav class="desktop-nav" aria-label="Primary navigation">
+        <a href="#loop">Loop</a>
+        <a href="#loss">Loss</a>
+        <a href="#cameras">Cameras</a>
+        <a href="#renderer">Renderer</a>
+        <a href="#slam">SLAM</a>
+        <a href="#radio">Radio</a>
+      </nav>
+
+      <a
+        class="header-link"
+        href="https://github.com/graphdeco-inria/gaussian-splatting"
+        target="_blank"
+        rel="noreferrer"
+      >
+        Original code
+        <span aria-hidden="true">↗</span>
+      </a>
+    </header>
+
+    <main id="main">
+      <section class="hero" id="top" aria-labelledby="hero-title">
+        <div class="hero-grid" aria-hidden="true"></div>
+        <canvas id="hero-canvas" class="hero-canvas" aria-hidden="true"></canvas>
+
+        <div class="hero-copy">
+          <p class="eyebrow reveal">SIGGRAPH 2023 · Kerbl et al.</p>
+          <h1 id="hero-title" class="reveal reveal-delay-1">
+            3D Gaussian<br />
+            Splatting,
+            <em>unpacked.</em>
+          </h1>
+          <p class="hero-deck reveal reveal-delay-2">
+            Calibrated photographs seed an explicit radiance field. Each iteration
+            projects the Gaussians, evaluates image error, propagates gradients, and
+            adapts the representation; later sections release the fixed camera pose
+            for SLAM.
+          </p>
+          <div class="hero-actions reveal reveal-delay-3">
+            <a class="button button-primary" href="#loop">
+              Run one iteration
+              <span aria-hidden="true">↓</span>
+            </a>
+            <a
+              class="button button-ghost"
+              href="https://repo-sam.inria.fr/fungraph/3d-gaussian-splatting/3d_gaussian_splatting_low.pdf"
+              target="_blank"
+              rel="noreferrer"
+            >
+              Read the paper
+              <span aria-hidden="true">↗</span>
+            </a>
+          </div>
+        </div>
+
+        <div class="hero-annotation hero-annotation-a" aria-hidden="true">
+          <span>explicit scene</span>
+          <strong>μ · s · q · α · c</strong>
+        </div>
+        <div class="hero-annotation hero-annotation-b" aria-hidden="true">
+          <span>render path</span>
+          <strong>project → sort → blend</strong>
+        </div>
+
+        <div class="scroll-cue" aria-hidden="true">
+          <span>Scroll to inspect</span>
+          <i></i>
+        </div>
+      </section>
+
+      <section class="answer-strip" aria-label="Core reconstruction pipeline">
+        <div class="answer-strip-lead">
+          <span class="index">00</span>
+          <p>Core reconstruction pipeline</p>
+        </div>
+        <div class="answer-strip-flow" aria-label="Simplified training flow">
+          <span>SfM</span><i>→</i><span>render</span><i>→</i><span>loss</span><i>→</i
+          ><span>backprop</span><i>→</i><span>update</span><i>↺</i>
+        </div>
+        <p class="answer-strip-note">
+          Rendering uses <strong>splat rasterization</strong>, not ray marching.
+        </p>
+      </section>
+
+      <section class="section loop-section" id="loop" aria-labelledby="loop-title">
+        <div class="section-heading">
+          <div>
+            <span class="index">01</span>
+            <p class="eyebrow">Interactive training loop</p>
+          </div>
+          <div>
+            <h2 id="loop-title">One iteration,<br /><em>frame by frame.</em></h2>
+            <p>
+              The sequence follows one iteration in the paper and reference training
+              code, from fixed SfM calibration through rendering, loss evaluation,
+              backpropagation, and adaptive density control.
+            </p>
+          </div>
+        </div>
+
+        <div class="pipeline-tabs" role="tablist" aria-label="Training stages">
+          <button class="pipeline-tab is-active" role="tab" aria-selected="true" data-step="0">
+            <span>01</span> SfM input
+          </button>
+          <button class="pipeline-tab" role="tab" aria-selected="false" data-step="1">
+            <span>02</span> Initialize
+          </button>
+          <button class="pipeline-tab" role="tab" aria-selected="false" data-step="2">
+            <span>03</span> Training view
+          </button>
+          <button class="pipeline-tab" role="tab" aria-selected="false" data-step="3">
+            <span>04</span> Splat render
+          </button>
+          <button class="pipeline-tab" role="tab" aria-selected="false" data-step="4">
+            <span>05</span> Loss
+          </button>
+          <button class="pipeline-tab" role="tab" aria-selected="false" data-step="5">
+            <span>06</span> Backprop
+          </button>
+          <button class="pipeline-tab" role="tab" aria-selected="false" data-step="6">
+            <span>07</span> Density control
+          </button>
+        </div>
+
+        <div class="lab-shell">
+          <div class="lab-toolbar">
+            <div class="lab-status">
+              <span class="status-dot"></span>
+              <span id="lab-status">COLMAP OUTPUT · FIXED</span>
+            </div>
+            <div class="camera-picker" aria-label="Training camera">
+              <span>training view</span>
+              <div class="camera-buttons">
+                <button aria-label="Use camera 1" data-camera="0">01</button>
+                <button aria-label="Use camera 2" data-camera="1">02</button>
+                <button class="is-active" aria-label="Use camera 3" data-camera="2">03</button>
+                <button aria-label="Use camera 4" data-camera="3">04</button>
+                <button aria-label="Use camera 5" data-camera="4">05</button>
+                <button aria-label="Use camera 6" data-camera="5">06</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="lab-main">
+            <div class="lab-visual">
+              <canvas
+                id="process-canvas"
+                aria-label="Interactive diagram of a Gaussian Splatting training iteration"
+                role="img"
+              ></canvas>
+              <p class="canvas-hint">Camera icons select the training view</p>
+            </div>
+
+            <aside class="lab-explanation" aria-live="polite">
+              <div>
+                <p class="step-count" id="step-count">STEP 01 / 07</p>
+                <h3 id="step-title">SfM calibrates the capture</h3>
+                <p id="step-copy">
+                  Structure from Motion recovers a sparse 3D point cloud and one calibrated
+                  camera per registered image: intrinsics, rotation, and translation.
+                </p>
+              </div>
+
+              <div class="step-detail">
+                <span id="step-detail-label">SfM output</span>
+                <code id="step-equation">{ points, Kᵢ, Rᵢ, tᵢ, imageᵢ }</code>
+              </div>
+
+              <div>
+                <p class="mini-label">State transition</p>
+                <div class="change-pills" id="change-pills">
+                  <span>camera poses: fixed</span>
+                  <span>seed points: created</span>
+                </div>
+              </div>
+
+              <div class="lab-controls">
+                <button class="icon-button" id="previous-step" aria-label="Previous stage">
+                  ←
+                </button>
+                <button class="play-button" id="play-loop" aria-pressed="false">
+                  <span class="play-icon" aria-hidden="true">▶</span>
+                  <span class="play-label">Play loop</span>
+                </button>
+                <button class="icon-button" id="next-step" aria-label="Next stage">
+                  →
+                </button>
+              </div>
+            </aside>
+          </div>
+
+          <div class="iteration-footer">
+            <div>
+              <span>model parameters</span>
+              <strong>position · scale · rotation · opacity · SH color</strong>
+            </div>
+            <div>
+              <span>default schedule</span>
+              <strong>30,000 iterations</strong>
+            </div>
+            <div>
+              <span>density phase</span>
+              <strong>iterations 500–15,000</strong>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section loss-section" id="loss" aria-labelledby="loss-title">
+        <div class="section-heading compact">
+          <div>
+            <span class="index">02</span>
+            <p class="eyebrow">Training objective</p>
+          </div>
+          <div>
+            <h2 id="loss-title">Pixels and structure,<br /><em>in one loss.</em></h2>
+          </div>
+        </div>
+
+        <div class="loss-grid">
+          <div class="loss-formula-card">
+            <div class="formula-labels" aria-hidden="true">
+              <span>pixel accuracy</span>
+              <span>structural similarity</span>
+            </div>
+            <div class="formula" aria-label="Loss equals one minus lambda times L1 plus lambda times one minus SSIM">
+              <span>ℒ</span>
+              <i>=</i>
+              <span class="formula-l1">(<b id="one-minus-lambda">0.8</b>) ℒ<sub>1</sub></span>
+              <i>+</i>
+              <span class="formula-ssim">(<b id="lambda-value">0.2</b>) (1 − SSIM)</span>
+            </div>
+
+            <label class="lambda-control" for="lambda-slider">
+              <span>
+                <b>λ</b>
+                <output id="lambda-output">0.20</output>
+              </span>
+              <input
+                id="lambda-slider"
+                type="range"
+                min="0"
+                max="1"
+                value="0.2"
+                step="0.01"
+              />
+              <span class="range-labels"><i>only L1</i><i>paper default</i><i>only structure</i></span>
+            </label>
+
+            <button class="text-button" id="reset-lambda">Reset to the paper’s λ = 0.2</button>
+          </div>
+
+          <div class="loss-meter-card">
+            <div class="loss-meter-head">
+              <div>
+                <span>example training view</span>
+                <strong>camera <i id="loss-camera">03</i></strong>
+              </div>
+              <div class="total-loss">
+                <span>combined loss</span>
+                <strong id="total-loss">0.159</strong>
+              </div>
+            </div>
+
+            <div class="meter-row">
+              <div class="meter-label">
+                <span>mean absolute pixel error</span>
+                <strong id="l1-value">0.142</strong>
+              </div>
+              <div class="meter-track"><i id="l1-meter"></i></div>
+            </div>
+            <div class="meter-row">
+              <div class="meter-label">
+                <span>1 − local structural similarity</span>
+                <strong id="ssim-value">0.226</strong>
+              </div>
+              <div class="meter-track"><i id="ssim-meter"></i></div>
+            </div>
+
+            <p class="code-note">
+              In the reference code, the paper’s D-SSIM contribution is evaluated as
+              <code>1 - ssim(render, target)</code>. Then <code>loss.backward()</code>
+              differentiates through the rasterizer.
+            </p>
+          </div>
+        </div>
+
+        <div class="loss-notes">
+          <article>
+            <span class="note-number">A</span>
+            <h3>L1 measures pixel error.</h3>
+            <p>
+              It measures the mean absolute RGB difference. It is direct and stable, but
+              does not fully capture perceived local structure.
+            </p>
+          </article>
+          <article>
+            <span class="note-number">B</span>
+            <h3>SSIM measures local structure.</h3>
+            <p>
+              It compares local luminance, contrast, and structure. The paper uses
+              λ = 0.2, so L1 still carries 80% of the objective.
+            </p>
+          </article>
+          <article>
+            <span class="note-number">+</span>
+            <h3>Optional depth regularization.</h3>
+            <p>
+              The 2024-updated repository can optionally add a monocular inverse-depth
+              L1 term. That is an extension, not the original paper’s base loss.
+            </p>
+          </article>
+        </div>
+      </section>
+
+      <section class="section camera-section" id="cameras" aria-labelledby="camera-title">
+        <div class="camera-layout">
+          <div class="camera-copy">
+            <span class="index">03</span>
+            <p class="eyebrow">The role of SfM cameras</p>
+            <h2 id="camera-title">Many cameras.<br /><em>One view at a time.</em></h2>
+            <p class="lead">
+              COLMAP provides one calibrated pose for every registered image, placing
+              multiple cameras and the sparse point cloud in a common world frame.
+            </p>
+
+            <ol class="camera-facts">
+              <li>
+                <span>01</span>
+                <div>
+                  <h3>SfM establishes shared 3D coordinates.</h3>
+                  <p>
+                    The sparse points and every camera pose live in the same world frame,
+                    so a Gaussian has one persistent 3D position across all views.
+                  </p>
+                </div>
+              </li>
+              <li>
+                <span>02</span>
+                <div>
+                  <h3>A camera projects the current model.</h3>
+                  <p>
+                    Its extrinsics <code>[Rᵢ | tᵢ]</code> move world Gaussians into camera
+                    space; its intrinsics <code>Kᵢ</code> map them onto that image plane.
+                  </p>
+                </div>
+              </li>
+              <li>
+                <span>03</span>
+                <div>
+                  <h3>The matching photo supplies supervision.</h3>
+                  <p>
+                    The rendered image is compared only with photo <code>Iᵢ</code> from that
+                    same pose. Across iterations, different views constrain the same scene.
+                  </p>
+                </div>
+              </li>
+            </ol>
+          </div>
+
+          <div class="camera-demo-card">
+            <div class="demo-card-head">
+              <div>
+                <span>view selector</span>
+                <strong>Selectable cameras</strong>
+              </div>
+              <span class="fixed-badge">POSES FIXED</span>
+            </div>
+            <canvas
+              id="camera-canvas"
+              aria-label="Top-down view of multiple calibrated cameras observing one scene"
+              role="img"
+            ></canvas>
+            <div class="camera-readout">
+              <div>
+                <span>selected</span>
+                <strong id="camera-readout-id">CAM 03</strong>
+              </div>
+              <div>
+                <span>world → camera</span>
+                <code id="camera-readout-pose">R₃, t₃</code>
+              </div>
+              <div>
+                <span>supervision</span>
+                <code id="camera-readout-image">image_003.jpg</code>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="camera-answer">
+          <span>Fixed-pose assumption</span>
+          <p>
+            <strong>The original method treats the SfM calibration as known input.</strong>
+            The Gaussians move and change while the camera poses remain fixed.
+            <a href="#slam">Releasing the poses produces the transition to SLAM&nbsp;↓</a>
+          </p>
+        </div>
+      </section>
+
+      <section class="section render-section" id="renderer" aria-labelledby="renderer-title">
+        <div class="section-heading renderer-heading">
+          <div>
+            <span class="index">04</span>
+            <p class="eyebrow">The renderer</p>
+          </div>
+          <div>
+            <h2 id="renderer-title">Forward splatting,<br /><em>without ray tracing.</em></h2>
+            <p>
+              There are no rays sampling an MLP through empty space. Known Gaussian
+              primitives are projected toward the screen, sorted, and composited.
+            </p>
+          </div>
+        </div>
+
+        <div class="renderer-lab">
+          <div class="renderer-stage">
+            <canvas
+              id="raster-canvas"
+              aria-label="Animated explanation of Gaussian projection, tile sorting, and alpha compositing"
+              role="img"
+            ></canvas>
+            <div class="raster-stage-label">
+              <span id="raster-stage-number">01</span>
+              <strong id="raster-stage-name">Project</strong>
+            </div>
+          </div>
+
+          <div class="renderer-controls">
+            <button class="raster-step is-active" data-raster-step="0">
+              <span>01</span>
+              <strong>Project</strong>
+              <small>3D ellipsoid → 2D ellipse</small>
+            </button>
+            <button class="raster-step" data-raster-step="1">
+              <span>02</span>
+              <strong>Bin</strong>
+              <small>duplicate into 16 × 16 tiles</small>
+            </button>
+            <button class="raster-step" data-raster-step="2">
+              <span>03</span>
+              <strong>Sort</strong>
+              <small>tile ID, then view depth</small>
+            </button>
+            <button class="raster-step" data-raster-step="3">
+              <span>04</span>
+              <strong>Composite</strong>
+              <small>front-to-back α blending</small>
+            </button>
+          </div>
+        </div>
+
+        <div class="renderer-equations">
+          <article>
+            <p class="mini-label">Project covariance</p>
+            <div class="equation-large">Σ′ = J W Σ Wᵀ Jᵀ</div>
+            <p>
+              <code>W</code> is the view transform and <code>J</code> is the local Jacobian
+              of perspective projection. The upper-left 2 × 2 portion becomes the ellipse
+              footprint on screen.
+            </p>
+          </article>
+          <article>
+            <p class="mini-label">Composite a pixel</p>
+            <div class="equation-large">C = Σ cᵢ αᵢ ∏<sub>j&lt;i</sub>(1 − αⱼ)</div>
+            <p>
+              Each splat’s opacity is its learned opacity times its 2D Gaussian value at
+              the pixel. Transmittance falls as nearer splats accumulate.
+            </p>
+          </article>
+        </div>
+
+        <div class="ray-contrast">
+          <div class="contrast-title">
+            <span>NeRF-style ray marching</span>
+            <strong>sample space along every ray</strong>
+          </div>
+          <div class="contrast-mark" aria-hidden="true">≠</div>
+          <div class="contrast-title is-splat">
+            <span>3D Gaussian Splatting</span>
+            <strong>send known primitives to tiles</strong>
+          </div>
+        </div>
+      </section>
+
+      <section class="section model-section" aria-labelledby="model-title">
+        <div class="section-heading compact">
+          <div>
+            <span class="index">05</span>
+            <p class="eyebrow">Trainable scene parameters</p>
+          </div>
+          <div>
+            <h2 id="model-title">Each point becomes<br /><em>a small model.</em></h2>
+          </div>
+        </div>
+
+        <div class="parameter-grid">
+          <article style="--accent: #16222e">
+            <span>μ</span>
+            <h3>Position</h3>
+            <p>Where the Gaussian center sits in the shared world frame.</p>
+          </article>
+          <article style="--accent: #7c4dbe">
+            <span>s</span>
+            <h3>Scale</h3>
+            <p>Three positive axis lengths, activated exponentially.</p>
+          </article>
+          <article style="--accent: #e8720c">
+            <span>q</span>
+            <h3>Rotation</h3>
+            <p>A normalized quaternion that orients the ellipsoid.</p>
+          </article>
+          <article style="--accent: #0e8f7e">
+            <span>α</span>
+            <h3>Opacity</h3>
+            <p>A sigmoid-constrained weight controlling contribution and visibility.</p>
+          </article>
+          <article style="--accent: #1874b8">
+            <span>c</span>
+            <h3>SH color</h3>
+            <p>Spherical-harmonic coefficients encode view-dependent appearance.</p>
+          </article>
+        </div>
+
+        <p class="covariance-note">
+          Rather than optimize a covariance matrix directly, the method constructs
+          <strong>Σ = R S Sᵀ Rᵀ</strong>. This keeps the covariance physically valid while
+          allowing anisotropic Gaussians to stretch along surfaces.
+        </p>
+      </section>
+
+      <section class="section recap-section" aria-labelledby="recap-title">
+        <div class="recap-card">
+          <p class="eyebrow">Complete reconstruction loop</p>
+          <h2 id="recap-title">
+            Calibrate once.<br />
+            <em>Render and correct, repeatedly.</em>
+          </h2>
+
+          <div class="recap-loop" aria-label="Complete training process">
+            <div><span>01</span><strong>Photos + SfM</strong><small>fixed cameras, sparse points</small></div>
+            <i>→</i>
+            <div><span>02</span><strong>3D Gaussians</strong><small>explicit trainable scene</small></div>
+            <i>→</i>
+            <div><span>03</span><strong>Splat a view</strong><small>project, sort, composite</small></div>
+            <i>→</i>
+            <div><span>04</span><strong>Compare + learn</strong><small>L1, SSIM, gradients</small></div>
+            <i class="loop-back">↺</i>
+          </div>
+
+          <div class="recap-answer">
+            <span>Forward render → loss evaluation → backward pass</span>
+            <strong>Repeated across views.</strong>
+          </div>
+        </div>
+      </section>
+
+      <section class="section slam-section" id="slam" aria-labelledby="slam-title">
+        <div class="section-heading slam-heading">
+          <div>
+            <span class="index">06</span>
+            <p class="eyebrow">From reconstruction to SLAM</p>
+          </div>
+          <div>
+            <h2 id="slam-title">Releasing the camera pose<br /><em>extends 3DGS to SLAM.</em></h2>
+            <p>
+              The differentiable renderer and image loss remain available, while the
+              estimated state expands: an online system must recover each incoming
+              camera pose and maintain the Gaussian map.
+            </p>
+          </div>
+        </div>
+
+        <div class="slam-boundary">
+          <span>Method boundary</span>
+          <p>
+            <strong>The original SIGGRAPH 2023 method is offline reconstruction—not SLAM.</strong>
+            It receives SfM camera poses as fixed input. Gaussian rendering can nonetheless
+            become a differentiable measurement model for tracking, mapping, and GraphSLAM.
+          </p>
+        </div>
+
+        <div class="state-shift" aria-label="The change from offline 3DGS to Gaussian-splatting SLAM">
+          <article>
+            <span>Original 3DGS</span>
+            <h3>Known poses,<br />unknown map.</h3>
+            <code>𝒢̂ = argmin<sub>𝒢</sub> Σᵢ ℒ(R(𝒢; Tᵢ), Iᵢ)</code>
+            <p>SfM supplies every <code>Tᵢ</code>. Gradient descent changes only the Gaussians.</p>
+          </article>
+          <div class="state-shift-arrow" aria-hidden="true"><i></i><span>release T</span><b>→</b></div>
+          <article class="is-slam">
+            <span>Gaussian SLAM</span>
+            <h3>Unknown pose,<br />evolving map.</h3>
+            <code>alternate: T<sub>t</sub> ↔ 𝒢</code>
+            <p>Track the current camera against the map, then update the map from accepted poses.</p>
+          </article>
+        </div>
+
+        <div class="slam-lab">
+          <div class="slam-lab-topbar">
+            <span><i></i> INTERACTIVE STATE MACHINE</span>
+            <strong id="slam-step-count">01 / 04</strong>
+          </div>
+
+          <div class="slam-tabs" role="tablist" aria-label="From 3DGS reconstruction to SLAM stages">
+            <button class="slam-tab is-active" role="tab" aria-selected="true" data-slam-step="0">
+              <span>01</span><strong>Fix cameras</strong><small>offline 3DGS</small>
+            </button>
+            <button class="slam-tab" role="tab" aria-selected="false" data-slam-step="1">
+              <span>02</span><strong>Track pose</strong><small>map frozen</small>
+            </button>
+            <button class="slam-tab" role="tab" aria-selected="false" data-slam-step="2">
+              <span>03</span><strong>Update map</strong><small>poses frozen</small>
+            </button>
+            <button class="slam-tab" role="tab" aria-selected="false" data-slam-step="3">
+              <span>04</span><strong>Close loop</strong><small>global graph</small>
+            </button>
+          </div>
+
+          <div class="slam-stage">
+            <div class="slam-visual-grid">
+              <figure class="slam-visual-panel">
+                <figcaption><span>A</span> Gaussian map + trajectory <b id="slam-world-state">SfM poses known</b></figcaption>
+                <canvas
+                  id="slam-canvas"
+                  role="img"
+                  aria-label="Top-down Gaussian map with fixed and estimated camera poses"
+                ></canvas>
+              </figure>
+              <figure class="slam-visual-panel">
+                <figcaption><span>B</span> Optimization graph <b id="slam-graph-state">map-only optimization</b></figcaption>
+                <svg
+                  id="slam-graph"
+                  viewBox="0 0 520 360"
+                  role="img"
+                  aria-label="Graph showing fixed cameras supervising a Gaussian map"
+                ></svg>
+              </figure>
+            </div>
+
+            <div class="slam-stage-copy" aria-live="polite">
+              <p class="mini-label" id="slam-kicker">ORIGINAL PAPER · OFFLINE</p>
+              <h3 id="slam-stage-title">SfM supplies fixed camera calibration.</h3>
+              <p id="slam-stage-body">
+                All calibrated views supervise one shared Gaussian scene. A training
+                iteration chooses a camera, but that camera is data—not a variable.
+              </p>
+              <code class="slam-equation" id="slam-equation">freeze {Tᵢ} · optimize 𝒢</code>
+
+              <div class="slam-state-grid" aria-label="Current optimization state">
+                <div><span>Camera poses</span><strong id="slam-pose-state">fixed</strong></div>
+                <div><span>Gaussian map</span><strong id="slam-map-state">learning</strong></div>
+                <div><span>Image evidence</span><strong id="slam-image-state">all views</strong></div>
+                <div><span>Global graph</span><strong id="slam-global-state">not needed</strong></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="slam-controls">
+            <button id="slam-previous" disabled><span aria-hidden="true">←</span> Previous</button>
+            <button id="slam-play" aria-pressed="false"><span aria-hidden="true">▶</span> Play chapter</button>
+            <button id="slam-next">Next: track pose <span aria-hidden="true">→</span></button>
+          </div>
+        </div>
+
+        <div class="factor-bridge">
+          <div class="factor-bridge-copy">
+            <p class="eyebrow">One GraphSLAM architecture</p>
+            <h3>Render error becomes a pose factor.</h3>
+            <p>
+              With the Gaussian map temporarily frozen, a candidate pose produces an
+              image residual and a pose Jacobian. A nonlinear solver can combine that
+              factor with odometry, IMU, priors, and loop closures on the same pose nodes.
+            </p>
+            <p class="factor-caveat">
+              This is one integration pattern—not a claim that every Gaussian SLAM system
+              uses GTSAM, iSAM2, or loop closure.
+            </p>
+          </div>
+          <div class="factor-flow" aria-label="How a rendered image becomes a GraphSLAM factor">
+            <article><span>01</span><strong>Render</strong><code>Î = R(𝒢,T)</code></article>
+            <i>→</i>
+            <article><span>02</span><strong>Compare</strong><code>r = vec(Î − I)</code></article>
+            <i>→</i>
+            <article><span>03</span><strong>Linearize</strong><code>J = ∂r / ∂ξ</code></article>
+            <i>→</i>
+            <article><span>04</span><strong>Insert</strong><code>φ<sub>splat</sub>(xₖ;𝒢)</code></article>
+          </div>
+        </div>
+
+        <div class="slam-deep-dive">
+          <div>
+            <span>Solver-level formulation</span>
+            <strong>A dedicated walkthrough develops the rendered image residual as a GraphSLAM factor.</strong>
+          </div>
+          <a href="/splatting-graph-slam/">Open the factor-graph lab <span aria-hidden="true">↗</span></a>
+        </div>
+      </section>
+
+      <section class="section radio-section" id="radio" aria-labelledby="radio-title">
+        <div class="section-heading radio-heading">
+          <div>
+            <span class="index">07</span>
+            <p class="eyebrow">Next chapter · radio Splat-SLAM</p>
+          </div>
+          <div>
+            <h2 id="radio-title">Optimization with an<br /><em>unknown UE pose.</em></h2>
+            <p>
+              Visual splatting compares rendered pixels with a camera image. A radio
+              extension needs a different forward model: trace a candidate multipath,
+              predict its delay and angles, then optimize the UE pose and reflecting
+              geometry from the residual.
+            </p>
+          </div>
+        </div>
+
+        <div class="radio-handoff" aria-label="The change from visual to radio optimization">
+          <div>
+            <span>Visual factor</span>
+            <strong>pose + Gaussian map</strong>
+            <code>render pixels → image residual</code>
+          </div>
+          <i aria-hidden="true">→</i>
+          <div>
+            <span>Radio factor</span>
+            <strong>pose + reflecting geometry</strong>
+            <code>trace multipath → delay / angle residual</code>
+          </div>
+        </div>
+
+        <div class="radio-assumption">
+          <span>Model boundary</span>
+          <p>
+            <strong>§3.1–§3.5 assume synchronized clocks, but no compass.</strong>
+            The measurements are path length <em>L = cτ</em>, BS-side departure
+            <em>ψ</em>, and UE body-frame arrival <em>φ<sub>body</sub></em>. The global
+            arrival direction is therefore <em>φ<sub>body</sub> + θ</em>, with heading
+            <em>θ</em> kept inside the unknown state. §3.6 deliberately adds a stronger,
+            globally referenced displacement sensor for its rank test.
+          </p>
+        </div>
+
+        <div class="radio-loop" aria-label="Radio optimization loop">
+          <div><span>01</span><strong>Hypothesize</strong><small>u, θ, walls, incidence points</small></div>
+          <i>→</i>
+          <div><span>02</span><strong>Trace</strong><small>ordered specular path</small></div>
+          <i>→</i>
+          <div><span>03</span><strong>Predict</strong><small>τ̂, φ̂<sub>body</sub>, ψ̂</small></div>
+          <i>→</i>
+          <div><span>04</span><strong>Compare</strong><small>radio residual</small></div>
+          <i>↺</i>
+        </div>
+
+        <div class="radio-lab">
+          <div class="radio-lab-bar">
+            <span><i></i> SECTION 3 · INTERACTIVE OPTIMIZATION VIEW</span>
+            <strong id="radio-case-count">§3.1 / §3.6</strong>
+          </div>
+
+          <div class="radio-tabs" role="tablist" aria-label="Unknown UE pose cases">
+            <button class="radio-tab is-active" role="tab" aria-selected="true" data-radio-case="0">
+              <span>3.1</span><strong>Single</strong><small>one bounce</small>
+            </button>
+            <button class="radio-tab" role="tab" aria-selected="false" data-radio-case="1">
+              <span>3.2</span><strong>Corner ×2</strong><small>two paths</small>
+            </button>
+            <button class="radio-tab" role="tab" aria-selected="false" data-radio-case="2">
+              <span>3.3</span><strong>Corner ×3</strong><small>recursive</small>
+            </button>
+            <button class="radio-tab" role="tab" aria-selected="false" data-radio-case="3">
+              <span>3.4</span><strong>Corridor ×2</strong><small>parallel walls</small>
+            </button>
+            <button class="radio-tab" role="tab" aria-selected="false" data-radio-case="4">
+              <span>3.5</span><strong>Corridor ×3</strong><small>path parity</small>
+            </button>
+            <button class="radio-tab" role="tab" aria-selected="false" data-radio-case="5">
+              <span>3.6</span><strong>Rank test</strong><small>global displacement</small>
+            </button>
+          </div>
+
+          <div class="radio-workbench">
+            <figure class="radio-figure">
+              <figcaption>
+                <span>A</span>
+                Candidate geometry from fixed measurements
+                <b id="radio-figure-state">two-parameter family</b>
+              </figcaption>
+              <svg
+                id="radio-opt-svg"
+                viewBox="0 0 760 520"
+                role="img"
+                aria-label="Single-bounce construction with unknown UE pose and reflecting wall"
+              ></svg>
+              <div class="radio-legend" aria-hidden="true">
+                <span><i class="is-measurement"></i> measured</span>
+                <span><i class="is-incidence"></i> incidence</span>
+                <span><i class="is-ue"></i> UE hypothesis</span>
+                <span><i class="is-wall"></i> implied wall</span>
+              </div>
+            </figure>
+
+            <aside class="radio-rail" aria-live="polite">
+              <div class="radio-case-copy">
+                <p class="mini-label" id="radio-kicker">§3.1 · SINGLE BOUNCE</p>
+                <h3 id="radio-case-title">One path leaves a family, not a point.</h3>
+                <p id="radio-case-body">
+                  The measured path length defines endpoint E on the departure ray. A
+                  bounce position P and heading hypothesis rotate the body-frame AoA and
+                  jointly determine a candidate UE and wall. Varying P and θ preserves a
+                  coherent family.
+                </p>
+                <code id="radio-case-equation">E = BS + Ldψ · state = (P, θ)</code>
+              </div>
+
+              <div class="radio-control-group">
+                <label for="radio-heading">
+                  <span id="radio-heading-label">Candidate UE heading θ</span>
+                  <output id="radio-heading-out">0°</output>
+                </label>
+                <input id="radio-heading" type="range" min="-180" max="180" step="1" value="0" />
+                <p id="radio-heading-hint">One hypothesis slice—not a heading measurement.</p>
+              </div>
+
+              <div class="radio-control-group">
+                <label for="radio-bounce">
+                  <span id="radio-bounce-label">Bounce P along AoD ray</span>
+                  <output id="radio-bounce-out">50%</output>
+                </label>
+                <input id="radio-bounce" type="range" min="15" max="85" step="1" value="50" />
+                <p id="radio-bounce-hint">Changing P changes the incidence point and inferred wall.</p>
+              </div>
+
+              <div class="radio-readout" aria-label="Current hypothesis readout">
+                <div><span>Slice</span><strong id="radio-slice-state">feasible</strong></div>
+                <div><span>Solution</span><strong id="radio-family-state">2D family</strong></div>
+                <div><span>Constraint</span><strong id="radio-rank-state">rank deficient</strong></div>
+              </div>
+
+              <button class="radio-sweep" id="radio-sweep" type="button" aria-pressed="false">
+                <span aria-hidden="true">▶</span> Sweep the surviving family
+              </button>
+            </aside>
+          </div>
+
+          <div class="radio-caption" id="radio-caption">
+            The endpoint E is the mirror image of the UE for the selected path. Re-pinning
+            the remaining path length at P and rotating φ<sub>body</sub> by a candidate θ
+            constructs a valid UE and an implied wall. One bounce therefore cannot
+            identify position, wall, or heading by itself.
+          </div>
+        </div>
+
+        <div class="radio-next">
+          <span>Shared optimization structure</span>
+          <p>
+            Visual and radio estimation share the pattern state → forward model → residual
+            → update, while radio measurements introduce different null directions. This
+            structure supports persistent factors connecting UE poses, reflecting splats,
+            and data-association variables.
+          </p>
+        </div>
+      </section>
+
+      <section class="sources" aria-labelledby="sources-title">
+        <div>
+          <p class="eyebrow">Primary sources</p>
+          <h2 id="sources-title">Original references.</h2>
+        </div>
+        <div class="source-links">
+          <a
+            href="https://repo-sam.inria.fr/fungraph/3d-gaussian-splatting/"
+            target="_blank"
+            rel="noreferrer"
+          >
+            <span>Paper project page</span><i>Inria · GraphDeco</i><b>↗</b>
+          </a>
+          <a
+            href="https://github.com/graphdeco-inria/gaussian-splatting/blob/main/train.py"
+            target="_blank"
+            rel="noreferrer"
+          >
+            <span>Training loop</span><i>train.py · GitHub</i><b>↗</b>
+          </a>
+          <a
+            href="https://github.com/graphdeco-inria/diff-gaussian-rasterization"
+            target="_blank"
+            rel="noreferrer"
+          >
+            <span>CUDA rasterizer</span><i>forward + backward kernels</i><b>↗</b>
+          </a>
+          <a
+            href="https://gtsam.org/2026/08/04/gaussian-splatting-slam.html"
+            target="_blank"
+            rel="noreferrer"
+          >
+            <span>Splatting + GraphSLAM</span><i>GTSAM technical post</i><b>↗</b>
+          </a>
+        </div>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <p>
+        An independent visual explainer of
+        <cite>3D Gaussian Splatting for Real-Time Radiance Field Rendering</cite>,
+        with extensions to visual and radio SLAM.
+      </p>
+      <p>Built from the paper and official reference implementation.</p>
+    </footer>
+
+    <script src="script.js"></script>
+  </body>
+</html>

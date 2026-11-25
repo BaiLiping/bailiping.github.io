@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="562" height="448" viewBox="0 0 562 448" role="img" aria-label="A 3D Gaussian becomes a 2D elliptical footprint"><title>A 3D Gaussian becomes a 2D elliptical footprint</title><defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 1L9 5L0 9" fill="none" stroke="#60747A" stroke-width="1.7"/></marker></defs><style>text{font-family:Arial,Helvetica,sans-serif;fill:#182D33} .label{font-size:15px;font-weight:700;letter-spacing:.7px;fill:#16736E}.small{font-size:16px;fill:#60747A}.body{font-size:20px}.title{font-size:23px;font-weight:700}.mono{font-family:monospace;font-size:19px}.line{stroke:#60747A;stroke-width:1.6;fill:none}.dash{stroke-dasharray:7 6}</style><rect width="562" height="448" rx="10" fill="#FFFDFA" stroke="#D6DEDC"/>
+ <text x="24" y="35" class="label">WORLD GEOMETRY → IMAGE PLANE</text>
+ <path d="M60 317L179 158L424 151L470 282Z" fill="#E4F0ED" opacity=".4"/>
+ <path d="M59 317L410 119M59 317L487 320" class="line dash" opacity=".6"/>
+ <path d="M342 110L469 144L493 323L366 289Z" fill="#E4F0ED" stroke="#16736E" stroke-width="1.8"/>
+ <ellipse cx="211" cy="227" rx="77" ry="36" transform="rotate(-29 211 227)" fill="#16736E" fill-opacity=".14" stroke="#16736E" stroke-width="2.5"/>
+ <ellipse cx="211" cy="227" rx="77" ry="15" transform="rotate(-29 211 227)" fill="none" stroke="#16736E" opacity=".6"/>
+ <ellipse cx="211" cy="227" rx="23" ry="36" transform="rotate(-29 211 227)" fill="none" stroke="#16736E" opacity=".6"/>
+ <ellipse cx="412" cy="218" rx="40" ry="59" transform="rotate(17 412 218)" fill="#B44F37" fill-opacity=".14" stroke="#B44F37" stroke-width="2.5"/>
+ <path d="M60 317L412 218" class="line dash"/>
+ <circle cx="211" cy="227" r="5" fill="#16736E"/><circle cx="412" cy="218" r="5" fill="#B44F37"/>
+ <path d="M29 302H57V333H29ZM57 307L75 299V336L57 328" fill="#182D33"/>
+ <text x="24" y="366" class="body">Camera</text>
+ <text x="165" y="310" class="body">3D covariance Σ</text>
+ <text x="358" y="353" class="body">2D covariance S</text>
+ <text x="217" y="213" class="mono">μ</text><text x="424" y="213" class="mono">m</text>
+ <text x="24" y="407" class="small">Schematic. The Jacobian carries local shape to the screen.</text></svg>

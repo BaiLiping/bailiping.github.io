@@ -1,0 +1,141 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="color-scheme" content="light">
+  <title>Gaussian Splatting · Training Labs | Bai Liping</title>
+  <meta name="description" content="Computed Gaussian splatting demonstrations: inspect a photometric loss, train anisotropic splats, and resolve a one-view depth ambiguity with a second calibrated camera.">
+  <link rel="stylesheet" href="./styles.css?v=20261105-2">
+  <script>if(new URLSearchParams(location.search).get('embed')==='1')document.documentElement.classList.add('embedded');</script>
+</head>
+<body>
+  <header class="site-header"><a href="../" target="_top">Back to the slides</a><a href="https://repo-sam.inria.fr/fungraph/3d-gaussian-splatting/" target="_top">Kerbl et al. · 2023</a></header>
+  <div class="page-title">
+    <h1>Pixels teach the splats</h1>
+    <p>Inspect the loss. Change which parameters can learn. See what an extra camera makes observable.</p>
+  </div>
+  <nav class="tabs" aria-label="Interactive demonstrations">
+    <button type="button" data-lab="training" aria-pressed="true">1 · Fit the image</button>
+    <button type="button" data-lab="multiview" aria-pressed="false">2 · Resolve the depth</button>
+    <a id="expand" href="./?lab=training" target="_top">Open full lab</a>
+  </nav>
+  <main class="lab-shell">
+    <aside class="controls" aria-label="Training controls">
+      <section id="training-controls">
+        <h2>A loss you can inspect</h2>
+        <div class="lambda-control">
+          <label for="lambda">Structure weight λ <output id="lambda-value" for="lambda">0.20</output></label>
+          <input id="lambda" type="range" min="0" max="1" value="0.2" step="0.05">
+          <div class="range-labels"><span>L1 only</span><button type="button" id="paper-weight">Paper: 0.20</button><span>SSIM only</span></div>
+        </div>
+        <fieldset class="parameter-controls">
+          <legend>Parameters allowed to learn</legend>
+          <label><input id="train-position" type="checkbox" checked> Position</label>
+          <label><input id="train-shape" type="checkbox" checked> Shape</label>
+          <label><input id="train-opacity" type="checkbox" checked> Opacity</label>
+          <label><input id="train-color" type="checkbox" checked> Color</label>
+        </fieldset>
+        <label class="check-row"><input id="footprints" type="checkbox"> Show current splat footprints</label>
+        <div class="actions">
+          <button type="button" id="train-play" class="primary" aria-pressed="false">Play</button>
+          <button type="button" id="train-step">1 step</button>
+          <button type="button" id="train-batch">Train 50</button>
+        </div>
+        <div class="reset-row"><button type="button" id="train-reset">Reset splats</button><span id="train-start">Same initial splats</span></div>
+        <p class="control-note">Uncheck a parameter group to freeze it. Every update comes from rendered-image error.</p>
+      </section>
+      <section id="multiview-controls" hidden>
+        <h2>One scene, two cameras</h2>
+        <fieldset class="camera-choice">
+          <legend>Views used for training</legend>
+          <label><input type="radio" name="views" value="1" checked> Camera 1 only</label>
+          <label><input type="radio" name="views" value="2"> Cameras 1 + 2</label>
+        </fieldset>
+        <p class="camera-hint" id="camera-hint">Camera 1 sees x and y. Its pixels give no gradient for z.</p>
+        <label class="check-row"><input id="show-reference" type="checkbox" checked> Show reference center</label>
+        <p class="reference-note">Reference is for evaluation only.</p>
+        <div class="actions">
+          <button type="button" id="view-play" class="primary" aria-pressed="false">Play</button>
+          <button type="button" id="view-step">1 step</button>
+          <button type="button" id="view-batch">Train 50</button>
+        </div>
+        <div class="reset-row"><button type="button" id="view-reset">Reset center</button><span>Keep view choice</span></div>
+        <p class="control-note">Fit camera 1, then add camera 2 without resetting. The 45° view never trains the center.</p>
+      </section>
+    </aside>
+    <section class="results" aria-labelledby="result-title">
+      <div class="result-heading"><h2 id="result-title">Fit a shared set of splats</h2><span id="iteration-label">Iteration 0</span></div>
+      <div id="training-results" class="training-results">
+        <div class="metrics training-metrics">
+          <div class="metric"><span>Mean absolute RGB error</span><strong id="l1-value">—</strong><small>L1</small></div>
+          <div class="metric"><span>Local structure error</span><strong id="dssim-value">—</strong><small>1 − SSIM</small></div>
+          <div class="metric total"><span>Combined image loss</span><strong id="loss-value">—</strong><small id="loss-change">Initial state</small></div>
+        </div>
+        <div class="image-grid">
+          <figure><figcaption>Target image <span>fixed supervision</span></figcaption><canvas id="target-image" width="192" height="192" role="img" aria-label="Fixed synthetic target image"></canvas></figure>
+          <figure><figcaption>Current render <span id="splat-count">trainable splats</span></figcaption><canvas id="render-image" width="192" height="192" role="img" aria-label="Current image rendered from the learned Gaussian splats"></canvas></figure>
+          <figure><figcaption>Absolute residual <span>mean RGB error · fixed scale</span></figcaption><canvas id="residual-image" width="192" height="192" role="img" aria-label="Mean absolute RGB error at each pixel"></canvas><div class="residual-scale"><span>0</span><i aria-hidden="true"></i><span>≥0.5</span></div></figure>
+        </div>
+        <div class="training-bottom">
+          <div class="loss-arithmetic"><span>Loss construction</span><p id="loss-equation">0.80 × L1 + 0.20 × (1 − SSIM)</p><small id="training-caption">Step once to see the optimizer respond.</small></div>
+          <figure class="history-figure"><figcaption>Image loss <span id="history-caption">actual optimizer steps</span></figcaption><svg id="loss-chart" viewBox="0 0 360 80" role="img" aria-label="Combined image loss versus optimizer iteration"></svg></figure>
+        </div>
+      </div>
+      <div id="multiview-results" class="multiview-results" hidden>
+        <div class="metrics view-metrics">
+          <div class="metric total"><span>Training image loss</span><strong id="view-loss">—</strong><small id="training-view-count">1 camera</small></div>
+          <div class="metric"><span>Held-out image loss</span><strong id="heldout-loss">—</strong><small>45° camera</small></div>
+          <div class="metric center-metric"><span>Current 3D center</span><strong id="center-value">—</strong><small>x, y, z</small></div>
+        </div>
+        <div class="geometry-grid">
+          <div class="geometry-panel">
+            <figure class="geometry-figure"><figcaption>Geometry from above <span>x / z plane · y is fitted in both views</span></figcaption><svg id="geometry-chart" viewBox="0 0 330 230" role="img" aria-label="Top-down plot of current Gaussian center, reference center and camera constraints"></svg></figure>
+            <div class="legend"><span class="teal">Estimate</span><span class="rust" id="reference-legend">Reference</span><span class="gray">Image constraint</span></div>
+            <p id="geometry-note" class="geometry-note">A whole line of depths matches camera 1.</p>
+          </div>
+          <div class="camera-panel">
+            <div class="camera-columns"><span>Camera</span><span>Target</span><span>Render</span><span>Loss</span></div>
+            <div id="camera-rows"></div>
+            <figure class="view-history"><figcaption><span id="view-history-label">Across optimizer steps</span><span><b class="teal-text">training</b> / <b class="rust-text">held-out</b></span></figcaption><svg id="view-chart" viewBox="0 0 390 68" role="img" aria-label="Training and held-out image loss across optimizer iterations"></svg></figure>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+  <p id="scope" class="scope">Computed 2D teaching model: anisotropic footprints, fixed depth order, constant RGB colors. This is not the full 3DGS rasterizer.</p>
+  <p id="status" class="screen-reader" role="status" aria-live="polite"></p>
+  <noscript><p class="load-error">These training demonstrations need JavaScript. The slide deck and its reading notes explain the same equations.</p></noscript>
+  <section class="pixel-inspector" id="pixel-inspector" aria-labelledby="pixel-heading">
+    <div class="inspector-heading"><div><h2 id="pixel-heading">Inside one rendered pixel</h2><p>Click an image above, or choose a pixel. Layers appear in the renderer’s front-to-back order.</p></div><div class="pixel-controls"><label for="pixel-x">x <input id="pixel-x" type="number" min="0" max="31" value="17"></label><label for="pixel-y">y <input id="pixel-y" type="number" min="0" max="31" value="17"></label><span>zero-based coordinates</span></div></div>
+    <div class="pixel-table-wrap"><table class="pixel-table"><thead><tr><th>Layer</th><th>Opacity o</th><th>Footprint g</th><th>α = o · g</th><th>Transmittance T</th><th>Weight Tα</th><th>RGB contribution</th></tr></thead><tbody id="pixel-rows"></tbody></table></div>
+    <div class="pixel-summary"><p><span>Rendered RGB</span><strong id="pixel-rendered">—</strong></p><p><span>Target RGB</span><strong id="pixel-target">—</strong></p><p><span>∂L / ∂RGB at this pixel</span><strong id="pixel-gradient">—</strong></p></div>
+    <p class="inspector-note">The background uses the transmittance left after every splat. The RGB gradient includes the L1 term and all overlapping SSIM windows. It is the signal passed back through the compositing calculation.</p>
+  </section>
+  <section class="explanation" id="training-explanation">
+    <h2>What is learning here?</h2>
+    <div class="explanation-grid">
+      <article><h3>A renderer turns splats into pixels</h3><p>Each splat has a 2D center, two positive scales, a rotation, an opacity and an RGB color. At a pixel, its unnormalized Gaussian footprint multiplies its opacity. The renderer then blends the splats in a fixed front-to-back order, including the remaining background. Overlap and occlusion affect which parameters receive useful gradients.</p></article>
+      <article><h3>The target defines a loss</h3><p>L1 is the mean absolute error over every pixel and RGB channel. SSIM compares local means, variances and covariance. The combined objective is (1 − λ)L1 + λ(1 − SSIM). The paper uses λ = 0.2. The colored residual plot shows the per-pixel mean absolute RGB error, not the SSIM contribution. Its scale stays fixed, so a darker image means less error.</p></article>
+      <article><h3>Gradients change the parameters</h3><p>The model differentiates the image loss through alpha compositing and the Gaussian footprint. Adam updates the allowed parameter groups. Shape includes both scales and rotation. Positive scales use an exponential parameterization. Opacity and RGB use sigmoid parameters in this teaching model. The target image stays fixed, and no reference splat parameters enter the optimizer.</p></article>
+      <article><h3>A good image fit can have several explanations</h3><p>Different overlapping splats can produce similar pixels. Color and opacity can compensate for one another, and a frozen parameter group can force other groups to absorb the error. This lab uses a fixed number of 2D splats. Original 3DGS additionally projects 3D covariances, handles view-dependent colors and changes model capacity through cloning, splitting and pruning.</p></article>
+    </div>
+    <div class="experiment"><h3>Try this sequence</h3><p>Run 50 steps and inspect the residual. Freeze Position, reset the splats, and repeat. Then enable Position and continue. Change λ to see the exact loss arithmetic update. The history restarts when the objective changes, so values from different objectives are not joined as one curve.</p></div>
+    <p class="numerical-note"><strong>Demo-specific numerical settings.</strong> Adam uses smaller rates for position and shape, with all rates multiplied by 1 / (1 + t / 180) at iteration t. Stability bounds keep centers in [−0.15, 1.15], scales in [0.02, 0.5], and opacity/color logits in [−8, 8]. These are teaching-model settings, separate from the original 3DGS schedule.</p>
+  </section>
+  <section class="explanation" id="multiview-explanation" hidden>
+    <h2>Why an extra view changes the answer</h2>
+    <div class="explanation-grid">
+      <article><h3>One center is shared by every camera</h3><p>This lab renders one isotropic Gaussian with fixed size, color and opacity. Only its 3D center (x, y, z) learns. Calibrated orthographic camera 1 sees (x, y), camera 2 sees (z, y), and a held-out camera sees a 45° mixture of x and z. The images have the same pixel loss as the fitting lab, with λ = 0.2.</p></article>
+      <article><h3>Camera 1 cannot measure z</h3><p>Moving this Gaussian along z leaves the first rendered image unchanged. The image-loss derivative with respect to z is therefore zero. Training can match the first target while preserving an incorrect initial depth. The gray vertical line marks centers with the same camera-1 horizontal projection as the reference.</p></article>
+      <article><h3>The second view constrains the missing direction</h3><p>Camera 2 sees the z displacement as a horizontal image error. When both cameras train the same center, their constraints intersect. The optimizer receives image gradients in the previously invisible direction. The held-out camera provides an additional image check and never contributes to training.</p></article>
+      <article><h3>This is a controlled identifiability example</h3><p>The cameras and appearance are known, the scene has one splat, and the targets are noise-free. Real 3DGS has more unknowns, occlusions, calibration error and potentially unobserved surfaces. Multiple views provide stronger constraints, but low training loss alone does not prove that the inferred scene is the unique physical geometry.</p></article>
+    </div>
+    <div class="experiment"><h3>Try this sequence</h3><p>Keep Camera 1 only and run 50 steps. Compare the small training loss with the held-out error and the wrong z coordinate. Select Cameras 1 + 2 and run another 50 steps without resetting. Watch the shared center move toward the intersection of the two image constraints.</p></div>
+    <p class="numerical-note"><strong>Demo-specific numerical settings.</strong> Adam uses rate 0.035 / (1 + t / 100), with center coordinates bounded to [−0.1, 1.1]. In the one-camera case, z and its optimizer momentum remain fixed because z has no effect on that image. Switching cameras preserves the estimated center.</p>
+  </section>
+  <footer><a href="../" target="_top">Gaussian Splatting · Slides</a><a href="https://arxiv.org/abs/2308.04079" target="_top">Original paper</a><a href="https://github.com/graphdeco-inria/gaussian-splatting" target="_top">Reference implementation</a><a href="./model.mjs" target="_top">Inspect the numerical model</a></footer>
+  <script type="module" src="./app.mjs?v=20261105-2"></script>
+  <script src="../../assets/bento-inline-frame.js"></script>
+</body>
+</html>

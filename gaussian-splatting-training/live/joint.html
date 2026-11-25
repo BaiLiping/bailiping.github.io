@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="color-scheme" content="light">
+  <link rel="canonical" href="https://bailiping.com/gaussian-splatting-training/live/joint.html">
+  <title>Joint Pose + Splats · Interactive Lab | Bai Liping</title>
+  <meta name="description" content="Jointly optimize a camera pose and shared Gaussian centers from two fixed images using L1 + SSIM. Inspect the image residual without supplying the true pose.">
+  <link rel="stylesheet" href="./styles.css?v=20261105-2">
+  <link rel="stylesheet" href="./joint.css?v=20261105-2">
+  <script>if(new URLSearchParams(location.search).get('embed')==='1')document.documentElement.classList.add('embedded');</script>
+</head>
+<body>
+  <header class="site-header"><a href="../#joint-live" target="_top">Back to the slides</a><a href="../study.html#joint-observation" target="_top">Loss derivation</a></header>
+  <div class="page-title"><h1>One image loss. Two kinds of unknown.</h1><p>The photographs stay fixed. Camera pose and Gaussian centers learn from the same L1 + SSIM residual.</p></div>
+  <nav class="tabs joint-tabs" aria-label="Interactive demonstrations"><a href="./?lab=training" target="_top">Fit the image</a><a href="./?lab=multiview" target="_top">Resolve the depth</a><span aria-current="page">Joint pose + splats</span><a class="expand" href="./joint.html" target="_top">Open full lab ↗</a></nav>
+  <main class="lab-shell joint-shell">
+    <aside class="controls joint-controls" aria-label="Joint optimization controls">
+      <h2>What can change?</h2>
+      <label class="select-label" for="mode">Trainable parameters</label>
+      <select id="mode"><option value="joint">Pose + splat centers</option><option value="pose">Pose only · splats frozen</option><option value="splats">Splats only · pose frozen</option></select>
+      <label class="select-label" for="schedule">Update schedule</label>
+      <select id="schedule"><option value="simultaneous">Simultaneous</option><option value="alternating">Alternating</option></select>
+      <div class="lambda-control"><label for="lambda">Structure weight λ <output id="lambda-value" for="lambda">0.20</output></label><input id="lambda" type="range" min="0" max="1" step="0.05" value="0.2"><div class="range-labels"><span>L1 only</span><button type="button" id="paper-weight">λ = 0.20</button><span>SSIM only</span></div></div>
+      <div class="actions"><button type="button" id="play" class="primary" aria-pressed="false">Run</button><button type="button" id="step">1 step</button><button type="button" id="batch">Run 50</button></div>
+      <div class="reset-row"><button type="button" id="reset">Reset estimates</button><span>Same fixed photos</span></div>
+      <div class="anchor-note"><strong>Camera 0 is anchored.</strong><span>Camera 1: 2 translations + 1 rotation.<br>All views share the same splat centers.</span></div>
+      <dl class="pose-readout"><div><dt>Camera 1 · t<sub>x</sub>, t<sub>y</sub></dt><dd id="pose-translation">—</dd></div><div><dt>Camera 1 · rotation</dt><dd id="pose-angle">—</dd></div></dl>
+      <p class="control-note" id="schedule-note">Both gradient blocks use the same current estimates.</p>
+    </aside>
+    <section class="results joint-results" aria-labelledby="result-title">
+      <div class="result-heading"><h2 id="result-title">Fit both observed images</h2><span id="iteration">Iteration 0</span></div>
+      <div class="metrics"><div class="metric"><span>Mean absolute RGB error</span><strong id="l1-value">—</strong><small>L1</small></div><div class="metric"><span>Mean local similarity</span><strong id="ssim-value">—</strong><small>SSIM</small></div><div class="metric total"><span>Weighted image loss</span><strong id="loss-value">—</strong><small id="loss-change">Initial state</small></div></div>
+      <div class="joint-view-columns" aria-hidden="true"><span>View</span><span>Observed image <small>fixed pixels</small></span><span>Current render <small>estimated pose + splats</small></span><span>Absolute residual <small>mean RGB · fixed scale</small></span></div>
+      <div id="camera-rows" class="joint-camera-rows"></div>
+      <div class="joint-bottom"><div class="loss-arithmetic"><span>(1 − λ)L1 + λ(1 − SSIM)</span><p id="loss-equation">—</p><small id="history-note">Measured over both images. No true pose enters the loss.</small></div><figure class="history-figure"><figcaption>Image loss <span>actual updates</span></figcaption><svg id="loss-chart" viewBox="0 0 360 90" role="img" aria-label="Combined image loss across optimizer steps"></svg></figure></div>
+    </section>
+  </main>
+  <p class="scope">Computed 2D orthographic teaching model: four anisotropic splats, shared centers, one anchored camera. Shape, color, opacity and layer order stay fixed. It is not a full 3D SLAM system.</p>
+  <p id="status" class="screen-reader" role="status" aria-live="polite"></p>
+  <noscript><p class="load-error">This interactive optimization needs JavaScript. See the <a href="../study.html#joint-start">joint estimation notes</a> for the derivation.</p></noscript>
+  <section class="joint-detail" aria-labelledby="map-title">
+    <figure class="joint-map"><figcaption id="map-title">The shared map and the estimated camera<span>World coordinates · 1σ Gaussian ellipses · no reference geometry</span></figcaption><svg id="map-chart" viewBox="0 0 480 280" role="img" aria-label="Estimated Gaussian centers and camera coordinate frames"></svg></figure>
+    <div class="joint-gradient"><h2>One residual, two gradient paths</h2><p>Image derivatives flow through the renderer to each splat center and to the camera pose. Rotating the camera changes both projected centers and anisotropic footprints.</p><div class="gradient-readout"><span>‖∇<sub>centers</sub>L‖<strong id="scene-gradient">—</strong></span><span>‖∇<sub>pose</sub>L‖<strong id="pose-gradient">—</strong></span></div><p class="small">These are gradients of the current image objective, including frozen blocks. A frozen block receives no update. Their norms use different parameter units; they are not an importance ranking.</p><p class="small">Pose convention: m = ½ + R(θ)(μ − ½) + t. The figure shows the corresponding inverse camera frame in world coordinates. Fixing camera 0 defines the coordinate frame for this reduced example.</p></div>
+  </section>
+  <section class="pixel-inspector" aria-labelledby="pixel-heading">
+    <div class="inspector-heading"><div><h2 id="pixel-heading">How can L1 be known without the true pose?</h2><p>Choose a pixel in a photo. The comparison is between its observed RGB and the current prediction at that same pixel.</p></div><div class="pixel-controls"><label for="pixel-view">View <select id="pixel-view"><option value="0">Camera 0</option><option value="1" selected>Camera 1</option></select></label><label for="pixel-x">x <input id="pixel-x" type="number" min="0" max="23" value="13"></label><label for="pixel-y">y <input id="pixel-y" type="number" min="0" max="23" value="12"></label><span>Click any image, or enter zero-based pixel coordinates.</span></div></div>
+    <div class="pixel-summary joint-pixel-summary"><p><span>Observed RGB · fixed</span><strong id="pixel-target">—</strong></p><p><span>Rendered RGB · current estimates</span><strong id="pixel-rendered">—</strong></p><p><span>Absolute channel errors</span><strong id="pixel-absolute">—</strong></p><p><span>Mean error at this pixel</span><strong id="pixel-l1">—</strong></p></div>
+    <p class="inspector-note">The optimizer does not need to know which scene point produced this pixel, or the true camera pose. It renders using its current pose estimate, compares against the fixed observed image, and differentiates that discrepancy. The full L1 averages these errors over pixels, RGB channels and both views. SSIM additionally compares local image statistics; the residual heatmap shows only absolute RGB error.</p>
+  </section>
+  <section class="explanation">
+    <h2>The distinction to keep</h2>
+    <div class="joint-distinction">Joint pose–splat optimization can also use L1 + SSIM. Removing SSIM is a MonoGS online-loss choice, not a requirement for pose gradients.</div>
+    <div class="explanation-grid"><article><h3>Unknown pose does not mean unknown photo</h3><p>A real camera supplies an RGB image even if its position and orientation are unknown. Here the two observed images are synthetic and are generated once. Their generating parameters are discarded; the optimizer receives pixels, the current estimates and the calibrated projection model. Changing an estimate changes the render, never the photo.</p></article><article><h3>SSIM remains in the joint objective</h3><p>With λ = 0.2, this lab minimizes 0.8 × L1 + 0.2 × (1 − SSIM). Local SSIM uses an 11 × 11 Gaussian window, standard deviation 1.5, with zero padding and constants C₁ = 0.01² and C₂ = 0.03² for RGB values in [0, 1]. There is no extra factor of ½. Both terms contribute to pose and splat gradients.</p></article><article><h3>Simultaneous and alternating updates</h3><p>Simultaneous updates use both gradient blocks at the same estimates. Alternating updates change the pose, then recompute the residual before changing the splats. Both solve the same coupled objective. The model uses gradient steps with backtracking to keep this small experiment stable; it does not reproduce MonoGS’s full optimizer.</p></article><article><h3>A small residual is not a proof of unique geometry</h3><p>Anchoring camera 0 removes a coordinate freedom in this 2D model. Its known scales and appearance also constrain the problem. General 3D monocular reconstruction has additional ambiguities, including metric scale. Good initialization, overlapping views and useful scene structure matter; SSIM does not remove those ambiguities.</p></article></div>
+    <div class="experiment"><h3>Try this sequence</h3><p>Run 50 joint steps at λ = 0.2. Reset, freeze the pose, and repeat: the shared map must absorb what it can of the pose error. Then enable both blocks and continue. Try λ = 0 (L1 only), or λ = 1 (SSIM only): either objective can supply pose gradients. History starts a fresh segment whenever the objective or update choices change.</p></div>
+  </section>
+  <footer><a href="../" target="_top">Gaussian Splatting · Slides</a><a href="./joint-model.mjs" target="_top">Inspect the numerical model</a><a href="https://github.com/graphdeco-inria/gaussian-splatting/blob/main/train.py" target="_top">Original loss implementation</a><a href="https://github.com/muskie82/MonoGS/blob/main/utils/slam_utils.py" target="_top">MonoGS online losses</a></footer>
+  <script type="module" src="./joint-app.mjs?v=20261105-1"></script>
+  <script src="../../assets/bento-inline-frame.js"></script>
+</body>
+</html>

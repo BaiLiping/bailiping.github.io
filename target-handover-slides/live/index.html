@@ -1,0 +1,265 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="color-scheme" content="light">
+    <meta name="description" content="Interactive, didactic point-target handover simulation for the GLOBECOM 2025 presentation.">
+    <title>Live target handover | GLOBECOM 2025</title>
+    <link rel="stylesheet" href="./styles.css?v=20260918">
+    <link rel="stylesheet" href="../../assets/interactive-slide-system.css">
+    <link rel="stylesheet" href="./theme.css">
+    <script src="../../assets/interactive-slide-system.js"></script>
+    <script src="./trajectory.js?v=20260918-trajectory" defer></script>
+    <script src="./app.js?v=20260918-trajectory" defer></script>
+    <script src="../../assets/bento-inline-frame.js" defer></script>
+  </head>
+  <body data-bento-live-app data-interactive-slides="target-handover">
+    <div class="app-shell interactive-slide-shell" id="appShell">
+      <header class="app-header interactive-slide-header">
+        <div class="title-block interactive-slide-heading">
+          <p class="eyebrow">LIVE EXAMPLE · POINT TARGETS</p>
+          <h1>When should a track cross the network?</h1>
+        </div>
+        <div class="header-actions interactive-slide-actions">
+          <span class="model-chip interactive-slide-chip" title="Ground-truth paths from the simulation trial used for Figure 3.">Figure 3 trajectories</span>
+          <a class="back-button interactive-slide-back" id="backButton" href="../" target="_top" aria-label="Back to presentation">
+            <svg aria-hidden="true" viewBox="0 0 20 20"><path d="m12.5 4-6 6 6 6M7 10h8"/></svg>
+            Back to slides
+          </a>
+        </div>
+      </header>
+
+      <main class="workspace interactive-slide-body">
+        <section class="scene-card interactive-slide-stage interactive-slide-panel" aria-labelledby="sceneTitle">
+          <div class="scene-heading">
+            <div>
+              <h2 id="sceneTitle">Two base stations, two crossing targets</h2>
+              <p>Figure 3 trajectories · 120 m fields of view · illustrative handover gates.</p>
+            </div>
+            <div class="legend" aria-label="Target legend">
+              <span><i class="legend-dot target-a"></i>Target A · BS1 → BS2</span>
+              <span><i class="legend-dot target-b"></i>Target B · BS2 → BS1</span>
+            </div>
+          </div>
+
+          <div class="scene-wrap">
+            <svg id="scene" class="scene" viewBox="0 0 820 470" role="img" aria-labelledby="sceneSvgTitle sceneSvgDesc">
+              <title id="sceneSvgTitle">Animated two-base-station target handover</title>
+              <desc id="sceneSvgDesc">Target A moves from the upper left to the lower right; target B moves from the upper right to the lower left, following the ground-truth trajectories in Figure 3. Track labels and handover messages update as the timeline advances.</desc>
+              <defs>
+                <pattern id="smallGrid" width="24" height="24" patternUnits="userSpaceOnUse">
+                  <path d="M24 0H0V24" fill="none" stroke="#dbe4dc" stroke-width="1"/>
+                </pattern>
+                <linearGradient id="groundWash" x1="0" x2="1" y1="0" y2="1">
+                  <stop offset="0" stop-color="#fbfaf5"/>
+                  <stop offset="1" stop-color="#eef4ea"/>
+                </linearGradient>
+                <filter id="softShadow" x="-40%" y="-40%" width="180%" height="180%">
+                  <feDropShadow dx="0" dy="3" stdDeviation="4" flood-color="#1d2520" flood-opacity=".18"/>
+                </filter>
+                <filter id="eventGlow" x="-60%" y="-60%" width="220%" height="220%">
+                  <feGaussianBlur stdDeviation="5" result="blur"/>
+                  <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+                </filter>
+                <marker id="arrowGreen" markerWidth="9" markerHeight="9" refX="8" refY="4.5" orient="auto">
+                  <path d="M0 0 9 4.5 0 9Z" fill="#2f7d5b"/>
+                </marker>
+              </defs>
+
+              <rect class="plot-background" x="1" y="1" width="818" height="468" rx="16"/>
+              <rect x="1" y="1" width="818" height="468" rx="16" fill="url(#smallGrid)" opacity=".7"/>
+
+              <g class="fov fov-one">
+                <circle cx="255" cy="236" r="228"/>
+                <text x="110" y="64">BS1 FoV</text>
+              </g>
+              <g class="fov fov-two">
+                <circle cx="540" cy="236" r="228"/>
+                <text x="640" y="64">BS2 FoV</text>
+              </g>
+              <path class="overlap-line" d="M397.5 59v354"/>
+              <g class="overlap-label" transform="translate(397.5 40)">
+                <rect x="-61" y="-15" width="122" height="30" rx="15"/>
+                <text text-anchor="middle" y="5">OVERLAP</text>
+              </g>
+
+              <path class="route route-a" d="M227.20 126.22L230.49 128.80L233.85 131.40L237.18 134.09L240.54 136.81L243.90 139.51L247.24 142.24L250.66 144.84L254.08 147.31L257.45 149.82L260.87 152.34L264.24 154.73L267.54 157.14L270.86 159.64L274.15 162.16L277.45 164.65L280.71 167.15L283.91 169.64L287.15 172.10L290.41 174.52L293.63 177.01L296.88 179.54L300.26 181.94L303.77 184.35L307.31 186.77L310.88 189.16L314.50 191.57L318.23 193.95L322.05 196.28L325.79 198.60L329.47 200.94L333.17 203.21L336.87 205.40L340.51 207.57L344.18 209.65L347.88 211.68L351.61 213.78L355.36 215.97L359.14 218.09L362.96 220.05L366.76 221.96L370.53 223.81L374.41 225.57L378.42 227.21L382.46 228.82L386.43 230.40L390.36 231.93L394.41 233.51L398.45 235.17L402.42 236.97L406.33 238.80L410.24 240.65L414.21 242.48L418.09 244.21L421.88 245.88L425.70 247.53L429.57 249.21L433.53 250.86L437.61 252.54L441.86 254.26L446.13 255.98L450.37 257.63L454.75 259.24L459.17 260.93L463.61 262.71L468.12 264.60L472.63 266.53L477.17 268.47L481.71 270.45L486.29 272.46L490.95 274.45L495.64 276.38L500.33 278.24L504.97 280.11L509.53 282.01L514.10 283.96L518.71 285.89L523.30 287.81L527.85 289.68L532.41 291.51L536.89 293.31L541.31 295.07L545.69 296.86L550.10 298.70L554.59 300.59L559.05 302.46L563.37 304.24L567.57 306.00L571.72 307.81L575.77 309.57L579.86 311.29L583.96 312.97L588.03 314.63L592.13 316.35L596.22 318.04L600.31 319.59L604.46 321.04L608.64 322.45L612.77 323.81L616.89 325.13L620.92 326.47"/>
+              <path class="route route-b" d="M705.97 167.98L699.57 169.02L693.06 170.25L686.54 171.56L680.05 172.81L673.57 174.01L667.10 175.14L660.63 176.29L654.16 177.56L647.70 178.86L641.26 180.07L634.82 181.29L628.35 182.57L621.96 183.84L615.63 185.23L609.27 186.71L602.94 188.20L596.56 189.65L590.19 191.07L583.90 192.45L577.65 193.87L571.47 195.34L565.34 196.88L559.27 198.57L553.25 200.33L547.30 202.13L541.52 203.90L535.79 205.68L530.09 207.49L524.56 209.30L519.16 211.09L513.81 212.83L508.43 214.46L502.98 216.02L497.45 217.59L491.82 219.12L486.15 220.60L480.52 222.07L474.92 223.58L469.41 225.09L464.03 226.62L458.73 228.19L453.42 229.81L448.07 231.49L442.72 233.19L437.29 234.92L431.75 236.63L426.24 238.33L420.73 240.01L415.19 241.69L409.74 243.43L404.37 245.19L399.04 246.95L393.71 248.75L388.38 250.61L383.12 252.49L377.94 254.36L372.84 256.19L367.73 257.89L362.59 259.56L357.45 261.23L352.20 262.88L346.86 264.45L341.46 265.95L336.00 267.44L330.51 268.98L325.02 270.58L319.61 272.13L314.26 273.61L308.92 275.06L303.62 276.40L298.34 277.65L292.97 278.84L287.46 280.03L281.89 281.13L276.31 282.09L270.71 282.99L265.04 283.96L259.27 285.02L253.43 286.15L247.59 287.34L241.85 288.52L236.15 289.67L230.38 290.83L224.54 291.99L218.72 293.07L212.92 294.10L207.12 295.16L201.28 296.17L195.30 297.07L189.25 298.02L183.27 299.07L177.39 300.19L171.54 301.41L165.82 302.72L160.21 304.01L154.62 305.23L149.02 306.45L143.40 307.69L137.72 308.99L132.00 310.37"/>
+
+              <g class="base-station" transform="translate(255 236)" aria-label="Base station 1">
+                <circle r="25"/>
+                <path d="M0-13v25M-11 12h22M-8-2 0-11 8-2M-15 20h30"/>
+                <text y="48">BS1</text>
+              </g>
+              <g class="base-station" transform="translate(540 236)" aria-label="Base station 2">
+                <circle r="25"/>
+                <path d="M0-13v25M-11 12h22M-8-2 0-11 8-2M-15 20h30"/>
+                <text y="48">BS2</text>
+              </g>
+
+              <g id="transferA" class="transfer transfer-a is-hidden" aria-hidden="true">
+                <path d="M275 214C340 145 462 145 520 214" marker-end="url(#arrowGreen)"/>
+                <g class="packet"><rect x="365" y="142" width="66" height="25" rx="12.5"/><text x="398" y="159" text-anchor="middle">PRIOR</text></g>
+              </g>
+              <g id="transferB" class="transfer transfer-b is-hidden" aria-hidden="true">
+                <path d="M520 258C460 330 340 330 275 258" marker-end="url(#arrowGreen)"/>
+                <g class="packet"><rect x="365" y="306" width="66" height="25" rx="12.5"/><text x="398" y="323" text-anchor="middle">PRIOR</text></g>
+              </g>
+
+              <g id="measurementA" class="measurement target-a-stroke is-hidden" aria-hidden="true">
+                <path class="measurement-link" d="M227.20 126.22h0"/>
+                <path class="measurement-mark" d="m-6 0h12M0-6v12" transform="translate(227.20 126.22)"/>
+              </g>
+              <g id="measurementB" class="measurement target-b-stroke is-hidden" aria-hidden="true">
+                <path class="measurement-link" d="M705.97 167.98h0"/>
+                <path class="measurement-mark" d="m-6 0h12M0-6v12" transform="translate(705.97 167.98)"/>
+              </g>
+
+              <g id="estimateA" class="estimate target-a-stroke is-hidden" aria-hidden="true">
+                <ellipse class="belief" cx="227.20" cy="126.22" rx="22" ry="13"/>
+                <path class="estimate-mark" d="m-7-7 14 14m0-14-14 14" transform="translate(227.20 126.22)"/>
+              </g>
+              <g id="estimateB" class="estimate target-b-stroke is-hidden" aria-hidden="true">
+                <ellipse class="belief" cx="705.97" cy="167.98" rx="22" ry="13"/>
+                <path class="estimate-mark" d="m-7-7 14 14m0-14-14 14" transform="translate(705.97 167.98)"/>
+              </g>
+
+              <g id="targetA" class="target target-a-fill" transform="translate(227.20 126.22)" aria-label="Target A">
+                <circle class="target-halo" r="16"/>
+                <circle class="target-core" r="7"/>
+                <g class="target-label" transform="translate(0 -31)"><rect x="-43" y="-14" width="86" height="26" rx="13"/><text text-anchor="middle" y="4">A · BS1</text></g>
+              </g>
+              <g id="targetB" class="target target-b-fill" transform="translate(705.97 167.98)" aria-label="Target B">
+                <circle class="target-halo" r="16"/>
+                <circle class="target-core" r="7"/>
+                <g class="target-label" transform="translate(0 31)"><rect x="-43" y="-14" width="86" height="26" rx="13"/><text text-anchor="middle" y="4">B · BS2</text></g>
+              </g>
+
+              <g class="scale" transform="translate(35 434)">
+                <path d="M0 0h95M0-5v10M95-5v10"/>
+                <text x="47.5" y="-9" text-anchor="middle">50 m</text>
+              </g>
+            </svg>
+            <div class="scene-callout" id="sceneCallout" role="status" aria-live="polite">
+              <span class="status-dot"></span>
+              <span id="eventText">Ready — press Play or jump to the next handover.</span>
+            </div>
+          </div>
+
+          <div class="transport" aria-label="Simulation timeline controls">
+            <div class="transport-buttons">
+              <button class="play-button" id="playButton" type="button" disabled aria-pressed="false">
+                <svg class="play-icon" aria-hidden="true" viewBox="0 0 20 20"><path d="M6 4.5 15 10l-9 5.5Z"/></svg>
+                <svg class="pause-icon" aria-hidden="true" viewBox="0 0 20 20"><path d="M5.5 4h3v12h-3zm6 0h3v12h-3z"/></svg>
+                <span>Play</span>
+              </button>
+              <button id="stepButton" type="button" disabled title="Advance one 1-second frame (Right Arrow)">+1 frame</button>
+              <button id="eventButton" type="button" disabled title="Jump to the next handover event">Next event</button>
+            </div>
+            <label class="timeline-label" for="timeline">
+              <span>Timeline</span>
+              <output id="timeOutput" for="timeline">t = 0 s</output>
+            </label>
+            <input id="timeline" class="timeline" type="range" min="0" max="100" value="0" step="1" disabled aria-label="Simulation time in seconds">
+          </div>
+        </section>
+
+        <aside class="control-card interactive-slide-controls interactive-slide-panel" aria-labelledby="controlsTitle">
+          <div class="control-heading">
+            <div>
+              <p class="eyebrow">PROTOCOL KNOBS</p>
+              <h2 id="controlsTitle">Open both gates</h2>
+            </div>
+            <span class="equation" aria-label="Existence probability strictly above P threshold and expected receiving detection probability strictly above Gamma">P(e) &gt; P<sub>th</sub> &amp; E[p<sub>D</sub><sup>Rx</sup>] &gt; Γ</span>
+          </div>
+
+          <fieldset class="mode-control">
+            <legend>Handover payload</legend>
+            <div class="segmented-control">
+              <input id="priorMode" name="payload" type="radio" value="prior" checked disabled>
+              <label for="priorMode">Prior only</label>
+              <input id="measurementMode" name="payload" type="radio" value="measurement" disabled>
+              <label for="measurementMode">Prior + associated measurement</label>
+            </div>
+            <p id="modeHint">The prior seeds a declared track at the receiver; uncertainty contracts through later local updates.</p>
+          </fieldset>
+
+          <div class="slider-group">
+            <label for="existenceThreshold">
+              <span>Existence declaration P<sub>th</sub></span>
+              <output id="existenceOutput" for="existenceThreshold">0.50</output>
+            </label>
+            <input id="existenceThreshold" type="range" min="0.50" max="0.98" step="0.01" value="0.50" disabled>
+            <div class="range-labels"><span>earlier / permissive</span><span>stronger existence</span></div>
+          </div>
+
+          <div class="slider-group">
+            <label for="visibilityThreshold">
+              <span>Receiver visibility Γ</span>
+              <output id="visibilityOutput" for="visibilityThreshold">0.50</output>
+            </label>
+            <input id="visibilityThreshold" type="range" min="0.20" max="0.90" step="0.01" value="0.50" disabled>
+            <div class="range-labels"><span>earlier / boundary risk</span><span>later / missed-track risk</span></div>
+          </div>
+
+          <section class="gate-panel" aria-labelledby="gateTitle">
+            <div class="section-label-row">
+              <h3 id="gateTitle">Gate state at this frame</h3>
+              <span id="gateSummary">0 of 4 open</span>
+            </div>
+            <div class="gate-row" id="gateA">
+              <span class="gate-target target-a-fill">A</span>
+              <div class="gate-metric">
+                <span>P(e) <b id="existA">0.00</b></span>
+                <i><span id="existBarA"></span></i>
+              </div>
+              <span class="gate-and">AND</span>
+              <div class="gate-metric">
+                <span title="Expected detection probability at receiving BS2">Vis.<sub>BS2</sub> <b id="visibleA">0.00</b></span>
+                <i><span id="visibleBarA"></span></i>
+              </div>
+              <strong class="gate-state" id="gateStateA">WAIT</strong>
+            </div>
+            <div class="gate-row" id="gateB">
+              <span class="gate-target target-b-fill">B</span>
+              <div class="gate-metric">
+                <span>P(e) <b id="existB">0.00</b></span>
+                <i><span id="existBarB"></span></i>
+              </div>
+              <span class="gate-and">AND</span>
+              <div class="gate-metric">
+                <span title="Expected detection probability at receiving BS1">Vis.<sub>BS1</sub> <b id="visibleB">0.00</b></span>
+                <i><span id="visibleBarB"></span></i>
+              </div>
+              <strong class="gate-state" id="gateStateB">WAIT</strong>
+            </div>
+          </section>
+
+          <section class="counter-panel" aria-label="Protocol counters">
+            <div><span>Prior messages</span><strong id="priorCount">0 / 2</strong></div>
+            <div><span>Assoc. measurements</span><strong id="measurementCount">0</strong></div>
+            <div><span>Receiver tracks seeded</span><strong id="trackCount">0 / 2</strong></div>
+          </section>
+
+          <div class="tradeoff-note" id="tradeoffNote">
+            Γ = 0.50 uses the paper’s simulated operating point: require credible receiver visibility without waiting for the target to reach the FoV centre.
+          </div>
+
+          <p class="disclaimer">
+            <strong>Interpretation boundary.</strong> The trajectories replay the simulation trial used for Figure 3. The handover probabilities, measurement offsets, and receiver uncertainty illustrate the rule; they are not BP tracking output or the published Monte Carlo results.
+          </p>
+        </aside>
+      </main>
+
+      <footer class="app-footer interactive-slide-footer">
+        <span><kbd>Space</kbd> play/pause · <kbd>←</kbd>/<kbd>→</kbd> step · <kbd>Esc</kbd> back</span>
+        <span>BS separation 150 m · FoV radius 120 m · deterministic 1 s frames</span>
+      </footer>
+    </div>
+
+    <noscript>
+      <div class="noscript-note"><strong>Static preview.</strong> Enable JavaScript to play, scrub, and change the handover gates.</div>
+    </noscript>
+  </body>
+</html>

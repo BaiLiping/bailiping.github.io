@@ -1,0 +1,474 @@
+<!doctype html>
+<html lang="en" class="mj-wait">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Calculate how much of two gasoline octane grades to add to existing fuel to reach a target average octane and tank volume.">
+<link rel="canonical" href="https://bailiping.com/octane-blender/">
+<meta name="theme-color" content="#193c2e">
+<title>Octane Blend Calculator | Bai Liping</title>
+<link rel="icon" href="data:,">
+<link rel="preload" href="../assets/fonts/barlow-condensed-600-latin.woff2" as="font" type="font/woff2" crossorigin>
+<style>
+@font-face{font-family:"Barlow Condensed";font-style:normal;font-weight:500;font-display:swap;src:url("../assets/fonts/barlow-condensed-500-latin.woff2") format("woff2")}
+@font-face{font-family:"Barlow Condensed";font-style:normal;font-weight:600;font-display:swap;src:url("../assets/fonts/barlow-condensed-600-latin.woff2") format("woff2")}
+:root{
+  color-scheme:light;
+  --paper:#f7f5ef;--surface:#fff;--ink:#1d2520;--muted:#5d6961;--line:#dbe4dc;--line-strong:#bccabf;
+  --green:#2f7d5b;--forest:#193c2e;--forest-ink:#c6dbce;--forest-line:#ffffff24;
+  /* One colour per fuel source, shared by inputs, gauge, steps and the math. */
+  --s0:#97a89f;--s1:#eaa938;--s2:#7fcd9e;
+  --warn-bg:#fff1db;--warn-ink:#6a4413;
+  --display:"Barlow Condensed","Arial Narrow","Roboto Condensed",sans-serif;
+  font:16px/1.5 Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);-webkit-font-smoothing:antialiased}
+a{color:var(--green);text-underline-offset:4px}
+button,input,select{font:inherit;color:inherit}
+button{cursor:pointer}
+[hidden]{display:none!important}
+.sr-only{position:absolute;width:1px;height:1px;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap}
+a:focus-visible,button:focus-visible,summary:focus-visible{outline:3px solid var(--green);outline-offset:4px;border-radius:4px}
+
+/* Site chrome, shared with the other Tools pages */
+.site{background:#fff;border-bottom:1px solid var(--line)}
+.site nav,main{width:min(1080px,calc(100% - 40px));margin:auto}
+.site nav{height:64px;display:flex;align-items:center;justify-content:space-between}
+.site nav a{text-decoration:none;font-size:14px;font-weight:650}
+.brand{background:var(--green);color:#fff!important;padding:7px 11px;border-radius:7px;letter-spacing:.05em}
+main{padding:44px 0 32px}
+
+/* Title */
+h1{font-family:var(--display);font-weight:600;font-size:clamp(44px,6.4vw,72px);line-height:.95;letter-spacing:-.01em;margin:0 0 14px}
+.intro{color:var(--muted);font-size:18px;max-width:34em;margin:0 0 32px}
+h2{font-size:18px;line-height:1.3;letter-spacing:-.015em;margin:0}
+
+/* Two-panel calculator */
+.layout{display:grid;grid-template-columns:minmax(0,1.08fr) minmax(0,1fr);gap:22px;align-items:start}
+.panel-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:20px}
+.form{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:26px}
+.reset{border:0;background:none;color:var(--green);font-size:13px;font-weight:650;padding:8px 0 8px 12px}
+label,legend{display:block;font-size:13px;font-weight:650;margin-bottom:7px;padding:0}
+input,select{width:100%;min-width:0;border:1px solid var(--line-strong);border-radius:10px;background:#fff}
+input:focus,select:focus{outline:2px solid var(--green);outline-offset:2px}
+input[aria-invalid="true"]{border-color:#c47d1e;background:#fffaf1}
+select{appearance:none;-webkit-appearance:none;min-height:50px;padding:11px 44px 11px 13px;font-size:17px;font-weight:550;
+  background:#fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1.5l5 5 5-5' fill='none' stroke='%232f7d5b' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") no-repeat right 16px center}
+.vehicle-meta{display:flex;justify-content:space-between;align-items:baseline;gap:12px;margin:10px 0 22px;padding-bottom:20px;border-bottom:1px solid var(--line);font-size:13px;color:var(--muted)}
+.vehicle-meta strong{font-family:var(--display);font-size:20px;font-weight:600;color:var(--ink);letter-spacing:.01em}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.row.single{grid-template-columns:1fr}
+.row.single .number input{padding-right:84px}
+.number input::placeholder{font-family:Inter,ui-sans-serif,system-ui,sans-serif;font-size:18px;font-weight:400;color:#8a968e}
+.number{position:relative}
+.number input{font-family:var(--display);font-size:34px;font-weight:600;font-variant-numeric:tabular-nums;line-height:1.1;min-height:58px;padding:9px 58px 9px 14px;appearance:textfield;-moz-appearance:textfield}
+.number input::-webkit-inner-spin-button,.number input::-webkit-outer-spin-button{appearance:none;margin:0}
+.unit{position:absolute;right:14px;top:50%;transform:translateY(-50%);font-size:12px;color:var(--muted);pointer-events:none}
+.conversion{font-size:13px;color:var(--muted);margin:10px 0 22px;min-height:20px;font-variant-numeric:tabular-nums}
+.target{display:flex;justify-content:space-between;align-items:center;gap:16px;background:#ecf3ed;border-radius:12px;padding:14px 14px 14px 16px}
+.target label{margin:0;font-size:15px}
+.target p{margin:2px 0 0;font-size:13px;color:var(--muted)}
+.target .number{width:132px;flex:none}
+.target input{border-color:#a9c3b1}
+
+/* Grade tiles echo the grade buttons on a pump; the top band is the fuel's colour */
+.grades{border:0;margin:22px 0 0;padding:0;min-width:0}
+.tiles{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.tile{position:relative;border:1px solid var(--line-strong);border-top:5px solid var(--band);border-radius:10px;background:#fff;padding:8px 12px 8px}
+.tile:focus-within{outline:2px solid var(--green);outline-offset:2px}
+.tile label{font-size:12px;font-weight:600;color:var(--muted);margin:2px 0 0}
+.tile input{border:0;padding:0;min-height:44px;background:transparent;font-family:var(--display);font-size:32px;font-weight:600;font-variant-numeric:tabular-nums;appearance:textfield;-moz-appearance:textfield}
+.tile input:focus{outline:0}
+.tile input::-webkit-inner-spin-button,.tile input::-webkit-outer-spin-button{appearance:none;margin:0}
+.tile:has(input[aria-invalid="true"]){border-color:#c47d1e;background:#fffaf1}
+.b0{--band:var(--s0)}.b1{--band:var(--s1)}.b2{--band:var(--s2)}
+.fine{font-size:12px;color:var(--muted);margin:12px 0 0}
+
+/* Pump readout */
+.pump{background:var(--forest);color:#fff;border-radius:18px;padding:26px;box-shadow:0 18px 40px -22px #193c2e80}
+.state{display:inline-flex;align-items:center;gap:7px;font-size:12px;color:var(--forest-ink)}
+.state::before{content:"";width:7px;height:7px;border-radius:50%;background:var(--s2)}
+.state.warn::before{background:var(--s1)}
+.alert{background:var(--warn-bg);color:var(--warn-ink);padding:12px 14px;border-radius:10px;font-size:14px;margin:0 0 18px}
+.gauge{position:relative;display:flex;gap:2px;height:18px;border-radius:9px;overflow:hidden;background:#ffffff14}
+.gauge i{display:block;flex:none;width:0;transition:width .35s cubic-bezier(.3,.7,.2,1)}
+.gauge .g0{background:var(--s0)}.gauge .g1{background:var(--s1)}.gauge .g2{background:var(--s2)}
+.scale{position:relative;display:flex;justify-content:space-between;font-family:var(--display);font-size:15px;font-weight:600;color:#9fbcad;margin:0 1px;padding-top:9px}
+.scale::before{content:"";position:absolute;left:0;right:0;top:3px;height:5px;background:linear-gradient(90deg,#9fbcad 0 1px,transparent 0 calc(25% - 1px),#9fbcad 0 calc(25% + 1px),transparent 0 calc(50% - 1px),#9fbcad 0 calc(50% + 1px),transparent 0 calc(75% - 1px),#9fbcad 0 calc(75% + 1px),transparent 0 calc(100% - 1px),#9fbcad 0)}
+.legend{display:flex;flex-wrap:wrap;justify-content:space-between;gap:6px 12px;list-style:none;margin:12px 0 4px;padding:0;font-size:12px;color:var(--forest-ink)}
+.legend li{display:flex;align-items:center;gap:7px;white-space:nowrap}
+.legend li::before{content:"";width:9px;height:9px;border-radius:2px;background:var(--dot)}
+.legend b{font-family:var(--display);font-size:16px;font-weight:600;color:#fff;font-variant-numeric:tabular-nums}
+.d0{--dot:var(--s0)}.d1{--dot:var(--s1)}.d2{--dot:var(--s2)}
+.step{padding:20px 0 18px;border-top:1px solid var(--forest-line)}
+.step:first-of-type{margin-top:18px}
+.step-label{display:flex;align-items:center;gap:10px;font-size:15px;color:#e1ece5}
+.step-label b{display:inline-grid;place-items:center;flex:none;width:26px;height:26px;border-radius:50%;border:2px solid var(--band);font-size:12px;font-weight:650}
+.quantity{display:flex;align-items:baseline;gap:10px;margin-top:2px}
+.quantity strong{font-family:var(--display);font-size:clamp(64px,7.4vw,88px);font-weight:600;line-height:1;letter-spacing:-.01em;font-variant-numeric:tabular-nums}
+.quantity span{font-size:14px;color:var(--forest-ink)}
+.facts{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:0;padding:18px 0 0;border-top:1px solid var(--forest-line)}
+.facts dt{font-size:12px;color:var(--forest-ink)}
+.facts dd{margin:2px 0 0;font-family:var(--display);font-size:28px;font-weight:600;font-variant-numeric:tabular-nums}
+.plan-note{font-size:12px;line-height:1.6;color:var(--forest-ink);margin:14px 0 0}
+
+.notice{font-size:13px;color:var(--muted);line-height:1.65;max-width:62em;margin:22px 0 0}
+.notice strong{color:var(--ink)}
+
+/* The math */
+.math{margin-top:40px;border-top:1px solid var(--line);max-width:860px}
+.math>summary{display:flex;align-items:baseline;flex-wrap:wrap;gap:2px 12px;padding:16px 30px 16px 0;position:relative;cursor:pointer;list-style:none}
+.math>summary::-webkit-details-marker{display:none}
+.math>summary::after,.specs>summary::after{content:"";position:absolute;right:6px;top:50%;width:10px;height:10px;border-right:2px solid var(--green);border-bottom:2px solid var(--green);transform:translateY(-75%) rotate(45deg);transition:transform .2s}
+.math[open]>summary::after,.specs[open]>summary::after{transform:translateY(-25%) rotate(225deg)}
+.math>summary h2{font-size:15px;font-weight:650;letter-spacing:0;line-height:1.5}
+.math-hint{font-size:13px;color:var(--muted)}
+.math-body{padding-bottom:30px}
+.math-body>p:first-child{margin-top:0}
+.math p{max-width:40em;color:#3c4740;margin:14px 0}
+.tex{font-size:19px;overflow-x:auto;overflow-y:hidden;color:var(--ink)}
+.tex mjx-container[display="true"]{margin:0!important}
+.mj-wait .tex,.mj-wait .sym{visibility:hidden}
+.model{display:flex;flex-wrap:wrap;align-items:center;gap:6px 48px;background:#fff;border:1px solid var(--line);border-radius:12px;padding:16px 18px;margin:16px 0 26px}
+.eqs{list-style:none;margin:0;padding:0}
+.eqs-head{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.05fr);gap:24px;font-size:12px;color:var(--muted);padding:0 0 8px}
+.eq{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.05fr);gap:24px;align-items:center;padding:14px 0;border-top:1px solid var(--line)}
+.eq:last-child{border-bottom:1px solid var(--line)}
+.eq .tex{min-height:2.2em;display:flex;align-items:center}
+.sub{font-family:var(--display);font-size:18px;font-weight:500;font-variant-numeric:tabular-nums;color:var(--muted);overflow-wrap:anywhere}
+.sub.out{color:#9a5a10}
+.eq.v1 .tex,.eq.v2 .tex{padding-left:12px;border-left:4px solid var(--band)}
+.eq.v1{--band:var(--s1)}.eq.v2{--band:var(--s2)}
+.reach{margin-top:30px}
+.symbols{display:grid;grid-template-columns:max-content 1fr;gap:8px 18px;margin:30px 0 0;font-size:14px;color:#3c4740}
+.symbols dt{font-size:17px;text-align:right;min-width:2.6em}
+.symbols dd{margin:0;align-self:center}
+.caveat{font-size:13px;color:var(--muted)!important}
+
+.specs{margin-top:0;border-top:1px solid var(--line);padding-top:0;font-size:13px;color:var(--muted);max-width:860px}
+.specs>summary{position:relative;list-style:none;font-size:15px;font-weight:650;line-height:1.5;color:var(--ink);cursor:pointer;padding:16px 30px 16px 0}
+.specs>summary::-webkit-details-marker{display:none}
+.specs p{max-width:62em}
+.spec-table{width:100%;border-collapse:collapse;margin:16px 0;font-size:14px}
+.spec-table th{text-align:left;font-size:12px;font-weight:600;color:var(--muted);padding:0 0 8px}
+.spec-table td{border-top:1px solid var(--line);padding:11px 12px 11px 0;vertical-align:top;color:var(--ink)}
+.spec-table th:last-child,.spec-table td:last-child{text-align:right;padding-right:0;white-space:nowrap;font-family:var(--display);font-size:18px;font-weight:600;font-variant-numeric:tabular-nums}
+.spec-table th:last-child{font-family:inherit;font-size:12px}
+.spec-table small{display:block;margin-top:2px;font-size:12px;color:var(--muted)}
+footer{margin-top:28px;padding-top:18px;border-top:1px solid var(--line);font-size:12px;color:var(--muted);display:flex;justify-content:space-between;gap:12px}
+noscript{display:block;padding:14px 16px;background:var(--warn-bg);color:var(--warn-ink);border-radius:10px;margin-bottom:20px}
+
+@media (max-width:820px){
+  .site nav,main{width:calc(100% - 32px)}
+  main{padding-top:30px}
+  .intro{font-size:16px;margin-bottom:24px}
+  .layout{grid-template-columns:minmax(0,1fr);gap:16px}
+  .form,.pump{padding:20px}
+  select{font-size:16px;padding-right:38px;background-position:right 13px center}
+  .eqs-head{display:none}
+  .eq{grid-template-columns:1fr;gap:6px}
+  .math{margin-top:32px}
+  footer{flex-direction:column}
+}
+@media (max-width:380px){
+  .form,.pump{padding:16px}
+  .row,.tiles{gap:8px}
+  .number input{font-size:30px;padding-right:50px}
+  .tile{padding:10px 9px 6px}
+  .tile input{font-size:28px}
+  .target .number{width:116px}
+  .tex{font-size:17px}
+  .legend{gap:6px 8px}
+  .legend li{gap:5px}
+  .legend b{font-size:15px}
+}
+@media (prefers-reduced-motion:reduce){.gauge i,.math>summary::after,.specs>summary::after{transition:none}}
+</style>
+<script>
+window.MathJax={
+  tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']]},
+  svg:{fontCache:'global',displayAlign:'left'},
+  options:{skipHtmlTags:['script','noscript','style','textarea','pre','code']},
+  startup:{pageReady:()=>MathJax.startup.defaultPageReady().then(()=>document.documentElement.classList.remove('mj-wait'))}
+};
+// If MathJax cannot load, show the TeX source rather than blank space.
+setTimeout(()=>document.documentElement.classList.remove('mj-wait'),5000);
+</script>
+<script defer src="https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/tex-svg.js"></script>
+</head>
+<body>
+<header class="site"><nav aria-label="Site navigation"><a class="brand" href="/" aria-label="Bai Liping home">BLP</a><a href="/#group-tools">Back to Tools</a></nav></header>
+<main>
+<h1>Octane blend calculator</h1>
+<p class="intro">Pick your car and tell it what’s left in the tank. It works out how much of each grade to pump so the full tank lands on your target octane.</p>
+<noscript>Enable JavaScript to calculate fuel quantities. The formulas below still apply.</noscript>
+
+<div class="layout">
+<form id="form" class="form" novalidate autocomplete="off" aria-labelledby="form-title">
+  <div class="panel-head"><h2 id="form-title">Your next fill</h2><button class="reset" type="reset">Reset defaults</button></div>
+
+  <label for="vehicle">Vehicle</label>
+  <select id="vehicle" aria-describedby="vehicle-note">
+    <option value="gt3" selected>Porsche 911 GT3 (992.2)</option>
+    <option value="civic">Honda Civic Type R</option>
+    <option value="raptor">Ford F-150 Raptor R</option>
+    <option value="crv">Honda CR-V (2003)</option>
+    <option value="mr2">Toyota MR2 Supercharged (1988)</option>
+  </select>
+  <div class="vehicle-meta"><span id="vehicle-note">2025, extended-range tank</span><span>Tank <strong id="capacity">22.1 U.S. gal</strong></span></div>
+
+  <div class="row" id="range-inputs">
+    <div><label for="range">Range left</label><div class="number"><input id="range" type="number" min="0" step="any" inputmode="decimal" value="123" required aria-describedby="conversion"><span class="unit">miles</span></div></div>
+    <div><label for="mpg">Average fuel economy</label><div class="number"><input id="mpg" type="number" min="0.1" step="any" inputmode="decimal" value="18.0" required aria-describedby="conversion"><span class="unit">MPG</span></div></div>
+  </div>
+  <!-- Older cars (MR2, CR-V) only have a fuel gauge, so they take its reading as a percent. -->
+  <div class="row single" id="gauge-inputs" hidden>
+    <div><label for="gauge">Fuel gauge reading</label><div class="number"><input id="gauge" type="number" min="0" max="100" step="any" inputmode="decimal" value="" placeholder="Enter percent" required disabled aria-describedby="conversion"><span class="unit">% full</span></div></div>
+  </div>
+  <p class="conversion" id="conversion">Fuel left in the tank = range ÷ average MPG.</p>
+
+  <div class="target">
+    <div><label for="target">Target octane</label><p>For the whole tank once it’s full</p></div>
+    <div class="number"><input id="target" type="number" min="1" max="150" step="any" inputmode="decimal" value="94" required><span class="unit">AKI</span></div>
+  </div>
+
+  <fieldset class="grades">
+    <legend>Fuel grades, AKI</legend>
+    <div class="tiles">
+      <div class="tile b0"><input id="current" type="number" min="1" max="150" step="any" inputmode="decimal" value="94" required><label for="current">In the tank</label></div>
+      <div class="tile b1"><input id="first" type="number" min="1" max="150" step="any" inputmode="decimal" value="100" required><label for="first">Pump 1</label></div>
+      <div class="tile b2"><input id="second" type="number" min="1" max="150" step="any" inputmode="decimal" value="91" required><label for="second">Pump 2</label></div>
+    </div>
+  </fieldset>
+  <p class="fine">Use the AKI number posted on U.S. pumps for every rating, and only unleaded gasoline your car is approved for.</p>
+</form>
+
+<section class="pump" aria-labelledby="plan-title">
+  <div class="panel-head"><h2 id="plan-title">At the pump</h2><span id="state" class="state">Estimated fill</span></div>
+  <div id="alert" class="alert" hidden></div>
+  <div class="gauge" aria-hidden="true"><i id="bar-existing" class="g0"></i><i id="bar-first" class="g1"></i><i id="bar-second" class="g2"></i></div>
+  <div class="scale" aria-hidden="true"><span>E</span><span>½</span><span>F</span></div>
+  <ul class="legend" aria-label="Tank contents after filling, in U.S. gallons">
+    <li class="d0">In tank <b id="leg-existing">—</b></li>
+    <li class="d1">Pump 1 <b id="leg-first">—</b></li>
+    <li class="d2">Pump 2 <b id="leg-second">—</b></li>
+  </ul>
+  <div class="step b1"><div class="step-label"><b aria-hidden="true">1</b><span>Pump <span id="first-grade">100</span> octane first</span></div><div class="quantity"><strong id="first-amount">—</strong><span>U.S. gal</span></div></div>
+  <div class="step b2"><div class="step-label"><b aria-hidden="true">2</b><span>Then <span id="second-grade">91</span> octane</span></div><div class="quantity"><strong id="second-amount">—</strong><span>U.S. gal</span></div></div>
+  <dl class="facts"><div><dt>Total to add</dt><dd><span id="total">—</span> gal</dd></div><div><dt>Final octane</dt><dd>≈ <span id="final">—</span> AKI</dd></div></dl>
+  <p class="plan-note" id="plan-note">Quantities update as you type.</p>
+  <p class="sr-only" id="live" role="status" aria-live="polite" aria-atomic="true"></p>
+</section>
+</div>
+
+<p class="notice"><strong>An estimate, not a fuel measurement.</strong> Range ÷ MPG and fuel gauge readings are both approximate, and quantities are rounded to 0.01 U.S. gallon. Stop at the pump’s automatic shutoff; don’t force in the calculated volume.</p>
+
+<details class="math" id="math">
+  <summary><h2 id="math-title">The math</h2><span class="math-hint">Formulas behind the fill plan, with your numbers plugged in</span></summary>
+  <div class="math-body">
+  <p>Octane is treated as a volume-weighted average. Once the tank is full, the fuel already in it and the two pump volumes must add up to the capacity and average out to the target:</p>
+  <div class="model"><div class="tex">\[ O^{\star} C = O_0 V_0 + O_1 V_1 + O_2 V_2, \]</div><div class="tex">\[ V_0 + V_1 + V_2 = C. \]</div></div>
+  <p>Estimating what’s left in the tank (from the range, or for the MR2 and CR-V from the fuel gauge), then eliminating \(V_2\), gives the four quantities the calculator reports:</p>
+  <div class="eqs-head" aria-hidden="true"><span>Formula</span><span>With your numbers</span></div>
+  <ol class="eqs">
+    <li class="eq"><div class="tex" id="tex-v0-range">\[ V_0 = \frac{d}{m} \]</div><div class="tex" id="tex-v0-gauge" hidden>\[ V_0 = \frac{g}{100}\, C \]</div><div class="sub" id="sub-v0">—</div></li>
+    <li class="eq"><div class="tex">\[ V_{\text{fill}} = C - V_0 \]</div><div class="sub" id="sub-fill">—</div></li>
+    <li class="eq v1"><div class="tex">\[ V_1 = \frac{O^{\star} C - O_0 V_0 - O_2 V_{\text{fill}}}{O_1 - O_2} \]</div><div class="sub" id="sub-v1">—</div></li>
+    <li class="eq v2"><div class="tex">\[ V_2 = V_{\text{fill}} - V_1 \]</div><div class="sub" id="sub-v2">—</div></li>
+  </ol>
+  <p class="reach">Both pump volumes must lie between zero and \(V_{\text{fill}}\), so the reachable targets are bounded by filling entirely from the lower or the higher grade:</p>
+  <ol class="eqs">
+    <li class="eq"><div class="tex">\[ O^{\star} \ge \frac{O_0 V_0 + \min(O_1, O_2)\, V_{\text{fill}}}{C} \]</div><div class="sub" id="sub-low">—</div></li>
+    <li class="eq"><div class="tex">\[ O^{\star} \le \frac{O_0 V_0 + \max(O_1, O_2)\, V_{\text{fill}}}{C} \]</div><div class="sub" id="sub-high">—</div></li>
+  </ol>
+  <dl class="symbols">
+    <dt class="sym">\(d\)</dt><dd>Range left, miles</dd>
+    <dt class="sym">\(m\)</dt><dd>Average fuel economy, MPG</dd>
+    <dt class="sym">\(g\)</dt><dd>Fuel gauge reading, percent full (MR2 and CR-V)</dd>
+    <dt class="sym">\(C\)</dt><dd>Tank capacity, U.S. gallons</dd>
+    <dt class="sym">\(O^{\star}\)</dt><dd>Target octane for the full tank</dd>
+    <dt class="sym">\(O_0,\ V_0\)</dt><dd>Octane and volume of the fuel already in the tank</dd>
+    <dt class="sym">\(O_1,\ V_1\)</dt><dd>Octane and volume from pump 1</dd>
+    <dt class="sym">\(O_2,\ V_2\)</dt><dd>Octane and volume from pump 2</dd>
+  </dl>
+  <p class="caveat">All octane ratings are AKI. Real blends can be slightly nonlinear, so treat the result as an estimate; it doesn’t certify fuel quality or suitability. Always follow the vehicle manufacturer’s fuel requirements.</p>
+  </div>
+</details>
+
+<details class="specs"><summary>Vehicle presets and sources</summary>
+  <p>For the GT3, Civic Type R and Raptor R, enter the range left and your car’s observed average fuel economy. It starts at 18.0 MPG, which isn’t a factory rating, and the 123-mile range is an example, not a live reading.</p>
+  <p>The 1988 MR2 Supercharged and 2003 CR-V have only a fuel gauge, so for them you enter its reading as a percent and the calculator converts it to gallons using the tank capacity. That field starts blank, and range and MPG aren’t used.</p>
+  <table class="spec-table"><caption class="sr-only">Vehicle tank capacities and manufacturer sources</caption>
+    <thead><tr><th scope="col">Vehicle and source</th><th scope="col">Tank</th></tr></thead>
+    <tbody>
+      <tr><td><a href="https://finder.porsche.com/us/en-US/details/porsche-911-gt3-preowned-Z5P7Z2">Porsche 911 GT3 (992.2)</a><small>2025, extended-range tank. Other GT3 generations and the standard tank differ.</small></td><td>22.1 gal</td></tr>
+      <tr><td><a href="https://hondanews.com/en-US/releases/release-a0290fb377b9a07ba1686b65910857e4-2025-honda-civic-type-r-specifications-features">Honda Civic Type R</a><small>2025 U.S. specification (FL5)</small></td><td>12.4 gal</td></tr>
+      <tr><td><a href="https://www.ford.com/inventory/details/ford/en_us/f150/vin/1FTFW1RJ2SFC29452">Ford F-150 Raptor R</a><small>2025, 5.2L supercharged V8</small></td><td>36.0 gal</td></tr>
+      <tr><td><a href="https://xr793.com/wp-content/uploads/2024/12/1988-Toyota-MR2.pdf#page=6">Toyota MR2 Supercharged</a><small>1988 (AW11), U.S. Toyota brochure specification page</small></td><td>10.8 gal</td></tr>
+      <tr><td><a href="https://hondanews.com/en-US/honda-automobiles/releases/release-9f9a8b5d2cfa6463d9dc60004c34c6cf-2003-honda-cr-v-specifications">Honda CR-V</a><small>2003 U.S. specification</small></td><td>15.3 gal</td></tr>
+    </tbody>
+  </table>
+  <p>Capacities are nominal U.S. gallons; check that the preset matches your model year and tank. Blending background: <a href="https://www.sunoco.com/fuel-facts/post/blending-fuels-to-get-the-right-mix">Sunoco blending guidance</a>.</p>
+</details>
+
+<footer><span>All quantities in U.S. gallons, octane in AKI</span><a href="/#group-tools">Back to Tools</a></footer>
+</main>
+
+<script>
+(() => {
+  'use strict';
+  // readsGauge: the car has only a fuel gauge, read as a percent of the tank.
+  const cars = Object.freeze({
+    gt3:{capacity:22.1,note:'2025, extended-range tank'},
+    civic:{capacity:12.4,note:'2025 U.S. specification (FL5)'},
+    raptor:{capacity:36,note:'2025 U.S. specification'},
+    crv:{capacity:15.3,note:'2003 model year, fuel gauge only',readsGauge:true},
+    mr2:{capacity:10.8,note:'1988, fuel gauge only',readsGauge:true}
+  });
+  const valid = {
+    range:v => v >= 0, mpg:v => v > 0, gauge:v => v >= 0 && v <= 100,
+    target:v => v > 0 && v <= 150, current:v => v > 0 && v <= 150, first:v => v > 0 && v <= 150, second:v => v > 0 && v <= 150
+  };
+  const octaneIds = ['target','current','first','second'];
+  const outputs = ['first-amount','second-amount','total','final','leg-existing','leg-first','leg-second'];
+  const subs = ['sub-v0','sub-fill','sub-v1','sub-v2','sub-low','sub-high'];
+  const $ = id => document.getElementById(id);
+  const put = (id,text) => { $(id).textContent = text; };
+  const typed = id => $(id).value.trim();
+  const fmt = n => n.toFixed(2);
+  const neg = n => n < 0 ? '−' + fmt(-n) : fmt(n);
+  const EPS = 1e-8;
+  let announcement;
+  function announce(text){ clearTimeout(announcement); announcement = setTimeout(() => put('live', text), 250); }
+  function setState(text, warn){ put('state', text); $('state').classList.toggle('warn', warn); }
+  function setGauge(capacity, existing, first, second){
+    [['bar-existing',existing],['bar-first',first],['bar-second',second]].forEach(([id,volume]) => {
+      $(id).style.width = capacity > 0 ? (100 * Math.max(0, volume) / capacity) + '%' : '0';
+    });
+  }
+
+  function render(){
+    const car = cars[$('vehicle').value];
+    // Clear old results first so an error never leaves a stale fill plan on screen.
+    outputs.forEach(id => put(id, '—'));
+    subs.forEach(id => { put(id, '—'); $(id).classList.remove('out'); });
+    $('alert').hidden = true;
+    setState('Check inputs', true);
+    put('plan-note', '');
+    setGauge(1, 0, 0, 0);
+    const fail = message => { put('alert', message); $('alert').hidden = false; announce(message); };
+    if(!car){ fail('Choose a vehicle.'); return; }
+
+    const readsGauge = Boolean(car.readsGauge);
+    $('range-inputs').hidden = readsGauge;
+    $('gauge-inputs').hidden = !readsGauge;
+    // Hidden inputs are disabled so they never take part in a calculation.
+    $('range').disabled = readsGauge;
+    $('mpg').disabled = readsGauge;
+    $('gauge').disabled = !readsGauge;
+    $('tex-v0-range').hidden = readsGauge;
+    $('tex-v0-gauge').hidden = !readsGauge;
+    put('conversion', readsGauge ? 'Read the needle as a percent: ¼ is 25, ½ is 50, ¾ is 75.' : 'Fuel left in the tank = range ÷ average MPG.');
+    put('vehicle-note', car.note);
+    put('capacity', car.capacity.toFixed(1) + ' U.S. gal');
+    put('first-grade', typed('first') || '—');
+    put('second-grade', typed('second') || '—');
+
+    // Only the inputs on screen for this car are read and validated.
+    const active = (readsGauge ? ['gauge'] : ['range','mpg']).concat(octaneIds);
+    Object.keys(valid).forEach(id => $(id).removeAttribute('aria-invalid'));
+    const v = {};
+    active.forEach(id => {
+      v[id] = typed(id) === '' ? NaN : Number(typed(id));
+      $(id).setAttribute('aria-invalid', String(!Number.isFinite(v[id]) || !valid[id](v[id])));
+    });
+    if(readsGauge && typed('gauge') === ''){
+      // A blank gauge field is a prompt, not a mistake.
+      $('gauge').setAttribute('aria-invalid', 'false');
+      setState('Waiting for gauge', true);
+      fail('Enter the fuel gauge reading as a percent to see your fill.');
+      return;
+    }
+    if(active.some(id => !Number.isFinite(v[id]))){ fail('Fill in every field with a number.'); return; }
+    if(readsGauge && !valid.gauge(v.gauge)){ fail('A fuel gauge reading runs from 0% (empty) to 100% (full).'); return; }
+    if(!readsGauge && (v.range < 0 || v.mpg <= 0)){ fail('Range must be zero or more, and fuel economy must be above zero.'); return; }
+    const {target, current, first, second} = v;
+    if(octaneIds.some(id => !valid[id](v[id]))){ fail('Enter octane ratings above 0 and up to 150, all in AKI.'); return; }
+
+    const capacity = car.capacity;
+    // Gauge cars: fuel left = reading as a fraction of the tank capacity.
+    const remaining = readsGauge ? v.gauge / 100 * capacity : v.range / v.mpg;
+    put('sub-v0', readsGauge
+      ? '= ' + typed('gauge') + ' ÷ 100 × ' + capacity.toFixed(1) + ' = ' + fmt(remaining) + '\u00a0gal'
+      : '= ' + typed('range') + ' ÷ ' + typed('mpg') + ' = ' + fmt(remaining) + '\u00a0gal');
+    if(remaining > capacity + EPS){
+      $('sub-v0').classList.add('out');
+      fail('That range and fuel economy imply ' + fmt(remaining) + ' gal, more than the ' + capacity.toFixed(1) + '-gal tank holds. Check both numbers.');
+      return;
+    }
+    const refill = Math.max(0, capacity - remaining);
+    put('conversion', readsGauge
+      ? typed('gauge') + '% of the ' + capacity.toFixed(1) + '-gal tank ≈ ' + fmt(remaining) + ' gal, so ' + fmt(refill) + ' gal to add.'
+      : typed('range') + ' mi ÷ ' + typed('mpg') + ' MPG ≈ ' + fmt(remaining) + ' gal already in the tank.');
+    put('sub-fill', '= ' + capacity.toFixed(1) + ' − ' + fmt(remaining) + ' = ' + fmt(refill) + '\u00a0gal');
+    put('leg-existing', fmt(remaining));
+    setGauge(capacity, remaining, 0, 0);
+
+    const low = (remaining * current + refill * Math.min(first, second)) / capacity;
+    const high = (remaining * current + refill * Math.max(first, second)) / capacity;
+    put('sub-low', '= ' + fmt(low) + '\u00a0AKI');
+    put('sub-high', '= ' + fmt(high) + '\u00a0AKI');
+
+    if(refill < EPS){
+      put('sub-v1', '= 0.00 gal, the tank is full');
+      put('sub-v2', '= 0.00 gal');
+      put('total', '0.00'); put('final', fmt(current));
+      if(Math.abs(current - target) > EPS){ setState('Tank full', true); fail('The tank is already full, so adding fuel can’t change its octane.'); return; }
+      put('first-amount', '0.00'); put('second-amount', '0.00');
+      setState('Already full', false);
+      put('plan-note', 'No fuel needed. What’s in the tank already matches your target.');
+      announce('Tank full at target. No fuel to add.');
+      return;
+    }
+
+    let a;
+    if(Math.abs(first - second) < EPS){
+      a = refill;
+      put('sub-v1', 'Equal grades: take all ' + fmt(refill) + ' gal from pump 1');
+    } else {
+      a = (target * capacity - current * remaining - second * refill) / (first - second);
+      put('sub-v1', '= (' + typed('target') + ' × ' + capacity.toFixed(1) + ' − ' + typed('current') + ' × ' + fmt(remaining) + ' − ' + typed('second') + ' × ' + fmt(refill) + ') ÷ (' + typed('first') + ' − ' + typed('second') + ') = ' + neg(a) + '\u00a0gal');
+    }
+    put('sub-v2', '= ' + fmt(refill) + ' − ' + neg(a) + ' = ' + neg(refill - a) + '\u00a0gal');
+
+    if(target < low - EPS || target > high + EPS){
+      setState('Out of reach', true);
+      ['sub-v1','sub-v2', target < low ? 'sub-low' : 'sub-high'].forEach(id => $(id).classList.add('out'));
+      fail('This refill can reach about ' + fmt(low) + ' to ' + fmt(high) + ' AKI for the whole tank. Change the target or the pump grades.');
+      return;
+    }
+    if(!Number.isFinite(a) || a < -EPS || a > refill + EPS){ fail('These grades can’t produce a valid full-tank blend. Check the grades and target.'); return; }
+
+    a = Math.max(0, Math.min(refill, a));
+    const b = refill - a;
+    const final = (current * remaining + first * a + second * b) / capacity;
+    put('first-amount', fmt(a)); put('second-amount', fmt(b));
+    put('leg-first', fmt(a)); put('leg-second', fmt(b));
+    put('total', fmt(refill)); put('final', fmt(final));
+    setState('Estimated fill', false);
+    setGauge(capacity, remaining, a, b);
+    put('plan-note', 'Based on ' + fmt(remaining) + ' gal already in your ' + capacity.toFixed(1) + '-gal tank. Follow the pump’s automatic shutoff.');
+    announce('Add ' + fmt(a) + ' gallons of ' + first + ' octane first, then ' + fmt(b) + ' gallons of ' + second + ' octane. Estimated final octane ' + fmt(final) + '.');
+  }
+
+  $('form').addEventListener('input', render);
+  $('vehicle').addEventListener('change', render);
+  $('form').addEventListener('submit', event => { event.preventDefault(); render(); });
+  $('form').addEventListener('reset', () => setTimeout(render, 0));
+  // Fresh loads and Reset defaults select the GT3 at 18.0 MPG and clear the gauge field.
+  $('form').reset(); render();
+})();
+</script>
+</body>
+</html>

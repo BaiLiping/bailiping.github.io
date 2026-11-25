@@ -1,0 +1,355 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <script>
+    // This lab is the Transmission lab tab of the 911 GT3 page. Opened on its own, it forwards to that tab.
+    if (window.top === window) location.replace('../porsche-911-gt3/#transmission-lab');
+    else document.documentElement.classList.add('embedded');
+  </script>
+  <title>911 Transmissions · Manual and PDK | Bai Liping</title>
+  <meta name="description" content="Watch the manual and PDK in a 911 GT3 shift. Follow the clutch pedal and gear stick, then look inside a solenoid valve as the PDK hands drive between clutches.">
+  <meta name="robots" content="noindex, indexifembedded">
+  <meta name="theme-color" content="#f7f5ef">
+  <base target="_top">
+  <link rel="icon" href="/favicon.ico">
+  <style>.embedded .lab-nav { display: none; }</style>
+  <link rel="preload" href="/assets/fonts/barlow-condensed-600-latin.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="./lab.css?v=a1d21ba20905">
+  <script type="module" src="./lab.js?v=a5c8b16091ec"></script>
+</head>
+<body>
+  <main id="transmission-lab">
+    <nav class="lab-nav" aria-label="Site">
+      <a href="/#group-random-thoughts">bailiping.com</a><span aria-hidden="true">/</span><span>Transmission lab</span>
+      <a class="sibling" href="/engine-lab/">Engine lab</a>
+    </nav>
+    <header class="lab-heading">
+      <div>
+        <p class="kicker">2025 911 GT3 · Type 992.2 · Europe</p>
+        <h1>911 transmissions</h1>
+      </div>
+    </header>
+
+    <section class="lab" aria-label="Synchronized transmission comparison">
+      <div class="transport interactive" inert>
+        <div class="drive-state"><strong id="shift-title">Upshift · 1st to 2nd</strong><span id="phase-name">In 1st gear</span></div>
+        <div class="view-options" role="group" aria-label="View both transmissions">
+          <label id="angle-control" hidden>Angle
+            <select id="view-angle" aria-controls="gearboxes">
+              <option value="selector">Selector side</option>
+              <option value="overhead">Overhead</option>
+              <option value="clutch">Clutch end</option>
+              <option value="custom" disabled hidden>Free orbit</option>
+            </select>
+          </label>
+          <button type="button" id="assembly-action" aria-controls="gearboxes" aria-pressed="false">Exploded view</button>
+        </div>
+        <button class="play" type="button" id="play" data-play><span class="play-icon" aria-hidden="true"></span><span class="play-label">Pause drive</span></button>
+      </div>
+
+      <div class="view-tools interactive">
+        <p id="view-help"><span id="assembly-hint" hidden>Assembling both transmissions. </span><span id="view-instructions">Drag either cutaway to turn both.</span></p>
+        <div id="camera-tools" role="group" aria-label="Cutaway controls" hidden>
+          <button type="button" id="skip-assembly" hidden>Skip assembly</button>
+          <button type="button" id="zoom-out" aria-label="Zoom out">−</button><button type="button" id="zoom-in" aria-label="Zoom in">+</button><button type="button" id="reset-view">Reset view</button>
+        </div>
+      </div>
+      <noscript><p>Both cutaways show first gear. Enable JavaScript to watch the shifting cycle.</p></noscript>
+
+      <div class="paired-stage" id="gearboxes">
+        <article class="specimen manual" data-side="manual" aria-labelledby="manual-title">
+          <header class="specimen-head">
+            <p class="specimen-type">Driver operated</p>
+            <h2 id="manual-title">Six-speed manual</h2>
+            <p class="spec-line">H-pattern stick <span>·</span> Clutch pedal <span>·</span> One drive clutch</p>
+          </header>
+          <div class="figure">
+            <div class="cutaway" role="group" aria-label="Manual transmission cutaway." tabindex="-1">
+              <picture>
+                <source media="(scripting: enabled) and (prefers-reduced-motion: no-preference)" srcset="./manual-exploded.webp?v=f20997c7e40b">
+                <img class="poster" src="./manual-cutaway.webp?v=866949de97e3" alt="Manual transmission components with a clutch pedal, gear stick, flywheel, clutch and gear train.">
+              </picture>
+            </div>
+          </div>
+          <dl class="readout">
+            <div><dt>Stick</dt><dd data-read="stick">1st gear</dd></div>
+            <div><dt>Clutch</dt><dd data-read="manualClutch">Clamped</dd></div>
+          </dl>
+          <p class="model-notes"><a class="factory-link" href="https://newsroom.porsche.com/dam/jcr:46cb0e24-ad5a-489c-a404-52c678071d03/pag-911-gt3-mt-en.pdf">Porsche data (PDF)</a></p>
+          <div class="model-diagrams">
+            <figure class="linkage-figure" id="clutch-linkage" aria-labelledby="linkage-title">
+              <h3 id="linkage-title">How the clutch pedal reaches the gearbox</h3>
+              <svg id="linkage-drawing" viewBox="0 0 480 284" role="img" aria-labelledby="section-title section-description" data-grip="clamped">
+                <title id="section-title">Side section of the manual clutch and its hydraulic pedal circuit</title>
+                <desc id="section-description">The pedal moves the master piston. A fluid line connects it to the release cylinder and bearing. The bearing acts on the spring, which controls how firmly the flywheel and pressure plate grip the disc. The disc hub fits the gearbox input shaft.</desc>
+                <defs>
+                  <pattern id="cut-metal" width="6" height="6" patternUnits="userSpaceOnUse"><path d="m-1 1 2 -2m-1 7 6 -6m-1 7 2 -2" stroke="#7f8c80" stroke-width=".85"/></pattern>
+                  <pattern id="disc-lining" width="4" height="4" patternUnits="userSpaceOnUse"><path d="m0 4 4 -4" stroke="#d5ae87" stroke-width="1.6"/></pattern>
+                </defs>
+                <g class="link-labels">
+                  <text x="12" y="23">Clutch pedal</text><text x="139" y="23">Master cylinder</text><text x="394" y="23" text-anchor="middle">Hydraulic line</text>
+                </g>
+                <g class="link-machine">
+                  <path class="light-metal" d="M44 34h33v10H56v8H44z"/>
+                  <path d="M112 44h75v23h-75z" class="chamber"/>
+                  <path d="M115 47h69v17h-69" fill="#f7f5ef"/>
+                  <path data-link-master-fluid class="fluid-fill" d="M132 48h50v15h-50z"/>
+                  <path data-link-rod d="M44 67 94 56h28" class="pushrod"/>
+                  <g data-link-pedal transform="rotate(0 61 43)">
+                    <path class="light-metal" d="m56 42 -18 28 -10 15 7 5 14 -17 17 -27z"/>
+                    <path class="dark-metal" d="m21 82 12 -6 8 15 -12 6z"/>
+                    <path class="pedal-ridges" d="m25 84 8 -4m-6 8 8 -4m-6 8 8 -4"/>
+                  </g>
+                  <circle cx="61" cy="43" r="5" class="dark-metal"/>
+                  <g data-link-master><path class="dark-metal" d="M123 46h9v19h-9z"/><path class="seal" d="M131 47v17"/></g>
+                  <path class="fluid-pipe-outer" d="M186 55h207q8 0 8 8v66q0 8 -8 8h-24q-8 0 -8 8v8"/>
+                  <path class="fluid-pipe" d="M186 55h207q8 0 8 8v66q0 8 -8 8h-24q-8 0 -8 8v8"/>
+                  <path class="fittings" d="M185 50v10m7 -10v10m164 87h10m-10 5h10"/>
+                  <text x="281" y="47" class="drawing-note" data-link-pressure>Pressure released</text>
+                  <!-- The flywheel and pressure plate turn with the engine. The thinner disc is splined to the input shaft. -->
+                  <path class="shaft-metal" d="M18 169h93v20H18z"/>
+                  <path class="light-metal" d="M102 130h17v-14h19v125h-19v-14h-17z"/>
+                  <path d="M105 132h15v-13h13v119h-13v-13h-15z" fill="url(#cut-metal)"/>
+                  <path class="shaft-metal" d="M141 174h307v10H141z"/>
+                  <path class="splines" d="M142 174h77m-77 5h77m-77 5h77"/>
+                  <g data-link-disc>
+                    <path class="disc-core" d="M140 130h4v38l9 4v14l-9 4v38h-4v-43l7 -4v-4l-7 -4z"/>
+                    <path class="lining" d="M138 128h8v29h-8zm0 73h8v29h-8z"/>
+                    <path fill="url(#disc-lining)" d="M138 128h8v29h-8zm0 73h8v29h-8z"/>
+                    <path class="hub" d="M138 169h29v5h-24v10h24v5h-29z"/>
+                  </g>
+                  <g data-link-plate>
+                    <path class="plate-metal" d="M146 124h14l6 10v18l-8 7h-12zm0 75h12l8 7v18l-6 10h-14z"/>
+                    <path d="M148 127h10l5 9v13l-6 7h-9zm0 75h9l6 7v13l-5 9h-10z" fill="url(#cut-metal)"/>
+                  </g>
+                  <path data-link-spring class="diaphragm" d="M159 139 194 145 257 162M159 219 194 213 257 196"/>
+                  <path class="pivot" d="m190 146 5 -8 5 8zm0 66 5 8 5 -8z"/>
+                  <path class="chamber" d="M304 152h69v17h-69zm0 37h69v17h-69z"/>
+                  <path data-link-release-fluid class="fluid-fill" d="M335 155h34v11h-34zm0 37h34v11h-34z"/>
+                  <g data-link-bearing>
+                    <path class="piston-sleeve" d="M267 157h68v9h-68zm0 35h68v9h-68z"/>
+                    <path class="seal" d="M334 155v11m0 26v11"/>
+                    <path class="dark-metal" d="M258 154h12v15h-12zm0 35h12v15h-12z"/>
+                    <path class="bearing-mark" d="M260 157l8 8m-8 28 8 8"/>
+                  </g>
+                  <g class="torque-stroke"><path d="M21 179h105v-36h15"/><path class="torque-out" d="M142 144v35h27m42 0h43m120 0h71"/></g>
+                </g>
+                <g class="link-leaders">
+                  <path d="M84 118h26l14 12"/><path data-link-plate-leader d="M183 110h-17l-10 17"/>
+                  <path d="M244 132h-17l-13 18M332 111h16l10 38"/>
+                  <path data-link-disc-leader d="M111 252h17l13 -24"/><path data-link-bearing-leader d="M212 252h39l12 -48"/><path d="M418 238v-46"/>
+                </g>
+                <g class="link-labels">
+                  <text x="14" y="123">Flywheel</text><text x="143" y="99">Pressure plate</text>
+                  <text x="226" y="125">Spring</text>
+                  <text x="344" y="103" text-anchor="middle">Release cylinder</text>
+                  <text x="14" y="258">Friction disc</text><text x="165" y="272">Release bearing</text>
+                  <text x="466" y="258" text-anchor="end">Input shaft</text>
+                </g>
+                <g class="shaft-ends"><text x="19" y="207">Engine</text><text x="453" y="164" text-anchor="end">Gearbox</text></g>
+              </svg>
+              <figcaption>
+                <div class="diagram-key"><span class="fluid-key">Hydraulic circuit</span><span class="torque-key">Torque connection</span><span>Clearances enlarged</span></div>
+                <div class="sources"><a href="https://valeoservice.cld.bz/Valeoscope-Clutch-Hydraulics-CSC-CMC-CRC-998123/1">Valeo · hydraulic actuation</a><a href="https://cdn.skfmediahub.skf.com/api/public/0901d196804e9e4b/pdf_preview_medium/0901d196804e9e4b_pdf_preview_medium.pdf">SKF · clutch cross-section (PDF)</a></div>
+              </figcaption>
+            </figure>
+
+            <figure class="linkage-figure" id="gear-stick-linkage" aria-labelledby="stick-title">
+              <h3 id="stick-title">How the gear stick selects a gear</h3>
+              <svg id="stick-drawing" viewBox="0 0 480 336" role="img" aria-labelledby="stick-figure-title stick-figure-desc" data-coupled="left" data-stage="engaged">
+                <title id="stick-figure-title">From the H-pattern gear stick to the synchronizer sleeve</title>
+                <desc id="stick-figure-desc">Moving sideways in neutral pulls or pushes the select cable to choose one of three rails. Moving the stick forward or back operates the shift cable. The selected rail moves a fork and sleeve. A friction ring matches speeds before the sleeve engages the gear’s dog teeth and locks it to the shaft.</desc>
+                <defs>
+                  <g id="stick-rail">
+                    <rect x="-40" y="-3" width="78" height="6" rx="3"/>
+                    <path d="M-12 -4v-5h6v5h12v-5h6v7h-24z"/>
+                  </g>
+                  <!-- Axial section of a free-running gear, including its cone and engagement teeth. -->
+                  <g id="stick-gear">
+                    <path class="gear-wheel" d="M-18 -48h34v12h-4v15h9v10h-42v-10h7v-15h-4zm0 96h34V36h-4V21h9V11h-42v10h7v15h-4z"/>
+                    <path class="gear-hatching" d="m-16 -37 7 -10m0 10 7 -10m0 10 7 -10m0 10 7 -10m-28 93 7 -10m0 10 7 -10m0 10 7 -10m0 10 7 -10"/>
+                    <path class="dog-teeth" d="M12 -31h21l5 3 -5 3H12zm0 56h21l5 3 -5 3H12z"/>
+                    <path class="gear-wheel" d="M12 -24l33 8v4l-33 -5zm0 48 33 -8v-4l-33 5z"/>
+                  </g>
+                  <g id="stick-ring"><path d="m0 -24 7 2v6l-7 -2zm0 48 7 -2v-6l-7 2z"/></g>
+                </defs>
+                <g class="link-labels"><text x="15" y="23">H-pattern stick</text><text x="346" y="23">Selector rails</text></g>
+                <rect class="gate-plate" x="12" y="30" width="111" height="105" rx="10"/>
+                <path class="gate-slot" d="M35 58v48m32 -48v48m32 -48v48M35 82h64"/>
+                <g class="gate-numbers"><text x="35" y="49">1</text><text x="67" y="49">3</text><text x="99" y="49">5</text><text x="35" y="128">2</text><text x="67" y="128">4</text><text x="99" y="128">6</text></g>
+                <g id="stick-knob" transform="translate(35 58)"><circle r="8"/><circle r="3"/></g>
+                <g class="link-labels"><text class="select-label" x="152" y="46">Select cable</text><text class="shift-label" x="152" y="122">Shift cable</text></g>
+                <g class="select-cable">
+                  <path class="cable-core" d="M118 68L129 60H275"/>
+                  <path class="cable-outer" d="M158 60h103"/><path class="cable-bore" d="M158 60h103"/>
+                  <path class="cable-fittings" d="M158 56v8m103 -8v8"/>
+                  <g id="select-pins" transform="translate(-9 0)"><circle cx="138" cy="60" r="4"/><circle cx="284" cy="60" r="4"/></g>
+                </g>
+                <g class="shift-cable">
+                  <path class="cable-core" d="M118 90L129 98H275"/>
+                  <path class="cable-outer" d="M158 98h103"/><path class="cable-bore" d="M158 98h103"/>
+                  <path class="cable-fittings" d="M158 94v8m103 -8v8"/>
+                  <g id="shift-pins" transform="translate(-9 0)"><circle cx="138" cy="98" r="4"/><circle cx="284" cy="98" r="4"/></g>
+                </g>
+                <g class="selector-arms"><path id="select-arm" class="select-label" d="M275 60 307 48 331 48"/><path id="shift-arm" class="shift-label" d="M275 98 307 79 331 48"/></g>
+                <g class="rail-pair" data-rail="0" data-active><use href="#stick-rail" transform="translate(355 51)"/><text x="437" y="55">1–2</text></g>
+                <g class="rail-pair" data-rail="1"><use href="#stick-rail" transform="translate(367 82)"/><text x="437" y="86">3–4</text></g>
+                <g class="rail-pair" data-rail="2"><use href="#stick-rail" transform="translate(367 113)"/><text x="437" y="117">5–6</text></g>
+                <path id="selector-finger" d="M331 48l9 -8h15v8"/>
+                <path class="stick-divider" d="M14 146h452"/>
+                <g class="link-labels"><text x="15" y="168" id="stick-pair">1st and 2nd on one shaft</text><text x="278" y="168">Selector fork</text></g>
+                <path class="link-leaders" id="fork-leader" d="M272 164h-15l-40 19"/>
+                <g transform="translate(0 239)">
+                  <rect class="stick-shaft" x="26" y="-8" width="428" height="16" rx="2"/>
+                  <path class="shaft-detail" d="M31 -3h418M31 3h418"/>
+                  <use class="wheel-left" href="#stick-gear" transform="translate(164)"/>
+                  <use class="wheel-right" href="#stick-gear" transform="translate(316) scale(-1 1)"/>
+                  <path class="stick-hub" d="M205 -22h70v7l-10 3v4h-50v-4l-10 -3zm0 44h70v-7l-10 -3v-4h-50v4l-10 3z"/>
+                  <use class="ring-left" href="#stick-ring" transform="translate(200)"/>
+                  <use class="ring-right" href="#stick-ring" transform="translate(280) scale(-1 1)"/>
+                  <g id="fork-and-sleeve" transform="translate(-29)">
+                    <rect class="fork-rail" x="140" y="-57" width="191" height="5" rx="2"/>
+                    <path class="stick-sleeve" d="M218 -32h16v3h12v-3h16v11h-44zm0 64h16v-3h12v3h16V21h-44z"/>
+                    <path class="sleeve-splines" d="M219 -24h42m-42 48h42"/>
+                    <path class="stick-fork" d="M200 -59h40l5 5v24h-9v-20h-36z"/>
+                    <circle class="fork-pin" cx="205" cy="-54.5" r="2.3"/>
+                  </g>
+                </g>
+                <g class="link-leaders"><path d="M104 204h24l18 6M377 204h-25l-18 6M86 266h24l2 -19"/>
+                  <path d="M102 306h51l41 -38M232 306v-17l9 -34M356 306h-64l-16 -47"/>
+                  <path id="sleeve-leader" d="M382 276h-27l-124 -9"/>
+                </g>
+                <g class="link-labels">
+                  <text x="24" y="208" id="stick-left-gear">1st gear</text><text x="456" y="208" text-anchor="end" id="stick-right-gear">2nd gear</text>
+                  <text x="24" y="272">Shaft</text><text x="456" y="282" text-anchor="end">Sleeve</text>
+                  <text x="66" y="329">Dog teeth</text><text x="195" y="329">Splined hub</text><text x="319" y="329">Synchronizer ring</text>
+                </g>
+              </svg>
+              <figcaption>
+                <div class="diagram-key"><span class="fluid-key">Side to side</span><span class="torque-key">Forward and back</span><span>Travel enlarged</span></div>
+                <div class="sources"><a href="https://porsche.factoryautopartsdirect.com/parts/porsche-cable-9gt711007a">GT3 shift cable assembly</a><a href="https://odr.chalmers.se/server/api/core/bitstreams/a5004bdf-2ee6-46bb-aad1-684b4df3379f/content">Chalmers · how synchronizers work (PDF)</a></div>
+              </figcaption>
+            </figure>
+          </div>
+        </article>
+
+        <article class="specimen pdk" data-side="pdk" aria-labelledby="pdk-title">
+          <header class="specimen-head">
+            <p class="specimen-type">Computer controlled · Drive</p>
+            <h2 id="pdk-title">Seven-speed PDK</h2>
+            <p class="spec-line"><span lang="de">Porsche Doppelkupplung</span> <span>·</span> Two wet clutches <span>·</span> Two input shafts</p>
+          </header>
+          <div class="figure">
+            <div class="cutaway" role="group" aria-label="PDK transmission cutaway." tabindex="-1">
+              <picture>
+                <source media="(scripting: enabled) and (prefers-reduced-motion: no-preference)" srcset="./pdk-exploded.webp?v=089f3c3e68e6">
+                <img class="poster" src="./pdk-cutaway.webp?v=dd9d1bb7191d" alt="PDK cutaway showing the control unit wired to the solenoid bank and two pressure lines leading to the twin-clutch housing.">
+              </picture>
+            </div>
+          </div>
+          <div class="readout" id="valve-circuits" role="group" aria-label="Clutch shown in the solenoid diagram">
+            <label><input type="radio" name="valve-circuit" value="K1" aria-controls="solenoid-drawing" checked><span>K1 · odd</span><strong data-read="odd">1st · coupled</strong></label>
+            <label><input type="radio" name="valve-circuit" value="K2" aria-controls="solenoid-drawing"><span>K2 · even</span><strong data-read="even">2nd · ready</strong></label>
+          </div>
+          <div class="model-notes">
+            <div class="control-line"><span>Controller · D</span><span data-read="command">Preselect 2nd on K2</span></div>
+            <p class="sensor-state" data-read="sensors">Accelerating · road speed rising</p>
+            <a class="factory-link" href="https://newsroom.porsche.com/dam/jcr:ca1882c7-1588-4a2e-995c-fe19ef1281fc/pag-911-gt3-pdk-en.pdf">Porsche data (PDF)</a>
+          </div>
+          <div class="model-diagrams">
+            <figure class="linkage-figure" id="inside-solenoid" aria-labelledby="solenoid-title">
+              <h3 id="solenoid-title">Inside the PDK solenoid bank</h3>
+              <p>The two silver lines above show the pressure feeds for K1 and K2. Their routing is schematic. Inside each clutch-pressure valve, the controller varies the coil current. The magnetic field pulls an armature that moves the spool against a spring, metering oil to the clutch piston. With the coil off, oil drains back to the sump.</p>
+              <svg id="solenoid-drawing" viewBox="0 0 480 310" role="img" aria-labelledby="valve-title valve-desc" data-state="hold">
+                <title id="valve-title">Clutch pressure solenoid in longitudinal section</title>
+                <desc id="valve-desc">Two electrical terminals feed the fixed coil around the moving armature. A pin links the armature to the spool. Spool travel connects the clutch to the pump or the sump. The shaded oil around the narrow middle of the spool also feeds the pressure feedback passage to the spring chamber.</desc>
+                <defs>
+                  <pattern id="valve-winding" width="7" height="12" patternUnits="userSpaceOnUse"><path d="M1 14 5 -2" stroke="#763f2d" stroke-width="2"/></pattern>
+                  <pattern id="valve-section" width="7" height="7" patternUnits="userSpaceOnUse"><path d="M-1 1 1 -1m-1 8 7 -7m-1 8 3 -3" stroke="#929e92" stroke-width="1"/></pattern>
+                  <path id="valve-housing" d="M169 73h293v21H169zM169 126h63v27h-63zm77 0h38v27h-38zm52 0h33v27h-33zm47 0h117v27H345zM455 94h7v32h-7z"/>
+                </defs>
+                <!-- Fixed winding and pole piece surround the armature on the left. -->
+                <g class="valve-shell">
+                  <path d="M20 60h124v9H31v82h113v9H20z"/>
+                  <rect x="33" y="90" width="136" height="40" rx="3" class="valve-bore"/>
+                  <path d="M131 75h38v30h-32zm6 40h32v30h-38z"/>
+                  <path class="valve-coil" d="M33 67h98v24H33zm0 63h98v24H33z"/>
+                  <path fill="url(#valve-winding)" stroke="none" d="M34 68h96v22H34zm0 63h96v22H34z"/>
+                  <g>
+                    <title>Two-pin connector to the PDK controller</title>
+                    <rect x="2" y="90" width="15" height="39" rx="3"/>
+                    <path class="valve-wire" d="M35 74H9v24m26 48H9v-25"/>
+                    <circle class="valve-terminal" cx="9" cy="98" r="3"/>
+                    <circle class="valve-terminal" cx="9" cy="121" r="3"/>
+                  </g>
+                </g>
+                <!-- Work port A is between T on the left and P on the right. Positive
+                     spool travel exposes P to the annular groove and covers T. -->
+                <rect x="169" y="93" width="286" height="34" class="valve-bore"/>
+                <!-- The spool covers the oil behind its right land as it travels. -->
+                <rect x="360" y="94" width="95" height="32" class="valve-oil"/>
+                <use href="#valve-housing" class="valve-shell"/>
+                <use href="#valve-housing" fill="url(#valve-section)"/>
+                <path class="valve-feedback" d="M291 97V83h153v14"/>
+                <g class="valve-ports">
+                  <path d="M239 126v63m99-63v52"/>
+                  <path class="valve-work-line" d="M291 125v128h57"/>
+                </g>
+                <path class="valve-tank" d="M226 184v9h26v-9"/>
+                <circle class="valve-pump" cx="338" cy="189" r="11"/><path d="m338 180-5 9h10z" fill="#42665b"/>
+                <g class="valve-moving">
+                  <!-- Both bands beside the spool stem are the same annular oil space. -->
+                  <rect x="250" y="94" width="78" height="32" class="valve-oil"/>
+                  <path class="valve-rod" d="M105 106h94v8h-94z"/>
+                  <path class="valve-armature" d="M59 97h46l5 5v16l-5 5H59l-5-5v-16z"/>
+                  <path class="valve-spool" d="M194 94h56v11h78V94h54v32h-54v-11h-78v11h-56z"/>
+                  <path class="valve-grooves" d="M201 97v26m5-26v26m164-26v26m5-26v26"/>
+                </g>
+                <path class="valve-spring" d="M382 110h5l5-9 8 18 7-18 8 18 7-18 8 18 7-18 7 9h11"/>
+                <g class="valve-flow valve-feed">
+                  <path d="M338 178v-57h-47v132h57"/>
+                  <path class="valve-arrows" d="m334 166 4-7 4 7m-46 43-5 8-5-8m48 40 7 4-7 4"/>
+                </g>
+                <g class="valve-flow valve-drain">
+                  <path d="M348 253h-57V121h-52v68"/>
+                  <path class="valve-arrows" d="m311 249-7 4 7 4m-25-48 5-8 5 8m-61-38 4 7 4-7"/>
+                </g>
+                <g class="link-leaders"><path d="M53 33v17l10 22M144 33v13l-60 56M256 33v20l-35 45M419 33v26l13 43M335 65v18"/></g>
+                <g class="link-labels">
+                  <text x="52" y="25" text-anchor="middle">Coil</text><text x="144" y="25" text-anchor="middle">Iron armature</text>
+                  <text x="256" y="25" text-anchor="middle">Valve spool</text><text x="419" y="25" text-anchor="middle">Return spring</text>
+                  <text x="335" y="59" text-anchor="middle">Pressure feedback</text>
+                  <text x="239" y="215" text-anchor="middle">Sump</text><text x="338" y="215" text-anchor="middle">Oil pump</text>
+                </g>
+                <!-- A wet clutch takes up clearance before its plates carry torque. -->
+                <path class="valve-shell" d="M342 229h120v48H342v-20h5v15h109v-38H347v15h-5z"/>
+                <rect class="valve-chamber" x="347" y="235" width="48" height="36"/>
+                <rect class="valve-piston" x="395" y="235" width="13" height="36" rx="1"/>
+                <g class="valve-plates">
+                  <path style="--intervals:4" d="M408 232h10v37h-10z"/>
+                  <path style="--intervals:3" d="M418 237h10v36h-10z"/>
+                  <path style="--intervals:2" d="M428 232h10v37h-10z"/>
+                  <path style="--intervals:1" d="M438 237h10v36h-10z"/>
+                  <path d="M448 232h9v37h-9z"/>
+                </g>
+                <g class="link-leaders"><path class="piston-leader" d="M365 288h13l23-20"/><path d="M439 288v-16"/></g>
+                <g class="link-labels"><text x="358" y="304" text-anchor="end">Clutch piston</text><text x="468" y="304" text-anchor="end">Friction plates</text></g>
+                <g class="valve-readings">
+                  <text x="16" y="190">Coil current</text><text id="valve-current" x="16" y="220">Steady</text>
+                  <text x="16" y="247">Clutch pressure</text><text id="valve-pressure" x="16" y="277">Held</text>
+                </g>
+              </svg>
+              <figcaption>
+                <div class="diagram-key"><strong id="valve-context">K1 · 1st gear</strong><span>Representative normally-low valve</span><span>Travel enlarged</span></div>
+                <div class="sources"><a href="https://www.hydraforce.com/globalassets/forms/proportional-manual.pdf#page=57">HydraForce · inside a pressure-control valve (PDF)</a><a href="https://www.borgwarner.com/technologies/transmission-technologies">BorgWarner · transmission solenoids</a><a href="https://www.porsche.com/stories/innovation/what-is-pdk/">Porsche · how PDK shifts</a></div>
+              </figcaption>
+            </figure>
+          </div>
+        </article>
+      </div>
+    </section>
+  </main>
+</body>
+</html>

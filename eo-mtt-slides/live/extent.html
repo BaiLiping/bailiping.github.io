@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light">
+  <meta name="robots" content="noindex">
+  <title>Extended-target tracking: learn motion and extent | Bai Liping</title>
+  <meta name="description" content="Track a moving extended object from noisy detections across its area. A Gaussian–inverse-Wishart random-matrix filter estimates its position, velocity, size, and orientation.">
+  <link rel="stylesheet" href="extent.css?v=20261004-rmm">
+  <script>if (new URLSearchParams(location.search).has('embed')) document.documentElement.classList.add('embedded');</script>
+  <script src="extent-model.js?v=20261004-rmm" defer></script>
+  <script src="extent-view.js?v=20261004-rmm" defer></script>
+  <script src="extent.js?v=20261004-rmm" defer></script>
+  <script src="../../assets/bento-inline-frame.js" defer></script>
+</head>
+<body data-bento-live-app>
+  <main class="extent-lab">
+    <aside class="controls" aria-label="Simulation controls">
+      <p class="eyebrow">SIMULATED EXTENDED TARGET</p>
+      <h1>Learn motion and shape</h1>
+      <p class="intro">Change the object and sensor. The tracker learns motion and shape from noisy detections.</p>
+      <div class="control-stack">
+        <div class="control extent-control"><div class="control-head"><label for="target-length">Target extent · length</label><output id="target-length-out" for="target-length">10 m</output></div><input id="target-length" type="range" min="6" max="16" step="0.5" value="10"></div>
+        <div class="control extent-control"><div class="control-head"><label for="target-width">Target extent · width</label><output id="target-width-out" for="target-width">4 m</output></div><input id="target-width" type="range" min="1.5" max="5.5" step="0.25" value="4"></div>
+        <div class="control"><div class="control-head"><label for="target-angle">Object orientation</label><output id="target-angle-out" for="target-angle">35°</output></div><input id="target-angle" type="range" min="0" max="170" step="5" value="35"></div>
+        <div class="control"><div class="control-head"><label for="sensor-noise">Sensor noise σ</label><output id="sensor-noise-out" for="sensor-noise">0.35 m</output></div><input id="sensor-noise" type="range" min="0.05" max="1.2" step="0.05" value="0.35"></div>
+        <div class="control"><div class="control-head"><label for="return-count">Detections per scan</label><output id="return-count-out" for="return-count">20</output></div><input id="return-count" type="range" min="4" max="40" step="1" value="20"></div>
+      </div>
+      <div class="actions"><button id="play" type="button" aria-pressed="false">Play</button><button id="step" type="button">Next scan</button><button id="reset" type="button">Reset</button></div>
+      <div class="timeline"><div class="control-head"><label for="scan-index">Scan</label><output id="scan-index-out" for="scan-index">1 / 40</output></div><input id="scan-index" type="range" min="1" max="40" step="1" value="1"></div>
+      <div class="toggles"><label><input id="show-truth" type="checkbox" checked> Truth</label><label><input id="show-sources" type="checkbox"> Sources</label><label><input id="show-uncertainty" type="checkbox" checked> Center 95%</label></div>
+      <details><summary>Model &amp; source</summary><p>One moving ellipse, with independent source points uniform over its area and additive Gaussian sensor noise. The tracker starts with the same circular shape prior for every slider setting.</p><p>The Gaussian–inverse-Wishart random-matrix filter estimates position, velocity, and the extent matrix from each measurement set. It approximates the uniform source density by a Gaussian with covariance X/4. Shape is inferred from the cloud scatter, with sensor-noise correction.</p><p>Single object, known association, fixed count per scan. This simulation does not perform multi-object association. Sliders replay the same random draws under the new settings.</p><p><a href="https://arxiv.org/abs/1604.00970" target="_top">Granström, Baum &amp; Reuter: Eq. (14), Tables IV &amp; IX</a>, describing the Feldmann et al. update and prediction. Symmetric matrix square roots are used here.</p></details>
+      <a class="back-link" href="../#/2" target="_top">← Back to the slides</a>
+    </aside>
+    <section class="stage" aria-label="Extended-object tracking results">
+      <header class="stage-bar"><strong>RANDOM-MATRIX FILTER · POSITION + EXTENT</strong><output id="scan-badge">SCAN 1 / 40</output></header>
+      <div class="workbench">
+        <div class="scene" id="scene"></div>
+        <aside class="metrics" aria-label="Estimated state">
+          <div class="metric accent"><span class="metric-label">Extent · inferred from detections</span><table><thead><tr><th scope="col"></th><th scope="col">True</th><th scope="col">Estimate</th></tr></thead><tbody><tr><th scope="row">Length</th><td id="true-length">—</td><td id="estimated-length">—</td></tr><tr><th scope="row">Width</th><td id="true-width">—</td><td id="estimated-width">—</td></tr><tr><th scope="row">Angle</th><td id="true-angle">—</td><td id="estimated-angle">—</td></tr></tbody></table></div>
+          <div class="metric"><span class="metric-label">Position estimate</span><output id="position-estimate">—</output><p id="center-error">—</p></div>
+          <div class="metric"><span class="metric-label">Velocity estimate</span><output id="velocity-estimate">—</output><p>Constant-velocity prediction</p></div>
+          <div class="metric"><span class="metric-label">Measurement set</span><output id="measurement-count">—</output><p>Sources across the body<br>+ sensor noise</p></div>
+        </aside>
+      </div>
+      <p class="takeaway" id="takeaway" aria-live="polite">The centroid updates motion; the cloud scatter updates the target's size and orientation.</p>
+      <p class="scope">Extent outlines describe the body. The dotted 95% ellipse describes uncertainty about its center. One target; known association.</p>
+    </section>
+  </main>
+  <noscript><p class="noscript">The tracker estimates motion and extent from repeated sets of noisy detections. Read the equations and static example on slide 3, or enable JavaScript to run the simulation.</p></noscript>
+</body>
+</html>

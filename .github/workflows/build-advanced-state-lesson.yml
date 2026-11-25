@@ -1,0 +1,88 @@
+name: Build and validate advanced-state lesson
+
+on:
+  push:
+    branches:
+      - improve/advanced-state-lesson
+    paths:
+      - advanced-state-representations/**
+      - .github/workflows/build-advanced-state-lesson.yml
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+defaults:
+  run:
+    shell: bash
+
+concurrency:
+  group: advanced-state-lesson-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 18
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.ref_name }}
+          fetch-depth: 1
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Build canonical pages and check all numerical models
+        run: |
+          mkdir -p asr-qa
+          node --check advanced-state-representations/lesson-model.js
+          node --check advanced-state-representations/lesson-figures.js
+          node --check advanced-state-representations/live/lesson.js
+          node advanced-state-representations/build.mjs
+          node --test advanced-state-representations/tests/lesson-math.test.cjs | tee asr-qa/math-tests.txt
+          node advanced-state-representations/test-model.cjs | tee asr-qa/legacy-tests.txt
+          git diff --check
+      - name: Install isolated browser-test dependencies
+        run: |
+          npm install --prefix /tmp/asr-browser --no-save playwright@1.55.0
+          /tmp/asr-browser/node_modules/.bin/playwright install --with-deps chromium
+          curl -fL --retry 3 https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/tex-svg-full.js -o /tmp/asr-mathjax.js
+      - name: Check slides, controls, math, focus, print, and mobile layouts
+        env:
+          NODE_PATH: /tmp/asr-browser/node_modules
+          MATHJAX_BUNDLE: /tmp/asr-mathjax.js
+        run: node advanced-state-representations/tests/lesson-browser.cjs
+      - name: Verify deterministic rebuilding
+        run: |
+          sha256sum advanced-state-representations/index.html advanced-state-representations/study.html advanced-state-representations/figures/*.svg > /tmp/asr-first.sha
+          node advanced-state-representations/build.mjs
+          sha256sum advanced-state-representations/index.html advanced-state-representations/study.html advanced-state-representations/figures/*.svg > /tmp/asr-second.sha
+          cmp /tmp/asr-first.sha /tmp/asr-second.sha
+          git diff --check
+      - name: Commit only validated generated output
+        env:
+          TARGET_BRANCH: ${{ github.ref_name }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add advanced-state-representations/index.html advanced-state-representations/study.html advanced-state-representations/figures
+          if ! git diff --cached --quiet; then
+            git commit -m "Build validated advanced-state lesson, seven labs, and study notes"
+            git push origin HEAD:"$TARGET_BRANCH"
+          fi
+          git log -1 --format='%H %s'
+      - name: Package the scoped browser preview for QA
+        if: always()
+        run: |
+          mkdir -p asr-qa/site/assets
+          cp -R advanced-state-representations asr-qa/site/
+          cp assets/bento-inline-* assets/mathjax-dynamic.js asr-qa/site/assets/
+          if [ -f /tmp/asr-mathjax.js ]; then cp /tmp/asr-mathjax.js asr-qa/site/mathjax.js; fi
+      - name: Retain numerical results and browser screenshots
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: advanced-state-lesson-qa
+          path: asr-qa/
+          if-no-files-found: warn
+          retention-days: 7

@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <script>
+    // This lab is the Engine lab tab of the 911 GT3 page. Opened on its own, it forwards to that tab.
+    if (window.top === window) location.replace('../porsche-911-gt3/#engine-lab');
+    else document.documentElement.classList.add('embedded');
+  </script>
+  <title>911 Engine Comparison | Bai Liping</title>
+  <meta name="description" content="Explore the 1978 911 Turbo 3.3 and naturally aspirated 911 SC 3.0 side by side in 3D. Compare their intake, exhaust and exploded views.">
+  <meta name="robots" content="noindex, indexifembedded">
+  <meta name="theme-color" content="#f7f5ef">
+  <base target="_top">
+  <link rel="icon" href="/favicon.ico">
+  <style>.embedded .lab-nav { display: none; }</style>
+  <link rel="preload" href="/assets/fonts/ibm-plex-mono-400-latin.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="./comparison.css?v=e816bcea50">
+  <noscript><style>#engine-comparison :is(.mode-strip, .view-tools, .pair-status, [data-compare-canvas], .keyboard-help) { display: none; }</style></noscript>
+  <script type="module" src="./entry.js?v=e816bcea50"></script>
+</head>
+<body>
+  <main id="engine-comparison">
+    <nav class="lab-nav" aria-label="Site">
+      <a href="/#group-random-thoughts">bailiping.com</a><span aria-hidden="true">/</span>Engine lab
+      <a href="/transmission-lab/" style="margin-inline-start: auto">Transmission lab</a>
+    </nav>
+    <header class="lab-heading">
+      <div>
+        <p class="lab-kicker">1978 · European specification</p>
+        <h1>911 engines</h1>
+      </div>
+      <div class="mode-strip" inert role="group" aria-label="Compare both engines">
+        <button type="button" data-mode="assembled" aria-pressed="true">Assembled</button>
+        <button type="button" data-mode="gas" aria-pressed="false">Gas flow</button>
+        <button type="button" data-mode="intake" aria-pressed="false">Intake</button>
+        <button type="button" data-mode="exhaust" aria-pressed="false">Exhaust</button>
+        <button type="button" data-mode="cutaway" aria-pressed="false">Cutaway</button>
+        <button type="button" data-mode="exploded" aria-pressed="false">Exploded</button>
+      </div>
+    </header>
+    <ul class="gas-key" aria-label="Gas flow colours">
+      <li data-kind="ambient">Fresh intake air</li>
+      <li data-kind="boost">Hot compressed air</li>
+      <li data-kind="charge">Cooled charge air</li>
+      <li data-kind="exhaust">Cylinder exhaust</li>
+      <li data-kind="exhaust_out">Outlet exhaust</li>
+      <li data-kind="wastegate">Wastegate bypass</li>
+      <li data-kind="cooling">Fan cooling air</li>
+    </ul>
+    <div class="paired-stage">
+      <canvas data-compare-canvas tabindex="0" aria-label="Linked 3D views of the 911 Turbo and 911 SC engines" aria-describedby="pair-instructions"></canvas>
+      <article class="specimen turbo-specimen" aria-labelledby="turbo-title">
+        <header>
+          <p class="induction-label">Turbocharged</p>
+          <h2 id="turbo-title">911 Turbo 3.3</h2>
+          <p class="spec-line">Type 930/60 <span>·</span> 3,299 cm³ <span>·</span> 300 PS</p>
+        </header>
+        <div class="model-frame" data-engine="turbo">
+          <picture>
+            <source media="(scripting: enabled) and (prefers-reduced-motion: no-preference)" srcset="./preview-turbo-exploded.webp?v=e816bcea50">
+            <img loading="lazy" class="model-preview" src="./preview-turbo.webp?v=e816bcea50" alt="Turbo 3.3 viewed from the rear quarter, with the intercooler on top and turbocharger low by the exhaust">
+          </picture>
+          <output data-part="turbo" aria-label="Selected Turbo part"></output>
+        </div>
+        <p class="engine-note" data-note="turbo">Look for the broad, finned intercooler on top. Its charge pipe leads down to the turbocharger beside the exhaust.</p>
+      </article>
+      <article class="specimen sc-specimen" aria-labelledby="sc-title">
+        <header>
+          <p class="induction-label">Naturally aspirated</p>
+          <h2 id="sc-title">911 SC 3.0</h2>
+          <p class="spec-line">Type 930/03 <span>·</span> 2,994 cm³ <span>·</span> 180 PS</p>
+        </header>
+        <div class="model-frame" data-engine="sc">
+          <picture>
+            <source media="(scripting: enabled) and (prefers-reduced-motion: no-preference)" srcset="./preview-sc-exploded.webp?v=e816bcea50">
+            <img loading="lazy" class="model-preview" src="./preview-sc.webp?v=e816bcea50" alt="911 SC 3.0 from the same angle, showing the central air cleaner, curved runners and transverse silencer">
+          </picture>
+          <output data-part="sc" aria-label="Selected SC part"></output>
+        </div>
+        <p class="engine-note" data-note="sc">Look for the central airbox and six curved intake runners. The pistons draw fresh air through these runners into the cylinders.</p>
+      </article>
+      <p class="pair-status" data-compare-status role="status">Loading the two engines…</p>
+    </div>
+    <div class="view-tools">
+      <p id="pair-instructions"><span class="opening-hint">Assembling both engines. </span>Drag either engine to rotate both. Scroll or pinch to zoom. Select a part to identify it.</p>
+      <div class="camera-tools" inert role="group" aria-label="Model controls">
+        <button type="button" data-action="run" aria-pressed="false">Run engines</button>
+        <button type="button" data-action="detach" disabled>Move selected part</button>
+        <button type="button" data-action="zoom-out" aria-label="Zoom out">−</button>
+        <button type="button" data-action="zoom-in" aria-label="Zoom in">+</button>
+        <button type="button" data-action="reset">Reset view</button>
+      </div>
+    </div>
+    <details class="model-notes">
+      <summary>Model notes &amp; sources</summary>
+      <p>These unofficial reconstructions show two air-cooled flat-sixes sold in Europe for the 1978 model year. The views share a scale and camera angle. External castings, pipe routing and shared internal parts are simplified. Power figures are Porsche’s factory ratings in metric horsepower (PS).</p>
+      <p class="keyboard-help">For keyboard rotation, focus the model and use the arrow keys. Use + or − to zoom and 0 to reset. In Assembled or Cutaway, select a part and choose Move selected part to pull it out. Double-clicking the part does the same.</p>
+      <p class="source-links"><a href="https://www.porsche.com/usa/accessoriesandservice/classic/models/911-g/911-sc/">Porsche Classic · 911 SC</a><a href="https://newsroom.porsche.com/en/press-kits/50-years-porsche-turbo/The-911-Turbo-generations.html">Porsche Newsroom · 911 Turbo</a><a href="https://porschecarshistory.com/wp-content/old/Techspec/03/911-all-78-81.pdf">Factory technical data · 1978–81 (PDF)</a></p>
+    </details>
+    <noscript><p>Enable JavaScript to rotate the 3D models and inspect their parts.</p></noscript>
+  </main>
+</body>
+</html>

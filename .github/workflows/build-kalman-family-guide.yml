@@ -1,0 +1,78 @@
+name: Build and validate Kalman derivation group guide
+
+on:
+  push:
+    branches:
+      - improve/kalman-derivation-groups
+    paths:
+      - kalman-filter-derivations/**
+      - scripts/install-kalman-family-guide.mjs
+      - .github/workflows/build-kalman-family-guide.yml
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: kalman-family-guide-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.ref_name }}
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - name: Integrate summaries and demonstrations
+        run: node scripts/install-kalman-family-guide.mjs
+      - name: Validate syntax and rebuild canonical deck
+        run: |
+          node --check kalman-filter-derivations/family-guide.mjs
+          node --check kalman-filter-derivations/live/families.js
+          node kalman-filter-derivations/build-bento.mjs
+      - name: Check mathematics and preserve previous audit tests
+        run: |
+          node --test kalman-filter-derivations/tests/family-guide.test.cjs
+          node --test tests/math-audit.test.cjs
+          git diff --check
+      - name: Install browser test dependencies outside the repository
+        run: |
+          npm install --prefix /tmp/kalman-browser --no-save playwright@1.55.0
+          /tmp/kalman-browser/node_modules/.bin/playwright install --with-deps chromium
+      - name: Exercise controls, math rendering, navigation and embedded labs
+        env:
+          NODE_PATH: /tmp/kalman-browser/node_modules
+        run: node kalman-filter-derivations/tests/browser-smoke.cjs
+      - name: Verify deterministic rebuild
+        run: |
+          git diff --binary > /tmp/kalman-first.diff
+          node scripts/install-kalman-family-guide.mjs
+          node kalman-filter-derivations/build-bento.mjs
+          git diff --binary > /tmp/kalman-second.diff
+          cmp /tmp/kalman-first.diff /tmp/kalman-second.diff
+      - name: Commit only tested source and generated pages
+        env:
+          TARGET_BRANCH: ${{ github.ref_name }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add kalman-filter-derivations
+          if ! git diff --cached --quiet; then
+            git commit -m "Expand Kalman deck with six viewpoints, route summaries, and distinctive demos"
+            git push origin HEAD:"$TARGET_BRANCH"
+          fi
+          git log -1 --format='%H %s'
+      - name: Retain browser screenshots
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: kalman-family-guide-browser-qa
+          path: kalman-qa/
+          if-no-files-found: ignore
+          retention-days: 7

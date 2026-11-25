@@ -1,0 +1,350 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="An interactive, step-by-step explanation of how Gaussian Splatting becomes a native measurement factor inside GraphSLAM and iSAM2.">
+    <meta name="theme-color" content="#f4f1e8">
+    <title>Splatting SLAM inside GraphSLAM — Interactive Walkthrough | Bai Liping</title>
+    <link rel="stylesheet" href="styles.css">
+  </head>
+  <body>
+    <a class="skip-link" href="#walkthrough">Skip to the walkthrough</a>
+
+    <header class="topbar">
+      <a class="brand" href="/" aria-label="Bai Liping home">
+        <span class="brand-mark">BLP</span>
+        <span class="brand-name">Visual notes</span>
+      </a>
+      <nav class="top-links" aria-label="Page links">
+        <a href="#walkthrough">Walkthrough</a>
+        <a href="#inside-factor">The factor</a>
+        <a href="#evidence">Evidence</a>
+        <a class="nav-pill" href="https://github.com/BaiLiping/gtsam-splatfactors" target="_blank" rel="noreferrer">View code <span aria-hidden="true">↗</span></a>
+      </nav>
+    </header>
+
+    <main>
+      <section class="hero" aria-labelledby="page-title">
+        <div class="hero-grid" aria-hidden="true"></div>
+        <div class="hero-splats" aria-hidden="true">
+          <span class="splat splat-a"></span>
+          <span class="splat splat-b"></span>
+          <span class="splat splat-c"></span>
+          <span class="splat splat-d"></span>
+        </div>
+
+        <div class="hero-copy">
+          <p class="eyebrow"><span class="live-dot"></span> Interactive systems note · 2026</p>
+          <h1 id="page-title">Make the renderer<br><em>part of the graph.</em></h1>
+          <p class="hero-lede">Gaussian Splatting gives SLAM a photorealistic map. GraphSLAM gives it global consistency. The key move is surprisingly small: turn the render error into a GTSAM factor.</p>
+          <div class="hero-actions">
+            <a class="button button-primary" href="#walkthrough">Build it step by step <span aria-hidden="true">↓</span></a>
+            <a class="button button-quiet" href="https://gtsam.org/2026/08/04/gaussian-splatting-slam.html" target="_blank" rel="noreferrer">Read the GTSAM post <span aria-hidden="true">↗</span></a>
+          </div>
+        </div>
+
+        <div class="hero-concept" aria-label="GraphSLAM and Gaussian Splatting joined by a SplatFactor">
+          <div class="concept-block graph-block">
+            <span class="concept-kicker">GTSAM</span>
+            <strong>GraphSLAM</strong>
+            <span>poses · odometry · IMU · loops</span>
+          </div>
+          <div class="concept-bridge">
+            <span class="bridge-line"></span>
+            <span class="bridge-card"><i></i>SplatFactor</span>
+            <span class="bridge-line"></span>
+          </div>
+          <div class="concept-block splat-block">
+            <span class="concept-kicker">PyTorch</span>
+            <strong>Gaussian map</strong>
+            <span>means · scales · colors · opacity</span>
+          </div>
+          <p class="concept-equation"><span>render</span> → <span>compare pixels</span> → <span>residual + Jacobian</span></p>
+        </div>
+      </section>
+
+      <section class="thesis section-pad" aria-labelledby="thesis-title">
+        <p class="section-no">00 · THE ONE-SENTENCE IDEA</p>
+        <div class="thesis-grid">
+          <h2 id="thesis-title">A camera image becomes a measurement on a pose node.</h2>
+          <div class="thesis-copy">
+            <p>Render the current Gaussian map from a candidate pose, compare that render with the observed keyframe, and tell GTSAM how the pixel error changes when the pose moves.</p>
+            <p>Now photometric alignment, odometry, IMU, priors, and loop closure all constrain the <strong>same pose variables</strong> in the same incremental solver.</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="walkthrough section-pad" id="walkthrough" aria-labelledby="walkthrough-title">
+        <div class="section-heading">
+          <div>
+            <p class="section-no">01 · INTERACTIVE WALKTHROUGH</p>
+            <h2 id="walkthrough-title">Build Splatting SLAM, one factor at a time.</h2>
+          </div>
+          <p class="heading-note">Use the numbered steps, or press play. The diagrams are a concept model—not a prerecorded video.</p>
+        </div>
+
+        <div class="lab-shell">
+          <div class="lab-topbar">
+            <div class="lab-status"><span class="status-light"></span> CONCEPT MODEL / RUNNING</div>
+            <div class="lab-progress" aria-hidden="true"><span id="progressFill"></span></div>
+            <span class="lab-count" id="labCount">01 / 07</span>
+          </div>
+
+          <div class="lab-layout">
+            <nav class="step-rail" aria-label="Walkthrough steps">
+              <button class="step-button is-active" data-step="0" aria-current="step">
+                <span class="step-index">01</span><span><strong>Observe</strong><small>A keyframe arrives</small></span>
+              </button>
+              <button class="step-button" data-step="1">
+                <span class="step-index">02</span><span><strong>Render</strong><small>Test a pose guess</small></span>
+              </button>
+              <button class="step-button" data-step="2">
+                <span class="step-index">03</span><span><strong>Factorize</strong><small>Pixels enter GTSAM</small></span>
+              </button>
+              <button class="step-button" data-step="3">
+                <span class="step-index">04</span><span><strong>Update</strong><small>iSAM2 grows the graph</small></span>
+              </button>
+              <button class="step-button" data-step="4">
+                <span class="step-index">05</span><span><strong>Revisit</strong><small>Detect a loop</small></span>
+              </button>
+              <button class="step-button" data-step="5">
+                <span class="step-index">06</span><span><strong>Correct</strong><small>Propagate globally</small></span>
+              </button>
+              <button class="step-button" data-step="6">
+                <span class="step-index">07</span><span><strong>Alternate</strong><small>Refine poses and map</small></span>
+              </button>
+            </nav>
+
+            <div class="lab-main">
+              <div class="stage-copy" aria-live="polite">
+                <div>
+                  <p class="stage-kicker" id="stageKicker">INPUT · RGB-D KEYFRAME</p>
+                  <h3 id="stageTitle">A new observation anchors the story.</h3>
+                </div>
+                <p id="stageBody">The first camera pose receives a strong prior. Its color and depth seed a small set of 3-D Gaussians—the beginning of the map.</p>
+              </div>
+
+              <div class="visual-grid">
+                <figure class="visual-panel world-panel">
+                  <figcaption><span>A</span> World + camera trajectory <b id="worldState">seed map</b></figcaption>
+                  <canvas id="worldCanvas" width="720" height="390" role="img" aria-label="Top-down Gaussian map and camera trajectory"></canvas>
+                </figure>
+                <figure class="visual-panel graph-panel">
+                  <figcaption><span>B</span> Factor graph <b id="graphState">one pose + prior</b></figcaption>
+                  <svg id="graphSvg" viewBox="0 0 720 390" role="img" aria-label="Factor graph showing camera pose variables and measurement factors"></svg>
+                </figure>
+              </div>
+
+              <div class="pixel-strip" id="pixelStrip">
+                <div class="pixel-intro">
+                  <span class="micro-label">THE MEASUREMENT</span>
+                  <strong id="pixelTitle">Image evidence</strong>
+                  <small id="pixelHint">The observed keyframe initializes color.</small>
+                </div>
+                <figure>
+                  <figcaption>Observed <i>I<sub>k</sub></i></figcaption>
+                  <canvas id="observedCanvas" width="260" height="136" aria-label="Observed synthetic keyframe"></canvas>
+                </figure>
+                <span class="pixel-operator" aria-hidden="true">−</span>
+                <figure>
+                  <figcaption>Rendered <i>R(𝒢,T<sub>k</sub>)</i></figcaption>
+                  <canvas id="renderedCanvas" width="260" height="136" aria-label="Synthetic rendering from the current pose estimate"></canvas>
+                </figure>
+                <span class="pixel-operator" aria-hidden="true">=</span>
+                <figure>
+                  <figcaption>| residual |</figcaption>
+                  <canvas id="residualCanvas" width="260" height="136" aria-label="Photometric residual heat map"></canvas>
+                </figure>
+              </div>
+
+              <div class="interaction-row">
+                <div class="pose-control" id="poseControl" hidden>
+                  <label for="poseError">Pose hypothesis <span id="poseValue">+18 px</span></label>
+                  <input type="range" id="poseError" min="-30" max="30" step="1" value="18">
+                  <button class="mini-button" id="optimizePose">Run one LM step <span aria-hidden="true">→</span></button>
+                </div>
+                <div class="loop-control" id="loopControl" hidden>
+                  <div><span class="micro-label">REVISIT FOUND</span><strong>x<sub>7</sub> looks like x<sub>0</sub></strong></div>
+                  <button class="mini-button loop-button" id="closeLoop">Insert loop factor</button>
+                </div>
+                <div class="alternate-control" id="alternateControl" hidden>
+                  <span class="micro-label">ALTERNATING OPTIMIZATION</span>
+                  <div class="segmented" role="group" aria-label="Choose which variables to optimize">
+                    <button class="is-active" data-mode="poses">Fix map · optimize poses</button>
+                    <button data-mode="map">Fix poses · optimize splats</button>
+                  </div>
+                </div>
+                <div class="cost-readout">
+                  <span class="micro-label" id="metricLabel">MAP SIZE</span>
+                  <strong id="metricValue">128 splats</strong>
+                  <span class="cost-bar" aria-hidden="true"><i id="metricBar"></i></span>
+                </div>
+              </div>
+
+              <div class="stage-insight">
+                <span class="insight-mark" aria-hidden="true">↳</span>
+                <p><strong id="insightLead">What changed:</strong> <span id="stageInsight">Depth lets us back-project pixels into 3-D; color initializes each Gaussian.</span></p>
+                <code id="stageEquation">Z₀ = { I₀, D₀ }  →  𝒢₀</code>
+              </div>
+
+              <div class="lab-controls">
+                <button class="control-button" id="prevStep" disabled><span aria-hidden="true">←</span> Previous</button>
+                <button class="control-button play-button" id="playSteps" aria-pressed="false"><span class="play-icon" aria-hidden="true">▶</span> Play steps</button>
+                <button class="control-button next-button" id="nextStep">Next: render a guess <span aria-hidden="true">→</span></button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="factor-section section-pad" id="inside-factor" aria-labelledby="factor-title">
+        <div class="section-heading narrow-heading">
+          <div>
+            <p class="section-no">02 · INSIDE THE BRIDGE</p>
+            <h2 id="factor-title">What exactly crosses into GTSAM?</h2>
+          </div>
+          <p class="heading-note">The map stays in PyTorch. During pose optimization it acts as a fixed, differentiable measurement model.</p>
+        </div>
+
+        <div class="factor-flow" aria-label="The Gaussian SplatFactor computation">
+          <article class="flow-card">
+            <span class="flow-number">1</span>
+            <div class="flow-icon splat-icon" aria-hidden="true"><i></i><i></i><i></i></div>
+            <h3>Render</h3>
+            <p>Project the 3-D Gaussians from the candidate camera pose.</p>
+            <code>Î = R(𝒢, T)</code>
+          </article>
+          <span class="flow-arrow" aria-hidden="true">→</span>
+          <article class="flow-card">
+            <span class="flow-number">2</span>
+            <div class="flow-icon residual-icon" aria-hidden="true"><i></i><i></i><i></i></div>
+            <h3>Compare</h3>
+            <p>Sample image pixels and stack their RGB differences.</p>
+            <code>r = vec(Î[P] − I[P])</code>
+          </article>
+          <span class="flow-arrow" aria-hidden="true">→</span>
+          <article class="flow-card featured-flow">
+            <span class="flow-number">3</span>
+            <div class="flow-icon jacobian-icon" aria-hidden="true">∂</div>
+            <h3>Linearize</h3>
+            <p>Measure how every residual changes under a small SE(3) pose update.</p>
+            <code>J = ∂r / ∂ξ</code>
+          </article>
+          <span class="flow-arrow" aria-hidden="true">→</span>
+          <article class="flow-card">
+            <span class="flow-number">4</span>
+            <div class="flow-icon factor-icon" aria-hidden="true">◇</div>
+            <h3>Insert</h3>
+            <p>Return the residual and Jacobian as a standard nonlinear factor.</p>
+            <code>φ<sub>splat</sub>(x<sub>k</sub>; 𝒢)</code>
+          </article>
+        </div>
+
+        <div class="ownership-grid">
+          <article class="ownership-card gtsam-card">
+            <div class="ownership-head"><span>GTSAM / iSAM2</span><strong>Owns pose belief</strong></div>
+            <ul>
+              <li><span class="factor-dot prior"></span>Pose variables and priors</li>
+              <li><span class="factor-dot odom"></span>Odometry / IMU / loop factors</li>
+              <li><span class="factor-dot splat-factor"></span>Photometric SplatFactors</li>
+              <li><span class="factor-dot covariance"></span>Bayes tree + pose covariance</li>
+            </ul>
+          </article>
+          <div class="ownership-bridge">
+            <span>residual <b>r</b></span>
+            <span>Jacobian <b>J</b></span>
+            <i aria-hidden="true">⇄</i>
+            <small>The narrow interface</small>
+          </div>
+          <article class="ownership-card torch-card">
+            <div class="ownership-head"><span>PyTorch / gsplat</span><strong>Owns scene belief</strong></div>
+            <ul>
+              <li><span class="splat-swatch cyan"></span>Gaussian means + rotations</li>
+              <li><span class="splat-swatch amber"></span>Scales + opacities</li>
+              <li><span class="splat-swatch coral"></span>Appearance / color</li>
+              <li><span class="splat-swatch violet"></span>Adam map refinement</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section class="mixer-section section-pad" aria-labelledby="mixer-title">
+        <div class="mixer-copy">
+          <p class="section-no">03 · COMPOSITION, NOT REPLACEMENT</p>
+          <h2 id="mixer-title">GraphSLAM stays GraphSLAM.</h2>
+          <p>The new factor does not replace odometry, IMU, or loop closure. It joins them. Toggle the available evidence and watch what the graph knows.</p>
+
+          <div class="factor-toggles" role="group" aria-label="Factor types in the graph">
+            <label class="factor-toggle prior-toggle"><input type="checkbox" checked disabled><span><i></i>Prior</span><small>fix the gauge</small></label>
+            <label class="factor-toggle odom-toggle"><input type="checkbox" data-factor="odom" checked><span><i></i>Odometry</span><small>local motion</small></label>
+            <label class="factor-toggle splat-toggle"><input type="checkbox" data-factor="splat" checked><span><i></i>Splat</span><small>image ↔ map</small></label>
+            <label class="factor-toggle imu-toggle"><input type="checkbox" data-factor="imu"><span><i></i>IMU</span><small>fast dynamics</small></label>
+            <label class="factor-toggle loop-toggle"><input type="checkbox" data-factor="loop"><span><i></i>Loop</span><small>global correction</small></label>
+          </div>
+        </div>
+
+        <div class="mixer-console">
+          <div class="console-head"><span>LIVE FACTOR GRAPH</span><span id="factorCount">11 factors</span></div>
+          <svg id="mixerGraph" viewBox="0 0 720 360" role="img" aria-label="Interactive factor graph with optional odometry, splat, IMU, and loop factors"></svg>
+          <div class="posterior-readout" aria-live="polite">
+            <div><span>LOCAL TRACKING</span><strong id="trackingValue">strong</strong></div>
+            <div><span>GLOBAL DRIFT</span><strong id="driftValue">17.4 cm</strong></div>
+            <div><span>POSE σ</span><strong id="sigmaValue">8.1 cm</strong></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="evidence-section section-pad" id="evidence" aria-labelledby="evidence-title">
+        <div class="section-heading">
+          <div>
+            <p class="section-no">04 · FROM IDEA TO RUNNING SYSTEM</p>
+            <h2 id="evidence-title">The concept has measurable consequences.</h2>
+          </div>
+          <p class="heading-note">These are outputs from the linked implementation, not from the simplified browser model above.</p>
+        </div>
+
+        <div class="metric-grid">
+          <article><span>KITTI 00 · ATE RMSE</span><strong><s>29.14 m</s> 7.76 m</strong><em>73% lower</em></article>
+          <article><span>TUM fr1/desk · ATE RMSE</span><strong><s>0.189 m</s> 0.113 m</strong><em>40% lower</em></article>
+          <article><span>POSE JACOBIAN CHECK</span><strong>&lt; 0.1%</strong><em>relative error</em></article>
+        </div>
+
+        <div class="evidence-grid">
+          <figure class="evidence-card loop-evidence">
+            <div class="evidence-image dark-image"><img src="assets/loop_closure_xyz.gif" alt="Animation of loop closure correcting a drifting TUM fr1/xyz trajectory" loading="lazy"></div>
+            <figcaption><span>TUM fr1/xyz</span><strong>A revisit becomes a global trajectory correction.</strong><p>DINOv2 proposes a loop, geometry verifies it, and iSAM2 updates the affected Bayes-tree cliques.</p></figcaption>
+          </figure>
+          <figure class="evidence-card render-evidence">
+            <div class="evidence-image"><img src="assets/tum_desk_gt_vs_render.png" alt="Ground-truth TUM desk frame beside a render from the trained Gaussian map" loading="lazy"></div>
+            <figcaption><span>THE MEASUREMENT MODEL</span><strong>The map can render what the camera should see.</strong><p>The difference between these two views is exactly the evidence packaged by the SplatFactor.</p></figcaption>
+          </figure>
+        </div>
+
+        <details class="kitti-details">
+          <summary><span>See the KITTI 00 trajectory result</span><small>bird’s-eye trajectory + frame error <b aria-hidden="true">＋</b></small></summary>
+          <div><img src="assets/kitti_00.png" alt="KITTI sequence 00 trajectory and frame error comparison" loading="lazy"></div>
+        </details>
+      </section>
+
+      <section class="takeaway section-pad" aria-labelledby="takeaway-title">
+        <div class="takeaway-mark" aria-hidden="true">◇</div>
+        <p class="section-no">THE TAKEAWAY</p>
+        <h2 id="takeaway-title">The Gaussian map is not a separate correction system.<br><em>It becomes evidence inside the SLAM posterior.</em></h2>
+        <p>That is the whole architectural shift: modern neural rendering on one side, decades of factor-graph machinery on the other, connected by a residual and its pose Jacobian.</p>
+        <div class="takeaway-actions">
+          <a class="button button-primary" href="https://gtsam.org/2026/08/04/gaussian-splatting-slam.html" target="_blank" rel="noreferrer">Read the technical post <span aria-hidden="true">↗</span></a>
+          <a class="button button-quiet dark-quiet" href="https://github.com/BaiLiping/gtsam-splatfactors" target="_blank" rel="noreferrer">Explore the implementation <span aria-hidden="true">↗</span></a>
+        </div>
+      </section>
+    </main>
+
+    <footer>
+      <a class="brand" href="/" aria-label="Bai Liping home"><span class="brand-mark">BLP</span><span class="brand-name">bailiping.com</span></a>
+      <p>An interactive companion to “3D Gaussian Splatting meets Factor Graph SLAM” by Jash Shah.</p>
+      <a href="#page-title">Back to top ↑</a>
+    </footer>
+
+    <script src="app.js"></script>
+  </body>
+</html>
