@@ -41,6 +41,15 @@ a { color: inherit; text-underline-offset: .2em; }
 #stage { display: block; touch-action: none; cursor: grab; }
 #stage.grabbing { cursor: grabbing; }
 #stage.hover-part { cursor: pointer; }
+#linkage-labels { position: fixed; inset: 0; overflow: hidden; pointer-events: none; }
+#linkage-labels span {
+  position: absolute; transform: translate(-50%, calc(-100% - 25px)); white-space: nowrap;
+  background: #fffffff2; border-radius: 4px; padding: 3px 7px; color: var(--ink); font-size: 12px;
+}
+#linkage-labels span::after { content: ''; position: absolute; top: 100%; left: 50%; height: 25px; border-left: 1px solid #42474b; }
+#linkage-labels span:last-child { transform: translate(-50%, 25px); }
+#linkage-labels span:last-child::after { top: auto; bottom: 100%; }
+.show-photos #linkage-labels, .hide-hud #linkage-labels { visibility: hidden; }
 #loader { display: grid; place-items: center; background: var(--surface); z-index: 15; }
 #loader.done { display: none; }
 #load-status { max-width: 32em; margin: 0 20px; color: var(--ink); text-align: center; }
@@ -82,6 +91,7 @@ a { color: inherit; text-underline-offset: .2em; }
 .panel-buttons button { background: #f4f5f6; color: var(--ink); border: 1px solid #e0e2e4; border-radius: 5px; min-height: 44px; padding: 4px 10px; font-weight: 500; font-size: 14px; line-height: 1.2; }
 #info { font-size: 12px; color: #505965; margin: 12px 0 15px; }
 #info .accent { font-weight: 600; color: var(--ink); }
+.controls-panel > p > a { display: inline-block; margin-bottom: 12px; }
 .notes { border-top: 1px solid var(--line); padding: 2px 0; }
 .notes summary { padding: 9px 2px; font-size: 14px; font-weight: 550; }
 .notes p, .sources { font-size: 13px; line-height: 1.5; margin: 0 0 8px; color: #3d454d; }

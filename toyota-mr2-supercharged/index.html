@@ -8,7 +8,7 @@
   <script>
     if (location.hash === '#mr2-views') document.documentElement.classList.add('show-photos');
     const overrideModel = new URLSearchParams(location.search).get('model');
-    const modelFile = overrideModel || './toyota_mr2_aw11_sc.glb?v=8c3ffd13';
+    const modelFile = overrideModel || './toyota_mr2_aw11_sc.glb?v=6ac37f2b';
     const preload = document.createElement('link');
     preload.rel = 'preload';
     preload.as = 'fetch';
@@ -19,7 +19,7 @@
   <link rel="canonical" href="https://bailiping.com/toyota-mr2-supercharged/" />
   <link rel="icon" href="/favicon.ico" />
   <title>1988 Toyota MR2 Supercharged (AW11) — Super Red</title>
-  <link rel="stylesheet" href="./studio.css?v=26468b37">
+  <link rel="stylesheet" href="./studio.css?v=d709fff8">
   <script type="module" src="./studio.js?v=2"></script>
 </head>
 <body>
@@ -48,6 +48,10 @@
   </section>
   <a href="#mr2-views" id="detail-photo" hidden>Reference photo</a>
   <canvas id="stage" aria-label="Interactive 3D model of a 1988 Toyota MR2 Supercharged"></canvas>
+  <div id="linkage-labels" hidden>
+    <span data-part="ShiftControl_ShiftCable">Gearshift cables</span>
+    <span data-part="ClutchControl_Line">Clutch hydraulic line</span>
+  </div>
   <div id="callout"><span class="title"></span><span class="sub"></span></div>
   <div id="loader">
     <span id="load-status" role="status">Preparing interactive model…</span>
@@ -71,6 +75,7 @@
             <button type="button" data-panel="fuel" aria-pressed="false" aria-keyshortcuts="G" disabled>Fuel filler</button>
           </div>
           <p id="info">1988 Toyota MR2 Supercharged · Super Red (3E5)</p>
+          <p><a href="#linkage">Trace the gearshift cables and clutch line</a></p>
           <details class="notes"><summary>Gestures and shortcuts</summary>
             <p>Tap a door, pop-up headlight, T-top, lid or flap to open it. Drag an assembly to detach it. Alt-drag moves a single part. On touchscreens, hold the part before dragging.</p>
             <p><a href="#assembly">Replay the assembly sequence</a></p>
@@ -83,6 +88,8 @@
             <a href="#rear">Rear three-quarter view</a> · <a href="#mr2-views">Compare with reference photos</a><br>
             <a href="https://commons.wikimedia.org/wiki/Category:Toyota_MR2_(W10)">Toyota MR2 (AW11) photography · Wikimedia Commons</a><br>
             <a href="https://svkworks.com/resources/1988%20Toyota%20MR2%20AW11.pdf#page=454">Toyota repair manual · E51 transmission drawings</a><br>
+            <a href="https://svkworks.com/resources/1988%20Toyota%20MR2%20AW11.pdf#page=516">Toyota repair manual · Shift lever and control cables</a><br>
+            <a href="https://toyota-epc.aftermarketcatalog.com/vehicle/US/211410/f/MCB998C?from=3102">Toyota parts drawing · Clutch pedal, pipes and flexible hose</a><br>
             <a href="https://svkworks.com/resources/1988%20Toyota%20MR2%20AW11.pdf#page=1063">Toyota repair manual · EFI and ignition wiring</a><br>
             <a href="https://ameblo.jp/team-tackle/entry-12569084295.html">AW11 shift cable and selector photographs · Team Tackle</a>
           </div></details>
@@ -392,7 +399,7 @@
         [/Taillight/, '1988 facelift taillight & smoked garnish', 'ruby tail, amber turn, clear reverse & smoked center band'],
         [/Wheelhouse_Liner/, 'Wheel arch inner liner', 'protective fender well shroud'],
         [/Body_Shell/, '1988 MR2 Supercharged unibody', 'AW11 origami wedge · Toyota Super Red (3E5)'],
-        [/Tire/, '185/60 R14 radial tire', 'square factory AW11 tire setup'],
+        [/^MR2_Tire/, '185/60 R14 radial tire', 'square factory AW11 tire setup'],
         [/Teardrop_Rim/, '14" 8-Teardrop alloy wheel', 'diamond-cut machined aluminum · 1988 SC exclusive'],
         [/Brake_Rotor/, 'Ventilated cast-iron brake rotor', '258 mm front / 263 mm rear 4-wheel disc'],
         [/Brake_Caliper/, 'Floating disc brake caliper', 'hydraulic cast-iron brake caliper'],
@@ -410,6 +417,14 @@
         [/Eng_Clutch/, 'Clutch and flywheel', 'Pressure plate and diaphragm spring at the engine–gearbox joint'],
         [/Eng_Alternator/, 'Alternator and auxiliary drive', 'Pulley, drive belt and alternator casing'],
         [/Eng_TimingCover/, 'Timing belt cover', 'At the right-hand end of the engine'],
+        [/ShiftControl_ShiftCable/, 'Shift cable', 'Fore-and-aft stick movement engages the gear'],
+        [/ShiftControl_SelectCable/, 'Select cable', 'Side-to-side stick movement selects the shift gate'],
+        [/ShiftControl_Bulkhead/, 'Rear bulkhead grommet', 'Both gearshift cables pass from the cabin into the engine bay here'],
+        [/ShiftControl_Lever/, 'Gear lever and selecting bellcrank', 'Two pivots transfer stick motion into the two cable ends'],
+        [/ClutchControl_PedalLink|Pedal_Clutch/, 'Clutch pedal and pushrod', 'Pedal movement pushes the master-cylinder piston'],
+        [/ClutchControl_Master/, 'Clutch master cylinder', 'Converts pedal travel into hydraulic pressure'],
+        [/ClutchControl_Line/, 'Clutch hydraulic pipe', 'Carries fluid pressure from the front master cylinder toward the gearbox'],
+        [/ClutchControl_Hose/, 'Clutch flexible hose', 'Allows the gearbox to move relative to the rigid body pipe'],
         [/Transaxle_Selector/, 'Gear selector and shift cables', 'Two cables transmit motion from the center console'],
         [/Transaxle_Clutch/, 'Clutch release mechanism', 'Hydraulic slave cylinder and release fork'],
         [/Transaxle_Oil/, 'E51 oil return circuit', 'External pipe and unions beneath the case'],
@@ -829,6 +844,7 @@
         }
 
         rootCar.updateMatrixWorld(true);
+        locateLinkageLabels();
         if (pivots.Pivot_Body_Assembly) {
           measureExplodedView();
           const detail = location.hash.slice(1);
@@ -1416,13 +1432,14 @@
       if (!detail && isDetailView(location.hash.slice(1))) history.replaceState(null, '', '#model');
       detailPhoto.dataset.preset = detail;
       detailPhoto.hidden = !detail || !!overrideModel;
-      const useDrawing = detail === 'gearset' || detail === 'loom';
-      detailPhoto.textContent = useDrawing ? 'Factory drawing' : 'Reference photo';
-      detailPhoto.href = useDrawing
-        ? 'https://svkworks.com/resources/1988%20Toyota%20MR2%20AW11.pdf#page=' + (detail === 'gearset' ? '455' : '1063')
+      const drawingPage = referenceViews.get(detail)?.drawingPage;
+      detailPhoto.textContent = drawingPage ? 'Factory drawing' : 'Reference photo';
+      detailPhoto.href = drawingPage
+        ? 'https://svkworks.com/resources/1988%20Toyota%20MR2%20AW11.pdf#page=' + drawingPage
         : '#mr2-views';
-      detailPhoto.target = useDrawing ? '_blank' : '_self';
+      detailPhoto.target = drawingPage ? '_blank' : '_self';
       detailPhoto.rel = 'noopener';
+      linkageLabels.hidden = selectedView !== 'linkage' || !!overrideModel;
       applyInspectionVisibility(referenceViews.get(selectedView)?.isolate);
       barEl.classList.toggle('in-cabin', state.interiorView);
       document.querySelector('[data-command="i"]').setAttribute('aria-pressed', String(state.interiorView));
@@ -1496,6 +1513,42 @@
       needsShadow = true;
     }
     const gearboxParts = /MR2_(Transaxle_(?!Internal)|Drivetrain_Axle)/;
+    const manualControls = /^MR2_(?:ShiftControl_|ClutchControl_|Pedal_Clutch|Shifter_|Transaxle_(?:E51|Selector|Clutch))/;
+    const linkageLabels = document.getElementById('linkage-labels');
+    const linkageAnchors = [];
+    const labelPoint = new THREE.Vector3();
+    function locateLinkageLabels() {
+      if (overrideModel) return;
+      // Pick a vertex near each run's middle, so its label stays on the actual
+      // cable or pipe as the camera or a detached assembly moves.
+      const targets = [new THREE.Vector3(-13, 20, -2), new THREE.Vector3(12, 12, -18)];
+      for (const [index, label] of [...linkageLabels.children].entries()) {
+        let nearest = Infinity, anchor;
+        for (const mesh of allPickableMeshes) {
+          if (!mesh.name.startsWith('MR2_' + label.dataset.part + '_')) continue;
+          const positions = mesh.geometry.getAttribute('position');
+          for (let i = 0; i < positions.count; i++) {
+            labelPoint.fromBufferAttribute(positions, i).applyMatrix4(mesh.matrixWorld);
+            const distance = labelPoint.distanceToSquared(targets[index]);
+            if (distance < nearest) {
+              nearest = distance;
+              anchor = { mesh, positions, vertex: i, label };
+            }
+          }
+        }
+        label.hidden = !anchor;
+        if (anchor) linkageAnchors.push(anchor);
+      }
+    }
+    function positionLinkageLabels() {
+      if (linkageLabels.hidden) return;
+      for (const { mesh, positions, vertex, label } of linkageAnchors) {
+        labelPoint.fromBufferAttribute(positions, vertex).applyMatrix4(mesh.matrixWorld).project(camera);
+        label.hidden = Math.abs(labelPoint.x) > 1 || Math.abs(labelPoint.y) > 1 || Math.abs(labelPoint.z) > 1;
+        label.style.left = (labelPoint.x + 1) * 50 + '%';
+        label.style.top = (1 - labelPoint.y) * 50 + '%';
+      }
+    }
     const cabinParts = /^(?:MR2_)(?:Seat|DoorCard|Pedal|SteeringWheel|InstrumentCluster|SwitchPod|Dash|ClimateControl|CassetteStereo|Shifter|Handbrake|CenterConsole|Int_)/;
     // Camera targets use the exported model’s Y-up, 1:18 coordinates.
     // Radius is expressed at the 30° orbit lens; the render loop dollies smoothly for each preset FOV.
@@ -1519,8 +1572,9 @@
       ['cluster',      { label: 'Instruments', theta: -Math.PI, phi: 1.42, radius: 48, fov: 32, center: new THREE.Vector3(22, 44, -20), isolate: /MR2_(InstrumentCluster|SwitchPod|Dashboard)/ }],
       ['engine',       { label: 'Engine bay', theta: Math.PI, phi: 0.56, radius: 111, fov: 31, center: new THREE.Vector3(-55, 42, 0), panels: { engineLid: 1 } }],
       ['wiring',       { label: 'Ignition and wiring', theta: 2.48, phi: 0.56, radius: 66, fov: 34, center: new THREE.Vector3(-55, 39, 9), isolate: /MR2_Eng_/ }],
-      ['loom',         { label: 'Engine harness', theta: 2.86, phi: .61, radius: 115, fov: 31, center: new THREE.Vector3(-53, 37, 2), isolate: /MR2_Eng_(Harness|Ignition|Battery)/ }],
-      ['gearset',      { label: 'E51 internal gears', theta: -2.32, phi: .68, radius: 42, fov: 29, center: new THREE.Vector3(-60.0, 21.7, -11.7), isolate: /MR2_Transaxle_Internal/ }],
+      ['loom',         { label: 'Engine harness', theta: 2.86, phi: .61, radius: 115, fov: 31, center: new THREE.Vector3(-53, 37, 2), isolate: /MR2_Eng_(Harness|Ignition|Battery)/, drawingPage: 1063 }],
+      ['gearset',      { label: 'E51 internal gears', theta: -2.32, phi: .68, radius: 42, fov: 29, center: new THREE.Vector3(-60.0, 21.7, -11.7), isolate: /MR2_Transaxle_Internal/, drawingPage: 455 }],
+      ['linkage',      { label: 'Gearshift cables and clutch hydraulics', theta: -1.43, phi: .83, radius: 158, fov: 31, center: new THREE.Vector3(-12, 22, -12), isolate: manualControls, drawingPage: 516 }],
       ['transmission', { label: 'E51 transaxle', theta: -2.23, phi: 1.13, radius: 91, fov: 31, center: new THREE.Vector3(-60, 20, -9), isolate: gearboxParts }],
       ['Cockpit',                            { cabin: true }],
       ['4A-GZE Supercharged engine',         { theta:  Math.PI, phi: 0.78, radius: 136, fov: 26, center: new THREE.Vector3(-55, 37, 0), panels: { engineLid: 1 } }],
@@ -1836,7 +1890,7 @@
       const rearScale = Math.max(1, 1.56 / camera.aspect, .76 / availableHeight);
       const portraitMargin = THREE.MathUtils.clamp(1.5 - camera.aspect, 0, 1);
       const closeUp = isDetailView(selectedView) || selectedView === '14" Teardrop wheel' || selectedView === '4A-GZE Supercharged engine' || selectedView === 'fuel';
-      const minimumAspect = ['transmission', 'gearset', 'seats', 'loom', 'door'].includes(selectedView) ? 1.47 : closeUp ? 1.02 : 1.52 + .06 * portraitMargin;
+      const minimumAspect = ['transmission', 'gearset', 'seats', 'loom', 'door', 'linkage'].includes(selectedView) ? 1.47 : closeUp ? 1.02 : 1.52 + .06 * portraitMargin;
       const exteriorScale = THREE.MathUtils.lerp(Math.max(1, minimumAspect / camera.aspect, .76 / availableHeight), rearScale, state.rearLens);
       scene.fog.density = studioFogDensity / THREE.MathUtils.lerp(1, dolly * exteriorScale, Math.min(1, state.frontLens + state.rearLens));
       const assembledRadius = THREE.MathUtils.lerp(state.radius * exteriorScale * dolly, cabinRadius, state.cabinBlend);
@@ -2019,6 +2073,7 @@
       engineEnclosure.value.set(1 - state.engineLid, state.engineLid).multiplyScalar(enclosed * (1 - enginePull));
       updateCabinMirror(geoMoving);
       renderer.render(scene, camera);
+      positionLinkageLabels();
       if (!loaderEl.classList.contains('done')) {
         if (intro) intro.previous = performance.now();
         loaderEl.classList.add('done');
