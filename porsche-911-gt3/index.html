@@ -3,20 +3,13 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <link rel="preload" as="image" type="image/webp" media="(prefers-reduced-motion: no-preference) and (orientation: landscape)" href="./gt3-exploded-wide.webp?v=studio28-r3-20261125" fetchpriority="high">
-  <link rel="preload" as="image" type="image/webp" media="(prefers-reduced-motion: no-preference) and (orientation: portrait)" href="./gt3-exploded-tall.webp?v=studio28-r3-20261125" fetchpriority="high">
-  <link rel="preload" as="image" type="image/webp" media="(prefers-reduced-motion: reduce) and (orientation: landscape)" href="./gt3-wide.webp?v=studio28-r3-20261125" fetchpriority="high">
-  <link rel="preload" as="image" type="image/webp" media="(prefers-reduced-motion: reduce) and (orientation: portrait)" href="./gt3-tall.webp?v=studio28-r3-20261125" fetchpriority="high">
   <link rel="modulepreload" href="./vendor/three-r170.js?v=1d65f356">
   <script>
     const labTab = ['#engine-lab', '#transmission-lab'].includes(location.hash);
     if (location.hash === '#porsche-views') document.documentElement.classList.add('show-photos');
     if (labTab) document.documentElement.classList.add('show-lab');
-    if (location.hash === '#rear') document.documentElement.classList.add('load-rear');
-    if (['#transmission', '#clutch-pedal'].includes(location.hash)) document.documentElement.classList.add('load-transmission');
     const overrideModel = new URLSearchParams(location.search).get('model');
-    if (overrideModel) document.documentElement.classList.add('custom-model');
-    const modelFile = overrideModel || './porsche_911_gt3_992_2.glb?v=studio28-r3-20261125';
+    const modelFile = overrideModel || './porsche_911_gt3_992_2.glb?v=surface-studio-r4';
     // A page opened on a lab tab fetches the car when the 3D model is first shown.
     if (!labTab) {
       const preload = document.createElement('link');
@@ -31,8 +24,8 @@
   <link rel="icon" href="/favicon.ico" />
   <title>2025 911 GT3 (992.2) — Six-speed manual</title>
   <link rel="stylesheet" href="./transmission.css?v=23aa01ea">
-  <link rel="stylesheet" href="./studio.css?v=studio28-r3-20261125">
-  <script type="module" src="./studio.js?v=studio28-20261125"></script>
+  <link rel="stylesheet" href="./studio.css?v=surface-studio-r4">
+  <script type="module" src="./studio.js?v=surface-studio-r4"></script>
 </head>
 <body>
   <noscript><p style="position:fixed;inset:0;z-index:30;background:#eceeef;padding:2em">The interactive car requires JavaScript. <a href="./manual-cutaway-4k.webp?v=60742a3d">Open the 4K transmission cutaway</a>.</p></noscript>
@@ -47,7 +40,15 @@
   </header>
   <section id="photo-room" aria-label="Porsche exterior views" hidden>
     <figure>
-      <img id="photo" width="2048" height="1152" alt="">
+      <div class="photo-frame">
+        <img id="photo" width="2048" height="1152" alt="">
+      </div>
+      <div id="comparison-controls" hidden>
+        <span>Photo</span>
+        <input type="range" id="comparison-split" min="0" max="100" value="50"
+               aria-label="Photo coverage" aria-valuetext="50 percent photo">
+        <span>3D model</span>
+      </div>
       <p id="photo-error" role="status" hidden>This view is unavailable. <a class="config-link" href="https://configurator.porsche.com/sv-SE/mode/model/992812?options=O1.1NX.1LQ.G0W&amp;viz-mode=3d">Open the Porsche configurator</a></p>
     </figure>
     <div id="photo-footer">
@@ -55,6 +56,7 @@
         <button id="previous-view" type="button" aria-label="Previous exterior view">‹</button>
         <select id="photo-angle" aria-label="Exterior camera angle"></select>
         <button id="next-view" type="button" aria-label="Next exterior view">›</button>
+        <button type="button" id="compare-view" aria-pressed="false" aria-controls="comparison-controls" disabled>Compare</button>
         <button id="match-view" type="button" disabled>Match in 3D</button>
       </div>
       <p>992.2 GT3 · 28 studio views · Images © Porsche AG · <a href="https://configurator.porsche.com/sv-SE/mode/model/992812?options=O1.1NX.1LQ.G0W&amp;viz-mode=3d">Open configurator</a></p>
@@ -68,13 +70,6 @@
   <canvas id="stage" aria-label="Interactive 3D model of a 911 GT3"></canvas>
   <div id="callout"><span class="title"></span><span class="sub"></span></div>
   <div id="loader">
-    <!-- The car opens exploded and then assembles; reduced-motion visitors see it assembled. -->
-    <picture>
-      <source media="(prefers-reduced-motion: no-preference) and (orientation: portrait)" srcset="./gt3-exploded-tall.webp?v=studio28-r3-20261125">
-      <source media="(prefers-reduced-motion: no-preference)" srcset="./gt3-exploded-wide.webp?v=studio28-r3-20261125">
-      <source media="(orientation: portrait)" srcset="./gt3-tall.webp?v=studio28-r3-20261125">
-      <img src="./gt3-wide.webp?v=studio28-r3-20261125" width="1280" height="800" fetchpriority="high" alt="Lugano Blue 911 GT3 preview">
-    </picture>
     <span id="load-status" role="status">Preparing interactive model…</span>
   </div>
   <dialog id="transmission" aria-labelledby="mt-title">
@@ -118,10 +113,11 @@
       <button type="button" data-panel="lid" aria-pressed="false" disabled>Rear service flap</button>
           </div>
           <label class="stripe"><input type="checkbox" id="stripe-toggle"> Custom carbon stripe</label>
+          <a class="top-view" href="#top">View from directly above</a>
           <p id="info">2025 911 GT3 · Six-speed manual</p>
           <details class="notes"><summary>Gestures and shortcuts</summary>
             <p>Tap a door, lid or flap to open it. Drag an assembly to detach it. Alt-drag moves a single part. On touchscreens, hold the part before dragging.</p>
-            <p><a href="#assembly">Replay the assembly sequence</a></p>
+            <p><a href="#assembly">Play the assembly sequence</a></p>
             <p>D opens both doors. 1 and 2 operate them separately. F opens the front lid, G the fuel filler, and L the rear flap.</p>
             <p>I cabin · T transmission · E explode · X x-ray · C stripe · R reset · S steer · W spin · Space rev · M sound · H hide controls</p>
           </details>
@@ -176,7 +172,9 @@
       loadStatus.append(' ', still);
       throw error;
     }
-    const stillRatio = () => Math.min(window.devicePixelRatio, 1.75);
+    // Supersample the parked view, with a pixel budget for large displays.
+    const stillRatio = () => Math.max(1, Math.min(2, Math.max(1.5, devicePixelRatio),
+      Math.sqrt(5000000 / (innerWidth * innerHeight))));
     renderer.setPixelRatio(stillRatio());
     renderer.setSize(window.innerWidth, window.innerHeight);
     renderer.shadowMap.enabled = true;
@@ -187,45 +185,52 @@
     renderer.toneMappingExposure = 0.93;
 
     const scene = new THREE.Scene();
-    const BG_HEX = 0xe2e5e7;
+    const BG_HEX = 0xf1f2f3;
     const studioFogDensity = 0.00014;
     scene.background = new THREE.Color(BG_HEX);
     scene.fog = new THREE.FogExp2(BG_HEX, studioFogDensity);
 
+    // Long side banks read in the paint as a continuous horizon. Their light
+    // falls off toward the dark ceiling and the floor below the beltline.
     const pmrem = new THREE.PMREMGenerator(renderer);
-    // Large rectangular studio lights give the fenders and glass continuous reflections.
-    const studio = new THREE.Scene();
-    studio.background = new THREE.Color().setScalar(0.27);
-    function softbox(position, width, height, luminance) {
-      const surface = new THREE.MeshStandardMaterial({
-        color: 0x000000, emissive: 0xffffff, emissiveIntensity: luminance,
-      });
-      const panel = new THREE.Mesh(new THREE.PlaneGeometry(width, height), surface);
-      panel.position.set(...position);
-      panel.lookAt(0, 0, 0);
-      studio.add(panel);
+    const panorama = document.createElement('canvas');
+    panorama.width = 256;
+    panorama.height = 128;
+    const context = panorama.getContext('2d');
+    const pixels = context.createImageData(panorama.width, panorama.height);
+    const radiance = pixels.data;
+    for (let y = 0; y < panorama.height; y++) {
+      const elevation = (.5 - (y + .5) / panorama.height) * Math.PI;
+      const band = THREE.MathUtils.smoothstep(elevation, 0.14, 0.41)
+        * (1 - THREE.MathUtils.smoothstep(elevation, .58, 1.10));
+      const floor = .75 * THREE.MathUtils.smoothstep(-elevation, .20, .65);
+      for (let x = 0; x < panorama.width; x++) {
+        const azimuth = ((x + .5) / panorama.width - .5) * Math.PI * 2;
+        const sides = .5 - .5 * Math.cos(2 * (azimuth + .18));
+        const bank = .40 + 3.7 * sides + .85 * Math.max(0, Math.cos(azimuth - .50));
+        const luminance = .13 + floor + bank * band;
+        const offset = 4 * (y * panorama.width + x);
+        radiance[offset] = radiance[offset + 1] = radiance[offset + 2] = Math.round(255 * luminance / 4);
+        radiance[offset + 3] = 255;
+      }
     }
-    softbox([0, 9, -11], 37, 5, 5.6);
-    softbox([-5, 8, 10], 25, 6, 3.9);
-    softbox([12, 7, 4], 12, 5, 3.4);
-    softbox([-16, 3, -7], 14, 2.4, 3.8);
-    softbox([-5, 14, 6], 14, 1.7, 4.2);
-    scene.environment = pmrem.fromScene(studio, 0.016).texture;
-    scene.environmentRotation.y = .35;
-    for (const panel of studio.children) {
-      panel.geometry.dispose();
-      panel.material.dispose();
-    }
+    context.putImageData(pixels, 0, 0);
+    const studio = new THREE.CanvasTexture(panorama);
+    scene.environment = pmrem.fromEquirectangular(studio).texture;
+    studio.dispose();
     pmrem.dispose();
-    scene.environmentIntensity = 0.52;
+    const exteriorEnvironmentGain = 1.65;
+    const exteriorRimGain = .006;
+    const exteriorKeyGain = .015;
+    scene.environmentIntensity = exteriorEnvironmentGain;
 
     const camera = new THREE.PerspectiveCamera(30, window.innerWidth / window.innerHeight, 1.0, 4000);
 
     // Balanced neutral overcast daylight studio lighting so Lugano Blue (Q5G) stays rich & vivid!
-    const hemi = new THREE.HemisphereLight(0xf6f8fb, 0xd0d5dc, 0.72);
+    const hemi = new THREE.HemisphereLight(0xf4f6fa, 0xb6b3b1, .95);
     scene.add(hemi);
 
-    const keyLight = new THREE.DirectionalLight(0xfffef9, 1.55);
+    const keyLight = new THREE.DirectionalLight(0xfffefa, exteriorKeyGain);
     keyLight.position.set(170, 310, -75);
     keyLight.castShadow = true;
     keyLight.shadow.mapSize.set(2048, 2048);
@@ -237,11 +242,11 @@
     keyLight.shadow.camera.top = sc;
     keyLight.shadow.camera.bottom = -sc;
     keyLight.shadow.bias = -0.0005;
-    keyLight.shadow.intensity = .38;
+    keyLight.shadow.intensity = .44;
     keyLight.shadow.radius = 3.5;
     scene.add(keyLight);
 
-    const rimLight = new THREE.DirectionalLight(0xdce8ff, 0.75);
+    const rimLight = new THREE.DirectionalLight(0xe0e7f3, exteriorRimGain);
     rimLight.position.set(-100, 240, 225);
     scene.add(rimLight);
 
@@ -253,7 +258,7 @@
       c.width = c.height = 1024;
       const ctx = c.getContext('2d');
       ctx.scale(0.5, 0.5);
-      ctx.fillStyle = '#c4c8cb';
+      ctx.fillStyle = '#dadee1';
       ctx.fillRect(0, 0, 2048, 2048);
 
       // Soft contact beneath the chassis and tire patches, in the floor's UV space.
@@ -269,10 +274,9 @@
         ctx.fillRect(-1, -1, 2, 2);
         ctx.restore();
       }
-      contactShadow(1028, 1024, 151, 68, 0.68);
-      contactShadow(1029, 1024, 120, 45, 0.85);
-      contactShadow(1104, 1024, 45, 38, 0.92);
-      contactShadow(947, 1024, 43, 34, 0.78);
+      contactShadow(1020, 1029, 152, 68, .66);
+      contactShadow(1024, 1024, 127, 50, .88);
+      contactShadow(1024, 1024, 94, 41, .72);
       for (const axle of [-58, 58]) {
         for (const side of [-38, 38]) contactShadow(1024 + axle, 1024 + side, 15, 8, 0.94);
       }
@@ -488,7 +492,7 @@
     // -----------------------------------------------------------------------
     // Front-three-quarter camera calibrated against the configurator's wheel centres,
     // contact patches and roof height. Radius is expressed at the orbit lens of 30°.
-    const exteriorView = { theta: -0.424, phi: 1.534, radius: 228 };
+    const exteriorView = { theta: -0.754, phi: 1.46, radius: 292, fov: 22.09 };
     const state = {
       // Spherical orbit camera around target
       theta: exteriorView.theta,      // azimuth (front 3/4 initial angle)
@@ -497,7 +501,7 @@
       targetTheta: exteriorView.theta,
       targetPhi: exteriorView.phi,
       targetRadius: exteriorView.radius,
-      targetCenter: new THREE.Vector3(30, 33.2, 0),
+      targetCenter: new THREE.Vector3(5.2, 38.4, -0.8),
 
       // Mechanical parameters (0..1, smoothly spring-damped!)
       explodeTarget: 0.0,
@@ -541,9 +545,9 @@
     const stripeToggle = document.getElementById('stripe-toggle');
     const capLift = new THREE.Vector3();
     const capPark = new THREE.Vector3();
-    const assemblyView = { theta: -1.98, phi: 1.12, compactInset: 0, center: new THREE.Vector3(), points: [] };
+    const assemblyView = { theta: exteriorView.theta, phi: exteriorView.phi, compactInset: 0, center: new THREE.Vector3(), points: [] };
     const introHoldMs = 700;
-    const introAssemblyMs = 2600;
+    const introAssemblyMs = 2100;
     let intro = null;
 
     function stopIntro() {
@@ -562,54 +566,44 @@
     };
     const panelByNode = Object.fromEntries(Object.entries(panels).map(([key, panel]) => [panel.node, key]));
     const panelButtons = [...document.querySelectorAll('[data-panel]')];
-    function facePanel(key) {
-      const views = {
-        doorL: [-1.1, 1.39, 355], doorR: [1.1, 1.39, 355],
-        hood: [-0.58, 1.01, 315], fuel: [1.97, 1.20, 66], lid: [-1.68, 0.59, 135]
-      };
-      const [theta, phi, radius] = views[key];
-      const turn = theta - state.theta;
-      state.targetTheta = state.theta + Math.atan2(Math.sin(turn), Math.cos(turn));
-      selectedView = key;
-      state.targetPhi = phi;
-      state.targetRadius = radius;
-      state.interiorView = false;
-    }
-
-    function togglePanel(key, focus = false) {
+    function togglePanel(key) {
       if (!pivots[panels[key].node]) return;
       stopIntro();
       const target = key + 'Target';
       state[target] = 1 - state[target];
-      if (focus && state[target]) {
-        state.explodeTarget = 0;
-        facePanel(key);
-      }
       playClickSound(state[target] ? 580 : 380, 0.06);
       updateHudText();
       wake(true);
     }
     for (const button of panelButtons) {
-      button.addEventListener('click', () => togglePanel(button.dataset.panel, true));
+      button.addEventListener('click', () => togglePanel(button.dataset.panel));
     }
     for (const button of document.querySelectorAll('[data-command]')) {
       button.addEventListener('click', () => runCommand(button.dataset.command));
     }
     stripeToggle.addEventListener('change', () => runCommand('c'));
+    function setExplosion(amount) {
+      if (amount > 0 && state.explodeTarget === 0) {
+        assemblyView.theta = state.theta;
+        assemblyView.phi = state.phi;
+        fitExplodedCamera();
+      }
+      state.interiorView = false;
+      state.explodeTarget = amount;
+      updateHudText();
+      wake(true);
+    }
+
     explosionButton.addEventListener('click', () => {
-      const assemble = explosionButton.getAttribute('aria-pressed') === 'true';
       stopIntro();
-      if (assemble) {
-        runCommand('r');
+      if (state.explodeTarget > 0.05) {
+        for (const part of pullOffsets.values()) {
+          part.tgt.set(0, 0, 0);
+          part.parked = false;
+        }
+        setExplosion(0);
       } else {
-        selectedView = null;
-        state.interiorView = false;
-        state.explodeTarget = 1;
-        state.targetTheta = assemblyView.theta;
-        state.targetPhi = assemblyView.phi;
-        state.targetRadius = exteriorView.radius;
-        updateHudText();
-        wake(true);
+        setExplosion(1);
       }
     });
     const restPos = new Map();
@@ -718,7 +712,7 @@
             const isCaster = SHADOW_CASTER_RE.test(obj.name) || /Fuel_Flap|Fuel_Cap/.test(obj.name);
 
             obj.castShadow = isCaster;
-            obj.receiveShadow = isCaster || /Floor|Carpet|Dash|Seat|EngineLid/.test(obj.name);
+            obj.receiveShadow = isCaster || /Floor|Carpet|Dash|Seat|EngineLid|Front_Grille|Front_Intake|Front_Radiator|Rotor|Caliper|Spoke/.test(obj.name);
             if (isHeadlightLens) obj.renderOrder = 2;
             allPickableMeshes.push(obj);
             const insideCase = /^(Gear\d|Reverse_|Selector_|Bearing_|Clutch_(?!Slave)|OutputShaft|InputShaft|Final_(?!OutputStub))/.test(obj.userData.transmissionPart || '');
@@ -744,6 +738,14 @@
                   }
                 }
                 if (shared.metalness > 0.3) shared.envMapIntensity = 1.25;
+                // The grille sits behind the bumper lip and the rotors sit
+                // inside the barrels. Only a fraction of the studio surrounds
+                // is visible from those surfaces.
+                if (/^Mat_Front_(Honeycomb|RadarGrid|RadarBacking)$/.test(shared.name) ||
+                    shared.name === 'Mat_PCCB_Ceramic_Rotor') {
+                  shared.envMap = scene.environment;
+                  shared.envMapIntensity = shared.name === 'Mat_PCCB_Ceramic_Rotor' ? .32 : .22;
+                }
                 if (shared.name === 'Mat_Lugano_Blue_Q5G') {
                   shared.envMapIntensity = .78;
                   shared.clearcoat = .68;
@@ -766,22 +768,36 @@
                   shared.transparent = true;
                   shared.depthWrite = false;
                   shared.color.setRGB(.013, .020, .024);
-                  shared.opacity = backlight ? .51 : quarter ? .29 : doorPane ? .24 : .80;
+                  shared.opacity = backlight ? .54 : quarter ? .39 : doorPane ? .30 : .53;
                   shared.roughness = backlight ? .077 : .09;
-                  shared.clearcoat = backlight ? .37 : .20;
+                  shared.clearcoat = .58;
                   shared.clearcoatRoughness = .045;
-                  shared.specularIntensity = backlight ? .64 : .46;
+                  shared.specularIntensity = .85;
                   shared.userData.cabinOpacity = backlight ? .29 : .22;
                   shared.envMap = scene.environment;
                   shared.envMapRotation.copy(scene.environmentRotation);
-                  shared.envMapIntensity = backlight ? .39 : .17;
+                  shared.envMapIntensity = .97;
+                  // Keep the reflected light visible through the transparency blend.
+                  // At grazing angles the laminated pane reflects more of the studio.
+                  shared.customProgramCacheKey = () => 'gt3-window-fresnel';
+                  shared.onBeforeCompile = shader => {
+                    shader.fragmentShader = shader.fragmentShader.replace('#include <opaque_fragment>', `
+                      float facing = saturate(abs(dot(geometryNormal,geometryViewDir)));
+                      float grazing = pow(1.0 - facing, 5.0);
+                      float paneAlpha = mix(diffuseColor.a, 1.0, grazing * smoothstep(0.1,0.4,diffuseColor.a));
+                      vec3 reflection = totalSpecular + clearcoatSpecularDirect + clearcoatSpecularIndirect;
+                      vec3 transmittedTint = totalDiffuse * diffuseColor.a;
+                      gl_FragColor = vec4((transmittedTint + reflection * smoothstep(0.05,0.30,diffuseColor.a)) /
+                        max(paneAlpha, 0.05), paneAlpha);
+                    `);
+                  };
                   shared.forceSinglePass = true;
                 }
                 if (shared.name === 'Mat_Headlight_Clear_Lens') {
                   shared.transmission = 0;
                   shared.transparent = true;
                   shared.depthWrite = false;
-                  shared.side = THREE.FrontSide;
+                  shared.side = 0; // FrontSide: render the outer surface of the closed lens.
                   shared.forceSinglePass = true;
                   shared.color.setRGB(.02, .035, .05);
                   shared.opacity = .08;
@@ -852,8 +868,9 @@
           measureExplodedView();
           if (location.hash === '#rear') {
             showRearView(true);
-          } else if (!['#transmission', '#clutch-pedal'].includes(location.hash) && !document.documentElement.dataset.matchView) {
-            // The car opens exploded and assembles itself unless a link or Match in 3D asks for another view.
+          } else if (location.hash === '#top') {
+            showTopView(true);
+          } else if (location.hash === '#assembly') {
             startAssembly();
           }
         }
@@ -861,6 +878,7 @@
         state.loaded = true;
         if (document.documentElement.dataset.matchView) matchPorscheView(document.documentElement.dataset.matchView);
         document.getElementById('match-view').disabled = !!overrideModel;
+        document.getElementById('compare-view').disabled = !!overrideModel;
         if (['#transmission', '#clutch-pedal'].includes(location.hash) && transmission.available) {
           loaderEl.classList.add('done');
           loaderEl.setAttribute('aria-hidden', 'true');
@@ -1181,6 +1199,16 @@
       wake(false);
     }, { passive: false });
 
+    const photoFraming = { height: 1, offset: 0 };
+    let lensFov = null;
+    let frameHeight = 1;
+    let frameOffset = 0;
+    let opticsMoving = false;
+    function measurePhotoFrame() {
+      const box = document.querySelector('.photo-frame').getBoundingClientRect();
+      photoFraming.height = box.height / innerHeight;
+      photoFraming.offset = innerHeight / 2 - (box.top + box.height / 2);
+    }
     function matchPorscheView(name) {
       const pose = referenceViews.get(name);
       if (!pose || overrideModel) return;
@@ -1192,6 +1220,8 @@
       if (transmission.active) document.getElementById('transmission').close();
       runCommand('r');
       selectedView = name;
+      measurePhotoFrame();
+      lensFov = null;
       state.theta = state.targetTheta = pose.theta;
       state.phi = state.targetPhi = pose.phi;
       state.radius = state.targetRadius = pose.radius;
@@ -1217,20 +1247,36 @@
         state.phi = state.targetPhi;
         state.radius = state.targetRadius;
         state.rearLens = 1;
-        state.targetCenter.copy(PANEL_CENTERS.rear);
+        state.targetCenter.copy(REAR_CENTER);
       }
       wake(true);
     }
+    function showTopView(immediate = false) {
+      stopIntro();
+      selectedView = 'top';
+      state.interiorView = false;
+      state.explodeTarget = state.xrayTarget = 0;
+      state.targetTheta = Math.PI / 2;
+      state.targetPhi = 0;
+      state.targetRadius = 312;
+      if (immediate) {
+        state.theta = state.targetTheta;
+        state.phi = state.targetPhi;
+        state.radius = state.targetRadius;
+        state.targetCenter.copy(TOP_CENTER);
+        state.frontLens = 1;
+        state.rearLens = state.cabinBlend = state.explode = 0;
+      }
+      wake(true);
+    }
+    document.querySelector('a[href="#top"]').addEventListener('click', () => {
+      document.getElementById('more').open = false;
+      if (state.loaded && location.hash === '#top') showTopView();
+    });
     function startAssembly() {
       if (!pivots.Pivot_Body_Assembly) return;
-      runCommand('r');
       if (reducedMotion.matches) return;
-      state.theta = state.targetTheta = assemblyView.theta;
-      state.phi = state.targetPhi = assemblyView.phi;
-      state.radius = state.targetRadius = exteriorView.radius;
-      state.targetCenter.copy(FOCUS_EXTERIOR);
-      state.frontLens = state.rearLens = state.cabinBlend = 0;
-      state.explode = state.explodeTarget = 1;
+      setExplosion(1);
       intro = { elapsed: 0, previous: null };
       wake(true);
     }
@@ -1244,6 +1290,7 @@
       if (state.loaded && location.hash === '#rear') showRearView();
     });
     window.addEventListener('hashchange', () => {
+      if (state.loaded && location.hash === '#top') showTopView();
       if (state.loaded && location.hash === '#assembly') startAssembly();
       if (state.loaded && location.hash === '#rear') showRearView();
     });
@@ -1259,7 +1306,7 @@
         playClickSound(open > 0.5 ? 580 : 380, 0.06);
         wake(true);
       } else if ('12lfg'.includes(k)) {
-        togglePanel({ '1': 'doorL', '2': 'doorR', l: 'lid', f: 'hood', g: 'fuel' }[k], k === 'g');
+        togglePanel({ '1': 'doorL', '2': 'doorR', l: 'lid', f: 'hood', g: 'fuel' }[k]);
       } else if (k === 'i') {
         selectedView = null;
         // Enter at eye level and retain the current position of both doors.
@@ -1285,17 +1332,8 @@
         playClickSound(state.stripeVisible ? 620 : 440, 0.05);
         wake(false);
       } else if (k === 'e') {
-        selectedView = null;
-        // Cycle assembled -> half explode -> full explode -> assembled
-        if (state.interiorView) {
-          state.targetTheta = exteriorView.theta;
-          state.targetPhi = exteriorView.phi;
-          state.targetRadius = exteriorView.radius;
-        }
-        state.interiorView = false;
-        state.explodeTarget = state.explodeTarget < 0.2 ? 0.55 : (state.explodeTarget < 0.85 ? 1.0 : 0.0);
+        setExplosion(state.explodeTarget < 0.2 ? 0.55 : (state.explodeTarget < 0.85 ? 1 : 0));
         playClickSound(state.explodeTarget > 0 ? 640 : 420, 0.06);
-        wake(true);
       } else if (k === 'x') {
         setHoverMesh(null, 0, 0);
         state.xrayTarget = state.xrayTarget > 0.5 ? 0.0 : 1.0;
@@ -1382,8 +1420,6 @@
       if (intro && reducedMotion.matches) {
         stopIntro();
         state.explode = state.explodeTarget = 0;
-        state.theta = state.targetTheta = exteriorView.theta;
-        state.phi = state.targetPhi = exteriorView.phi;
         updateHudText();
         wake(true);
       }
@@ -1448,48 +1484,44 @@
     // -----------------------------------------------------------------------
     const clock = new THREE.Clock();
     function frontLensTarget() {
-      return Number((!selectedView || referenceViews.has(selectedView)) && !state.interiorView && state.explodeTarget === 0 && !intro);
+      return Number((!selectedView || selectedView === 'top' || referenceViews.has(selectedView)) && !state.interiorView);
     }
-    const FOCUS_EXTERIOR = new THREE.Vector3(30, 33.2, 0);
-    const PANEL_CENTERS = {
-      hood: new THREE.Vector3(38, 34, 0),
-      fuel: new THREE.Vector3(56, 43, 50),
-      rear: new THREE.Vector3(-33.6, 33.5, 0),
-      lid: new THREE.Vector3(-93, 52, -28)
-    };
+    const FOCUS_EXTERIOR = new THREE.Vector3(5.2, 38.4, -0.8);
+    const TOP_CENTER = new THREE.Vector3(0, 35, 0);
+    const REAR_CENTER = new THREE.Vector3(-33.6, 33.5, 0);
     // Exterior camera presets share their names with the configurator angle selector.
     // Radius is the equivalent orbit distance at 30°; the render loop compensates
     // for each lens so zoom and drag continue from the selected composition.
     const referenceViews = new Map([
       // Camera poses calibrated against all 28 local 992.2 studio views (24-frame 360° orbit + 4 high/overhead views).
-      ['Front three-quarter',       { theta: -0.7370, phi: 1.4429, radius: 306.64, fov: 21.258, center: new THREE.Vector3( 5.21, 38.44, -0.78) }],
-      ['Front-left 45°',            { theta: -0.7993, phi: 1.4771, radius: 304.09, fov: 21.000, center: new THREE.Vector3( 7.13, 39.42,  0.00) }],
-      ['Front-left 65°',            { theta: -1.1337, phi: 1.4679, radius: 306.00, fov: 21.000, center: new THREE.Vector3( 4.75, 38.77,  0.00) }],
-      ['Left side profile',         { theta: -1.5699, phi: 1.4901, radius: 302.85, fov: 20.910, center: new THREE.Vector3( 3.89, 37.28,  0.00) }],
-      ['Rear-left 115°',            { theta: -2.0186, phi: 1.4836, radius: 307.74, fov: 21.000, center: new THREE.Vector3( 2.95, 39.26,  0.00) }],
-      ['Rear three-quarter',        { theta: -2.4080, phi: 1.4957, radius: 308.52, fov: 21.257, center: new THREE.Vector3( 3.77, 36.93,  1.17) }],
-      ['Rear-left 155°',            { theta: -2.7546, phi: 1.5045, radius: 296.87, fov: 20.672, center: new THREE.Vector3( 2.89, 36.88,  0.02) }],
-      ['Rear-left 170°',            { theta: -2.9244, phi: 1.4894, radius: 311.89, fov: 21.000, center: new THREE.Vector3( 4.01, 40.92,  0.00) }],
-      ['Rear',                      { theta:  3.1156, phi: 1.5312, radius: 297.49, fov: 20.641, center: new THREE.Vector3( 3.01, 38.23,  0.00) }],
-      ['Rear-right 165°',           { theta:  2.8858, phi: 1.4610, radius: 326.87, fov: 21.000, center: new THREE.Vector3( 8.68, 39.48,  0.00) }],
-      ['Rear-right 160°',           { theta:  2.8149, phi: 1.4900, radius: 305.99, fov: 21.000, center: new THREE.Vector3( 5.13, 38.30,  0.00) }],
-      ['Rear-right three-quarter',  { theta:  2.4553, phi: 1.5149, radius: 319.61, fov: 21.874, center: new THREE.Vector3( 9.94, 35.42, -6.30) }],
-      ['Rear-right 135°',           { theta:  2.4004, phi: 1.5123, radius: 307.55, fov: 21.000, center: new THREE.Vector3( 4.38, 38.11,  0.00) }],
-      ['Rear-right 130°',           { theta:  2.2645, phi: 1.5130, radius: 308.64, fov: 21.000, center: new THREE.Vector3( 4.47, 38.85,  0.00) }],
-      ['Rear-right 120°',           { theta:  2.1369, phi: 1.5086, radius: 309.74, fov: 21.000, center: new THREE.Vector3( 3.78, 38.74,  0.00) }],
-      ['Rear-right 110°',           { theta:  1.8850, phi: 1.5010, radius: 307.00, fov: 21.000, center: new THREE.Vector3( 4.10, 38.00,  0.00) }],
-      ['Right side profile',        { theta:  1.5738, phi: 1.5052, radius: 303.89, fov: 20.920, center: new THREE.Vector3( 4.07, 37.16,  0.00) }],
-      ['Front-right 65°',           { theta:  1.1415, phi: 1.4896, radius: 309.79, fov: 21.000, center: new THREE.Vector3( 4.32, 38.06,  0.00) }],
-      ['Front-right three-quarter', { theta:  0.8977, phi: 1.4915, radius: 308.68, fov: 21.000, center: new THREE.Vector3( 5.56, 38.92,  0.00) }],
-      ['Front-right 30°',           { theta:  0.5200, phi: 1.4609, radius: 311.25, fov: 20.851, center: new THREE.Vector3( 6.15, 38.39, -0.44) }],
-      ['Front-right 15°',           { theta:  0.2310, phi: 1.4712, radius: 307.24, fov: 21.000, center: new THREE.Vector3( 4.72, 38.09,  0.00) }],
-      ['Front',                     { theta: -0.0001, phi: 1.4794, radius: 313.66, fov: 22.895, center: new THREE.Vector3(-8.22, 37.05,  0.67) }],
-      ['Front-left 15°',            { theta: -0.2347, phi: 1.4163, radius: 314.43, fov: 21.000, center: new THREE.Vector3( 0.89, 38.72,  0.00) }],
-      ['Front-left 30°',            { theta: -0.5073, phi: 1.4106, radius: 332.59, fov: 22.402, center: new THREE.Vector3( 6.54, 38.66,  0.97) }],
-      ['High right 25°',            { theta:  1.5767, phi: 1.1571, radius: 325.34, fov: 21.378, center: new THREE.Vector3( 5.06, 38.95, -3.27) }],
-      ['High 45°',                  { theta:  1.5226, phi: 0.7766, radius: 317.41, fov: 22.762, center: new THREE.Vector3( 4.40, 34.68, -3.47) }],
-      ['High 72°',                  { theta:  1.6711, phi: 0.2785, radius: 305.71, fov: 20.414, center: new THREE.Vector3( 1.66, 39.27,  4.64) }],
-      ['Overhead',                  { theta:  1.5141, phi: 0.0080, radius: 293.51, fov: 20.917, center: new THREE.Vector3( 6.05, 37.22, -0.71) }],
+      ['Front three-quarter',       { theta: -0.7544, phi: 1.4600, radius: 316.04, fov: 22.086, center: new THREE.Vector3( 6.18, 37.67,  0.15) }],
+      ['Front-left 45°',            { theta: -0.8564, phi: 1.4613, radius: 307.96, fov: 21.074, center: new THREE.Vector3( 5.46, 36.84, -1.97) }],
+      ['Front-left 65°',            { theta: -1.1333, phi: 1.4574, radius: 309.56, fov: 21.009, center: new THREE.Vector3( 3.67, 36.78, -0.73) }],
+      ['Left side profile',         { theta: -1.5259, phi: 1.4839, radius: 311.71, fov: 20.920, center: new THREE.Vector3( 3.13, 37.70,  0.03) }],
+      ['Rear-left 115°',            { theta: -1.9954, phi: 1.4810, radius: 309.89, fov: 20.705, center: new THREE.Vector3( 3.31, 36.80, -0.41) }],
+      ['Rear three-quarter',        { theta: -2.4793, phi: 1.4983, radius: 305.24, fov: 20.812, center: new THREE.Vector3( 4.25, 36.47,  0.59) }],
+      ['Rear-left 155°',            { theta: -2.6885, phi: 1.5005, radius: 315.65, fov: 23.840, center: new THREE.Vector3( 2.30, 36.93,  1.23) }],
+      ['Rear-left 170°',            { theta: -2.9214, phi: 1.4897, radius: 313.92, fov: 21.100, center: new THREE.Vector3( 3.47, 36.55,  0.81) }],
+      ['Rear',                      { theta:  3.1001, phi: 1.5059, radius: 314.73, fov: 22.977, center: new THREE.Vector3( 2.93, 36.42,  0.99) }],
+      ['Rear-right 165°',           { theta:  2.9185, phi: 1.4938, radius: 319.23, fov: 21.620, center: new THREE.Vector3( 8.22, 36.08, -0.83) }],
+      ['Rear-right 160°',           { theta:  2.7868, phi: 1.4978, radius: 317.33, fov: 22.382, center: new THREE.Vector3( 4.51, 36.53, -1.30) }],
+      ['Rear-right three-quarter',  { theta:  2.5160, phi: 1.5112, radius: 321.86, fov: 23.998, center: new THREE.Vector3( 10.33, 36.62, -5.89) }],
+      ['Rear-right 135°',           { theta:  2.3893, phi: 1.4972, radius: 312.71, fov: 22.918, center: new THREE.Vector3( 3.73, 36.89, -0.56) }],
+      ['Rear-right 130°',           { theta:  2.2923, phi: 1.5008, radius: 306.27, fov: 20.161, center: new THREE.Vector3( 4.85, 36.65,  0.48) }],
+      ['Rear-right 120°',           { theta:  2.0924, phi: 1.4937, radius: 310.52, fov: 20.698, center: new THREE.Vector3( 4.28, 36.58,  0.47) }],
+      ['Rear-right 110°',           { theta:  1.8705, phi: 1.4805, radius: 311.66, fov: 20.785, center: new THREE.Vector3( 4.20, 36.78,  0.12) }],
+      ['Right side profile',        { theta:  1.5281, phi: 1.4987, radius: 312.67, fov: 20.908, center: new THREE.Vector3( 3.32, 37.51, -0.03) }],
+      ['Front-right 65°',           { theta:  1.1470, phi: 1.4752, radius: 310.00, fov: 21.043, center: new THREE.Vector3( 3.04, 36.62,  0.71) }],
+      ['Front-right three-quarter', { theta:  0.9148, phi: 1.4627, radius: 310.55, fov: 21.140, center: new THREE.Vector3( 4.17, 36.61,  1.35) }],
+      ['Front-right 30°',           { theta:  0.5108, phi: 1.5097, radius: 311.55, fov: 22.580, center: new THREE.Vector3( 4.05, 38.44,  3.22) }],
+      ['Front-right 15°',           { theta:  0.2478, phi: 1.4930, radius: 309.63, fov: 22.060, center: new THREE.Vector3( 4.29, 37.88,  1.92) }],
+      ['Front',                     { theta:  0.0035, phi: 1.4919, radius: 317.00, fov: 22.019, center: new THREE.Vector3(-8.23, 37.16,  0.56) }],
+      ['Front-left 15°',            { theta: -0.1961, phi: 1.4908, radius: 312.10, fov: 21.847, center: new THREE.Vector3( 1.02, 38.17,  0.16) }],
+      ['Front-left 30°',            { theta: -0.4194, phi: 1.4963, radius: 309.22, fov: 22.587, center: new THREE.Vector3( 5.09, 38.08, -1.84) }],
+      ['High right 25°',            { theta:  1.4848, phi: 1.1508, radius: 304.56, fov: 19.747, center: new THREE.Vector3( 3.74, 33.58, -0.92) }],
+      ['High right 36°',                  { theta:  1.5037, phi: 0.9466, radius: 306.02, fov: 20.169, center: new THREE.Vector3( 3.76, 32.76, -1.48) }],
+      ['Near-overhead 81°',                  { theta:  1.6537, phi: 0.1618, radius: 306.34, fov: 19.239, center: new THREE.Vector3( 3.18, 37.00,  1.32) }],
+      ['Overhead reference 79°',                  { theta:  1.5098, phi: 0.1903, radius: 306.22, fov: 20.235, center: new THREE.Vector3( 3.07, 37.00,  1.12) }],
     ]);
     const FOCUS_INTERIOR = new THREE.Vector3(12, 41, -4.5);
     const cabinRadius = 47;
@@ -1608,7 +1640,7 @@
       const footerHeight = barEl.offsetHeight + 24;
       assemblyView.compactInset = compact * (footerHeight - headerHeight) / innerHeight;
       assemblyView.availableHeight = Math.max(.18, 1 - compact * (footerHeight + headerHeight + 18) / innerHeight);
-      FOCUS_EXTERIOR.x = 30 / Math.max(1, 1.60 / camera.aspect);
+
       if (!state.loaded) state.targetCenter.copy(FOCUS_EXTERIOR);
       if (!assemblyView.points.length) return;
       const { theta, phi, center } = assemblyView;
@@ -1644,21 +1676,23 @@
 
     function advanceIntro(now) {
       if (!intro) return;
+      if (intro.elapsed === 0 && state.explode < 0.995) {
+        intro.previous = null;
+        return;
+      }
       const holding = intro.elapsed <= introHoldMs;
       if (intro.previous !== null) intro.elapsed += Math.max(0, now - intro.previous);
       intro.previous = now;
       const progress = THREE.MathUtils.clamp((intro.elapsed - introHoldMs) / introAssemblyMs, 0, 1);
       const ease = progress * progress * (3 - 2 * progress);
-      state.explode = state.explodeTarget = 1 - ease;
-      state.theta = state.targetTheta = THREE.MathUtils.lerp(assemblyView.theta, exteriorView.theta, ease);
-      state.phi = state.targetPhi = THREE.MathUtils.lerp(assemblyView.phi, exteriorView.phi, ease);
+      state.explodeTarget = 1 - ease;
       if (progress === 1) intro = null;
       if (!intro || (holding && progress > 0)) updateHudText();
     }
 
     function animate(now) {
       framePending = false;
-      if (transmission.active || carHidden()) return;
+      if (transmission.active || (carHidden() && !document.documentElement.classList.contains('compare-photos'))) return;
       const frameTime = clock.getDelta();
       const dt = Math.min(frameTime, 0.08);
       const t = clock.elapsedTime;
@@ -1666,6 +1700,8 @@
       // finish in real time even when a slow GPU skips several frames.
       const transitionTime = wasMoving ? Math.min(frameTime, 0.75) : 1 / 60;
       const damp = 1.0 - Math.exp(-8.5 * transitionTime);
+      // Resume a camera transition gently even after a background tab or a long GPU frame.
+      const cameraDamp = 1 - Math.exp(-6 * Math.min(transitionTime, 1 / 20));
 
       if (!state.loaded) {
         if (needsRender) {
@@ -1684,10 +1720,6 @@
       const presenting = !!intro;
       if (presenting) {
         advanceIntro(now);
-        if (intro && intro.elapsed <= introHoldMs && !needsRender) {
-          scheduleFrame();
-          return;
-        }
       }
 
       // Detect whether camera or any mechanical rig is actively moving
@@ -1699,7 +1731,7 @@
         Math.abs(Number(selectedView === 'rear') - state.rearLens) +
         Math.abs(frontLensTarget() - state.frontLens);
       const photoPose = referenceViews.get(selectedView);
-      const focusTarget = state.interiorView ? FOCUS_INTERIOR : (photoPose?.center || PANEL_CENTERS[selectedView] || FOCUS_EXTERIOR);
+      const focusTarget = state.interiorView ? FOCUS_INTERIOR : (photoPose?.center ?? (selectedView === 'top' ? TOP_CENTER : selectedView === 'rear' ? REAR_CENTER : FOCUS_EXTERIOR));
       const focusDelta = state.targetCenter.distanceToSquared(focusTarget);
 
       const mechDelta =
@@ -1732,9 +1764,9 @@
 
       const continuousAnim = state.spinMode || state.steerMode || state.revving || rpmDelta > 5;
       const geoMoving = presenting || mechDelta > 5e-4 || pullActive || continuousAnim;
-      const active = needsRender || camDelta > 2e-4 || focusDelta > 1e-3 || xrayDelta > 5e-4 || geoMoving;
+      const active = needsRender || opticsMoving || camDelta > 2e-4 || focusDelta > 1e-3 || xrayDelta > 5e-4 || geoMoving;
 
-      const ratio = active ? motionRatio : stillRatio();
+      const ratio = geoMoving || opticsMoving || camDelta > 2e-4 || focusDelta > 1e-3 ? motionRatio : stillRatio();
       if (renderer.getPixelRatio() !== ratio) renderer.setPixelRatio(ratio);
       if (!active) {
         wasMoving = false;
@@ -1757,10 +1789,12 @@
       wasMoving = true;
 
       // Camera orbit smooth damping
-      state.theta += (state.targetTheta - state.theta) * damp;
-      state.phi += (state.targetPhi - state.phi) * damp;
-      state.radius += (state.targetRadius - state.radius) * damp;
-      state.targetCenter.lerp(focusTarget, damp);
+      const turn = state.targetTheta - state.theta;
+      state.targetTheta = state.theta + Math.atan2(Math.sin(turn), Math.cos(turn));
+      state.theta += (state.targetTheta - state.theta) * cameraDamp;
+      state.phi += (state.targetPhi - state.phi) * cameraDamp;
+      state.radius += (state.targetRadius - state.radius) * cameraDamp;
+      state.targetCenter.lerp(focusTarget, cameraDamp);
 
       // Smoothly spring-damp interactive parameters
       state.explode += (state.explodeTarget - state.explode) * damp;
@@ -1773,19 +1807,22 @@
       state.xray += (state.xrayTarget - state.xray) * damp;
 
       // Preserve horizontal framing on portrait screens.
-      state.cabinBlend += (Number(state.interiorView) - state.cabinBlend) * damp;
+      state.cabinBlend += (Number(state.interiorView) - state.cabinBlend) * cameraDamp;
       // A side-window fill reveals the grain on surfaces facing away from the windscreen.
-      rimLight.intensity = .75 + 1.20 * state.cabinBlend;
-      scene.environmentIntensity = .52 + .13 * state.cabinBlend;
+      rimLight.intensity = THREE.MathUtils.lerp(exteriorRimGain, 1.79, state.cabinBlend);
+      keyLight.intensity = THREE.MathUtils.lerp(exteriorKeyGain, 1.42, state.cabinBlend);
+      scene.environmentIntensity = exteriorEnvironmentGain + .08 * state.cabinBlend;
       renderer.toneMappingExposure = .93 + .13 * state.cabinBlend;
-      // Move from the assembly lens to the front reference lens in step with
-      // the active assembly sequence, including its very first and last frames.
-      state.frontLens = presenting ? 1 - state.explode : state.frontLens + (frontLensTarget() - state.frontLens) * damp;
-      state.rearLens += (Number(selectedView === 'rear') - state.rearLens) * damp;
+      // Keep the exterior lens while parts move through the assembly.
+      state.frontLens = state.frontLens + (frontLensTarget() - state.frontLens) * cameraDamp;
+      state.rearLens += (Number(selectedView === 'rear') - state.rearLens) * cameraDamp;
       // Porsche's rear three-quarter still uses a long lens. Dolly with the
       // focal length so selecting this angle keeps the car the same size.
-      const exteriorFov = THREE.MathUtils.lerp(30, photoPose?.fov ?? 12.02, Math.min(1, state.frontLens + state.rearLens));
-      const lensTangent = Math.tan(THREE.MathUtils.degToRad(exteriorFov / 2));
+      const presetFov = photoPose?.fov ?? (selectedView === 'rear' ? 12.02 : exteriorView.fov);
+      const targetLens = THREE.MathUtils.lerp(30, presetFov, Math.min(1, state.frontLens + state.rearLens));
+      const opticalStep = lensFov === null ? 1 : cameraDamp;
+      lensFov = THREE.MathUtils.lerp(lensFov ?? targetLens, targetLens, opticalStep);
+      const lensTangent = Math.tan(THREE.MathUtils.degToRad(lensFov / 2));
       const dolly = Math.tan(Math.PI / 12) / lensTangent;
       // Fit the rear silhouette above the toolbar when a phone is turned sideways.
       const availableHeight = assemblyView.availableHeight || 1;
@@ -1793,35 +1830,46 @@
       const portraitMargin = THREE.MathUtils.clamp(1.5 - camera.aspect, 0, 1);
       const minimumAspect = 1.60 + .05 * portraitMargin;
       const exteriorScale = THREE.MathUtils.lerp(Math.max(1, minimumAspect / camera.aspect, .76 / availableHeight), rearScale, state.rearLens);
-      // Keep the studio lighting consistent as the rear camera backs up on phones.
-      scene.fog.density = studioFogDensity / THREE.MathUtils.lerp(1, dolly * exteriorScale, Math.min(1, state.frontLens + state.rearLens));
-      const assembledRadius = THREE.MathUtils.lerp(state.radius * exteriorScale * dolly, cabinRadius, state.cabinBlend);
+      // Preserve distance to the car when the viewport changes aspect ratio.
+      scene.fog.density = studioFogDensity / THREE.MathUtils.lerp(1, dolly, Math.min(1, state.frontLens + state.rearLens));
+      const assembledRadius = THREE.MathUtils.lerp(state.radius * dolly, cabinRadius, state.cabinBlend);
       const explodedRadius = state.radius / exteriorView.radius * (assemblyView.distance || 440 * exteriorScale) * dolly;
-      // The orbit sweeps the front-right tire farther sideways midway through
-      // assembly. Leave room for that arc on a narrow screen.
-      const turnClearance = 1 + 0.80 * portraitMargin * state.explode * (1 - state.explode);
-      const effRadius = THREE.MathUtils.lerp(assembledRadius, explodedRadius, state.explode) * turnClearance;
+      const effRadius = THREE.MathUtils.lerp(assembledRadius, explodedRadius, state.explode);
       // At the driver's eye point, widen the lens on portrait screens instead of
       // backing the camera out through the seat or the rear glass.
       const cabinLens = Math.max(Math.tan(THREE.MathUtils.degToRad(59 / 2)), Math.tan(0.60) / camera.aspect);
       const cabinFov = THREE.MathUtils.radToDeg(2 * Math.atan(cabinLens * Math.min(1, state.radius / cabinRadius)));
-      const fov = THREE.MathUtils.lerp(exteriorFov, cabinFov, state.cabinBlend);
+      // A matched photo keeps its camera distance and perspective on every screen.
+      const targetHeight = THREE.MathUtils.lerp(photoPose ? photoFraming.height : 1 / exteriorScale, 1, state.explode);
+      const targetOffset = photoPose ? photoFraming.offset * (1 - state.explode) : 0;
+      frameHeight = THREE.MathUtils.lerp(frameHeight, targetHeight, opticalStep);
+      frameOffset = THREE.MathUtils.lerp(frameOffset, targetOffset, opticalStep);
+      opticsMoving = Math.abs(lensFov - targetLens) > .003 || Math.abs(frameHeight - targetHeight) > .0001 ||
+        Math.abs(frameOffset - targetOffset) > .05;
+      const framingFov = THREE.MathUtils.radToDeg(2 * Math.atan(lensTangent / frameHeight));
+      const fov = THREE.MathUtils.lerp(framingFov, cabinFov, state.cabinBlend);
+      if (Math.abs(frameOffset) > .05) camera.setViewOffset(innerWidth, innerHeight, 0, frameOffset, innerWidth, innerHeight);
+      else if (camera.view?.enabled) camera.clearViewOffset();
       const far = Math.max(4000, effRadius + 1200);
       if (Math.abs(camera.fov - fov) > 0.002 || Math.abs(camera.far - far) > 1) {
         camera.fov = fov;
         camera.far = far;
         camera.updateProjectionMatrix();
       }
-      const effX = state.targetCenter.x + state.explode * (assemblyView.center.x - FOCUS_EXTERIOR.x);
+      const effX = THREE.MathUtils.lerp(state.targetCenter.x, assemblyView.center.x, state.explode);
       // On short landscape screens, aim the assembled exterior above the toolbar.
-      const compactLift = effRadius * lensTangent * assemblyView.compactInset * (1 - state.explode) * (1 - state.cabinBlend);
-      const effY = state.targetCenter.y + state.explode * (assemblyView.center.y - FOCUS_EXTERIOR.y) - compactLift;
-      const effZ = state.targetCenter.z + state.explode * (assemblyView.center.z - FOCUS_EXTERIOR.z);
+      const compactLift = (photoPose ? 0 : effRadius) * lensTangent / frameHeight * assemblyView.compactInset * (1 - state.explode) * (1 - state.cabinBlend);
+      const effY = THREE.MathUtils.lerp(state.targetCenter.y, assemblyView.center.y, state.explode) - compactLift;
+      const effZ = THREE.MathUtils.lerp(state.targetCenter.z, assemblyView.center.z, state.explode);
       camera.position.set(
         effX + effRadius * Math.sin(state.phi) * Math.cos(state.theta),
         effY + effRadius * Math.cos(state.phi),
         effZ + effRadius * Math.sin(state.phi) * Math.sin(state.theta)
       );
+      // At the exact pole the world-up vector is parallel to the view axis.
+      // Choose an explicit screen-up direction so the nose points right.
+      if (state.phi < .00001) camera.up.set(-Math.cos(state.theta), 0, -Math.sin(state.theta));
+      else camera.up.set(0, 1, 0);
       camera.lookAt(effX, effY, effZ);
       if (state.cabinBlend > 0.0001) {
         camera.rotateOnWorldAxis(cabinUp, state.cabinYaw * state.cabinBlend);
@@ -1966,6 +2014,8 @@
       wake();
     });
     window.addEventListener('resize', () => {
+      if (referenceViews.has(selectedView)) measurePhotoFrame();
+      lensFov = null;
       camera.aspect = window.innerWidth / window.innerHeight;
       camera.updateProjectionMatrix();
       if (!transmission.active) {

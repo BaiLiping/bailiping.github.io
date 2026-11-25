@@ -41,11 +41,7 @@ a { color: inherit; text-underline-offset: .2em; }
 #stage { display: block; touch-action: none; cursor: grab; }
 #stage.grabbing { cursor: grabbing; }
 #stage.hover-part { cursor: pointer; }
-#loader { background: var(--surface); z-index: 15; transition: opacity .18s; }
-#loader img { width: 100%; height: 100%; object-fit: contain; }
-.load-transmission #loader { background: #1d2931 url('./manual-cutaway-4k.webp?v=60742a3d') center/contain no-repeat; }
-.load-rear #loader { background: var(--surface) url('./gt3-rear.webp?v=studio28-r3-20261125') center/contain no-repeat; }
-.load-transmission #loader picture, .load-rear #loader picture, .custom-model #loader picture { visibility: hidden; }
+#loader { background: #f1f2f3; z-index: 15; transition: opacity .2s ease-out, visibility 0s linear .2s; }
 #loader.done { opacity: 0; pointer-events: none; visibility: hidden; }
 #load-status { position: absolute; bottom: 30px; left: 50%; transform: translateX(-50%); max-width: 88%; padding: 8px 14px; border-radius: 6px; background: white; font-size: 13px; text-align: center; }
 
@@ -87,6 +83,7 @@ a { color: inherit; text-underline-offset: .2em; }
 .panel-buttons button { background: #f4f5f6; color: var(--ink); border: 1px solid #e0e2e4; border-radius: 5px; min-height: 44px; font-weight: 500; font-size: 14px; }
 .stripe { display: flex; align-items: center; gap: 8px; font-size: 14px; padding: 14px 0 3px; cursor: pointer; }
 .stripe input { width: 17px; height: 17px; accent-color: #194d78; }
+.top-view { display: inline-block; margin: 7px 0; font-size: 14px; }
 #info { font-size: 12px; color: #505965; margin: 5px 0 15px; }
 .notes { border-top: 1px solid var(--line); padding: 2px 0; }
 .notes summary { padding: 9px 2px; font-size: 14px; font-weight: 550; }
@@ -99,6 +96,7 @@ a { color: inherit; text-underline-offset: .2em; }
 .hide-hud #studio-header, .hide-hud #bar, .hide-hud #callout { visibility: hidden; }
 
 #photo-room { position: fixed; inset: var(--header-height) 0 0; z-index: 19; display: grid; grid-template-rows: minmax(0, 1fr) auto; background: #181a1d; color: white; }
+#photo-room[hidden] { display: grid !important; visibility: hidden; pointer-events: none; }
 #photo-room figure { min-height: 0; position: relative; display: grid; place-items: center; touch-action: pan-y; }
 #photo { width: 100%; height: 100%; object-fit: contain; position: absolute; inset: 0; user-select: none; }
 #photo-error { padding: 24px; }
@@ -170,4 +168,42 @@ a { color: inherit; text-underline-offset: .2em; }
 @media (max-width: 360px) {
   #photo-footer { padding-inline: 4px; grid-template-columns: minmax(0, 1fr); }
   .photo-tools select { min-width: 0; width: 122px; padding-inline: 2px; }
+}
+
+/* The overlay and matched camera share the same letterboxed 16:9 rectangle. */
+#photo-room figure { container-type: size; overflow: hidden; }
+.photo-frame {
+  position: relative;
+  width: min(100cqw, calc(100cqh * 16 / 9));
+  aspect-ratio: 16 / 9;
+}
+#photo-error { position: absolute; background: #181a1d; }
+.photo-tools #compare-view {
+  font: inherit; font-weight: 550; font-size: 14px; padding-inline: 12px;
+}
+.photo-tools #compare-view[aria-pressed="true"] { background: var(--ink); color: white; }
+.photo-tools #compare-view:disabled { color: #686c71; cursor: default; }
+.compare-photos #stage { visibility: visible; pointer-events: none; }
+.compare-photos #photo-room { background: transparent; }
+.compare-photos .photo-frame { box-shadow: 0 0 0 200vmax #181a1d; }
+.compare-photos #photo { clip-path: inset(0 calc(100% - var(--photo-share, 50%)) 0 0); }
+.compare-photos .photo-frame::after {
+  content: ''; position: absolute; inset-block: 0; left: var(--photo-share, 50%);
+  width: 2px; transform: translateX(-1px); background: white;
+  box-shadow: 0 0 3px #0008; pointer-events: none;
+}
+#comparison-controls {
+  position: absolute; bottom: 10px; left: 50%; transform: translateX(-50%);
+  display: flex; align-items: center; gap: 10px; min-height: 36px;
+  padding: 0 12px; border-radius: 7px; background: #191c20eb; color: white;
+  font-size: 13px; white-space: nowrap;
+}
+#comparison-split { width: clamp(95px, 16vw, 190px); min-height: 32px; margin: 0; accent-color: #c3e4ff; }
+#photo-footer { background: #181a1d; }
+@media (max-width: 640px) {
+  #photo-footer { padding-inline: 5px; }
+  .photo-tools { width: min(100%, 420px); }
+  .photo-tools select { width: 0; min-width: 0; flex: 1; font-size: 12px; padding-inline: 2px; }
+  .photo-tools #compare-view, .photo-tools #match-view { flex: 0 0 auto; padding-inline: 7px; font-size: 12px; }
+  .photo-tools > button { min-width: 32px; padding-inline: 5px; }
 }

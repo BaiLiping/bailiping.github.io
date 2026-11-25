@@ -8,6 +8,26 @@ const labRoom = document.getElementById('lab-room');
 const labFrames = [...labRoom.querySelectorAll('iframe[data-lab]')];
 let sourcePromise;
 const matchButton = document.getElementById('match-view');
+const compareButton = document.getElementById('compare-view');
+const comparison = document.getElementById('comparison-controls');
+const split = document.getElementById('comparison-split');
+function matchAngle() {
+  const option = angles.selectedOptions[0];
+  if (option) window.dispatchEvent(new CustomEvent('match-porsche-view', {detail: option.label}));
+}
+function setComparison(enabled) {
+  compareButton.setAttribute('aria-pressed', String(enabled));
+  comparison.hidden = !enabled;
+  document.documentElement.classList.toggle('compare-photos', enabled);
+  if (enabled) matchAngle();
+}
+compareButton.addEventListener('click', () => {
+  if (angles.selectedIndex >= 0) setComparison(comparison.hidden);
+});
+split.addEventListener('input', () => {
+  room.style.setProperty('--photo-share', split.value + '%');
+  split.setAttribute('aria-valuetext', split.value + ' percent photo');
+});
 matchButton.addEventListener('click', () => {
   const option = angles.selectedOptions[0];
   if (!option) return;
@@ -33,6 +53,7 @@ function showAngle() {
   photo.alt = 'Lugano Blue Porsche 911 GT3, ' + option.label.toLowerCase() + ' view';
   photo.src = option.value;
   preloaded.add(option.value);
+  if (!comparison.hidden) matchAngle();
   if (angles.length > 1) {
     preloadAngle(angles.selectedIndex + 1);
     preloadAngle(angles.selectedIndex - 1);
@@ -57,7 +78,7 @@ document.getElementById('next-view').addEventListener('click', () => moveAngle(1
 async function loadAngles() {
   if (angles.length) return;
   try {
-    sourcePromise ??= fetch('./porsche-views.json?v=studio28-20261125').then(response => {
+    sourcePromise ??= fetch('./porsche-views.json?v=surface-studio-r4').then(response => {
       if (!response.ok) throw new Error('Camera list unavailable');
       return response.json();
     });
@@ -75,6 +96,7 @@ async function loadAngles() {
 // Each tab is a URL hash. Every hash without its own tab, such as #rear, shows the 3D model.
 function updateMode() {
   const gallery = location.hash === '#porsche-views';
+  if (!gallery && !comparison.hidden) setComparison(false);
   const lab = labFrames.find(frame => location.hash === '#' + frame.dataset.lab);
   const tab = gallery || lab ? location.hash : '#model';
   document.documentElement.classList.toggle('show-photos', gallery);
@@ -113,7 +135,7 @@ window.addEventListener('keydown', event => {
     more.open = false;
     more.querySelector('summary').focus();
   }
-  if (room.hidden || event.target === angles) return;
+  if (room.hidden || event.target === angles || event.target === split) return;
   if (event.key === 'ArrowLeft' || event.key === 'ArrowRight') {
     event.preventDefault();
     moveAngle(event.key === 'ArrowLeft' ? -1 : 1);
@@ -121,7 +143,7 @@ window.addEventListener('keydown', event => {
 });
 let swipe;
 room.querySelector('figure').addEventListener('pointerdown', event => {
-  if (!event.isPrimary || event.button !== 0 || event.target.closest('a, button')) return;
+  if (!event.isPrimary || event.button !== 0 || event.target.closest('a, button, #comparison-controls')) return;
   swipe = {x: event.clientX, y: event.clientY};
   event.currentTarget.setPointerCapture(event.pointerId);
 });
