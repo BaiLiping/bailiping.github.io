@@ -15,7 +15,7 @@
       document.documentElement.classList.add('show-photos');
     }
     const overrideModel = initParams.get('model');
-    const modelFile = overrideModel || './ford_f150_raptor_r.glb?v=5';
+    const modelFile = overrideModel || './ford_f150_raptor_r.glb?v=5.1';
     const preload = document.createElement('link');
     preload.rel = 'preload';
     preload.as = 'fetch';
@@ -26,7 +26,7 @@
   <link rel="icon" href="/favicon.ico" />
   <title>2024 Ford F-150 Raptor R — Rapid Red Metallic</title>
   <meta property="og:title" content="2024 Ford F-150 Raptor R in Rapid Red Metallic">
-  <meta property="og:image" content="https://bailiping.com/ford-f150-raptor-r/og-preview.jpg?v=5">
+  <meta property="og:image" content="https://bailiping.com/ford-f150-raptor-r/og-preview.jpg?v=5.1">
   <meta property="og:image:alt" content="Rear three-quarter view of the Rapid Red Raptor R with the flat bed cover closed">
   <link rel="stylesheet" href="./studio.css">
   <script type="module" src="./studio.js?v=5"></script>
@@ -135,7 +135,7 @@
     }
 
     const [photoSources, exteriorCameras] = await Promise.all(
-      ['./raptor-views.json?v=5', './exterior-photo-cameras.json?v=5']
+      ['./raptor-views.json?v=5', './exterior-photo-cameras.json?v=5.1']
         .map(url => fetch(url).then(response => response.json()))
     );
     const orbitRadius = pose => pose.distance * Math.tan(pose.fov * Math.PI / 360) / Math.tan(Math.PI / 12);
