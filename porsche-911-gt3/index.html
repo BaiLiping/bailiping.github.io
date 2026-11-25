@@ -9,7 +9,7 @@
     if (location.hash === '#porsche-views') document.documentElement.classList.add('show-photos');
     if (labTab) document.documentElement.classList.add('show-lab');
     const overrideModel = new URLSearchParams(location.search).get('model');
-    const modelFile = overrideModel || './porsche_911_gt3_992_2.glb?v=outer-contour-r6';
+    const modelFile = overrideModel || './porsche_911_gt3_992_2.glb?v=carbon-stripe-r7';
     // A page opened on a lab tab fetches the car when the 3D model is first shown.
     if (!labTab) {
       const preload = document.createElement('link');
@@ -112,7 +112,7 @@
       <button type="button" data-panel="fuel" aria-pressed="false" aria-keyshortcuts="G" disabled>Fuel filler</button>
       <button type="button" data-panel="lid" aria-pressed="false" disabled>Rear service flap</button>
           </div>
-          <label class="stripe"><input type="checkbox" id="stripe-toggle"> Custom carbon stripe</label>
+          <label class="stripe"><input type="checkbox" id="stripe-toggle" checked disabled> Custom carbon stripe</label>
           <a class="top-view" href="#top">View from directly above</a>
           <p id="info">2025 911 GT3 · Six-speed manual</p>
           <details class="notes"><summary>Gestures and shortcuts</summary>
@@ -438,7 +438,7 @@
         [/Mirror/, 'Door-Mounted Aero Mirror', 'painted housing on a door-mounted stalk'],
         [/Door_Handle/, 'Flush Pop-Out Door Handle', 'recessed aerodynamic latch'],
         [/Wiper/, 'Low-Profile Windshield Wiper', 'aero blade assembly'],
-        [/Weissach_CenterStripe/, 'Custom carbon stripe', 'optional visualization · not a Weissach package replica'],
+        [/Weissach_CenterStripe/, 'Custom carbon stripe', 'satin-black finish on the hood, roof and rear wing'],
         [/Hood_FrontSeam/, 'Front Frunk Shutline Seam', 'gap between the front luggage lid and bumper'],
         [/Nose_Crest/, 'Porsche Stuttgart Crest', 'multi-color gold, crimson & black heraldic hood emblem'],
         [/Headlight_Lens/, 'Headlight Polycarbonate Cover', 'flush curved clear outer lens cover'],
@@ -493,6 +493,7 @@
     // Front-three-quarter camera calibrated against the configurator's wheel centres,
     // contact patches and roof height. Radius is expressed at the orbit lens of 30°.
     const exteriorView = { theta: -0.754, phi: 1.46, radius: 292, fov: 22.09 };
+    const stripeToggle = document.getElementById('stripe-toggle');
     const state = {
       // Spherical orbit camera around target
       theta: exteriorView.theta,      // azimuth (front 3/4 initial angle)
@@ -518,7 +519,7 @@
       frontLens: 1,
       cabinYaw: 0,
       cabinPitch: 0,
-      stripeVisible: false,
+      stripeVisible: stripeToggle.defaultChecked,
       fuelTarget: 0,
       fuel: 0,
       lidTarget: 0.0,
@@ -542,7 +543,6 @@
     // Porsche views and the lab tabs cover the car; it neither renders nor takes shortcuts meanwhile.
     const carHidden = () => document.documentElement.matches('.show-photos, .show-lab');
     const explosionButton = document.getElementById('exploded-view');
-    const stripeToggle = document.getElementById('stripe-toggle');
     const capLift = new THREE.Vector3();
     const capPark = new THREE.Vector3();
     const assemblyView = { theta: exteriorView.theta, phi: exteriorView.phi, compactInset: 0, center: new THREE.Vector3(), points: [] };
@@ -1359,7 +1359,7 @@
         state.doorLTarget = 0.0;
         state.doorRTarget = 0.0;
         state.interiorView = false;
-        state.stripeVisible = false;
+        state.stripeVisible = stripeToggle.defaultChecked;
         for (const sm of weissachStripeMeshes) sm.visible = state.stripeVisible;
         state.hoodTarget = state.lidTarget = state.fuelTarget = 0.0;
         state.xrayTarget = 0.0;
