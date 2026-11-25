@@ -9,7 +9,7 @@
     if (location.hash === '#porsche-views') document.documentElement.classList.add('show-photos');
     if (labTab) document.documentElement.classList.add('show-lab');
     const overrideModel = new URLSearchParams(location.search).get('model');
-    const modelFile = overrideModel || './porsche_911_gt3_992_2.glb?v=planform-r5';
+    const modelFile = overrideModel || './porsche_911_gt3_992_2.glb?v=outer-contour-r6';
     // A page opened on a lab tab fetches the car when the 3D model is first shown.
     if (!labTab) {
       const preload = document.createElement('link');
