@@ -546,7 +546,7 @@
     const capLift = new THREE.Vector3();
     const capPark = new THREE.Vector3();
     const assemblyView = { theta: exteriorView.theta, phi: exteriorView.phi, compactInset: 0, center: new THREE.Vector3(), points: [] };
-    const introHoldMs = 700;
+    const introHoldMs = 1200;
     const introAssemblyMs = 2100;
     let intro = null;
 
@@ -870,8 +870,9 @@
             showRearView(true);
           } else if (location.hash === '#top') {
             showTopView(true);
-          } else if (location.hash === '#assembly') {
-            startAssembly();
+          } else if (location.hash === '#assembly' ||
+              (!overrideModel && ['', '#model'].includes(location.hash) && !document.documentElement.dataset.matchView)) {
+            startAssembly(true);
           }
         }
         explosionButton.disabled = !pivots.Pivot_Body_Assembly;
@@ -1273,12 +1274,13 @@
       document.getElementById('more').open = false;
       if (state.loaded && location.hash === '#top') showTopView();
     });
-    function startAssembly() {
+    function startAssembly(opening = false) {
       if (!pivots.Pivot_Body_Assembly) return;
-      if (reducedMotion.matches) return;
+      state.targetTheta = state.theta;
+      state.targetPhi = state.phi;
+      if (opening || reducedMotion.matches) state.explode = 1;
+      intro = reducedMotion.matches ? null : { elapsed: 0, previous: null };
       setExplosion(1);
-      intro = { elapsed: 0, previous: null };
-      wake(true);
     }
     document.querySelector('a[href="#assembly"]').addEventListener('click', () => {
       document.getElementById('more').open = false;
@@ -1419,8 +1421,6 @@
     reducedMotion.addEventListener('change', () => {
       if (intro && reducedMotion.matches) {
         stopIntro();
-        state.explode = state.explodeTarget = 0;
-        updateHudText();
         wake(true);
       }
     });
@@ -1735,7 +1735,6 @@
       const focusDelta = state.targetCenter.distanceToSquared(focusTarget);
 
       const mechDelta =
-        Math.abs(state.explodeTarget - state.explode) +
         Math.abs(state.fuelTarget - state.fuel) +
         Math.abs(state.doorLTarget - state.doorL) +
         Math.abs(state.doorRTarget - state.doorR) +
@@ -1763,8 +1762,8 @@
       }
 
       const continuousAnim = state.spinMode || state.steerMode || state.revving || rpmDelta > 5;
-      const geoMoving = presenting || mechDelta > 5e-4 || pullActive || continuousAnim;
-      const active = needsRender || opticsMoving || camDelta > 2e-4 || focusDelta > 1e-3 || xrayDelta > 5e-4 || geoMoving;
+      const geoMoving = state.explode !== state.explodeTarget || mechDelta > 5e-4 || pullActive || continuousAnim;
+      const active = presenting || needsRender || opticsMoving || camDelta > 2e-4 || focusDelta > 1e-3 || xrayDelta > 5e-4 || geoMoving;
 
       const ratio = geoMoving || opticsMoving || camDelta > 2e-4 || focusDelta > 1e-3 ? motionRatio : stillRatio();
       if (renderer.getPixelRatio() !== ratio) renderer.setPixelRatio(ratio);
@@ -1798,6 +1797,7 @@
 
       // Smoothly spring-damp interactive parameters
       state.explode += (state.explodeTarget - state.explode) * damp;
+      if (Math.abs(state.explodeTarget - state.explode) < 5e-4) state.explode = state.explodeTarget;
       const fuelStep = reducedMotion.matches ? 1 : transitionTime / 1.05;
       state.fuel += THREE.MathUtils.clamp(state.fuelTarget - state.fuel, -fuelStep, fuelStep);
       state.doorL += (state.doorLTarget - state.doorL) * damp;
