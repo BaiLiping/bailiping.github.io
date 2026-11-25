@@ -15,7 +15,7 @@
       document.documentElement.classList.add('show-photos');
     }
     const overrideModel = initParams.get('model');
-    const modelFile = overrideModel || './ford_f150_raptor_r.glb';
+    const modelFile = overrideModel || './ford_f150_raptor_r.glb?v=5';
     const preload = document.createElement('link');
     preload.rel = 'preload';
     preload.as = 'fetch';
@@ -25,8 +25,11 @@
   </script>
   <link rel="icon" href="/favicon.ico" />
   <title>2024 Ford F-150 Raptor R — Rapid Red Metallic</title>
+  <meta property="og:title" content="2024 Ford F-150 Raptor R in Rapid Red Metallic">
+  <meta property="og:image" content="https://bailiping.com/ford-f150-raptor-r/og-preview.jpg?v=5">
+  <meta property="og:image:alt" content="Rear three-quarter view of the Rapid Red Raptor R with the flat bed cover closed">
   <link rel="stylesheet" href="./studio.css">
-  <script type="module" src="./studio.js"></script>
+  <script type="module" src="./studio.js?v=5"></script>
 </head>
 <body>
   <noscript><p style="position:fixed;inset:0;z-index:30;background:#eceeef;padding:2em">The interactive 2024 Ford F-150 Raptor R viewer requires JavaScript. <a href="https://bringatrailer.com/listing/2024-ford-f-150-raptor-r-18/">View the reference listing</a>.</p></noscript>
@@ -41,7 +44,7 @@
   <section id="photo-room" aria-label="2024 Ford F-150 Raptor R reference photographs" hidden>
     <figure>
       <img id="photo" width="2048" height="1365" alt="">
-      <p id="photo-error" role="status" hidden>This view is unavailable. <a class="config-link" href="https://bringatrailer.com/listing/2024-ford-f-150-raptor-r-18/">View the Bring a Trailer listing</a></p>
+      <p id="photo-error" role="status" hidden>This view is unavailable. <a class="config-link" href="https://bringatrailer.com/listing/2024-ford-f-150-raptor-r-18/">View the photograph source</a></p>
     </figure>
     <div id="photo-footer">
       <div class="photo-tools">
@@ -50,7 +53,7 @@
         <button id="next-view" type="button" aria-label="Next view">›</button>
         <button id="match-view" type="button" disabled>Match in 3D</button>
       </div>
-      <p>3D finish: Rapid Red Metallic (D4) · 2024 Shelter Green reference vehicle photos by 710HP via Bring a Trailer (Lot #181,611) · <a href="https://bringatrailer.com/listing/2024-ford-f-150-raptor-r-18/">View listing</a> · <a id="full-photo" href="#" target="_blank" rel="noopener" hidden>Full-size photo</a></p>
+      <p>3D finish: Rapid Red Metallic (D4) · <span id="photo-credit">710HP via Bring a Trailer (Lot #181,611)</span> · <a id="photo-source" href="https://bringatrailer.com/listing/2024-ford-f-150-raptor-r-18/">Photograph source</a> · <a id="full-photo" href="#" target="_blank" rel="noopener" hidden>Full-size photo</a></p>
     </div>
   </section>
   <div id="photo-tools-3d">
@@ -80,12 +83,14 @@
             <button type="button" data-panel="doorRR" aria-pressed="false" aria-keyshortcuts="4" disabled>Rear right door</button>
             <button type="button" data-panel="hood" aria-pressed="false" aria-keyshortcuts="F" disabled>Power Dome hood</button>
             <button type="button" data-panel="tailgate" aria-pressed="false" aria-keyshortcuts="T" disabled>Power tailgate</button>
+            <button type="button" data-panel="tonneau" aria-pressed="false" aria-keyshortcuts="B" disabled>Fold bed cover</button>
             <button type="button" data-panel="fuel" aria-pressed="false" aria-keyshortcuts="G" disabled>Fuel door</button>
           </div>
           <h2>Inspection views</h2>
           <div class="view-links">
             <a href="#exterior">Exterior</a>
             <a href="#rear">Rear 3/4</a>
+            <a href="#photo-flat-tonneau-cover">Closed bed cover</a>
             <a href="#engine">Power Dome &amp; V8 engine bay</a>
             <a href="#drivetrain">4WD drivetrain &amp; gears</a>
             <a href="#cabin">Cabin cockpit</a>
@@ -97,13 +102,14 @@
           <div class="controls-meta">
             <p id="info">2024 F-150 Raptor R · Rapid Red Metallic</p>
             <p class="shortcuts">
-              Click any door, hood, tailgate or fuel door to toggle. Drag an assembly to detach (<kbd>Alt</kbd>+drag moves a single part); double-click for X-ray.<br>
-              <kbd>D</kbd> all doors · <kbd>1</kbd>–<kbd>4</kbd> doors · <kbd>F</kbd> hood · <kbd>T</kbd> tailgate · <kbd>G</kbd> fuel · <kbd>I</kbd> cabin · <kbd>E</kbd> explode · <kbd>X</kbd> x-ray · <kbd>S</kbd> steer · <kbd>W</kbd> spin · <kbd>Space</kbd> rev 5.2L V8 · <kbd>M</kbd> sound · <kbd>H</kbd> HUD · <kbd>R</kbd> reset
+              Click any door, hood, bed cover, tailgate or fuel door to toggle. Drag an assembly to detach (<kbd>Alt</kbd>+drag moves a single part); double-click for X-ray.<br>
+              <kbd>D</kbd> all doors · <kbd>1</kbd>–<kbd>4</kbd> doors · <kbd>F</kbd> hood · <kbd>T</kbd> tailgate · <kbd>B</kbd> fold bed cover · <kbd>G</kbd> fuel · <kbd>I</kbd> cabin · <kbd>E</kbd> explode · <kbd>X</kbd> x-ray · <kbd>S</kbd> steer · <kbd>W</kbd> spin · <kbd>Space</kbd> rev 5.2L V8 · <kbd>M</kbd> sound · <kbd>H</kbd> HUD · <kbd>R</kbd> reset
             </p>
             <details class="refs"><summary>Credits &amp; references</summary><div>
-              <p>Photo-matched 2024 Ford F-150 Raptor R (803A, Rapid Red Metallic (D4) over black Recaro leather &amp; Alcantara, solid aluminum roof, 37" BFGoodrich KO2 package, Exterior Graphics, 5.2L supercharged Predator V8 — 720 hp / 640 lb-ft — with full 10R80 &amp; 2-speed 4WD drivetrain). Modeled at true 1:1 real-world meter scale (5.91 m length, 3.693 m wheelbase, 2.20 m widebody track, 2.05 m height).</p>
+              <p>2024 Ford F-150 Raptor R (803A, Rapid Red Metallic (D4) over black Recaro leather &amp; Alcantara, solid aluminum roof, 37" BFGoodrich KO2 package, Exterior Graphics, 5.2L supercharged Predator V8 — 720 hp / 640 lb-ft — with full 10R80 &amp; 2-speed 4WD drivetrain). The three-panel hard tonneau sits level with the bed rails. The model uses meters. Ford lists a 3.693 m wheelbase, a 2.210 m width without mirrors and a 5.908 m overall length.</p>
               <a href="https://bringatrailer.com/listing/2024-ford-f-150-raptor-r-18/">Reference vehicle: 2024 Ford F-150 Raptor R (Shelter Green) · 710HP via Bring a Trailer (Lot #181,611)</a><br>
-              <a href="#raptor-views">Browse all 22 reference photographs</a> · <a href="./frame-by-frame/">Frame-by-frame verification</a>
+              <a href="https://www.marshallgoldman.com/imagetag/5184/35/l/Used-2024-Ford-F150-Raptor-R-720HP-Supercharged-V8-Recaro-Seats-Hard-Tonneau-Cover-1770314723.jpg">Closed tonneau reference photograph · Marshall Goldman Motor Sales</a> · <a href="https://www.fromtheroad.ford.com/content/dam/fordmediasite/us/en/library/2024/specs/2024-Ford-Raptor-and-Raptor-R-Tech-Specs.pdf">Ford dimensions</a><br>
+              <a href="#raptor-views">Browse all 23 reference photographs</a> · <a href="./frame-by-frame/">Frame-by-frame comparison</a> · <a href="./frame-by-frame/#geometry-audit">Measured model dimensions</a>
             </div></details>
           </div>
         </section>
@@ -129,7 +135,7 @@
     }
 
     const [photoSources, exteriorCameras] = await Promise.all(
-      ['./raptor-views.json', './exterior-photo-cameras.json']
+      ['./raptor-views.json?v=5', './exterior-photo-cameras.json?v=5']
         .map(url => fetch(url).then(response => response.json()))
     );
     const orbitRadius = pose => pose.distance * Math.tan(pose.fov * Math.PI / 360) / Math.tan(Math.PI / 12);
@@ -609,7 +615,7 @@
         [/Drivetrain_Trans10R80/i, '10R80 10-speed SelectShift transmission', 'Cutaway cast-aluminum housing · heavy-duty torque converter'],
         [/Drivetrain_TransGears/i, '10R80 planetary & helical gearset', 'Precision machined-steel 10-speed gear stack & bronze clutch rings'],
         [/Drivetrain_TransferCase/i, '2-speed Torque-On-Demand transfer case', 'Cutaway BorgWarner 4A/4H/4L mechanical locking transfer case'],
-        [/Drivetrain_TcaseGear_Main/i, 'Transfer case main input gear', '20-tooth machined-steel spur gear · spins live at 3.73× wheel speed'],
+        [/Drivetrain_TcaseGear_Main/i, 'Transfer case main input gear', 'High range · 4.10 driveshaft turns per wheel revolution'],
         [/Drivetrain_TcaseGear_Idler/i, 'Transfer case counter-rotating idler gear', '18-tooth meshed steel transfer idler · counter-rotates with input gear'],
         [/Drivetrain_TcaseGear_Front/i, 'Transfer case front-output driven gear', '18-tooth meshed steel gear driving the front 4WD shaft'],
         [/Drivetrain_FrontDriveshaft/i, 'Front 4WD steel driveshaft', 'Universal-jointed propeller shaft linking transfer case to front diff'],
@@ -628,7 +634,7 @@
 
         // Front grille, lighting & bumper
         [/Grille_Letter|FORD_Letter|Grille_FORD/i, 'F-O-R-D block grille lettering', 'Satin-charcoal sculpted Raptor R heritage block letters'],
-        [/Clearance|Amber_Marker|Grille_Light|Marker_Light/i, 'Raptor amber clearance & marker lamps', '3 grille LEDs + outer widebody fender markers (86.6" width)'],
+        [/Clearance|Amber_Marker|Grille_Light|Marker_Light/i, 'Raptor amber clearance & marker lamps', '3 grille LEDs + outer widebody fender markers (87.0" width)'],
         [/Grille_R_Badge|R_Badge|Badge_R/i, 'Code Orange Raptor R badge', 'Signature 2024 Raptor R V8 edition emblem'],
         [/Grille/i, 'Deep matte-black honeycomb grille', 'High-airflow Raptor R front cooling aperture'],
         [/Headlight_DRL|DRL|C_Clamp|Amber_DRL/i, '2024 amber C-clamp LED DRL', 'Wrap-around signature Raptor R daytime running light'],
@@ -655,11 +661,12 @@
         [/Glass|Window/i, 'SuperCrew cabin glazing', 'Front clear acoustic / rear factory privacy tint'],
         [/RunningBoard|Running_Board|SideStep|Side_Step/i, 'Cast-aluminum Raptor running boards', 'Textured matte-black heavy-duty side steps'],
         [/Fender_Vent|Fender_Extractor|Side_Vent/i, 'Functional widebody fender extractor', 'Satin-black front fender vent with Code Orange accent'],
-        [/Flare|Arch/i, 'Widebody satin-black fender flare', '86.6" overall body width framing 37" KO2 tires'],
+        [/Flare|Arch/i, 'Widebody satin-black fender flare', '87.0" overall body width framing 37" KO2 tires'],
         [/Graphic_Bedside|Bedside_Graphic|Graphic_Fender|Fender_Graphic/i, '2024 Raptor R exterior graphics', 'Matte charcoal fade stripes with Code Orange striped R'],
         [/Fuel_Door|Fuel_Flap|Fuel_Cap/i, '36-gallon fuel filler door', 'Driver-side bedside · click or press G to open'],
 
         // Bed, tailgate & rear
+        [/Tonneau/i, 'Hard folding bed cover', 'Three powder-coated panels · click or press B to fold'],
         [/Tailgate_Applique|Applique|Tailgate_FORD/i, 'Tailgate F-O-R-D black applique', 'Sculpted satin-black panel with Code Orange Raptor R badge'],
         [/Tailgate/i, 'Power drop tailgate', '5.5-ft cargo box access · click or press T to lower'],
         [/Bedliner|Bed_Floor|Bed_Wall|Cargo_Bed|Bed_Box/i, '5.5-ft spray-in ribbed cargo bed', '67.1" length · 50.6" between wheelhouses · 21.4" depth'],
@@ -672,11 +679,11 @@
         [/Spare/i, 'Full-size 37" underbody spare tire', 'Under-bed mounted BFGoodrich KO2 spare'],
         [/Tire|Tread|Sidewall|KO2/i, '37×12.50R17 BFGoodrich All-Terrain T/A KO2', '36.5" OD · standard Raptor R 37" off-road tire'],
         [/Beadlock|Wheel|Rim|Hub|Lug/i, '17" forged beadlock-capable wheel', '6-split-spoke dark gray forged aluminum with machined ring'],
-        [/Rotor|Disc/i, 'Ventilated heavy-duty brake rotor', '13.8" four-wheel hydraulic disc braking'],
-        [/Caliper/i, 'Dual-piston floating brake caliper', 'Heavy-duty off-road braking assembly'],
+        [/Rotor|Disc/i, 'Ventilated brake rotor', '350 mm front · 336 mm rear'],
+        [/Caliper/i, 'Sliding brake caliper', 'Two front pistons · one rear piston per caliper'],
 
         // Suspension, chassis & exhaust
-        [/FOX|Shock|Damper|Reservoir|LiveValve|Coil/i, 'FOX 3.1" Dual Live Valve shock & coil', 'Electronically controlled internal bypass · 14" F / 15" R travel'],
+        [/FOX|Shock|Damper|Reservoir|LiveValve|Coil/i, 'FOX 3.1" Dual Live Valve shock', '13.0" front / 14.1" rear suspension travel with 37" tires'],
         [/Rear5Link|ControlArm|Control_Arm|UpperArm|LowerArm|Trailing|Panhard|Axle|Diff|FrontArms|FrontDrive/i, 'Long-travel off-road suspension & axle', '5-link coil-sprung rear with Panhard rod · e-locking diff'],
         [/MidSkid|Skid|BashPlate|Bash_Plate/i, 'Heavy-duty brushed silver skid plate', 'High-strength steel front & underbody armor · 33.1° approach'],
         [/Frame|Chassis|Crossmember|Rail|TransferCase|Driveshaft/i, 'Fully boxed high-strength steel frame', '145.4" wheelbase · 13.1" ground clearance · 10-speed & 4A'],
@@ -725,7 +732,7 @@
         return { title: 'Spun-aluminum 4WD driveshaft', spec: 'Balanced propeller shaft with U-joint yokes' };
       }
       if (matName === 'Mat_FOX_LiveValve_Blue' || matName === 'Mat_FOX_Coil_Spring') {
-        return { title: 'FOX 3.1" Dual Live Valve suspension', spec: 'Electronically controlled damping · 14" front / 15" rear travel' };
+        return { title: 'FOX 3.1" Dual Live Valve suspension', spec: 'Electronically controlled damping · 13.0" front / 14.1" rear travel' };
       }
       if (matName === 'Mat_Code_Orange_Accent') {
         return { title: 'Ford Code Orange R accent', spec: 'Signature Raptor R V8 visual detail' };
@@ -775,7 +782,7 @@
       if (explicitPanels && Object.keys(explicitPanels).length) return { ...explicitPanels };
       switch (panelState) {
         case 'hood-open': return { hood: 1 };
-        case 'tailgate-open': return { tailgate: 1 };
+        case 'tailgate-open': return { tailgate: 1, tonneau: 1 };
         case 'door-fl-open': return { doorFL: 1 };
         case 'door-fr-open': return { doorFR: 1 };
         case 'door-rl-open': return { doorRL: 1 };
@@ -821,6 +828,8 @@
       doorRR: 0.0,
       hoodTarget: 0.0,
       hood: 0.0,
+      tonneauTarget: 0.0,
+      tonneau: 0.0,
       tailgateTarget: 0.0,
       tailgate: 0.0,
       fuelTarget: 0.0,
@@ -931,6 +940,7 @@
       doorRL:   { nodes: ['Pivot_Door_RL'],   axis: 'y', angle: -62 * Math.PI / 180 },
       doorRR:   { nodes: ['Pivot_Door_RR'],   axis: 'y', angle:  62 * Math.PI / 180 },
       hood:     { nodes: ['Pivot_Hood'],      axis: 'z', angle:  48 * Math.PI / 180 },
+      tonneau:  { nodes: ['Pivot_Tonneau_Middle', 'Pivot_Tonneau_Rear'], axis: 'z', angle: -Math.PI },
       tailgate: { nodes: ['Pivot_Tailgate'],  axis: 'z', angle:  88 * Math.PI / 180 },
       fuel:     { nodes: ['Pivot_Fuel_Door'], axis: 'y', angle: -80 * Math.PI / 180 },
     };
@@ -948,6 +958,7 @@
         doorRL:   [-1.85, 1.42, 7.2],
         doorRR:   [ 1.85, 1.42, 7.2],
         hood:     [-0.52, 1.16, 6.2],
+        tonneau:  [ 2.45, 0.72, 4.0],
         tailgate: [ 2.68, 1.24, 6.4],
         fuel:     [-1.74, 1.38, 2.8],
       };
@@ -1068,7 +1079,7 @@
       if (/^RaptorR_(Int_|Mirror_Cabin|Eng_|Drivetrain_|Chassis_|Susp_|FOX_|Exhaust_|Brake|Tire|Rim|WheelCap|Spare)/i.test(obj.name)) return false;
       if (/DoorCard|Door_Card|Door_Trim|Armrest|Speaker|Seat|Dash|Cluster|SYNC4|Console|Steering|Pedal|Headliner|Carpet|Rearview/i.test(obj.name)) return false;
       return /^(Pivot_Body_Assembly|Pivot_Hood|Pivot_Door_|Pivot_Tailgate|Pivot_Fuel_Door)/.test(pivName)
-        || /Body|Cab|Bed|Fender|Flare|Hood|Door|Tailgate|Grille|Bumper|Headlight|Taillight|Mirror|Windshield|Glass|RunningBoard|Wiper|Fuel_Door|Graphic/i.test(obj.name);
+        || /Tonneau|Body|Cab|Bed|Fender|Flare|Hood|Door|Tailgate|Grille|Bumper|Headlight|Taillight|Mirror|Windshield|Glass|RunningBoard|Wiper|Fuel_Door|Graphic/i.test(obj.name);
     }
 
     const loadModel = () => loader.load(
@@ -1605,7 +1616,7 @@
       if ((draggingMode === 'pull' || draggingMode === 'touchPart') && grabbedTarget) {
         const ps = getPullState(grabbedTarget);
         const pullDist = ps.tgt.length();
-        const clickedPanel = panelByNode[grabbedTarget.name];
+        const clickedPanel = /Tonneau/.test(grabbedMesh?.name) ? 'tonneau' : panelByNode[grabbedTarget.name];
         if (clickedPanel && Math.hypot(e.clientX - pressX, e.clientY - pressY) < 7) {
           togglePanel(clickedPanel);
           ps.tgt.copy(dragObjStartOffset);
@@ -1775,7 +1786,7 @@
 
     // Keyboard controls
     function runCommand(k, keepAssemblyCamera = false) {
-      if (!state.loaded || k.length !== 1 || !'d1234ftgiesxwr mh+=-_0'.includes(k)) return;
+      if (!state.loaded || k.length !== 1 || !'d1234ftgbiesxwr mh+=-_0'.includes(k)) return;
       if (k !== 'm' && k !== 'h') closeOverlay();
       stopIntro();
       customCapturePose = null;
@@ -1786,7 +1797,7 @@
         state.doorFLTarget = state.doorFRTarget = state.doorRLTarget = state.doorRRTarget = open;
         playClickSound(open > 0.5 ? 560 : 360, 0.06);
         wake(true);
-      } else if ('1234ftg'.includes(k)) {
+      } else if ('1234ftgb'.includes(k)) {
         const keyMap = {
           '1': 'doorFL',
           '2': 'doorFR',
@@ -1794,6 +1805,7 @@
           '4': 'doorRR',
           f: 'hood',
           t: 'tailgate',
+          b: 'tonneau',
           g: 'fuel',
         };
         togglePanel(keyMap[k], k === 'g');
@@ -1850,7 +1862,7 @@
         }
         state.explodeTarget = 0.0;
         state.doorFLTarget = state.doorFRTarget = state.doorRLTarget = state.doorRRTarget = 0.0;
-        state.hoodTarget = state.tailgateTarget = state.fuelTarget = 0.0;
+        state.hoodTarget = state.tailgateTarget = state.tonneauTarget = state.fuelTarget = 0.0;
         state.interiorView = false;
         state.xrayTarget = 0.0;
         state.steerMode = false;
@@ -1974,6 +1986,7 @@
       if (intro) tags.push(intro.elapsed <= introHoldMs ? 'exploded view' : 'assembling');
       else if (state.explodeTarget > 0.05) tags.push(`exploded ${Math.round(state.explodeTarget * 100)}%`);
       if (state.hoodTarget > 0.5) tags.push('Power Dome hood open');
+      if (state.tonneauTarget > 0.5) tags.push('bed cover folded');
       if (state.tailgateTarget > 0.5) tags.push('tailgate down');
       if (state.fuelTarget > 0.5) tags.push('fuel door open');
       if (state.spinMode) tags.push('37" wheels & 4WD gears spinning');
@@ -2002,6 +2015,7 @@
       doorRL:   new THREE.Vector3(-0.58, 1.12, -0.82),
       doorRR:   new THREE.Vector3(-0.58, 1.12,  0.82),
       hood:     new THREE.Vector3(1.88, 1.32,  0.00),
+      tonneau: new THREE.Vector3(-2.13, 1.44, 0),
       tailgate: new THREE.Vector3(-2.65, 1.02, 0.00),
       fuel:     new THREE.Vector3(-1.62, 1.15, -1.02),
       rear:     new THREE.Vector3(...rearView.center),
@@ -2051,7 +2065,7 @@
       ['underbody',  { label: 'Underbody & FOX Live Valve shocks', group: 'Powertrain', theta: -0.42, phi: 1.72, distance: 3.15, fov: 40, radius: orbitRadius({ distance: 3.15, fov: 40 }), center: new THREE.Vector3(1.15, 0.48, 0.0), hideFloor: true }],
     ]);
 
-    // Map all 22 photo-matched views from raptor-views.json + exterior-photo-cameras.json
+    // Map the reference views from raptor-views.json + exterior-photo-cameras.json
     const photoViewById = new Map();
     for (const view of photoSources) {
       const fit = exteriorCameras[view.id] || exteriorCameras[view.label] || exteriorCameras[view.photoView];
@@ -2305,7 +2319,7 @@
 
     function applyAllPivots(damp, t, vib, steerRad) {
       const ex = state.explode;
-      const shaftSpin = state.wheelSpinAngle * 3.73 + state.revDriveAngle;
+      const shaftSpin = state.wheelSpinAngle * 4.10 + state.revDriveAngle;
       for (const [pname, piv] of Object.entries(pivots)) {
         const rp = restPos.get(piv);
         const rr = restRot.get(piv);
@@ -2323,7 +2337,13 @@
         const panelKey = panelByNode[pname];
         if (panelKey) {
           const panel = panels[panelKey];
-          piv.rotation[panel.axis] = rr[panel.axis] + state[panelKey] * panel.angle;
+          // First fold the rear leaf over the middle, then fold the stack toward the cab.
+          let travel = state[panelKey];
+          if (panelKey === 'tonneau') {
+            const phase = pname === 'Pivot_Tonneau_Rear' ? 0 : 1;
+            travel = THREE.MathUtils.smoothstep(2 * travel - phase, 0, 1);
+          }
+          piv.rotation[panel.axis] = rr[panel.axis] + travel * panel.angle;
         } else if (pname === 'Pivot_Corner_FL' || pname === 'Pivot_Corner_FR') {
           piv.rotation.set(rr.x, rr.y + steerRad, rr.z);
         } else if (pname.startsWith('Pivot_WheelSpin_') || pname === 'Pivot_Spin_Gear_Diff_F' || pname === 'Pivot_Spin_Gear_Diff_R') {
@@ -2432,7 +2452,7 @@
       scene.fog.density = outlineMode ? 0 : studioFogDensity;
       applyInspectionVisibility(pose);
       updateInspectionLighting(pose);
-      applyAllPivots(1, 0, 0, 0);
+      applyAllPivots(1, 0, 0, THREE.MathUtils.degToRad(pose.steeringDegrees || 0));
       updateEnclosureWeights();
       rootCar.updateMatrixWorld(true);
 
@@ -2545,6 +2565,7 @@
         Math.abs(state.doorRRTarget - state.doorRR) +
         Math.abs(state.hoodTarget - state.hood) +
         Math.abs(state.tailgateTarget - state.tailgate) +
+        Math.abs(state.tonneauTarget - state.tonneau) +
         Math.abs(state.fuelTarget - state.fuel);
       const xrayDelta = Math.abs(state.xrayTarget - state.xray);
       const rpmTarget = state.revving ? 7000 : 720;
@@ -2586,6 +2607,7 @@
       state.doorRL += (state.doorRLTarget - state.doorRL) * damp;
       state.doorRR += (state.doorRRTarget - state.doorRR) * damp;
       state.hood += (state.hoodTarget - state.hood) * damp;
+      state.tonneau += (state.tonneauTarget - state.tonneau) * damp;
       state.tailgate += (state.tailgateTarget - state.tailgate) * damp;
       state.fuel += (state.fuelTarget - state.fuel) * damp;
       state.xray += (state.xrayTarget - state.xray) * damp;
@@ -2704,7 +2726,7 @@
       if (state.spinMode) state.wheelSpinAngle += 2.4 * dt;
       if (state.rpm > 850) state.revDriveAngle += ((state.rpm - 720) / 6280) * 4.5 * dt;
       if (state.steerMode) state.steerPhase += 1.35 * dt;
-      const steerRad = state.steerMode ? Math.sin(state.steerPhase) * 0.42 : 0.0;
+      const steerRad = state.steerMode ? Math.sin(state.steerPhase) * 0.42 : THREE.MathUtils.degToRad(photoPose?.steeringDegrees || 0);
 
       if (geoMoving || needsShadow) {
         const vib = (state.rpm > 1100 ? (state.rpm / 7000) * 0.006 : 0.0);

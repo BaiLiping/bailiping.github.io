@@ -14,7 +14,15 @@ function showLayout(layout) {
     option.setAttribute('aria-pressed', String(option.dataset.layout === layout));
   }
 }
-showLayout('shape');
+function followReference() {
+  if (location.hash === '#geometry-audit') {
+    document.getElementById('geometry-audit').open = true;
+  }
+  if (location.hash === '#photo-flat-tonneau-cover') showLayout('pairs');
+}
+showLayout(location.hash === '#photo-flat-tonneau-cover' ? 'pairs' : 'shape');
+followReference();
+window.addEventListener('hashchange', followReference);
 display.addEventListener('click', event => {
   const button = event.target.closest('button');
   if (button) showLayout(button.dataset.layout);

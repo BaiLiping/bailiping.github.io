@@ -9,7 +9,8 @@
       1.030129,
       0.215018
     ],
-    "roll": 0.006122
+    "roll": 0.006122,
+    "steeringDegrees": 14
   },
   "front-three-quarter-left": {
     "theta": -0.684576,
@@ -21,7 +22,8 @@
       1.030129,
       0.215018
     ],
-    "roll": 0.006122
+    "roll": 0.006122,
+    "steeringDegrees": 14
   },
   "Front three-quarter (right)": {
     "theta": 0.733147,
@@ -33,7 +35,8 @@
       0.855582,
       -0.25436
     ],
-    "roll": -0.01055
+    "roll": -0.01055,
+    "steeringDegrees": 14
   },
   "front-three-quarter-right": {
     "theta": 0.733147,
@@ -45,7 +48,8 @@
       0.855582,
       -0.25436
     ],
-    "roll": -0.01055
+    "roll": -0.01055,
+    "steeringDegrees": 14
   },
   "Front": {
     "theta": -0.007208,
@@ -305,7 +309,8 @@
     ],
     "roll": 0.0,
     "panels": {
-      "tailgate": 1
+      "tailgate": 1,
+      "tonneau": 1
     }
   },
   "bed-and-tailgate-open": {
@@ -320,7 +325,8 @@
     ],
     "roll": 0.0,
     "panels": {
-      "tailgate": 1
+      "tailgate": 1,
+      "tonneau": 1
     }
   },
   "Driver's cockpit": {
@@ -572,5 +578,29 @@
     ],
     "roll": 0.0,
     "hideFloor": true
+  },
+  "flat-tonneau-cover": {
+    "theta": 2.226937,
+    "phi": 0.971287,
+    "distance": 3.438868,
+    "fov": 43.881818,
+    "center": [
+      -1.489279,
+      0.405179,
+      -0.633611
+    ],
+    "roll": 0.049965
+  },
+  "Flat tonneau cover (closed)": {
+    "theta": 2.226937,
+    "phi": 0.971287,
+    "distance": 3.438868,
+    "fov": 43.881818,
+    "center": [
+      -1.489279,
+      0.405179,
+      -0.633611
+    ],
+    "roll": 0.049965
   }
 }

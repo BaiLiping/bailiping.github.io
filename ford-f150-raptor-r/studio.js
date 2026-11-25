@@ -26,7 +26,10 @@ function showAngle() {
   if (!option) return;
   error.hidden = true;
   photo.hidden = false;
-  photo.alt = option.label + ' on the 2024 Ford F-150 Raptor R reference vehicle (Shelter Green)';
+  photo.alt = option.label + ' on a ' + option.dataset.finish + ' 2024 Ford F-150 Raptor R';
+  document.getElementById('photo-credit').textContent = option.dataset.credit;
+  document.getElementById('photo-source').href = option.dataset.source;
+  error.querySelector('a').href = option.dataset.source;
   const fullPhoto = document.getElementById('full-photo');
   fullPhoto.href = option.dataset.original || option.value;
   fullPhoto.hidden = false;
@@ -65,7 +68,7 @@ async function loadAngles() {
     return;
   }
   try {
-    sourcePromise ??= fetch('./raptor-views.json').then(response => {
+    sourcePromise ??= fetch('./raptor-views.json?v=5').then(response => {
       if (!response.ok) throw new Error('Camera list unavailable');
       return response.json();
     });
@@ -78,6 +81,9 @@ async function loadAngles() {
       group.label = groupName;
       for (const view of items) {
         const option = new Option(view.label, view.preview || view.image);
+        option.dataset.finish = view.finish || 'Shelter Green';
+        option.dataset.credit = view.credit || '710HP via Bring a Trailer (Lot #181,611)';
+        option.dataset.source = view.source || 'https://bringatrailer.com/listing/2024-ford-f-150-raptor-r-18/';
         option.dataset.original = view.original || view.image;
         option.dataset.photoView = view.photoView;
         option.dataset.preset = view.preset || '';
