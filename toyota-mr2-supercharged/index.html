@@ -5,9 +5,14 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <link rel="modulepreload" href="./vendor/three-r170.js?v=31c84364">
   <script>
+    function resolveOverheadBookmark() {
+      if (location.hash === '#photo-overhead-t-tops-off') history.replaceState(null, '', '#photo-overhead-fixed-roof');
+    }
+    resolveOverheadBookmark();
+    window.addEventListener('hashchange', resolveOverheadBookmark);
     if (location.hash === '#mr2-views') document.documentElement.classList.add('show-photos');
     const overrideModel = new URLSearchParams(location.search).get('model');
-    const modelFile = overrideModel || './toyota_mr2_aw11_sc.glb?v=c53478408c';
+    const modelFile = overrideModel || './toyota_mr2_aw11_sc.glb?v=bd65369561';
     const preload = document.createElement('link');
     preload.rel = 'preload';
     preload.as = 'fetch';
@@ -19,7 +24,7 @@
   <link rel="icon" href="/favicon.ico" />
   <title>1988 Toyota MR2 Supercharged (AW11) — Super Red</title>
   <link rel="stylesheet" href="./studio.css?v=24f829ea3e">
-  <script type="module" src="./studio.js?v=e2a8023145"></script>
+  <script type="module" src="./studio.js?v=a1c4f17f62"></script>
 </head>
 <body>
   <noscript><p style="position:fixed;inset:0;z-index:30;background:#eceeef;padding:2em">The interactive 1988 Toyota MR2 Supercharged viewer requires JavaScript. <a href="https://bringatrailer.com/listing/1988-toyota-mr2-supercharged-31/">View the reference listing</a>.</p></noscript>
@@ -43,7 +48,7 @@
         <button id="next-view" type="button" aria-label="Next view">›</button>
         <button id="match-view" type="button" disabled>Match in 3D</button>
       </div>
-      <p>1988 Toyota MR2 Supercharged · JWeston listing photos via Bring a Trailer · <a href="https://bringatrailer.com/listing/1988-toyota-mr2-supercharged-31/">View listing</a> · <a id="full-photo" href="#" target="_blank" rel="noopener" hidden>Full-size photo</a></p>
+      <p><span id="photo-credit">JWeston listing photograph via Bring a Trailer</span><span id="photo-listing"> · <a href="https://bringatrailer.com/listing/1988-toyota-mr2-supercharged-31/">View listing</a></span> · <a id="full-photo" href="#" target="_blank" rel="noopener" hidden>Full-size photo</a></p>
     </div>
   </section>
   <div id="photo-tools-3d">
@@ -75,7 +80,6 @@
             <button type="button" data-panel="doorR" aria-pressed="false" aria-keyshortcuts="2" disabled>Right door</button>
             <button type="button" data-panel="popups" aria-pressed="false" aria-keyshortcuts="P" disabled>Pop-up headlights</button>
             <button type="button" data-panel="hood" aria-pressed="false" aria-keyshortcuts="F" disabled>Front luggage lid</button>
-            <button type="button" data-panel="ttop" aria-pressed="false" aria-keyshortcuts="T" disabled>T-top roof</button>
             <button type="button" data-panel="engineLid" aria-pressed="false" aria-keyshortcuts="L" disabled>Engine lid</button>
             <button type="button" data-panel="trunk" aria-pressed="false" aria-keyshortcuts="K" disabled>Rear trunk</button>
             <button type="button" data-panel="fuel" aria-pressed="false" aria-keyshortcuts="G" disabled>Fuel filler</button>
@@ -83,15 +87,15 @@
           <p id="info">1988 Toyota MR2 Supercharged · Super Red (3E5)</p>
           <p><a href="#linkage">Trace the gearshift cables and clutch line</a></p>
           <details class="notes"><summary>Gestures and shortcuts</summary>
-            <p>Tap a door, pop-up headlight, T-top, lid or flap to open it. Drag an assembly to detach it. Alt-drag moves a single part. On touchscreens, hold the part before dragging.</p>
+            <p>Tap a door, pop-up headlight, lid or flap to open it. Drag an assembly to detach it. Alt-drag moves a single part. On touchscreens, hold the part before dragging.</p>
             <p><a href="#assembly">Replay the assembly sequence</a></p>
-            <p>D opens both doors. 1 and 2 operate them separately. P raises the pop-up headlights, F opens the front luggage lid, T removes the T-top roof, L opens the engine lid, K opens the rear trunk, and G opens the fuel filler.</p>
+            <p>D opens both doors. 1 and 2 operate them separately. P raises the pop-up headlights, F opens the front luggage lid, L opens the engine lid, K opens the rear trunk, and G opens the fuel filler.</p>
             <p>I cabin · E explode · X x-ray · R reset · S steer · W spin · Space rev · M sound · H hide controls</p>
           </details>
           <details class="notes"><summary>Model references</summary><div class="sources">
-            <p>Photo-based 1988 AW11 Supercharged reconstruction in Toyota Super Red (3E5) over black leather. The photographs show the same 38k-mile five-speed, including its TRD exhaust header. The gearbox layout follows Toyota’s E51 repair drawings. Concealed dimensions, cable runs and gear tooth profiles are approximate.</p>
+            <p>Photo-based 1988 AW11 Supercharged reconstruction in Toyota Super Red (3E5) over black leather. The supplied overhead image guides the fixed roof and vented engine lid. The listing photographs document the Super Red five-speed and its TRD exhaust header. The gearbox layout follows Toyota’s E51 repair drawings. Concealed dimensions, cable runs and gear tooth profiles are approximate.</p>
             <a href="https://bringatrailer.com/listing/1988-toyota-mr2-supercharged-31/">38k-mile 1988 MR2 Supercharged (Super Red) · Bring a Trailer</a><br>
-            <a href="#rear">Rear three-quarter view</a> · <a href="#mr2-views">Compare with reference photos</a><br>
+            <a href="#photo-overhead-fixed-roof">Overhead view</a> · <a href="#rear">Rear three-quarter view</a> · <a href="#mr2-views">Compare with reference photos</a><br>
             <a href="https://commons.wikimedia.org/wiki/Category:Toyota_MR2_(W10)">Toyota MR2 (AW11) photography · Wikimedia Commons</a><br>
             <a href="https://svkworks.com/resources/1988%20Toyota%20MR2%20AW11.pdf#page=454">Toyota repair manual · E51 transmission drawings</a><br>
             <a href="https://svkworks.com/resources/1988%20Toyota%20MR2%20AW11.pdf#page=516">Toyota repair manual · Shift lever and control cables</a><br>
@@ -112,7 +116,7 @@
     import { interiorPhotoViews } from './interior-photo-views.js?v=fb8c2032a3';
     import { powertrainPhotoViews } from './powertrain-photo-views.js?v=c72ceb883a';
     const [photoSources, exteriorCameras, frontCameras] = await Promise.all(
-      ['./mr2-views.json?v=7a4f443772', './exterior-photo-cameras.json?v=03bf1f17cb', './front-photo-cameras.json?v=3e384a9813']
+      ['./mr2-views.json?v=0b4d32aa8d', './exterior-photo-cameras.json?v=e165214058', './front-photo-cameras.json?v=3e384a9813']
         .map(url => fetch(url).then(response => response.json()))
     );
     const fittedCameras = { ...exteriorCameras, ...frontCameras, ...interiorPhotoViews, ...powertrainPhotoViews };
@@ -208,7 +212,7 @@
       `reflectVec = inverseTransformDirection( reflectVec, viewMatrix );
        vec3 surface = cameraPosition - (vec4(vViewPosition, 0.0) * viewMatrix).xyz;
        // Project the world ray into the articulated engine lid. Dimensions
-       // are the panel and 15 left louver vanes from scripts/closures.py.
+       // follow the punched panel and the left-hand intercooler openings.
        vec3 lidNormal = normalize(engineLidWorld[1].xyz);
        vec3 lidOrigin = engineLidWorld[3].xyz;
        float angle = dot(reflectVec, lidNormal);
@@ -219,11 +223,14 @@
        float feather = max(.65, distanceToLid * max(.04, roughness));
        float lidCoverage = step(.15, distanceToLid) * step(.001, angle)
                          * smoothstep(-feather, feather, min(edge.x, edge.y)) * opacity;
-       vec2 vent = point.xz * 18.0 + (toLid * reflectVec).xz * 35.0 / max(angle, .01);
-       vec2 ventEdge = min(vent - vec2(-438.0, -458.0), vec2(-100.0, -113.0) - vent);
-       float slots = abs(fract((vent.x + 122.0) / (299.0 / 14.0) + .5) - .5);
-       lidCoverage *= 1.0 - .35 * smoothstep(0.0, 9.0, min(ventEdge.x, ventEdge.y))
-                                * smoothstep(.22, .45, slots);
+       float skinHeight = mix(30.7, 23.7, smoothstep(303., 326., abs(point.z * 18.0)));
+       vec2 vent = point.xz * 18.0 + (toLid * reflectVec).xz * skinHeight / max(angle, .01);
+       float side = -vent.y;
+       float bank = min(abs(side - 253.0), abs(side - 407.0));
+       float pitch = 182.0 / 9.0;
+       float slot = abs(fract((vent.x + 274.0) / pitch + .5) - .5) * pitch;
+       float opening = min(min(vent.x + 460.5, -269.5 - vent.x), min(56.5 - bank, 4.5 - slot));
+       lidCoverage *= 1.0 - .35 * smoothstep(-1.5, 1.5, opening);
        // A ray from the painted luggage lid can see the underside of the
        // raised rear wing in place of the studio ceiling.
        mat3 toWing = transpose(mat3(wingWorld));
@@ -389,16 +396,12 @@
         [/Headlight_Bulb/, 'H4 halogen headlamp bulb', 'retractable dual-filament beam'],
         [/Headlight_Housing/, 'Pop-up headlight housing & bezel', 'matte black surround · click or press P'],
         [/PopupBay_Pocket/, 'Retractable headlamp bay', 'recessed nose housing pocket'],
-        [/TTop_Glass/, 'Tinted glass T-bar roof panel', 'removable smoked glass · click or press T'],
-        [/TTop_Frame/, 'T-top roof frame & latch', 'removable T-bar weatherstrip · click or press T'],
-        [/TBar_CenterSpine/, 'Central T-bar roof spine', 'fixed structural gloss-black beam'],
         [/Front_Lid/, 'Front luggage lid', 'cowl-hinged hood · click or press F'],
         [/Frunk_SpareTire/, 'Space-saver spare tire cover', 'angled front luggage compartment stowage'],
         [/Frunk_StrutBrace/, 'Front strut tower brace', 'factory AW11 chassis cross-brace'],
         [/Frunk_Coolant/, 'Brake master cylinder reservoir', 'front luggage bay fluid service'],
         [/Frunk/, 'Front luggage compartment', 'molded tub, walls and perimeter seal'],
-        [/EngineLid_Louver/, 'Supercharged engine lid louvers', 'raised twin vent slats · click or press L'],
-        [/EngineLid/, 'Raised Supercharged engine lid', 'front-hinged 4A-GZE cover · click or press L'],
+        [/EngineLid/, 'Vented engine lid', 'four banks of punched slots · click or press L'],
         [/EngineBay_Weatherseal/, 'Engine bay weatherseal', 'perimeter rubber gasket around 4A-GZE bay'],
         [/Trunk_HarnessRelay/, 'Rear compartment connector assembly', 'blue relay housing, plugs and wiring loom'],
         [/Trunk_Hinge|Trunk_LidHingeArm/, 'Rear trunk hinge', 'plated bracket and articulated hinge arm'],
@@ -416,12 +419,13 @@
         [/Door_Badge/, 'SUPERCHARGED side decal', '1988 factory silver rocker lettering'],
         [/DoorCard/, 'Interior door card & armrest', 'black leather & vinyl trim · swings with door'],
         [/Glass_Door/, 'Side door glass', 'swings open with door'],
+        [/Roof_WindowSeal/, 'Hardtop window seal', 'fixed glazing channel above the side window'],
         [/Glass_Quarter/, 'Fixed rear quarter glass', 'triangular C-pillar daylight opening'],
         [/Glass_Windshield/, 'Raked front windshield', 'laminated safety glazing'],
         [/Glass_RearBulkhead/, 'Vertical rear bulkhead glass', 'recessed mid-engine cabin rear window'],
-        [/Rear_WindowVisor/, 'Smoked TOYOTA rear window visor', 'factory acrylic sun shade above rear glass'],
+        [/Rear_WindowVisor/, 'Smoked rear window visor', 'factory acrylic sun shade above rear glass'],
         [/CPillar_Buttress/, 'Flying-buttress C-pillar', 'signature AW11 mid-engine sail panel'],
-        [/CPillar_Trim/, 'C-pillar rear vent trim', 'satin black cabin extraction louver'],
+        [/CPillar_Trim/, 'Rear pillar trim', 'sail molding, quarter-window seals and extraction louvers'],
         [/APillar_Trim|BPillar_Trim|Windshield_Header|RearWindow_Trim/, 'Window perimeter trim', 'gloss black glazing molding'],
         [/SideIntake/, 'Passenger-side engine air scoop', 'right-only louvered cooling intake for 4A-GZE'],
         [/Front_ChinSpoiler/, '1988 Aero front chin spoiler', 'color-matched lower air dam'],
@@ -545,8 +549,6 @@
       popups: 0.0,
       hoodTarget: 0.0,
       hood: 0.0,
-      ttopTarget: 0.0,
-      ttop: 0.0,
       engineLidTarget: 0.0,
       engineLid: 0.0,
       trunkTarget: 0.0,
@@ -640,7 +642,6 @@
       doorR:     { nodes: ['Pivot_Door_R'], axis: 'y', angle:  64 * Math.PI / 180 },
       popups:    { nodes: ['Pivot_Headlight_L', 'Pivot_Headlight_R'], axis: 'z', angle:  52 * Math.PI / 180 },
       hood:      { nodes: ['Pivot_Front_Lid'], axis: 'z', angle:  54 * Math.PI / 180 },
-      ttop:      { nodes: ['Pivot_TTop_L', 'Pivot_TTop_R'], translate: true },
       engineLid: { nodes: ['Pivot_Engine_Lid'], axis: 'z', angle: -78 * Math.PI / 180 },
       trunk:     { nodes: ['Pivot_Trunk_Lid'], axis: 'z', angle: -76 * Math.PI / 180 },
       fuel:      { nodes: ['Pivot_Fuel_Flap'], axis: 'y', angle: -Math.PI * 0.52 },
@@ -658,7 +659,6 @@
         doorR:     [ 1.08, 1.38, 345],
         popups:    [-0.52, 1.36, 275],
         hood:      [-0.55, 1.02, 295],
-        ttop:      [-1.12, 0.90, 325],
         engineLid: [ 2.88, 0.78, 150],
         trunk:     [ 2.58, 1.06, 265],
         fuel:      [-1.78, 1.24,  86],
@@ -681,8 +681,6 @@
       if (focus && state[target]) {
         state.explodeTarget = 0;
         facePanel(key);
-      } else if (key === 'ttop' && selectedView === 'photo-overhead-t-tops-off') {
-        selectedView = null;
       }
       playClickSound(state[target] ? 580 : 380, 0.06);
       updateHudText();
@@ -767,8 +765,8 @@
     loader.setDRACOLoader(dracoLoader);
     let rootCar = null;
 
-    const EXTERIOR_RE = /Body_Shell|Door_Shell|Door_Handle|Door_Weatherstrip|Door_Badge|CPillar_|APillar_|BPillar_|Windshield_Header|RearWindow_Trim|Front_Lid|Front_ChinSpoiler|Front_Grille|Front_LicensePlate|Front_TurnSignal|Headlight_|PopupBay_|TTop_|TBar_CenterSpine|EngineLid|Trunk_Lid|Rear_Spoiler|Spoiler_ThirdBrake|Fuel_Flap|Fuel_Filler|SideIntake|Side_Skirt|SideMarker|Pinstripe|Rear_Mudflap|Rear_Valance|Rear_LicensePlate|Rear_Badge|Rear_WindowVisor|Rear_Antenna|Nose_Emblem|Mirror_[LR]|Wiper|Glass_|Taillight|Wheelhouse_Liner/;
-    const SHADOW_CASTER_RE = /Body_Shell|Door_Shell|Front_Lid|EngineLid|Trunk_Lid|Rear_Spoiler|CPillar_|TTop_|Headlight_PopupLid|Headlight_Housing|Front_ChinSpoiler|Side_Skirt|Rear_Mudflap|Mirror_[LR]|Tire|Eng_4AGZE|Eng_Intercooler|Eng_Supercharger|Exh_|Undertray|Fuel_Flap|Fuel_Cap/;
+    const EXTERIOR_RE = /Body_Shell|Door_Shell|Door_Handle|Door_Weatherstrip|Door_Badge|CPillar_|APillar_|BPillar_|Windshield_Header|RearWindow_Trim|Front_Lid|Front_ChinSpoiler|Front_Grille|Front_LicensePlate|Front_TurnSignal|Headlight_|PopupBay_|Roof_WindowSeal|EngineLid|Trunk_Lid|Rear_Spoiler|Spoiler_ThirdBrake|Fuel_Flap|Fuel_Filler|SideIntake|Side_Skirt|SideMarker|Pinstripe|Rear_Mudflap|Rear_Valance|Rear_LicensePlate|Rear_Badge|Rear_WindowVisor|Rear_Antenna|Nose_Emblem|Mirror_[LR]|Wiper|Glass_|Taillight|Wheelhouse_Liner/;
+    const SHADOW_CASTER_RE = /Body_Shell|Door_Shell|Front_Lid|EngineLid|Trunk_Lid|Rear_Spoiler|CPillar_|Headlight_PopupLid|Headlight_Housing|Front_ChinSpoiler|Side_Skirt|Rear_Mudflap|Mirror_[LR]|Tire|Eng_4AGZE|Eng_Intercooler|Eng_Supercharger|Exh_|Undertray|Fuel_Flap|Fuel_Cap/;
 
     const loadModel = () => loader.load(
       MODEL_URL,
@@ -789,8 +787,8 @@
           if (obj.isMesh) {
             if (obj.material?.name === 'Mat_Cabin_Rearview') rearMirror = obj;
             const isExterior = EXTERIOR_RE.test(obj.name);
-            const isGlass = /Glass_|TTop_Glass|Rear_WindowVisor|Headlight_Lens/.test(obj.name) ||
-              /^Mat_(Automotive_Glass|TTop_Smoked_Glass|Rear_Visor_Smoke|Headlight_Clear_Lens)$/.test(obj.material?.name || '');
+            const isGlass = /Glass_|Rear_WindowVisor|Headlight_Lens/.test(obj.name) ||
+              /^Mat_(Automotive_Glass|Rear_Visor_Smoke|Headlight_Clear_Lens)$/.test(obj.material?.name || '');
             const isHeadlightLens = obj.material?.name === 'Mat_Headlight_Clear_Lens';
             const isHeader = /Exh_Header|Exh_Pipe/.test(obj.name);
             const isCaster = !isGlass && (SHADOW_CASTER_RE.test(obj.name) ||
@@ -853,17 +851,17 @@
                   shared.depthWrite = false;
                   shared.forceSinglePass = true;
                 }
-                if (/^Mat_(Automotive_Glass|TTop_Smoked_Glass|Rear_Visor_Smoke)$/.test(shared.name)) {
-                  const ttopGlass = shared.name === 'Mat_TTop_Smoked_Glass';
+                if (/^Mat_(Automotive_Glass|Rear_Visor_Smoke)$/.test(shared.name)) {
                   const rearVisor = shared.name === 'Mat_Rear_Visor_Smoke';
                   const rearBulk = glassKind === 'GR';
                   const doorPane = glassKind === 'GD';
                   shared.transparent = true;
                   shared.depthWrite = false;
-                  shared.opacity = ttopGlass ? .74 : rearVisor ? .63 : rearBulk ? .54 : doorPane ? .30 : glassKind === 'GQ' ? .39 : .53;
-                  shared.userData.cabinOpacity = ttopGlass ? .34 : rearVisor ? .20 : rearBulk ? .14 : .17;
-                  shared.color.setRGB(.013, .025, .031);
-                  shared.roughness = ttopGlass ? .073 : .09;
+                  shared.opacity = rearVisor ? .72 : rearBulk ? .54 : doorPane ? .30 : glassKind === 'GQ' ? .39 : .53;
+                  shared.userData.cabinOpacity = rearVisor ? .20 : rearBulk ? .14 : .17;
+                  if (rearVisor) shared.color.setRGB(.082, .106, .145);
+                  else shared.color.setRGB(.013, .025, .031);
+                  shared.roughness = .09;
                   shared.clearcoat = .58;
                   shared.clearcoatRoughness = .045;
                   shared.specularIntensity = .85;
@@ -1398,7 +1396,6 @@
           '2': 'doorR',
           p: 'popups',
           f: 'hood',
-          t: 'ttop',
           l: 'engineLid',
           k: 'trunk',
           g: 'fuel',
@@ -1406,7 +1403,7 @@
         togglePanel(keyMap[k], k === 'g');
       } else if (k === 'i') {
         selectedView = null;
-        // Enter at driver eye level and retain the current state of doors, T-tops, and pop-ups.
+        // Enter at driver eye level and retain the current state of doors and pop-ups.
         state.interiorView = !state.interiorView;
         if (state.interiorView) {
           state.explodeTarget = 0.0;
@@ -1453,7 +1450,7 @@
         }
         state.explodeTarget = 0.0;
         state.doorLTarget = state.doorRTarget = 0.0;
-        state.popupsTarget = state.hoodTarget = state.ttopTarget = 0.0;
+        state.popupsTarget = state.hoodTarget = 0.0;
         state.engineLidTarget = state.trunkTarget = state.fuelTarget = 0.0;
         state.interiorView = false;
         state.xrayTarget = 0.0;
@@ -1576,7 +1573,6 @@
       else if (state.doorLTarget > 0.5) tags.push('driver door open');
       else if (state.doorRTarget > 0.5) tags.push('passenger door open');
       if (state.popupsTarget > 0.5) tags.push('pop-ups raised');
-      if (state.ttopTarget > 0.5) tags.push('T-tops off');
 
       if (intro) tags.push(intro.elapsed <= introHoldMs ? 'exploded view' : 'assembling');
       else if (state.explodeTarget > 0.05) tags.push(`exploded ${Math.round(state.explodeTarget * 100)}%`);
@@ -1606,7 +1602,6 @@
       assembly:  assemblyView.center,
       popups:    new THREE.Vector3(44, 30, 0),
       hood:      new THREE.Vector3(48, 30, 0),
-      ttop:      new THREE.Vector3(-4, 48, 0),
       engineLid: new THREE.Vector3(-55, 38, 0),
       trunk:     new THREE.Vector3(-76, 36, 0),
       fuel:      new THREE.Vector3(-40, 41, -43),
@@ -1690,11 +1685,9 @@
     for (const view of photoSources) {
       const fit = fittedCameras[view.label];
       if (!fit) continue;
-      const panels = view.label.includes('pop-ups open') ? { popups: 1 }
-        : view.label.includes('T-tops off') ? { ttop: 1 } : fit.panels;
+      const panels = view.label.includes('pop-ups open') ? { popups: 1 } : fit.panels;
       const pose = { ...fit, panels, label: view.label, group: view.group, photo: true,
         image: view.image, aspect: view.aspect, center: new THREE.Vector3(...fit.center), radius: orbitRadius(fit) };
-      if (view.photoView === 'photo-overhead-t-tops-off') pose.hide = /^MR2_Glass_Door_/;
       referenceViews.set(view.photoView, pose);
     }
     const landingPhoto = referenceViews.get('photo-front-three-quarter');
@@ -1729,8 +1722,6 @@
         case 'Pivot_Headlight_L':        out.set(22, 16, -12); break;
         case 'Pivot_Headlight_R':        out.set(22, 16, 12); break;
         case 'Pivot_Front_Lid':          out.set(24, 30, 0); break;
-        case 'Pivot_TTop_L':             out.set(0, 26, -24); break;
-        case 'Pivot_TTop_R':             out.set(0, 26, 24); break;
         case 'Pivot_Engine_Lid':         out.set(-8, 32, 0); break;
         case 'Pivot_Trunk_Lid':          out.set(-34, 24, 0); break;
         case 'Pivot_Fuel_Flap':          out.set(0, 4, -18); break;
@@ -1966,7 +1957,6 @@
         Math.abs(state.doorRTarget - state.doorR) +
         Math.abs(state.popupsTarget - state.popups) +
         Math.abs(state.hoodTarget - state.hood) +
-        Math.abs(state.ttopTarget - state.ttop) +
         Math.abs(state.engineLidTarget - state.engineLid) +
         Math.abs(state.trunkTarget - state.trunk) +
         Math.abs(state.fuelTarget - state.fuel);
@@ -2014,7 +2004,6 @@
       state.doorR += (state.doorRTarget - state.doorR) * damp;
       state.popups += (state.popupsTarget - state.popups) * damp;
       state.hood += (state.hoodTarget - state.hood) * damp;
-      state.ttop += (state.ttopTarget - state.ttop) * damp;
       state.engineLid += (state.engineLidTarget - state.engineLid) * damp;
       state.trunk += (state.trunkTarget - state.trunk) * damp;
       state.xray += (state.xrayTarget - state.xray) * damp;
@@ -2134,7 +2123,6 @@
       if (geoMoving || needsShadow) {
         const ex = state.explode;
         const vib = (state.rpm > 1200 ? (state.rpm / 7500) * 0.24 : 0.0);
-        const hideOverheadTTops = selectedView === 'photo-overhead-t-tops-off' && state.ttop > 0.9;
 
         for (const [pname, piv] of Object.entries(pivots)) {
           const rp = restPos.get(piv);
@@ -2150,19 +2138,8 @@
           const panelKey = panelByNode[pname];
           if (panelKey) {
             const panel = panels[panelKey];
-            if (panel.translate) {
-              // Removable T-top glass panels lift clear of the roof seals, then glide outward.
-              const side = pname.endsWith('_L') ? -1 : 1;
-              const lift = THREE.MathUtils.smoothstep(state.ttop, 0, 0.5) * 11.5;
-              const glide = THREE.MathUtils.smoothstep(state.ttop, 0.28, 1.0) * 21.0;
-              piv.position.y += lift;
-              piv.position.z += side * glide;
-              piv.rotation.x = rr.x + side * THREE.MathUtils.smoothstep(state.ttop, 0.28, 1.0) * 0.14;
-              piv.visible = !hideOverheadTTops;
-            } else {
-              const opening = panelKey === 'fuel' ? THREE.MathUtils.smoothstep(state.fuel, 0, .48) : state[panelKey];
-              piv.rotation[panel.axis] = rr[panel.axis] + opening * panel.angle;
-            }
+            const opening = panelKey === 'fuel' ? THREE.MathUtils.smoothstep(state.fuel, 0, .48) : state[panelKey];
+            piv.rotation[panel.axis] = rr[panel.axis] + opening * panel.angle;
           } else if (pname === 'Pivot_Fuel_Cap') {
             const lifted = THREE.MathUtils.smoothstep(state.fuel, .48, .72);
             const parked = THREE.MathUtils.smoothstep(state.fuel, .72, 1);
@@ -2228,11 +2205,11 @@
       for (const [object, pull] of pullOffsets) {
         const assembly = object.isMesh ? object.parent.name : object.name;
         const release = THREE.MathUtils.smoothstep(pull.cur.length(), 0, 45);
-        if (/Body_Assembly|Interior_Cabin|Door_|TTop_/.test(assembly)) cabinPull = Math.max(cabinPull, release);
+        if (/Body_Assembly|Interior_Cabin|Door_/.test(assembly)) cabinPull = Math.max(cabinPull, release);
         if (/Body_Assembly|Engine_|Transaxle/.test(assembly)) enginePull = Math.max(enginePull, release);
       }
       const enclosed = lastIsolation ? 0 : (1 - state.xray) * (1 - THREE.MathUtils.smoothstep(state.explode, 0, 0.55));
-      const cabinOpen = state.doorL * 0.25 + state.doorR * 0.25 + state.ttop * 0.5;
+      const cabinOpen = (state.doorL + state.doorR) * .5;
       cabinEnclosure.value.set(1 - cabinOpen, cabinOpen).multiplyScalar(enclosed * (1 - cabinPull));
       engineEnclosure.value.set(1 - state.engineLid, state.engineLid).multiplyScalar(enclosed * (1 - enginePull));
       updateCabinMirror(geoMoving);

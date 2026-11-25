@@ -1,3 +1,10 @@
+// Preserve bookmarks to the previously published overhead frame.
+function resolveOverheadBookmark() {
+  if (location.hash === '#photo-overhead-t-tops-off') location.replace('#photo-overhead-fixed-roof');
+}
+resolveOverheadBookmark();
+window.addEventListener('hashchange', resolveOverheadBookmark);
+
 const display = document.querySelector('.display');
 const report = document.querySelector('main');
 display.hidden = false;
