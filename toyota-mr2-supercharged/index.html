@@ -8,7 +8,7 @@
   <script>
     if (location.hash === '#mr2-views') document.documentElement.classList.add('show-photos');
     const overrideModel = new URLSearchParams(location.search).get('model');
-    const modelFile = overrideModel || './toyota_mr2_aw11_sc.glb?v=e9fab3a708';
+    const modelFile = overrideModel || './toyota_mr2_aw11_sc.glb?v=a358f7dc9b';
     const preload = document.createElement('link');
     preload.rel = 'preload';
     preload.as = 'fetch';
@@ -106,13 +106,13 @@
   </div>
   <script type="module">
     import * as THREE from './vendor/three-r170.js?v=31c84364';
-    import { createStudioFloor } from './studio-floor.js?v=f6fce73381';
+    import { createStudioFloor } from './studio-floor.js?v=dffc9cdccb';
     import { applyStudioVisibility } from './studio-visibility.js?v=616fb3a0';
     import { createPlanarMirror } from './mirror-reflection.js?v=cd0eff4a';
     import { interiorPhotoViews } from './interior-photo-views.js?v=9007816c76';
     import { powertrainPhotoViews } from './powertrain-photo-views.js?v=3b08a7425a';
     const [photoSources, exteriorCameras, frontCameras] = await Promise.all(
-      ['./mr2-views.json?v=7a4f443772', './exterior-photo-cameras.json?v=c0645afe27', './front-photo-cameras.json?v=4a5f761158']
+      ['./mr2-views.json?v=7a4f443772', './exterior-photo-cameras.json?v=db7dd8fa63', './front-photo-cameras.json?v=4a5f761158']
         .map(url => fetch(url).then(response => response.json()))
     );
     const fittedCameras = { ...exteriorCameras, ...frontCameras, ...interiorPhotoViews, ...powertrainPhotoViews };
@@ -211,22 +211,35 @@
        vec3 surface = cameraPosition - (vec4(vViewPosition, 0.0) * viewMatrix).xyz;
        #ifdef MR2_DECK_REFLECTION
          // Project the world ray into the articulated engine lid. Dimensions
-         // are the panel and 14 left louver vanes from scripts/closures.py.
+         // are the panel and 15 left louver vanes from scripts/closures.py.
          vec3 lidNormal = normalize(engineLidWorld[1].xyz);
          vec3 lidOrigin = engineLidWorld[3].xyz;
          float angle = dot(reflectVec, lidNormal);
          float distanceToLid = dot(lidOrigin - surface - .65 * lidNormal, lidNormal) / max(angle, .00001);
          mat3 toLid = transpose(mat3(engineLidWorld));
          vec3 point = toLid * (surface + distanceToLid * reflectVec - lidOrigin);
-         vec2 edge = min(vec2(point.x + 37.22, point.z + 28.33), vec2(.45 - point.x, 28.33 - point.z));
+         vec2 edge = min(vec2(point.x + 28.72, point.z + 29.45), vec2(.22 - point.x, 29.45 - point.z));
          float feather = max(.65, distanceToLid * max(.04, roughness));
          float lidCoverage = step(.15, distanceToLid) * step(.001, angle)
                            * smoothstep(-feather, feather, min(edge.x, edge.y)) * opacity;
          vec2 vent = point.xz * 18.0 + (toLid * reflectVec).xz * 35.0 / max(angle, .01);
-         vec2 ventEdge = min(vent - vec2(-581.0, -418.0), vec2(-129.0, -82.0) - vent);
-         float slots = abs(fract((vent.x + 140.0) / (430.0 / 13.0) + .5) - .5);
+         vec2 ventEdge = min(vent - vec2(-438.0, -458.0), vec2(-100.0, -113.0) - vent);
+         float slots = abs(fract((vent.x + 122.0) / (299.0 / 14.0) + .5) - .5);
          lidCoverage *= 1.0 - .35 * smoothstep(0.0, 9.0, min(ventEdge.x, ventEdge.y))
                                   * smoothstep(.22, .45, slots);
+         // A ray from the painted luggage lid can see the underside of the
+         // raised rear wing in place of the studio ceiling.
+         mat3 toWing = transpose(mat3(wingWorld));
+         vec3 wingPoint = 18.0 * toWing * (surface - wingWorld[3].xyz);
+         vec3 wingRay = toWing * reflectVec;
+         float wingDistance = (976.0 - wingPoint.y) / max(wingRay.y, .0001);
+         vec2 wingHit = wingPoint.xz + wingDistance * wingRay.xz;
+         float wingSide = abs(wingHit.y);
+         float wingFront = -1638.0 + 70.0 * smoothstep(585.0, 685.0, wingSide);
+         vec2 wingEdges = vec2(min(wingFront - wingHit.x, wingHit.x + 1877.0), 710.0 - wingSide);
+         float wingBlur = max(3.0, wingDistance * roughness);
+         float wingCoverage = step(0.0, wingDistance) * step(.001, wingRay.y)
+                            * smoothstep(-wingBlur, wingBlur, min(wingEdges.x, wingEdges.y)) * wingOpacity;
        #endif
        surface = clamp(surface, studioMin + 0.01, studioMax - 0.01);
        vec3 t = (mix(studioMin, studioMax, step(vec3(0.0), reflectVec)) - surface)
@@ -237,6 +250,7 @@
        vec3 studioRadiance = envMapColor.rgb * envMapIntensity;
        #ifdef MR2_DECK_REFLECTION
          studioRadiance = mix(studioRadiance, vec3(.23, .018, .014), lidCoverage);
+         studioRadiance = mix(studioRadiance, vec3(.080, .006, .004), wingCoverage);
        #endif
        return studioRadiance;`);
     function projectStudioReflections(material, reflectsLid) {
@@ -245,9 +259,25 @@
       const previousKey = material.customProgramCacheKey();
       material.onBeforeCompile = function(shader, renderer) {
         previousCompile.call(this, shader, renderer);
-        if (reflectsLid && pivots.Pivot_Engine_Lid) {
+        const wing = reflectsLid && rootCar.getObjectByName('MR2_Rear_Spoiler_Super_Red_3E5');
+        if (wing && pivots.Pivot_Engine_Lid) {
           shader.uniforms.engineLidWorld = { value: pivots.Pivot_Engine_Lid.matrixWorld };
-          shader.fragmentShader = '#define MR2_DECK_REFLECTION\nuniform mat4 engineLidWorld;\n' + shader.fragmentShader;
+          shader.uniforms.wingWorld = { value: wing.matrixWorld };
+          shader.uniforms.wingOpacity = { get value() { return wing.visible ? wing.material.opacity : 0; } };
+          shader.fragmentShader = '#define MR2_DECK_REFLECTION\nuniform mat4 engineLidWorld;\nuniform mat4 wingWorld;\nuniform float wingOpacity;\n' + shader.fragmentShader;
+          shader.fragmentShader = shader.fragmentShader.replace('#include <aomap_fragment>', `
+            #include <aomap_fragment>
+            // The paint under the wing receives less skylight. Integrate its
+            // projected angular width at the actual lid-to-wing separation.
+            vec3 bootWorld = cameraPosition - (vec4(vViewPosition, 0.0) * viewMatrix).xyz;
+            vec3 boot = 18.0 * transpose(mat3(wingWorld)) * (bootWorld - wingWorld[3].xyz);
+            float clearance = max(8.0, 976.0 - boot.y);
+            float front = -1638.0 + 70.0 * smoothstep(585.0, 685.0, abs(boot.z)) - boot.x;
+            float rear = -1877.0 - boot.x;
+            float blocked = .5 * (front / length(vec2(front, clearance)) - rear / length(vec2(rear, clearance)));
+            float sideExtent = .5 + .5 * (710.0 - abs(boot.z)) / length(vec2(710.0 - abs(boot.z), clearance));
+            reflectedLight.indirectDiffuse *= 1.0 - blocked * sideExtent * wingOpacity;
+          `);
         }
         shader.fragmentShader = shader.fragmentShader.replace(
           '#include <envmap_physical_pars_fragment>', studioReflections
@@ -648,6 +678,7 @@
 
     function togglePanel(key, focus = false) {
       if (!panelAvailable(key)) return;
+      closeOverlay();
       stopIntro();
       const target = key + 'Target';
       state[target] = 1 - state[target];
@@ -790,8 +821,9 @@
               const enclosure = !obj.geometry.hasAttribute('_studio_visibility') ? ''
                 : /Interior_Cabin|Pivot_Door_/.test(obj.parent.name) ? 'cabin'
                 : /Pivot_Engine|Pivot_Transaxle/.test(obj.parent.name) || obj.material.name === 'Mat_Engine_Bay_Wall' ? 'engine' : 'exterior';
+              const doorTop = obj.name.startsWith('MR2_Door_Shell_') && obj.material.name === 'Mat_Interior_Matte_Vinyl';
               const reflectsLid = obj.name === 'MR2_Trunk_Lid_Super_Red_3E5';
-              const matKey = `${obj.material.uuid}|${isExterior ? (isGlass ? 'EG' : 'E') : 'I'}|${glassKind}${isHeader ? 'H' : 'S'}|${enclosure}|${reflectsLid}`;
+              const matKey = `${obj.material.uuid}|${isExterior ? (isGlass ? 'EG' : 'E') : 'I'}|${glassKind}${isHeader ? 'H' : 'S'}|${enclosure}|${reflectsLid}|${doorTop}`;
               let shared = sharedMaterials.get(matKey);
               if (!shared) {
                 shared = obj.material.clone();
@@ -800,6 +832,13 @@
                   for (const texture of [shared.map, shared.normalMap, shared.emissiveMap]) {
                     if (texture) texture.anisotropy = filtering;
                   }
+                }
+                if (doorTop) {
+                  // The upholstered door cap sits behind the exterior window sweep.
+                  shared.color.setRGB(.095, .105, .120);
+                  shared.roughness = .72;
+                  shared.clearcoat = .04;
+                  shared.specularIntensity = .30;
                 }
                 if (shared.name === 'Mat_Super_Red_3E5') {
                   shared.color.g *= .42;
@@ -830,6 +869,7 @@
                   shared.roughness = ttopGlass ? .073 : .09;
                   shared.clearcoat = .66;
                   shared.clearcoatRoughness = .045;
+                  if (glassKind === 'GW') shared.defines = { ...shared.defines, MR2_WINDSHIELD_SKY: 1 };
                   shared.customProgramCacheKey = () => 'mr2-fresnel-glass';
                   shared.onBeforeCompile = shader => {
                     shader.fragmentShader = shader.fragmentShader.replace('#include <opaque_fragment>', `
@@ -838,6 +878,17 @@
                       vec3 ray = inverseTransformDirection(reflect(-geometryViewDir, geometryNormal), viewMatrix);
                       float sky = smoothstep(-.12,.62,ray.y);
                       reflection += mix(vec3(.014,.027,.033),vec3(.080,.215,.30),sky) * (.20+.36*grazing);
+                      #ifdef MR2_WINDSHIELD_SKY
+                        // A broad skylight softens the dashboard behind the raked glass.
+                        // Its gradient stays in world space as the camera orbits the car.
+                        vec3 viewWorld = inverseTransformDirection(geometryViewDir, viewMatrix);
+                        vec3 glassSurface = cameraPosition - (vec4(vViewPosition, 0.0) * viewMatrix).xyz;
+                        float highView = smoothstep(.48, .94, viewWorld.y);
+                        float skyMask = highView * mix(.18, 1., smoothstep(-.22, .80, ray.y));
+                        float skyAcrossPane = smoothstep(-42., 42., glassSurface.z + .75 * (glassSurface.x - 24.));
+                        reflection += vec3(.064, .163, .273) * skyMask * mix(.60, 1.52, skyAcrossPane);
+                        diffuseColor.a += .19 * skyMask * smoothstep(.25, .40, diffuseColor.a);
+                      #endif
                       float bright = max(reflection.r, max(reflection.g, reflection.b));
                       float visible = smoothstep(.03, .26, diffuseColor.a);
                       float coverage = clamp(diffuseColor.a + (.26*grazing + .62*bright)*visible, diffuseColor.a, .95);
@@ -1348,6 +1399,9 @@
     // Keyboard controls
     function runCommand(k) {
       if (!state.loaded || k.length !== 1 || !'d12pftlkgiesxwr mh+=-_0'.includes(k)) return;
+      // A fixed reference can only be compared at its calibrated camera
+      // and with the photographed panels in place.
+      if (k !== 'm' && k !== 'h') closeOverlay();
       stopIntro();
       if (k === 'd') {
         const open = (state.doorLTarget < 0.5 || state.doorRTarget < 0.5) ? 1.0 : 0.0;
@@ -1662,6 +1716,7 @@
         : view.label.includes('T-tops off') ? { ttop: 1 } : fit.panels;
       const pose = { ...fit, panels, label: view.label, group: view.group, photo: true,
         image: view.image, aspect: view.aspect, center: new THREE.Vector3(...fit.center), radius: orbitRadius(fit) };
+      if (view.photoView === 'photo-overhead-t-tops-off') pose.hide = /^MR2_Glass_Door_/;
       referenceViews.set(view.photoView, pose);
     }
     const landingPhoto = referenceViews.get('photo-front-three-quarter');
@@ -2010,11 +2065,14 @@
       );
       camera.lookAt(effX, effY, effZ);
       if (match && photoPose.roll) camera.rotateZ(photoPose.roll * match);
+      // With the glass panels off, the overhead softbox reaches the leather
+      // and the rubber channels bordering the two roof openings.
+      const openRoofLight = state.ttop * THREE.MathUtils.smoothstep(Math.cos(state.phi), .53, .96) * (1 - state.explode);
       const cabinShot = photoPose?.group === 'Interior' || state.interiorView;
       const bayShot = photoPose?.group === 'Powertrain' || ['engine','wiring','linkage','transmission','gearset','loom'].includes(selectedView);
-      photoFill.intensity = cabinShot ? 2.25 : bayShot ? 1.55 : 0.30;
-      photoKey.intensity = cabinShot ? 4.4 : bayShot ? 2.8 : 0;
-      if (cabinShot || bayShot) {
+      photoFill.intensity = cabinShot ? 2.25 : bayShot ? 1.55 : .30 + .75 * openRoofLight;
+      photoKey.intensity = cabinShot ? 4.4 : bayShot ? 2.8 : .85 * openRoofLight;
+      if (cabinShot || bayShot || openRoofLight > .0001) {
         photoKey.position.copy(camera.position).add(photoLightOffset);
         photoKey.target.position.set(effX, effY, effZ);
       }
