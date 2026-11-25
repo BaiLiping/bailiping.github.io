@@ -1,6 +1,6 @@
 import * as THREE from './vendor/three-r170.js?v=31c84364';
 
-export const VIEWS_URL = './civic-views.json?v=3db436e91a';
+export const VIEWS_URL = './civic-views.json?v=ad6eb2b072';
 
 // Default 1:1 metric studio cameras (glTF Y-up: +X forward, +Y up, -Z driver left, +Z passenger right).
 export const DEFAULT_CAMERAS = {
@@ -26,7 +26,7 @@ export const DEFAULT_CAMERAS = {
   },
   cabin: {
     // Driver-eye at (-0.08, 1.13, -0.34) looking ahead of the red bucket headrest
-    // across the Type R steering wheel, 10.2" digital cluster, center touchscreen,
+    // across the Type R steering wheel, digital cluster, center touchscreen,
     // aluminum shift knob, and live planar rearview mirror.
     theta: -2.9745,
     phi: 1.3488,

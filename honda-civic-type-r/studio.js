@@ -1,4 +1,4 @@
-import { loadCivicViews } from './civic-views.js?v=c972d97c09';
+import { loadCivicViews } from './civic-views.js?v=48db82616f';
 
 const room = document.getElementById('photo-room');
 const photo = document.getElementById('photo');
@@ -31,7 +31,7 @@ function showAngle() {
   if (!option) return;
   error.hidden = true;
   photo.hidden = false;
-  photo.alt = option.label + ' on the Championship White reference 2025 Honda Civic Type R (FL5)';
+  photo.alt = option.label + ' on the Boost Blue 2021 Honda Civic Type R (FK8)';
   const fullPhoto = document.getElementById('full-photo');
   const fullUrl = option.dataset.original || option.value;
   if (fullUrl) {
@@ -43,8 +43,9 @@ function showAngle() {
   if (creditText && option.dataset.credit) {
     creditText.textContent = option.dataset.credit;
   }
+  for (const id of ['photo-source', 'photo-source-fallback']) document.getElementById(id).href = option.dataset.source;
   updateMatch();
-  document.getElementById('compare-frames').href = './frame-by-frame/#' + option.dataset.photoView;
+  document.getElementById('compare-frames').href = './frame-by-frame/' + (option.dataset.photoView ? '#' + option.dataset.photoView : '');
   photo.src = option.value;
 }
 
@@ -99,7 +100,8 @@ async function loadAngles() {
         const option = new Option(view.label, view.preview || view.image || '');
         option.dataset.id = view.id || '';
         option.dataset.original = view.image || '';
-        option.dataset.photoView = view.photoView;
+        option.dataset.photoView = view.camera ? view.photoView : '';
+        option.dataset.source = view.source;
         option.dataset.preset = view.preset || '';
         option.dataset.credit = view.credit || '';
         group.append(option);

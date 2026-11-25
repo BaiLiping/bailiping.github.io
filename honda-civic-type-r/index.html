@@ -9,7 +9,7 @@
     const params = new URLSearchParams(location.search);
     if (params.get('capture') === '1' || params.get('hud') === '0') document.documentElement.classList.add('hide-hud');
     const overrideModel = params.get('model');
-    const modelFile = overrideModel || './honda_civic_type_r.glb?v=4ac518492b';
+    const modelFile = overrideModel || './honda_civic_type_r.glb?v=fbf25eae0a';
     const preload = document.createElement('link');
     preload.rel = 'preload';
     preload.as = 'fetch';
@@ -19,25 +19,25 @@
   </script>
   <link rel="canonical" href="https://bailiping.com/honda-civic-type-r/" />
   <link rel="icon" href="/favicon.ico" />
-  <title>2025 Honda Civic Type R (FL5) — Crystal Black Pearl</title>
-  <meta name="description" content="Interactive 3D 2025 Honda Civic Type R (FL5) studio viewer in Crystal Black Pearl (NH-731P) with articulated doors, hood, rear hatch, X-ray cutaway, exploded assembly, cabin view, and calibrated photo comparisons." />
-  <link rel="stylesheet" href="./studio.css?v=7ef936f1e8">
-  <script type="module" src="./studio.js?v=64084249d4"></script>
+  <title>2021 Honda Civic Type R (FK8) — Boost Blue Pearl</title>
+  <meta name="description" content="Explore the 2021 Honda Civic Type R (FK8) in Boost Blue Pearl. Rotate the 3D model, open the rear hatch and compare its wing, C-shaped taillights and triple exhaust with photographs." />
+  <link rel="stylesheet" href="./studio.css?v=f545ff0d26">
+  <script type="module" src="./studio.js?v=5d3229be6b"></script>
 </head>
 <body>
-  <noscript><p style="position:fixed;inset:0;z-index:30;background:#eceeef;padding:2em">The interactive 2025 Honda Civic Type R viewer requires JavaScript. <a href="https://bringatrailer.com/listing/2025-honda-civic-type-r-3/">View the reference listing</a> or <a href="./frame-by-frame/">open the frame-by-frame photo comparison</a>.</p></noscript>
+  <noscript><p style="position:fixed;inset:0;z-index:30;background:#eceeef;padding:2em">The interactive Honda Civic Type R (FK8) viewer requires JavaScript. <a href="https://bringatrailer.com/listing/2021-honda-civic-type-r-touring-5/">View the reference listing</a> or <a href="./frame-by-frame/">open the frame-by-frame photo comparison</a>.</p></noscript>
   <header id="studio-header">
-    <div class="identity"><h1>Civic Type R</h1><span class="finish"><i aria-hidden="true"></i><span id="finish-name">Crystal Black Pearl</span><span class="reference-finish">Championship White</span></span></div>
+    <div class="identity"><h1>Honda Civic Type R (FK8)</h1><span class="finish"><i aria-hidden="true"></i><span id="finish-name">Boost Blue Pearl</span></span></div>
     <nav class="mode-switch" aria-label="Views">
       <a href="#model" aria-current="true">3D model</a>
       <a href="#civic-views">Civic views</a>
       <a id="compare-frames" href="./frame-by-frame/">Compare photos</a>
     </nav>
   </header>
-  <section id="photo-room" aria-label="2025 Honda Civic Type R reference photographs" hidden>
+  <section id="photo-room" aria-label="Boost Blue Honda Civic Type R (FK8) reference photographs" hidden>
     <figure>
       <img id="photo" width="1280" height="853" alt="">
-      <p id="photo-error" role="status" hidden>This view is unavailable. <a class="config-link" href="https://bringatrailer.com/listing/2025-honda-civic-type-r-3/">View the Bring a Trailer listing</a></p>
+      <p id="photo-error" role="status" hidden>This view is unavailable. <a class="config-link" id="photo-source-fallback" href="https://bringatrailer.com/listing/2021-honda-civic-type-r-touring-5/">View the source listing</a></p>
     </figure>
     <div id="photo-footer">
       <div class="photo-tools">
@@ -46,7 +46,7 @@
         <button id="next-view" type="button" aria-label="Next view">›</button>
         <button id="match-view" type="button" disabled>Match in 3D</button>
       </div>
-      <p>Championship White reference car (#R-41430) · <span id="photo-credit">Bruno Silie / Maison Throne via Bring a Trailer</span> · <a href="https://bringatrailer.com/listing/2025-honda-civic-type-r-3/">View listing</a> · <a id="full-photo" href="#" target="_blank" rel="noopener" hidden>Full-size photo</a></p>
+      <p><span id="photo-credit">Bring a Trailer</span> · <a id="photo-source" href="https://bringatrailer.com/listing/2021-honda-civic-type-r-touring-5/">View listing</a> · <a id="full-photo" href="#" hidden>Full-size photo</a></p>
     </div>
   </section>
   <div id="photo-tools-3d">
@@ -56,7 +56,7 @@
     <span id="overlay-error" role="status" hidden>Photo unavailable</span>
   </div>
   <img id="reference-overlay" alt="" hidden>
-  <canvas id="stage" aria-label="Interactive 3D model of a Honda Civic Type R"></canvas>
+  <canvas id="stage" aria-label="Interactive 3D model of a Boost Blue Honda Civic Type R (FK8)"></canvas>
   <div id="callout"><span class="title"></span><span class="sub"></span></div>
   <div id="gear-bar" role="group" aria-label="6-speed manual transaxle controls" hidden>
     <span class="gear-label">6MT</span>
@@ -70,7 +70,7 @@
       <button type="button" data-gear="R" aria-pressed="false">R</button>
       <button type="button" data-gear="N" aria-pressed="false">N</button>
     </div>
-    <span id="gear-ratio">3rd · 1.55:1 · FD 3.83:1</span>
+    <span id="gear-ratio">3rd · 1.529:1 · FD 4.111:1</span>
     <button type="button" id="gear-play" aria-pressed="true">Pause</button>
     <button type="button" id="gear-cutaway" aria-pressed="true" hidden>Cutaway</button>
   </div>
@@ -97,9 +97,9 @@
             <button type="button" data-panel="hatch" aria-pressed="false" aria-keyshortcuts="K" disabled>Rear hatch</button>
             <button type="button" data-panel="fuel" aria-pressed="false" aria-keyshortcuts="G" hidden disabled>Fuel filler</button>
           </div>
-          <p id="info">2025 Honda Civic Type R (FL5) · Crystal Black Pearl (NH-731P)</p>
+          <p id="info">2021 Honda Civic Type R (FK8) · Boost Blue Pearl (B-637P)</p>
           <p class="quick-links">
-            <a href="#photo-fl5-front-high-nose">Closed hood</a>
+            <a href="#photo-fk8-front-high">Closed hood</a>
             <a href="#rear">Rear three-quarter</a>
             <a href="#engine">Engine bay</a>
             <a href="#drivetrain">6MT gearing &amp; K20C1</a>
@@ -113,12 +113,12 @@
             <p>I cabin · E explode · X x-ray · R reset · S steer · W spin · Space rev · M sound · H hide controls</p>
           </details>
           <details class="notes"><summary>Model references</summary><div class="sources" id="model-sources">
-            <p>The 3D model shows the 2025 Civic Type R in Crystal Black Pearl with red sport seats. The reference photos show a Championship White US-market car, serial #R-41430. Body surfaces and internal parts are approximations based on photographs and Honda’s published dimensions.</p>
-            <a href="https://bringatrailer.com/listing/2025-honda-civic-type-r-3/">2025 Honda Civic Type R #R-41430 (Championship White) · Bring a Trailer Lot #231,834</a><br>
-            <a href="#civic-views">Browse calibrated reference photos</a> · <a href="./frame-by-frame/">Frame-by-frame comparison</a><br>
-            <a href="https://hondanews.com/en-US/honda-automobiles/releases/release-a0290fb377b9a07ba1686b65910857e4-2025-honda-civic-type-r-specifications-features">2025 Civic Type R Specifications &amp; Features · Honda News US</a><br>
-            <a href="https://hondanews.ca/en-CA/releases/release-d2ee5ddc58a672cff18909ee94000bd1-2025-civic-type-r-specifications">2025 Civic Type R Metric Specifications · Honda Canada News</a><br>
-            <a href="https://www.honda.se/content/dam/local/sweden/brochures/cars/TypeR/23YM%20Civic%20Type%20R%20Brochure_WEBB_20240626.pdf">Civic Type R Official Brochure · Honda Motor Europe (PDF)</a>
+            <p>This model follows the 2021 US-market FK8 Touring in Boost Blue Pearl. The exterior is reconstructed from photographs. The engine and gearbox cutaways show the working layout with simplified internal parts. The gear readout gives Honda’s published ratios.</p>
+            <a href="#civic-views">Browse the FK8 reference photos</a> · <a href="./frame-by-frame/">Compare photos and renders</a><br>
+            <a href="https://bringatrailer.com/listing/2021-honda-civic-type-r-touring-5/">Boost Blue exterior and detail photographs · Bring a Trailer lot 163,254</a><br>
+            <a href="https://bringatrailer.com/listing/2021-honda-civic-type-r-5/">Additional rear, hatch and cabin photographs · Bring a Trailer lot 111,995</a><br>
+            <a href="https://www.hondainfocenter.com/2021/Civic-Type-R/Feature-Guide/Civic-Type-R-Specifications/">2021 Civic Type R specifications · Honda</a><br>
+            <a href="https://automobiles.honda.com/-/media/Honda-Automobiles/Vehicles/Full-Line-and-Family-Brochures/2021/Wave-2/Cars/MY21-Cars-Brochure-Wave-2.pdf">Boost Blue Pearl Touring in Honda’s 2021 brochure (PDF)</a>
           </div></details>
         </section>
       </details>
@@ -130,7 +130,7 @@
     import { createStudioFloor } from './studio-floor.js';
     import { applyStudioVisibility } from './studio-visibility.js';
     import { createPlanarMirror } from './mirror-reflection.js';
-    import { DEFAULT_CAMERAS, orbitRadius, normalizeCameraPose, buildReferenceViews, loadCivicViews } from './civic-views.js?v=c972d97c09';
+    import { DEFAULT_CAMERAS, orbitRadius, normalizeCameraPose, buildReferenceViews, loadCivicViews } from './civic-views.js?v=48db82616f';
 
     const { GLTFLoader, DRACOLoader } = THREE;
     const MODEL_URL = modelFile;
@@ -201,7 +201,7 @@
     renderer.shadowMap.needsUpdate = true;
     renderer.shadowMap.type = THREE.PCFSoftShadowMap;
     renderer.toneMapping = THREE.ACESFilmicToneMapping;
-    renderer.toneMappingExposure = 0.93;
+    renderer.toneMappingExposure = 1.10;
 
     const scene = new THREE.Scene();
     const BG_HEX = 0xf1f2f3;
@@ -227,7 +227,7 @@
         const azimuth = ((x + 0.5) / panorama.width - 0.5) * Math.PI * 2;
         const sides = Math.abs(Math.sin(azimuth + 0.20));
         const bank = smooth(sides, 0.42, 0.86);
-        const luminance = 0.14 + 0.23 * ceiling + 0.15 * smooth(-elevation, 0.25, 0.8)
+        const luminance = 0.26 + 0.33 * ceiling + 0.15 * smooth(-elevation, 0.25, 0.8)
           + softbox * (0.24 + 2.65 * bank) + sideStrip * (0.20 + 1.65 * bank);
         const offset = 4 * (y * panorama.width + x);
         radiance[offset] = radiance[offset + 1] = radiance[offset + 2] = Math.round(255 * luminance / 4);
@@ -243,8 +243,8 @@
 
     const camera = new THREE.PerspectiveCamera(30, window.innerWidth / window.innerHeight, 0.02, 120);
 
-    const studioFill = new THREE.HemisphereLight(0xf4f6fa, 0xb6b3b1, 0.95);
-    const keyLight = new THREE.DirectionalLight(0xfffbf2, 0.82);
+    const studioFill = new THREE.HemisphereLight(0xf5f8ff, 0xc4c8cf, 1.65);
+    const keyLight = new THREE.DirectionalLight(0xfffbf2, 1.35);
     keyLight.position.set(3.2, 5.8, -1.5);
     keyLight.castShadow = true;
     keyLight.shadow.mapSize.set(2048, 2048);
@@ -258,11 +258,13 @@
     keyLight.shadow.bias = -0.0004;
     keyLight.shadow.intensity = 0.44;
     keyLight.shadow.radius = 3.5;
-    const rimLight = new THREE.DirectionalLight(0xe0e7f3, 0.65);
+    const rimLight = new THREE.DirectionalLight(0xe9f2ff, 1.36);
     rimLight.position.set(-2.0, 4.5, 4.2);
     const detailFill = new THREE.DirectionalLight(0xf4f1ed, 0);
     detailFill.position.set(1.2, -2.2, 1.8);
-    scene.add(studioFill, keyLight, rimLight, detailFill);
+    const rearFill = new THREE.DirectionalLight(0xf5f8ff, 0.85);
+    rearFill.position.set(-5.0, 2.5, -2.4);
+    scene.add(studioFill, keyLight, rimLight, detailFill, rearFill);
 
     // -----------------------------------------------------------------------
     // 2. Metric Studio Floor & Geometry-Aware Contact Shadows
@@ -344,9 +346,13 @@
     function describePart(meshName) {
       const n = meshName || 'Component';
       const checks = [
-        [/Hood_Vent|Hood_Duct/, 'Functional aluminum hood vent', 'extracts radiator heat and reduces front-axle lift'],
-        [/Hood/, 'Aluminum Type R hood', 'cowl-hinged with center heat-extraction duct · click or press F'],
-        [/Rear_Wing|Wing_Upright|Wing_Endplate|Spoiler/, 'Pedestal rear aero wing', 'die-cast aluminum uprights · opens with rear hatch'],
+        [/Hood_Scoop|Hood_Duct/, 'Forward-facing hood scoop', 'painted intake above the turbocharged engine'],
+        [/Hood/, 'Aluminum Type R hood', 'cowl-hinged with forward-facing intake · click or press F'],
+        [/Rear_Wing|Wing_Upright|Wing_Endplate|Spoiler/, 'FK8 high rear wing', 'black aerofoil between body-colour endplates · opens with hatch'],
+        [/Hatch_Lower_Window_And_Deck/, 'Lower rear window and black crosspiece', 'the narrow glass opening sits below the main rear window'],
+        [/Hatch_RearWiper/, 'Rear wiper', 'rests across the lower edge of the upper glass'],
+        [/Roof_Hatch_Vortex_Generators/, 'Roof-edge vortex generators', 'small fins along the trailing edge of the roof'],
+        [/Taillamp_Hatch_Tip/, 'Inner red lamp section', 'moves with the tailgate when the hatch opens'],
         [/Hatch_Glass|Glass_Hatch/, 'Sloped fastback rear glass', 'integrated hatchback tailgate glazing'],
         [/Hatch|Tailgate/, 'Hatchback rear tailgate', 'roof-hinged liftback · click or press K'],
         [/Door_Shell_RL|Door_Shell_RR/, 'Rear hatchback door', 'wide-body rear quarter flare · click to open'],
@@ -357,21 +363,25 @@
         [/Glass_Quarter/, 'Fixed rear quarter glass', 'tapered hatchback daylight opening'],
         [/Glass_Windshield/, 'Laminated front windshield', 'raked acoustic safety glazing'],
         [/Mirror_Cabin|Rearview/, 'Interior rear-view mirror', 'live planar reflection in Cabin view (I)'],
-        [/Mirror_[LR]/, 'Gloss-black aero side mirror', 'door-mounted power mirror with turn indicator'],
+        [/Mirror_[LR]/, 'Body-colour side mirror', 'door-mounted power mirror with turn indicator'],
         [/Headlamp_Lens|Headlight_Lens/, 'Clear polycarbonate headlamp lens', 'slim Type R LED optics'],
         [/Headlamp|Headlight/, 'Full-LED Type R headlamp', 'signature L-shaped daytime running light'],
-        [/Taillamp|Taillight/, 'Sculpted LED taillamp assembly', 'full-width fastback signature lighting'],
+        [/Taillamp|Taillight/, 'Sculpted LED taillamp assembly', 'C-shaped outer lamp and separate red hatch tip'],
         [/Front_Grille/, 'High-flow Type R mesh grille', 'expanded radiator & intercooler airflow opening'],
         [/Front_Splitter|Front_Lip/, 'Gloss-black front aero splitter', 'channels air around front wheel curtains'],
         [/Front_Bumper/, 'Sculpted Type R front fascia', 'integrated brake cooling ducts & wider stance'],
         [/Side_Skirt|Rocker/, 'Gloss-black side sill skirt', 'controls underbody airflow behind front fender vents'],
         [/Fender_Vent|Side_Gill/, 'Front fender extraction gill', 'relieves wheelhouse air pressure'],
+        [/Rear_Bumper_Painted_Blades/, 'Boost Blue rear bumper blades', 'L-shaped inserts on the facelift FK8'],
+        [/Rear_Bumper_Vent_/, 'Rear bumper corner insert', 'recessed black mesh beside the painted blade'],
+        [/Rear_Reflectors/, 'Rear bumper reflectors', 'upright red strips at the outer edges of the bumper'],
+        [/Rear_Bumper/, 'FK8 rear bumper', 'sculpted corners above the diffuser'],
         [/Rear_Diffuser/, 'Finned gloss-black rear diffuser', 'surrounds triple center exhaust outlets'],
         [/Badge_Honda/, 'Red Honda H emblem', 'Championship heritage Type R badge'],
         [/Badge_TypeR/, 'Type R badge', 'chrome & red signature badging'],
         [/Fuel_Flap|Fuel_Cap/, 'Fuel filler door', 'left rear quarter · click or press G'],
-        [/Wheel_.*_Tire|Tire/, 'Michelin Pilot Sport 4 S tire', '265/30 ZR19 93Y XL Honda OE (DT1) compound'],
-        [/Wheel_.*_Rim|Rim/, '19×9.5J Matte-Black Type R alloy wheel', 'reverse-rim 5-split-Y-spoke (ET60, 5×120) with red H cap'],
+        [/Wheel_.*_Tire|Tire/, 'Summer performance tire', '245/30ZR20 on the US Touring'],
+        [/Wheel_.*_Rim|Rim/, '20 × 8.5 in FK8 alloy wheel', 'black split spokes, red rim stripe and Honda centre cap'],
         [/Brake_Caliper_F|Caliper_FL|Caliper_FR/, 'Brembo 4-piston front caliper', 'gloss-red monoblock aluminum caliper · leading-edge mount'],
         [/Brake_Caliper/, 'Rear disc brake caliper', 'gloss-red floating caliper on silver carrier with EPB'],
         [/Brake_Rotor|Rotor/, 'Ventilated front / solid rear disc rotors', '350 mm two-piece front / 305 mm rear discs'],
@@ -379,23 +389,23 @@
         [/Flywheel|Starter_Ring/, 'Lightweight single-mass flywheel', '56-tooth starter ring · reduced inertia for quicker rev-matching'],
         [/Clutch_Pressure|Diaphragm|Clutch_Cover/, 'High-clamp clutch pressure plate', 'diaphragm spring cover mated to K20C1 rear crank flange'],
         [/Clutch_Disc|Clutch_Friction|Clutch_Release|Clutch_Fork|Slave/, 'Organic clutch disc & hydraulic release', 'concentric release fork & slave cylinder for crisp 6MT engagement'],
-        [/Gear.*Out1|Gear.*In1|Gear_1st|1st_Gear/i, '1st gear constant-mesh pair (3.67:1)', '12T input / 44T countershaft helical steel gears on needle bearings'],
-        [/Gear.*Out2|Gear.*In2|Gear_2nd|2nd_Gear/i, '2nd gear constant-mesh pair (2.11:1)', '18T input / 38T countershaft helical steel gears'],
-        [/Gear.*In3|Gear.*Out3|Gear_3rd|3rd_Gear/i, '3rd gear constant-mesh pair (1.55:1)', '22T input / 34T countershaft close-ratio helical gears'],
-        [/Gear.*In4|Gear.*Out4|Gear_4th|4th_Gear/i, '4th gear constant-mesh pair (1.15:1)', '26T input / 30T countershaft close-ratio helical gears'],
-        [/Gear.*In5|Gear.*Out5|Gear_5th|5th_Gear/i, '5th gear constant-mesh pair (0.93:1)', '29T input / 27T countershaft overdrive helical gears'],
-        [/Gear.*In6|Gear.*Out6|Gear_6th|6th_Gear/i, '6th gear constant-mesh pair (0.75:1)', '32T input / 24T countershaft highway overdrive gears'],
-        [/ReverseIdler|Rev_Idler|OutRev|Reverse_Gear/i, 'Reverse gearset & 18T idler (3.75:1)', '12T input -> 18T idler -> 45T countershaft reversing drive direction'],
-        [/Synchro|Hub|Sleeve/i, 'Triple-cone brass synchronizer assembly', 'bronze blocker rings & dog-tooth sleeves for rapid FL5 shifts'],
+        [/Gear.*Out1|Gear.*In1|Gear_1st|1st_Gear/i, '1st gear constant-mesh pair (3.625:1)', 'Modelled 12T input / 44T countershaft helical steel gears on needle bearings'],
+        [/Gear.*Out2|Gear.*In2|Gear_2nd|2nd_Gear/i, '2nd gear constant-mesh pair (2.115:1)', 'Modelled 18T input / 38T countershaft helical steel gears'],
+        [/Gear.*In3|Gear.*Out3|Gear_3rd|3rd_Gear/i, '3rd gear constant-mesh pair (1.529:1)', 'Modelled 22T input / 34T countershaft close-ratio helical gears'],
+        [/Gear.*In4|Gear.*Out4|Gear_4th|4th_Gear/i, '4th gear constant-mesh pair (1.125:1)', 'Modelled 26T input / 30T countershaft close-ratio helical gears'],
+        [/Gear.*In5|Gear.*Out5|Gear_5th|5th_Gear/i, '5th gear constant-mesh pair (0.911:1)', 'Modelled 29T input / 27T countershaft overdrive helical gears'],
+        [/Gear.*In6|Gear.*Out6|Gear_6th|6th_Gear/i, '6th gear constant-mesh pair (0.735:1)', 'Modelled 32T input / 24T countershaft highway overdrive gears'],
+        [/ReverseIdler|Rev_Idler|OutRev|Reverse_Gear/i, 'Reverse gearset & 18T idler (3.758:1)', 'Modelled 12T input -> 18T idler -> 45T countershaft reversing drive direction'],
+        [/Synchro|Hub|Sleeve/i, 'Triple-cone brass synchronizer assembly', 'bronze blocker rings & dog-tooth sleeves for close-ratio shifts'],
         [/ShiftFork|ShiftRail|ShiftTower|Selector/i, '6MT shift forks, rails & selector tower', 'high-rigidity shift gate linkages for direct teardrop-knob feel'],
         [/InputShaft|MainShaft/i, '6MT splined mainshaft (input shaft)', 'transmits engine torque from clutch hub to constant-mesh gears'],
-        [/CounterShaft|LayShaft|FD_Pinion/i, '6MT countershaft & 12T final-drive pinion', 'counter-rotates against input shaft and drives the 46T ring gear'],
-        [/FinalDrive|RingGear|LSD|Helical_Diff|Diff_/i, 'Helical limited-slip differential (3.83:1)', '46T final-drive ring gear & torque-sensing planetary worm pinions'],
+        [/CounterShaft|LayShaft|FD_Pinion/i, '6MT countershaft & final-drive pinion', 'counter-rotates against input shaft and drives the differential ring gear'],
+        [/FinalDrive|RingGear|LSD|Helical_Diff|Diff_/i, 'Helical limited-slip differential (4.111:1)', 'torque-sensing helical limited-slip differential'],
         [/Axle|HalfShaft|CV_Joint|CV_Boot|Intermediate_Shaft/i, 'Equal-length front CV half-shafts', 'intermediate shaft & center bearing eliminate front-drive torque steer'],
         [/ShaftBearings|CenterBearing/i, 'Precision ball & tapered roller bearings', 'supports input shaft, countershaft, helical LSD & intermediate half-shaft'],
         [/Trans_Case|TransCase|Bellhousing|EndCover|Transaxle/i, 'Split die-cast aluminum 6MT transaxle case', 'ribbed bellhousing, main gearcase & 6th-gear end cover'],
         // K20C1 2.0L DOHC VTEC Turbo engine & reciprocating internals
-        [/Eng_ValveCover|ValveCover/, 'K20C1 wrinkle-red valve cover', '2.0L DOHC VTEC Turbo · 315 hp @ 6,500 rpm · 310 lb-ft'],
+        [/Eng_ValveCover|ValveCover/, 'K20C1 wrinkle-red valve cover', '2.0L DOHC VTEC Turbo · 306 hp @ 6,500 rpm · 295 lb-ft'],
         [/Eng_IgnitionCoils|Eng_Coil|Spark|Ignition/, 'Direct coil-on-plug ignition pack', '4 red-top individual coils in recessed central spark valley'],
         [/Eng_TimingCover|TimingChain|Timing_Guide|Tensioner/, 'DOHC timing chain & tensioner drive', 'silent chain linking forged crankshaft to twin VTC cam phasers'],
         [/Eng_Cam|Camshaft|VTC|Phaser/, 'DOHC VTEC camshafts & Dual VTC phasers', 'variable intake/exhaust timing & exhaust-side VTEC lift'],
@@ -405,18 +415,18 @@
         [/Eng_Crank|Crankshaft/, 'Forged steel balanced crankshaft', '5-main-journal counterweighted crank spinning to 7,000 RPM'],
         [/Eng_OilPan|OilPickup|OilFilter/, 'Finned cast-aluminum oil pan & pickup', 'baffled track sump with integrated cooling ribs'],
         [/Eng_Pulley|Serpentine|Alternator|WaterPump|AC_Comp/, 'Serpentine accessory belt & pulleys', 'crank harmonic damper driving alternator, water pump & A/C'],
-        [/Eng_Turbo_Impeller|Impeller|Compressor_Wheel/, 'MHI mono-scroll compressor impeller', 'revised blade count & geometry · 25.2 psi peak boost'],
+        [/Eng_Turbo_Impeller|Impeller|Compressor_Wheel/, 'MHI mono-scroll compressor impeller', 'single-scroll turbocharger · 23.2 psi peak boost'],
         [/Eng_TurboShield|HeatShield|O2_Sensor/, 'Stamped aluminum turbo heat shield', 'embossed thermal barrier with front wideband O2 sensor boss'],
         [/Eng_Turbo|Wastegate|Downpipe/, 'MHI mono-scroll turbocharger & downpipe', 'electronic wastegate actuator · rapid low-end spool'],
         [/Eng_Intercooler|ChargePipe|Coupler/, 'Front-mount air-to-air intercooler & piping', 'cast aluminum end tanks & high-pressure silicone couplers'],
-        [/Eng_Radiator|RadFan/, 'High-capacity radiator & twin cooling fans', 'increased core area for sustained FL5 track lapping'],
+        [/Eng_Radiator|RadFan/, 'High-capacity radiator & twin cooling fans', 'increased core area for the turbocharged K20C1'],
         [/Eng_IntakeManifold|Plenum|ThrottleBody|FuelRail|Injector/, 'Cast 4-runner intake plenum & DI fuel rail', 'electronic drive-by-wire throttle body & direct-injection rail'],
         [/Eng_IntakeCover/, 'Carbon-weave TYPE R intake cover', 'covers front turbo inlet crossover piping'],
         [/Eng_Intake|Airbox|Snorkel/, 'High-flow Type R airbox & intake duct', 'straightened cold-air snorkel feeding the turbo compressor'],
         [/Eng_Battery|Eng_Auxiliaries|CoolantTank|WasherCap|BrakeBooster|FuseBox/, 'Engine bay auxiliaries & reservoirs', '12V battery, pressurized coolant expansion tank & brake master'],
-        [/Eng_BayWalls|Eng_CoreSupport/, 'Structural engine bay aprons & strut towers', 'high-rigidity FL5 unibody front shock towers & radiator support'],
+        [/Eng_BayWalls|Eng_CoreSupport/, 'Structural engine bay aprons & strut towers', 'FK8 unibody front shock towers & radiator support'],
         [/Eng_Block|Eng_/, 'K20C1 2.0L VTEC Turbo engine block', '1,996 cc die-cast open-deck aluminum block · 7,000 RPM redline'],
-        [/Exhaust_Tips|Exhaust_Tip/, 'Triple center exhaust outlets', '102 mm active center outlet flanked by twin 86 mm tips'],
+        [/Exhaust_Tip|Exhaust_Inner_Sleeves|Exhaust_Bores/, 'Triple center exhaust outlets', 'two larger main outlets flank a smaller centre resonator'],
         [/Exhaust_/, 'High-flow Type R exhaust system', 'straight-through underbody routing to triple outlets'],
         [/Suspension_Strut|Suspension_Spring|Suspension_/, 'Dual-Axis strut / multi-link suspension', 'Adaptive Damper System minimizing front-drive torque steer'],
         [/Subframe/, 'High-rigidity aluminum subframe', 'precision mounting for powertrain and dual-pinion EPS rack'],
@@ -424,20 +434,20 @@
         [/Seat_F|Seat_L|Seat_R/, 'Type R high-bolster sport bucket seat', 'bright red suede-effect upholstery with harness pass-throughs'],
         [/Seat_Rear|Bench/, 'Rear 2-passenger split-fold bench', 'black woven cloth, red contrast stitching & center dual cupholders'],
         [/SteeringWheel/, 'Black suede-effect Type R steering wheel', 'red Honda H emblem & red contrast stitching'],
-        [/GaugeCluster|InstrumentCluster/, '10.2" digital instrument cluster', 'Type R +R track mode & LED shift-light strip'],
-        [/Infotainment|Screen/, '9" center touchscreen & LogR', 'integrated Honda LogR datalogger display'],
-        [/Plaque|Serial/, 'Serialized Type R dash plaque', 'brushed aluminum TYPE R · CIVIC R-41430'],
-        [/LicensePlate|Plate/, 'Pennsylvania rear display plate', 'MWX-8114 on reference car (no front plate fitted)'],
+        [/GaugeCluster|InstrumentCluster/, 'Digital instrument cluster', 'Type R +R track mode & LED shift-light strip'],
+        [/Infotainment|Screen/, '7-inch centre touchscreen and LogR', 'integrated Honda LogR datalogger display'],
+        [/Plaque|Serial/, 'Type R console plaque', 'mounted beside the six-speed shifter'],
+        [/LicensePlate|Plate/, 'FK8 display plate', 'mounted in the recessed hatch panel'],
         [/Shifter/, 'Machined aluminum teardrop shift knob', '6-speed close-ratio manual with red-engraved gate'],
         [/CenterConsole/, 'Brushed metallic center console', 'drive-mode toggle, +R switch & dual cupholders'],
-        [/Dashboard|Dash|Vent/, 'Full-width honeycomb-mesh dashboard', 'concealed air vents, 3 knurled climate dials & #R-41430 plaque'],
+        [/Dashboard|Dash|Vent/, 'FK8 instrument panel', 'paired centre vents above the integrated display'],
         [/Pedal/, 'Drilled aluminum sport pedals', 'clutch, brake, accelerator & dead pedal'],
-        [/Carpet|Floor/, 'Signature Type R red carpet', 'bright red footwell carpet & red 3-point seatbelts'],
+        [/Carpet|Floor/, 'Cabin carpet', 'dark carpeting beneath the red and black seats'],
       ];
       for (const [re, title, spec] of checks) {
         if (re.test(n)) return { title, spec };
       }
-      return { title: n.replace(/^Civic_/, '').replace(/_/g, ' '), spec: '2025 Honda Civic Type R (FL5) component' };
+      return { title: n.replace(/^Civic_/, '').replace(/_/g, ' '), spec: '2021 Honda Civic Type R (FK8) component' };
     }
 
     // -----------------------------------------------------------------------
@@ -551,19 +561,19 @@
     const gearCutawayButton = document.getElementById('gear-cutaway');
     const gearButtons = [...document.querySelectorAll('[data-gear]')];
 
-    // Exact 6-speed + Reverse tooth counts matching gearing_drivetrain.py (#9)
+    // Use the modelled tooth counts for animation and the published FK8 ratios for the readout.
     const GEARBOX_RATIOS = {
-      '1': { label: '1st · 3.67:1 · FD 3.83:1', zIn: 12, zOut: 44, reverse: false },
-      '2': { label: '2nd · 2.11:1 · FD 3.83:1', zIn: 18, zOut: 38, reverse: false },
-      '3': { label: '3rd · 1.55:1 · FD 3.83:1', zIn: 22, zOut: 34, reverse: false },
-      '4': { label: '4th · 1.15:1 · FD 3.83:1', zIn: 26, zOut: 30, reverse: false },
-      '5': { label: '5th · 0.93:1 · FD 3.83:1', zIn: 29, zOut: 27, reverse: false },
-      '6': { label: '6th · 0.75:1 · FD 3.83:1', zIn: 32, zOut: 24, reverse: false },
-      'R': { label: 'Rev · 3.75:1 · FD 3.83:1', zIn: 12, zOut: 45, reverse: true },
+      '1': { label: '1st · 3.625:1 · FD 4.111:1', zIn: 12, zOut: 44, reverse: false },
+      '2': { label: '2nd · 2.115:1 · FD 4.111:1', zIn: 18, zOut: 38, reverse: false },
+      '3': { label: '3rd · 1.529:1 · FD 4.111:1', zIn: 22, zOut: 34, reverse: false },
+      '4': { label: '4th · 1.125:1 · FD 4.111:1', zIn: 26, zOut: 30, reverse: false },
+      '5': { label: '5th · 0.911:1 · FD 4.111:1', zIn: 29, zOut: 27, reverse: false },
+      '6': { label: '6th · 0.735:1 · FD 4.111:1', zIn: 32, zOut: 24, reverse: false },
+      'R': { label: 'Rev · 3.758:1 · FD 4.111:1', zIn: 12, zOut: 45, reverse: true },
       'N': { label: 'Neutral · input free',     zIn: 0,  zOut: 0,  reverse: false },
     };
-    const FD_PINION_Z = 12;
-    const FD_RING_Z = 46;
+    const FD_PINION_Z = 9;
+    const FD_RING_Z = 37;
     const REV_IDLER_Z = 18;
 
     // Exact K20C1 reciprocating geometry (86 mm stroke -> R = 0.043 m, L = 0.145 m, 1-3-4-2 flat crank)
@@ -868,7 +878,7 @@
                   const doorPane = glassKind === 'GD';
                   shared.transparent = true;
                   shared.depthWrite = false;
-                  shared.opacity = privacy ? 0.88 : doorPane ? 0.62 : 0.70;
+                  shared.opacity = privacy ? 0.72 : doorPane ? 0.47 : 0.48;
                   shared.userData.cabinOpacity = privacy ? 0.24 : 0.16;
                   shared.color.setRGB(0.012, 0.028, 0.039);
                   shared.roughness = 0.08;
@@ -1724,8 +1734,8 @@
       if (detached) tags.push(`${detached} detached`);
       if (tags.length === 0) tags.push('assembled');
       if (soundMuted) tags.push('muted');
-      const carName = vehicleMeta.subtitle || '2025 Honda Civic Type R (FL5)';
-      const finish = vehicleMeta.finish || 'Crystal Black Pearl';
+      const carName = vehicleMeta.subtitle || '2021 Honda Civic Type R (FK8)';
+      const finish = vehicleMeta.finish || 'Boost Blue Pearl';
       infoEl.textContent = `${carName} · ${finish} · ${tags.join(' · ')}`;
     }
 
