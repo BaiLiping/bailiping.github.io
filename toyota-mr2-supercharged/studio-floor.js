@@ -41,7 +41,7 @@ export async function createStudioFloor(scene, renderer, backgroundColor) {
   const span = { value: 440 };
   const loader = new THREE.TextureLoader();
   const [illumination, assembled] = await Promise.all(
-    ['./studio-floor.webp', './studio-contact.webp'].map(url => loader.loadAsync(url).catch(() => null))
+    ['./studio-floor.webp?v=331e17c02f', './studio-contact.webp?v=e27fdeb863'].map(url => loader.loadAsync(url).catch(() => null))
   );
   for (const texture of [illumination, assembled]) {
     if (texture) texture.colorSpace = THREE.SRGBColorSpace;
@@ -94,7 +94,7 @@ export async function createStudioFloor(scene, renderer, backgroundColor) {
         float weight = assembledWeight * (1.0 - smoothstep(160.0, 200.0, edgeDistance));
         outgoingLight = mix(outgoingLight, baked, weight);
       }
-      outgoingLight = mix(outgoingLight, horizonColor, smoothstep(610.0, 776.0, edgeDistance));
+      outgoingLight = mix(outgoingLight, horizonColor, smoothstep(120.0, 410.0, edgeDistance));
       #include <opaque_fragment>
     `);
   };

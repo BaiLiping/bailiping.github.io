@@ -8,16 +8,16 @@ let sourcePromise;
 const matchButton = document.getElementById('match-view');
 matchButton.addEventListener('click', () => {
   const option = angles.selectedOptions[0];
-  if (!option?.dataset.preset) return;
-  document.documentElement.dataset.matchView = option.dataset.preset;
+  if (!option?.dataset.photoView) return;
+  document.documentElement.dataset.matchView = option.dataset.photoView;
   location.hash = 'model';
-  window.dispatchEvent(new CustomEvent('match-mr2-view', { detail: option.dataset.preset }));
+  window.dispatchEvent(new CustomEvent('match-mr2-view', { detail: option.dataset.photoView }));
 });
 
 function updateMatch() {
   const option = angles.selectedOptions[0];
-  matchButton.disabled = !option?.dataset.preset || document.documentElement.dataset.modelReady !== 'stock';
-  matchButton.textContent = option?.parentElement.label === 'Exterior' ? 'Match in 3D' : 'Inspect in 3D';
+  matchButton.disabled = !option?.dataset.photoView || document.documentElement.dataset.modelReady !== 'stock';
+  matchButton.textContent = 'Match in 3D';
 }
 window.addEventListener('model-ready', updateMatch);
 
@@ -52,7 +52,7 @@ document.getElementById('next-view').addEventListener('click', () => moveAngle(1
 function selectRequestedPhoto() {
   const preset = document.documentElement.dataset.photoPreset;
   if (!preset) return;
-  const option = [...angles.options].find(item => item.dataset.preset === preset);
+  const option = [...angles.options].find(item => item.dataset.photoView === preset || item.dataset.preset === preset);
   if (option) angles.selectedIndex = option.index;
   delete document.documentElement.dataset.photoPreset;
 }
@@ -64,7 +64,7 @@ async function loadAngles() {
     return;
   }
   try {
-    sourcePromise ??= fetch('./mr2-views.json?v=2').then(response => {
+    sourcePromise ??= fetch('./mr2-views.json?v=7a4f443772').then(response => {
       if (!response.ok) throw new Error('Camera list unavailable');
       return response.json();
     });
@@ -76,6 +76,7 @@ async function loadAngles() {
       for (const view of sources.filter(item => item.group === groupName)) {
         const option = new Option(view.label, view.preview || view.image);
         option.dataset.original = view.image;
+        option.dataset.photoView = view.photoView;
         option.dataset.preset = view.preset || '';
         group.append(option);
       }

@@ -4,11 +4,11 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <link rel="modulepreload" href="./vendor/three-r170.js?v=31c84364">
-  <link rel="preload" as="image" href="./studio-environment.png" crossorigin="anonymous">
+  <link rel="preload" as="image" href="./studio-environment.png?v=dec308a802" crossorigin="anonymous">
   <script>
     if (location.hash === '#mr2-views') document.documentElement.classList.add('show-photos');
     const overrideModel = new URLSearchParams(location.search).get('model');
-    const modelFile = overrideModel || './toyota_mr2_aw11_sc.glb?v=6ac37f2b';
+    const modelFile = overrideModel || './toyota_mr2_aw11_sc.glb?v=e9fab3a708';
     const preload = document.createElement('link');
     preload.rel = 'preload';
     preload.as = 'fetch';
@@ -19,8 +19,8 @@
   <link rel="canonical" href="https://bailiping.com/toyota-mr2-supercharged/" />
   <link rel="icon" href="/favicon.ico" />
   <title>1988 Toyota MR2 Supercharged (AW11) — Super Red</title>
-  <link rel="stylesheet" href="./studio.css?v=d709fff8">
-  <script type="module" src="./studio.js?v=2"></script>
+  <link rel="stylesheet" href="./studio.css?v=24f829ea3e">
+  <script type="module" src="./studio.js?v=7a81d1d436"></script>
 </head>
 <body>
   <noscript><p style="position:fixed;inset:0;z-index:30;background:#eceeef;padding:2em">The interactive 1988 Toyota MR2 Supercharged viewer requires JavaScript. <a href="https://bringatrailer.com/listing/1988-toyota-mr2-supercharged-31/">View the reference listing</a>.</p></noscript>
@@ -46,7 +46,13 @@
       <p>1988 Toyota MR2 Supercharged · JWeston listing photos via Bring a Trailer · <a href="https://bringatrailer.com/listing/1988-toyota-mr2-supercharged-31/">View listing</a> · <a id="full-photo" href="#" target="_blank" rel="noopener" hidden>Full-size photo</a></p>
     </div>
   </section>
-  <a href="#mr2-views" id="detail-photo" hidden>Reference photo</a>
+  <div id="photo-tools-3d">
+    <a href="#mr2-views" id="detail-photo" hidden>Reference photo</a>
+    <button id="overlay-toggle" type="button" aria-pressed="false" hidden>Overlay photo</button>
+    <input id="overlay-opacity" type="range" min="0" max="100" value="50" aria-label="Reference photo opacity" hidden>
+    <span id="overlay-error" role="status" hidden>Photo unavailable</span>
+  </div>
+  <img id="reference-overlay" alt="" hidden>
   <canvas id="stage" aria-label="Interactive 3D model of a 1988 Toyota MR2 Supercharged"></canvas>
   <div id="linkage-labels" hidden>
     <span data-part="ShiftControl_ShiftCable">Gearshift cables</span>
@@ -100,9 +106,17 @@
   </div>
   <script type="module">
     import * as THREE from './vendor/three-r170.js?v=31c84364';
-    import { createStudioFloor } from './studio-floor.js?v=a830d31e';
+    import { createStudioFloor } from './studio-floor.js?v=f6fce73381';
     import { applyStudioVisibility } from './studio-visibility.js?v=616fb3a0';
     import { createPlanarMirror } from './mirror-reflection.js?v=cd0eff4a';
+    import { interiorPhotoViews } from './interior-photo-views.js?v=9007816c76';
+    import { powertrainPhotoViews } from './powertrain-photo-views.js?v=3b08a7425a';
+    const [photoSources, exteriorCameras, frontCameras] = await Promise.all(
+      ['./mr2-views.json?v=7a4f443772', './exterior-photo-cameras.json?v=c0645afe27', './front-photo-cameras.json?v=4a5f761158']
+        .map(url => fetch(url).then(response => response.json()))
+    );
+    const fittedCameras = { ...exteriorCameras, ...frontCameras, ...interiorPhotoViews, ...powertrainPhotoViews };
+    const orbitRadius = pose => pose.distance * Math.tan(pose.fov * Math.PI / 360) / Math.tan(Math.PI / 12);
     const { GLTFLoader, DRACOLoader } = THREE;
 
     // -----------------------------------------------------------------------
@@ -148,10 +162,10 @@
     renderer.shadowMap.needsUpdate = true;
     renderer.shadowMap.type = THREE.PCFSoftShadowMap;
     renderer.toneMapping = THREE.NeutralToneMapping;
-    renderer.toneMappingExposure = 2 ** -0.22; // Matches the Cycles studio camera.
+    renderer.toneMappingExposure = .94;
 
     const scene = new THREE.Scene();
-    const BG_HEX = 0x87888c;
+    const BG_HEX = 0xe8eaed;
     const studioFogDensity = 0.00014;
     scene.background = new THREE.Color(BG_HEX);
     scene.fog = new THREE.FogExp2(BG_HEX, studioFogDensity);
@@ -162,7 +176,7 @@
     // floor. Its sRGB PNG stores 1/16 linear radiance to retain HDR highlights.
     let probeIntensity = 16;
     try {
-      const probe = await new THREE.TextureLoader().loadAsync('./studio-environment.png');
+      const probe = await new THREE.TextureLoader().loadAsync('./studio-environment.png?v=dec308a802');
       probe.colorSpace = THREE.SRGBColorSpace;
       probe.mapping = THREE.EquirectangularReflectionMapping;
       scene.environment = pmrem.fromEquirectangular(probe).texture;
@@ -173,6 +187,16 @@
       room.dispose();
       probeIntensity = 1;
     }
+    let cabinEnvironment = scene.environment;
+    let cabinRadiance = probeIntensity;
+    try {
+      const windowMap = await new THREE.TextureLoader().loadAsync('./cabin-environment.png?v=47c8ce785e');
+      windowMap.colorSpace = THREE.SRGBColorSpace;
+      windowMap.mapping = THREE.EquirectangularReflectionMapping;
+      cabinEnvironment = pmrem.fromEquirectangular(windowMap).texture;
+      cabinRadiance = 8;
+      windowMap.dispose();
+    } catch { /* The exterior probe also illuminates the upholstery if this map fails. */ }
     pmrem.dispose();
     scene.environmentIntensity = probeIntensity;
 
@@ -208,7 +232,7 @@
        vec3 t = (mix(studioMin, studioMax, step(vec3(0.0), reflectVec)) - surface)
                 / (sign(reflectVec) * max(abs(reflectVec), vec3(0.00001)) + vec3(1e-8));
        vec3 hit = surface + reflectVec * min(t.x, min(t.y, t.z));
-       reflectVec = normalize(hit - vec3(0.0, 560.0 / 18.0, 0.0));`
+       reflectVec = normalize(mix(reflectVec, normalize(hit - vec3(0.0, 560.0 / 18.0, 0.0)), .46));`
     ).replace('return envMapColor.rgb * envMapIntensity;', `
        vec3 studioRadiance = envMapColor.rgb * envMapIntensity;
        #ifdef MR2_DECK_REFLECTION
@@ -251,6 +275,10 @@
     keyLight.shadow.intensity = .38;
     keyLight.shadow.radius = 3.5;
     scene.add(keyLight);
+    const photoFill = new THREE.HemisphereLight(0xeaf1ff, 0xc7ced6, .30);
+    const photoKey = new THREE.DirectionalLight(0xeaf4ff, 0);
+    const photoLightOffset = new THREE.Vector3(-12, 25, -13);
+    scene.add(photoFill, photoKey, photoKey.target);
 
     // -----------------------------------------------------------------------
     // 3. Cycles studio illumination and geometry-aware ground shadows
@@ -358,6 +386,9 @@
         [/EngineLid_Louver/, 'Supercharged engine lid louvers', 'raised twin vent slats · click or press L'],
         [/EngineLid/, 'Raised Supercharged engine lid', 'front-hinged 4A-GZE cover · click or press L'],
         [/EngineBay_Weatherseal/, 'Engine bay weatherseal', 'perimeter rubber gasket around 4A-GZE bay'],
+        [/Trunk_HarnessRelay/, 'Rear compartment connector assembly', 'blue relay housing, plugs and wiring loom'],
+        [/Trunk_Hinge|Trunk_LidHingeArm/, 'Rear trunk hinge', 'plated bracket and articulated hinge arm'],
+        [/Trunk_Service/, 'Rear luggage compartment trim', 'carpet panel over the harness connectors'],
         [/Trunk_Lid/, 'Rear trunk lid', 'rear luggage access · click or press K'],
         [/Trunk/, 'Rear carpeted trunk', 'charcoal-lined rear luggage tub'],
         [/Spoiler_ThirdBrake/, 'High-mount center brake light', 'integrated rear wing third brake lamp'],
@@ -475,7 +506,9 @@
     // -----------------------------------------------------------------------
     // 6. State & Mechanical Rig Controllers
     // -----------------------------------------------------------------------
-    const exteriorView = { theta: -0.58, phi: 1.40, radius: 308 };
+    const exteriorView = fittedCameras['Front three-quarter'];
+    exteriorView.radius = orbitRadius(exteriorView);
+    const rearView = fittedCameras['Rear three-quarter'];
     const cabinView = { theta: -2.9447, phi: 1.3826, radius: 42.8 };
     const state = {
       // Spherical orbit camera around target
@@ -533,7 +566,32 @@
     const carHidden = () => document.documentElement.classList.contains('show-photos');
     const detailPhoto = document.getElementById('detail-photo');
     const isDetailView = name => Boolean(referenceViews.get(name)?.label);
-    let lastIsolation = null;
+    let lastIsolation;
+    let lastVisibilityPose = null;
+    const overlay = document.getElementById('reference-overlay');
+    const overlayToggle = document.getElementById('overlay-toggle');
+    const overlayOpacity = document.getElementById('overlay-opacity');
+    const overlayError = document.getElementById('overlay-error');
+    function closeOverlay() {
+      overlay.hidden = overlayOpacity.hidden = overlayError.hidden = true;
+      overlayToggle.setAttribute('aria-pressed', 'false');
+    }
+    overlayToggle.addEventListener('click', () => {
+      if (!overlay.hidden) return closeOverlay();
+      const pose = referenceViews.get(selectedView);
+      if (!pose?.photo) return;
+      matchMr2View(selectedView);
+      overlay.src = pose.image;
+      overlay.style.opacity = overlayOpacity.value / 100;
+      overlay.hidden = overlayOpacity.hidden = false;
+      overlayError.hidden = true;
+      overlayToggle.setAttribute('aria-pressed', 'true');
+    });
+    overlayOpacity.addEventListener('input', () => { overlay.style.opacity = overlayOpacity.value / 100; });
+    overlay.addEventListener('error', () => { closeOverlay(); overlayError.hidden = false; });
+    canvas.addEventListener('pointerdown', closeOverlay);
+    canvas.addEventListener('wheel', closeOverlay, { passive: true });
+    window.addEventListener('studio-mode-change', closeOverlay);
     const explosionButton = document.getElementById('exploded-view');
     const capLift = new THREE.Vector3();
     const capPark = new THREE.Vector3();
@@ -557,8 +615,8 @@
       popups:    { nodes: ['Pivot_Headlight_L', 'Pivot_Headlight_R'], axis: 'z', angle:  52 * Math.PI / 180 },
       hood:      { nodes: ['Pivot_Front_Lid'], axis: 'z', angle:  54 * Math.PI / 180 },
       ttop:      { nodes: ['Pivot_TTop_L', 'Pivot_TTop_R'], translate: true },
-      engineLid: { nodes: ['Pivot_Engine_Lid'], axis: 'z', angle: -56 * Math.PI / 180 },
-      trunk:     { nodes: ['Pivot_Trunk_Lid'], axis: 'z', angle: -48 * Math.PI / 180 },
+      engineLid: { nodes: ['Pivot_Engine_Lid'], axis: 'z', angle: -78 * Math.PI / 180 },
+      trunk:     { nodes: ['Pivot_Trunk_Lid'], axis: 'z', angle: -76 * Math.PI / 180 },
       fuel:      { nodes: ['Pivot_Fuel_Flap'], axis: 'y', angle: -Math.PI * 0.52 },
     };
     const panelByNode = {};
@@ -596,7 +654,7 @@
       if (focus && state[target]) {
         state.explodeTarget = 0;
         facePanel(key);
-      } else if (key === 'ttop' && selectedView === 'Overhead (T-tops off)') {
+      } else if (key === 'ttop' && selectedView === 'photo-overhead-t-tops-off') {
         selectedView = null;
       }
       playClickSound(state[target] ? 580 : 380, 0.06);
@@ -636,6 +694,7 @@
     const headerMaterials = [];          // Shared exhaust header material(s) glowing on rev
     const allPickableMeshes = [];
     const cabinEnclosure = { value: new THREE.Vector2() };
+    const trimEnclosure = { value: new THREE.Vector2(1, 0) };
     const engineEnclosure = { value: new THREE.Vector2() };
     const hits = [];
     let rearMirror, cabinMirror;
@@ -728,8 +787,9 @@
                 : obj.name.startsWith('MR2_Glass_Windshield') ? 'GW' : '';
               // The GLB loader makes distinct materials for batches with baked vertex
               // occlusion. Those variants share a name, but must keep their own shader.
-              const enclosure = obj.geometry.hasAttribute('_studio_visibility')
-                ? (/Interior_Cabin|Pivot_Door_/.test(obj.parent.name) ? 'cabin' : 'engine') : '';
+              const enclosure = !obj.geometry.hasAttribute('_studio_visibility') ? ''
+                : /Interior_Cabin|Pivot_Door_/.test(obj.parent.name) ? 'cabin'
+                : /Pivot_Engine|Pivot_Transaxle/.test(obj.parent.name) || obj.material.name === 'Mat_Engine_Bay_Wall' ? 'engine' : 'exterior';
               const reflectsLid = obj.name === 'MR2_Trunk_Lid_Super_Red_3E5';
               const matKey = `${obj.material.uuid}|${isExterior ? (isGlass ? 'EG' : 'E') : 'I'}|${glassKind}${isHeader ? 'H' : 'S'}|${enclosure}|${reflectsLid}`;
               let shared = sharedMaterials.get(matKey);
@@ -742,9 +802,12 @@
                   }
                 }
                 if (shared.name === 'Mat_Super_Red_3E5') {
-                  // Match the diffuse paint in the front and rear Cycles views
-                  // while keeping the authored clearcoat and specular response.
-                  shared.color.multiplyScalar(.82);
+                  shared.color.g *= .42;
+                  shared.color.b *= .52;
+                  shared.roughness = .25;
+                  shared.clearcoat = .65;
+                  shared.clearcoatRoughness = .065;
+                  shared.specularIntensity = .52;
                 }
                 // Blended glazing preserves the view into the cabin and avoids extra transmission passes.
                 if (shared.transmission > 0) {
@@ -761,25 +824,26 @@
                   const doorPane = glassKind === 'GD';
                   shared.transparent = true;
                   shared.depthWrite = false;
-                  shared.opacity = ttopGlass ? .76 : rearVisor ? .55 : rearBulk ? .34 : doorPane ? .30 : .44;
+                  shared.opacity = ttopGlass ? .70 : rearVisor ? .53 : rearBulk ? .44 : doorPane ? .26 : .41;
                   shared.userData.cabinOpacity = ttopGlass ? .34 : rearVisor ? .20 : rearBulk ? .14 : .17;
-                  if (ttopGlass) {
-                    // In a display-space alpha blend, fixed coverage caps an
-                    // HDR glint at the glass opacity. Let bright softboxes fill
-                    // the pane while preserving its premultiplied linear energy.
-                    shared.customProgramCacheKey = () => 'mr2-smoked-roof';
-                    shared.onBeforeCompile = shader => {
-                      shader.fragmentShader = shader.fragmentShader.replace(
-                        '#include <opaque_fragment>',
-                        `float lightLevel = max(outgoingLight.r, max(outgoingLight.g, outgoingLight.b));
-                         float reflection = smoothstep(.32, 1.6, lightLevel) * smoothstep(.16, .66, diffuseColor.a);
-                         float coverage = mix(diffuseColor.a, 1.0, reflection);
-                         outgoingLight *= diffuseColor.a / max(coverage, .001);
-                         diffuseColor.a = coverage;
-                         #include <opaque_fragment>`
-                      );
-                    };
-                  }
+                  shared.color.setRGB(.013, .025, .031);
+                  shared.roughness = ttopGlass ? .073 : .09;
+                  shared.clearcoat = .66;
+                  shared.clearcoatRoughness = .045;
+                  shared.customProgramCacheKey = () => 'mr2-fresnel-glass';
+                  shared.onBeforeCompile = shader => {
+                    shader.fragmentShader = shader.fragmentShader.replace('#include <opaque_fragment>', `
+                      float grazing = pow(1.0 - saturate(dot(geometryNormal, geometryViewDir)), 3.7);
+                      vec3 reflection = totalSpecular + clearcoatSpecularDirect + clearcoatSpecularIndirect;
+                      vec3 ray = inverseTransformDirection(reflect(-geometryViewDir, geometryNormal), viewMatrix);
+                      float sky = smoothstep(-.12,.62,ray.y);
+                      reflection += mix(vec3(.014,.027,.033),vec3(.080,.215,.30),sky) * (.20+.36*grazing);
+                      float bright = max(reflection.r, max(reflection.g, reflection.b));
+                      float visible = smoothstep(.03, .26, diffuseColor.a);
+                      float coverage = clamp(diffuseColor.a + (.26*grazing + .62*bright)*visible, diffuseColor.a, .95);
+                      gl_FragColor = vec4((totalDiffuse * diffuseColor.a + reflection * visible) / max(.015, coverage), coverage);
+                    `);
+                  };
                   shared.forceSinglePass = true;
                 }
                 if (shared.name === 'Mat_Headlight_Clear_Lens') {
@@ -812,9 +876,19 @@
                     );
                   };
                 }
-                projectStudioReflections(shared, reflectsLid);
+                if (/Mat_(Interior_Black_Leather|Cabin_Perforated_Leather|Cabin_Leather_Welt|Interior_Vinyl)/.test(shared.name)) {
+                  shared.envMap = cabinEnvironment;
+                  shared.envMapIntensity = cabinRadiance * 1.25;
+                  if (/Leather/.test(shared.name)) {
+                    shared.roughness = .285;
+                    shared.color.multiplyScalar(.73);
+                  }
+                } else {
+                  projectStudioReflections(shared, reflectsLid);
+                }
                 if (enclosure && shared.isMeshStandardMaterial) {
-                  applyStudioVisibility(shared, enclosure === 'cabin' ? cabinEnclosure : engineEnclosure);
+                  const weight = enclosure === 'exterior' ? trimEnclosure : enclosure === 'cabin' ? cabinEnclosure : engineEnclosure;
+                  applyStudioVisibility(shared, weight);
                 }
                 shared.userData.origOpacity = shared.opacity ?? 1.0;
                 shared.userData.origTransparent = !!shared.transparent;
@@ -1070,7 +1144,9 @@
           state.cabinPitch = THREE.MathUtils.clamp(state.cabinPitch + dy * 0.004, -0.98, 1.15);
         } else {
           state.targetTheta -= dx * 0.0065;
-          state.targetPhi = THREE.MathUtils.clamp(state.targetPhi - dy * 0.006, 0.06, Math.PI * 0.485);
+          const pose = referenceViews.get(selectedView);
+          const maxPhi = pose?.hideFloor ? Math.PI - .025 : Math.max(Math.PI*.485, (pose?.phi ?? 0) + .015);
+          state.targetPhi = THREE.MathUtils.clamp(state.targetPhi - dy * .006, .02, maxPhi);
         }
         wake(false);
       } else if (draggingMode === 'pull' && grabbedTarget) {
@@ -1164,7 +1240,7 @@
       const closeView = isDetailView(selectedView) || selectedView === '14" Teardrop wheel' || selectedView === '4A-GZE Supercharged engine' || selectedView === 'fuel';
       state.targetRadius = state.interiorView
         ? THREE.MathUtils.clamp(radius, 18, cabinRadius)
-        : THREE.MathUtils.clamp(radius, isDetailView(selectedView) ? 10 : closeView ? 38 : 115, 780);
+        : THREE.MathUtils.clamp(radius, isDetailView(selectedView) ? Math.min(10, referenceViews.get(selectedView).radius * .3) : closeView ? 38 : 115, 780);
     }
 
     // Wheel zoom
@@ -1228,9 +1304,9 @@
       selectedView = 'rear';
       state.interiorView = false;
       state.explodeTarget = state.xrayTarget = 0;
-      state.targetTheta = 2.54;
-      state.targetPhi = 1.34;
-      state.targetRadius = 310;
+      state.targetTheta = rearView.theta;
+      state.targetPhi = rearView.phi;
+      state.targetRadius = orbitRadius(rearView);
       if (immediate) {
         state.theta = state.targetTheta;
         state.phi = state.targetPhi;
@@ -1430,6 +1506,10 @@
       }
       const detail = isDetailView(selectedView) ? selectedView : state.interiorView ? 'cabin' : '';
       if (!detail && isDetailView(location.hash.slice(1))) history.replaceState(null, '', '#model');
+      const currentPhoto = referenceViews.get(detail);
+      overlayToggle.hidden = !currentPhoto?.photo || !!overrideModel;
+      if (overlayToggle.hidden || overlayToggle.dataset.view !== detail) closeOverlay();
+      overlayToggle.dataset.view = detail;
       detailPhoto.dataset.preset = detail;
       detailPhoto.hidden = !detail || !!overrideModel;
       const drawingPage = referenceViews.get(detail)?.drawingPage;
@@ -1440,7 +1520,7 @@
       detailPhoto.target = drawingPage ? '_blank' : '_self';
       detailPhoto.rel = 'noopener';
       linkageLabels.hidden = selectedView !== 'linkage' || !!overrideModel;
-      applyInspectionVisibility(referenceViews.get(selectedView)?.isolate);
+      applyInspectionVisibility(referenceViews.get(selectedView));
       barEl.classList.toggle('in-cabin', state.interiorView);
       document.querySelector('[data-command="i"]').setAttribute('aria-pressed', String(state.interiorView));
       const showingExplosion = intro ? intro.elapsed <= introHoldMs : state.explodeTarget > 0.05;
@@ -1489,7 +1569,7 @@
     function frontLensTarget() {
       return Number((!selectedView || referenceViews.has(selectedView)) && !state.interiorView && state.explodeTarget === 0 && !intro);
     }
-    const FOCUS_EXTERIOR = new THREE.Vector3(6, 26, 0);
+    const FOCUS_EXTERIOR = new THREE.Vector3(...exteriorView.center);
     const PANEL_CENTERS = {
       popups:    new THREE.Vector3(44, 30, 0),
       hood:      new THREE.Vector3(48, 30, 0),
@@ -1497,17 +1577,22 @@
       engineLid: new THREE.Vector3(-55, 38, 0),
       trunk:     new THREE.Vector3(-76, 36, 0),
       fuel:      new THREE.Vector3(-40, 41, -43),
-      rear:      new THREE.Vector3(-8, 28, 0),
+      rear:      new THREE.Vector3(...rearView.center),
     };
 
     // Hide surrounding sheet metal when an inspection angle looks through it.
     // Individual meshes keep their original parents for drag and explosion.
-    function applyInspectionVisibility(isolate) {
-      if (lastIsolation === isolate) return;
+    function applyInspectionVisibility(pose) {
+      if (lastVisibilityPose === pose) return;
+      lastVisibilityPose = pose;
+      scene.background.setHex(pose?.background ?? BG_HEX);
+      renderer.toneMappingExposure = .94 * (pose?.exposure ?? 1);
+      const isolate = pose?.isolate;
+      const hidden = pose?.hide;
       lastIsolation = isolate;
-      showroomFloor.visible = !isolate;
+      showroomFloor.visible = !isolate && !pose?.hideFloor && !(pose?.phi > Math.PI * .56);
       for (const mesh of allPickableMeshes) {
-        mesh.visible = isolate ? isolate.test(mesh.name) : !mesh.name.startsWith('MR2_Transaxle_Internal');
+        mesh.visible = (isolate ? isolate.test(mesh.name) : !mesh.name.startsWith('MR2_Transaxle_Internal')) && !hidden?.test(mesh.name);
       }
       setHoverMesh(null, 0, 0);
       needsShadow = true;
@@ -1553,16 +1638,6 @@
     // Camera targets use the exported model’s Y-up, 1:18 coordinates.
     // Radius is expressed at the 30° orbit lens; the render loop dollies smoothly for each preset FOV.
     const referenceViews = new Map([
-      ['Front three-quarter',                { theta: -0.58, phi: 1.40, radius: 308, fov: 25, center: new THREE.Vector3(6, 26, 0) }],
-      ['Front three-quarter (pop-ups open)', { theta: -0.52, phi: 1.44, radius: 305, fov: 25, center: new THREE.Vector3(8, 26, 0), panels: { popups: 1 } }],
-      ['Front',                              { theta:  0.00, phi: 1.44, radius: 270, fov: 24, center: new THREE.Vector3(10, 23, 0) }],
-      ['Front (pop-ups open)',               { theta:  0.00, phi: 1.34, radius: 272, fov: 24, center: new THREE.Vector3(14, 23, 0), panels: { popups: 1 } }],
-      ['Side profile (left)',                { theta: -Math.PI / 2, phi: 1.53, radius: 335, fov: 18, center: new THREE.Vector3(-1, 27, 0) }],
-      ['Side profile (right)',               { theta:  Math.PI / 2, phi: 1.53, radius: 335, fov: 18, center: new THREE.Vector3(-1, 27, 0) }],
-      ['Rear three-quarter',                 { theta:  2.54, phi: 1.34, radius: 310, fov: 25, center: new THREE.Vector3(-8, 28, 0) }],
-      ['Rear',                               { theta:  Math.PI, phi: 1.51, radius: 252, fov: 22, center: new THREE.Vector3(-12, 24, 0) }],
-      ['Overhead (T-tops off)',              { theta: -Math.PI / 2, phi: 0.07, radius: 325, fov: 22, center: new THREE.Vector3(0, 30, 0), panels: { ttop: 1 } }],
-      ['14" Teardrop wheel',                 { theta: -Math.PI / 2, phi: 1.56, radius: 88,  fov: 26, center: new THREE.Vector3(64.44, 15.2, -38.0) }],
       ['cabin',        { label: 'Driver’s view', cabin: true }],
       ['seats',        { label: 'Leather seats', theta: -0.92, phi: 0.97, radius: 150, fov: 32, center: new THREE.Vector3(-11, 34, -2), isolate: /MR2_(Seat|CenterConsole|Handbrake|Shifter|Int_Cabin_Floor)/ }],
       ['console',      { label: 'Center stack', theta: -2.98, phi: 1.32, radius: 46, fov: 38, center: new THREE.Vector3(22, 36, 0), isolate: cabinParts }],
@@ -1579,6 +1654,26 @@
       ['Cockpit',                            { cabin: true }],
       ['4A-GZE Supercharged engine',         { theta:  Math.PI, phi: 0.78, radius: 136, fov: 26, center: new THREE.Vector3(-55, 37, 0), panels: { engineLid: 1 } }],
     ]);
+
+    for (const view of photoSources) {
+      const fit = fittedCameras[view.label];
+      if (!fit) continue;
+      const panels = view.label.includes('pop-ups open') ? { popups: 1 }
+        : view.label.includes('T-tops off') ? { ttop: 1 } : fit.panels;
+      const pose = { ...fit, panels, label: view.label, group: view.group, photo: true,
+        image: view.image, aspect: view.aspect, center: new THREE.Vector3(...fit.center), radius: orbitRadius(fit) };
+      referenceViews.set(view.photoView, pose);
+    }
+    const landingPhoto = referenceViews.get('photo-front-three-quarter');
+    const rearPhoto = referenceViews.get('photo-rear-three-quarter');
+    const galleryFigure = document.querySelector('#photo-room figure');
+    let galleryRect = galleryFigure.getBoundingClientRect();
+    new ResizeObserver(() => {
+      galleryRect = galleryFigure.getBoundingClientRect();
+      Object.assign(overlay.style, { top: galleryRect.top + 'px', left: galleryRect.left + 'px',
+        width: galleryRect.width + 'px', height: galleryRect.height + 'px' });
+      wake(true);
+    }).observe(galleryFigure);
 
     // Driver eye sits at (-17.2, 56.8, -19.72), keeping both the live planar rear-view mirror
     // below the header and the MR2 steering wheel + gauges cleanly framed above the toolbar.
@@ -1598,10 +1693,6 @@
       const closedWeight = overrideModel ? 0 : 1 - THREE.MathUtils.smoothstep(displacement, 0, .35);
       groundShadows.update(closedWeight);
     }
-    let motionRatio = fullRatio;
-    let lastResolutionChange = 0;
-    let slowFrames = 0;
-    let fastFrames = 0;
     const _ev = new THREE.Vector3();
 
     // Offsets are in 1:18 millimetres. Child panels inherit the body lift before clearing their openings.
@@ -1712,7 +1803,6 @@
       const footerHeight = barEl.offsetHeight + 24;
       assemblyView.compactInset = compact * (footerHeight - headerHeight) / innerHeight;
       assemblyView.availableHeight = Math.max(.18, 1 - compact * (footerHeight + headerHeight + 18) / innerHeight);
-      FOCUS_EXTERIOR.x = 6 / Math.max(1, 1.55 / camera.aspect);
       if (!state.loaded) state.targetCenter.copy(FOCUS_EXTERIOR);
       if (!assemblyView.points.length) return;
       const { theta, phi, center } = assemblyView;
@@ -1797,7 +1887,8 @@
         Math.abs(Number(state.interiorView) - state.cabinBlend) +
         Math.abs(Number(selectedView === 'rear') - state.rearLens) +
         Math.abs(frontLensTarget() - state.frontLens);
-      const photoPose = referenceViews.get(selectedView);
+      const photoPose = referenceViews.get(selectedView) ||
+        (selectedView === 'rear' ? rearPhoto : !selectedView && !state.interiorView ? landingPhoto : undefined);
       const focusTarget = state.interiorView ? FOCUS_INTERIOR : (photoPose?.center || PANEL_CENTERS[selectedView] || FOCUS_EXTERIOR);
       const focusDelta = state.targetCenter.distanceToSquared(focusTarget);
 
@@ -1827,8 +1918,7 @@
       const geoMoving = presenting || mechDelta > 5e-4 || pullActive || continuousAnim;
       const active = needsRender || camDelta > 2e-4 || focusDelta > 1e-3 || xrayDelta > 5e-4 || geoMoving;
 
-      const ratio = active ? motionRatio : fullRatio;
-      if (renderer.getPixelRatio() !== ratio) renderer.setPixelRatio(ratio);
+
       if (!active) {
         wasMoving = false;
         if (shadowDirty) {
@@ -1840,23 +1930,6 @@
         return;
       }
       scheduleFrame();
-      if (!wasMoving) {
-        slowFrames = fastFrames = 0;
-      } else if (frameTime > 0) {
-        // Ignore isolated shader compilation or input stalls. Sustained slow motion
-        // can trade resolution for responsiveness, then recover on faster frames.
-        slowFrames = frameTime > 0.036 ? slowFrames + 1 : Math.max(0, slowFrames - 1);
-        fastFrames = frameTime < 0.022 ? fastFrames + 1 : 0;
-        if (now - lastResolutionChange > 650 && (slowFrames >= 8 || fastFrames >= 40)) {
-          const floor = Math.min(fullRatio, 0.75);
-          motionRatio = slowFrames >= 8
-            ? Math.max(floor, motionRatio - 0.25)
-            : Math.min(fullRatio, motionRatio + 0.25);
-          lastResolutionChange = now;
-          slowFrames = fastFrames = 0;
-        }
-      }
-
       wasMoving = true;
 
       // Camera orbit smooth damping
@@ -1896,20 +1969,39 @@
       const assembledRadius = THREE.MathUtils.lerp(state.radius * exteriorScale * dolly, cabinRadius, state.cabinBlend);
       const explodedRadius = state.radius / exteriorView.radius * (assemblyView.distance || 400 * exteriorScale) * dolly;
       const turnClearance = 1 + 0.55 * portraitMargin * state.explode * (1 - state.explode);
-      const effRadius = THREE.MathUtils.lerp(assembledRadius, explodedRadius, state.explode) * turnClearance;
+      let effRadius = THREE.MathUtils.lerp(assembledRadius, explodedRadius, state.explode) * turnClearance;
       // Widen the cabin lens on portrait phones rather than backing through the headrest.
       const cabinLens = Math.max(Math.tan(THREE.MathUtils.degToRad(59 / 2)), Math.tan(0.60) / camera.aspect);
       const cabinFov = THREE.MathUtils.radToDeg(2 * Math.atan(cabinLens * Math.min(1, state.radius / cabinRadius)));
-      const fov = THREE.MathUtils.lerp(exteriorFov, cabinFov, state.cabinBlend);
+      let fov = THREE.MathUtils.lerp(exteriorFov, cabinFov, state.cabinBlend);
+      // Compose the physical camera into the same onscreen rectangle as the
+      // original photograph. Letterboxing changes the projection, never the lens position.
+      const match = photoPose?.photo ? (1 - state.cabinBlend) * (1 - state.explode) : 0;
+      let offsetX = 0, offsetY = 0;
+      if (match > 0 && galleryRect.height && galleryRect.width) {
+        const imageHeight = Math.min(galleryRect.height, galleryRect.width / photoPose.aspect);
+        const screenTan = Math.tan(photoPose.fov * Math.PI / 360) * innerHeight / imageHeight;
+        effRadius = THREE.MathUtils.lerp(effRadius, state.radius * photoPose.distance / photoPose.radius, match);
+        fov = THREE.MathUtils.lerp(fov, THREE.MathUtils.radToDeg(2 * Math.atan(screenTan)), match);
+        offsetX = (1 - 2 * (galleryRect.x + galleryRect.width / 2) / innerWidth) * match;
+        offsetY = (2 * (galleryRect.y + galleryRect.height / 2) / innerHeight - 1) * match;
+      }
+      const near = photoPose?.photo && photoPose.group !== 'Exterior' ? .16 : 1;
       const far = Math.max(4000, effRadius + 1200);
-      if (Math.abs(camera.fov - fov) > 0.002 || Math.abs(camera.far - far) > 1) {
+      if (Math.abs(camera.fov - fov) > 0.002 || Math.abs(camera.far - far) > 1 || camera.near !== near) {
         camera.fov = fov;
         camera.far = far;
+        camera.near = near;
         camera.updateProjectionMatrix();
+      }
+      if (camera.projectionMatrix.elements[8] !== offsetX || camera.projectionMatrix.elements[9] !== offsetY) {
+        camera.projectionMatrix.elements[8] = offsetX;
+        camera.projectionMatrix.elements[9] = offsetY;
+        camera.projectionMatrixInverse.copy(camera.projectionMatrix).invert();
       }
       const effX = state.targetCenter.x + state.explode * (assemblyView.center.x - FOCUS_EXTERIOR.x);
       const compactLift = effRadius * lensTangent * assemblyView.compactInset * (1 - state.explode) * (1 - state.cabinBlend);
-      const effY = state.targetCenter.y + state.explode * (assemblyView.center.y - FOCUS_EXTERIOR.y) - compactLift;
+      const effY = state.targetCenter.y + state.explode * (assemblyView.center.y - FOCUS_EXTERIOR.y) - compactLift * (1 - match);
       const effZ = state.targetCenter.z + state.explode * (assemblyView.center.z - FOCUS_EXTERIOR.z);
       camera.position.set(
         effX + effRadius * Math.sin(state.phi) * Math.cos(state.theta),
@@ -1917,6 +2009,15 @@
         effZ + effRadius * Math.sin(state.phi) * Math.sin(state.theta)
       );
       camera.lookAt(effX, effY, effZ);
+      if (match && photoPose.roll) camera.rotateZ(photoPose.roll * match);
+      const cabinShot = photoPose?.group === 'Interior' || state.interiorView;
+      const bayShot = photoPose?.group === 'Powertrain' || ['engine','wiring','linkage','transmission','gearset','loom'].includes(selectedView);
+      photoFill.intensity = cabinShot ? 2.25 : bayShot ? 1.55 : 0.30;
+      photoKey.intensity = cabinShot ? 4.4 : bayShot ? 2.8 : 0;
+      if (cabinShot || bayShot) {
+        photoKey.position.copy(camera.position).add(photoLightOffset);
+        photoKey.target.position.set(effX, effY, effZ);
+      }
       if (state.cabinBlend > 0.0001) {
         camera.rotateOnWorldAxis(cabinUp, state.cabinYaw * state.cabinBlend);
         const portraitTilt = THREE.MathUtils.clamp(1 - camera.aspect, 0, 1) * 0.16;
@@ -1970,7 +2071,7 @@
       if (geoMoving || needsShadow) {
         const ex = state.explode;
         const vib = (state.rpm > 1200 ? (state.rpm / 7500) * 0.24 : 0.0);
-        const hideOverheadTTops = selectedView === 'Overhead (T-tops off)' && state.ttop > 0.9;
+        const hideOverheadTTops = selectedView === 'photo-overhead-t-tops-off' && state.ttop > 0.9;
 
         for (const [pname, piv] of Object.entries(pivots)) {
           const rp = restPos.get(piv);
@@ -2096,8 +2197,6 @@
       camera.aspect = window.innerWidth / window.innerHeight;
       camera.updateProjectionMatrix();
       fullRatio = targetPixelRatio();
-      motionRatio = fullRatio;
-      slowFrames = fastFrames = 0;
       renderer.setPixelRatio(fullRatio);
       renderer.setSize(window.innerWidth, window.innerHeight);
       fitExplodedCamera();

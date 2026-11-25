@@ -108,6 +108,7 @@ a { color: inherit; text-underline-offset: .2em; }
 #photo { width: 100%; height: 100%; object-fit: contain; position: absolute; inset: 0; user-select: none; }
 #photo-error { padding: 24px; text-align: center; }
 #photo-footer { display: grid; justify-items: center; gap: 8px; padding: 14px var(--edge) max(16px, env(safe-area-inset-bottom)); }
+#full-photo[hidden] { display: inline !important; visibility: hidden; }
 #photo-footer p { font-size: 12px; color: #d7dade; text-align: center; }
 .photo-tools button { min-width: 48px; padding: 0 13px; font: 28px/1 system-ui, sans-serif; }
 .photo-tools select { display: block; appearance: auto; padding: 0 7px; font-size: 14px; max-width: min(290px, 52vw); }
@@ -173,12 +174,21 @@ a { color: inherit; text-underline-offset: .2em; }
   .photo-tools select { min-width: 0; width: 130px; padding-inline: 2px; }
 }
 
-#detail-photo {
-  position: fixed; top: calc(var(--header-height) + 14px); left: var(--edge); z-index: 8;
-  padding: 8px 12px; border: 1px solid var(--line); border-radius: 7px;
+#photo-tools-3d {
+  position: fixed; top: calc(var(--header-height) + 12px); left: var(--edge); z-index: 8;
+  display: flex; align-items: center; gap: 6px;
+}
+#photo-tools-3d a, #photo-tools-3d button, #overlay-error {
+  padding: 7px 10px; border: 1px solid var(--line); border-radius: 6px;
   color: var(--ink); background: #fffffff5; font-size: 13px;
 }
-.show-photos #detail-photo, .hide-hud #detail-photo { visibility: hidden; }
+#overlay-opacity { width: min(90px, 18vw); accent-color: #ac1821; }
+#overlay-toggle[aria-pressed="true"] { background: var(--ink); color: white; }
+#reference-overlay { position: fixed; pointer-events: none; z-index: 5; object-fit: contain; }
+.show-photos :is(#photo-tools-3d,#reference-overlay), .hide-hud :is(#photo-tools-3d,#reference-overlay) { visibility: hidden; }
 @media (max-width: 480px) {
-  #detail-photo { top: calc(var(--header-height) + 8px); left: 10px; }
+  #photo-tools-3d { top: calc(var(--header-height) + 8px); left: 10px; }
 }
+
+/* Keep the gallery image rectangle measurable when fitting the 3D camera. */
+#photo-room[hidden] { display: grid !important; visibility: hidden; pointer-events: none; }
