@@ -9,7 +9,7 @@
     const params = new URLSearchParams(location.search);
     if (params.get('capture') === '1' || params.get('hud') === '0') document.documentElement.classList.add('hide-hud');
     const overrideModel = params.get('model');
-    const modelFile = overrideModel || './honda_civic_type_r.glb?v=495d188d86';
+    const modelFile = overrideModel || './honda_civic_type_r.glb?v=4ac518492b';
     const preload = document.createElement('link');
     preload.rel = 'preload';
     preload.as = 'fetch';
@@ -21,8 +21,8 @@
   <link rel="icon" href="/favicon.ico" />
   <title>2025 Honda Civic Type R (FL5) — Crystal Black Pearl</title>
   <meta name="description" content="Interactive 3D 2025 Honda Civic Type R (FL5) studio viewer in Crystal Black Pearl (NH-731P) with articulated doors, hood, rear hatch, X-ray cutaway, exploded assembly, cabin view, and calibrated photo comparisons." />
-  <link rel="stylesheet" href="./studio.css?v=d4bba94613">
-  <script type="module" src="./studio.js?v=24fac5d8b1"></script>
+  <link rel="stylesheet" href="./studio.css?v=7ef936f1e8">
+  <script type="module" src="./studio.js?v=64084249d4"></script>
 </head>
 <body>
   <noscript><p style="position:fixed;inset:0;z-index:30;background:#eceeef;padding:2em">The interactive 2025 Honda Civic Type R viewer requires JavaScript. <a href="https://bringatrailer.com/listing/2025-honda-civic-type-r-3/">View the reference listing</a> or <a href="./frame-by-frame/">open the frame-by-frame photo comparison</a>.</p></noscript>
@@ -58,6 +58,22 @@
   <img id="reference-overlay" alt="" hidden>
   <canvas id="stage" aria-label="Interactive 3D model of a Honda Civic Type R"></canvas>
   <div id="callout"><span class="title"></span><span class="sub"></span></div>
+  <div id="gear-bar" role="group" aria-label="6-speed manual transaxle controls" hidden>
+    <span class="gear-label">6MT</span>
+    <div class="gear-buttons" role="group" aria-label="Gear selection">
+      <button type="button" data-gear="1" aria-pressed="false">1</button>
+      <button type="button" data-gear="2" aria-pressed="false">2</button>
+      <button type="button" data-gear="3" aria-pressed="true">3</button>
+      <button type="button" data-gear="4" aria-pressed="false">4</button>
+      <button type="button" data-gear="5" aria-pressed="false">5</button>
+      <button type="button" data-gear="6" aria-pressed="false">6</button>
+      <button type="button" data-gear="R" aria-pressed="false">R</button>
+      <button type="button" data-gear="N" aria-pressed="false">N</button>
+    </div>
+    <span id="gear-ratio">3rd · 1.55:1 · FD 3.83:1</span>
+    <button type="button" id="gear-play" aria-pressed="true">Pause</button>
+    <button type="button" id="gear-cutaway" aria-pressed="true" hidden>Cutaway</button>
+  </div>
   <div id="loader">
     <span id="load-status" role="status">Preparing interactive model…</span>
   </div>
@@ -67,6 +83,7 @@
       <button type="button" id="exploded-view" aria-pressed="false">Exploded</button>
       <button type="button" data-command="i" aria-pressed="false">Cabin</button>
       <button type="button" id="engine-view" aria-pressed="false">Engine</button>
+      <button type="button" id="drivetrain-view" aria-pressed="false">Gearing</button>
       <button type="button" data-command="x" aria-pressed="false">X-ray</button>
       <details id="more"><summary>Controls</summary>
         <section class="controls-panel" aria-label="Additional model controls">
@@ -85,6 +102,7 @@
             <a href="#photo-fl5-front-high-nose">Closed hood</a>
             <a href="#rear">Rear three-quarter</a>
             <a href="#engine">Engine bay</a>
+            <a href="#drivetrain">6MT gearing &amp; K20C1</a>
             <a href="#seats">Type R seats</a>
             <a href="#hatch">Rear hatch &amp; wing</a>
           </p>
@@ -112,7 +130,7 @@
     import { createStudioFloor } from './studio-floor.js';
     import { applyStudioVisibility } from './studio-visibility.js';
     import { createPlanarMirror } from './mirror-reflection.js';
-    import { DEFAULT_CAMERAS, orbitRadius, normalizeCameraPose, buildReferenceViews, loadCivicViews } from './civic-views.js?v=74bae4f433';
+    import { DEFAULT_CAMERAS, orbitRadius, normalizeCameraPose, buildReferenceViews, loadCivicViews } from './civic-views.js?v=c972d97c09';
 
     const { GLTFLoader, DRACOLoader } = THREE;
     const MODEL_URL = modelFile;
@@ -357,11 +375,47 @@
         [/Brake_Caliper_F|Caliper_FL|Caliper_FR/, 'Brembo 4-piston front caliper', 'gloss-red monoblock aluminum caliper · leading-edge mount'],
         [/Brake_Caliper/, 'Rear disc brake caliper', 'gloss-red floating caliper on silver carrier with EPB'],
         [/Brake_Rotor|Rotor/, 'Ventilated front / solid rear disc rotors', '350 mm two-piece front / 305 mm rear discs'],
-        [/Eng_ValveCover/, 'K20C1 red crinkle valve cover', '2.0L DOHC VTEC Turbo · 315 hp @ 6,500 rpm · 310 lb-ft'],
-        [/Eng_Turbo/, 'Mono-scroll turbocharger', '25.2 psi peak boost · revised turbine wheel'],
-        [/Eng_Intercooler/, 'Front-mount air-to-air intercooler', 'cools pressurized intake charge air'],
-        [/Eng_Intake/, 'High-flow Type R airbox & intake', 'straightened intake ducting to turbo inlet'],
-        [/Eng_Block|Eng_/, 'K20C1 2.0L VTEC Turbo engine', '1,996 cc · 7,000 RPM redline · 6-speed rev-matching manual'],
+        // 6-speed manual transaxle, meshed constant-mesh gearset, helical LSD & CV axles
+        [/Flywheel|Starter_Ring/, 'Lightweight single-mass flywheel', '56-tooth starter ring · reduced inertia for quicker rev-matching'],
+        [/Clutch_Pressure|Diaphragm|Clutch_Cover/, 'High-clamp clutch pressure plate', 'diaphragm spring cover mated to K20C1 rear crank flange'],
+        [/Clutch_Disc|Clutch_Friction|Clutch_Release|Clutch_Fork|Slave/, 'Organic clutch disc & hydraulic release', 'concentric release fork & slave cylinder for crisp 6MT engagement'],
+        [/Gear.*Out1|Gear.*In1|Gear_1st|1st_Gear/i, '1st gear constant-mesh pair (3.67:1)', '12T input / 44T countershaft helical steel gears on needle bearings'],
+        [/Gear.*Out2|Gear.*In2|Gear_2nd|2nd_Gear/i, '2nd gear constant-mesh pair (2.11:1)', '18T input / 38T countershaft helical steel gears'],
+        [/Gear.*In3|Gear.*Out3|Gear_3rd|3rd_Gear/i, '3rd gear constant-mesh pair (1.55:1)', '22T input / 34T countershaft close-ratio helical gears'],
+        [/Gear.*In4|Gear.*Out4|Gear_4th|4th_Gear/i, '4th gear constant-mesh pair (1.15:1)', '26T input / 30T countershaft close-ratio helical gears'],
+        [/Gear.*In5|Gear.*Out5|Gear_5th|5th_Gear/i, '5th gear constant-mesh pair (0.93:1)', '29T input / 27T countershaft overdrive helical gears'],
+        [/Gear.*In6|Gear.*Out6|Gear_6th|6th_Gear/i, '6th gear constant-mesh pair (0.75:1)', '32T input / 24T countershaft highway overdrive gears'],
+        [/ReverseIdler|Rev_Idler|OutRev|Reverse_Gear/i, 'Reverse gearset & 18T idler (3.75:1)', '12T input -> 18T idler -> 45T countershaft reversing drive direction'],
+        [/Synchro|Hub|Sleeve/i, 'Triple-cone brass synchronizer assembly', 'bronze blocker rings & dog-tooth sleeves for rapid FL5 shifts'],
+        [/ShiftFork|ShiftRail|ShiftTower|Selector/i, '6MT shift forks, rails & selector tower', 'high-rigidity shift gate linkages for direct teardrop-knob feel'],
+        [/InputShaft|MainShaft/i, '6MT splined mainshaft (input shaft)', 'transmits engine torque from clutch hub to constant-mesh gears'],
+        [/CounterShaft|LayShaft|FD_Pinion/i, '6MT countershaft & 12T final-drive pinion', 'counter-rotates against input shaft and drives the 46T ring gear'],
+        [/FinalDrive|RingGear|LSD|Helical_Diff|Diff_/i, 'Helical limited-slip differential (3.83:1)', '46T final-drive ring gear & torque-sensing planetary worm pinions'],
+        [/Axle|HalfShaft|CV_Joint|CV_Boot|Intermediate_Shaft/i, 'Equal-length front CV half-shafts', 'intermediate shaft & center bearing eliminate front-drive torque steer'],
+        [/ShaftBearings|CenterBearing/i, 'Precision ball & tapered roller bearings', 'supports input shaft, countershaft, helical LSD & intermediate half-shaft'],
+        [/Trans_Case|TransCase|Bellhousing|EndCover|Transaxle/i, 'Split die-cast aluminum 6MT transaxle case', 'ribbed bellhousing, main gearcase & 6th-gear end cover'],
+        // K20C1 2.0L DOHC VTEC Turbo engine & reciprocating internals
+        [/Eng_ValveCover|ValveCover/, 'K20C1 wrinkle-red valve cover', '2.0L DOHC VTEC Turbo · 315 hp @ 6,500 rpm · 310 lb-ft'],
+        [/Eng_IgnitionCoils|Eng_Coil|Spark|Ignition/, 'Direct coil-on-plug ignition pack', '4 red-top individual coils in recessed central spark valley'],
+        [/Eng_TimingCover|TimingChain|Timing_Guide|Tensioner/, 'DOHC timing chain & tensioner drive', 'silent chain linking forged crankshaft to twin VTC cam phasers'],
+        [/Eng_Cam|Camshaft|VTC|Phaser/, 'DOHC VTEC camshafts & Dual VTC phasers', 'variable intake/exhaust timing & exhaust-side VTEC lift'],
+        [/Eng_CylinderHead|Eng_Head|Valve_Spring|Rocker/, 'Die-cast aluminum DOHC 16V cylinder head', 'integrated water-cooled exhaust manifold & sodium-filled valves'],
+        [/Eng_Piston|Piston/, 'Forged aluminum gallery-cooled piston', '86.0 mm bore × 86.0 mm stroke · 9.8:1 compression ratio'],
+        [/Eng_Conrod|Conrod/, 'Forged H-beam connecting rod', '145 mm center-to-center steel rod · 1-3-4-2 firing order'],
+        [/Eng_Crank|Crankshaft/, 'Forged steel balanced crankshaft', '5-main-journal counterweighted crank spinning to 7,000 RPM'],
+        [/Eng_OilPan|OilPickup|OilFilter/, 'Finned cast-aluminum oil pan & pickup', 'baffled track sump with integrated cooling ribs'],
+        [/Eng_Pulley|Serpentine|Alternator|WaterPump|AC_Comp/, 'Serpentine accessory belt & pulleys', 'crank harmonic damper driving alternator, water pump & A/C'],
+        [/Eng_Turbo_Impeller|Impeller|Compressor_Wheel/, 'MHI mono-scroll compressor impeller', 'revised blade count & geometry · 25.2 psi peak boost'],
+        [/Eng_TurboShield|HeatShield|O2_Sensor/, 'Stamped aluminum turbo heat shield', 'embossed thermal barrier with front wideband O2 sensor boss'],
+        [/Eng_Turbo|Wastegate|Downpipe/, 'MHI mono-scroll turbocharger & downpipe', 'electronic wastegate actuator · rapid low-end spool'],
+        [/Eng_Intercooler|ChargePipe|Coupler/, 'Front-mount air-to-air intercooler & piping', 'cast aluminum end tanks & high-pressure silicone couplers'],
+        [/Eng_Radiator|RadFan/, 'High-capacity radiator & twin cooling fans', 'increased core area for sustained FL5 track lapping'],
+        [/Eng_IntakeManifold|Plenum|ThrottleBody|FuelRail|Injector/, 'Cast 4-runner intake plenum & DI fuel rail', 'electronic drive-by-wire throttle body & direct-injection rail'],
+        [/Eng_IntakeCover/, 'Carbon-weave TYPE R intake cover', 'covers front turbo inlet crossover piping'],
+        [/Eng_Intake|Airbox|Snorkel/, 'High-flow Type R airbox & intake duct', 'straightened cold-air snorkel feeding the turbo compressor'],
+        [/Eng_Battery|Eng_Auxiliaries|CoolantTank|WasherCap|BrakeBooster|FuseBox/, 'Engine bay auxiliaries & reservoirs', '12V battery, pressurized coolant expansion tank & brake master'],
+        [/Eng_BayWalls|Eng_CoreSupport/, 'Structural engine bay aprons & strut towers', 'high-rigidity FL5 unibody front shock towers & radiator support'],
+        [/Eng_Block|Eng_/, 'K20C1 2.0L VTEC Turbo engine block', '1,996 cc die-cast open-deck aluminum block · 7,000 RPM redline'],
         [/Exhaust_Tips|Exhaust_Tip/, 'Triple center exhaust outlets', '102 mm active center outlet flanked by twin 86 mm tips'],
         [/Exhaust_/, 'High-flow Type R exhaust system', 'straight-through underbody routing to triple outlets'],
         [/Suspension_Strut|Suspension_Spring|Suspension_/, 'Dual-Axis strut / multi-link suspension', 'Adaptive Damper System minimizing front-drive torque steer'],
@@ -407,6 +461,17 @@
 
       explodeTarget: 0.0,
       explode: 0.0,
+      powertrainCutawayTarget: 0.0,
+      powertrainCutaway: 0.0,
+      gear: '3',
+      powertrainPlaying: true,
+      crankTheta: 0.0,
+      counterTheta: 0.0,
+      diffTheta: 0.0,
+      frontWheelTheta: 0.0,
+      rearWheelTheta: 0.0,
+      turboTheta: 0.0,
+      fanTheta: 0.0,
       doorLTarget: 0.0,
       doorL: 0.0,
       doorRTarget: 0.0,
@@ -479,23 +544,54 @@
 
     const explosionButton = document.getElementById('exploded-view');
     const engineButton = document.getElementById('engine-view');
+    const drivetrainButton = document.getElementById('drivetrain-view');
+    const gearBarEl = document.getElementById('gear-bar');
+    const gearRatioEl = document.getElementById('gear-ratio');
+    const gearPlayButton = document.getElementById('gear-play');
+    const gearCutawayButton = document.getElementById('gear-cutaway');
+    const gearButtons = [...document.querySelectorAll('[data-gear]')];
+
+    // Exact 6-speed + Reverse tooth counts matching gearing_drivetrain.py (#9)
+    const GEARBOX_RATIOS = {
+      '1': { label: '1st · 3.67:1 · FD 3.83:1', zIn: 12, zOut: 44, reverse: false },
+      '2': { label: '2nd · 2.11:1 · FD 3.83:1', zIn: 18, zOut: 38, reverse: false },
+      '3': { label: '3rd · 1.55:1 · FD 3.83:1', zIn: 22, zOut: 34, reverse: false },
+      '4': { label: '4th · 1.15:1 · FD 3.83:1', zIn: 26, zOut: 30, reverse: false },
+      '5': { label: '5th · 0.93:1 · FD 3.83:1', zIn: 29, zOut: 27, reverse: false },
+      '6': { label: '6th · 0.75:1 · FD 3.83:1', zIn: 32, zOut: 24, reverse: false },
+      'R': { label: 'Rev · 3.75:1 · FD 3.83:1', zIn: 12, zOut: 45, reverse: true },
+      'N': { label: 'Neutral · input free',     zIn: 0,  zOut: 0,  reverse: false },
+    };
+    const FD_PINION_Z = 12;
+    const FD_RING_Z = 46;
+    const REV_IDLER_Z = 18;
+
+    // Exact K20C1 reciprocating geometry (86 mm stroke -> R = 0.043 m, L = 0.145 m, 1-3-4-2 flat crank)
+    const CRANK_R = 0.043;
+    const CONROD_L = 0.145;
+    const PISTON_PHASES = [0, Math.PI, Math.PI, 0];
+    const PISTON_YW_REST = PISTON_PHASES.map(
+      p => CRANK_R * Math.cos(p) + Math.sqrt(CONROD_L * CONROD_L - CRANK_R * CRANK_R * Math.sin(p) * Math.sin(p))
+    );
+
     const assemblyView = {
-      theta: -0.78,
-      phi: 1.44,
-      fov: 24.0,
+      theta: -0.72,
+      phi: 1.28,
+      fov: 24.5,
       compactInset: 0,
       availableHeight: 1,
-      center: new THREE.Vector3(0, 0.85, 0),
+      center: new THREE.Vector3(0.25, 0.92, 0),
       points: [],
-      distance: 7.4,
+      distance: 7.8,
     };
-    const introHoldMs = 650;
-    const introAssemblyMs = 2400;
+    const introHoldMs = 700;
+    const introAssemblyMs = 2600;
     let intro = null;
 
     function stopIntro() {
       if (!intro) return;
       intro = null;
+      if (selectedView === 'assembly') selectedView = null;
       state.explodeTarget = state.explode;
       updateHudText();
     }
@@ -586,8 +682,10 @@
       const assemble = explosionButton.getAttribute('aria-pressed') === 'true';
       stopIntro();
       if (assemble) {
-        runCommand('r', selectedView === 'assembly');
+        runCommand('r', false);
       } else {
+        state.powertrainCutawayTarget = 0;
+        for (const key of Object.keys(panels)) state[key + 'Target'] = 0;
         if (selectedView !== 'assembly') frameAssembly();
         state.explodeTarget = 1;
       }
@@ -601,6 +699,39 @@
       } else {
         matchCivicView('engine');
       }
+    });
+    drivetrainButton.addEventListener('click', () => {
+      stopIntro();
+      if (selectedView === 'drivetrain') {
+        runCommand('r');
+      } else {
+        matchCivicView('drivetrain');
+      }
+    });
+    for (const button of gearButtons) {
+      button.addEventListener('click', () => {
+        const g = button.dataset.gear;
+        if (!(g in GEARBOX_RATIOS)) return;
+        stopIntro();
+        state.gear = g;
+        playClickSound(g === 'R' ? 420 : g === 'N' ? 500 : 620 + Number(g) * 30, 0.045);
+        updateHudText();
+        wake(true);
+      });
+    }
+    gearPlayButton.addEventListener('click', () => {
+      stopIntro();
+      state.powertrainPlaying = !state.powertrainPlaying;
+      playClickSound(state.powertrainPlaying ? 660 : 440, 0.045);
+      updateHudText();
+      wake(true);
+    });
+    gearCutawayButton.addEventListener('click', () => {
+      stopIntro();
+      state.powertrainCutawayTarget = state.powertrainCutawayTarget > 0.5 ? 0 : 1;
+      playClickSound(state.powertrainCutawayTarget > 0.5 ? 640 : 460, 0.05);
+      updateHudText();
+      wake(true);
     });
 
     const restPos = new Map();
@@ -671,9 +802,9 @@
       return false;
     }
 
-    const NON_EXTERIOR_IN_BODY_RE = /Int_|Seat_|Carpet|Headliner|Eng_(?!BayWalls)|Cargo|Trunk_Liner/;
-    const EXTERIOR_NAME_RE = /Body_Shell|Door_Shell|DoorCard|Door_Handle|Door_Weatherstrip|Eng_BayWalls|Hood|Hatch|Tailgate|Rear_Wing|Wing_|Spoiler|Front_Bumper|Front_Grille|Front_Splitter|Front_Lip|Rear_Bumper|Rear_Diffuser|Side_Skirt|Fender|Quarter_Panel|Roof|Pillar|Trim|Badge|Mirror_[LR]|Wiper|Glass_|Headlamp|Headlight|Taillamp|Taillight|Fuel_Flap|Wheelhouse_Liner/;
-    const SHADOW_CASTER_RE = /Body_Shell|Door_Shell|Hood|Hatch|Tailgate|Rear_Wing|Wing_|Spoiler|Bumper|Splitter|Diffuser|Side_Skirt|Fender|Mirror_[LR]|Tire|Wheel_.*_Rim|Eng_|Exhaust_|Subframe|Suspension_|Undertray|Seat_|Fuel_Flap/;
+    const NON_EXTERIOR_IN_BODY_RE = /Int_|Seat_|Carpet|Headliner|Eng_(?!BayWalls|CoreSupport)|Trans_|Gear|Clutch|Flywheel|LSD|Axle|Piston|Conrod|Crank|Cam|Turbo|Cargo|Trunk_Liner/;
+    const EXTERIOR_NAME_RE = /Body_Shell|Door_Shell|DoorCard|Door_Handle|Door_Weatherstrip|Eng_BayWalls|Eng_CoreSupport|Hood|Hatch|Tailgate|Rear_Wing|Wing_|Spoiler|Front_Bumper|Front_Grille|Front_Splitter|Front_Lip|Rear_Bumper|Rear_Diffuser|Side_Skirt|Fender|Quarter_Panel|Roof|Pillar|Trim|Badge|Mirror_[LR]|Wiper|Glass_|Headlamp|Headlight|Taillamp|Taillight|Fuel_Flap|Wheelhouse_Liner/;
+    const SHADOW_CASTER_RE = /Body_Shell|Door_Shell|Hood|Hatch|Tailgate|Rear_Wing|Wing_|Spoiler|Bumper|Splitter|Diffuser|Side_Skirt|Fender|Mirror_[LR]|Tire|Wheel_.*_Rim|Eng_|Trans_|Transaxle|Gear|Clutch|Flywheel|LSD|Axle|Piston|Conrod|Crank|Cam|Pulley|Turbo|Exhaust_|Subframe|Suspension_|Undertray|Seat_|Fuel_Flap/;
 
     const loadModel = () => loader.load(
       MODEL_URL,
@@ -694,16 +825,17 @@
           if (obj.isMesh) {
             if (obj.material?.name === 'Mat_Cabin_Rearview') rearMirror = obj;
             const inBody = isUnderPivot(obj, /^Pivot_(?:Body_Assembly|Door_|Hood_Assembly|Hatch_Assembly|Fuel_Flap)/);
-            const isExterior = (inBody && !NON_EXTERIOR_IN_BODY_RE.test(obj.name)) || EXTERIOR_NAME_RE.test(obj.name);
+            const inPowertrain = isUnderPivot(obj, /^Pivot_(?:Drivetrain_6MT|Trans_|Engine_(?!BayWalls)|Spin_(?!WheelSpin)|Piston_|Conrod_)/);
+            const isExterior = !inPowertrain && ((inBody && !NON_EXTERIOR_IN_BODY_RE.test(obj.name)) || EXTERIOR_NAME_RE.test(obj.name));
             const isGlass = /Glass_|Headlamp_Lens|Headlight_Lens/.test(obj.name) ||
               /^Mat_(Automotive_Glass|Rear_Privacy_Glass|Headlight_Clear_Lens)$/.test(obj.material?.name || '');
             const isHeadlightLens = obj.material?.name === 'Mat_Headlight_Clear_Lens' || /Headlamp_Lens|Headlight_Lens/.test(obj.name);
-            const isHeader = /Eng_Turbo|Eng_Manifold|Exhaust_Pipe|Exhaust_Downpipe/.test(obj.name);
-            const isCaster = !isGlass && (SHADOW_CASTER_RE.test(obj.name) || inBody);
+            const isHeader = /Eng_Turbo(?!Shield)|Eng_Manifold|Eng_Exhaust|Eng_Downpipe|Exhaust_Pipe|Exhaust_Downpipe/.test(obj.name);
+            const isCaster = !isGlass && (SHADOW_CASTER_RE.test(obj.name) || inBody || inPowertrain);
 
             obj.castShadow = isCaster;
             if (isCaster) groundShadows.addCaster(obj);
-            obj.receiveShadow = isCaster || /Floor|Carpet|Dash|Seat|Engine|Hatch|Undertray/.test(obj.name);
+            obj.receiveShadow = isCaster || /Floor|Carpet|Dash|Seat|Engine|Hatch|Undertray|Trans|Gear/.test(obj.name);
             if (isHeadlightLens) obj.renderOrder = 2;
             allPickableMeshes.push(obj);
             if (isExterior) exteriorBodySet.add(obj);
@@ -715,7 +847,7 @@
                 : /Glass_Windshield/.test(obj.name) ? 'GW' : '';
               const enclosure = !obj.geometry.hasAttribute('_studio_visibility') ? ''
                 : isUnderPivot(obj, /^Pivot_(?:Interior_Cabin|Door_)/) ? 'cabin'
-                : isUnderPivot(obj, /^Pivot_Engine_Bay/) ? 'engine' : 'exterior';
+                : isUnderPivot(obj, /^Pivot_(?:Engine_|Drivetrain_6MT)/) ? 'engine' : 'exterior';
               const matKey = `${obj.material.uuid}|${isExterior ? (isGlass ? 'EG' : 'E') : 'I'}|${glassKind}${isHeader ? 'H' : 'S'}|${enclosure}`;
               let shared = sharedMaterials.get(matKey);
               if (!shared) {
@@ -793,6 +925,29 @@
                   const weight = enclosure === 'exterior' ? trimEnclosure : enclosure === 'cabin' ? cabinEnclosure : engineEnclosure;
                   applyStudioVisibility(shared, weight);
                 }
+                // Crisp metallic highlights on K20C1 & 6MT machined gears under studio PMREM
+                if (shared.name === 'Mat_Gear_Machined_Steel') {
+                  shared.envMap = scene.environment;
+                  shared.envMapIntensity = 2.45;
+                  shared.roughness = 0.16;
+                  shared.metalness = 0.96;
+                } else if (shared.name === 'Mat_Gear_Hardened_Steel') {
+                  shared.envMap = scene.environment;
+                  shared.envMapIntensity = 2.10;
+                  shared.roughness = 0.22;
+                  shared.metalness = 0.92;
+                } else if (shared.name === 'Mat_Gear_Bronze_Synchro' || shared.name === 'Mat_Engine_Copper_Bronze') {
+                  shared.envMap = scene.environment;
+                  shared.envMapIntensity = 2.35;
+                  shared.roughness = 0.20;
+                  shared.metalness = 0.94;
+                } else if (/^Mat_(?:Transaxle_Cast_Aluminum|Engine_Cast_Aluminum|Engine_Machined_Aluminum|Engine_Forged_Steel|Engine_Heat_Shield|Intercooler_Aluminum)$/.test(shared.name)) {
+                  shared.envMap = scene.environment;
+                  shared.envMapIntensity = shared.name.includes('Machined') || shared.name.includes('Forged') ? 2.25 : 1.85;
+                } else if (shared.name === 'Mat_Engine_Turbo_Cast') {
+                  shared.envMap = scene.environment;
+                  shared.envMapIntensity = 1.60;
+                }
                 shared.userData.origOpacity = shared.opacity ?? 1.0;
                 shared.userData.origTransparent = !!shared.transparent;
                 shared.userData.origDepthWrite = shared.depthWrite !== false;
@@ -825,15 +980,49 @@
         }
         explosionButton.disabled = !pivots.Pivot_Body_Assembly;
         engineButton.disabled = !pivots.Pivot_Engine_Bay && !pivots.Pivot_Hood_Assembly;
+        drivetrainButton.disabled = !pivots.Pivot_Drivetrain_6MT && !pivots.Pivot_Engine_Bay;
         state.loaded = true;
 
-        // Open cleanly in a stationary live studio view unless a deep link asks for a specific view.
-        const reqView = urlParams.get('view') || document.documentElement.dataset.matchView || location.hash.slice(1);
-        if (reqView && isDetailView(reqView) && !overrideModel) {
+        // Match sibling car showcases: normal page loads open in exploded view and smoothly assemble,
+        // while captureMode, photo gallery, reduced-motion, and deep-linked views settle directly.
+        const rawReqView = captureMode ? '' : (urlParams.get('view') || document.documentElement.dataset.matchView || location.hash.slice(1));
+        const reqView = rawReqView === 'gearing' ? 'drivetrain' : rawReqView;
+        const reqExplode = urlParams.get('explode');
+        if (captureMode) {
+          selectedView = null;
+          state.explode = state.explodeTarget = 0;
+          state.theta = state.targetTheta = exteriorView.theta;
+          state.phi = state.targetPhi = exteriorView.phi;
+          state.radius = state.targetRadius = exteriorView.radius;
+          state.targetCenter.copy(FOCUS_EXTERIOR);
+          state.frontLens = 1;
+          state.rearLens = state.cabinBlend = 0;
+        } else if (reqView && isDetailView(reqView) && !overrideModel) {
           matchCivicView(reqView, { immediate: true });
-        } else if (location.hash === '#rear') {
+        } else if (reqView === 'rear') {
           showRearView(true);
-        } else if (location.hash === '#assembly') {
+        } else if (location.hash === '#civic-views') {
+          selectedView = null;
+          state.explode = state.explodeTarget = 0;
+          state.theta = state.targetTheta = exteriorView.theta;
+          state.phi = state.targetPhi = exteriorView.phi;
+          state.radius = state.targetRadius = exteriorView.radius;
+          state.targetCenter.copy(FOCUS_EXTERIOR);
+          state.frontLens = 1;
+          state.rearLens = state.cabinBlend = 0;
+        } else if (reqExplode === '1' || reqView === 'exploded') {
+          frameAssembly();
+          state.explode = state.explodeTarget = 1;
+        } else if (reqExplode === '0') {
+          selectedView = null;
+          state.explode = state.explodeTarget = 0;
+          state.theta = state.targetTheta = exteriorView.theta;
+          state.phi = state.targetPhi = exteriorView.phi;
+          state.radius = state.targetRadius = exteriorView.radius;
+          state.targetCenter.copy(FOCUS_EXTERIOR);
+          state.frontLens = 1;
+          state.rearLens = state.cabinBlend = 0;
+        } else {
           startAssembly();
         }
 
@@ -1163,6 +1352,9 @@
       selectedView = name;
       fullViewportCapture = Boolean(fullViewport);
       state.explode = state.explodeTarget = state.xray = state.xrayTarget = 0;
+      state.powertrainCutawayTarget = pose.powertrainCutaway ? 1 : 0;
+      if (immediate) state.powertrainCutaway = state.powertrainCutawayTarget;
+      if (pose.powertrainCutaway) state.powertrainPlaying = !captureMode && !reducedMotion.matches;
       for (const key of Object.keys(panels)) state[key] = state[key + 'Target'] = 0;
       for (const offset of pullOffsets.values()) {
         offset.tgt.set(0, 0, 0);
@@ -1171,6 +1363,10 @@
       }
       state.steerMode = false;
       state.spinMode = false;
+      state.frontWheelTheta = state.rearWheelTheta = 0;
+      if (!pose.powertrainCutaway) {
+        state.crankTheta = state.counterTheta = state.diffTheta = state.turboTheta = state.fanTheta = 0;
+      }
       state.steerOverride = Number.isFinite(pose.steer) ? pose.steer : null;
 
       if (pose.cabin) {
@@ -1260,15 +1456,27 @@
     function startAssembly() {
       if (!pivots.Pivot_Body_Assembly) return;
       runCommand('r');
-      frameAssembly();
-      if (reducedMotion.matches) {
+      if (reducedMotion.matches || captureMode) {
+        selectedView = null;
+        state.customPose = null;
         state.explode = state.explodeTarget = 0;
+        state.theta = state.targetTheta = exteriorView.theta;
+        state.phi = state.targetPhi = exteriorView.phi;
+        state.radius = state.targetRadius = exteriorView.radius;
+        state.targetCenter.copy(FOCUS_EXTERIOR);
+        state.frontLens = 1;
+        state.rearLens = state.cabinBlend = 0;
         updateHudText();
         wake(true);
         return;
       }
+      frameAssembly();
+      // Keep targetCenter anchored at FOCUS_EXTERIOR during intro so cameraExplosion smoothly
+      // interpolates effCenter from assemblyView.center (explode=1) -> FOCUS_EXTERIOR (explode=0).
+      state.targetCenter.copy(FOCUS_EXTERIOR);
       state.explode = state.explodeTarget = 1;
       intro = { elapsed: 0, previous: null };
+      updateHudText();
       wake(true);
     }
 
@@ -1279,15 +1487,23 @@
     for (const quick of document.querySelectorAll('.quick-links a')) {
       quick.addEventListener('click', () => {
         document.getElementById('more').open = false;
-        const view = quick.hash.slice(1);
+        const view = quick.hash.slice(1) === 'gearing' ? 'drivetrain' : quick.hash.slice(1);
         if (location.hash === quick.hash && isDetailView(view)) matchCivicView(view, { skipHash: true });
       });
     }
     window.addEventListener('hashchange', () => {
-      const hash = location.hash.slice(1);
+      const rawHash = location.hash.slice(1);
+      const hash = rawHash === 'gearing' ? 'drivetrain' : rawHash;
       if (state.loaded && isDetailView(hash)) matchCivicView(hash, { skipHash: true });
       else if (state.loaded && location.hash === '#assembly') startAssembly();
-      else if (state.loaded && location.hash === '#rear') showRearView();
+      else if (state.loaded && location.hash === '#exploded') {
+        stopIntro();
+        state.powertrainCutawayTarget = 0;
+        frameAssembly();
+        state.explodeTarget = 1;
+        updateHudText();
+        wake(true);
+      } else if (state.loaded && location.hash === '#rear') showRearView();
     });
 
     function runCommand(k, keepAssemblyCamera = false) {
@@ -1323,8 +1539,15 @@
         playClickSound(state.interiorView ? 700 : 460, 0.06);
         wake(true);
       } else if (k === 'e') {
+        state.powertrainCutawayTarget = 0;
         if (selectedView !== 'assembly') frameAssembly();
         state.explodeTarget = state.explodeTarget < 0.2 ? 0.55 : (state.explodeTarget < 0.85 ? 1.0 : 0.0);
+        if (state.explodeTarget === 0.0) {
+          selectedView = null;
+          state.targetTheta = exteriorView.theta;
+          state.targetPhi = exteriorView.phi;
+          state.targetRadius = exteriorView.radius;
+        }
         playClickSound(state.explodeTarget > 0 ? 640 : 420, 0.06);
         wake(true);
       } else if (k === 'x') {
@@ -1354,6 +1577,9 @@
           state.targetRadius = exteriorView.radius;
         }
         state.explodeTarget = 0.0;
+        state.powertrainCutawayTarget = 0.0;
+        state.gear = '3';
+        state.powertrainPlaying = true;
         for (const key of Object.keys(panels)) state[key + 'Target'] = 0.0;
         state.interiorView = false;
         state.xrayTarget = 0.0;
@@ -1361,6 +1587,7 @@
         state.steerOverride = null;
         state.spinMode = false;
         state.wheelSpinAngle = state.steerPhase = 0;
+        state.crankTheta = state.counterTheta = state.diffTheta = state.turboTheta = state.fanTheta = 0;
         state.revving = false;
         for (const ps of pullOffsets.values()) {
           ps.tgt.set(0, 0, 0);
@@ -1447,8 +1674,24 @@
       document.querySelector('[data-command="i"]').setAttribute('aria-pressed', String(state.interiorView));
       document.querySelector('[data-command="x"]').setAttribute('aria-pressed', String(state.xrayTarget > 0.5));
       engineButton.setAttribute('aria-pressed', String(selectedView === 'engine' && state.hoodTarget > 0.5));
+      drivetrainButton.setAttribute('aria-pressed', String(selectedView === 'drivetrain'));
       const showingExplosion = intro ? intro.elapsed <= introHoldMs : state.explodeTarget > 0.05;
       explosionButton.setAttribute('aria-pressed', String(showingExplosion));
+
+      const hasPowertrainRig = Boolean(pivots.Pivot_Drivetrain_6MT || pivots.Pivot_Spin_Crankshaft);
+      const showGearBar = !captureMode && !intro && (selectedView === 'drivetrain' || (hasPowertrainRig && state.explodeTarget > 0.05));
+      gearBarEl.hidden = !showGearBar;
+      if (showGearBar) {
+        const gInfo = GEARBOX_RATIOS[state.gear] || GEARBOX_RATIOS['3'];
+        for (const button of gearButtons) {
+          button.setAttribute('aria-pressed', String(button.dataset.gear === state.gear));
+        }
+        gearRatioEl.textContent = gInfo.label;
+        gearPlayButton.setAttribute('aria-pressed', String(state.powertrainPlaying));
+        gearPlayButton.textContent = state.powertrainPlaying ? 'Pause' : 'Spin';
+        gearCutawayButton.hidden = selectedView !== 'drivetrain';
+        gearCutawayButton.setAttribute('aria-pressed', String(state.powertrainCutawayTarget > 0.5));
+      }
 
       const tags = [];
       if (draggingMode === 'pull' && grabbedMesh) {
@@ -1489,16 +1732,27 @@
     // -----------------------------------------------------------------------
     // 8. Exploded View Offsets & Visibility Isolation (1:1 Metric Meters)
     // -----------------------------------------------------------------------
+    function hasAncestorMatching(obj, pattern) {
+      for (let p = obj.parent; p; p = p.parent) {
+        if (p.name && pattern.test(p.name)) return true;
+      }
+      return false;
+    }
+
     function applyInspectionVisibility(pose) {
       if (lastVisibilityPose === pose) return;
       lastVisibilityPose = pose;
       scene.background.setHex(pose?.background ?? BG_HEX);
       const isolate = pose?.isolate;
       const hidden = pose?.hide;
+      const byPivot = Boolean(pose?.isolateByPivot);
       lastIsolation = isolate;
-      showroomFloor.visible = !isolate && !pose?.hideFloor && !(pose?.phi > Math.PI * 0.56);
+      const keepFloor = pose?.hideFloor === false;
+      showroomFloor.visible = keepFloor || (!isolate && !pose?.hideFloor && !(pose?.phi > Math.PI * 0.56));
       for (const mesh of allPickableMeshes) {
-        mesh.visible = (isolate ? isolate.test(mesh.name) : true) && !hidden?.test(mesh.name);
+        const matchIso = !isolate || isolate.test(mesh.name) || (byPivot && hasAncestorMatching(mesh, isolate));
+        const matchHide = hidden && (hidden.test(mesh.name) || (byPivot && hasAncestorMatching(mesh, hidden)));
+        mesh.visible = matchIso && !matchHide;
       }
       setHoverMesh(null, 0, 0);
       needsShadow = true;
@@ -1518,30 +1772,80 @@
     }).observe(galleryFigure);
 
     const _ev = new THREE.Vector3();
+    const _ptVec = new THREE.Vector3();
 
-    // Metric exploded offsets (meters). Articulated panels are children of Pivot_Body_Assembly.
-    function getExplodeOffset(name, ex, vibration, time, out) {
+    // Metric exploded offsets (glTF Y-up meters: +X fwd, +Y up, -Z driver-left, +Z passenger-right).
+    // Articulated panels inherit Pivot_Body_Assembly; K20C1 sub-pivots inherit Pivot_Engine_Bay;
+    // 6MT transaxle sub-pivots inherit Pivot_Drivetrain_6MT; meshed shafts stay locked inside Pivot_Trans_Gearset.
+    function getExplodeOffset(name, ex, pt, vibration, time, out) {
       out.set(0, 0, 0);
-      switch (name) {
-        case 'Pivot_Body_Assembly':     out.set(0, 1.18, 0); break;
-        case 'Pivot_Door_L':            out.set(0.08, -0.05, -0.95); break;
-        case 'Pivot_Door_R':            out.set(0.08, -0.05,  0.95); break;
-        case 'Pivot_Door_RL':           out.set(-0.18, -0.05, -0.92); break;
-        case 'Pivot_Door_RR':           out.set(-0.18, -0.05,  0.92); break;
-        case 'Pivot_Hood_Assembly':     out.set(0.58, 0.44, 0); break;
-        case 'Pivot_Hatch_Assembly':    out.set(-0.62, 0.42, 0); break;
-        case 'Pivot_Fuel_Flap':         out.set(0, 0.06, -0.28); break;
-        case 'Pivot_Interior_Cabin':    out.set(-0.08, 0.34, 0); break;
-        case 'Pivot_Engine_Bay':        out.set(0.62, 0.32, 0); break;
-        case 'Pivot_Exhaust_System':    out.set(-0.48, -0.32, 0); break;
-        case 'Pivot_Chassis_Underbody': out.set(0, -0.24, 0); break;
-        case 'Pivot_Corner_FL':         out.set(0.26, 0, -0.58); break;
-        case 'Pivot_Corner_FR':         out.set(0.26, 0,  0.58); break;
-        case 'Pivot_Corner_RL':         out.set(-0.26, 0, -0.58); break;
-        case 'Pivot_Corner_RR':         out.set(-0.26, 0,  0.58); break;
+      if (ex > 0) {
+        switch (name) {
+          // Body shell & articulated closures (lifted cleanly above layered K20C1 valve cover & 6MT)
+          case 'Pivot_Body_Assembly':       out.set( 0.00,  1.72,  0.00); break;
+          case 'Pivot_Door_L':              out.set( 0.08, -0.06, -1.00); break;
+          case 'Pivot_Door_R':              out.set( 0.08, -0.06,  1.00); break;
+          case 'Pivot_Door_RL':             out.set(-0.18, -0.06, -0.98); break;
+          case 'Pivot_Door_RR':             out.set(-0.18, -0.06,  0.98); break;
+          case 'Pivot_Hood_Assembly':       out.set( 0.52,  0.38,  0.00); break;
+          case 'Pivot_Hatch_Assembly':      out.set(-0.62,  0.36,  0.00); break;
+          case 'Pivot_Fuel_Flap':           out.set( 0.00,  0.06, -0.28); break;
+          case 'Pivot_Interior_Cabin':      out.set(-0.22,  0.48,  0.00); break;
+          case 'Pivot_Exhaust_System':      out.set(-0.48, -0.14,  0.00); break;
+          case 'Pivot_Chassis_Underbody':   out.set( 0.00, -0.10,  0.00); break;
+          case 'Pivot_Corner_FL':           out.set( 0.24,  0.00, -0.88); break;
+          case 'Pivot_Corner_FR':           out.set( 0.24,  0.00,  0.78); break;
+          case 'Pivot_Corner_RL':           out.set(-0.26,  0.00, -0.62); break;
+          case 'Pivot_Corner_RR':           out.set(-0.26,  0.00,  0.62); break;
+
+          // K20C1 2.0L VTEC Turbo engine layered assembly (children of Pivot_Engine_Bay)
+          case 'Pivot_Engine_Bay':          out.set( 0.52,  0.08,  0.00); break;
+          case 'Pivot_Engine_BayWalls':     out.set(-0.52,  1.64,  0.00); break;
+          case 'Pivot_Engine_Block':        out.set( 0.00,  0.06,  0.10); break;
+          case 'Pivot_Engine_OilPan':       out.set( 0.00, -0.20,  0.00); break;
+          case 'Pivot_Engine_Head':         out.set( 0.00,  0.26,  0.10); break;
+          case 'Pivot_Engine_ValveCover':   out.set( 0.00,  0.48,  0.10); break;
+          case 'Pivot_Engine_Turbo':        out.set( 0.28,  0.06,  0.10); break;
+          case 'Pivot_Engine_TurboShield':  out.set( 0.20,  0.20,  0.00); break;
+          case 'Pivot_Engine_IntakeManifold': out.set(-0.26, 0.22, 0.10); break;
+          case 'Pivot_Engine_Intake':       out.set( 0.14,  0.40, -0.34); break;
+          case 'Pivot_Engine_Auxiliaries':  out.set(-0.18,  0.46,  0.34); break;
+          case 'Pivot_Engine_Cooling':      out.set( 0.72,  0.02,  0.00); break;
+
+          // 6-speed manual transaxle, split housings, meshed gearset, helical LSD & CV axles
+          case 'Pivot_Drivetrain_6MT':      out.set( 0.52,  0.14, -0.10); break;
+          case 'Pivot_Spin_Flywheel_Clutch': out.set( 0.00, 0.00,  0.08); break;
+          case 'Pivot_Trans_Case_Clutch':   out.set(-0.26, -0.06,  0.00); break;
+          case 'Pivot_Trans_Gearset':       out.set( 0.00,  0.00,  0.00); break;
+          case 'Pivot_Trans_ShiftForks':    out.set( 0.00,  0.22,  0.00); break;
+          case 'Pivot_Trans_Case_Outer':    out.set( 0.00,  0.00, -0.36); break;
+          case 'Pivot_Trans_Case_EndCover': out.set( 0.00,  0.00, -0.56); break;
+          case 'Pivot_Spin_Axle_L':         out.set( 0.00, -0.06, -0.18); break;
+          case 'Pivot_Spin_Axle_R':         out.set( 0.00, -0.06,  0.22); break;
+        }
+        out.multiplyScalar(ex);
       }
-      out.multiplyScalar(ex);
-      if (name === 'Pivot_Engine_Bay' && vibration) {
+
+      // Isolated powertrain cutaway mode (#drivetrain): splits housings & valve cover while keeping
+      // K20C1 block and 6MT meshed gearset tightly grouped at center for close-up inspection.
+      const ptWeight = pt * (1 - ex);
+      if (ptWeight > 1e-4) {
+        _ptVec.set(0, 0, 0);
+        switch (name) {
+          case 'Pivot_Engine_OilPan':         _ptVec.set( 0.00, -0.14,  0.00); break;
+          case 'Pivot_Engine_Head':           _ptVec.set( 0.00,  0.09,  0.00); break;
+          case 'Pivot_Engine_ValveCover':     _ptVec.set( 0.00,  0.21,  0.00); break;
+          case 'Pivot_Engine_TurboShield':    _ptVec.set( 0.18,  0.14,  0.00); break;
+          case 'Pivot_Engine_IntakeManifold': _ptVec.set(-0.14,  0.08,  0.00); break;
+          case 'Pivot_Trans_Case_Clutch':     _ptVec.set(-0.20, -0.07,  0.00); break;
+          case 'Pivot_Trans_ShiftForks':      _ptVec.set( 0.00,  0.17,  0.00); break;
+          case 'Pivot_Trans_Case_Outer':      _ptVec.set( 0.00,  0.00, -0.28); break;
+          case 'Pivot_Trans_Case_EndCover':   _ptVec.set( 0.00,  0.00, -0.44); break;
+        }
+        out.addScaledVector(_ptVec, ptWeight);
+      }
+
+      if ((name === 'Pivot_Engine_Block' || (name === 'Pivot_Engine_Bay' && !pivots.Pivot_Engine_Block)) && vibration) {
         out.x += Math.sin(time * 75) * vibration;
         out.y += Math.cos(time * 92) * vibration;
       }
@@ -1560,7 +1864,8 @@
         if (/SteeringWheel/.test(name)) offset.set(0.10, 0.12, -0.14);
         else if (/Dash|GaugeCluster|Infotainment/.test(name)) offset.set(0.20, 0.10, 0);
         else if (/Seat_/.test(name)) offset.y = 0.14;
-      } else if (parent === 'Pivot_Engine_Bay') {
+      } else if (parent === 'Pivot_Engine_Bay' && !pivots.Pivot_Engine_Block) {
+        // Fallback separation when loading an older single-pivot engine GLB
         if (/Eng_ValveCover/.test(name)) offset.y = 0.18;
         else if (/Eng_Intercooler/.test(name)) offset.x = 0.24;
         else if (/Eng_Intake/.test(name)) offset.set(0.10, 0.16, -0.12);
@@ -1577,7 +1882,7 @@
     function measureExplodedView() {
       assemblyView.points.length = 0;
       for (const [name, pivot] of Object.entries(pivots)) {
-        pivot.position.copy(restPos.get(pivot)).add(getExplodeOffset(name, 1, 0, 0, _ev));
+        pivot.position.copy(restPos.get(pivot)).add(getExplodeOffset(name, 1, 0, 0, 0, _ev));
       }
       for (const mesh of allPickableMeshes) {
         const offset = partOffset(mesh);
@@ -1627,7 +1932,7 @@
       const up = new THREE.Vector3().crossVectors(eye, right);
       const vertical = Math.tan(THREE.MathUtils.degToRad(assemblyView.fov / 2));
       const side = vertical * camera.aspect * 0.9;
-      const top = vertical * Math.min(0.90, 1 - 2 * (headerHeight + 8) / Math.max(1, innerHeight));
+      const top = vertical * Math.min(0.88, 1 - 2 * (headerHeight + 54) / Math.max(1, innerHeight));
       const bottom = vertical * THREE.MathUtils.clamp(1 - 2 * (barEl.offsetHeight + 30) / Math.max(1, innerHeight), 0.12, 0.85);
       let leftLimit = Infinity, rightLimit = -Infinity;
       let lowerLimit = Infinity, upperLimit = -Infinity;
@@ -1647,7 +1952,7 @@
       center.copy(right).multiplyScalar((leftLimit + rightLimit) / 2)
         .addScaledVector(up, centerY).addScaledVector(eye, centerDepth);
       assemblyView.distance = (eyeDepth - centerDepth) * vertical / Math.tan(Math.PI / 12);
-      if (selectedView === 'assembly') state.targetCenter.copy(center);
+      if (selectedView === 'assembly' && !intro) state.targetCenter.copy(center);
     }
 
     function advanceIntro(now) {
@@ -1658,7 +1963,17 @@
       const progress = THREE.MathUtils.clamp((intro.elapsed - introHoldMs) / introAssemblyMs, 0, 1);
       const ease = progress * progress * (3 - 2 * progress);
       state.explode = state.explodeTarget = 1 - ease;
-      if (progress === 1) intro = null;
+      // Smoothly glide camera angles from assemblyView -> assembled exteriorView hero pose
+      state.theta = state.targetTheta = THREE.MathUtils.lerp(assemblyView.theta, exteriorView.theta, ease);
+      state.phi = state.targetPhi = THREE.MathUtils.lerp(assemblyView.phi, exteriorView.phi, ease);
+      state.radius = state.targetRadius = exteriorView.radius;
+      if (progress === 1) {
+        intro = null;
+        selectedView = null;
+        state.targetCenter.copy(FOCUS_EXTERIOR);
+        state.frontLens = 1;
+        state.rearLens = state.cabinBlend = 0;
+      }
       if (!intro || (holding && progress > 0)) updateHudText();
     }
 
@@ -1671,8 +1986,12 @@
       environment: 1.73, exposure: 1.06, ground: exteriorLighting.ground,
     };
     const engineLighting = {
-      sky: 0.52, key: 2.05, rim: 1.10, lower: 0.12,
-      environment: 1.20, exposure: 0.98, ground: new THREE.Color(0x39414c),
+      sky: 0.56, key: 2.05, rim: 1.15, lower: 0.16,
+      environment: 1.30, exposure: 0.99, ground: new THREE.Color(0x39414c),
+    };
+    const drivetrainLighting = {
+      sky: 0.92, key: 2.15, rim: 1.55, lower: 0.72,
+      environment: 1.88, exposure: 1.05, ground: new THREE.Color(0x525862),
     };
     const undersideLighting = {
       ...engineLighting, key: 1.5, lower: 3.3, environment: 1.70, exposure: 1.12,
@@ -1681,7 +2000,9 @@
 
     function updateInspectionLighting(pose) {
       let lighting = exteriorLighting;
-      if (pose?.group === 'Interior' || selectedView === 'seats') {
+      if (selectedView === 'drivetrain') {
+        lighting = drivetrainLighting;
+      } else if (pose?.group === 'Interior' || selectedView === 'seats') {
         lighting = cabinLighting;
       } else if (pose?.group === 'Powertrain' || selectedView === 'engine') {
         lighting = pose?.phi > Math.PI / 2 ? undersideLighting : engineLighting;
@@ -1710,9 +2031,58 @@
       return Number(selectedView === 'assembly' || ((!selectedView || referenceViews.has(selectedView) || state.customPose) && !state.interiorView && state.explodeTarget === 0 && !intro));
     }
 
-    function applyCameraAndScene(now, dt, transitionTime, damp, forceSceneUpdate = false) {
+    function isPowertrainAnimating() {
+      if (captureMode) return false;
+      if (intro && intro.elapsed <= introHoldMs) return false;
+      if (state.spinMode || state.revving || Math.abs((state.revving ? 7000 : 850) - state.rpm) > 5) return true;
+      if (!state.powertrainPlaying || reducedMotion.matches) return false;
+      return selectedView === 'drivetrain' || state.explode > 0.05 || state.explodeTarget > 0.05;
+    }
+
+    function stepPowertrainKinematics(dt) {
+      if (dt <= 0) return;
+      const g = GEARBOX_RATIOS[state.gear] || GEARBOX_RATIOS['3'];
+      const rpmNorm = THREE.MathUtils.clamp((state.rpm - 850) / 6150, 0, 1);
+      let dCrank = 0;
+      let dCounter = 0;
+      let dDiff = 0;
+
+      if (state.spinMode) {
+        const dir = g.reverse ? 1 : -1;
+        const wheelOmega = 2.2 + rpmNorm * 3.0;
+        dDiff = dir * wheelOmega * dt;
+        state.wheelSpinAngle -= dDiff;
+        state.frontWheelTheta += dDiff;
+        state.rearWheelTheta += dDiff;
+        dCounter = -dDiff * (FD_RING_Z / FD_PINION_Z);
+        if (g.zIn > 0 && g.zOut > 0) {
+          dCrank = g.reverse ? dCounter * (g.zOut / g.zIn) : -dCounter * (g.zOut / g.zIn);
+        } else {
+          dCrank = -(2.8 + rpmNorm * 18.0) * dt;
+        }
+      } else if (isPowertrainAnimating()) {
+        const crankOmega = 3.2 + rpmNorm * 22.0;
+        dCrank = -crankOmega * dt;
+        if (g.zIn > 0 && g.zOut > 0) {
+          dCounter = g.reverse ? dCrank * (g.zIn / g.zOut) : -dCrank * (g.zIn / g.zOut);
+          dDiff = -dCounter * (FD_PINION_Z / FD_RING_Z);
+          if (!intro && state.explode > 0.35) state.frontWheelTheta += dDiff;
+        }
+      }
+
+      state.crankTheta += dCrank;
+      state.counterTheta += dCounter;
+      state.diffTheta = -state.counterTheta * (FD_PINION_Z / FD_RING_Z);
+      if (dCrank !== 0) {
+        state.turboTheta += dCrank * (6.0 + rpmNorm * 9.0);
+        state.fanTheta += (5.0 + rpmNorm * 9.0) * dt;
+      }
+    }
+
+    function applyCameraAndScene(now, dt, transitionTime, damp, forceSceneUpdate = false, updateShadows = forceSceneUpdate) {
+      const presenting = !!intro;
       const photoPose = activePose();
-      const focusTarget = state.interiorView ? FOCUS_INTERIOR : (photoPose?.center || PANEL_CENTERS[selectedView] || FOCUS_EXTERIOR);
+      const focusTarget = state.interiorView ? FOCUS_INTERIOR : (presenting ? FOCUS_EXTERIOR : (photoPose?.center || PANEL_CENTERS[selectedView] || FOCUS_EXTERIOR));
 
       state.theta += (state.targetTheta - state.theta) * damp;
       state.phi += (state.targetPhi - state.phi) * damp;
@@ -1720,6 +2090,7 @@
       state.targetCenter.lerp(focusTarget, damp);
 
       state.explode += (state.explodeTarget - state.explode) * damp;
+      state.powertrainCutaway += (state.powertrainCutawayTarget - state.powertrainCutaway) * damp;
       for (const key of Object.keys(panels)) {
         state[key] += (state[key + 'Target'] - state[key]) * damp;
       }
@@ -1728,8 +2099,9 @@
       state.frontLens += (frontLensTarget() - state.frontLens) * damp;
       state.rearLens += (Number(selectedView === 'rear') - state.rearLens) * damp;
 
-      const assemblyFramed = selectedView === 'assembly';
-      const exteriorFov = assemblyFramed ? assemblyView.fov : THREE.MathUtils.lerp(30, photoPose?.fov ?? 26, Math.min(1, state.frontLens + state.rearLens));
+      const assemblyFramed = selectedView === 'assembly' && !presenting;
+      const baseExteriorFov = THREE.MathUtils.lerp(30, photoPose?.fov ?? 25, Math.min(1, state.frontLens + state.rearLens));
+      const exteriorFov = assemblyFramed ? assemblyView.fov : presenting ? THREE.MathUtils.lerp(baseExteriorFov, assemblyView.fov, state.explode) : baseExteriorFov;
       const lensTangent = Math.tan(THREE.MathUtils.degToRad(exteriorFov / 2));
       const dolly = Math.tan(Math.PI / 12) / lensTangent;
       const availableHeight = assemblyView.availableHeight || 1;
@@ -1835,21 +2207,29 @@
         }
       }
 
-      if (state.spinMode) state.wheelSpinAngle += 2.6 * dt;
+      stepPowertrainKinematics(dt);
       if (state.steerMode) state.steerPhase += 1.4 * dt;
       const steerRad = state.steerOverride !== null ? state.steerOverride : (state.steerMode ? Math.sin(state.steerPhase) * 0.44 : 0.0);
 
       if (forceSceneUpdate) {
         const ex = state.explode;
+        const pt = state.powertrainCutaway;
         const vib = (state.rpm > 1200 ? (state.rpm / 7000) * 0.004 : 0.0);
         const t = clock.elapsedTime;
+        const crankTheta = state.crankTheta;
+        const counterTheta = state.counterTheta;
+        const diffTheta = state.diffTheta;
+
         for (const [pname, piv] of Object.entries(pivots)) {
           const rp = restPos.get(piv);
           const rr = restRot.get(piv);
           if (!rp || !rr) continue;
           const ps = pullOffsets.get(piv);
-          if (ps) ps.cur.lerp(ps.tgt, damp);
-          const ev = getExplodeOffset(pname, ex, vib, t, _ev);
+          if (ps) {
+            if (damp >= 1) ps.cur.copy(ps.tgt);
+            else ps.cur.lerp(ps.tgt, damp);
+          }
+          const ev = getExplodeOffset(pname, ex, pt, vib, t, _ev);
           piv.position.copy(rp).add(ev);
           if (ps) piv.position.add(ps.cur);
 
@@ -1859,8 +2239,63 @@
             piv.rotation[panel.axis] = rr[panel.axis] + state[panelKey] * panel.angle;
           } else if (pname === 'Pivot_Corner_FL' || pname === 'Pivot_Corner_FR') {
             piv.rotation.set(rr.x, rr.y + steerRad, rr.z);
+          } else if (pname === 'Pivot_WheelSpin_FL' || pname === 'Pivot_WheelSpin_FR') {
+            piv.rotation.set(rr.x, rr.y, rr.z + state.frontWheelTheta);
           } else if (pname.startsWith('Pivot_WheelSpin_')) {
-            piv.rotation.set(rr.x, rr.y, rr.z - state.wheelSpinAngle);
+            piv.rotation.set(rr.x, rr.y, rr.z + state.rearWheelTheta);
+          } else if (pname === 'Pivot_Spin_Crankshaft' || pname === 'Pivot_Spin_Pulley_Crank' || pname === 'Pivot_Spin_Flywheel_Clutch' || pname === 'Pivot_Spin_InputShaft') {
+            piv.rotation.set(rr.x, rr.y, rr.z + crankTheta);
+          } else if (pname === 'Pivot_Spin_Cam_Intake' || pname === 'Pivot_Spin_Cam_Exhaust') {
+            piv.rotation.set(rr.x, rr.y, rr.z + 0.5 * crankTheta);
+          } else if (pname === 'Pivot_Spin_Pulley_Alt') {
+            piv.rotation.set(rr.x, rr.y, rr.z + 2.1 * crankTheta);
+          } else if (pname === 'Pivot_Spin_Pulley_AC') {
+            piv.rotation.set(rr.x, rr.y, rr.z + 1.3 * crankTheta);
+          } else if (pname === 'Pivot_Spin_Pulley_WP') {
+            piv.rotation.set(rr.x, rr.y, rr.z + 1.4 * crankTheta);
+          } else if (pname === 'Pivot_Spin_Pulley_Idler') {
+            piv.rotation.set(rr.x, rr.y, rr.z - 2.0 * crankTheta);
+          } else if (pname === 'Pivot_Spin_Turbo_Impeller') {
+            piv.rotation.set(rr.x, rr.y, rr.z + state.turboTheta);
+          } else if (pname === 'Pivot_Spin_RadFan_L' || pname === 'Pivot_Spin_RadFan_R') {
+            piv.rotation.set(rr.x + state.fanTheta, rr.y, rr.z);
+          } else if (pname === 'Pivot_Spin_CounterShaft') {
+            piv.rotation.set(rr.x, rr.y, rr.z + counterTheta);
+          } else if (pname === 'Pivot_Spin_ReverseIdler') {
+            piv.rotation.set(rr.x, rr.y, rr.z - crankTheta * (12 / REV_IDLER_Z));
+          } else if (pname === 'Pivot_Spin_FinalDrive_LSD' || pname === 'Pivot_Spin_Axle_L' || pname === 'Pivot_Spin_Axle_R') {
+            piv.rotation.set(rr.x, rr.y, rr.z + diffTheta);
+          } else if (pname === 'Pivot_Spin_Gear_Out1') {
+            piv.rotation.set(rr.x, rr.y, rr.z - crankTheta * (12 / 44));
+          } else if (pname === 'Pivot_Spin_Gear_Out2') {
+            piv.rotation.set(rr.x, rr.y, rr.z - crankTheta * (18 / 38));
+          } else if (pname === 'Pivot_Spin_Gear_OutRev') {
+            piv.rotation.set(rr.x, rr.y, rr.z + crankTheta * (12 / 45));
+          } else if (pname === 'Pivot_Spin_Gear_In3') {
+            piv.rotation.set(rr.x, rr.y, rr.z - counterTheta * (34 / 22));
+          } else if (pname === 'Pivot_Spin_Gear_In4') {
+            piv.rotation.set(rr.x, rr.y, rr.z - counterTheta * (30 / 26));
+          } else if (pname === 'Pivot_Spin_Gear_In5') {
+            piv.rotation.set(rr.x, rr.y, rr.z - counterTheta * (27 / 29));
+          } else if (pname === 'Pivot_Spin_Gear_In6') {
+            piv.rotation.set(rr.x, rr.y, rr.z - counterTheta * (24 / 32));
+          } else if (pname.startsWith('Pivot_Piston_')) {
+            const idx = Number(pname.slice(13)) - 1;
+            if (idx >= 0 && idx < 4) {
+              const phi = crankTheta + PISTON_PHASES[idx];
+              const s = Math.sin(phi);
+              const dy = CRANK_R * Math.cos(phi) + Math.sqrt(CONROD_L * CONROD_L - CRANK_R * CRANK_R * s * s) - PISTON_YW_REST[idx];
+              piv.position.y += dy;
+            }
+          } else if (pname.startsWith('Pivot_Conrod_')) {
+            const idx = Number(pname.slice(13)) - 1;
+            if (idx >= 0 && idx < 4) {
+              const phi = crankTheta + PISTON_PHASES[idx];
+              const s = Math.sin(phi);
+              const dy = CRANK_R * Math.cos(phi) + Math.sqrt(CONROD_L * CONROD_L - CRANK_R * CRANK_R * s * s) - PISTON_YW_REST[idx];
+              piv.position.y += dy;
+              piv.rotation.set(rr.x, rr.y, rr.z - Math.asin((CRANK_R / CONROD_L) * s));
+            }
           }
         }
         for (const [mesh, part] of explodedParts) {
@@ -1868,19 +2303,22 @@
         }
         for (const [obj, ps] of pullOffsets.entries()) {
           if (obj.isMesh) {
-            ps.cur.lerp(ps.tgt, damp);
+            if (damp >= 1) ps.cur.copy(ps.tgt);
+            else ps.cur.lerp(ps.tgt, damp);
             if (!explodedParts.has(obj)) obj.position.copy(ps.basePos);
             obj.position.add(ps.cur);
           }
         }
-        shadowDirty = true;
-        if (now - lastShadowTime > 100 || damp >= 1) {
-          renderer.shadowMap.needsUpdate = true;
-          groundShadows.update();
-          lastShadowTime = now;
-          shadowDirty = false;
+        if (updateShadows) {
+          shadowDirty = true;
+          if (now - lastShadowTime > 100 || damp >= 1 || needsShadow) {
+            renderer.shadowMap.needsUpdate = true;
+            groundShadows.update();
+            lastShadowTime = now;
+            shadowDirty = false;
+          }
+          needsShadow = false;
         }
-        needsShadow = false;
       }
 
       if (Math.abs(state.xray - prevXrayRendered) > 5e-4 || Math.abs(state.cabinBlend - prevGlazingBlend) > 5e-4) {
@@ -1912,9 +2350,9 @@
         const assembly = object.isMesh ? object.parent?.name || '' : object.name;
         const release = THREE.MathUtils.smoothstep(pull.cur.length(), 0, 0.8);
         if (/Body_Assembly|Interior_Cabin|Door_|Hatch_/.test(assembly)) cabinPull = Math.max(cabinPull, release);
-        if (/Body_Assembly|Engine_Bay|Hood_/.test(assembly)) enginePull = Math.max(enginePull, release);
+        if (/Body_Assembly|Engine_|Drivetrain_6MT|Hood_/.test(assembly)) enginePull = Math.max(enginePull, release);
       }
-      const enclosed = lastIsolation ? 0 : (1 - state.xray) * (1 - THREE.MathUtils.smoothstep(state.explode, 0, 0.55));
+      const enclosed = lastIsolation ? 0 : (1 - state.xray) * (1 - THREE.MathUtils.smoothstep(Math.max(state.explode, state.powertrainCutaway), 0, 0.55));
       const cabinOpen = Math.min(1, state.doorL * 0.35 + state.doorR * 0.35 + state.doorRL * 0.2 + state.doorRR * 0.2 + state.hatch * 0.3);
       cabinEnclosure.value.set(1 - cabinOpen, cabinOpen).multiplyScalar(enclosed * (1 - cabinPull));
       engineEnclosure.value.set(1 - state.hood, state.hood).multiplyScalar(enclosed * (1 - enginePull));
@@ -1928,7 +2366,7 @@
       const frameTime = clock.getDelta();
       const dt = Math.min(frameTime, 0.08);
       const transitionTime = wasMoving ? Math.min(frameTime, 0.75) : 1 / 60;
-      const damp = 1.0 - Math.exp(-8.5 * transitionTime);
+      const damp = (captureMode || reducedMotion.matches) ? 1.0 : (1.0 - Math.exp(-8.5 * transitionTime));
 
       if (!state.loaded) {
         if (needsRender) {
@@ -1954,7 +2392,7 @@
       }
 
       const photoPose = activePose();
-      const focusTarget = state.interiorView ? FOCUS_INTERIOR : (photoPose?.center || PANEL_CENTERS[selectedView] || FOCUS_EXTERIOR);
+      const focusTarget = state.interiorView ? FOCUS_INTERIOR : (presenting ? FOCUS_EXTERIOR : (photoPose?.center || PANEL_CENTERS[selectedView] || FOCUS_EXTERIOR));
       const camDelta =
         Math.abs(state.targetTheta - state.theta) +
         Math.abs(state.targetPhi - state.phi) +
@@ -1964,7 +2402,7 @@
         Math.abs(frontLensTarget() - state.frontLens);
       const focusDelta = state.targetCenter.distanceToSquared(focusTarget);
 
-      let mechDelta = Math.abs(state.explodeTarget - state.explode);
+      let mechDelta = Math.abs(state.explodeTarget - state.explode) + Math.abs(state.powertrainCutawayTarget - state.powertrainCutaway);
       for (const key of Object.keys(panels)) mechDelta += Math.abs(state[key + 'Target'] - state[key]);
       const xrayDelta = Math.abs(state.xrayTarget - state.xray);
       const rpmDelta = Math.abs((state.revving ? 7000 : 850) - state.rpm);
@@ -1974,8 +2412,10 @@
         if (ps.cur.distanceToSquared(ps.tgt) > 1e-6) { pullActive = true; break; }
       }
 
-      const continuousAnim = state.spinMode || state.steerMode || state.revving || rpmDelta > 5;
-      const geoMoving = presenting || mechDelta > 5e-4 || pullActive || continuousAnim;
+      const powertrainActive = isPowertrainAnimating();
+      const macroMoving = presenting || mechDelta > 5e-4 || pullActive || state.steerMode;
+      const continuousAnim = state.spinMode || state.steerMode || state.revving || rpmDelta > 5 || powertrainActive;
+      const geoMoving = macroMoving || continuousAnim;
       const active = needsRender || camDelta > 2e-4 || focusDelta > 1e-5 || xrayDelta > 5e-4 || geoMoving;
 
       if (!active) {
@@ -1991,7 +2431,7 @@
       scheduleFrame();
       wasMoving = true;
 
-      applyCameraAndScene(now, dt, transitionTime, damp, geoMoving || needsShadow);
+      applyCameraAndScene(now, dt, transitionTime, damp, geoMoving || needsShadow, macroMoving || needsShadow);
 
       if (!loaderEl.classList.contains('done')) {
         if (intro) intro.previous = performance.now();
@@ -2010,7 +2450,15 @@
       getState: () => ({
         loaded: state.loaded,
         selectedView,
+        introActive: !!intro,
         explode: state.explode,
+        explodeTarget: state.explodeTarget,
+        powertrainCutaway: state.powertrainCutaway,
+        gear: state.gear,
+        powertrainPlaying: state.powertrainPlaying,
+        crankTheta: state.crankTheta,
+        counterTheta: state.counterTheta,
+        diffTheta: state.diffTheta,
         xray: state.xray,
         interiorView: state.interiorView,
         panels: Object.fromEntries(Object.keys(panels).map(k => [k, state[k]])),
@@ -2029,6 +2477,63 @@
       setHudVisible: (visible) => {
         state.hudHidden = !visible;
         document.documentElement.classList.toggle('hide-hud', state.hudHidden);
+      },
+      stopIntro: () => {
+        stopIntro();
+        applyCameraAndScene(performance.now(), 0, 1, 1, true);
+        needsRender = false;
+      },
+      setGear: (gear) => {
+        if (!(gear in GEARBOX_RATIOS)) return false;
+        state.gear = gear;
+        updateHudText();
+        applyCameraAndScene(performance.now(), 0, 1, 1, true);
+        needsRender = false;
+        return true;
+      },
+      setDrivetrainAngle: (crankTheta, gear = state.gear) => {
+        if (gear in GEARBOX_RATIOS) state.gear = gear;
+        const g = GEARBOX_RATIOS[state.gear] || GEARBOX_RATIOS['3'];
+        state.crankTheta = Number(crankTheta) || 0;
+        if (g.zIn > 0 && g.zOut > 0) {
+          state.counterTheta = g.reverse
+            ? state.crankTheta * (g.zIn / g.zOut)
+            : -state.crankTheta * (g.zIn / g.zOut);
+        } else {
+          state.counterTheta = 0;
+        }
+        state.diffTheta = -state.counterTheta * (FD_PINION_Z / FD_RING_Z);
+        state.turboTheta = state.crankTheta * 6.0;
+        state.fanTheta = Math.abs(state.crankTheta) * 1.5;
+        applyCameraAndScene(performance.now(), 0, 1, 1, true);
+        needsRender = false;
+      },
+      openView: (name) => {
+        stopIntro();
+        if (name === 'assembly' || name === 'exploded') {
+          state.powertrainCutaway = state.powertrainCutawayTarget = 0;
+          state.xray = state.xrayTarget = 0;
+          state.interiorView = false;
+          for (const key of Object.keys(panels)) state[key] = state[key + 'Target'] = 0;
+          frameAssembly();
+          state.explode = state.explodeTarget = 1;
+          updateHudText();
+          applyCameraAndScene(performance.now(), 0, 1, 1, true, true);
+          needsRender = false;
+          return true;
+        }
+        if (name === 'exterior') {
+          runCommand('r', false);
+          state.explode = state.explodeTarget = 0;
+          state.theta = state.targetTheta = exteriorView.theta;
+          state.phi = state.targetPhi = exteriorView.phi;
+          state.radius = state.targetRadius = exteriorView.radius;
+          state.targetCenter.copy(FOCUS_EXTERIOR);
+          applyCameraAndScene(performance.now(), 0, 1, 1, true);
+          needsRender = false;
+          return true;
+        }
+        return window.__civicStudio.matchView(name === 'gearing' ? 'drivetrain' : name);
       },
       matchView: (photoView, opts = {}) => {
         const ok = matchCivicView(photoView, { immediate: true, skipHash: true, ...opts });
@@ -2074,6 +2579,7 @@
           if (key in patch) state[key] = state[key + 'Target'] = Number(patch[key]);
         }
         if ('explode' in patch) state.explode = state.explodeTarget = Number(patch.explode);
+        if ('powertrainCutaway' in patch) state.powertrainCutaway = state.powertrainCutawayTarget = Number(patch.powertrainCutaway);
         if ('xray' in patch) state.xray = state.xrayTarget = Number(patch.xray);
         if ('steer' in patch) state.steerOverride = patch.steer === null ? null : Number(patch.steer);
         updateHudText();

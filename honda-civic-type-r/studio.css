@@ -98,7 +98,32 @@ a { color: inherit; text-underline-offset: .2em; }
 #callout.visible { display: grid; }
 #callout .title { font-weight: 600; }
 #callout .sub { font-size: 11px; color: #52606d; }
-.hide-hud #studio-header, .hide-hud #bar, .hide-hud #callout { visibility: hidden; }
+.hide-hud #studio-header, .hide-hud #bar, .hide-hud #callout, .hide-hud #gear-bar { visibility: hidden; }
+.show-photos #gear-bar { visibility: hidden; }
+
+#gear-bar {
+  position: fixed; top: calc(var(--header-height) + 12px); left: 50%; transform: translateX(-50%);
+  z-index: 9; display: flex; align-items: center; gap: 6px; padding: 4px 8px;
+  background: #fffffff2; border: 1px solid #0002; border-radius: 10px;
+  box-shadow: 0 3px 14px #18212d12; font-size: 13px; max-width: calc(100vw - 20px);
+}
+#gear-bar .gear-label { font-weight: 700; letter-spacing: .02em; color: var(--accent); padding: 0 2px; white-space: nowrap; }
+#gear-bar .gear-buttons { display: flex; align-items: center; gap: 2px; }
+#gear-bar button {
+  appearance: none; border: 1px solid transparent; border-radius: 6px; background: transparent;
+  color: var(--ink); min-width: 28px; min-height: 30px; padding: 0 7px;
+  font-size: 13px; font-weight: 600; line-height: 1; white-space: nowrap;
+}
+#gear-bar button:hover { background: #eef1f3; }
+#gear-bar .gear-buttons button[aria-pressed="true"] { background: var(--accent); color: #fff; }
+#gear-bar #gear-play, #gear-bar #gear-cutaway { border-color: var(--line); padding: 0 9px; font-weight: 550; }
+#gear-bar #gear-play[aria-pressed="true"], #gear-bar #gear-cutaway[aria-pressed="true"] { background: #23282e; color: #fff; border-color: #23282e; }
+#gear-ratio { color: #505965; font-size: 12px; font-weight: 550; padding: 0 4px; white-space: nowrap; }
+@media (max-width: 640px) {
+  #gear-bar { flex-wrap: wrap; justify-content: center; gap: 4px; padding: 4px 6px; }
+  #gear-bar button { min-width: 25px; min-height: 28px; padding: 0 5px; font-size: 12px; }
+  #gear-ratio { font-size: 11px; }
+}
 
 #photo-room { position: fixed; inset: var(--header-height) 0 0; z-index: 19; display: grid; grid-template-rows: minmax(0, 1fr) auto; background: #181a1d; color: white; }
 #photo-room figure { min-height: 0; position: relative; display: grid; place-items: center; touch-action: pan-y; }
