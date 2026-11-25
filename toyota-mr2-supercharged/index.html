@@ -3,20 +3,11 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <link rel="preload" as="image" type="image/webp" media="(prefers-reduced-motion: no-preference) and (orientation: landscape)" href="./mr2-exploded-wide.webp?v=a397cd6b" fetchpriority="high">
-  <link rel="preload" as="image" type="image/webp" media="(prefers-reduced-motion: no-preference) and (orientation: portrait)" href="./mr2-exploded-tall.webp?v=acea0262" fetchpriority="high">
-  <link rel="preload" as="image" type="image/webp" media="(prefers-reduced-motion: reduce) and (orientation: landscape)" href="./mr2-wide.webp?v=220d81fd" fetchpriority="high">
-  <link rel="preload" as="image" type="image/webp" media="(prefers-reduced-motion: reduce) and (orientation: portrait)" href="./mr2-tall.webp?v=f1b58a47" fetchpriority="high">
   <link rel="modulepreload" href="./vendor/three-r170.js?v=31c84364">
   <link rel="preload" as="image" href="./studio-environment.png" crossorigin="anonymous">
   <script>
     if (location.hash === '#mr2-views') document.documentElement.classList.add('show-photos');
-    if (location.hash === '#rear') document.documentElement.classList.add('load-rear');
-    if (location.hash && !['#model', '#assembly', '#rear', '#mr2-views'].includes(location.hash)) {
-      document.documentElement.classList.add('load-detail');
-    }
     const overrideModel = new URLSearchParams(location.search).get('model');
-    if (overrideModel) document.documentElement.classList.add('custom-model');
     const modelFile = overrideModel || './toyota_mr2_aw11_sc.glb?v=8c3ffd13';
     const preload = document.createElement('link');
     preload.rel = 'preload';
@@ -28,7 +19,7 @@
   <link rel="canonical" href="https://bailiping.com/toyota-mr2-supercharged/" />
   <link rel="icon" href="/favicon.ico" />
   <title>1988 Toyota MR2 Supercharged (AW11) — Super Red</title>
-  <link rel="stylesheet" href="./studio.css?v=3064fabd">
+  <link rel="stylesheet" href="./studio.css?v=26468b37">
   <script type="module" src="./studio.js?v=2"></script>
 </head>
 <body>
@@ -59,13 +50,6 @@
   <canvas id="stage" aria-label="Interactive 3D model of a 1988 Toyota MR2 Supercharged"></canvas>
   <div id="callout"><span class="title"></span><span class="sub"></span></div>
   <div id="loader">
-    <!-- The car opens exploded and then assembles; reduced-motion visitors see it assembled. -->
-    <picture>
-      <source media="(prefers-reduced-motion: no-preference) and (orientation: portrait)" srcset="./mr2-exploded-tall.webp?v=acea0262">
-      <source media="(prefers-reduced-motion: no-preference)" srcset="./mr2-exploded-wide.webp?v=a397cd6b">
-      <source media="(orientation: portrait)" srcset="./mr2-tall.webp?v=f1b58a47">
-      <img src="./mr2-wide.webp?v=220d81fd" width="1280" height="800" fetchpriority="high" alt="Super Red 1988 Toyota MR2 Supercharged preview">
-    </picture>
     <span id="load-status" role="status">Preparing interactive model…</span>
   </div>
   <div id="bar" inert>
