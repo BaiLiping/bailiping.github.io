@@ -1,10 +1,12 @@
 """Measure the assembled GLB in world space using Blender's glTF/Draco importer.
 
 blender -b --python-exit-code 1 --python measure_model.py -- truck.glb measurements.json
-Add a previous GLB as the third argument to include its measurements.
+Optional third and fourth arguments are the original GLB and the GLB immediately
+before the painted front-panel revision.
 """
 import hashlib
 import json
+import math
 from pathlib import Path
 import sys
 
@@ -82,7 +84,69 @@ def sheet_clearance(meshes, vertices, first, second):
     return best
 
 
-def measure(path):
+def front_panel_fit(meshes, vertices):
+    hood = "RaptorR_Hood_PowerDome"
+    grille = "RaptorR_Front_Grille_Frame"
+    lenses = {side: "RaptorR_Headlight_Lens_" + side for side in ("L", "R")}
+    panels = sorted(name for name in meshes if name in (hood, "RaptorR_Body_Front_Valance")
+                    or name.startswith(("RaptorR_Body_Fender", "RaptorR_Fender_LampReturn")))
+    surveyed = panels + list(lenses.values()) + [grille]
+    faces = {n: [tuple(p.vertices) for p in meshes[n].data.polygons] for n in surveyed}
+    trees = {n: BVHTree.FromPolygons(vertices[n].tolist(), faces[n]) for n in surveyed}
+    surfaces = {target: [n for n in panels if trees[n].overlap(trees[target])]
+                for target in [*lenses.values(), grille]}
+
+    # Slice actual exported edges at 5 mm intervals across the front of each lamp.
+    # At each station, measure the lowest point of the leading 8 mm of hood metal.
+    def edges(name):
+        ids = np.asarray([tuple(e.vertices) for e in meshes[name].data.edges])
+        return vertices[name][ids]
+
+    def cross_section(segments, y):
+        a, b = segments[:, 0], segments[:, 1]
+        keep = ((a[:, 1] <= y) & (b[:, 1] > y)) | ((b[:, 1] <= y) & (a[:, 1] > y))
+        a, b = a[keep], b[keep]
+        return a + (b-a) * ((y-a[:, 1]) / (b[:, 1]-a[:, 1]))[:, None]
+
+    hood_edges = edges(hood)
+    cuts = {}
+    for side, name in lenses.items():
+        lens_edges = edges(name)
+        samples = []
+        for station_mm in range(680, 821, 5):
+            y = station_mm * (0.001 if side == "L" else -0.001)
+            h, l = cross_section(hood_edges, y), cross_section(lens_edges, y)
+            front_x = h[:, 0].max()
+            hem_z = h[h[:, 0] >= front_x-0.008, 2].min()
+            samples.append([station_mm, round(float(hem_z-l[:, 2].max())*1000, 2),
+                            round(float(front_x-l[:, 0].max())*1000, 2)])
+        cuts[side] = samples
+
+    # The viewer rotates the hood about its hinge up to 48 degrees. Test the
+    # forward stamping (ahead of X=2 m when shut) against the fixed front assembly.
+    hinge = np.asarray(bpy.data.objects["Pivot_Hood"].matrix_world.translation)
+    nose_faces = [f for f in faces[hood] if vertices[hood][list(f), 0].max() >= 2.0]
+    fixed = [n for n in surveyed if n != hood]
+    motion = {}
+    for degrees in (0, 1, 2, 4, 8, 12, 18, 24, 36, 48):
+        angle = math.radians(-degrees)
+        c, s = math.cos(angle), math.sin(angle)
+        rotation = np.asarray([[c, 0, s], [0, 1, 0], [-s, 0, c]])
+        moved = (vertices[hood] - hinge) @ rotation.T + hinge
+        tree = BVHTree.FromPolygons(moved.tolist(), nose_faces)
+        motion[degrees] = [n for n in fixed if tree.overlap(trees[n])]
+    return {
+        "painted_meshes_intersecting_each_lens": {s: surfaces[n] for s, n in lenses.items()},
+        "painted_meshes_intersecting_grille_frame": surfaces[grille],
+        "section_columns_mm": ["distance_from_centerline", "hood_bottom_minus_lens_top",
+                               "hood_front_minus_lens_front"],
+        "sections_mm": cuts,
+        "hood_nose_intersections_by_open_angle_degrees": motion,
+        "front_fender_flare_crown_height_mm": round(float(vertices["RaptorR_FenderFlare_FL"][:, 2].max())*1000, 2),
+    }
+
+
+def measure(path, front_only=False):
     bpy.ops.wm.read_factory_settings(use_empty=True)
     bpy.ops.import_scene.gltf(filepath=str(path.resolve()))
     bpy.context.view_layer.update()
@@ -94,6 +158,10 @@ def measure(path):
         transform = np.asarray(obj.matrix_world)
         vertices[name] = coords.reshape(-1, 3) @ transform[:3, :3].T + transform[:3, 3]
 
+    digest = hashlib.sha256(path.read_bytes()).hexdigest()
+    front = front_panel_fit(meshes, vertices)
+    if front_only:
+        return {"sha256": digest, "front_panel_fit": front}
     points = np.vstack(list(vertices.values()))
     body = np.vstack(
         [p for name, p in vertices.items() if not name.startswith("RaptorR_Mirror_")]
@@ -146,9 +214,10 @@ def measure(path):
             for section in ("Front", "Middle", "Rear")
         ]
     return {
-        "sha256": hashlib.sha256(path.read_bytes()).hexdigest(),
+        "sha256": digest,
         "measured_mm": {key: mm(measured[key]) for key in FORD},
         "geometry": geometry,
+        "front_panel_fit": front,
     }
 
 
@@ -158,4 +227,6 @@ if __name__ == "__main__":
     report = {"source": SOURCE, "ford_inches": FORD, "current": measure(asset)}
     if len(args) > 2:
         report["previous"] = measure(Path(args[2]))
+    if len(args) > 3:
+        report["before_front_panel_revision"] = measure(Path(args[3]), front_only=True)
     output.write_text(json.dumps(report, indent=2) + "\n")

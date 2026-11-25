@@ -15,7 +15,7 @@
       document.documentElement.classList.add('show-photos');
     }
     const overrideModel = initParams.get('model');
-    const modelFile = overrideModel || './ford_f150_raptor_r.glb?v=5.1';
+    const modelFile = overrideModel || './ford_f150_raptor_r.glb?v=6';
     const preload = document.createElement('link');
     preload.rel = 'preload';
     preload.as = 'fetch';
@@ -26,7 +26,7 @@
   <link rel="icon" href="/favicon.ico" />
   <title>2024 Ford F-150 Raptor R — Rapid Red Metallic</title>
   <meta property="og:title" content="2024 Ford F-150 Raptor R in Rapid Red Metallic">
-  <meta property="og:image" content="https://bailiping.com/ford-f150-raptor-r/og-preview.jpg?v=5.1">
+  <meta property="og:image" content="https://bailiping.com/ford-f150-raptor-r/og-preview.jpg?v=6">
   <meta property="og:image:alt" content="Rear three-quarter view of the Rapid Red Raptor R with the flat bed cover closed">
   <link rel="stylesheet" href="./studio.css">
   <script type="module" src="./studio.js?v=5"></script>
@@ -109,7 +109,7 @@
               <p>2024 Ford F-150 Raptor R (803A, Rapid Red Metallic (D4) over black Recaro leather &amp; Alcantara, solid aluminum roof, 37" BFGoodrich KO2 package, Exterior Graphics, 5.2L supercharged Predator V8 — 720 hp / 640 lb-ft — with full 10R80 &amp; 2-speed 4WD drivetrain). The three-panel hard tonneau sits level with the bed rails. The model uses meters. Ford lists a 3.693 m wheelbase, a 2.210 m width without mirrors and a 5.908 m overall length.</p>
               <a href="https://bringatrailer.com/listing/2024-ford-f-150-raptor-r-18/">Reference vehicle: 2024 Ford F-150 Raptor R (Shelter Green) · 710HP via Bring a Trailer (Lot #181,611)</a><br>
               <a href="https://www.marshallgoldman.com/imagetag/5184/35/l/Used-2024-Ford-F150-Raptor-R-720HP-Supercharged-V8-Recaro-Seats-Hard-Tonneau-Cover-1770314723.jpg">Closed tonneau reference photograph · Marshall Goldman Motor Sales</a> · <a href="https://www.fromtheroad.ford.com/content/dam/fordmediasite/us/en/library/2024/specs/2024-Ford-Raptor-and-Raptor-R-Tech-Specs.pdf">Ford dimensions</a><br>
-              <a href="#raptor-views">Browse all 23 reference photographs</a> · <a href="./frame-by-frame/">Frame-by-frame comparison</a> · <a href="./frame-by-frame/#geometry-audit">Measured model dimensions</a>
+              <a href="#raptor-views">Browse all 23 reference photographs</a> · <a href="./frame-by-frame/">Frame-by-frame comparison</a> · <a href="./frame-by-frame/#front-panel-fit">Hood and fender fit</a> · <a href="./frame-by-frame/#geometry-audit">Measured model dimensions</a>
             </div></details>
           </div>
         </section>
@@ -135,7 +135,7 @@
     }
 
     const [photoSources, exteriorCameras] = await Promise.all(
-      ['./raptor-views.json?v=5', './exterior-photo-cameras.json?v=5.1']
+      ['./raptor-views.json?v=5', './exterior-photo-cameras.json?v=6']
         .map(url => fetch(url).then(response => response.json()))
     );
     const orbitRadius = pose => pose.distance * Math.tan(pose.fov * Math.PI / 360) / Math.tan(Math.PI / 12);

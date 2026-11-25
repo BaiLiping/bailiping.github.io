@@ -15,12 +15,13 @@ function showLayout(layout) {
   }
 }
 function followReference() {
-  if (location.hash === '#geometry-audit') {
-    document.getElementById('geometry-audit').open = true;
+  const detail = document.getElementById(location.hash.slice(1));
+  if (detail instanceof HTMLDetailsElement) {
+    detail.open = true;
   }
-  if (location.hash === '#photo-flat-tonneau-cover') showLayout('pairs');
+  if (['#photo-flat-tonneau-cover', '#photo-headlight-and-amber-drl'].includes(location.hash)) showLayout('pairs');
 }
-showLayout(location.hash === '#photo-flat-tonneau-cover' ? 'pairs' : 'shape');
+showLayout(['#photo-flat-tonneau-cover', '#photo-headlight-and-amber-drl'].includes(location.hash) ? 'pairs' : 'shape');
 followReference();
 window.addEventListener('hashchange', followReference);
 display.addEventListener('click', event => {
