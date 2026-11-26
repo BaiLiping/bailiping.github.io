@@ -15,7 +15,7 @@
       document.documentElement.classList.add('show-photos');
     }
     const overrideModel = initParams.get('model');
-    const modelFile = overrideModel || './ford_f150_raptor_r.glb?v=6';
+    const modelFile = overrideModel || './ford_f150_raptor_r.glb?v=7';
     const preload = document.createElement('link');
     preload.rel = 'preload';
     preload.as = 'fetch';
@@ -26,7 +26,7 @@
   <link rel="icon" href="/favicon.ico" />
   <title>2024 Ford F-150 Raptor R — Rapid Red Metallic</title>
   <meta property="og:title" content="2024 Ford F-150 Raptor R in Rapid Red Metallic">
-  <meta property="og:image" content="https://bailiping.com/ford-f150-raptor-r/og-preview.jpg?v=6">
+  <meta property="og:image" content="https://bailiping.com/ford-f150-raptor-r/og-preview.jpg?v=7">
   <meta property="og:image:alt" content="Rear three-quarter view of the Rapid Red Raptor R with the flat bed cover closed">
   <link rel="stylesheet" href="./studio.css">
   <script type="module" src="./studio.js?v=5"></script>
@@ -109,6 +109,9 @@
               <p>2024 Ford F-150 Raptor R (803A, Rapid Red Metallic (D4) over black Recaro leather &amp; Alcantara, solid aluminum roof, 37" BFGoodrich KO2 package, Exterior Graphics, 5.2L supercharged Predator V8 — 720 hp / 640 lb-ft — with full 10R80 &amp; 2-speed 4WD drivetrain). The three-panel hard tonneau sits level with the bed rails. The model uses meters. Ford lists a 3.693 m wheelbase, a 2.210 m width without mirrors and a 5.908 m overall length.</p>
               <a href="https://bringatrailer.com/listing/2024-ford-f-150-raptor-r-18/">Reference vehicle: 2024 Ford F-150 Raptor R (Shelter Green) · 710HP via Bring a Trailer (Lot #181,611)</a><br>
               <a href="https://www.marshallgoldman.com/imagetag/5184/35/l/Used-2024-Ford-F150-Raptor-R-720HP-Supercharged-V8-Recaro-Seats-Hard-Tonneau-Cover-1770314723.jpg">Closed tonneau reference photograph · Marshall Goldman Motor Sales</a> · <a href="https://www.fromtheroad.ford.com/content/dam/fordmediasite/us/en/library/2024/specs/2024-Ford-Raptor-and-Raptor-R-Tech-Specs.pdf">Ford dimensions</a><br>
+              <a href="./frame-by-frame/#schematics">View Ford's cab and pickup-box schematics</a> · <a href="https://api-prd.fordpro.com/pro/bbas/download/BBLB/661025b789417d202fd69d4f">2024 Body Builders Layout Book · pages 6–8</a><br>
+              <a href="https://www.ford.mx/content/dam/Ford/website-assets/latam/mx/nameplate/raptor-2018/lobo-raptor-2024/pdfs/ford-lobo-raptor-2024-catalogo-descargable.pdf#page=14">Ford Raptor brochure · dimension diagram on page 14</a>
+              <p>The layout book describes the shared F-150 cab and pickup box. Raptor R width, ride height, tracks and overall dimensions follow Ford's dedicated Raptor R specifications. Exterior details are reconstructed from photographs. This is a visual reconstruction, not factory CAD.</p>
               <a href="#raptor-views">Browse all 23 reference photographs</a> · <a href="./frame-by-frame/">Frame-by-frame comparison</a> · <a href="./frame-by-frame/#front-panel-fit">Hood and fender fit</a> · <a href="./frame-by-frame/#geometry-audit">Measured model dimensions</a>
             </div></details>
           </div>
@@ -135,7 +138,7 @@
     }
 
     const [photoSources, exteriorCameras] = await Promise.all(
-      ['./raptor-views.json?v=5', './exterior-photo-cameras.json?v=6']
+      ['./raptor-views.json?v=5', './exterior-photo-cameras.json?v=7']
         .map(url => fetch(url).then(response => response.json()))
     );
     const orbitRadius = pose => pose.distance * Math.tan(pose.fov * Math.PI / 360) / Math.tan(Math.PI / 12);
@@ -1316,7 +1319,7 @@
         explosionButton.disabled = !pivots.Pivot_Body_Assembly;
         state.loaded = true;
 
-        const hashView = captureMode ? '' : location.hash.slice(1);
+        const hashView = captureMode ? (initParams.get('view') || '') : location.hash.slice(1);
         if (captureMode) {
           selectedView = null;
           state.explode = state.explodeTarget = 0;
@@ -1342,9 +1345,26 @@
           state.targetCenter.copy(FOCUS_EXTERIOR);
           state.frontLens = 1;
           state.rearLens = state.cabinBlend = 0;
-        } else {
-          // Normal initial load (/, #model, #assembly): open exploded and converge smoothly into assembled view
+        } else if (hashView === 'assembly') {
+          // Assembly remains an explicit inspection action.
           startAssembly();
+        } else {
+          // Show the complete truck immediately. Exploded inspection is opt-in.
+          selectedView = null;
+          state.explode = state.explodeTarget = 0;
+          state.theta = state.targetTheta = exteriorView.theta;
+          state.phi = state.targetPhi = exteriorView.phi;
+          state.radius = state.targetRadius = exteriorView.radius;
+          state.targetCenter.copy(FOCUS_EXTERIOR);
+          state.frontLens = 1;
+          state.rearLens = state.cabinBlend = 0;
+        }
+
+        // Reproducible comparison captures use a visible URL rather than injected
+        // browser state. Camera values come from the same named reference views.
+        if (captureMode && hashView && referenceViews.has(hashView)) {
+          const pose = referenceViews.get(hashView);
+          applyExactPoseNow({ ...pose, center: [pose.center.x, pose.center.y, pose.center.z] });
         }
 
         document.documentElement.dataset.modelReady = overrideModel ? 'custom' : 'stock';

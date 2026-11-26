@@ -1,152 +1,109 @@
 {
- "method": "Body shell reshaped by a smooth, left-right symmetric B-spline deformation fitted to the car silhouette in each photo (camera re-solved per photo); wheels, tyres and brakes kept rigid; wheel centres and the extreme front, rear, roof, side and mirror points pinned; then overall length, width, height and mirror width set to the published figures by rescaling only the overhangs beyond the tyres, the body outside the tyre faces, the area above the tyre tops and the mirrors (wheelbase and tracks untouched).",
- "spec_source": "Ford 2024 Raptor/Raptor R tech specs (measurements.json)",
- "dimensions_mm": {
-  "length": {
-   "spec_mm": 5908,
-   "before_mm": 5908.0,
-   "after_mm": 5908.0
+  "revision": "2026-11-26-geometry-correction",
+  "method": "Restore the intact verified base mesh before the whole-body B-spline silhouette deformation, then correct individual exterior components using the photographs. Preserve the Raptor R outer dimensions, wheel centers and articulation hierarchy.",
+  "baseline": {
+    "repository": "BaiLiping/bailiping.github.io",
+    "commit": "007d1fc7ff1f939016f3ddcc9330afb3a02dfca5",
+    "path": "ford-f150-raptor-r/ford_f150_raptor_r.glb",
+    "reason": "Retains the previously verified cab/bed separation, flush tonneau, front-panel relationships and underbody clearance."
   },
-  "width": {
-   "spec_mm": 2210,
-   "before_mm": 2209.8,
-   "after_mm": 2209.8
+  "replaced_revision": {
+    "commit": "de6e5da41f3feac4d546b904e845529ff814300d",
+    "deployed_glb_sha256": "79e25476fb315ccbcc098e402c9815b7934c3304d6e1377f5b4ef63aaefa95a6",
+    "measured_decoded_glb_sha256": "9c2bfdc48ed72c8d8bb47dc906f8819d2af0bc85b5b4583efb060fcb6ae8580f",
+    "audit_note": "The decoded audit mesh and deployed Draco-compressed file have different byte hashes. These before measurements were taken from the decoded form of that deployed model.",
+    "measured_mm": {
+      "length": 5907.98,
+      "wheelbase": 3693.2,
+      "width_without_mirrors": 2209.76,
+      "width_with_mirrors": 2438.12,
+      "height": 2047.28,
+      "front_track": 1887.0,
+      "rear_track": 1877.0,
+      "ground_clearance": 249.71
+    },
+    "assembly": {
+      "bedside_forward_of_rail_mm": -2.25,
+      "cab_wall_to_bedside_longitudinal_gap_mm": -20.14,
+      "front_to_middle_skid_surface_gap_mm": 0.0,
+      "tonneau_panel_tops_above_rail_mm": [
+        -43.33,
+        -19.23,
+        1.1
+      ]
+    },
+    "hood_lens_vertical_gap_range_mm": [
+      5.72,
+      41.35
+    ]
   },
-  "width_mirrors": {
-   "spec_mm": null,
-   "before_mm": 2438.1,
-   "after_mm": 2438.1
+  "corrections": [
+    "Remove the global silhouette deformation that introduced a cab/bed overlap and uneven closed tonneau panels.",
+    "Restore the intact cab-to-bed clearance, bed-cover alignment, hood-to-lens gap and underbody clearance.",
+    "Restore the intact hood and grille proportions; locally refine rear-door glazing, mirrors and door handles using reference photographs.",
+    "Correct tailgate lettering proportions and rear-lamp height, close the former upper lamp openings with painted body panels, and rebuild the stepped rear bumper with exhaust outlets below its wings.",
+    "Refine tire tread and sidewall appearance while preserving wheel centers and the established tire envelope."
+  ],
+  "verification": {
+    "measurements_file": "measurements.json",
+    "measurement_method": "Blender world-space mesh and articulation measurements. The current and previous records identify the measured files by SHA-256.",
+    "photo_cameras": "Estimated; not calibrated factory photography.",
+    "render_revision": "v7",
+    "new_silhouette_metrics": null,
+    "metric_note": "No new IoU, optimizer convergence result or pixel-error score was computed for this correction. The removed fit scores must not be interpreted as validation of the current mesh.",
+    "current_dimensions_mm": {
+      "length": 5907.98,
+      "wheelbase": 3693.2,
+      "width_without_mirrors": 2209.79,
+      "width_with_mirrors": 2438.12,
+      "height": 2047.27,
+      "front_track": 1887.0,
+      "rear_track": 1877.0,
+      "ground_clearance": 333.0
+    }
   },
-  "height": {
-   "spec_mm": 2047,
-   "before_mm": 2047.3,
-   "after_mm": 2047.3
-  },
-  "wheelbase": {
-   "spec_mm": 3693,
-   "before_mm": 3693.2,
-   "after_mm": 3693.2
-  },
-  "front_track": {
-   "spec_mm": 1887,
-   "before_mm": 1887.0,
-   "after_mm": 1887.0
-  },
-  "rear_track": {
-   "spec_mm": 1877,
-   "before_mm": 1877.0,
-   "after_mm": 1877.0
-  },
-  "tire_dia_f": {
-   "spec_mm": null,
-   "before_mm": 927.0,
-   "after_mm": 927.0
-  },
-  "tire_dia_r": {
-   "spec_mm": null,
-   "before_mm": 927.0,
-   "after_mm": 927.0
-  }
- },
- "photos": [
-  {
-   "id": "front-three-quarter-left",
-   "frame": "front-three-quarter-left",
-   "before": {
-    "iou": 0.9128,
-    "mean_px": 6.9,
-    "p90_px": 13.39
-   },
-   "after": {
-    "iou": 0.938,
-    "mean_px": 4.71,
-    "p90_px": 10.27
-   }
-  },
-  {
-   "id": "front-three-quarter-right",
-   "frame": "front-three-quarter-right",
-   "before": {
-    "iou": 0.8835,
-    "mean_px": 9.02,
-    "p90_px": 17.62
-   },
-   "after": {
-    "iou": 0.9435,
-    "mean_px": 4.72,
-    "p90_px": 11.18
-   }
-  },
-  {
-   "id": "front",
-   "frame": "front",
-   "before": {
-    "iou": 0.9161,
-    "mean_px": 7.32,
-    "p90_px": 15.09
-   },
-   "after": {
-    "iou": 0.9502,
-    "mean_px": 4.09,
-    "p90_px": 8.99
-   }
-  },
-  {
-   "id": "side-profile-left",
-   "frame": "side-profile-left",
-   "before": {
-    "iou": 0.9427,
-    "mean_px": 3.98,
-    "p90_px": 8.99
-   },
-   "after": {
-    "iou": 0.9501,
-    "mean_px": 2.79,
-    "p90_px": 7.31
-   }
-  },
-  {
-   "id": "side-profile-right",
-   "frame": "side-profile-right",
-   "before": {
-    "iou": 0.919,
-    "mean_px": 5.61,
-    "p90_px": 11.55
-   },
-   "after": {
-    "iou": 0.9617,
-    "mean_px": 2.96,
-    "p90_px": 7.5
-   }
-  },
-  {
-   "id": "rear-three-quarter-right",
-   "frame": "rear-three-quarter-right",
-   "before": {
-    "iou": 0.9044,
-    "mean_px": 6.55,
-    "p90_px": 17.89
-   },
-   "after": {
-    "iou": 0.9445,
-    "mean_px": 3.77,
-    "p90_px": 7.5
-   }
-  },
-  {
-   "id": "rear",
-   "frame": "rear",
-   "before": {
-    "iou": 0.891,
-    "mean_px": 9.44,
-    "p90_px": 20.52
-   },
-   "after": {
-    "iou": 0.953,
-    "mean_px": 3.96,
-    "p90_px": 7.5
-   }
-  }
- ],
- "metric": "iou = overlap of model and photo silhouettes; mean_px / p90_px = silhouette edge distance at 640 px image width"
+  "sources": [
+    {
+      "title": "Ford 2024 F-150 Raptor and Raptor R technical specifications",
+      "url": "https://www.fromtheroad.ford.com/content/dam/fordmediasite/us/en/library/2024/specs/2024-Ford-Raptor-and-Raptor-R-Tech-Specs.pdf",
+      "pdf_page": 4,
+      "application": "Authority for Raptor R overall dimensions, tracks, wheelbase and clearance. Width without mirrors is 87.0 in, approximately 2210 mm."
+    },
+    {
+      "title": "Ford Pro 2024 Body Builders Layout Book: F-150",
+      "url": "https://api-prd.fordpro.com/pro/bbas/download/BBLB/661025b789417d202fd69d4f",
+      "pdf_pages": [
+        6,
+        7,
+        8
+      ],
+      "application": "Shared F-150 cab and pickup-box layout, dimensioned plan/side drawings and Crew 145/5.5-foot box table. Not an exact Raptor R exterior blueprint.",
+      "preview_images": [
+        "../model/references/ford-2024-f150-cab-layout.webp",
+        "../model/references/ford-2024-f150-box-layout.webp"
+      ]
+    },
+    {
+      "title": "Ford Mexico 2024 Lobo Raptor brochure",
+      "url": "https://www.ford.mx/content/dam/Ford/website-assets/latam/mx/nameplate/raptor-2018/lobo-raptor-2024/pdfs/ford-lobo-raptor-2024-catalogo-descargable.pdf",
+      "pdf_page": 14,
+      "application": "Dimensioned schematic for supporting longitudinal and box references. The generic outline and 2049 mm width do not establish the Raptor R outer surfaces; the US 2210 mm width is used."
+    },
+    {
+      "title": "2024 Raptor R reference photographs, 710HP, Bring a Trailer lot181611",
+      "url": "https://bringatrailer.com/listing/2024-ford-f-150-raptor-r-18/",
+      "application": "Exterior component shape, proportions and detail comparison."
+    },
+    {
+      "title": "2024 Rapid Red Raptor R with hard tonneau, Marshall Goldman stock W43603",
+      "url": "https://www.marshallgoldman.com/used-vehicle-2024-ford-f150-raptor-r-720hp-supercharged-v8-recaro-seats.-hard-tonneau-cover-c-5184/",
+      "application": "Closed three-panel tonneau and upper-body comparison."
+    }
+  ],
+  "limitations": [
+    "Dimensioned drawings cover shared F-150 geometry and do not supply exact Raptor R surface coordinates.",
+    "Local component dimensions derived from photographs are modeling estimates, not verified factory tolerances.",
+    "Interior and mechanical details remain illustrative.",
+    "Older front-panel and bedside repair images are labeled historical and are not before-and-after evidence for this revision."
+  ]
 }
