@@ -1,109 +1,149 @@
 {
+ "revision": "2026-11-26-exterior-rebuild",
+ "method": "Rebuild the exterior body from analytic surfaces fitted to Ford's 36 F-150 Raptor 360-degree studio renders, whose cameras were solved with metric wheel-hub constraints (lug-pattern hexagons, 3693.2 mm wheelbase). Raptor R specifications set overall width, height and stance; Bring a Trailer close-ups set lamp, extractor, lettering, bumper and hitch details. Frame, suspension, wheels, engine and cabin are carried over from the baseline and locally fitted inside the new glass and hood.",
+ "baseline": {
+  "repository": "BaiLiping/bailiping.github.io",
+  "commit": "a391343",
+  "path": "ford-f150-raptor-r/ford_f150_raptor_r.glb",
+  "deployed_glb_sha256": "5941cd6de5d2a5fbdaedf896bcb8f81615c26b7ac734ed3dcb6df3c9ca35cc3a",
+  "decoded_glb_sha256": "bcb990a30cb36c676570fcc013323c06d539c15654c99f297e83fb091a94ed3d",
+  "reason": "Supplies the articulated rig, running gear, engine bay and cabin. All of its exterior body meshes are replaced."
+ },
+ "replaced_revision": {
+  "commit": "a391343",
+  "deployed_glb_sha256": "5941cd6de5d2a5fbdaedf896bcb8f81615c26b7ac734ed3dcb6df3c9ca35cc3a",
+  "measured_mm": {
+   "length": 5907.98,
+   "wheelbase": 3693.2,
+   "width_without_mirrors": 2209.79,
+   "width_with_mirrors": 2438.12,
+   "height": 2047.27,
+   "front_track": 1887.0,
+   "rear_track": 1877.0,
+   "ground_clearance": 333.0
+  },
+  "assembly": {
+   "bedside_forward_of_rail_mm": 0.0,
+   "cab_wall_to_bedside_longitudinal_gap_mm": 30.0,
+   "front_to_middle_skid_surface_gap_mm": 0.0,
+   "tonneau_panel_tops_above_rail_mm": [
+    -0.02,
+    -0.02,
+    -0.02
+   ]
+  },
+  "offroad_angles_deg": {
+   "approach": 32.56,
+   "departure": 26.17,
+   "breakover": 23.75
+  }
+ },
+ "corrections": [
+  "Replace 444 exterior meshes with a rebuilt body: side panels and tumblehome, A-pillar and windshield rake, roof crown with its stamped ribs, hood and Power Dome, fender decks, bed, tailgate and both bumpers.",
+  "Headlamps: lens wrap and slanted rear edge from Ford frame 13, thin amber C-clamp light guides inside the side lens, reflector modules and projector lenses.",
+  "Taillamps: ruby lens with folded double-gamma light pipes, clear reverse strip and red reflex; the bed tapers to about 0.94 m half-width at the lamps, per the BaT rear photograph scaled by the 305 mm plate and Ford's rear render.",
+  "Rear bumper narrowed to 0.955 m half-width with a lower centre section, raised corners over the exhaust outlets, end caps wrapping to the flares and a flush 2.5 in receiver; the model now meets Ford's 24.9 degree departure angle.",
+  "Front skid plate brought forward and down to Ford's side-render profile, meeting Ford's 33.1 degree approach angle; LED fog modules, recovery hooks, hood nose, three-scoop extractor, CHMSL with cargo lamps and camera, roof antenna pods and C-pillar trims added.",
+  "Doors, hood, tailgate, tonneau and fuel door hinge on relocated pivots; the lowered tailgate meets the bed floor."
+ ],
+ "verification": {
+  "measurements_file": "measurements.json",
+  "measurement_method": "Blender world-space mesh and articulation measurements (measure_model.py); off-road angles from model/exterior/check_offroad_angles.py. Records identify the measured files by SHA-256.",
+  "ford_render_cameras": "Calibrated: shared intrinsics with per-frame poses, mirror-symmetric rig, refined by silhouette alignment. Stored in model/exterior/ford360_cameras.json.",
+  "photo_cameras": "The Bring a Trailer comparison cameras remain estimated, not calibrated.",
+  "render_revision": "v8",
+  "ford_side_render_extent_check_mm": {
+   "note": "Range of model x-extent minus Ford silhouette x-extent (mm) over bumper heights in side frames 13 and 31, converted at the centre plane. At the front a positive value means the model reaches further forward; at the rear a negative value means it reaches further back.",
+   "front_z_0.56_to_0.65": [
+    -12,
+    8
+   ],
+   "rear_z_0.56_to_0.70": [
+    -32,
+    4
+   ]
+  },
+  "current_dimensions_mm": {
+   "length": 5861.45,
+   "wheelbase": 3693.2,
+   "width_without_mirrors": 2210.01,
+   "width_with_mirrors": 2440.0,
+   "height": 2048.51,
+   "front_track": 1887.0,
+   "rear_track": 1877.0,
+   "ground_clearance": 333.0
+  },
+  "offroad_angles_deg": {
+   "approach": 33.33,
+   "departure": 24.87,
+   "breakover": 23.75
+  }
+ },
+ "sources": [
+  {
+   "title": "Ford F-150 Raptor 360-degree view (Ford.com)",
+   "url": "https://www.ford.com/trucks/f150/models/raptor/",
+   "application": "36 official studio renders per colour. Calibrated cameras give metric silhouettes and panel lines for the body, glass, lamps and bumpers. The renders show the current Raptor body, which shares its panels with the 2024 Raptor R."
+  },
+  {
+   "title": "Ford 2024 F-150 Raptor and Raptor R technical specifications",
+   "url": "https://www.fromtheroad.ford.com/content/dam/fordmediasite/us/en/library/2024/specs/2024-Ford-Raptor-and-Raptor-R-Tech-Specs.pdf",
+   "pdf_page": 4,
+   "application": "Authority for Raptor R overall dimensions, tracks, wheelbase and clearance. Width without mirrors is 87.0 in, approximately 2210 mm."
+  },
+  {
+   "title": "Ford Pro 2024 Body Builders Layout Book: F-150",
+   "url": "https://api-prd.fordpro.com/pro/bbas/download/BBLB/661025b789417d202fd69d4f",
+   "pdf_pages": [
+    6,
+    7,
+    8
+   ],
+   "application": "Shared F-150 cab and pickup-box layout, dimensioned plan/side drawings and Crew 145/5.5-foot box table. Not an exact Raptor R exterior blueprint.",
+   "preview_images": [
+    "../model/references/ford-2024-f150-cab-layout.webp",
+    "../model/references/ford-2024-f150-box-layout.webp"
+   ]
+  },
+  {
+   "title": "Ford Mexico 2024 Lobo Raptor brochure",
+   "url": "https://www.ford.mx/content/dam/Ford/website-assets/latam/mx/nameplate/raptor-2018/lobo-raptor-2024/pdfs/ford-lobo-raptor-2024-catalogo-descargable.pdf",
+   "pdf_page": 14,
+   "application": "Dimensioned schematic for supporting longitudinal and box references. The generic outline and 2049 mm width do not establish the Raptor R outer surfaces; the US 2210 mm width is used."
+  },
+  {
+   "title": "2024 Raptor R reference photographs, 710HP, Bring a Trailer lot181611",
+   "url": "https://bringatrailer.com/listing/2024-ford-f-150-raptor-r-18/",
+   "application": "Exterior component shape, proportions and detail comparison."
+  },
+  {
+   "title": "2024 Rapid Red Raptor R with hard tonneau, Marshall Goldman stock W43603",
+   "url": "https://www.marshallgoldman.com/used-vehicle-2024-ford-f150-raptor-r-720hp-supercharged-v8-recaro-seats.-hard-tonneau-cover-c-5184/",
+   "application": "Closed three-panel tonneau and upper-body comparison."
+  }
+ ],
+ "limitations": [
+  "Ford's renders and the dimensioned drawings give silhouettes and panel lines, not surface CAD; surfaces between those constraints are modeled.",
+  "The model is 47 mm shorter than Ford's published 5908 mm overall length although both bumper faces sit within about 2 cm of Ford's calibrated side renders; the difference is unresolved.",
+  "Lamp internals, extractor vents, badges and fog modules follow photographs; they are visual approximations, not part measurements.",
+  "Interior and mechanical details remain illustrative.",
+  "Older front-panel and bedside repair images are labeled historical and are not before-and-after evidence for this revision."
+ ],
+ "previous_revision": {
   "revision": "2026-11-26-geometry-correction",
   "method": "Restore the intact verified base mesh before the whole-body B-spline silhouette deformation, then correct individual exterior components using the photographs. Preserve the Raptor R outer dimensions, wheel centers and articulation hierarchy.",
   "baseline": {
-    "repository": "BaiLiping/bailiping.github.io",
-    "commit": "007d1fc7ff1f939016f3ddcc9330afb3a02dfca5",
-    "path": "ford-f150-raptor-r/ford_f150_raptor_r.glb",
-    "reason": "Retains the previously verified cab/bed separation, flush tonneau, front-panel relationships and underbody clearance."
-  },
-  "replaced_revision": {
-    "commit": "de6e5da41f3feac4d546b904e845529ff814300d",
-    "deployed_glb_sha256": "79e25476fb315ccbcc098e402c9815b7934c3304d6e1377f5b4ef63aaefa95a6",
-    "measured_decoded_glb_sha256": "9c2bfdc48ed72c8d8bb47dc906f8819d2af0bc85b5b4583efb060fcb6ae8580f",
-    "audit_note": "The decoded audit mesh and deployed Draco-compressed file have different byte hashes. These before measurements were taken from the decoded form of that deployed model.",
-    "measured_mm": {
-      "length": 5907.98,
-      "wheelbase": 3693.2,
-      "width_without_mirrors": 2209.76,
-      "width_with_mirrors": 2438.12,
-      "height": 2047.28,
-      "front_track": 1887.0,
-      "rear_track": 1877.0,
-      "ground_clearance": 249.71
-    },
-    "assembly": {
-      "bedside_forward_of_rail_mm": -2.25,
-      "cab_wall_to_bedside_longitudinal_gap_mm": -20.14,
-      "front_to_middle_skid_surface_gap_mm": 0.0,
-      "tonneau_panel_tops_above_rail_mm": [
-        -43.33,
-        -19.23,
-        1.1
-      ]
-    },
-    "hood_lens_vertical_gap_range_mm": [
-      5.72,
-      41.35
-    ]
+   "repository": "BaiLiping/bailiping.github.io",
+   "commit": "007d1fc7ff1f939016f3ddcc9330afb3a02dfca5",
+   "path": "ford-f150-raptor-r/ford_f150_raptor_r.glb",
+   "reason": "Retains the previously verified cab/bed separation, flush tonneau, front-panel relationships and underbody clearance."
   },
   "corrections": [
-    "Remove the global silhouette deformation that introduced a cab/bed overlap and uneven closed tonneau panels.",
-    "Restore the intact cab-to-bed clearance, bed-cover alignment, hood-to-lens gap and underbody clearance.",
-    "Restore the intact hood and grille proportions; locally refine rear-door glazing, mirrors and door handles using reference photographs.",
-    "Correct tailgate lettering proportions and rear-lamp height, close the former upper lamp openings with painted body panels, and rebuild the stepped rear bumper with exhaust outlets below its wings.",
-    "Refine tire tread and sidewall appearance while preserving wheel centers and the established tire envelope."
-  ],
-  "verification": {
-    "measurements_file": "measurements.json",
-    "measurement_method": "Blender world-space mesh and articulation measurements. The current and previous records identify the measured files by SHA-256.",
-    "photo_cameras": "Estimated; not calibrated factory photography.",
-    "render_revision": "v7",
-    "new_silhouette_metrics": null,
-    "metric_note": "No new IoU, optimizer convergence result or pixel-error score was computed for this correction. The removed fit scores must not be interpreted as validation of the current mesh.",
-    "current_dimensions_mm": {
-      "length": 5907.98,
-      "wheelbase": 3693.2,
-      "width_without_mirrors": 2209.79,
-      "width_with_mirrors": 2438.12,
-      "height": 2047.27,
-      "front_track": 1887.0,
-      "rear_track": 1877.0,
-      "ground_clearance": 333.0
-    }
-  },
-  "sources": [
-    {
-      "title": "Ford 2024 F-150 Raptor and Raptor R technical specifications",
-      "url": "https://www.fromtheroad.ford.com/content/dam/fordmediasite/us/en/library/2024/specs/2024-Ford-Raptor-and-Raptor-R-Tech-Specs.pdf",
-      "pdf_page": 4,
-      "application": "Authority for Raptor R overall dimensions, tracks, wheelbase and clearance. Width without mirrors is 87.0 in, approximately 2210 mm."
-    },
-    {
-      "title": "Ford Pro 2024 Body Builders Layout Book: F-150",
-      "url": "https://api-prd.fordpro.com/pro/bbas/download/BBLB/661025b789417d202fd69d4f",
-      "pdf_pages": [
-        6,
-        7,
-        8
-      ],
-      "application": "Shared F-150 cab and pickup-box layout, dimensioned plan/side drawings and Crew 145/5.5-foot box table. Not an exact Raptor R exterior blueprint.",
-      "preview_images": [
-        "../model/references/ford-2024-f150-cab-layout.webp",
-        "../model/references/ford-2024-f150-box-layout.webp"
-      ]
-    },
-    {
-      "title": "Ford Mexico 2024 Lobo Raptor brochure",
-      "url": "https://www.ford.mx/content/dam/Ford/website-assets/latam/mx/nameplate/raptor-2018/lobo-raptor-2024/pdfs/ford-lobo-raptor-2024-catalogo-descargable.pdf",
-      "pdf_page": 14,
-      "application": "Dimensioned schematic for supporting longitudinal and box references. The generic outline and 2049 mm width do not establish the Raptor R outer surfaces; the US 2210 mm width is used."
-    },
-    {
-      "title": "2024 Raptor R reference photographs, 710HP, Bring a Trailer lot181611",
-      "url": "https://bringatrailer.com/listing/2024-ford-f-150-raptor-r-18/",
-      "application": "Exterior component shape, proportions and detail comparison."
-    },
-    {
-      "title": "2024 Rapid Red Raptor R with hard tonneau, Marshall Goldman stock W43603",
-      "url": "https://www.marshallgoldman.com/used-vehicle-2024-ford-f150-raptor-r-720hp-supercharged-v8-recaro-seats.-hard-tonneau-cover-c-5184/",
-      "application": "Closed three-panel tonneau and upper-body comparison."
-    }
-  ],
-  "limitations": [
-    "Dimensioned drawings cover shared F-150 geometry and do not supply exact Raptor R surface coordinates.",
-    "Local component dimensions derived from photographs are modeling estimates, not verified factory tolerances.",
-    "Interior and mechanical details remain illustrative.",
-    "Older front-panel and bedside repair images are labeled historical and are not before-and-after evidence for this revision."
+   "Remove the global silhouette deformation that introduced a cab/bed overlap and uneven closed tonneau panels.",
+   "Restore the intact cab-to-bed clearance, bed-cover alignment, hood-to-lens gap and underbody clearance.",
+   "Restore the intact hood and grille proportions; locally refine rear-door glazing, mirrors and door handles using reference photographs.",
+   "Correct tailgate lettering proportions and rear-lamp height, close the former upper lamp openings with painted body panels, and rebuild the stepped rear bumper with exhaust outlets below its wings.",
+   "Refine tire tread and sidewall appearance while preserving wheel centers and the established tire envelope."
   ]
+ }
 }

@@ -10,8 +10,364 @@
     "rear_track": 73.9,
     "ground_clearance": 13.1
   },
-  "comparison_note": "Current and previous are independently measured exported models. Historical measurements are retained under historical and do not describe the current served asset. The 5 mm panel gap is a modeling constraint, not a verified Ford manufacturing tolerance.",
+  "ford_angles_deg": {
+    "approach": 33.1,
+    "departure": 24.9,
+    "breakover": 24.4
+  },
+  "comparison_note": "Current and previous are independently measured exported models, identified by SHA-256. Historical measurements are retained under historical and do not describe the current served asset. Panel gaps are modeling constraints, not verified Ford manufacturing tolerances.",
   "current": {
+    "sha256": "84558e8e2d0af00621840e4f903ab54c8f7c60e5d5ce991e1ed68b3c579971b2",
+    "measured_mm": {
+      "length": 5861.45,
+      "wheelbase": 3693.2,
+      "width_without_mirrors": 2210.01,
+      "width_with_mirrors": 2440.0,
+      "height": 2048.51,
+      "front_track": 1887.0,
+      "rear_track": 1877.0,
+      "ground_clearance": 333.0
+    },
+    "geometry": {
+      "bedside_forward_of_rail_mm": 6.55,
+      "cab_wall_to_bedside_longitudinal_gap_mm": 13.08,
+      "front_to_middle_skid_surface_gap_mm": 0.0,
+      "tonneau_panel_tops_above_rail_mm": [
+        1.0,
+        1.0,
+        1.0
+      ]
+    },
+    "front_panel_fit": {
+      "painted_meshes_intersecting_each_lens": {
+        "L": [],
+        "R": []
+      },
+      "painted_meshes_intersecting_grille_frame": [],
+      "section_columns_mm": [
+        "distance_from_centerline",
+        "hood_bottom_minus_lens_top",
+        "hood_front_minus_lens_front"
+      ],
+      "sections_mm": {
+        "L": [
+          [
+            680,
+            12.99,
+            -16.33
+          ],
+          [
+            685,
+            12.99,
+            -16.13
+          ],
+          [
+            690,
+            12.79,
+            -15.81
+          ],
+          [
+            695,
+            12.86,
+            -15.46
+          ],
+          [
+            700,
+            12.93,
+            -15.03
+          ],
+          [
+            705,
+            12.99,
+            -14.63
+          ],
+          [
+            710,
+            12.99,
+            -14.47
+          ],
+          [
+            715,
+            12.99,
+            -14.26
+          ],
+          [
+            720,
+            12.99,
+            -14.01
+          ],
+          [
+            725,
+            12.79,
+            -13.7
+          ],
+          [
+            730,
+            12.86,
+            -13.34
+          ],
+          [
+            735,
+            12.93,
+            -12.86
+          ],
+          [
+            740,
+            12.99,
+            -12.36
+          ],
+          [
+            745,
+            12.99,
+            -11.76
+          ],
+          [
+            750,
+            12.99,
+            -11.16
+          ],
+          [
+            755,
+            12.99,
+            -10.47
+          ],
+          [
+            760,
+            12.99,
+            -9.75
+          ],
+          [
+            765,
+            12.99,
+            -8.98
+          ],
+          [
+            770,
+            12.99,
+            -8.16
+          ],
+          [
+            775,
+            12.99,
+            -7.24
+          ],
+          [
+            780,
+            19.46,
+            -5.81
+          ],
+          [
+            785,
+            21.24,
+            -4.36
+          ],
+          [
+            790,
+            22.1,
+            -2.8
+          ],
+          [
+            795,
+            22.95,
+            -1.21
+          ],
+          [
+            800,
+            25.48,
+            0.52
+          ],
+          [
+            805,
+            30.35,
+            2.31
+          ],
+          [
+            810,
+            31.12,
+            4.21
+          ],
+          [
+            815,
+            31.11,
+            6.45
+          ],
+          [
+            820,
+            27.1,
+            8.73
+          ]
+        ],
+        "R": [
+          [
+            680,
+            12.84,
+            -16.36
+          ],
+          [
+            685,
+            12.77,
+            -16.17
+          ],
+          [
+            690,
+            12.99,
+            -15.84
+          ],
+          [
+            695,
+            12.99,
+            -15.48
+          ],
+          [
+            700,
+            12.99,
+            -15.04
+          ],
+          [
+            705,
+            12.98,
+            -14.65
+          ],
+          [
+            710,
+            12.91,
+            -14.58
+          ],
+          [
+            715,
+            12.84,
+            -14.48
+          ],
+          [
+            720,
+            12.77,
+            -14.22
+          ],
+          [
+            725,
+            12.99,
+            -13.85
+          ],
+          [
+            730,
+            12.99,
+            -13.46
+          ],
+          [
+            735,
+            12.99,
+            -12.99
+          ],
+          [
+            740,
+            12.98,
+            -12.37
+          ],
+          [
+            745,
+            12.91,
+            -11.94
+          ],
+          [
+            750,
+            12.84,
+            -11.49
+          ],
+          [
+            755,
+            12.99,
+            -10.94
+          ],
+          [
+            760,
+            12.99,
+            -10.11
+          ],
+          [
+            765,
+            12.99,
+            -9.21
+          ],
+          [
+            770,
+            12.99,
+            -8.26
+          ],
+          [
+            775,
+            12.99,
+            -7.25
+          ],
+          [
+            780,
+            18.47,
+            -5.89
+          ],
+          [
+            785,
+            23.71,
+            -4.5
+          ],
+          [
+            790,
+            22.85,
+            -3.01
+          ],
+          [
+            795,
+            25.49,
+            -1.41
+          ],
+          [
+            800,
+            25.48,
+            0.39
+          ],
+          [
+            805,
+            26.25,
+            2.25
+          ],
+          [
+            810,
+            31.09,
+            4.21
+          ],
+          [
+            815,
+            30.29,
+            6.45
+          ],
+          [
+            820,
+            29.48,
+            8.73
+          ]
+        ]
+      },
+      "hood_nose_intersections_by_open_angle_degrees": {
+        "0": [],
+        "1": [],
+        "2": [],
+        "4": [],
+        "8": [],
+        "12": [],
+        "18": [],
+        "24": [],
+        "36": [],
+        "48": []
+      },
+      "front_fender_flare_crown_height_mm": 1256.04
+    },
+    "label": "Exterior rebuilt against Ford's calibrated F-150 Raptor 360-degree renders and Raptor R specifications",
+    "offroad_angles_deg": {
+      "approach": 33.33,
+      "departure": 24.87,
+      "breakover": 23.75,
+      "method": "model/exterior/check_offroad_angles.py: tangent lines from each tire (radius 0.4635 m) to the lowest body points; tires, wheels, brakes, cabin, door cards and suspension excluded"
+    }
+  },
+  "previous": {
     "sha256": "5941cd6de5d2a5fbdaedf896bcb8f81615c26b7ac734ed3dcb6df3c9ca35cc3a",
     "measured_mm": {
       "length": 5907.98,
@@ -354,7 +710,7 @@
       },
       "front_fender_flare_crown_height_mm": 1261.55
     },
-    "label": "Corrected model: restored structural geometry and localized exterior corrections",
+    "label": "Assembly-corrected model from commit a391343, replaced by the exterior rebuild",
     "artifact": "../ford_f150_raptor_r.glb",
     "file_size_bytes": 5194944,
     "integrity_checks": {
@@ -411,352 +767,13 @@
       "retained_tire_normal_strength": 0.07999999821186066
     },
     "measurement_method": "World-space vertex measurements on a losslessly Draco-decoded copy of the final served GLB. The SHA-256 identifies the compressed served asset.",
-    "intersection_check_scope": "Surveyed hood, painted front fender panels, headlight lenses, and grille frame, including hood motion at the listed angles. This is not a complete all-part collision or engineering validation."
-  },
-  "previous": {
-    "sha256": "79e25476fb315ccbcc098e402c9815b7934c3304d6e1377f5b4ef63aaefa95a6",
-    "measured_mm": {
-      "length": 5907.98,
-      "wheelbase": 3693.2,
-      "width_without_mirrors": 2209.76,
-      "width_with_mirrors": 2438.12,
-      "height": 2047.28,
-      "front_track": 1887.0,
-      "rear_track": 1877.0,
-      "ground_clearance": 249.71
-    },
-    "geometry": {
-      "bedside_forward_of_rail_mm": -2.25,
-      "cab_wall_to_bedside_longitudinal_gap_mm": -20.14,
-      "front_to_middle_skid_surface_gap_mm": 0.0,
-      "tonneau_panel_tops_above_rail_mm": [
-        -43.33,
-        -19.23,
-        1.1
-      ]
-    },
-    "front_panel_fit": {
-      "painted_meshes_intersecting_each_lens": {
-        "L": [],
-        "R": []
-      },
-      "painted_meshes_intersecting_grille_frame": [],
-      "section_columns_mm": [
-        "distance_from_centerline",
-        "hood_bottom_minus_lens_top",
-        "hood_front_minus_lens_front"
-      ],
-      "sections_mm": {
-        "L": [
-          [
-            680,
-            5.72,
-            -21.54
-          ],
-          [
-            685,
-            5.72,
-            -21.69
-          ],
-          [
-            690,
-            5.73,
-            -21.79
-          ],
-          [
-            695,
-            5.75,
-            -21.88
-          ],
-          [
-            700,
-            5.75,
-            -21.94
-          ],
-          [
-            705,
-            5.75,
-            -21.98
-          ],
-          [
-            710,
-            5.76,
-            -21.98
-          ],
-          [
-            715,
-            5.77,
-            -22.19
-          ],
-          [
-            720,
-            5.78,
-            -22.41
-          ],
-          [
-            725,
-            5.78,
-            -22.59
-          ],
-          [
-            730,
-            5.78,
-            -22.77
-          ],
-          [
-            735,
-            5.78,
-            -22.91
-          ],
-          [
-            740,
-            5.78,
-            -23.04
-          ],
-          [
-            745,
-            5.79,
-            -23.11
-          ],
-          [
-            750,
-            5.79,
-            -23.16
-          ],
-          [
-            755,
-            5.79,
-            -23.18
-          ],
-          [
-            760,
-            5.8,
-            -23.26
-          ],
-          [
-            765,
-            5.81,
-            -23.49
-          ],
-          [
-            770,
-            5.82,
-            -23.68
-          ],
-          [
-            775,
-            5.82,
-            -23.87
-          ],
-          [
-            780,
-            5.82,
-            -24.01
-          ],
-          [
-            785,
-            5.82,
-            -24.12
-          ],
-          [
-            790,
-            5.82,
-            -24.2
-          ],
-          [
-            795,
-            5.82,
-            -24.25
-          ],
-          [
-            800,
-            5.82,
-            -24.29
-          ],
-          [
-            805,
-            5.8,
-            -24.28
-          ],
-          [
-            810,
-            37.32,
-            -53.32
-          ],
-          [
-            815,
-            36.62,
-            -72.31
-          ],
-          [
-            820,
-            41.35,
-            -91.3
-          ]
-        ],
-        "R": [
-          [
-            680,
-            5.72,
-            -21.55
-          ],
-          [
-            685,
-            5.72,
-            -21.7
-          ],
-          [
-            690,
-            5.73,
-            -21.79
-          ],
-          [
-            695,
-            5.75,
-            -21.88
-          ],
-          [
-            700,
-            5.75,
-            -21.93
-          ],
-          [
-            705,
-            5.75,
-            -21.96
-          ],
-          [
-            710,
-            5.76,
-            -21.95
-          ],
-          [
-            715,
-            5.77,
-            -22.17
-          ],
-          [
-            720,
-            5.78,
-            -22.41
-          ],
-          [
-            725,
-            5.78,
-            -22.59
-          ],
-          [
-            730,
-            5.78,
-            -22.77
-          ],
-          [
-            735,
-            5.78,
-            -22.9
-          ],
-          [
-            740,
-            5.78,
-            -23.02
-          ],
-          [
-            745,
-            5.78,
-            -23.09
-          ],
-          [
-            750,
-            5.79,
-            -23.15
-          ],
-          [
-            755,
-            5.79,
-            -23.18
-          ],
-          [
-            760,
-            5.81,
-            -23.26
-          ],
-          [
-            765,
-            5.82,
-            -23.5
-          ],
-          [
-            770,
-            5.82,
-            -23.68
-          ],
-          [
-            775,
-            5.82,
-            -23.87
-          ],
-          [
-            780,
-            5.82,
-            -24.0
-          ],
-          [
-            785,
-            5.82,
-            -24.11
-          ],
-          [
-            790,
-            5.82,
-            -24.2
-          ],
-          [
-            795,
-            5.82,
-            -24.25
-          ],
-          [
-            800,
-            5.82,
-            -24.29
-          ],
-          [
-            805,
-            5.81,
-            -24.28
-          ],
-          [
-            810,
-            37.32,
-            -53.33
-          ],
-          [
-            815,
-            36.62,
-            -72.31
-          ],
-          [
-            820,
-            41.35,
-            -91.29
-          ]
-        ]
-      },
-      "hood_nose_intersections_by_open_angle_degrees": {
-        "0": [],
-        "1": [],
-        "2": [],
-        "4": [],
-        "8": [],
-        "12": [],
-        "18": [],
-        "24": [],
-        "36": [],
-        "48": []
-      },
-      "front_fender_flare_crown_height_mm": 1215.05
-    },
-    "label": "Previously deployed photo-fit deformation (commit de6e5da)"
+    "intersection_check_scope": "Surveyed hood, painted front fender panels, headlight lenses, and grille frame, including hood motion at the listed angles. This is not a complete all-part collision or engineering validation.",
+    "offroad_angles_deg": {
+      "approach": 32.56,
+      "departure": 26.17,
+      "breakover": 23.75,
+      "method": "model/exterior/check_offroad_angles.py: tangent lines from each tire (radius 0.4635 m) to the lowest body points; tires, wheels, brakes, cabin, door cards and suspension excluded"
+    }
   },
   "historical": {
     "verified_pre_deformation": {
@@ -1798,6 +1815,351 @@
         "front_fender_flare_crown_height_mm": 1152.48
       },
       "label": "Historical intermediate model before the front-panel revision"
+    },
+    "globally_warped_model_de6e5da": {
+      "sha256": "79e25476fb315ccbcc098e402c9815b7934c3304d6e1377f5b4ef63aaefa95a6",
+      "measured_mm": {
+        "length": 5907.98,
+        "wheelbase": 3693.2,
+        "width_without_mirrors": 2209.76,
+        "width_with_mirrors": 2438.12,
+        "height": 2047.28,
+        "front_track": 1887.0,
+        "rear_track": 1877.0,
+        "ground_clearance": 249.71
+      },
+      "geometry": {
+        "bedside_forward_of_rail_mm": -2.25,
+        "cab_wall_to_bedside_longitudinal_gap_mm": -20.14,
+        "front_to_middle_skid_surface_gap_mm": 0.0,
+        "tonneau_panel_tops_above_rail_mm": [
+          -43.33,
+          -19.23,
+          1.1
+        ]
+      },
+      "front_panel_fit": {
+        "painted_meshes_intersecting_each_lens": {
+          "L": [],
+          "R": []
+        },
+        "painted_meshes_intersecting_grille_frame": [],
+        "section_columns_mm": [
+          "distance_from_centerline",
+          "hood_bottom_minus_lens_top",
+          "hood_front_minus_lens_front"
+        ],
+        "sections_mm": {
+          "L": [
+            [
+              680,
+              5.72,
+              -21.54
+            ],
+            [
+              685,
+              5.72,
+              -21.69
+            ],
+            [
+              690,
+              5.73,
+              -21.79
+            ],
+            [
+              695,
+              5.75,
+              -21.88
+            ],
+            [
+              700,
+              5.75,
+              -21.94
+            ],
+            [
+              705,
+              5.75,
+              -21.98
+            ],
+            [
+              710,
+              5.76,
+              -21.98
+            ],
+            [
+              715,
+              5.77,
+              -22.19
+            ],
+            [
+              720,
+              5.78,
+              -22.41
+            ],
+            [
+              725,
+              5.78,
+              -22.59
+            ],
+            [
+              730,
+              5.78,
+              -22.77
+            ],
+            [
+              735,
+              5.78,
+              -22.91
+            ],
+            [
+              740,
+              5.78,
+              -23.04
+            ],
+            [
+              745,
+              5.79,
+              -23.11
+            ],
+            [
+              750,
+              5.79,
+              -23.16
+            ],
+            [
+              755,
+              5.79,
+              -23.18
+            ],
+            [
+              760,
+              5.8,
+              -23.26
+            ],
+            [
+              765,
+              5.81,
+              -23.49
+            ],
+            [
+              770,
+              5.82,
+              -23.68
+            ],
+            [
+              775,
+              5.82,
+              -23.87
+            ],
+            [
+              780,
+              5.82,
+              -24.01
+            ],
+            [
+              785,
+              5.82,
+              -24.12
+            ],
+            [
+              790,
+              5.82,
+              -24.2
+            ],
+            [
+              795,
+              5.82,
+              -24.25
+            ],
+            [
+              800,
+              5.82,
+              -24.29
+            ],
+            [
+              805,
+              5.8,
+              -24.28
+            ],
+            [
+              810,
+              37.32,
+              -53.32
+            ],
+            [
+              815,
+              36.62,
+              -72.31
+            ],
+            [
+              820,
+              41.35,
+              -91.3
+            ]
+          ],
+          "R": [
+            [
+              680,
+              5.72,
+              -21.55
+            ],
+            [
+              685,
+              5.72,
+              -21.7
+            ],
+            [
+              690,
+              5.73,
+              -21.79
+            ],
+            [
+              695,
+              5.75,
+              -21.88
+            ],
+            [
+              700,
+              5.75,
+              -21.93
+            ],
+            [
+              705,
+              5.75,
+              -21.96
+            ],
+            [
+              710,
+              5.76,
+              -21.95
+            ],
+            [
+              715,
+              5.77,
+              -22.17
+            ],
+            [
+              720,
+              5.78,
+              -22.41
+            ],
+            [
+              725,
+              5.78,
+              -22.59
+            ],
+            [
+              730,
+              5.78,
+              -22.77
+            ],
+            [
+              735,
+              5.78,
+              -22.9
+            ],
+            [
+              740,
+              5.78,
+              -23.02
+            ],
+            [
+              745,
+              5.78,
+              -23.09
+            ],
+            [
+              750,
+              5.79,
+              -23.15
+            ],
+            [
+              755,
+              5.79,
+              -23.18
+            ],
+            [
+              760,
+              5.81,
+              -23.26
+            ],
+            [
+              765,
+              5.82,
+              -23.5
+            ],
+            [
+              770,
+              5.82,
+              -23.68
+            ],
+            [
+              775,
+              5.82,
+              -23.87
+            ],
+            [
+              780,
+              5.82,
+              -24.0
+            ],
+            [
+              785,
+              5.82,
+              -24.11
+            ],
+            [
+              790,
+              5.82,
+              -24.2
+            ],
+            [
+              795,
+              5.82,
+              -24.25
+            ],
+            [
+              800,
+              5.82,
+              -24.29
+            ],
+            [
+              805,
+              5.81,
+              -24.28
+            ],
+            [
+              810,
+              37.32,
+              -53.33
+            ],
+            [
+              815,
+              36.62,
+              -72.31
+            ],
+            [
+              820,
+              41.35,
+              -91.29
+            ]
+          ]
+        },
+        "hood_nose_intersections_by_open_angle_degrees": {
+          "0": [],
+          "1": [],
+          "2": [],
+          "4": [],
+          "8": [],
+          "12": [],
+          "18": [],
+          "24": [],
+          "36": [],
+          "48": []
+        },
+        "front_fender_flare_crown_height_mm": 1215.05
+      },
+      "label": "Previously deployed photo-fit deformation (commit de6e5da)"
     }
   }
 }
