@@ -1345,19 +1345,10 @@
           state.targetCenter.copy(FOCUS_EXTERIOR);
           state.frontLens = 1;
           state.rearLens = state.cabinBlend = 0;
-        } else if (hashView === 'assembly') {
-          // Assembly remains an explicit inspection action.
-          startAssembly();
         } else {
-          // Show the complete truck immediately. Exploded inspection is opt-in.
-          selectedView = null;
-          state.explode = state.explodeTarget = 0;
-          state.theta = state.targetTheta = exteriorView.theta;
-          state.phi = state.targetPhi = exteriorView.phi;
-          state.radius = state.targetRadius = exteriorView.radius;
-          state.targetCenter.copy(FOCUS_EXTERIOR);
-          state.frontLens = 1;
-          state.rearLens = state.cabinBlend = 0;
+          // Like the other car pages, the truck opens exploded and assembles itself
+          // unless a link or Match in 3D asks for another view.
+          startAssembly();
         }
 
         // Reproducible comparison captures use a visible URL rather than injected
