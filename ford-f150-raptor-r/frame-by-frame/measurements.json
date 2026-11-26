@@ -2161,5 +2161,194 @@
       },
       "label": "Previously deployed photo-fit deformation (commit de6e5da)"
     }
+  },
+  "exterior_comparison": {
+    "reference": "Ford.com F-150 Raptor 360-degree view, Ruby Red Metallic Tinted Clearcoat, wheel 64b (2160x926 frames, numbered 01-36)",
+    "url": "https://www.ford.com/trucks/f150/models/raptor/",
+    "full_frames": [
+      "04",
+      "07",
+      "10",
+      "13",
+      "16",
+      "19",
+      "22",
+      "25",
+      "28",
+      "31",
+      "34",
+      "01"
+    ],
+    "registration": {
+      "04": {
+        "silhouette_iou_calibrated": 0.9651,
+        "silhouette_iou_registered": 0.9736,
+        "rotation_mrad": [
+          -0.944,
+          0.014,
+          -0.292
+        ],
+        "camera_shift_cm": [
+          6.12,
+          -0.0,
+          -0.85
+        ]
+      },
+      "07": {
+        "silhouette_iou_calibrated": 0.9452,
+        "silhouette_iou_registered": 0.9759,
+        "rotation_mrad": [
+          1.138,
+          -14.11,
+          5.025
+        ],
+        "camera_shift_cm": [
+          71.28,
+          13.55,
+          -1.3
+        ]
+      },
+      "10": {
+        "silhouette_iou_calibrated": 0.9594,
+        "silhouette_iou_registered": 0.9831,
+        "rotation_mrad": [
+          -0.839,
+          -5.816,
+          2.666
+        ],
+        "camera_shift_cm": [
+          26.61,
+          38.51,
+          -3.28
+        ]
+      },
+      "13": {
+        "silhouette_iou_calibrated": 0.967,
+        "silhouette_iou_registered": 0.9794,
+        "rotation_mrad": [
+          -0.796,
+          -0.286,
+          -0.533
+        ],
+        "camera_shift_cm": [
+          0.03,
+          -0.03,
+          0.06
+        ]
+      },
+      "16": {
+        "silhouette_iou_calibrated": 0.9612,
+        "silhouette_iou_registered": 0.9779,
+        "rotation_mrad": [
+          0.286,
+          -7.581,
+          -1.826
+        ],
+        "camera_shift_cm": [
+          -3.94,
+          35.3,
+          -0.11
+        ]
+      },
+      "19": {
+        "silhouette_iou_calibrated": 0.9384,
+        "silhouette_iou_registered": 0.9497,
+        "rotation_mrad": [
+          0.025,
+          -0.23,
+          20.526
+        ],
+        "camera_shift_cm": [
+          4.66,
+          1.91,
+          0.05
+        ]
+      },
+      "22": {
+        "silhouette_iou_calibrated": 0.9611,
+        "silhouette_iou_registered": 0.9681,
+        "rotation_mrad": [
+          0.819,
+          0.187,
+          -0.12
+        ],
+        "camera_shift_cm": [
+          -1.8,
+          0.1,
+          0.0
+        ]
+      },
+      "25": {
+        "silhouette_iou_calibrated": 0.9338,
+        "silhouette_iou_registered": 0.9492,
+        "rotation_mrad": [
+          1.0,
+          0.876,
+          -19.528
+        ],
+        "camera_shift_cm": [
+          4.16,
+          -0.94,
+          0.5
+        ]
+      },
+      "28": {
+        "silhouette_iou_calibrated": 0.9593,
+        "silhouette_iou_registered": 0.9788,
+        "rotation_mrad": [
+          0.668,
+          1.469,
+          -0.537
+        ],
+        "camera_shift_cm": [
+          -15.68,
+          -32.73,
+          -0.51
+        ]
+      },
+      "31": {
+        "silhouette_iou_calibrated": 0.9716,
+        "silhouette_iou_registered": 0.9771,
+        "rotation_mrad": [
+          -0.283,
+          0.985,
+          0.18
+        ],
+        "camera_shift_cm": [
+          0.02,
+          0.18,
+          -0.01
+        ]
+      },
+      "34": {
+        "silhouette_iou_calibrated": 0.9614,
+        "silhouette_iou_registered": 0.983,
+        "rotation_mrad": [
+          0.883,
+          -4.983,
+          -2.563
+        ],
+        "camera_shift_cm": [
+          11.02,
+          -40.91,
+          0.09
+        ]
+      },
+      "01": {
+        "silhouette_iou_calibrated": 0.9486,
+        "silhouette_iou_registered": 0.9767,
+        "rotation_mrad": [
+          1.889,
+          18.573,
+          -3.849
+        ],
+        "camera_shift_cm": [
+          66.26,
+          -3.99,
+          -0.06
+        ]
+      }
+    },
+    "note": "Silhouette agreement between the measured current model and Ford's renders at the comparison cameras (body above the tire tops)."
   }
 }

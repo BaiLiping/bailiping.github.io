@@ -50,8 +50,8 @@
   "measurements_file": "measurements.json",
   "measurement_method": "Blender world-space mesh and articulation measurements (measure_model.py); off-road angles from model/exterior/check_offroad_angles.py. Records identify the measured files by SHA-256.",
   "ford_render_cameras": "Calibrated: shared intrinsics with per-frame poses, mirror-symmetric rig, refined by silhouette alignment. Stored in model/exterior/ford360_cameras.json.",
-  "photo_cameras": "The Bring a Trailer comparison cameras remain estimated, not calibrated.",
-  "render_revision": "v8",
+  "photo_cameras": "Exterior comparisons use Ford's 360-degree renders with calibrated, per-frame registered cameras (see exterior_comparison). Interior and powertrain photographs keep estimated cameras.",
+  "render_revision": "v9",
   "ford_side_render_extent_check_mm": {
    "note": "Range of model x-extent minus Ford silhouette x-extent (mm) over bumper heights in side frames 13 and 31, converted at the centre plane. At the front a positive value means the model reaches further forward; at the rear a negative value means it reaches further back.",
    "front_z_0.56_to_0.65": [
@@ -83,7 +83,7 @@
   {
    "title": "Ford F-150 Raptor 360-degree view (Ford.com)",
    "url": "https://www.ford.com/trucks/f150/models/raptor/",
-   "application": "36 official studio renders per colour. Calibrated cameras give metric silhouettes and panel lines for the body, glass, lamps and bumpers. The renders show the current Raptor body, which shares its panels with the 2024 Raptor R."
+   "application": "36 official studio renders per colour. Calibrated cameras give metric silhouettes and panel lines for the body, glass, lamps and bumpers. The renders show the current Raptor body, which shares its panels with the 2024 Raptor R. The frame-by-frame exterior comparisons and the viewer gallery use these renders."
   },
   {
    "title": "Ford 2024 F-150 Raptor and Raptor R technical specifications",
@@ -114,12 +114,7 @@
   {
    "title": "2024 Raptor R reference photographs, 710HP, Bring a Trailer lot181611",
    "url": "https://bringatrailer.com/listing/2024-ford-f-150-raptor-r-18/",
-   "application": "Exterior component shape, proportions and detail comparison."
-  },
-  {
-   "title": "2024 Rapid Red Raptor R with hard tonneau, Marshall Goldman stock W43603",
-   "url": "https://www.marshallgoldman.com/used-vehicle-2024-ford-f150-raptor-r-720hp-supercharged-v8-recaro-seats.-hard-tonneau-cover-c-5184/",
-   "application": "Closed three-panel tonneau and upper-body comparison."
+   "application": "Interior and powertrain comparison photographs; close-up references for exterior details during the rebuild. No longer used for exterior comparisons."
   }
  ],
  "limitations": [
@@ -127,7 +122,7 @@
   "The model is 47 mm shorter than Ford's published 5908 mm overall length although both bumper faces sit within about 2 cm of Ford's calibrated side renders; the difference is unresolved.",
   "Lamp internals, extractor vents, badges and fog modules follow photographs; they are visual approximations, not part measurements.",
   "Interior and mechanical details remain illustrative.",
-  "Older front-panel and bedside repair images are labeled historical and are not before-and-after evidence for this revision."
+  "Ford's renders show an uncovered bed and a whip antenna; the model keeps its closed hard tonneau and has no antenna."
  ],
  "previous_revision": {
   "revision": "2026-11-26-geometry-correction",
@@ -145,5 +140,206 @@
    "Correct tailgate lettering proportions and rear-lamp height, close the former upper lamp openings with painted body panels, and rebuild the stepped rear bumper with exhaust outlets below its wings.",
    "Refine tire tread and sidewall appearance while preserving wheel centers and the established tire envelope."
   ]
+ },
+ "exterior_comparison": {
+  "reference": "Ford.com F-150 Raptor 360-degree view, Ruby Red Metallic Tinted Clearcoat, wheel 64b (2160x926 frames, numbered 01-36)",
+  "url": "https://www.ford.com/trucks/f150/models/raptor/",
+  "full_frames": [
+   "04",
+   "07",
+   "10",
+   "13",
+   "16",
+   "19",
+   "22",
+   "25",
+   "28",
+   "31",
+   "34",
+   "01"
+  ],
+  "detail_views": {
+   "front-grille-and-tow-hooks": "frame 04",
+   "headlight-and-amber-drl": "frame 07",
+   "power-dome-hood-extractor": "frame 04",
+   "wheel-and-37-ko2-tire": "frame 13",
+   "taillamp-and-bedside-graphic": "frame 19"
+  },
+  "fit_views": {
+   "front-fit-hood": "frame 07",
+   "front-fit-face": "frame 04",
+   "front-fit-side": "frame 13"
+  },
+  "camera_method": "Calibrated cameras (model/exterior/ford360_cameras.json) refined per frame by a rigid 6-DOF registration that maximises silhouette IoU of the published model's body against Ford's mask above the tire tops. Intrinsics are unchanged. Each frame is resampled exactly (same camera centre) to a centred pinhole view, and the model is rendered in the site viewer from the matching pose. Full frames and details are aligned on the body; the wheel detail is aligned on the wheel (Ford renders the body 62 mm lower on its wheels).",
+  "registration": {
+   "04": {
+    "silhouette_iou_calibrated": 0.9651,
+    "silhouette_iou_registered": 0.9736,
+    "rotation_mrad": [
+     -0.944,
+     0.014,
+     -0.292
+    ],
+    "camera_shift_cm": [
+     6.12,
+     -0.0,
+     -0.85
+    ]
+   },
+   "07": {
+    "silhouette_iou_calibrated": 0.9452,
+    "silhouette_iou_registered": 0.9759,
+    "rotation_mrad": [
+     1.138,
+     -14.11,
+     5.025
+    ],
+    "camera_shift_cm": [
+     71.28,
+     13.55,
+     -1.3
+    ]
+   },
+   "10": {
+    "silhouette_iou_calibrated": 0.9594,
+    "silhouette_iou_registered": 0.9831,
+    "rotation_mrad": [
+     -0.839,
+     -5.816,
+     2.666
+    ],
+    "camera_shift_cm": [
+     26.61,
+     38.51,
+     -3.28
+    ]
+   },
+   "13": {
+    "silhouette_iou_calibrated": 0.967,
+    "silhouette_iou_registered": 0.9794,
+    "rotation_mrad": [
+     -0.796,
+     -0.286,
+     -0.533
+    ],
+    "camera_shift_cm": [
+     0.03,
+     -0.03,
+     0.06
+    ]
+   },
+   "16": {
+    "silhouette_iou_calibrated": 0.9612,
+    "silhouette_iou_registered": 0.9779,
+    "rotation_mrad": [
+     0.286,
+     -7.581,
+     -1.826
+    ],
+    "camera_shift_cm": [
+     -3.94,
+     35.3,
+     -0.11
+    ]
+   },
+   "19": {
+    "silhouette_iou_calibrated": 0.9384,
+    "silhouette_iou_registered": 0.9497,
+    "rotation_mrad": [
+     0.025,
+     -0.23,
+     20.526
+    ],
+    "camera_shift_cm": [
+     4.66,
+     1.91,
+     0.05
+    ]
+   },
+   "22": {
+    "silhouette_iou_calibrated": 0.9611,
+    "silhouette_iou_registered": 0.9681,
+    "rotation_mrad": [
+     0.819,
+     0.187,
+     -0.12
+    ],
+    "camera_shift_cm": [
+     -1.8,
+     0.1,
+     0.0
+    ]
+   },
+   "25": {
+    "silhouette_iou_calibrated": 0.9338,
+    "silhouette_iou_registered": 0.9492,
+    "rotation_mrad": [
+     1.0,
+     0.876,
+     -19.528
+    ],
+    "camera_shift_cm": [
+     4.16,
+     -0.94,
+     0.5
+    ]
+   },
+   "28": {
+    "silhouette_iou_calibrated": 0.9593,
+    "silhouette_iou_registered": 0.9788,
+    "rotation_mrad": [
+     0.668,
+     1.469,
+     -0.537
+    ],
+    "camera_shift_cm": [
+     -15.68,
+     -32.73,
+     -0.51
+    ]
+   },
+   "31": {
+    "silhouette_iou_calibrated": 0.9716,
+    "silhouette_iou_registered": 0.9771,
+    "rotation_mrad": [
+     -0.283,
+     0.985,
+     0.18
+    ],
+    "camera_shift_cm": [
+     0.02,
+     0.18,
+     -0.01
+    ]
+   },
+   "34": {
+    "silhouette_iou_calibrated": 0.9614,
+    "silhouette_iou_registered": 0.983,
+    "rotation_mrad": [
+     0.883,
+     -4.983,
+     -2.563
+    ],
+    "camera_shift_cm": [
+     11.02,
+     -40.91,
+     0.09
+    ]
+   },
+   "01": {
+    "silhouette_iou_calibrated": 0.9486,
+    "silhouette_iou_registered": 0.9767,
+    "rotation_mrad": [
+     1.889,
+     18.573,
+     -3.849
+    ],
+    "camera_shift_cm": [
+     66.26,
+     -3.99,
+     -0.06
+    ]
+   }
+  }
  }
 }

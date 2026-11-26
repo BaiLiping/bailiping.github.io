@@ -26,7 +26,7 @@ function showAngle() {
   if (!option) return;
   error.hidden = true;
   photo.hidden = false;
-  photo.alt = option.label + ' on a ' + option.dataset.finish + ' 2024 Ford F-150 Raptor R';
+  photo.alt = option.dataset.alt || option.label + ' on a ' + option.dataset.finish + ' 2024 Ford F-150 Raptor R';
   document.getElementById('photo-credit').textContent = option.dataset.credit;
   document.getElementById('photo-source').href = option.dataset.source;
   error.querySelector('a').href = option.dataset.source;
@@ -68,7 +68,7 @@ async function loadAngles() {
     return;
   }
   try {
-    sourcePromise ??= fetch('./raptor-views.json?v=5').then(response => {
+    sourcePromise ??= fetch('./raptor-views.json?v=6').then(response => {
       if (!response.ok) throw new Error('Camera list unavailable');
       return response.json();
     });
@@ -87,6 +87,7 @@ async function loadAngles() {
         option.dataset.original = view.original || view.image;
         option.dataset.photoView = view.photoView;
         option.dataset.preset = view.preset || '';
+        option.dataset.alt = view.alt || '';
         group.append(option);
       }
       angles.append(group);

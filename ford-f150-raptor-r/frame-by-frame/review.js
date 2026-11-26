@@ -19,9 +19,9 @@ function followReference() {
   if (detail instanceof HTMLDetailsElement) {
     detail.open = true;
   }
-  if (['#photo-flat-tonneau-cover', '#photo-headlight-and-amber-drl'].includes(location.hash)) showLayout('pairs');
+  if (['#photo-headlight-and-amber-drl'].includes(location.hash)) showLayout('pairs');
 }
-showLayout(['#photo-flat-tonneau-cover', '#photo-headlight-and-amber-drl'].includes(location.hash) ? 'pairs' : 'shape');
+showLayout(['#photo-headlight-and-amber-drl'].includes(location.hash) ? 'pairs' : 'shape');
 followReference();
 window.addEventListener('hashchange', followReference);
 display.addEventListener('click', event => {
