@@ -9,7 +9,7 @@
     const params = new URLSearchParams(location.search);
     if (params.get('capture') === '1' || params.get('hud') === '0') document.documentElement.classList.add('hide-hud');
     const overrideModel = params.get('model');
-    const modelFile = overrideModel || './honda_civic_type_r.glb?v=1d6b7bd991';
+    const modelFile = overrideModel || './honda_civic_type_r.glb?v=cc89ad215c';
     const preload = document.createElement('link');
     preload.rel = 'preload';
     preload.as = 'fetch';
@@ -22,7 +22,7 @@
   <title>2020 Honda Civic Type R (FK8) — Boost Blue</title>
   <meta name="description" content="Explore the 2020 Honda Civic Type R (FK8) in Boost Blue. Rotate the 3D model, open the rear hatch and compare its wing, C-shaped taillights and triple exhaust with photographs." />
   <link rel="stylesheet" href="./studio.css?v=f545ff0d26">
-  <script type="module" src="./studio.js?v=1a2b8672bf"></script>
+  <script type="module" src="./studio.js?v=92908b4606"></script>
 </head>
 <body>
   <noscript><p style="position:fixed;inset:0;z-index:30;background:#eceeef;padding:2em">The interactive Honda Civic Type R (FK8) viewer requires JavaScript. <a href="https://bringatrailer.com/listing/2021-honda-civic-type-r-touring-5/">View the reference listing</a> or <a href="./frame-by-frame/">open the frame-by-frame photo comparison</a>.</p></noscript>
@@ -99,7 +99,7 @@
           </div>
           <p id="info">2020 Honda Civic Type R (FK8) · Boost Blue (B-637P)</p>
           <p class="quick-links">
-            <a href="#photo-fk8-front-high">Closed hood</a>
+            <a href="#photo-fk8-official-07">Front three-quarter</a>
             <a href="#rear">Rear three-quarter</a>
             <a href="#engine">Engine bay</a>
             <a href="#drivetrain">6MT gearing &amp; K20C1</a>
@@ -115,6 +115,7 @@
           <details class="notes"><summary>Model references</summary><div class="sources" id="model-sources">
             <p>The model follows the 2020 U.S. Civic Type R Touring in Boost Blue, with the white Honda display plate from its Chicago debut. Honda’s Japanese photographs supply detail on the shared wheels and seats. The 2021 auction cars show the same facelift in everyday light. The cabin trim and mechanical cutaways are approximate.</p>
             <a href="#civic-views">Browse the FK8 reference photos</a> · <a href="./frame-by-frame/">Compare photos and renders</a><br>
+            <a href="https://web.archive.org/web/20200924143435/https://automobiles.honda.com/2020/civic-type-r">American Honda · official 2020 Civic Type R 360° colour selector (Internet Archive)</a><br>
             <a href="https://hondanews.com/en-US/honda-automobiles/releases/release-9349200e0db74014eece042d0a00252c-2020-honda-civic-type-r-press-kit">American Honda · 2020 Civic Type R press gallery</a><br>
             <a href="https://www.civicx.com/forum/threads/live-pics-2020-civic-type-r-in-boost-blue-from-cas.45895/">CivicX · Chicago Auto Show close-ups</a><br>
             <a href="https://global.honda/jp/news/2020/4201008-civic/image_download.html">Honda Japan · brake, seat and body photographs</a><br>
@@ -133,7 +134,7 @@
     import { createStudioFloor } from './studio-floor.js';
     import { applyStudioVisibility } from './studio-visibility.js';
     import { createPlanarMirror } from './mirror-reflection.js';
-    import { DEFAULT_CAMERAS, orbitRadius, normalizeCameraPose, buildReferenceViews, loadCivicViews } from './civic-views.js?v=a063f72bce';
+    import { DEFAULT_CAMERAS, orbitRadius, normalizeCameraPose, buildReferenceViews, loadCivicViews } from './civic-views.js?v=eb0fff5d0b';
 
     const { GLTFLoader, DRACOLoader } = THREE;
     const MODEL_URL = modelFile;
