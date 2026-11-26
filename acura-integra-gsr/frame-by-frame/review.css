@@ -1,0 +1,22 @@
+@import url('../../honda-civic-type-r/frame-by-frame/review.css');
+header.site nav { flex-wrap:wrap; }
+.method { margin:12px 0 0; max-width:81ch; color:#485056; }
+.method summary { width:fit-content; cursor:pointer; text-decoration:underline; text-underline-offset:.2em; }
+.method p { margin-top:8px; }
+.fit { color:#495057; font-size:.88rem; margin-top:5px; }
+.earlier { display:none; }
+.shape-mode .earlier { display:inline-flex; align-items:center; gap:.45em; font-size:.83rem; margin-top:8px; }
+.shape-mode .early-trace { display:none; }
+.shape-mode article:has(.earlier input:checked) .early-trace { display:block; }
+.earlier input { accent-color:#a26016; }
+@media(max-width:560px) {
+  header.site { align-items:flex-start; padding-top:13px; }
+  header.site nav { justify-content:flex-end; gap:5px 12px; }
+  .index { position:static; }
+}
+.jump { display:flex; align-items:center; flex-wrap:wrap; gap:6px 10px; margin-top:18px; font-size:.9rem; }
+.jump select { font:inherit; max-width:100%; padding:.3em .5em; }
+@media(max-width:460px) {
+  header.site { display:grid; gap:5px; }
+  header.site nav { justify-content:flex-start; gap:15px; }
+}

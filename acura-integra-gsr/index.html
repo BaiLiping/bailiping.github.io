@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>2000 Acura Integra GS-R (DC2) — Flamenco Black Pearl</title>
+  <meta name="description" content="Explore the black 2000 Acura Integra GS-R Sports Coupe in 3D. Open the hood, doors and liftback, then compare the DC2 with photographs from the same camera angles.">
+  <link rel="canonical" href="https://bailiping.com/acura-integra-gsr/">
+  <link rel="icon" href="/favicon.ico">
+  <link rel="stylesheet" href="../honda-civic-type-r/studio.css">
+  <link rel="stylesheet" href="./integra.css">
+  <script type="module" src="./studio.js"></script>
+</head>
+<body>
+  <header id="studio-header">
+    <div class="identity"><h1>2000 Acura Integra GS-R</h1><span class="finish"><i aria-hidden="true"></i>Flamenco Black Pearl</span></div>
+    <nav class="mode-switch" aria-label="Views"><a id="model-link" href="#model" aria-current="page">3D model</a><a id="gallery-link" href="#integra-views">Integra views</a><a href="./frame-by-frame/">Compare photos</a></nav>
+  </header>
+  <main>
+    <div id="room"><div id="image-rect"><canvas id="stage" tabindex="0" aria-label="3D Acura Integra. Use arrow keys to orbit, plus and minus to zoom."></canvas><img id="overlay" hidden alt="Reference photograph over the matched 3D view" referrerpolicy="no-referrer"></div></div>
+    <div id="loader"><p id="load-status" role="status">Loading the Integra…</p></div>
+    <noscript><p class="fallback">Explore the <a href="./frame-by-frame/">photograph and model comparisons</a>.</p></noscript>
+    <div id="photo-tools-3d" hidden><button id="overlay-toggle" type="button" aria-pressed="false">Overlay photo</button><input id="overlay-opacity" hidden aria-label="Photo opacity" type="range" min="0" max="100" value="50"><span id="match-label"></span></div>
+    <div id="bar" inert>
+      <p id="drag-hint"><span class="mouse">Drag to orbit · Scroll to zoom</span><span class="touch">Drag to orbit · Pinch to zoom</span></p>
+      <div id="tools" role="group" aria-label="Model controls">
+        <button type="button" data-panel="hood" aria-pressed="false">Hood</button>
+        <button type="button" data-panel="doors" aria-pressed="false">Doors</button>
+        <button type="button" data-panel="hatch" aria-pressed="false">Liftback</button>
+        <details id="more"><summary>Controls</summary><section class="controls-panel" aria-label="Additional model controls">
+          <h2>Inspect the Integra</h2>
+          <div class="panel-buttons"><button type="button" data-view="rear">Rear three-quarter</button><button type="button" data-view="cabin">Cabin view</button><button type="button" data-view="engine">Engine bay</button><button type="button" data-view="wheel">GS-R wheel</button></div>
+          <p id="info">U.S. three-door Sports Coupe · 1.8 L B18C1 DOHC VTEC · 170 hp · Five-speed manual · 2,570 mm wheelbase</p>
+          <details class="notes"><summary>Model references</summary><div class="sources"><p>The 15-inch six-spoke wheels, low rear spoiler, Ebony leather seats and red cam cover follow the car in the reference gallery. The engine bay and cabin are simplified reconstructions.</p><a href="https://bringatrailer.com/listing/2000-acura-integra-36/">rmwcali · Bring a Trailer lot 263,334</a><br><a href="https://acuranews.com/en-US/releases/release-516d49d9d1f53ced13279f004c34c93b-2000-acura-integra-specifications">Acura · 2000 Integra specifications</a></div></details>
+          <p class="return"><a href="/#cars">Back to Cars</a></p>
+        </section></details>
+        <button id="reset" type="button">Reset</button>
+      </div>
+    </div>
+    <section id="photo-room" aria-label="Reference photographs" hidden>
+      <figure><img id="photo" width="2048" height="1365" alt="" referrerpolicy="no-referrer"><p id="photo-error" hidden role="status">This photograph could not load. Open the full-size photograph below.</p></figure>
+      <div id="photo-footer">
+        <div class="photo-tools"><button id="previous-view" type="button" aria-label="Previous photograph">‹</button><select id="photo-angle" aria-label="Reference photograph"></select><button id="next-view" type="button" aria-label="Next photograph">›</button><button id="match-view" type="button">Match in 3D</button></div>
+        <p><span id="frame-count"></span> · <a href="https://bringatrailer.com/listing/2000-acura-integra-36/">rmwcali / Bring a Trailer</a> · <a id="full-photo" href="https://bringatrailer.com/listing/2000-acura-integra-36/">Full-size photograph</a></p>
+      </div>
+    </section>
+  </main>
+</body>
+</html>
