@@ -9,7 +9,7 @@
     const params = new URLSearchParams(location.search);
     if (params.get('capture') === '1' || params.get('hud') === '0') document.documentElement.classList.add('hide-hud');
     const overrideModel = params.get('model');
-    const modelFile = overrideModel || './honda_civic_type_r.glb?v=3be67c321a';
+    const modelFile = overrideModel || './honda_civic_type_r.glb?v=9a923457e8';
     const preload = document.createElement('link');
     preload.rel = 'preload';
     preload.as = 'fetch';
@@ -22,7 +22,7 @@
   <title>2020 Honda Civic Type R (FK8) — Boost Blue</title>
   <meta name="description" content="Explore the 2020 Honda Civic Type R (FK8) in Boost Blue. Rotate the 3D model, open the rear hatch and compare its wing, C-shaped taillights and triple exhaust with photographs." />
   <link rel="stylesheet" href="./studio.css?v=f545ff0d26">
-  <script type="module" src="./studio.js?v=a03ff5601f"></script>
+  <script type="module" src="./studio.js?v=a5f84e847b"></script>
 </head>
 <body>
   <noscript><p style="position:fixed;inset:0;z-index:30;background:#eceeef;padding:2em">The interactive Honda Civic Type R (FK8) viewer requires JavaScript. <a href="https://bringatrailer.com/listing/2021-honda-civic-type-r-touring-5/">View the reference listing</a> or <a href="./frame-by-frame/">open the frame-by-frame photo comparison</a>.</p></noscript>
@@ -36,8 +36,8 @@
   </header>
   <section id="photo-room" aria-label="Boost Blue Honda Civic Type R (FK8) reference photographs" hidden>
     <figure>
-      <img id="photo" width="1280" height="853" alt="">
-      <p id="photo-error" role="status" hidden>This view is unavailable. <a class="config-link" id="photo-source-fallback" href="https://bringatrailer.com/listing/2021-honda-civic-type-r-touring-5/">View the source listing</a></p>
+      <img id="photo" width="1280" height="853" alt="" referrerpolicy="no-referrer">
+      <p id="photo-error" role="status" hidden>This photograph is unavailable. <a class="config-link" id="photo-source-fallback" href="https://hondanews.com/en-US/honda-automobiles/releases/release-9349200e0db74014eece042d0a00252c-2020-honda-civic-type-r-press-kit">Open the photo source</a></p>
     </figure>
     <div id="photo-footer">
       <div class="photo-tools">
@@ -46,7 +46,7 @@
         <button id="next-view" type="button" aria-label="Next view">›</button>
         <button id="match-view" type="button" disabled>Match in 3D</button>
       </div>
-      <p><span id="photo-credit">Bring a Trailer</span> · <a id="photo-source" href="https://bringatrailer.com/listing/2021-honda-civic-type-r-touring-5/">View listing</a> · <a id="full-photo" href="#" hidden>Full-size photo</a></p>
+      <p><span id="photo-credit">American Honda</span> · <a id="photo-source" href="https://hondanews.com/en-US/honda-automobiles/releases/release-9349200e0db74014eece042d0a00252c-2020-honda-civic-type-r-press-kit">Photo source</a> · <a id="full-photo" href="#" hidden>Full-size photo</a></p>
     </div>
   </section>
   <div id="photo-tools-3d">
@@ -113,8 +113,11 @@
             <p>I cabin · E explode · X x-ray · R reset · S steer · W spin · Space rev · M sound · H hide controls</p>
           </details>
           <details class="notes"><summary>Model references</summary><div class="sources" id="model-sources">
-            <p>The model represents the 2020 U.S. Civic Type R Touring in Boost Blue. The reference galleries show 2021 cars with the same facelifted FK8 bodywork. The engine and gearbox cutaways show the working layout with simplified internal parts. The gear readout gives Honda’s published ratios.</p>
+            <p>The model follows the 2020 U.S. Civic Type R Touring in Boost Blue, with the white Honda display plate from its Chicago debut. Honda’s Japanese photographs supply detail on the shared wheels and seats. The 2021 auction cars show the same facelift in everyday light. The cabin trim and mechanical cutaways are approximate.</p>
             <a href="#civic-views">Browse the FK8 reference photos</a> · <a href="./frame-by-frame/">Compare photos and renders</a><br>
+            <a href="https://hondanews.com/en-US/honda-automobiles/releases/release-9349200e0db74014eece042d0a00252c-2020-honda-civic-type-r-press-kit">American Honda · 2020 Civic Type R press gallery</a><br>
+            <a href="https://www.civicx.com/forum/threads/live-pics-2020-civic-type-r-in-boost-blue-from-cas.45895/">CivicX · Chicago Auto Show close-ups</a><br>
+            <a href="https://global.honda/jp/news/2020/4201008-civic/image_download.html">Honda Japan · brake, seat and body photographs</a><br>
             <a href="https://bringatrailer.com/listing/2021-honda-civic-type-r-touring-5/">Boost Blue exterior and detail photographs · Bring a Trailer lot 163,254</a><br>
             <a href="https://bringatrailer.com/listing/2021-honda-civic-type-r-5/">Additional rear, hatch and cabin photographs · Bring a Trailer lot 111,995</a><br>
             <a href="https://hondanews.com/en-US/honda-automobiles/releases/release-9349200e0db74014eece042d0a003399-2020-civic-type-r-specifications-features">2020 Civic Type R specifications · Honda</a><br>
@@ -130,13 +133,16 @@
     import { createStudioFloor } from './studio-floor.js';
     import { applyStudioVisibility } from './studio-visibility.js';
     import { createPlanarMirror } from './mirror-reflection.js';
-    import { DEFAULT_CAMERAS, orbitRadius, normalizeCameraPose, buildReferenceViews, loadCivicViews } from './civic-views.js?v=80e5db28a0';
+    import { DEFAULT_CAMERAS, orbitRadius, normalizeCameraPose, buildReferenceViews, loadCivicViews } from './civic-views.js?v=c3d3a8cd3e';
 
     const { GLTFLoader, DRACOLoader } = THREE;
     const MODEL_URL = modelFile;
     const urlParams = new URLSearchParams(location.search);
     const captureMode = urlParams.get('capture') === '1';
     let fullViewportCapture = captureMode;
+    const reflectionPhoto = new Image();
+    reflectionPhoto.src = './studio-reflections.webp?v=ebef723812';
+    const reflectionReady = reflectionPhoto.decode().then(() => reflectionPhoto, () => null);
 
     let photoSources = [];
     let vehicleMeta = {};
@@ -215,6 +221,16 @@
     panorama.width = 512;
     panorama.height = 256;
     const context = panorama.getContext('2d');
+    const roomPhoto = await reflectionReady;
+    let roomPixels;
+    if (roomPhoto) {
+      context.drawImage(roomPhoto, 0, 0, panorama.width, panorama.height);
+      roomPixels = context.getImageData(0, 0, panorama.width, panorama.height).data;
+    }
+    const linearResponse = Array.from({ length: 256 }, (_, n) => {
+      const level = n / 255;
+      return level <= .04045 ? level / 12.92 : ((level + .055) / 1.055) ** 2.4;
+    });
     const pixels = context.createImageData(panorama.width, panorama.height);
     const radiance = pixels.data;
     for (let y = 0; y < panorama.height; y++) {
@@ -230,7 +246,12 @@
         const luminance = 0.26 + 0.33 * ceiling + 0.15 * smooth(-elevation, 0.25, 0.8)
           + softbox * (0.24 + 2.65 * bank) + sideStrip * (0.20 + 1.65 * bank);
         const offset = 4 * (y * panorama.width + x);
-        radiance[offset] = radiance[offset + 1] = radiance[offset + 2] = Math.round(255 * luminance / 4);
+        for (let channel = 0; channel < 3; channel++) {
+          const level = roomPixels
+            ? .34 * luminance / 4 + .88 * linearResponse[roomPixels[offset + channel]] + .026
+            : luminance / 4;
+          radiance[offset + channel] = Math.round(255 * Math.min(1, level));
+        }
         radiance[offset + 3] = 255;
       }
     }
@@ -243,8 +264,8 @@
 
     const camera = new THREE.PerspectiveCamera(30, window.innerWidth / window.innerHeight, 0.02, 120);
 
-    const studioFill = new THREE.HemisphereLight(0xf5f8ff, 0xc4c8cf, 1.65);
-    const keyLight = new THREE.DirectionalLight(0xfffbf2, 1.35);
+    const studioFill = new THREE.HemisphereLight(0xf5f8ff, 0xc4c8cf, 1.20);
+    const keyLight = new THREE.DirectionalLight(0xfffbf2, 1.16);
     keyLight.position.set(3.2, 5.8, -1.5);
     keyLight.castShadow = true;
     keyLight.shadow.mapSize.set(2048, 2048);
@@ -258,7 +279,7 @@
     keyLight.shadow.bias = -0.0004;
     keyLight.shadow.intensity = 0.44;
     keyLight.shadow.radius = 3.5;
-    const rimLight = new THREE.DirectionalLight(0xe9f2ff, 1.36);
+    const rimLight = new THREE.DirectionalLight(0xe9f2ff, 1.02);
     rimLight.position.set(-2.0, 4.5, 4.2);
     const detailFill = new THREE.DirectionalLight(0xf4f1ed, 0);
     detailFill.position.set(1.2, -2.2, 1.8);
@@ -878,15 +899,15 @@
                   const doorPane = glassKind === 'GD';
                   shared.transparent = true;
                   shared.depthWrite = false;
-                  shared.opacity = privacy ? 0.72 : doorPane ? 0.47 : 0.48;
+                  shared.opacity = privacy ? 0.86 : doorPane ? 0.61 : 0.70;
                   shared.userData.cabinOpacity = privacy ? 0.24 : 0.16;
-                  shared.color.setRGB(0.012, 0.028, 0.039);
+                  shared.color.setRGB(0.008, 0.017, 0.025);
                   shared.roughness = 0.08;
                   shared.clearcoat = 0.62;
                   shared.clearcoatRoughness = 0.04;
                   shared.specularIntensity = 0.85;
                   shared.envMap = scene.environment;
-                  shared.envMapIntensity = 0.97;
+                  shared.envMapIntensity = 1.35;
                   shared.customProgramCacheKey = () => 'civic-window-fresnel';
                   shared.onBeforeCompile = shader => {
                     shader.fragmentShader = shader.fragmentShader.replace('#include <opaque_fragment>', `

@@ -1,6 +1,6 @@
 import * as THREE from './vendor/three-r170.js?v=31c84364';
 
-export const VIEWS_URL = './civic-views.json?v=1d0efd7fff';
+export const VIEWS_URL = './civic-views.json?v=104a09dfd3';
 
 // Default 1:1 metric studio cameras (glTF Y-up: +X forward, +Y up, -Z driver left, +Z passenger right).
 export const DEFAULT_CAMERAS = {

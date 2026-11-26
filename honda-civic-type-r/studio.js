@@ -1,4 +1,4 @@
-import { loadCivicViews } from './civic-views.js?v=80e5db28a0';
+import { loadCivicViews } from './civic-views.js?v=c3d3a8cd3e';
 
 const room = document.getElementById('photo-room');
 const photo = document.getElementById('photo');
@@ -31,7 +31,7 @@ function showAngle() {
   if (!option) return;
   error.hidden = true;
   photo.hidden = false;
-  photo.alt = option.label + ' on a 2021 Boost Blue FK8 reference car';
+  photo.alt = option.label + ' · ' + option.dataset.credit;
   const fullPhoto = document.getElementById('full-photo');
   const fullUrl = option.dataset.original || option.value;
   if (fullUrl) {
