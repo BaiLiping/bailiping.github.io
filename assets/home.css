@@ -160,7 +160,8 @@ h1 {
 
 .category-tab:hover { color: var(--ink); }
 
-.category-tab[aria-selected="true"] {
+.category-tab[aria-selected="true"],
+.category-tab[aria-current="page"] {
   color: var(--accent);
   border-bottom-color: var(--accent);
 }

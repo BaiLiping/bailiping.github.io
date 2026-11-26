@@ -4,7 +4,21 @@
 (() => {
   const tablist = document.querySelector('.category-tabs');
   const tabs = [...tablist.querySelectorAll('.category-tab')];
-  const panels = tabs.map(tab => document.querySelector(tab.getAttribute('href')));
+  const panels = tabs.map(tab => document.getElementById(tab.id.slice('tab-'.length)));
+
+  function revealTab(tab) {
+    const bounds = tab.getBoundingClientRect();
+    const rail = tablist.getBoundingClientRect();
+    if (bounds.left < rail.left) tablist.scrollLeft -= rail.left - bounds.left;
+    if (bounds.right > rail.right) tablist.scrollLeft += bounds.right - rail.right;
+  }
+
+  // The standalone Cars list uses normal links to the other categories.
+  const currentPage = tablist.querySelector('[aria-current="page"]');
+  if (currentPage) {
+    revealTab(currentPage);
+    return;
+  }
 
   /* Upgrade the plain anchor links to ARIA tabs and tab-panels so
      assistive technology announces them correctly.
@@ -44,15 +58,14 @@
 
     /* Scroll the selected tab into view on narrow screens without
        shifting the page vertically. */
-    const bounds = tab.getBoundingClientRect();
-    const rail = tablist.getBoundingClientRect();
-    if (bounds.left < rail.left) tablist.scrollLeft -= rail.left - bounds.left;
-    if (bounds.right > rail.right) tablist.scrollLeft += bounds.right - rail.right;
+    revealTab(tab);
 
-    const hash = tab.getAttribute('href');
-    if (historyMode && location.hash !== hash) {
-      history[historyMode](null, '', hash);
+    const url = new URL(tab.href);
+    url.search = location.search;
+    if (historyMode && location.href !== url.href) {
+      history[historyMode](null, '', url);
     }
+    document.title = panels[index].id === 'cars' ? 'Cars | Bai Liping' : 'Bai Liping';
   }
 
   /* Read the current URL hash and activate the matching tab.
@@ -60,9 +73,10 @@
      #group-life still work.
      Takes nothing, returns nothing. */
   function restore() {
-    const id = location.hash.slice(1).replace(/^group-/, '');
+    const id = location.hash.slice(1).replace(/^group-/, '') ||
+      (location.pathname.replace(/\/$/, '') === '/cars' ? 'cars' : 'work');
     const index = panels.findIndex(panel => panel.id === id);
-    activate(index < 0 ? 0 : index);
+    activate(index < 0 ? 0 : index, { historyMode: id === 'cars' ? 'replaceState' : undefined });
   }
 
   /* Attach click and keyboard handlers to each tab.
