@@ -1,5 +1,6 @@
 import * as THREE from '../honda-civic-type-r/vendor/three-r170.js?v=31c84364';
 import {createStudioFloor} from '../honda-civic-type-r/studio-floor.js';
+import {bindPartInteraction} from './part-interaction.js?v=99b104300f';
 
 const $ = selector => document.querySelector(selector);
 const canvas = $('#stage');
@@ -10,25 +11,40 @@ const params = new URLSearchParams(location.search);
 const capture = params.has('capture');
 const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)');
 document.body.classList.toggle('capture', capture);
-const frames = await fetch('./views.json?v=41069a1d4d').then(response => response.json());
+let frames = [];
 const frameList = $('#photo-angle');
-frames.forEach(frame => frameList.add(new Option(frame.title, frame.id)));
-let active = Math.max(0, frames.findIndex(frame => frame.id === params.get('frame')));
+let active = 0;
 let matched = null;
 let scene, renderer, camera, model, floor;
 let ready = false;
 let pending = false;
+let floorDirty = false;
 let exteriorOrbit = true;
+let currentView = 'front';
 let lastAspect;
 const exteriorRadius = aspect => Math.max(6.9,1.45+7.5/aspect);
 let radius = 6, yaw = 0, elevation = .23;
 const target = new THREE.Vector3(0,.6,0);
-const panels = {hood:false,doors:false,hatch:false,passengerOnly:false};
+const panelSpec = {
+  hood: ['Hood', 'z', -1], hatch: ['Liftback', 'z', .93],
+  leftDoor: ['DoorLeft', 'y', -.98], rightDoor: ['DoorRight', 'y', .98],
+};
+const panels = {hood:false, hatch:false, leftDoor:false, rightDoor:false};
+const panelAngles = {hood:0, hatch:0, leftDoor:0, rightDoor:0};
+const panelTargets = {...panelAngles};
+let hingeMotion;
 const pivots = {};
 const original = {};
 const position = new THREE.Vector3();
-const drag = new Map();
-let gesture;
+const frontCenter = new THREE.Vector3(-.16,.62,0);
+let partInteraction;
+let detachedCount = 0;
+let steering = false;
+let spinning = false;
+let spinAngle = 0;
+let lastSpinTime;
+const frontWheels = [];
+const rollingMeshes = [];
 
 // Move complete GLB assemblies so trim, glass and hinges travel with their panels.
 const assemblyOffsets = {
@@ -52,6 +68,7 @@ const assemblyUp = assemblyDirection.clone().cross(assemblyRight);
 let assemblyDistance = 0;
 let explosion = 0;
 let intro = null;
+let spreadMotion = null;
 
 function prepareAssembly() {
   const boxes = [];
@@ -97,22 +114,32 @@ function fitAssembly() {
     .addScaledVector(assemblyUp, (lowEdge + highEdge + (bottom - top) * assemblyDistance) / 2);
 }
 function setExplosion(amount) {
-  if (amount === explosion) return;
   explosion = amount;
-  for (const {node, rest, travel} of assemblyParts) node.position.copy(rest).addScaledVector(travel, amount);
-  $('#exploded-view').setAttribute('aria-pressed', String(amount > 0));
-  floor.update();
+  partInteraction?.setSeparation(amount);
+  updateInspectionTools();
+}
+function updateInspectionTools() {
+  const active = ready && location.hash === '#exploded' && !matched && !gallery();
+  $('#exploded-view').setAttribute('aria-pressed', String(active || (spreadMotion ? spreadMotion.to > 0 : explosion > 0)));
+  $('#separation-control').hidden = !active;
+  const percent = Math.round(explosion * 100);
+  $('#separation').value = percent;
+  $('#separation-control output').value = percent + '%';
+  $('#reattach').hidden = detachedCount === 0;
+  $('#reattach').textContent = detachedCount === 1 ? 'Reattach 1 part' : 'Reattach ' + detachedCount + ' parts';
+  $('#inspection-tools').hidden = !active && !detachedCount;
 }
 function frameExterior(rear = false) {
   const aspect = Math.max(.40, room.clientWidth / room.clientHeight);
   const distance = THREE.MathUtils.lerp(exteriorRadius(aspect), assemblyDistance, explosion);
-  target.set(-.16, .62, 0).lerp(assemblyFocus, explosion);
+  target.copy(frontCenter).lerp(assemblyFocus, explosion);
   camera.position.set(rear ? .75 : -.78, .26, .85).normalize()
     .lerp(assemblyDirection, explosion).normalize().multiplyScalar(distance).add(target);
   camera.lookAt(target);
   rememberOrbit();
 }
 function showExplosion(animate) {
+  if (animate && reducedMotion.matches) return;
   setExplosion(1);
   frameExterior();
   if (animate && !reducedMotion.matches) intro = {elapsed: 0, previous: null};
@@ -120,6 +147,7 @@ function showExplosion(animate) {
 }
 function draw(now) {
   pending = false;
+  if (document.hidden || gallery()) return;
   if (intro && !document.hidden) {
     if (intro.previous !== null) intro.elapsed += now - intro.previous;
     intro.previous = now;
@@ -131,19 +159,64 @@ function draw(now) {
     if (amount === 0 || reducedMotion.matches) intro = null;
     else invalidate();
   }
+  if (spreadMotion) {
+    const t = THREE.MathUtils.smoothstep(now - spreadMotion.start, 0, 430);
+    setExplosion(THREE.MathUtils.lerp(spreadMotion.from, spreadMotion.to, t));
+    frameExterior();
+    if (t === 1) spreadMotion = null;
+    else invalidate();
+  }
+  if (hingeMotion) {
+    const t = THREE.MathUtils.smoothstep(now - hingeMotion.start, 0, 310);
+    for (const key of Object.keys(panelSpec)) applyHinge(key, THREE.MathUtils.lerp(hingeMotion.from[key], panelTargets[key], t));
+    floorDirty = true;
+    if (t === 1) hingeMotion = null;
+    else invalidate();
+  }
+  if (spinning) {
+    if (lastSpinTime !== undefined) spinAngle = (spinAngle + Math.min(65, now - lastSpinTime) * .0028) % (2 * Math.PI);
+    lastSpinTime = now;
+    for (const mesh of rollingMeshes) mesh.rotation.z = spinAngle;
+    invalidate();
+  }
+  if (floorDirty && floor) { floor.update(); floorDirty = false; }
   if (renderer && camera) renderer.render(scene,camera);
 }
 document.addEventListener('visibilitychange', () => {
-  if (intro) { intro.previous = null; invalidate(); }
+  if (intro) intro.previous = null;
+  lastSpinTime = undefined;
+  if (document.hidden) partInteraction?.stopGesture();
+  else invalidate();
 });
 function invalidate() {
   if (!pending) { pending = true; requestAnimationFrame(draw); }
 }
+function geometryChanged() { floorDirty = true; invalidate(); }
 function redrawOrbit() {
   camera.up.set(0,1,0);
-  camera.position.set(target.x + radius*Math.cos(elevation)*Math.cos(yaw), target.y + radius*Math.sin(elevation), target.z + radius*Math.cos(elevation)*Math.sin(yaw));
+  position.set(Math.cos(elevation)*Math.cos(yaw), Math.sin(elevation), Math.cos(elevation)*Math.sin(yaw)).multiplyScalar(radius);
+  if (currentView === 'cabin') target.copy(camera.position).sub(position);
+  else camera.position.copy(target).add(position);
   camera.lookAt(target);
   invalidate();
+}
+function orbitBy(dx, dy) {
+  leaveCalibration();
+  yaw += dx * .007;
+  const inCabin = currentView === 'cabin';
+  elevation = THREE.MathUtils.clamp(elevation + dy * .006, inCabin ? -1.23 : -.10, inCabin ? 1.23 : 1.48);
+  redrawOrbit();
+}
+function zoomBy(scale) {
+  leaveCalibration();
+  if (currentView === 'cabin') {
+    camera.fov = THREE.MathUtils.clamp(camera.fov * scale, 36, 92);
+    camera.updateProjectionMatrix();
+    invalidate();
+  } else {
+    radius = THREE.MathUtils.clamp(radius * scale, .20, Math.max(22, assemblyDistance * 1.2));
+    redrawOrbit();
+  }
 }
 function rememberOrbit() {
   position.copy(camera.position).sub(target);
@@ -165,17 +238,52 @@ function layout() {
   camera.updateProjectionMatrix();
   invalidate();
 }
-function setPanels(changes, angles = {}) {
-  Object.assign(panels,changes);
-  if (pivots.Hood) {
-    for (const [name,axis,angle] of [['Hood','z',panels.hood ? -(angles.hood ?? 1.00) : 0],['Liftback','z',panels.hatch ? (angles.hatch ?? .93) : 0],['DoorLeft','y',panels.doors && !panels.passengerOnly ? -(angles.doors ?? .98) : 0],['DoorRight','y',panels.doors ? (angles.doors ?? .98) : 0]]) {
-      pivots[name].quaternion.copy(original[name]);
-      if (axis==='z') pivots[name].rotateZ(angle); else pivots[name].rotateY(angle);
-    }
-    floor.update();
+function applyHinge(key, angle) {
+  panelAngles[key] = angle;
+  const [name, axis] = panelSpec[key];
+  const node = pivots[name];
+  node.quaternion.copy(original[name]);
+  if (axis === 'z') node.rotateZ(angle);
+  else node.rotateY(angle);
+}
+function setPanels(changes, angles = {}, animate = false) {
+  for (const [key, open] of Object.entries(changes)) {
+    const standard = panelSpec[key][2];
+    const amount = angles[key] ?? (key.endsWith('Door') ? angles.doors : undefined) ?? Math.abs(standard);
+    panels[key] = open;
+    panelTargets[key] = open ? Math.sign(standard) * amount : 0;
   }
-  document.querySelectorAll('[data-panel]').forEach(button => button.setAttribute('aria-pressed',String(panels[button.dataset.panel])));
-  invalidate();
+  if (animate && !capture && !reducedMotion.matches) hingeMotion = { start: performance.now(), from: {...panelAngles} };
+  else {
+    hingeMotion = null;
+    for (const key of Object.keys(panelSpec)) applyHinge(key, panelTargets[key]);
+  }
+  for (const button of document.querySelectorAll('[data-panel]')) {
+    const key = button.dataset.panel;
+    const value = key === 'doors' ? (panels.leftDoor === panels.rightDoor ? panels.leftDoor : 'mixed') : panels[key];
+    button.setAttribute('aria-pressed', String(value));
+  }
+  geometryChanged();
+}
+function togglePanel(key) {
+  leaveCalibration();
+  if (key === 'doors') {
+    const open = !(panels.leftDoor && panels.rightDoor);
+    setPanels({leftDoor:open, rightDoor:open}, {}, true);
+  } else setPanels({[key]:!panels[key]}, {}, true);
+}
+function setWheels(steer, spin, resetAngle = false) {
+  steering = steer;
+  spinning = spin;
+  lastSpinTime = undefined;
+  for (const wheel of frontWheels) wheel.rotation.y = steer ? .48 : 0;
+  if (resetAngle) {
+    spinAngle = 0;
+    for (const mesh of rollingMeshes) mesh.rotation.z = 0;
+  }
+  $('#steer').setAttribute('aria-pressed', String(steer));
+  $('#spin').setAttribute('aria-pressed', String(spin));
+  geometryChanged();
 }
 function clearMatch() {
   if (!matched) return;
@@ -185,12 +293,16 @@ function clearMatch() {
   $('#overlay-opacity').hidden = true;
   $('#photo-tools-3d').hidden = true;
   layout();
+  updateInspectionTools();
 }
 function setView(name) {
   if (!ready) return;
   intro = null;
+  spreadMotion = null;
   setExplosion(0);
   clearMatch();
+  currentView = name;
+  $('#bar').classList.toggle('in-cabin', name === 'cabin');
   exteriorOrbit = name === 'front' || name === 'rear';
   if (name === 'front' || name === 'rear') {
     camera.fov = 32;
@@ -200,12 +312,36 @@ function setView(name) {
   } else if (name === 'wheel') {
     target.set(-1.285,.30,.80);camera.position.set(-1.54,.49,2.10);camera.fov=35;
   } else {
-    setPanels({doors:true,passengerOnly:true});target.set(-.42,.73,.07);camera.position.set(.16,1.00,-.52);camera.fov=66;
+    target.set(-.77,.83,.17);camera.position.set(.04,1.04,.36);camera.fov=67;
   }
   camera.up.set(0,1,0);camera.lookAt(target);camera.updateProjectionMatrix();rememberOrbit();layout();
 }
 function gallery() {return location.hash === '#integra-views';}
+async function loadPhotos() {
+  try {
+    const response = await fetch('./views.json?v=41069a1d4d');
+    if (!response.ok) throw new Error('Photo catalogue unavailable');
+    const photos = await response.json();
+    if (!Array.isArray(photos) || !photos.length) throw new Error('Empty photo catalogue');
+    frames = photos;
+    frames.forEach(frame => frameList.add(new Option(frame.title, frame.id)));
+    const frameId = new URLSearchParams(location.search).get('frame');
+    active = Math.max(0, frames.findIndex(frame => frame.id === frameId));
+    if (gallery()) selectPhoto(active);
+    else if (ready && frameId) match(active);
+  } catch {
+    $('#photo').hidden = true;
+    $('#full-photo').hidden = true;
+    const link = document.createElement('a');
+    link.href = './frame-by-frame/'; link.textContent = 'Open the photo comparisons';
+    $('#photo-error').replaceChildren('The reference gallery could not load. ', link);
+    $('#photo-error').hidden = false;
+  }
+  for (const selector of ['#previous-view','#next-view','#photo-angle']) $(selector).disabled = !frames.length;
+  $('#match-view').disabled = !ready || !frames.length;
+}
 function selectPhoto(index) {
+  if (!frames.length) return;
   active = (index+frames.length)%frames.length;
   const frame=frames[active];
   frameList.value=frame.id;
@@ -219,22 +355,25 @@ function selectPhoto(index) {
   $('#frame-count').textContent=(active+1)+' / '+frames.length+' · '+frame.width+' × '+frame.height;
 }
 function setURL(index,hash) {
+  if (!frames.length) return;
   const url=new URL(location.href);
   url.searchParams.set('frame',frames[index].id);url.hash=hash;history.pushState(null,'',url);route();
 }
 function match(index) {
   if (!ready) return;
   const frame=frames[index];
-  clearMatch();matched=frame;
-  setPanels({hood:['open','engine'].includes(frame.state),doors:['open','cabin'].includes(frame.state),hatch:frame.state==='open',passengerOnly:frame.state==='cabin'},frame.angles);
+  partInteraction?.reset();setWheels(false,false,true);setExplosion(0);
+  clearMatch();matched=frame;currentView='photo';exteriorOrbit=false;$('#bar').classList.remove('in-cabin');
+  setPanels({hood:['open','engine'].includes(frame.state),leftDoor:frame.state==='open',rightDoor:['open','cabin'].includes(frame.state),hatch:frame.state==='open'},frame.angles);
   camera.position.fromArray(frame.camera.position);target.fromArray(frame.camera.target);
   camera.up.fromArray(frame.camera.up);camera.lookAt(target);camera.fov=frame.camera.fov;
   rememberOrbit();layout();
   $('#match-label').textContent=frame.title;$('#photo-tools-3d').hidden=false;
+  if (capture) { floor.update(); floorDirty = false; }
 }
 function route({opening = false} = {}) {
   intro = null;
-  setExplosion(0);
+  spreadMotion = null;
   const url=new URL(location.href);
   active=Math.max(0,frames.findIndex(f=>f.id===url.searchParams.get('frame')));
   const photos=gallery();
@@ -242,23 +381,40 @@ function route({opening = false} = {}) {
   $('#photo-room').hidden=!photos;
   $('#model-link').setAttribute('aria-current',photos?'false':'page');
   $('#gallery-link').setAttribute('aria-current',photos?'page':'false');
-  if (photos) selectPhoto(active);
-  else if (url.searchParams.has('frame')) match(active);
-  else if (ready) {
-    setPanels({hood:false,doors:false,hatch:false,passengerOnly:false});
-    setView('front');
-    if (url.hash === '#exploded') showExplosion(false);
-    else if (!capture && (opening || url.hash === '#assembly')) showExplosion(true);
+  $('#more').open = false;
+  if (photos) {
+    partInteraction?.stopGesture();
+    lastSpinTime = undefined;
+    selectPhoto(active);
   }
+  else if (frames.length && url.searchParams.has('frame')) match(active);
+  else if (ready) {
+    partInteraction.reset(); setWheels(false,false,true);
+    setPanels({hood:false,leftDoor:false,rightDoor:false,hatch:false});
+    const view = url.hash.slice(1);
+    setView(['cabin','engine','wheel','rear'].includes(view) ? view : 'front');
+    if (url.hash === '#exploded') showExplosion(false);
+    else if (!capture && (url.hash === '#assembly' || (opening && !url.hash && !url.searchParams.has('frame')))) showExplosion(true);
+  }
+  updateInspectionTools();
 }
 function baseURL(hash = 'model') {
   const url=new URL(location.href);url.searchParams.delete('frame');url.hash=hash;
   if (url.href!==location.href) history.pushState(null,'',url);
 }
-function leaveCalibration(assemble = false) {
+function stopIntro() {
+  if (!intro && !spreadMotion) return;
   intro = null;
-  if (assemble && location.hash === '#exploded') baseURL();
-  if (matched) {baseURL();clearMatch();}
+  spreadMotion = null;
+  if (explosion > 0) {
+    const url = new URL(location.href); url.hash = 'exploded'; history.replaceState(null, '', url);
+    updateInspectionTools();
+  }
+}
+function leaveCalibration(assemble = false) {
+  stopIntro();
+  if (matched || (!frames.length && new URLSearchParams(location.search).has('frame'))) {baseURL();clearMatch();}
+  if (assemble && (explosion || location.hash === '#exploded')) { baseURL(); setView('front'); }
 }
 function initGL() {
   renderer=new THREE.WebGLRenderer({canvas,antialias:true,alpha:false,preserveDrawingBuffer:capture,powerPreference:'high-performance'});
@@ -305,7 +461,7 @@ $('#next-view').onclick=()=>setURL((active+1)%frames.length,'integra-views');
 frameList.onchange=()=>setURL(frameList.selectedIndex,'integra-views');
 $('#match-view').onclick=()=>setURL(active,'model');
 $('#photo').onerror=()=>{$('#photo-error').hidden=false;};
-$('#gallery-link').onclick=event=>{event.preventDefault();setURL(active,'integra-views');};
+$('#gallery-link').onclick=event=>{if (frames.length) {event.preventDefault();setURL(active,'integra-views');}};
 $('#model-link').onclick=event=>{event.preventDefault();baseURL();route();};
 $('#overlay-toggle').onclick=()=>{
   if (!matched) return;
@@ -316,52 +472,95 @@ $('#overlay-toggle').onclick=()=>{
 $('#overlay-opacity').oninput=event=>{overlay.style.opacity=event.target.value/100;};
 $('#reset').onclick=()=>{baseURL();route();$('#more').open=false;};
 $('#exploded-view').onclick = () => {
-  baseURL(explosion > 0 ? 'model' : 'exploded');
+  const from = explosion;
+  const open = spreadMotion ? spreadMotion.to === 0 : from === 0 && location.hash !== '#exploded';
+  baseURL(open ? 'exploded' : 'model');
   route();
-  $('#more').open = false;
+  if (!capture && !reducedMotion.matches && from !== explosion) {
+    spreadMotion = {from, to:explosion, start:performance.now()};
+    setExplosion(from);
+    frameExterior();
+    invalidate();
+  }
+};
+$('#separation').oninput = event => {
+  if (!ready) return;
+  spreadMotion = null;
+  const amount = Number(event.target.value) / 100;
+  const aspect = Math.max(.4,room.clientWidth / room.clientHeight);
+  const restRadius = exteriorRadius(aspect);
+  const previousDistance = THREE.MathUtils.lerp(restRadius, assemblyDistance, explosion);
+  const nextDistance = THREE.MathUtils.lerp(restRadius, assemblyDistance, amount);
+  radius *= nextDistance / previousDistance;
+  target.addScaledVector(position.copy(assemblyFocus).sub(frontCenter), amount - explosion);
+  setExplosion(amount);
+  redrawOrbit();
 };
 $('#replay-assembly').onclick = event => {
-  event.preventDefault(); baseURL('assembly'); route(); $('#more').open = false;
+  event.preventDefault(); baseURL('assembly'); route();
 };
-document.querySelectorAll('[data-panel]').forEach(button=>button.onclick=()=>{
+document.querySelectorAll('[data-panel]').forEach(button => button.onclick = () => {
   leaveCalibration(true);
-  if (explosion) setView('front');
-  const key=button.dataset.panel;setPanels({[key]:!panels[key],passengerOnly:false});
+  togglePanel(button.dataset.panel);
 });
-document.querySelectorAll('[data-view]').forEach(button=>button.onclick=()=>{
-  leaveCalibration(true);setView(button.dataset.view);$('#more').open=false;
+document.querySelectorAll('[data-view]').forEach(button => button.onclick = () => {
+  baseURL(button.dataset.view); route();
 });
-function gestures() {
-  const a=[...drag.values()];return {x:a[0][0],y:a[0][1],gap:a.length>1?Math.hypot(a[1][0]-a[0][0],a[1][1]-a[0][1]):0};
+$('#xray').onclick = () => partInteraction?.toggleXray();
+$('#steer').onclick = () => { leaveCalibration(); setWheels(!steering, spinning); };
+$('#spin').onclick = () => { leaveCalibration(); setWheels(steering, !spinning); };
+function shortcuts(event) {
+  if (event.defaultPrevented || event.altKey || event.ctrlKey || event.metaKey ||
+      event.target.closest('input,select,textarea,[contenteditable="true"]')) return;
+  if (gallery()) {
+    if (frames.length && ['ArrowLeft','ArrowRight'].includes(event.key)) {
+      event.preventDefault();
+      setURL((active + frames.length + (event.key === 'ArrowLeft' ? -1 : 1)) % frames.length, 'integra-views');
+    }
+    return;
+  }
+  if (!ready) return;
+  if (event.key === 'Escape') {
+    if ($('#more').open) { $('#more').open = false; $('#more > summary').focus(); }
+    partInteraction.stopGesture(); return;
+  }
+  const key = event.key.toLowerCase();
+  const commands = { e: '#exploded-view', x: '#xray', r: '#reset', f: '[data-panel="hood"]',
+    d: '[data-panel="doors"]', k: '[data-panel="hatch"]', '1': '[data-panel="leftDoor"]',
+    '2': '[data-panel="rightDoor"]', s: '#steer', w: '#spin', i: currentView === 'cabin' ? '#reset' : '[data-view="cabin"]' };
+  if (commands[key]) {
+    event.preventDefault();
+    if (!event.repeat) $(commands[key]).click();
+    return;
+  }
+  if (event.target !== canvas) return;
+  if (!['ArrowLeft','ArrowRight','ArrowUp','ArrowDown','+','=','-','Home'].includes(event.key)) return;
+  event.preventDefault();
+  if (event.key === 'Home') { $('#reset').click(); return; }
+  if (event.key.startsWith('Arrow')) {
+    const x = event.key === 'ArrowLeft' ? -15 : event.key === 'ArrowRight' ? 15 : 0;
+    const y = event.key === 'ArrowUp' ? 13 : event.key === 'ArrowDown' ? -13 : 0;
+    orbitBy(x,y);
+  } else zoomBy(event.key === '-' ? 1 / .9 : .9);
 }
-canvas.addEventListener('pointerdown',e=>{
-  if (!ready || e.button!==0) return;
-  intro = null;
-  canvas.setPointerCapture(e.pointerId);drag.set(e.pointerId,[e.clientX,e.clientY]);gesture=gestures();
+window.addEventListener('keydown', shortcuts);
+let photoSwipe;
+const photoFigure = $('#photo-room figure');
+photoFigure.addEventListener('pointerdown', event => {
+  if (!frames.length || !event.isPrimary || event.button !== 0 || event.target.closest('a')) return;
+  photoSwipe = {id:event.pointerId, x:event.clientX, y:event.clientY};
+  photoFigure.setPointerCapture(event.pointerId);
 });
-canvas.addEventListener('pointermove',e=>{
-  if (!drag.has(e.pointerId)) return;
-  drag.set(e.pointerId,[e.clientX,e.clientY]);const next=gestures();
-  if (Math.abs(next.x-gesture.x)+Math.abs(next.y-gesture.y)+Math.abs(next.gap-gesture.gap)<.15) return;
-  leaveCalibration();
-  if (next.gap&&gesture.gap) radius=Math.min(22,Math.max(.20,radius*gesture.gap/next.gap));
-  else {yaw+=(next.x-gesture.x)*.007;elevation=Math.min(1.48,Math.max(-.10,elevation+(next.y-gesture.y)*.006));}
-  gesture=next;redrawOrbit();
+photoFigure.addEventListener('pointerup', event => {
+  if (event.pointerId !== photoSwipe?.id) return;
+  const dx = event.clientX - photoSwipe.x, dy = event.clientY - photoSwipe.y;
+  photoSwipe = null;
+  if (Math.abs(dx) > Math.max(45, Math.abs(dy))) setURL((active + frames.length + (dx < 0 ? 1 : -1)) % frames.length, 'integra-views');
 });
-function release(e) {drag.delete(e.pointerId);if (drag.size) gesture=gestures();}
-canvas.addEventListener('pointerup',release);canvas.addEventListener('pointercancel',release);
-canvas.addEventListener('wheel',e=>{e.preventDefault();if (!ready) return;leaveCalibration();radius=Math.max(.20,Math.min(22,radius*Math.exp(Math.sign(e.deltaY)*.10)));redrawOrbit();},{passive:false});
-canvas.addEventListener('keydown',e=>{
-  if (!ready || !['ArrowLeft','ArrowRight','ArrowUp','ArrowDown','+','=','-','Home'].includes(e.key)) return;
-  e.preventDefault();leaveCalibration();
-  if (e.key==='Home') {$('#reset').click();return;}
-  if (e.key==='ArrowLeft') yaw-=.10;
-  if (e.key==='ArrowRight') yaw+=.10;
-  if (e.key==='ArrowUp') elevation=Math.min(1.48,elevation+.08);
-  if (e.key==='ArrowDown') elevation=Math.max(-.10,elevation-.08);
-  if (['+','='].includes(e.key)) radius=Math.max(.20,radius*.9);
-  if (e.key==='-') radius=Math.min(22,radius/.9);
-  redrawOrbit();
+photoFigure.addEventListener('pointercancel', () => { photoSwipe = null; });
+$('#photo').draggable = false;
+document.addEventListener('pointerdown', event => {
+  if ($('#more').open && !$('#more').contains(event.target)) $('#more').open = false;
 });
 window.addEventListener('popstate',route);window.addEventListener('hashchange',route);
 const observer=new ResizeObserver(()=>{
@@ -377,7 +576,11 @@ const observer=new ResizeObserver(()=>{
   }
   lastAspect=aspect;layout();
 });observer.observe(room);
+new ResizeObserver(() => {
+  document.documentElement.style.setProperty('--toolbar-height', (innerHeight - $('#bar').getBoundingClientRect().top) + 'px');
+}).observe($('#bar'));
 route();$('#match-view').disabled=true;
+loadPhotos();
 try {
   const gltf=await initGL(); model=gltf.scene;scene.add(model);
   model.traverse(node=>{
@@ -391,7 +594,18 @@ try {
   });
   for (const name of ['Hood','Liftback','DoorLeft','DoorRight']) {pivots[name]=model.getObjectByName(name);original[name]=pivots[name].quaternion.clone();}
   prepareAssembly();fitAssembly();
-  ready=true;floor.update();$('#loader').hidden=true;$('#bar').inert=false;$('#match-view').disabled=false;
+  for (const { node } of assemblyParts) {
+    if (!node.name.startsWith('Wheel')) continue;
+    if (node.name.startsWith('WheelFront')) frontWheels.push(node);
+    // Each rolling mesh is authored in hub coordinates. The fixed brake casting stays with the upright.
+    node.traverse(mesh => { if (mesh.isMesh && !/Brake[ _]casting/i.test(mesh.name)) rollingMeshes.push(mesh); });
+  }
+  partInteraction = bindPartInteraction(canvas, camera, model, assemblyParts, {
+    orbit: orbitBy, zoom: zoomBy, stopIntro, leavePhoto: leaveCalibration,
+    inCabin: () => currentView === 'cabin', panel: togglePanel, isPanelOpen: key => panels[key],
+    render: invalidate, moved: geometryChanged, detached: count => { detachedCount = count; updateInspectionTools(); },
+  });
+  ready=true;floor.update();$('#loader').hidden=true;$('#bar').inert=false;$('#match-view').disabled=!frames.length;
   setView('front');route({opening:true});renderer.render(scene,camera);
   document.documentElement.dataset.modelReady='true';
 } catch (error) {
