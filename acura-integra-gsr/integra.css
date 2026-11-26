@@ -14,7 +14,8 @@
 body.capture #studio-header,body.capture #bar,body.capture #photo-tools-3d { display:none; }
 body.capture #room { inset:0; }
 @media(max-width:460px) and (orientation:portrait) {
-  #tools > * { flex:1 1 auto; }
+  #tools > * { flex:0 0 33.333%; }
+  #tools > :nth-child(3)::after { display:none; }
   #tools > :nth-child(4)::after { display:block; }
   .finish { font-size:11px; }
   #match-label { max-width:min(55vw,200px); }

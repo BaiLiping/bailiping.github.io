@@ -247,15 +247,17 @@ function route({opening = false} = {}) {
   else if (ready) {
     setPanels({hood:false,doors:false,hatch:false,passengerOnly:false});
     setView('front');
-    if (!capture && (opening || url.hash === '#assembly')) showExplosion(true);
+    if (url.hash === '#exploded') showExplosion(false);
+    else if (!capture && (opening || url.hash === '#assembly')) showExplosion(true);
   }
 }
 function baseURL(hash = 'model') {
   const url=new URL(location.href);url.searchParams.delete('frame');url.hash=hash;
   if (url.href!==location.href) history.pushState(null,'',url);
 }
-function leaveCalibration() {
+function leaveCalibration(assemble = false) {
   intro = null;
+  if (assemble && location.hash === '#exploded') baseURL();
   if (matched) {baseURL();clearMatch();}
 }
 function initGL() {
@@ -314,21 +316,20 @@ $('#overlay-toggle').onclick=()=>{
 $('#overlay-opacity').oninput=event=>{overlay.style.opacity=event.target.value/100;};
 $('#reset').onclick=()=>{baseURL();route();$('#more').open=false;};
 $('#exploded-view').onclick = () => {
-  const assemble = explosion > 0;
-  baseURL(); route();
-  if (!assemble) showExplosion(false);
+  baseURL(explosion > 0 ? 'model' : 'exploded');
+  route();
   $('#more').open = false;
 };
 $('#replay-assembly').onclick = event => {
   event.preventDefault(); baseURL('assembly'); route(); $('#more').open = false;
 };
 document.querySelectorAll('[data-panel]').forEach(button=>button.onclick=()=>{
-  leaveCalibration();
+  leaveCalibration(true);
   if (explosion) setView('front');
   const key=button.dataset.panel;setPanels({[key]:!panels[key],passengerOnly:false});
 });
 document.querySelectorAll('[data-view]').forEach(button=>button.onclick=()=>{
-  leaveCalibration();setView(button.dataset.view);$('#more').open=false;
+  leaveCalibration(true);setView(button.dataset.view);$('#more').open=false;
 });
 function gestures() {
   const a=[...drag.values()];return {x:a[0][0],y:a[0][1],gap:a.length>1?Math.hypot(a[1][0]-a[0][0],a[1][1]-a[0][1]):0};
