@@ -1,0 +1,152 @@
+{
+ "method": "Body shell reshaped by a smooth, left-right symmetric B-spline deformation fitted to the car silhouette in each photo (camera re-solved per photo); wheels, tyres and brakes kept rigid; wheel centres and the extreme front, rear, roof, side and mirror points pinned; then overall length, width, height and mirror width set to the published figures by rescaling only the overhangs beyond the tyres, the body outside the tyre faces, the area above the tyre tops and the mirrors (wheelbase and tracks untouched).",
+ "spec_source": "Ford 2024 Raptor/Raptor R tech specs (measurements.json)",
+ "dimensions_mm": {
+  "length": {
+   "spec_mm": 5908,
+   "before_mm": 5908.0,
+   "after_mm": 5908.0
+  },
+  "width": {
+   "spec_mm": 2210,
+   "before_mm": 2209.8,
+   "after_mm": 2209.8
+  },
+  "width_mirrors": {
+   "spec_mm": null,
+   "before_mm": 2438.1,
+   "after_mm": 2438.1
+  },
+  "height": {
+   "spec_mm": 2047,
+   "before_mm": 2047.3,
+   "after_mm": 2047.3
+  },
+  "wheelbase": {
+   "spec_mm": 3693,
+   "before_mm": 3693.2,
+   "after_mm": 3693.2
+  },
+  "front_track": {
+   "spec_mm": 1887,
+   "before_mm": 1887.0,
+   "after_mm": 1887.0
+  },
+  "rear_track": {
+   "spec_mm": 1877,
+   "before_mm": 1877.0,
+   "after_mm": 1877.0
+  },
+  "tire_dia_f": {
+   "spec_mm": null,
+   "before_mm": 927.0,
+   "after_mm": 927.0
+  },
+  "tire_dia_r": {
+   "spec_mm": null,
+   "before_mm": 927.0,
+   "after_mm": 927.0
+  }
+ },
+ "photos": [
+  {
+   "id": "front-three-quarter-left",
+   "frame": "front-three-quarter-left",
+   "before": {
+    "iou": 0.9128,
+    "mean_px": 6.9,
+    "p90_px": 13.39
+   },
+   "after": {
+    "iou": 0.938,
+    "mean_px": 4.71,
+    "p90_px": 10.27
+   }
+  },
+  {
+   "id": "front-three-quarter-right",
+   "frame": "front-three-quarter-right",
+   "before": {
+    "iou": 0.8835,
+    "mean_px": 9.02,
+    "p90_px": 17.62
+   },
+   "after": {
+    "iou": 0.9435,
+    "mean_px": 4.72,
+    "p90_px": 11.18
+   }
+  },
+  {
+   "id": "front",
+   "frame": "front",
+   "before": {
+    "iou": 0.9161,
+    "mean_px": 7.32,
+    "p90_px": 15.09
+   },
+   "after": {
+    "iou": 0.9502,
+    "mean_px": 4.09,
+    "p90_px": 8.99
+   }
+  },
+  {
+   "id": "side-profile-left",
+   "frame": "side-profile-left",
+   "before": {
+    "iou": 0.9427,
+    "mean_px": 3.98,
+    "p90_px": 8.99
+   },
+   "after": {
+    "iou": 0.9501,
+    "mean_px": 2.79,
+    "p90_px": 7.31
+   }
+  },
+  {
+   "id": "side-profile-right",
+   "frame": "side-profile-right",
+   "before": {
+    "iou": 0.919,
+    "mean_px": 5.61,
+    "p90_px": 11.55
+   },
+   "after": {
+    "iou": 0.9617,
+    "mean_px": 2.96,
+    "p90_px": 7.5
+   }
+  },
+  {
+   "id": "rear-three-quarter-right",
+   "frame": "rear-three-quarter-right",
+   "before": {
+    "iou": 0.9044,
+    "mean_px": 6.55,
+    "p90_px": 17.89
+   },
+   "after": {
+    "iou": 0.9445,
+    "mean_px": 3.77,
+    "p90_px": 7.5
+   }
+  },
+  {
+   "id": "rear",
+   "frame": "rear",
+   "before": {
+    "iou": 0.891,
+    "mean_px": 9.44,
+    "p90_px": 20.52
+   },
+   "after": {
+    "iou": 0.953,
+    "mean_px": 3.96,
+    "p90_px": 7.5
+   }
+  }
+ ],
+ "metric": "iou = overlap of model and photo silhouettes; mean_px / p90_px = silhouette edge distance at 640 px image width"
+}

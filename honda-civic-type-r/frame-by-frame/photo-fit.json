@@ -1,0 +1,250 @@
+{
+ "method": "No photo warp on this car (the earlier photo reshape is kept as it was). Overall length and width set to the published figures by rescaling only the overhangs beyond the tyres and the body outside the tyre faces (wheelbase, tracks, height and mirrors untouched).",
+ "spec_source": "auto-data.net FK8 facelift 2.0 306 hp; cars.com 2020 Touring",
+ "dimensions_mm": {
+  "length": {
+   "spec_mm": 4557,
+   "before_mm": 4578.1,
+   "after_mm": 4557.1
+  },
+  "width": {
+   "spec_mm": 1877,
+   "before_mm": 1935.2,
+   "after_mm": 1895.0
+  },
+  "width_mirrors": {
+   "spec_mm": null,
+   "before_mm": 2120.0,
+   "after_mm": 2120.0
+  },
+  "height": {
+   "spec_mm": 1435,
+   "before_mm": 1453.0,
+   "after_mm": 1453.0
+  },
+  "wheelbase": {
+   "spec_mm": 2700,
+   "before_mm": 2700.0,
+   "after_mm": 2700.0
+  },
+  "front_track": {
+   "spec_mm": 1600,
+   "before_mm": 1600.2,
+   "after_mm": 1600.2
+  },
+  "rear_track": {
+   "spec_mm": 1593,
+   "before_mm": 1592.6,
+   "after_mm": 1592.6
+  },
+  "tire_dia_f": {
+   "spec_mm": null,
+   "before_mm": 654.0,
+   "after_mm": 654.0
+  },
+  "tire_dia_r": {
+   "spec_mm": null,
+   "before_mm": 654.0,
+   "after_mm": 654.0
+  }
+ },
+ "photos": [
+  {
+   "id": "fk8-side-left",
+   "frame": "fk8-side-left",
+   "before": {
+    "iou": 0.9009,
+    "mean_px": 5.2,
+    "p90_px": 11.5
+   },
+   "after": {
+    "iou": 0.899,
+    "mean_px": 5.29,
+    "p90_px": 11.58
+   }
+  },
+  {
+   "id": "fk8-side-right",
+   "frame": "fk8-side-right",
+   "before": {
+    "iou": 0.8934,
+    "mean_px": 5.56,
+    "p90_px": 12.92
+   },
+   "after": {
+    "iou": 0.8928,
+    "mean_px": 5.56,
+    "p90_px": 12.85
+   }
+  },
+  {
+   "id": "fk8-front-left",
+   "frame": "fk8-front-left",
+   "before": {
+    "iou": 0.8712,
+    "mean_px": 7.97,
+    "p90_px": 15.64
+   },
+   "after": {
+    "iou": 0.8697,
+    "mean_px": 8.07,
+    "p90_px": 15.66
+   }
+  },
+  {
+   "id": "fk8-front-right",
+   "frame": "fk8-front-right",
+   "before": {
+    "iou": 0.8524,
+    "mean_px": 10.96,
+    "p90_px": 25.13
+   },
+   "after": {
+    "iou": 0.8503,
+    "mean_px": 11.12,
+    "p90_px": 25.13
+   }
+  },
+  {
+   "id": "fk8-front-square",
+   "frame": "fk8-front-square",
+   "before": {
+    "iou": 0.8727,
+    "mean_px": 10.78,
+    "p90_px": 21.41
+   },
+   "after": {
+    "iou": 0.8717,
+    "mean_px": 10.92,
+    "p90_px": 21.5
+   }
+  },
+  {
+   "id": "fk8-rear-square",
+   "frame": "fk8-rear-square",
+   "before": {
+    "iou": 0.929,
+    "mean_px": 4.39,
+    "p90_px": 8.5
+   },
+   "after": {
+    "iou": 0.9275,
+    "mean_px": 4.52,
+    "p90_px": 8.99
+   }
+  },
+  {
+   "id": "fk8-rear-left",
+   "frame": "fk8-rear-left",
+   "before": {
+    "iou": 0.9115,
+    "mean_px": 6.42,
+    "p90_px": 14.26
+   },
+   "after": {
+    "iou": 0.9125,
+    "mean_px": 6.41,
+    "p90_px": 14.45
+   }
+  },
+  {
+   "id": "fk8-rear-right",
+   "frame": "fk8-rear-right",
+   "before": {
+    "iou": 0.8729,
+    "mean_px": 10.85,
+    "p90_px": 19.72
+   },
+   "after": {
+    "iou": 0.8727,
+    "mean_px": 10.9,
+    "p90_px": 19.99
+   }
+  },
+  {
+   "id": "fk8-front-high",
+   "frame": "fk8-front-high",
+   "before": {
+    "iou": 0.8925,
+    "mean_px": 11.53,
+    "p90_px": 19.42
+   },
+   "after": {
+    "iou": 0.8881,
+    "mean_px": 11.87,
+    "p90_px": 20.5
+   }
+  },
+  {
+   "id": "fk8-rear-left-high",
+   "frame": "fk8-rear-left-high",
+   "before": {
+    "iou": 0.8992,
+    "mean_px": 7.7,
+    "p90_px": 17.5
+   },
+   "after": {
+    "iou": 0.901,
+    "mean_px": 7.74,
+    "p90_px": 17.5
+   }
+  },
+  {
+   "id": "fk8-front-left-wide",
+   "frame": "fk8-front-left-wide",
+   "before": {
+    "iou": 0.8974,
+    "mean_px": 7.14,
+    "p90_px": 13.5
+   },
+   "after": {
+    "iou": 0.8961,
+    "mean_px": 7.17,
+    "p90_px": 13.41
+   }
+  },
+  {
+   "id": "fk8-rear-side-right",
+   "frame": "fk8-rear-side-right",
+   "before": {
+    "iou": 0.8569,
+    "mean_px": 10.9,
+    "p90_px": 29.78
+   },
+   "after": {
+    "iou": 0.8595,
+    "mean_px": 10.82,
+    "p90_px": 28.75
+   }
+  },
+  {
+   "id": "fk8-rear-left-low",
+   "frame": "fk8-rear-left-low",
+   "before": {
+    "iou": 0.8841,
+    "mean_px": 7.5,
+    "p90_px": 17.88
+   },
+   "after": {
+    "iou": 0.8844,
+    "mean_px": 7.5,
+    "p90_px": 17.53
+   }
+  },
+  {
+   "id": "fk8-rear-right-low",
+   "frame": "fk8-rear-right-low",
+   "before": {
+    "iou": 0.8534,
+    "mean_px": 17.35,
+    "p90_px": 43.33
+   },
+   "after": {
+    "iou": 0.8539,
+    "mean_px": 17.35,
+    "p90_px": 44.68
+   }
+  }
+ ],
+ "metric": "iou = overlap of model and photo silhouettes; mean_px / p90_px = silhouette edge distance at 640 px image width"
+}
