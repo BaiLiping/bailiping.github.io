@@ -16,6 +16,7 @@ ROOT = Path(__file__).resolve().parent.parent
 SITE = "https://bailiping.com"
 DIRECTORY = Path("site-map/index.html")
 SUPPORT_DIRS = {"assets", "vendor", "node_modules", "slides-assets", "scripts", "tests", "test-results"}
+TOPIC_LABELS = {"slam": "SLAM"}
 
 
 class Head(HTMLParser):
@@ -124,7 +125,7 @@ def directory(pages):
     sections = []
     for topic, entries in groups.items():
         primary = next((page for page in entries if page.path == Path(topic) / "index.html"), None)
-        label = primary.label if primary else topic.replace("-", " ").title()
+        label = primary.label if primary else TOPIC_LABELS.get(topic, topic.replace("-", " ").title())
         heading = escape(label)
         if primary:
             heading = f'<a href="{escape(primary.url.removeprefix(SITE))}">{heading}</a>'
