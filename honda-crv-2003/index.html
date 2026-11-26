@@ -8,7 +8,7 @@
   <script>
     if (location.hash === '#crv-views') document.documentElement.classList.add('show-photos');
     const overrideModel = new URLSearchParams(location.search).get('model');
-    const modelFile = overrideModel || './honda-crv-2003.glb?v=6be4d7ddfb';
+    const modelFile = overrideModel || './honda-crv-2003.glb?v=acd0a041b0';
     const preload = document.createElement('link');
     preload.rel = 'preload';
     preload.as = 'fetch';
@@ -20,7 +20,7 @@
   <link rel="icon" href="/favicon.ico" />
   <title>2003 Honda CR-V EX 4WD (RD7) — Eternal Blue Pearl</title>
   <link rel="stylesheet" href="./studio.css?v=6b8b38f7e2">
-  <script type="module" src="./studio.js?v=6eebe1e0e0"></script>
+  <script type="module" src="./studio.js?v=6de970e85b"></script>
 </head>
 <body>
   <noscript><p style="position:fixed;inset:0;z-index:30;background:#eceeef;padding:2em">The interactive 2003 Honda CR-V EX 4WD (Eternal Blue Pearl) 3D studio viewer requires JavaScript.</p></noscript>
@@ -34,7 +34,7 @@
   </header>
   <section id="photo-room" aria-label="2003 Honda CR-V EX 4WD reference photographs" hidden>
     <figure>
-      <img id="photo" width="1600" height="1067" alt="">
+      <img id="photo" referrerpolicy="no-referrer" width="1600" height="1067" alt="">
       <p id="photo-error" role="status" hidden>This reference view is unavailable.</p>
     </figure>
     <div id="photo-footer">
@@ -53,7 +53,7 @@
     <input id="overlay-opacity" type="range" min="0" max="100" value="50" aria-label="Reference photo opacity" hidden>
     <span id="overlay-error" role="status" hidden>Photo unavailable</span>
   </div>
-  <img id="reference-overlay" alt="" hidden>
+  <img id="reference-overlay" referrerpolicy="no-referrer" alt="" hidden>
   <canvas id="stage" aria-label="Interactive 3D model of a 2003 Honda CR-V"></canvas>
   <div id="callout"><span class="title"></span><span class="sub"></span></div>
   <div id="loader">
@@ -93,7 +93,8 @@
             <a href="https://hondanews.com/en-US/honda-automobiles/releases/release-9f9a8b5d2cfa6463d9dc60004c34c6cf-2003-honda-cr-v-specifications">American Honda Newsroom · 2003 Honda CR-V Official Press Archive &amp; Specifications</a><br>
             <a href="https://commons.wikimedia.org/wiki/Category:Honda_CR-V_(2nd_generation)">Wikimedia Commons · Second-generation CR-V photographs</a><br>
             <a href="https://www.auto-brochures.com/makes/Honda/CR-V/Honda_US%20CR-V_2003.pdf">Honda · 2003 U.S. sales brochure</a><br>
-            <a href="https://www.victorymotorsofcolorado.com/inventory/2003-honda-cr-v-ex/149516">Victory Motors of Colorado · Eternal Blue Pearl EX and K24A1 engine bay</a>
+            <a href="https://www.victorymotorsofcolorado.com/inventory/2003-honda-cr-v-ex/149516">Victory Motors of Colorado · Eternal Blue Pearl EX, tailgate and K24A1 engine bay</a><br>
+            <a href="https://bringatrailer.com/listing/2003-honda-cr-v-9/">CMD1 · Silver 2003 EX grille, headlamps, tail lamps and alloy wheels</a>
           </div></details>
         </section>
       </details>
@@ -109,7 +110,7 @@
     import { powertrainPhotoViews } from './powertrain-photo-views.js?v=0628d03f2c';
 
     const [photoSources, exteriorCameras, frontCameras] = await Promise.all(
-      ['./crv-views.json?v=aeb94960c6', './exterior-photo-cameras.json?v=baca62af7c', './front-photo-cameras.json?v=d9edb8aee9']
+      ['./crv-views.json?v=16e190585e', './exterior-photo-cameras.json?v=93cdae805e', './front-photo-cameras.json?v=d9edb8aee9']
         .map(url => fetch(url).then(response => response.json()))
     );
     const fittedCameras = { ...exteriorCameras, ...frontCameras, ...interiorPhotoViews, ...powertrainPhotoViews };

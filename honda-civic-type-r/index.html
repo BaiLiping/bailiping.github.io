@@ -9,7 +9,7 @@
     const params = new URLSearchParams(location.search);
     if (params.get('capture') === '1' || params.get('hud') === '0') document.documentElement.classList.add('hide-hud');
     const overrideModel = params.get('model');
-    const modelFile = overrideModel || './honda_civic_type_r.glb?v=fbf25eae0a';
+    const modelFile = overrideModel || './honda_civic_type_r.glb?v=3be67c321a';
     const preload = document.createElement('link');
     preload.rel = 'preload';
     preload.as = 'fetch';
@@ -19,15 +19,15 @@
   </script>
   <link rel="canonical" href="https://bailiping.com/honda-civic-type-r/" />
   <link rel="icon" href="/favicon.ico" />
-  <title>2021 Honda Civic Type R (FK8) — Boost Blue Pearl</title>
-  <meta name="description" content="Explore the 2021 Honda Civic Type R (FK8) in Boost Blue Pearl. Rotate the 3D model, open the rear hatch and compare its wing, C-shaped taillights and triple exhaust with photographs." />
+  <title>2020 Honda Civic Type R (FK8) — Boost Blue</title>
+  <meta name="description" content="Explore the 2020 Honda Civic Type R (FK8) in Boost Blue. Rotate the 3D model, open the rear hatch and compare its wing, C-shaped taillights and triple exhaust with photographs." />
   <link rel="stylesheet" href="./studio.css?v=f545ff0d26">
-  <script type="module" src="./studio.js?v=5d3229be6b"></script>
+  <script type="module" src="./studio.js?v=a03ff5601f"></script>
 </head>
 <body>
   <noscript><p style="position:fixed;inset:0;z-index:30;background:#eceeef;padding:2em">The interactive Honda Civic Type R (FK8) viewer requires JavaScript. <a href="https://bringatrailer.com/listing/2021-honda-civic-type-r-touring-5/">View the reference listing</a> or <a href="./frame-by-frame/">open the frame-by-frame photo comparison</a>.</p></noscript>
   <header id="studio-header">
-    <div class="identity"><h1>Honda Civic Type R (FK8)</h1><span class="finish"><i aria-hidden="true"></i><span id="finish-name">Boost Blue Pearl</span></span></div>
+    <div class="identity"><h1>2020 Honda Civic Type R (FK8)</h1><span class="finish"><i aria-hidden="true"></i><span id="finish-name">Boost Blue</span></span></div>
     <nav class="mode-switch" aria-label="Views">
       <a href="#model" aria-current="true">3D model</a>
       <a href="#civic-views">Civic views</a>
@@ -97,7 +97,7 @@
             <button type="button" data-panel="hatch" aria-pressed="false" aria-keyshortcuts="K" disabled>Rear hatch</button>
             <button type="button" data-panel="fuel" aria-pressed="false" aria-keyshortcuts="G" hidden disabled>Fuel filler</button>
           </div>
-          <p id="info">2021 Honda Civic Type R (FK8) · Boost Blue Pearl (B-637P)</p>
+          <p id="info">2020 Honda Civic Type R (FK8) · Boost Blue (B-637P)</p>
           <p class="quick-links">
             <a href="#photo-fk8-front-high">Closed hood</a>
             <a href="#rear">Rear three-quarter</a>
@@ -113,12 +113,12 @@
             <p>I cabin · E explode · X x-ray · R reset · S steer · W spin · Space rev · M sound · H hide controls</p>
           </details>
           <details class="notes"><summary>Model references</summary><div class="sources" id="model-sources">
-            <p>This model follows the 2021 US-market FK8 Touring in Boost Blue Pearl. The exterior is reconstructed from photographs. The engine and gearbox cutaways show the working layout with simplified internal parts. The gear readout gives Honda’s published ratios.</p>
+            <p>The model represents the 2020 U.S. Civic Type R Touring in Boost Blue. The reference galleries show 2021 cars with the same facelifted FK8 bodywork. The engine and gearbox cutaways show the working layout with simplified internal parts. The gear readout gives Honda’s published ratios.</p>
             <a href="#civic-views">Browse the FK8 reference photos</a> · <a href="./frame-by-frame/">Compare photos and renders</a><br>
             <a href="https://bringatrailer.com/listing/2021-honda-civic-type-r-touring-5/">Boost Blue exterior and detail photographs · Bring a Trailer lot 163,254</a><br>
             <a href="https://bringatrailer.com/listing/2021-honda-civic-type-r-5/">Additional rear, hatch and cabin photographs · Bring a Trailer lot 111,995</a><br>
-            <a href="https://www.hondainfocenter.com/2021/Civic-Type-R/Feature-Guide/Civic-Type-R-Specifications/">2021 Civic Type R specifications · Honda</a><br>
-            <a href="https://automobiles.honda.com/-/media/Honda-Automobiles/Vehicles/Full-Line-and-Family-Brochures/2021/Wave-2/Cars/MY21-Cars-Brochure-Wave-2.pdf">Boost Blue Pearl Touring in Honda’s 2021 brochure (PDF)</a>
+            <a href="https://hondanews.com/en-US/honda-automobiles/releases/release-9349200e0db74014eece042d0a003399-2020-civic-type-r-specifications-features">2020 Civic Type R specifications · Honda</a><br>
+            <a href="https://hondanews.com/en-US/releases/refreshed-2020-honda-civic-type-r-makes-us-debut-at-2020-chicago-auto-show">2020 Type R in Boost Blue · Honda</a>
           </div></details>
         </section>
       </details>
@@ -130,7 +130,7 @@
     import { createStudioFloor } from './studio-floor.js';
     import { applyStudioVisibility } from './studio-visibility.js';
     import { createPlanarMirror } from './mirror-reflection.js';
-    import { DEFAULT_CAMERAS, orbitRadius, normalizeCameraPose, buildReferenceViews, loadCivicViews } from './civic-views.js?v=48db82616f';
+    import { DEFAULT_CAMERAS, orbitRadius, normalizeCameraPose, buildReferenceViews, loadCivicViews } from './civic-views.js?v=80e5db28a0';
 
     const { GLTFLoader, DRACOLoader } = THREE;
     const MODEL_URL = modelFile;
@@ -447,7 +447,7 @@
       for (const [re, title, spec] of checks) {
         if (re.test(n)) return { title, spec };
       }
-      return { title: n.replace(/^Civic_/, '').replace(/_/g, ' '), spec: '2021 Honda Civic Type R (FK8) component' };
+      return { title: n.replace(/^Civic_/, '').replace(/_/g, ' '), spec: '2020 Honda Civic Type R (FK8) component' };
     }
 
     // -----------------------------------------------------------------------
@@ -1734,8 +1734,8 @@
       if (detached) tags.push(`${detached} detached`);
       if (tags.length === 0) tags.push('assembled');
       if (soundMuted) tags.push('muted');
-      const carName = vehicleMeta.subtitle || '2021 Honda Civic Type R (FK8)';
-      const finish = vehicleMeta.finish || 'Boost Blue Pearl';
+      const carName = vehicleMeta.subtitle || '2020 Honda Civic Type R (FK8)';
+      const finish = vehicleMeta.finish || 'Boost Blue';
       infoEl.textContent = `${carName} · ${finish} · ${tags.join(' · ')}`;
     }
 

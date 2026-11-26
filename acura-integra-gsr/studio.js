@@ -10,7 +10,7 @@ const params = new URLSearchParams(location.search);
 const capture = params.has('capture');
 const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)');
 document.body.classList.toggle('capture', capture);
-const frames = await fetch('./views.json').then(response => response.json());
+const frames = await fetch('./views.json?v=41069a1d4d').then(response => response.json());
 const frameList = $('#photo-angle');
 frames.forEach(frame => frameList.add(new Option(frame.title, frame.id)));
 let active = Math.max(0, frames.findIndex(frame => frame.id === params.get('frame')));
@@ -213,6 +213,9 @@ function selectPhoto(index) {
   $('#photo-error').hidden=true;
   $('#photo').src=frame.url;
   $('#full-photo').href=frame.url;
+  const credit = $('#photo-credit');
+  credit.href = frame.source || 'https://bringatrailer.com/listing/2000-acura-integra-36/';
+  credit.textContent = frame.credit || 'rmwcali · Bring a Trailer lot 263,334';
   $('#frame-count').textContent=(active+1)+' / '+frames.length+' · '+frame.width+' × '+frame.height;
 }
 function setURL(index,hash) {
@@ -273,7 +276,8 @@ function initGL() {
     for (let x=0;x<512;x++) {
       const az=((x+.5)/512-.5)*2*Math.PI;
       const bank=smooth(Math.abs(Math.sin(az+.20)),.27,.85);
-      const light=.17+.28*smooth(lat,.86,1.4)+high*(.24+2.9*bank)+low*(.12+1.25*bank);
+      const endWall = Math.pow(Math.abs(Math.cos(az - .45)), 12) * smooth(lat, -.12, .22);
+      const light=.25+.72*smooth(lat,.64,1.36)+high*(.34+2.45*bank)+low*(.15+.98*bank)+.82*endWall;
       const k=4*(y*512+x);pixels.data[k]=light*64;pixels.data[k+1]=light*66;pixels.data[k+2]=light*69;pixels.data[k+3]=255;
     }
   }
@@ -290,7 +294,9 @@ function initGL() {
   camera=new THREE.PerspectiveCamera(32,1,.015,140);
   floor=createStudioFloor(scene,renderer,0xe7e8ea);
   layout();
-  return new THREE.GLTFLoader().loadAsync('./integra.glb');
+  const decoder = new THREE.DRACOLoader().setDecoderPath('../honda-civic-type-r/vendor/');
+  const loader = new THREE.GLTFLoader().setDRACOLoader(decoder);
+  return loader.loadAsync('./integra.glb?v=02a3e08042').finally(() => decoder.dispose());
 }
 $('#previous-view').onclick=()=>setURL((active+frames.length-1)%frames.length,'integra-views');
 $('#next-view').onclick=()=>setURL((active+1)%frames.length,'integra-views');

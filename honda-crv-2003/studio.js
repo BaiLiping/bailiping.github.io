@@ -88,7 +88,7 @@ async function loadAngles() {
     return;
   }
   try {
-    sourcePromise ??= fetch('./crv-views.json?v=aeb94960c6').then(response => {
+    sourcePromise ??= fetch('./crv-views.json?v=16e190585e').then(response => {
       if (!response.ok) throw new Error('Camera list unavailable');
       return response.json();
     });
