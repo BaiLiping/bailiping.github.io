@@ -1,4 +1,4 @@
-import { loadCivicViews } from './civic-views.js?v=6e02174079';
+import { loadCivicViews } from './civic-views.js?v=2ad09f8f89';
 
 const room = document.getElementById('photo-room');
 const photo = document.getElementById('photo');

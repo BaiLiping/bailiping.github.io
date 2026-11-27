@@ -1,0 +1,380 @@
+"""Cut the body mesh into panels along Honda's drawn lines.
+
+Run: venv/bin/python cutpanels.py <body-mesh.npz> <field.npz> <specs.json> <out.npz> [fine-mesh.npz]
+specs.json: [{"names": [left, right] | "name": both, "terms": [[view, ids, neg?], ...], "face": side|top|front|rear|none,
+              "mat": ..., "pivot": ...}, ...] in priority order.
+A panel is the part of the body surface where every term holds: the projection into `view` lies inside the
+merged drawing regions `ids` (or outside, when neg). Top and front masks are made left/right symmetric. For
+named left/right panels the surface is further limited to that side; `face` keeps only surface facing that
+view, which drops e.g. the underbody under a roof outline. Membership is a smooth signed distance (metres,
+from the region masks), so triangles are split exactly where it crosses zero and the panel edges follow the
+drawn strokes. Unclaimed surface off Honda's strokes becomes 'Civic_Body_Shell_Misc' (paint); everything
+else is 'Civic_Body_Seams' (the dark shut-line gaps, wheelhouses and underbody). Normals of new vertices come
+from the field gradient.
+Optional spec keys: nsmooth (voxels, default 2.5) smooths the field the panel's normals come from; nflat: true
+interpolates the panel's normals harmonically from its outline (a flush flap without the hull's bumps); grow (m, default 0) moves the panel edge outward into Honda's stroke (narrower, even shut
+lines); close (px) closes the merged drawing regions further (swallows small inner strokes, e.g. around the door
+handles). Extra term: ["hp", a, b, c] = side-view half-plane a*X + b*Y + c < 0 (straight cuts across a region).
+A view term may carry a 4th element, an offset in metres that dilates the merged regions before the test:
+[view, ids, "neg", 0.01] keeps only surface more than 1 cm outside those regions (their shut lines included).
+["face", dir, thr, "neg"] inside a group keeps surface facing dir LESS than thr (e.g. the inner wheelhouse lip).
+Triangles are partitioned exactly in priority order (clip_all), so the pieces tile the body with no holes.
+With the optional fine mesh (mesh.py step 1 of the same field), a spec with "mesh": "fine" is cut from it
+instead: priority holds across both meshes (its area is still reserved on the coarse mesh, so later panels, the
+catch-all and the seams leave it free; earlier panels still win on the fine mesh). Seams and catch-all stay
+coarse. Without the 5th argument the key is ignored.
+Despeckle: islands of seams / catch-all under 1.5 cm2 go to the panel bordering them most (env CUT_DESPECKLE=<cm2>,
+0 disables).
+Writes one npz with per-panel V, F, N (glTF axes) plus a JSON index of names/materials/pivots.
+"""
+import sys, json
+import numpy as np
+import cv2
+from scipy import ndimage
+import p24, outlines
+
+mesh = np.load(sys.argv[1]); V0, F0 = mesh['V'].astype(np.float64), mesh['F'].astype(np.int64)
+fd = np.load(sys.argv[2]); FLD = ndimage.gaussian_filter(fd['F'], 2.5)   # normals from a smoother field: even reflections
+GRID = np.array([float(fd['x0']), float(fd['y0']), float(fd['z0'])]); H = float(fd['h'])
+GX, GY, GZ = np.gradient(FLD)
+SDF = {}
+
+
+GRADS = {}
+
+
+def field_normals(P, sigma=None):
+    """Unit outward normals from the smoothed field gradient at points P (N,3); sigma (voxels) other than the
+    default 2.5 uses a field smoothed that much more (spec key nsmooth: even shading over a lumpy hull)."""
+    idx = ((P - GRID) / H).T
+    if sigma is None or sigma == 2.5:
+        G = (GX, GY, GZ)
+    else:
+        if sigma not in GRADS: GRADS[sigma] = np.gradient(ndimage.gaussian_filter(fd['F'], sigma))
+        G = GRADS[sigma]
+    g = np.stack([ndimage.map_coordinates(A, idx, order=1, mode='nearest') for A in G], 1)
+    return g / np.maximum(np.linalg.norm(g, axis=1, keepdims=True), 1e-9)
+
+
+def region_sdf(view, ids, close=0):
+    """Signed distance image (metres, negative inside) of merged regions; top/front symmetric. close: extra
+    morphological closing (px)."""
+    key = (view, tuple(sorted(ids)), close)
+    if key not in SDF:
+        m = outlines.region_mask(view, ids, sym=view in ('top', 'front'))
+        if close:
+            m = cv2.morphologyEx(m.astype(np.uint8), cv2.MORPH_CLOSE, cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (close, close))) > 0
+        SDF[key] = p24.sdf2d(m) / 1000.0
+    return SDF[key]
+
+
+CAM28 = None
+
+
+def h28_value(P, classes):
+    """Membership in Honda rear frame 28 colour classes, via the calibrated camera (metres at depth)."""
+    global CAM28
+    if CAM28 is None:
+        cams, w, h = p24.rig(); K, R, C = cams[28]; sc = 1920.0 / w
+        K = K.copy(); K[:2] *= sc
+        CAM28 = (K, R, C)
+    key = ('h28', tuple(classes))
+    if key not in SDF:
+        m = np.zeros((1080, 1920), bool)
+        for c in classes:
+            m |= cv2.imread(str(p24.P24 / f'h28-{c}.png'), cv2.IMREAD_GRAYSCALE) > 127
+        SDF[key] = p24.sdf2d(m)
+    K, R, C = CAM28
+    u, v, d = p24.project(K, R, C, P)
+    return p24.sample(SDF[key], u, v, outside=500.0) * d / K[0, 0]
+
+
+def term_value(P, view, ids, neg=False, close=0, off=0.0):
+    """Signed membership of points P for one term (negative = inside)."""
+    if view == 'h28':
+        s = h28_value(P, ids); return -s if neg else s
+    if view == 'box':                          # ids = [axis, lo, hi]; axis x|y|z|az (|z|)
+        ax, lo, hi = ids
+        c = np.abs(P[:, 2]) if ax == 'az' else P[:, 'xyz'.index(ax)]
+        s = np.maximum(lo - c, c - hi); return -s if neg else s
+    if view == 'disc':                         # ids = [x0, y0, r] in the side view
+        s = np.hypot(P[:, 0] - ids[0], P[:, 1] - ids[1]) - ids[2]; return -s if neg else s
+    if view == 'hp':                           # ids = [a, b, c]: side-view half-plane a*X + b*Y + c < 0
+        s = ids[0] * P[:, 0] + ids[1] * P[:, 1] + ids[2]; return -s if neg else s
+    u, v = p24.to_px(view, P[:, 0], P[:, 1], P[:, 2])   # side ignores Z (the left-side plate serves both sides)
+    s = p24.sample(region_sdf(view, ids, close), u, v, outside=1.0) - off
+    return -s if neg else s
+
+
+FACE = {'side': None, 'top': np.array([0, 1, 0]), 'front': np.array([1, 0, 0]), 'rear': np.array([-1, 0, 0])}
+
+
+def membership(spec, P, N, side):
+    """Panel membership value at points (negative = in the panel)."""
+    s = np.full(len(P), 1.0)
+    for group in spec.get('any', [spec.get('terms', [])]):          # union of groups, each an intersection
+        g = np.full(len(P), -1.0)
+        for t in group:
+            if t[0] == 'face':                                         # facing constraint inside a group
+                d = {'front': np.array([1, 0, 0]), 'rear': np.array([-1, 0, 0]), 'top': np.array([0, 1, 0])}.get(t[1])
+                fv = (N @ d) if d is not None else (side if side else np.sign(P[:, 2])) * N[:, 2]
+                thr = float(t[2]) if len(t) > 2 else 0.15
+                g = np.maximum(g, (fv - thr) * 0.02 if len(t) > 3 and t[3] == 'neg' else (thr - fv) * 0.02)
+                continue
+            g = np.maximum(g, term_value(P, t[0], t[1], len(t) > 2 and t[2] == 'neg', spec.get('close', 0), float(t[3]) if len(t) > 3 else 0.0)
+                           if t[0] not in ('box', 'disc', 'hp') else term_value(P, t[0], t[1:], False))
+        s = np.minimum(s, g)
+    s = s - spec.get('grow', 0.0)
+    if side:
+        s = np.maximum(s, -side * P[:, 2] - 0.0)                      # keep this side of the centre line
+    face = spec.get('face', 'none')
+    if face == 'side':
+        side_n = side if side else np.sign(P[:, 2])
+        s = np.maximum(s, (0.15 - side_n * N[:, 2]) * 0.02)
+    elif False:
+        s = np.maximum(s, (0.15 - side * N[:, 2]) * 0.02)
+    elif face in FACE and FACE[face] is not None:
+        s = np.maximum(s, (0.15 - N @ FACE[face]) * 0.02)
+    return s
+
+
+def cut(V, F, s):
+    """Keep the part of a triangle mesh where s < 0, splitting crossed triangles exactly.
+    Returns (V2, F2, new-vertex mask)."""
+    inside = s < 0
+    cnt = inside[F].sum(1)
+    keep = F[cnt == 3]
+    mixed = F[(cnt > 0) & (cnt < 3)]
+    newv = {}; extra = []
+    def edge_point(a, b):
+        k = (a, b) if a < b else (b, a)
+        if k not in newv:
+            t = s[a] / (s[a] - s[b])
+            extra.append(V[a] + t * (V[b] - V[a])); newv[k] = len(V) + len(extra) - 1
+        return newv[k]
+    tris = []
+    for f in mixed:
+        poly = []
+        for i in range(3):
+            a, b = f[i], f[(i + 1) % 3]
+            if inside[a]: poly.append(a)
+            if inside[a] != inside[b]: poly.append(edge_point(a, b))
+        for k in range(1, len(poly) - 1):
+            tris.append((poly[0], poly[k], poly[k + 1]))
+    V2 = np.vstack([V] + ([np.array(extra)] if extra else []))
+    F2 = np.vstack([keep] + ([np.array(tris)] if tris else [])) if len(keep) or tris else np.zeros((0, 3), int)
+    used = np.unique(F2)
+    remap = -np.ones(len(V2), int); remap[used] = np.arange(len(used))
+    isnew = np.zeros(len(V2), bool); isnew[len(V):] = True
+    return V2[used], remap[F2], isnew[used]
+
+
+def clip_all(V, F, S):
+    """Exact priority partition of a triangle mesh. Takes vertices, faces and per-vertex values S (nv, K), one
+    column per piece in priority order (negative = wants the surface; the last column must be negative
+    everywhere). Every triangle is clipped by each column's linear interpolant in turn: the part where column k
+    is negative goes to piece k, the rest stays for the later columns. The pieces tile the mesh exactly (no
+    holes, however thin the band between two panels). Returns a list of (V_k, F_k) per column."""
+    nf, K = len(F), S.shape[1]
+    anyneg = np.zeros((nf, K), bool); allneg = np.zeros((nf, K), bool)
+    for a in range(0, nf, 200000):                   # (chunk, 3, K) sign tests, chunked for the fine mesh
+        neg = S[F[a:a + 200000]] < 0
+        anyneg[a:a + 200000] = neg.any(1); allneg[a:a + 200000] = neg.all(1)
+    del neg
+    kf = anyneg.argmax(1)
+    fast = allneg[np.arange(nf), kf]
+    fast_tris = [[] for _ in range(K)]
+    for k in np.unique(kf[fast]):
+        fast_tris[k] = F[fast & (kf == k)]
+    slow_tris = [[] for _ in range(K)]
+    E = np.eye(3)
+    for i in np.nonzero(~fast)[0]:
+        f = F[i]; P3 = V[f]
+        poly = [E[0], E[1], E[2]]
+        for k in np.nonzero(anyneg[i])[0]:
+            sv = S[f, k]
+            vals = [w @ sv for w in poly]
+            if all(v < 0 for v in vals):
+                ins, poly = poly, []
+            elif all(v >= 0 for v in vals):
+                continue
+            else:
+                ins, outp = [], []
+                n = len(poly)
+                for j in range(n):
+                    p, q, sp, sq = poly[j], poly[(j + 1) % n], vals[j], vals[(j + 1) % n]
+                    (ins if sp < 0 else outp).append(p)
+                    if (sp < 0) != (sq < 0):
+                        r = p + (sp / (sp - sq)) * (q - p); ins.append(r); outp.append(r)
+                poly = outp
+            W = np.array(ins) @ P3
+            for j in range(1, len(W) - 1):
+                slow_tris[k].append((W[0], W[j], W[j + 1]))
+            if len(poly) < 3: break
+    out = []
+    for k in range(K):
+        parts = []
+        if len(fast_tris[k]): parts.append(V[fast_tris[k]].reshape(-1, 3))
+        if slow_tris[k]: parts.append(np.array(slow_tris[k]).reshape(-1, 3))
+        if not parts:
+            out.append((np.zeros((0, 3)), np.zeros((0, 3), int))); continue
+        P = np.vstack(parts)
+        key = np.round(P * 1e6).astype(np.int64)
+        _, first, inv = np.unique(key, axis=0, return_index=True, return_inverse=True)
+        Vk = P[first]; Fk = inv.reshape(-1, 3)
+        ok = (Fk[:, 0] != Fk[:, 1]) & (Fk[:, 1] != Fk[:, 2]) & (Fk[:, 0] != Fk[:, 2])
+        a = np.linalg.norm(np.cross(Vk[Fk[:, 1]] - Vk[Fk[:, 0]], Vk[Fk[:, 2]] - Vk[Fk[:, 0]]), axis=1)
+        Fk = Fk[ok & (a > 1e-11)]
+        used = np.unique(Fk); remap = -np.ones(len(Vk), int); remap[used] = np.arange(len(used))
+        out.append((Vk[used], remap[Fk]))
+    return out
+
+
+def catch_all(N0, claimed):
+    """Per-vertex value of the catch-all paint piece: negative away from Honda's shut-line strokes (judged in
+    the view the surface looks toward); down-facing and wheelhouse surface excluded (stays seams). Positive
+    wherever a panel claims the vertex (claimed = min over the panel columns), so the thin strokes between
+    two panels stay seams even where the mesh is coarser than the stroke."""
+    stroke = {}
+    for view in ('side', 'top', 'front'):
+        lab = p24.labels(view)
+        st = cv2.dilate((lab == 0).astype(np.uint8), np.ones((2, 2), np.uint8)) > 0
+        stroke[view] = p24.sdf2d(~st) / 1000.0          # negative away from strokes
+    an = np.abs(N0)
+    dom = np.where((an[:, 2] >= an[:, 0]) & (an[:, 2] >= an[:, 1]), 0, np.where((N0[:, 1] > an[:, 0]), 1, 2))
+    s_rest = np.full(len(V0), -0.01)
+    for k, view in enumerate(('side', 'top', 'front')):
+        sel = dom == k
+        if view == 'front': sel &= N0[:, 0] > 0
+        u, v = p24.to_px(view, V0[sel, 0], V0[sel, 1], V0[sel, 2])
+        s_rest[sel] = p24.sample(stroke[view], u, v, outside=-0.01) + 0.0008
+    s_rest = np.maximum(s_rest, (-0.5 - N0[:, 1]) * 0.02)
+    for wx in p24.WHEEL_X:                               # inside the wheelhouse (|z| < 0.9): seams
+        s_rest = np.maximum(s_rest, np.where(np.abs(V0[:, 2]) < 0.9, -(np.hypot(V0[:, 0] - wx, V0[:, 1] - p24.WHEEL_Y) - 0.40), -1.0))
+    return np.maximum(s_rest, -claimed)
+
+
+DESPECKLE_CM2 = float(__import__('os').environ.get('CUT_DESPECKLE', '1.5'))   # 0 disables
+
+
+def components(V, F):
+    """Connected components of a triangle mesh (shared vertices). Returns per-face labels and per-label areas."""
+    from scipy.sparse import coo_matrix
+    from scipy.sparse.csgraph import connected_components
+    n = len(V)
+    A = coo_matrix((np.ones(3 * len(F)), (np.concatenate([F[:, 0], F[:, 1], F[:, 2]]), np.concatenate([F[:, 1], F[:, 2], F[:, 0]]))), shape=(n, n))
+    _, lab = connected_components(A, directed=False)
+    fl = lab[F[:, 0]]
+    ar = 0.5 * np.linalg.norm(np.cross(V[F[:, 1]] - V[F[:, 0]], V[F[:, 2]] - V[F[:, 0]]), axis=1)
+    return fl, np.bincount(fl, ar, lab.max() + 1)
+
+
+def despeckle(pieces, index, amin):
+    """Small islands of the seams and the catch-all (area < amin m2, e.g. at triple junctions of strokes) are
+    handed to the neighbouring panel that borders them most (vertices within 2 mm), so they do not show as dark
+    or blue specks. Long shut-line strips are much larger and stay. Returns the new pieces list."""
+    from scipy.spatial import cKDTree
+    names = [e['name'] for e in index]
+    targets = [k for k, n in enumerate(names) if n in ('Civic_Body_Seams', 'Civic_Body_Shell_Misc')]
+    trees = {k: cKDTree(pieces[k][0]) for k in range(len(pieces)) if len(pieces[k][1])}
+    add = {k: [] for k in range(len(pieces))}; moved = 0
+    for t in targets:
+        V, F = pieces[t]
+        if len(F) == 0: continue
+        fl, area = components(V, F)
+        small = np.nonzero(area < amin)[0]
+        keep = np.ones(len(F), bool)
+        for c in small:
+            fm = fl == c; vs = V[np.unique(F[fm])]
+            best, bk = 0, None
+            for k, tr in trees.items():
+                if k == t: continue
+                hit = int((tr.query(vs, distance_upper_bound=0.002)[0] < 0.002).sum())
+                if hit > best: best, bk = hit, k
+            if bk is None: continue
+            add[bk].append(V[F[fm]]); keep[fm] = False; moved += 1
+        pieces[t] = (V, F[keep])
+    for k, tris in add.items():
+        if not tris: continue
+        V, F = pieces[k]; T = np.vstack(tris).reshape(-1, 3)
+        pieces[k] = (np.vstack([V, T]), np.vstack([F, len(V) + np.arange(len(T)).reshape(-1, 3)]))
+    print(f'despeckle: {moved} islands < {amin * 1e4:.1f} cm2 handed to neighbours')
+    return pieces
+
+
+def flat_normals(V, F, N):
+    """Harmonic interpolation of the normals over a panel from its outline (spec key nflat): the panel reads as
+    a smooth flush skin matching its surroundings at the shut line, without the hull's local bumps."""
+    from scipy.sparse import coo_matrix, diags
+    from scipy.sparse.linalg import spsolve
+    E = np.sort(np.concatenate([F[:, [0, 1]], F[:, [1, 2]], F[:, [2, 0]]]), axis=1)
+    u, cnt = np.unique(E, axis=0, return_counts=True)
+    bnd = np.zeros(len(V), bool); bnd[u[cnt == 1].ravel()] = True
+    if bnd.all() or not bnd.any(): return N
+    n = len(V)
+    W = coo_matrix((np.ones(2 * len(u)), (np.concatenate([u[:, 0], u[:, 1]]), np.concatenate([u[:, 1], u[:, 0]]))), shape=(n, n)).tocsr()
+    L = (diags(np.asarray(W.sum(1)).ravel()) - W).tocsr()
+    I = np.nonzero(~bnd)[0]; B = np.nonzero(bnd)[0]
+    A = L[I][:, I]; R = -L[I][:, B] @ N[B]
+    out = N.copy(); out[I] = np.stack([spsolve(A.tocsc(), R[:, i]) for i in range(3)], 1)
+    return out / np.maximum(np.linalg.norm(out, axis=1, keepdims=True), 1e-9)
+
+
+def fine_pieces(path, entries, fine):
+    """Cuts the fine-mesh panels. Takes the fine mesh npz path, the [(spec, side)] column list in priority order
+    and the set of column numbers flagged "mesh": "fine"; returns {column: (V, F)} for those columns. Every
+    column up to the last fine one is evaluated on the fine mesh, so earlier panels (coarse or fine) keep their
+    priority; only faces a fine panel touches are clipped."""
+    m = np.load(path); Vf, Ff = m['V'].astype(np.float64), m['F'].astype(np.int64)
+    Nf = field_normals(Vf)
+    touch = np.zeros(len(Vf), bool)
+    for k in fine:
+        spec, side = entries[k]; touch |= membership(spec, Vf, Nf, side) < 0.02
+    Ff = Ff[touch[Ff].any(1)]
+    used = np.unique(Ff); remap = -np.ones(len(Vf), int); remap[used] = np.arange(len(used))
+    Vs, Ns, Fs = Vf[used], Nf[used], remap[Ff]
+    last = max(fine)
+    S = np.stack([membership(spec, Vs, Ns, side) for spec, side in entries[:last + 1]] + [np.full(len(Vs), -1.0)], 1)
+    pieces = clip_all(Vs, Fs, S.astype(np.float32))
+    print(f'fine mesh: {len(Ff)} faces near {len(fine)} fine panels')
+    return {k: pieces[k] for k in fine}
+
+
+def main():
+    specs = [s for p in sys.argv[3].split(",") for s in json.load(open(p))]
+    fine_path = sys.argv[5] if len(sys.argv) > 5 else None
+    N0 = field_normals(V0)
+    cols, index, entries, fine = [], [], [], set()
+    for spec in specs:
+        names = spec['names'] if 'names' in spec else [spec['name']]
+        sides = [-1, +1] if len(names) == 2 else [spec.get('side', 0)]
+        for nm, side in zip(names, sides):
+            if fine_path and spec.get('mesh') == 'fine': fine.add(len(cols))
+            cols.append(membership(spec, V0, N0, side).astype(np.float64)); entries.append((spec, side))
+            index.append({'name': nm, 'mat': spec.get('mat', 'paint'), 'pivot': spec.get('pivot', '').replace('{S}', 'L' if side < 0 else 'R')})
+    # catch-all: unclaimed surface off Honda's shut-line strokes becomes paint; the rest is the dark seams
+    cols.append(catch_all(N0, np.min(cols, 0))); index.append({'name': 'Civic_Body_Shell_Misc', 'mat': 'paint', 'pivot': ''})
+    cols.append(np.full(len(V0), -1.0)); index.append({'name': 'Civic_Body_Seams', 'mat': 'seam', 'pivot': ''})
+    pieces = clip_all(V0, F0, np.stack(cols, 1))
+    if fine:                       # fine panels: their coarse pieces only reserve the area (dropped), cut again fine
+        for k, pc in fine_pieces(fine_path, entries, fine).items(): pieces[k] = pc
+    if DESPECKLE_CM2 > 0: pieces = despeckle(pieces, index, DESPECKLE_CM2 * 1e-4)
+    out, idx2 = {}, []
+    nsm = [spec.get('nsmooth') for spec, _ in entries] + [None, None]
+    nfl = [spec.get('nflat', False) for spec, _ in entries] + [False, False]
+    for e, (V, F), ns, nf in zip(index, pieces, nsm, nfl):
+        nm = e['name']
+        if len(F) == 0:
+            print('EMPTY', nm); continue
+        N = field_normals(V, ns)
+        if nf: N = flat_normals(V, F, N)
+        out[nm + '/V'] = V.astype(np.float32); out[nm + '/F'] = F.astype(np.int32); out[nm + '/N'] = N.astype(np.float32)
+        idx2.append(e)
+        print(f'{nm:36s} {len(F):7d} faces')
+    out['index'] = np.array(json.dumps(idx2))
+    np.savez_compressed(sys.argv[4], **out)
+    print('seams', len(pieces[-1][1]), 'faces; panels', len(idx2) - 1)
+
+
+if __name__ == '__main__':
+    main()

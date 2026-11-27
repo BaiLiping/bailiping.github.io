@@ -1,0 +1,832 @@
+[
+ {
+  "name": "Civic_Wheelhouse_Liner_Inner",
+  "any": [
+   [
+    [
+     "disc",
+     1.3484,
+     0.3195,
+     0.37
+    ],
+    [
+     "box",
+     "az",
+     0.0,
+     0.9
+    ]
+   ],
+   [
+    [
+     "disc",
+     1.3484,
+     0.3195,
+     0.4
+    ],
+    [
+     "box",
+     "az",
+     0.0,
+     0.875
+    ]
+   ],
+   [
+    [
+     "disc",
+     -1.3484,
+     0.3195,
+     0.37
+    ],
+    [
+     "box",
+     "az",
+     0.0,
+     0.9
+    ]
+   ],
+   [
+    [
+     "disc",
+     -1.3484,
+     0.3195,
+     0.4
+    ],
+    [
+     "box",
+     "az",
+     0.0,
+     0.875
+    ]
+   ]
+  ],
+  "face": "none",
+  "mat": "liner"
+ },
+ {
+  "name": "Civic_Body_Shell_Arch_Lip",
+  "any": [
+   [
+    [
+     "disc",
+     1.3484,
+     0.3195,
+     0.4
+    ],
+    [
+     "box",
+     "az",
+     0.875,
+     0.96
+    ],
+    [
+     "box",
+     "y",
+     0.38,
+     2.0
+    ]
+   ],
+   [
+    [
+     "disc",
+     -1.3484,
+     0.3195,
+     0.4
+    ],
+    [
+     "box",
+     "az",
+     0.875,
+     0.96
+    ],
+    [
+     "box",
+     "y",
+     0.38,
+     2.0
+    ]
+   ]
+  ],
+  "face": "none",
+  "mat": "paint"
+ },
+ {
+  "name": "Civic_Glass_Windshield",
+  "face": "none",
+  "mat": "glass",
+  "any": [
+   [
+    [
+     "top",
+     [
+      2
+     ]
+    ],
+    [
+     "face",
+     "top",
+     0.15
+    ]
+   ],
+   [
+    [
+     "side",
+     [
+      19
+     ]
+    ],
+    [
+     "top",
+     [
+      1,
+      88,
+      116,
+      9,
+      22
+     ],
+     "neg"
+    ]
+   ]
+  ],
+  "grow": 0.004
+ },
+ {
+  "name": "Civic_Glass_Hatch",
+  "terms": [
+   [
+    "top",
+    [
+     4
+    ]
+   ]
+  ],
+  "face": "top",
+  "mat": "privacy",
+  "pivot": "Pivot_Hatch_Assembly"
+ },
+ {
+  "names": [
+   "Civic_Glass_Door_L",
+   "Civic_Glass_Door_R"
+  ],
+  "terms": [
+   [
+    "side",
+    [
+     6
+    ]
+   ]
+  ],
+  "face": "side",
+  "mat": "glass",
+  "pivot": "Pivot_Door_{S}",
+  "grow": 0.0015
+ },
+ {
+  "names": [
+   "Civic_Glass_Door_RL",
+   "Civic_Glass_Door_RR"
+  ],
+  "terms": [
+   [
+    "side",
+    [
+     7
+    ]
+   ]
+  ],
+  "face": "side",
+  "mat": "glass",
+  "pivot": "Pivot_Door_R{S}",
+  "grow": 0.0015
+ },
+ {
+  "names": [
+   "Civic_Glass_Quarter_L",
+   "Civic_Glass_Quarter_R"
+  ],
+  "terms": [
+   [
+    "side",
+    [
+     70
+    ]
+   ]
+  ],
+  "face": "side",
+  "mat": "privacy",
+  "grow": 0.0015
+ },
+ {
+  "names": [
+   "Civic_Door_Frame_L",
+   "Civic_Door_Frame_R"
+  ],
+  "terms": [
+   [
+    "side",
+    [
+     57,
+     62,
+     31
+    ]
+   ]
+  ],
+  "face": "side",
+  "mat": "gloss_black",
+  "pivot": "Pivot_Door_{S}",
+  "grow": 0.0015
+ },
+ {
+  "names": [
+   "Civic_Door_Sail_L",
+   "Civic_Door_Sail_R"
+  ],
+  "terms": [
+   [
+    "side",
+    [
+     84,
+     108,
+     149,
+     140,
+     126,
+     75,
+     79,
+     101,
+     128
+    ]
+   ],
+   [
+    "face",
+    "side",
+    0.5
+   ]
+  ],
+  "face": "side",
+  "mat": "gloss_black",
+  "pivot": "Pivot_Door_{S}",
+  "grow": 0.0015,
+  "mesh": "fine"
+ },
+ {
+  "names": [
+   "Civic_Door_Frame_RL",
+   "Civic_Door_Frame_RR"
+  ],
+  "terms": [
+   [
+    "side",
+    [
+     63,
+     68,
+     33,
+     55
+    ]
+   ]
+  ],
+  "face": "side",
+  "mat": "gloss_black",
+  "pivot": "Pivot_Door_R{S}",
+  "grow": 0.0015
+ },
+ {
+  "names": [
+   "Civic_Pillar_Trim_L",
+   "Civic_Pillar_Trim_R"
+  ],
+  "terms": [
+   [
+    "side",
+    [
+     65,
+     130
+    ]
+   ]
+  ],
+  "face": "side",
+  "mat": "gloss_black",
+  "grow": 0.0015
+ },
+ {
+  "name": "Civic_Body_Shell_Roof",
+  "terms": [
+   [
+    "top",
+    [
+     1,
+     88,
+     116
+    ]
+   ]
+  ],
+  "face": "top",
+  "mat": "paint"
+ },
+ {
+  "name": "Civic_Roof_Spoiler",
+  "terms": [
+   [
+    "top",
+    [
+     10,
+     138,
+     142
+    ]
+   ]
+  ],
+  "face": "top",
+  "mat": "paint"
+ },
+ {
+  "names": [
+   "Civic_Door_Sash_L",
+   "Civic_Door_Sash_R"
+  ],
+  "terms": [
+   [
+    "side",
+    [
+     8
+    ]
+   ],
+   [
+    "hp",
+    -0.982,
+    -0.191,
+    -0.0876
+   ],
+   [
+    "box",
+    "x",
+    -2.0,
+    0.3
+   ]
+  ],
+  "face": "none",
+  "mat": "paint",
+  "pivot": "Pivot_Door_{S}",
+  "grow": 0.0025
+ },
+ {
+  "names": [
+   "Civic_Body_Shell_APillar_L",
+   "Civic_Body_Shell_APillar_R"
+  ],
+  "terms": [
+   [
+    "side",
+    [
+     8
+    ]
+   ],
+   [
+    "box",
+    "x",
+    0.306,
+    2.0
+   ]
+  ],
+  "face": "none",
+  "mat": "paint",
+  "grow": 0.0025
+ },
+ {
+  "names": [
+   "Civic_Door_Sash_RL",
+   "Civic_Door_Sash_RR"
+  ],
+  "terms": [
+   [
+    "side",
+    [
+     8
+    ]
+   ],
+   [
+    "hp",
+    0.982,
+    0.191,
+    0.0916
+   ],
+   [
+    "hp",
+    -0.879,
+    0.476,
+    -1.548
+   ]
+  ],
+  "face": "none",
+  "mat": "paint",
+  "pivot": "Pivot_Door_R{S}",
+  "grow": 0.0025
+ },
+ {
+  "names": [
+   "Civic_Door_Handle_Pocket_L",
+   "Civic_Door_Handle_Pocket_R"
+  ],
+  "terms": [
+   [
+    "side",
+    [
+     119,
+     109
+    ]
+   ]
+  ],
+  "face": "side",
+  "mat": "pocket",
+  "pivot": "Pivot_Door_{S}",
+  "grow": 0.0015,
+  "mesh": "fine"
+ },
+ {
+  "names": [
+   "Civic_Door_Handle_Pocket_RL",
+   "Civic_Door_Handle_Pocket_RR"
+  ],
+  "terms": [
+   [
+    "side",
+    [
+     132,
+     115
+    ]
+   ]
+  ],
+  "face": "side",
+  "mat": "pocket",
+  "pivot": "Pivot_Door_R{S}",
+  "grow": 0.0015,
+  "mesh": "fine"
+ },
+ {
+  "names": [
+   "Civic_Door_Shell_L",
+   "Civic_Door_Shell_R"
+  ],
+  "terms": [
+   [
+    "side",
+    [
+     1,
+     11,
+     14,
+     48,
+     95,
+     119,
+     109,
+     136,
+     156,
+     158,
+     169
+    ]
+   ]
+  ],
+  "face": "side",
+  "mat": "paint",
+  "pivot": "Pivot_Door_{S}",
+  "grow": 0.0015,
+  "close": 15
+ },
+ {
+  "names": [
+   "Civic_Door_Shell_RL",
+   "Civic_Door_Shell_RR"
+  ],
+  "terms": [
+   [
+    "side",
+    [
+     2,
+     24,
+     17,
+     92,
+     132,
+     115,
+     137,
+     151,
+     157,
+     161
+    ]
+   ]
+  ],
+  "face": "side",
+  "mat": "paint",
+  "pivot": "Pivot_Door_R{S}",
+  "grow": 0.0015,
+  "close": 15
+ },
+ {
+  "name": "Civic_Fuel_Flap",
+  "side": -1,
+  "terms": [
+   [
+    "side",
+    [
+     44,
+     69
+    ]
+   ]
+  ],
+  "face": "side",
+  "mat": "paint",
+  "pivot": "Pivot_Fuel_Flap",
+  "grow": 0.0015,
+  "mesh": "fine"
+ },
+ {
+  "name": "Civic_Body_Shell_RearQuarter_L",
+  "side": -1,
+  "any": [
+   [
+    [
+     "side",
+     [
+      15,
+      61,
+      25,
+      66,
+      59,
+      143,
+      168
+     ]
+    ],
+    [
+     "box",
+     "y",
+     0.72,
+     2.0
+    ]
+   ],
+   [
+    [
+     "side",
+     [
+      15,
+      61,
+      25,
+      66,
+      59,
+      143,
+      168
+     ]
+    ],
+    [
+     "box",
+     "az",
+     0.84,
+     2.0
+    ]
+   ],
+   [
+    [
+     "side",
+     [
+      8,
+      15
+     ]
+    ],
+    [
+     "hp",
+     0.879,
+     -0.476,
+     1.55
+    ]
+   ],
+   [
+    [
+     "top",
+     [
+      42,
+      33
+     ]
+    ],
+    [
+     "face",
+     "top",
+     0.15
+    ],
+    [
+     "side",
+     [
+      44,
+      69,
+      2,
+      17,
+      24,
+      7,
+      55,
+      63,
+      68,
+      33
+     ],
+     "neg",
+     0.01
+    ]
+   ]
+  ],
+  "face": "none",
+  "mat": "paint",
+  "grow": 0.0015
+ },
+ {
+  "name": "Civic_Body_Shell_RearQuarter_R",
+  "side": 1,
+  "any": [
+   [
+    [
+     "side",
+     [
+      15,
+      61,
+      25,
+      66,
+      59,
+      44,
+      69,
+      143,
+      168
+     ]
+    ],
+    [
+     "box",
+     "y",
+     0.72,
+     2.0
+    ]
+   ],
+   [
+    [
+     "side",
+     [
+      15,
+      61,
+      25,
+      66,
+      59,
+      44,
+      69,
+      143,
+      168
+     ]
+    ],
+    [
+     "box",
+     "az",
+     0.84,
+     2.0
+    ]
+   ],
+   [
+    [
+     "side",
+     [
+      8,
+      15,
+      44,
+      69
+     ]
+    ],
+    [
+     "hp",
+     0.879,
+     -0.476,
+     1.55
+    ]
+   ],
+   [
+    [
+     "top",
+     [
+      42,
+      33
+     ]
+    ],
+    [
+     "face",
+     "top",
+     0.15
+    ],
+    [
+     "side",
+     [
+      44,
+      69,
+      2,
+      17,
+      24,
+      7,
+      55,
+      63,
+      68,
+      33
+     ],
+     "neg",
+     0.01
+    ]
+   ]
+  ],
+  "face": "none",
+  "mat": "paint",
+  "grow": 0.0015
+ },
+ {
+  "names": [
+   "Civic_Front_Fender_Vent_L",
+   "Civic_Front_Fender_Vent_R"
+  ],
+  "terms": [
+   [
+    "side",
+    [
+     58
+    ]
+   ]
+  ],
+  "face": "side",
+  "mat": "gloss_black",
+  "grow": 0.0015,
+  "mesh": "fine"
+ },
+ {
+  "names": [
+   "Civic_Body_Shell_FrontFender_L",
+   "Civic_Body_Shell_FrontFender_R"
+  ],
+  "terms": [
+   [
+    "side",
+    [
+     13,
+     18,
+     29,
+     113
+    ]
+   ]
+  ],
+  "face": "side",
+  "mat": "paint",
+  "grow": 0.0015
+ },
+ {
+  "names": [
+   "Civic_Body_Shell_Sill_L",
+   "Civic_Body_Shell_Sill_R"
+  ],
+  "terms": [
+   [
+    "side",
+    [
+     28,
+     23,
+     107
+    ]
+   ]
+  ],
+  "face": "side",
+  "mat": "paint",
+  "grow": 0.0015
+ },
+ {
+  "names": [
+   "Civic_Side_Skirt_L",
+   "Civic_Side_Skirt_R"
+  ],
+  "terms": [
+   [
+    "side",
+    [
+     22,
+     71,
+     111,
+     125,
+     127,
+     170,
+     172
+    ]
+   ]
+  ],
+  "face": "side",
+  "mat": "carbon",
+  "grow": 0.0015
+ },
+ {
+  "names": [
+   "Civic_Side_Skirt_Pinstripe_L",
+   "Civic_Side_Skirt_Pinstripe_R"
+  ],
+  "terms": [
+   [
+    "side",
+    [
+     72
+    ]
+   ]
+  ],
+  "face": "side",
+  "mat": "red",
+  "grow": 0.0015,
+  "mesh": "fine"
+ }
+]

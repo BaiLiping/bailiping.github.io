@@ -1,0 +1,67 @@
+[
+ {
+  "name": "Civic_Wheelhouse_Liner",
+  "any": [
+   [
+    [
+     "disc",
+     1.3484,
+     0.3195,
+     0.4
+    ]
+   ],
+   [
+    [
+     "disc",
+     -1.3484,
+     0.3195,
+     0.4
+    ]
+   ]
+  ],
+  "face": "none",
+  "mat": "liner"
+ },
+ {
+  "names": [
+   "Civic_Body_Shell_Pillars_L",
+   "Civic_Body_Shell_Pillars_R"
+  ],
+  "terms": [
+   [
+    "side",
+    [
+     27
+    ]
+   ]
+  ],
+  "face": "none",
+  "mat": "paint",
+  "grow": 0.004
+ },
+ {
+  "names": [
+   "Civic_Body_Shell_Cowl_Side_L",
+   "Civic_Body_Shell_Cowl_Side_R"
+  ],
+  "terms": [
+   [
+    "side",
+    [
+     84,
+     108,
+     149
+    ]
+   ],
+   [
+    "box",
+    "x",
+    0.7,
+    2.0
+   ]
+  ],
+  "face": "none",
+  "mat": "paint",
+  "grow": 0.0025
+ }
+]
