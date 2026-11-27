@@ -9,7 +9,7 @@
     const params = new URLSearchParams(location.search);
     if (params.get('capture') === '1' || params.get('hud') === '0') document.documentElement.classList.add('hide-hud');
     const overrideModel = params.get('model');
-    const modelFile = overrideModel || './honda_civic_type_r.glb?v=3dfc97028d';
+    const modelFile = overrideModel || './honda_civic_type_r.glb?v=151c854305';
     const preload = document.createElement('link');
     preload.rel = 'preload';
     preload.as = 'fetch';
@@ -22,7 +22,7 @@
   <title>2020 Honda Civic Type R (FK8) — Boost Blue</title>
   <meta name="description" content="Explore the 2020 Honda Civic Type R (FK8) in Boost Blue. Rotate the 3D model, open the rear hatch and compare its wing, C-shaped taillights and triple exhaust with photographs." />
   <link rel="stylesheet" href="./studio.css?v=f545ff0d26">
-  <script type="module" src="./studio.js?v=ef27d08333"></script>
+  <script type="module" src="./studio.js?v=10bea92d4e"></script>
 </head>
 <body>
   <noscript><p style="position:fixed;inset:0;z-index:30;background:#eceeef;padding:2em">The interactive Honda Civic Type R (FK8) viewer requires JavaScript. <a href="https://bringatrailer.com/listing/2021-honda-civic-type-r-touring-5/">View the reference listing</a> or <a href="./frame-by-frame/">open the frame-by-frame photo comparison</a>.</p></noscript>
@@ -131,11 +131,11 @@
   </div>
   <script type="module">
     import * as THREE from './vendor/three-r170.js?v=31c84364';
-    import { createStudioFloor } from './studio-floor.js';
+    import { createStudioFloor } from './studio-floor.js?v=3c1c96d463';
     import { applyStudioVisibility } from './studio-visibility.js';
     import { createPlanarMirror } from './mirror-reflection.js';
-    import { createPaintEnvironment } from './paint-studio.js?v=b647aede01';
-    import { DEFAULT_CAMERAS, orbitRadius, normalizeCameraPose, buildReferenceViews, loadCivicViews } from './civic-views.js?v=2ad09f8f89';
+    import { createPaintEnvironment } from './paint-studio.js?v=5fe5ffea29';
+    import { DEFAULT_CAMERAS, orbitRadius, normalizeCameraPose, buildReferenceViews, loadCivicViews } from './civic-views.js?v=5cdcbf6f40';
 
     const { GLTFLoader, DRACOLoader } = THREE;
     const MODEL_URL = modelFile;
@@ -263,7 +263,7 @@
     studio.dispose();
     pmrem.dispose();
     scene.environmentIntensity = 1.60;
-    // The Boost Blue paint reflects a studio fitted to Honda's renders (paint-studio.js), not the room panorama.
+    // The body and glass share the neutral reflection studio fitted to Honda’s renders.
     const paintEnvironment = createPaintEnvironment(renderer);
 
     const camera = new THREE.PerspectiveCamera(30, window.innerWidth / window.innerHeight, 0.02, 120);
@@ -776,6 +776,7 @@
     const exteriorBodySet = new Set();
     const exteriorXrayMaterials = [];
     const headerMaterials = [];
+    const wheelWellMaterials = new Map();
     const allPickableMeshes = [];
     const cabinEnclosure = { value: new THREE.Vector2() };
     const trimEnclosure = { value: new THREE.Vector2(1, 0) };
@@ -866,11 +867,12 @@
               /^Mat_(Automotive_Glass|Rear_Privacy_Glass|Headlight_Clear_Lens)$/.test(obj.material?.name || '');
             const isHeadlightLens = obj.material?.name === 'Mat_Headlight_Clear_Lens' || /Headlamp_Lens|Headlight_Lens/.test(obj.name);
             const isHeader = /Eng_Turbo(?!Shield)|Eng_Manifold|Eng_Exhaust|Eng_Downpipe|Exhaust_Pipe|Exhaust_Downpipe/.test(obj.name);
+            const inWheelWell = /^Civic_(?:Brake_|Wheel_.._Rotor|Suspension_)/.test(obj.name);
             const isCaster = !isGlass && (SHADOW_CASTER_RE.test(obj.name) || inBody || inPowertrain);
 
             obj.castShadow = isCaster;
             if (isCaster) groundShadows.addCaster(obj);
-            obj.receiveShadow = isCaster || /Floor|Carpet|Dash|Seat|Engine|Hatch|Undertray|Trans|Gear/.test(obj.name);
+            obj.receiveShadow = isCaster || inWheelWell || /Floor|Carpet|Dash|Seat|Engine|Hatch|Undertray|Trans|Gear/.test(obj.name);
             if (isHeadlightLens) obj.renderOrder = 2;
             allPickableMeshes.push(obj);
             if (isExterior) exteriorBodySet.add(obj);
@@ -883,13 +885,15 @@
               const enclosure = !obj.geometry.hasAttribute('_studio_visibility') ? ''
                 : isUnderPivot(obj, /^Pivot_(?:Interior_Cabin|Door_)/) ? 'cabin'
                 : isUnderPivot(obj, /^Pivot_(?:Engine_|Drivetrain_6MT)/) ? 'engine' : 'exterior';
-              const matKey = `${obj.material.uuid}|${isExterior ? (isGlass ? 'EG' : 'E') : 'I'}|${glassKind}${isHeader ? 'H' : 'S'}|${enclosure}`;
+              const matKey = `${obj.material.uuid}|${isExterior ? (isGlass ? 'EG' : 'E') : 'I'}|${glassKind}${isHeader ? 'H' : 'S'}|${enclosure}|${inWheelWell}`;
               let shared = sharedMaterials.get(matKey);
               if (!shared) {
                 shared = obj.material.clone();
                 if (/^Mat_Boost_Blue/.test(shared.name)) {
                   shared.envMap = paintEnvironment.texture;
-                  shared.envMapIntensity = paintEnvironment.scale;
+                  // The diffuse blue base also receives the showroom lights.
+                  // Keep the fitted environment as a soft fill and coat highlight.
+                  shared.envMapIntensity = paintEnvironment.scale * 0.5;
                 }
                 const filtering = Math.min(8, renderer.capabilities.getMaxAnisotropy());
                 for (const texture of [shared.map, shared.normalMap, shared.emissiveMap, shared.roughnessMap]) {
@@ -907,15 +911,14 @@
                   const doorPane = glassKind === 'GD';
                   shared.transparent = true;
                   shared.depthWrite = false;
-                  shared.opacity = privacy ? 0.86 : doorPane ? 0.61 : 0.70;
+                  shared.opacity = privacy ? 0.83 : doorPane ? 0.65 : 0.76;
                   shared.userData.cabinOpacity = privacy ? 0.24 : 0.16;
-                  shared.color.setRGB(0.008, 0.017, 0.025);
-                  shared.roughness = 0.08;
-                  shared.clearcoat = 0.62;
-                  shared.clearcoatRoughness = 0.04;
+                  shared.color.setRGB(0.075, 0.084, 0.087);
+                  shared.roughness = 0.095;
+                  shared.clearcoat = 0;
                   shared.specularIntensity = 0.85;
-                  shared.envMap = scene.environment;
-                  shared.envMapIntensity = 1.35;
+                  shared.envMap = paintEnvironment.texture;
+                  shared.envMapIntensity = 2.0;
                   shared.customProgramCacheKey = () => 'civic-window-fresnel';
                   shared.onBeforeCompile = shader => {
                     shader.fragmentShader = shader.fragmentShader.replace('#include <opaque_fragment>', `
@@ -986,6 +989,10 @@
                 } else if (shared.name === 'Mat_Engine_Turbo_Cast') {
                   shared.envMap = scene.environment;
                   shared.envMapIntensity = 1.60;
+                }
+                if (inWheelWell && shared.isMeshStandardMaterial) {
+                  wheelWellMaterials.set(shared, shared.envMap ? shared.envMapIntensity : null);
+                  shared.envMap = scene.environment;
                 }
                 shared.userData.origOpacity = shared.opacity ?? 1.0;
                 shared.userData.origTransparent = !!shared.transparent;
@@ -1782,6 +1789,7 @@
       if (lastVisibilityPose === pose) return;
       lastVisibilityPose = pose;
       scene.background.setHex(pose?.background ?? BG_HEX);
+      groundShadows.setBackdrop(pose?.background);
       const isolate = pose?.isolate;
       const hidden = pose?.hide;
       const byPivot = Boolean(pose?.isolateByPivot);
@@ -2384,17 +2392,24 @@
         }
       }
 
-      let cabinPull = 0, enginePull = 0;
+      let cabinPull = 0, enginePull = 0, wheelPull = 0;
       for (const [object, pull] of pullOffsets) {
         const assembly = object.isMesh ? object.parent?.name || '' : object.name;
         const release = THREE.MathUtils.smoothstep(pull.cur.length(), 0, 0.8);
         if (/Body_Assembly|Interior_Cabin|Door_|Hatch_/.test(assembly)) cabinPull = Math.max(cabinPull, release);
         if (/Body_Assembly|Engine_|Drivetrain_6MT|Hood_/.test(assembly)) enginePull = Math.max(enginePull, release);
+        if (/Body_Assembly|Wheel|Corner|Suspension|Brake/.test(assembly + object.name)) wheelPull = Math.max(wheelPull, release);
       }
       const enclosed = lastIsolation ? 0 : (1 - state.xray) * (1 - THREE.MathUtils.smoothstep(Math.max(state.explode, state.powertrainCutaway), 0, 0.55));
       const cabinOpen = Math.min(1, state.doorL * 0.35 + state.doorR * 0.35 + state.doorRL * 0.2 + state.doorRR * 0.2 + state.hatch * 0.3);
       cabinEnclosure.value.set(1 - cabinOpen, cabinOpen).multiplyScalar(enclosed * (1 - cabinPull));
       engineEnclosure.value.set(1 - state.hood, state.hood).multiplyScalar(enclosed * (1 - enginePull));
+      // The barrel, spokes and arch limit how much of the studio the brakes see.
+      // Exposing the mechanism restores the full environment for inspection.
+      const wheelOcclusion = enclosed * (1 - wheelPull);
+      for (const [material, exposedIntensity] of wheelWellMaterials) {
+        material.envMapIntensity = THREE.MathUtils.lerp(exposedIntensity ?? scene.environmentIntensity, 0.38, wheelOcclusion);
+      }
       updateCabinMirror(forceSceneUpdate);
       renderer.render(scene, camera);
     }

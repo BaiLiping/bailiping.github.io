@@ -22,6 +22,7 @@ from pathlib import Path
 import numpy as np
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 import panels
+from finishes import BODY_PAINT, POCKET_PAINT, WHEEL_PAINT, FINISHES, set_blender_finish
 
 argv = sys.argv[sys.argv.index('--') + 1:]
 base, panels_npz, out = argv[:3]
@@ -31,8 +32,8 @@ REMOVE = re.compile(r'^Civic_(Badge_|Body_Shell_|Fender_|Front_|Fuel_|Glass_|Hea
                     r'Side_Skirt|Taillamp_|Wheelhouse_|Windshield_Cowl|Door_Frame_|Door_Handle_|Door_Shell_|Mirror_|Hatch_|Hood_)')
 
 MATS = {  # cutpanels material key -> site material name (created if missing) and fallback colour
-    'paint': ('Mat_Boost_Blue_B637P', (0.0, 0.30, 0.90)),
-    'pocket': ('Mat_Boost_Blue_Pocket', (0.0, 0.085, 0.30)),      # door-handle recesses: paint in shadow
+    'paint': (BODY_PAINT, FINISHES[BODY_PAINT].color),
+    'pocket': (POCKET_PAINT, FINISHES[POCKET_PAINT].color),    # door-handle recesses: paint in shadow
     'glass': ('Mat_Automotive_Glass', (0.02, 0.03, 0.04)),
     'privacy': ('Mat_Rear_Privacy_Glass', (0.01, 0.01, 0.012)),
     'gloss_black': ('Mat_Gloss_Black_Trim', (0.01, 0.01, 0.012)),
@@ -58,10 +59,12 @@ def material(key):
         m = bpy.data.materials.new(name); m.use_nodes = True
         b = m.node_tree.nodes['Principled BSDF']; b.inputs['Base Color'].default_value = (*col, 1)
         b.inputs['Roughness'].default_value = 0.35 if key != 'black' else 0.7
-        if key == 'pocket':
-            b.inputs['Metallic'].default_value = 0.8; b.inputs['Roughness'].default_value = 0.4
         if key == 'headlamp':
             b.inputs['Metallic'].default_value = 0.6; b.inputs['Roughness'].default_value = 0.12
+    # The base GLB can supply an older metallic paint. Set both the reused
+    # and newly built materials to the same pigment and protective clear coat.
+    if key in ('paint', 'pocket'):
+        set_blender_finish(m)
     return m
 
 
@@ -456,6 +459,11 @@ CALIPER_TURN = {'F': 26.0, 'R': 125.0}                             # degrees, fo
 def fit_wheels():
     """Drops the four corner pivots to the loaded wheel-centre height and enlarges the rims (and the tyres'
     beads with them) radially about each hub, keeping the tread radius close to Honda's. Returns a report."""
+    # The spokes and barrel share the wheel's black coating. The brake disc
+    # and machined fasteners retain their metal surfaces.
+    rim = bpy.data.materials.get(WHEEL_PAINT)
+    if rim:
+        set_blender_finish(rim)
     rep = []
     for c in ('FL', 'FR', 'RL', 'RR'):
         corner = bpy.data.objects.get('Pivot_Corner_' + c); spin = bpy.data.objects.get('Pivot_WheelSpin_' + c)

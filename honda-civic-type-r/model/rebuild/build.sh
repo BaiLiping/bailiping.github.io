@@ -23,7 +23,9 @@ $PY sides_openings.py cut-$T.npz body-$T.npz openings-$T.npz > openings-$T.log 2
 tail -1 openings-$T.log
 blender -b --python assemble.py -- ../render-fix/final.glb cut-$T.npz $PWD/car-$T.glb --parts parts-$T.npz$EXTRA,openings-$T.npz > asm-$T.log 2>&1 || { tail -5 asm-$T.log; exit 1; }
 grep -E "removed|wrote" asm-$T.log
-node ../gltfx/compress_model.mjs car-$T.glb car-$T.draco.glb && cp car-$T.draco.glb ../../site/_preview/rb-$T.glb
+node ../compress_model.mjs car-$T.glb car-$T.base.draco.glb
+$PY refine_exterior.py car-$T.base.draco.glb car-$T.draco.glb
+cp car-$T.draco.glb ../../site/_preview/rb-$T.glb
 ls -la car-$T.draco.glb | awk '{print "draco", $5}'
 cd ../render-fix
 POSES='[{"id":"fq","theta":-0.75,"phi":1.38,"distance":9},{"id":"rq","theta":2.4,"phi":1.35,"distance":9},{"id":"rear","theta":3.1416,"phi":1.45,"distance":9},{"id":"side","theta":-1.5708,"phi":1.45,"distance":10}]' \

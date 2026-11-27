@@ -34,13 +34,15 @@ export function createStudioFloor(scene, renderer, backgroundColor) {
 
   const span = { value: 8.0 };
   // Neutral studio cyclorama floor matching the MR2 and GT3 studios.
+  const studioFloorColor = 0xc1c2c4;
+  const horizonColor = new THREE.Color(backgroundColor);
   const material = new THREE.MeshBasicMaterial({
-    color: 0xc1c2c4, toneMapped: false, fog: false,
+    color: studioFloorColor, toneMapped: false, fog: false,
   });
   material.onBeforeCompile = shader => {
     shader.uniforms.footprintMap = { value: target.texture };
     shader.uniforms.footprintSpan = span;
-    shader.uniforms.horizonColor = { value: new THREE.Color(backgroundColor) };
+    shader.uniforms.horizonColor = { value: horizonColor };
     shader.vertexShader = 'varying vec2 floorPosition;\n' + shader.vertexShader.replace(
       '#include <begin_vertex>', '#include <begin_vertex>\nfloorPosition = vec2(position.x, -position.y);',
     );
@@ -129,5 +131,10 @@ export function createStudioFloor(scene, renderer, backgroundColor) {
       scene.overrideMaterial = previousOverride;
     }
   }
-  return { floor, addCaster, update };
+  function setBackdrop(color) {
+    material.color.setHex(color ?? studioFloorColor);
+    horizonColor.setHex(color ?? backgroundColor);
+  }
+
+  return { floor, addCaster, update, setBackdrop };
 }

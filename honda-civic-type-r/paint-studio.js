@@ -1,13 +1,8 @@
 import * as THREE from './vendor/three-r170.js?v=31c84364';
 
-// Reflection environment for the Boost Blue paint only. The shared room panorama is low-range and full of
-// windows and furniture, so a glossy metallic paint mirrored it as blotches and a milky veil. This studio
-// was instead recovered from American Honda's official 360-degree renders of the car: for every paint
-// pixel in Honda's twelve full frames, the solved camera and the model's surface normal give the direction
-// that pixel reflects, and the radiance below was fitted per direction until the viewer's paint matched
-// Honda's brightness and saturation (work/render-fix/env_fit.py in the build workspace), then clamped and
-// smoothed so reflections stay smooth. Directions Honda's cameras never see (below -40 degrees) are a
-// dim floor.
+// Neutral studio shared by the paint and exterior glass. American Honda's twelve full 360° frames
+// provide the intensity and direction of the softboxes. The fitted radiance is clamped and smoothed
+// across directions. The part of the environment below -40 degrees represents a dim floor.
 // Grid: linear radiance, 36 elevation rows from straight up (row 0) to straight down, by 72 azimuth
 // columns from -pi, 5 degrees each; three.js equirect lookup u = atan2(z, x) / 2pi + 0.5. The car's length
 // runs along X (front at +X).
