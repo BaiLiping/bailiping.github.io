@@ -9,7 +9,7 @@
     const params = new URLSearchParams(location.search);
     if (params.get('capture') === '1' || params.get('hud') === '0') document.documentElement.classList.add('hide-hud');
     const overrideModel = params.get('model');
-    const modelFile = overrideModel || './honda_civic_type_r.glb?v=a2c4797a09';
+    const modelFile = overrideModel || './honda_civic_type_r.glb?v=54b534a0d6';
     const preload = document.createElement('link');
     preload.rel = 'preload';
     preload.as = 'fetch';
@@ -22,7 +22,7 @@
   <title>2020 Honda Civic Type R (FK8) — Boost Blue</title>
   <meta name="description" content="Explore the 2020 Honda Civic Type R (FK8) in Boost Blue. Rotate the 3D model, open the rear hatch and compare its wing, C-shaped taillights and triple exhaust with photographs." />
   <link rel="stylesheet" href="./studio.css?v=f545ff0d26">
-  <script type="module" src="./studio.js?v=b6f98bdae7"></script>
+  <script type="module" src="./studio.js?v=75a67d4afa"></script>
 </head>
 <body>
   <noscript><p style="position:fixed;inset:0;z-index:30;background:#eceeef;padding:2em">The interactive Honda Civic Type R (FK8) viewer requires JavaScript. <a href="https://bringatrailer.com/listing/2021-honda-civic-type-r-touring-5/">View the reference listing</a> or <a href="./frame-by-frame/">open the frame-by-frame photo comparison</a>.</p></noscript>
@@ -134,7 +134,8 @@
     import { createStudioFloor } from './studio-floor.js';
     import { applyStudioVisibility } from './studio-visibility.js';
     import { createPlanarMirror } from './mirror-reflection.js';
-    import { DEFAULT_CAMERAS, orbitRadius, normalizeCameraPose, buildReferenceViews, loadCivicViews } from './civic-views.js?v=a5b6ded0ef';
+    import { createPaintEnvironment } from './paint-studio.js?v=b647aede01';
+    import { DEFAULT_CAMERAS, orbitRadius, normalizeCameraPose, buildReferenceViews, loadCivicViews } from './civic-views.js?v=6e02174079';
 
     const { GLTFLoader, DRACOLoader } = THREE;
     const MODEL_URL = modelFile;
@@ -262,6 +263,8 @@
     studio.dispose();
     pmrem.dispose();
     scene.environmentIntensity = 1.60;
+    // The Boost Blue paint reflects a studio fitted to Honda's renders (paint-studio.js), not the room panorama.
+    const paintEnvironment = createPaintEnvironment(renderer);
 
     const camera = new THREE.PerspectiveCamera(30, window.innerWidth / window.innerHeight, 0.02, 120);
 
@@ -884,6 +887,10 @@
               let shared = sharedMaterials.get(matKey);
               if (!shared) {
                 shared = obj.material.clone();
+                if (/^Mat_Boost_Blue/.test(shared.name)) {
+                  shared.envMap = paintEnvironment.texture;
+                  shared.envMapIntensity = paintEnvironment.scale;
+                }
                 const filtering = Math.min(8, renderer.capabilities.getMaxAnisotropy());
                 for (const texture of [shared.map, shared.normalMap, shared.emissiveMap, shared.roughnessMap]) {
                   if (texture) texture.anisotropy = filtering;
