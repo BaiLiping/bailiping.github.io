@@ -22,7 +22,7 @@
   <title>2020 Honda Civic Type R (FK8) — Boost Blue</title>
   <meta name="description" content="Explore the 2020 Honda Civic Type R (FK8) in Boost Blue. Rotate the 3D model, open the rear hatch and compare its wing, C-shaped taillights and triple exhaust with photographs." />
   <link rel="stylesheet" href="./studio.css?v=f545ff0d26">
-  <script type="module" src="./studio.js?v=0aca760127"></script>
+  <script type="module" src="./studio.js?v=f319756f6d"></script>
 </head>
 <body>
   <noscript><p style="position:fixed;inset:0;z-index:30;background:#eceeef;padding:2em">The interactive Honda Civic Type R (FK8) viewer requires JavaScript. <a href="https://bringatrailer.com/listing/2021-honda-civic-type-r-touring-5/">View the reference listing</a> or <a href="./frame-by-frame/">open the frame-by-frame photo comparison</a>.</p></noscript>
@@ -132,10 +132,10 @@
   <script type="module">
     import * as THREE from './vendor/three-r170.js?v=655c60e5';
     import { createStudioFloor } from './studio-floor.js?v=5e689b1502';
-    import { applyStudioVisibility, attachStudioVisibility, loadStudioVisibility } from './studio-visibility.js?v=1a05de5675';
+    import { applyStudioVisibility, attachStudioVisibility, loadStudioVisibility } from './studio-visibility.js?v=4983a6eba7';
     import { createPlanarMirror } from './mirror-reflection.js?v=a806e09fc7';
     import { createPaintEnvironment } from './paint-studio.js?v=c7567331f0';
-    import { DEFAULT_CAMERAS, orbitRadius, normalizeCameraPose, buildReferenceViews, loadCivicViews } from './civic-views.js?v=911cc0cd28';
+    import { DEFAULT_CAMERAS, orbitRadius, normalizeCameraPose, buildReferenceViews, loadCivicViews } from './civic-views.js?v=15c019fc20';
 
     const { GLTFLoader, DRACOLoader } = THREE;
     const MODEL_URL = modelFile;
@@ -912,7 +912,9 @@
                 : /Glass_Quarter/.test(obj.name) ? 'GQ'
                 : /Glass_Windshield/.test(obj.name) ? 'GW' : '';
               const enclosure = enclosureFor(obj);
-              const matKey = `${obj.material.uuid}|${isExterior ? (isGlass ? 'EG' : 'E') : 'I'}|${glassKind}${isHeader ? 'H' : 'S'}|${enclosure}|${inWheelWell}`;
+              // The taillights reuse the red seat material for a light guide.
+              const dyedFabric = !overrideModel && obj.material.sheen > 0 && !obj.name.startsWith('Civic_Taillamp_');
+              const matKey = `${obj.material.uuid}|${isExterior ? (isGlass ? 'EG' : 'E') : 'I'}|${glassKind}${isHeader ? 'H' : 'S'}|${enclosure}|${inWheelWell}|${dyedFabric}`;
               let shared = sharedMaterials.get(matKey);
               if (!shared) {
                 shared = obj.material.clone();
@@ -922,6 +924,8 @@
                   // Keep the fitted environment as a soft fill and coat highlight.
                   shared.envMapIntensity = paintEnvironment.scale * 0.625;
                 }
+                // Fibres reflect their dye colour at grazing angles.
+                if (dyedFabric) shared.sheenColor.multiply(shared.color);
                 const filtering = Math.min(8, renderer.capabilities.getMaxAnisotropy());
                 for (const texture of [shared.map, shared.normalMap, shared.emissiveMap, shared.roughnessMap]) {
                   if (texture) texture.anisotropy = filtering;

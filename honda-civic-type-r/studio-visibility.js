@@ -64,6 +64,9 @@ export function applyStudioVisibility(material, weights) {
         reflectedLight.indirectDiffuse *= mix(0.14, 1.0, studioVisibility);
         float specularVisibility = mix(0.06, 1.0, studioVisibility);
         reflectedLight.indirectSpecular *= specularVisibility;
+        #ifdef USE_SHEEN
+          sheenSpecularIndirect *= specularVisibility;
+        #endif
         #ifdef USE_CLEARCOAT
           clearcoatSpecularIndirect *= specularVisibility;
         #endif
