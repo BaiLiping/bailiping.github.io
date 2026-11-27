@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <link rel="modulepreload" href="./vendor/three-r170.js?v=31c84364">
+  <link rel="modulepreload" href="./vendor/three-r170.js?v=655c60e5">
   <script>
     if (location.hash === '#civic-views') document.documentElement.classList.add('show-photos');
     const params = new URLSearchParams(location.search);
@@ -22,7 +22,7 @@
   <title>2020 Honda Civic Type R (FK8) — Boost Blue</title>
   <meta name="description" content="Explore the 2020 Honda Civic Type R (FK8) in Boost Blue. Rotate the 3D model, open the rear hatch and compare its wing, C-shaped taillights and triple exhaust with photographs." />
   <link rel="stylesheet" href="./studio.css?v=f545ff0d26">
-  <script type="module" src="./studio.js?v=10bea92d4e"></script>
+  <script type="module" src="./studio.js?v=0aca760127"></script>
 </head>
 <body>
   <noscript><p style="position:fixed;inset:0;z-index:30;background:#eceeef;padding:2em">The interactive Honda Civic Type R (FK8) viewer requires JavaScript. <a href="https://bringatrailer.com/listing/2021-honda-civic-type-r-touring-5/">View the reference listing</a> or <a href="./frame-by-frame/">open the frame-by-frame photo comparison</a>.</p></noscript>
@@ -78,7 +78,7 @@
     <span id="load-status" role="status">Preparing interactive model…</span>
   </div>
   <div id="bar" inert>
-    <p id="drag-hint"><span class="mouse">Drag the background to orbit · Scroll to zoom</span><span class="touch">Drag to orbit · Pinch to zoom</span><span class="cabin-hint mouse">Drag to look around · Scroll to zoom</span><span class="cabin-hint touch">Drag to look around · Pinch to zoom</span></p>
+    <p id="drag-hint"><span class="mouse">Drag to orbit · Scroll to zoom</span><span class="touch">Drag to orbit · Pinch to zoom</span><span class="cabin-hint mouse">Drag to look around · Scroll to zoom</span><span class="cabin-hint touch">Drag to look around · Pinch to zoom</span></p>
     <div id="tools" role="group" aria-label="Model controls">
       <button type="button" id="exploded-view" aria-pressed="false">Exploded</button>
       <button type="button" data-command="i" aria-pressed="false">Cabin</button>
@@ -107,7 +107,7 @@
             <a href="#hatch">Rear hatch &amp; wing</a>
           </p>
           <details class="notes"><summary>Gestures and shortcuts</summary>
-            <p>Tap a door, hood, rear hatch or fuel flap to open it. Drag an assembly to detach it. Alt-drag moves a single part. On touchscreens, hold the part before dragging.</p>
+            <p>Click or tap a door, hood, rear hatch or fuel flap to open it. With a mouse, Shift-drag to detach an assembly or Alt-drag to move one part. In exploded view, drag an assembly directly or drag the background to orbit. On touchscreens, hold a part before dragging to move it.</p>
             <p><a href="#assembly">Play the assembly sequence</a></p>
             <p>D opens the doors. 1–4 operate individual doors, F opens the hood, K opens the rear hatch, and G opens the fuel flap.</p>
             <p>I cabin · E explode · X x-ray · R reset · S steer · W spin · Space rev · M sound · H hide controls</p>
@@ -130,16 +130,18 @@
     </div>
   </div>
   <script type="module">
-    import * as THREE from './vendor/three-r170.js?v=31c84364';
-    import { createStudioFloor } from './studio-floor.js?v=3c1c96d463';
-    import { applyStudioVisibility } from './studio-visibility.js';
-    import { createPlanarMirror } from './mirror-reflection.js';
-    import { createPaintEnvironment } from './paint-studio.js?v=5fe5ffea29';
-    import { DEFAULT_CAMERAS, orbitRadius, normalizeCameraPose, buildReferenceViews, loadCivicViews } from './civic-views.js?v=5cdcbf6f40';
+    import * as THREE from './vendor/three-r170.js?v=655c60e5';
+    import { createStudioFloor } from './studio-floor.js?v=5e689b1502';
+    import { applyStudioVisibility, attachStudioVisibility, loadStudioVisibility } from './studio-visibility.js?v=1a05de5675';
+    import { createPlanarMirror } from './mirror-reflection.js?v=a806e09fc7';
+    import { createPaintEnvironment } from './paint-studio.js?v=c7567331f0';
+    import { DEFAULT_CAMERAS, orbitRadius, normalizeCameraPose, buildReferenceViews, loadCivicViews } from './civic-views.js?v=911cc0cd28';
 
     const { GLTFLoader, DRACOLoader } = THREE;
     const MODEL_URL = modelFile;
     const urlParams = new URLSearchParams(location.search);
+    const visibilityReady = !overrideModel && loadStudioVisibility('./studio-visibility.bin.gz?v=a6a1ec8995')
+      .catch(error => { console.warn('Studio visibility unavailable', error); return null; });
     const captureMode = urlParams.get('capture') === '1';
     let fullViewportCapture = captureMode;
     const reflectionPhoto = new Image();
@@ -172,6 +174,7 @@
     const canvas = document.getElementById('stage');
     const infoEl = document.getElementById('info');
     const barEl = document.getElementById('bar');
+    const mouseDragHint = document.querySelector('#drag-hint .mouse');
     const calloutEl = document.getElementById('callout');
     const calloutTitle = calloutEl.querySelector('.title');
     const calloutSub = calloutEl.querySelector('.sub');
@@ -283,11 +286,11 @@
     keyLight.shadow.bias = -0.0004;
     keyLight.shadow.intensity = 0.44;
     keyLight.shadow.radius = 3.5;
-    const rimLight = new THREE.DirectionalLight(0xe9f2ff, 1.02);
+    const rimLight = new THREE.DirectionalLight(0xe9f2ff, 0);
     rimLight.position.set(-2.0, 4.5, 4.2);
     const detailFill = new THREE.DirectionalLight(0xf4f1ed, 0);
     detailFill.position.set(1.2, -2.2, 1.8);
-    const rearFill = new THREE.DirectionalLight(0xf5f8ff, 0.85);
+    const rearFill = new THREE.DirectionalLight(0xf5f8ff, 0);
     rearFill.position.set(-5.0, 2.5, -2.4);
     scene.add(studioFill, keyLight, rimLight, detailFill, rearFill);
 
@@ -627,7 +630,7 @@
       if (!intro) return;
       intro = null;
       if (selectedView === 'assembly') selectedView = null;
-      state.explodeTarget = state.explode;
+      state.explodeTarget = 0;
       updateHudText();
     }
 
@@ -781,6 +784,24 @@
     const cabinEnclosure = { value: new THREE.Vector2() };
     const trimEnclosure = { value: new THREE.Vector2(1, 0) };
     const engineEnclosure = { value: new THREE.Vector2() };
+    const panelEnclosures = Object.fromEntries(Object.keys(panels).map(key => [key, { value: new THREE.Vector2() }]));
+    const enclosureWeights = { exterior: trimEnclosure, cabin: cabinEnclosure, engine: engineEnclosure, ...panelEnclosures };
+
+    function updateEnclosure(weights, opening, strength) {
+      // Some inspection poses swing the hood farther than the baked open angle.
+      const fraction = THREE.MathUtils.clamp(opening, 0, 1);
+      weights.value.set(1 - fraction, fraction).multiplyScalar(strength);
+    }
+
+    function enclosureFor(obj) {
+      if (!obj.geometry.hasAttribute('_studio_visibility')) return '';
+      for (let p = obj; p; p = p.parent) {
+        if (panelByNode[p.name]) return panelByNode[p.name];
+        if (p.name === 'Pivot_Interior_Cabin') return 'cabin';
+        if (/^Pivot_(?:Engine_|Drivetrain_6MT)/.test(p.name)) return 'engine';
+      }
+      return 'exterior';
+    }
     const hits = [];
     let rearMirror = null, cabinMirror = null;
     let mirrorDirty = true;
@@ -844,7 +865,15 @@
 
     const loadModel = () => loader.load(
       MODEL_URL,
-      (gltf) => {
+      async (gltf) => {
+        const visibility = await visibilityReady;
+        if (visibility) {
+          try {
+            attachStudioVisibility(gltf, visibility, new URL(MODEL_URL, location.href).searchParams.get('v'));
+          } catch (error) {
+            console.warn('Studio visibility unavailable', error);
+          }
+        }
         rootCar = gltf.scene;
         // Blender Z-up -> glTF Y-up (+X forward, +Y up, -Z driver left, +Z passenger right), 1:1 meters.
         scene.add(rootCar);
@@ -882,9 +911,7 @@
                 : /Glass_Hatch|Hatch_Glass/.test(obj.name) ? 'GH'
                 : /Glass_Quarter/.test(obj.name) ? 'GQ'
                 : /Glass_Windshield/.test(obj.name) ? 'GW' : '';
-              const enclosure = !obj.geometry.hasAttribute('_studio_visibility') ? ''
-                : isUnderPivot(obj, /^Pivot_(?:Interior_Cabin|Door_)/) ? 'cabin'
-                : isUnderPivot(obj, /^Pivot_(?:Engine_|Drivetrain_6MT)/) ? 'engine' : 'exterior';
+              const enclosure = enclosureFor(obj);
               const matKey = `${obj.material.uuid}|${isExterior ? (isGlass ? 'EG' : 'E') : 'I'}|${glassKind}${isHeader ? 'H' : 'S'}|${enclosure}|${inWheelWell}`;
               let shared = sharedMaterials.get(matKey);
               if (!shared) {
@@ -893,7 +920,7 @@
                   shared.envMap = paintEnvironment.texture;
                   // The diffuse blue base also receives the showroom lights.
                   // Keep the fitted environment as a soft fill and coat highlight.
-                  shared.envMapIntensity = paintEnvironment.scale * 0.5;
+                  shared.envMapIntensity = paintEnvironment.scale * 0.625;
                 }
                 const filtering = Math.min(8, renderer.capabilities.getMaxAnisotropy());
                 for (const texture of [shared.map, shared.normalMap, shared.emissiveMap, shared.roughnessMap]) {
@@ -911,9 +938,9 @@
                   const doorPane = glassKind === 'GD';
                   shared.transparent = true;
                   shared.depthWrite = false;
-                  shared.opacity = privacy ? 0.83 : doorPane ? 0.65 : 0.76;
+                  shared.opacity = privacy ? 0.63 : doorPane ? 0.38 : 0.47;
                   shared.userData.cabinOpacity = privacy ? 0.24 : 0.16;
-                  shared.color.setRGB(0.075, 0.084, 0.087);
+                  shared.color.setRGB(0.002, 0.004, 0.005);
                   shared.roughness = 0.095;
                   shared.clearcoat = 0;
                   shared.specularIntensity = 0.85;
@@ -926,7 +953,8 @@
                       float grazing = pow(1.0 - facing, 5.0);
                       float paneAlpha = mix(diffuseColor.a, 1.0, grazing * smoothstep(0.1,0.4,diffuseColor.a));
                       vec3 reflection = totalSpecular + clearcoatSpecularDirect + clearcoatSpecularIndirect;
-                      vec3 transmittedTint = totalDiffuse * diffuseColor.a;
+                      // The transparent pane absorbs light passing through it. Only its reflection is lit.
+                      vec3 transmittedTint = diffuseColor.rgb * diffuseColor.a;
                       gl_FragColor = vec4((transmittedTint + reflection * smoothstep(0.05,0.30,diffuseColor.a)) /
                         max(paneAlpha, 0.05), paneAlpha);
                     `);
@@ -964,8 +992,7 @@
                   };
                 }
                 if (enclosure && shared.isMeshStandardMaterial) {
-                  const weight = enclosure === 'exterior' ? trimEnclosure : enclosure === 'cabin' ? cabinEnclosure : engineEnclosure;
-                  applyStudioVisibility(shared, weight);
+                  applyStudioVisibility(shared, enclosureWeights[enclosure]);
                 }
                 // Crisp metallic highlights on K20C1 & 6MT machined gears under studio PMREM
                 if (shared.name === 'Mat_Gear_Machined_Steel') {
@@ -990,7 +1017,7 @@
                   shared.envMap = scene.environment;
                   shared.envMapIntensity = 1.60;
                 }
-                if (inWheelWell && shared.isMeshStandardMaterial) {
+                if (inWheelWell && !enclosure && shared.isMeshStandardMaterial) {
                   wheelWellMaterials.set(shared, shared.envMap ? shared.envMapIntensity : null);
                   shared.envMap = scene.environment;
                 }
@@ -1002,7 +1029,6 @@
                 if (isExterior) exteriorXrayMaterials.push(shared);
               }
               obj.material = shared;
-              obj.userData.baseMat = shared;
               if (isHeader && !headerMatSet.has(shared)) {
                 headerMatSet.add(shared);
                 headerMaterials.push(shared);
@@ -1029,47 +1055,22 @@
         drivetrainButton.disabled = !pivots.Pivot_Drivetrain_6MT && !pivots.Pivot_Engine_Bay;
         state.loaded = true;
 
-        // Match sibling car showcases: normal page loads open in exploded view and smoothly assemble,
-        // while captureMode, photo gallery, reduced-motion, and deep-linked views settle directly.
-        const rawReqView = captureMode ? '' : (urlParams.get('view') || document.documentElement.dataset.matchView || location.hash.slice(1));
-        const reqView = rawReqView === 'gearing' ? 'drivetrain' : rawReqView;
-        const reqExplode = urlParams.get('explode');
-        if (captureMode) {
-          selectedView = null;
-          state.explode = state.explodeTarget = 0;
-          state.theta = state.targetTheta = exteriorView.theta;
-          state.phi = state.targetPhi = exteriorView.phi;
-          state.radius = state.targetRadius = exteriorView.radius;
-          state.targetCenter.copy(FOCUS_EXTERIOR);
-          state.frontLens = 1;
-          state.rearLens = state.cabinBlend = 0;
-        } else if (reqView && isDetailView(reqView) && !overrideModel) {
-          matchCivicView(reqView, { immediate: true });
-        } else if (reqView === 'rear') {
-          showRearView(true);
-        } else if (location.hash === '#civic-views') {
-          selectedView = null;
-          state.explode = state.explodeTarget = 0;
-          state.theta = state.targetTheta = exteriorView.theta;
-          state.phi = state.targetPhi = exteriorView.phi;
-          state.radius = state.targetRadius = exteriorView.radius;
-          state.targetCenter.copy(FOCUS_EXTERIOR);
-          state.frontLens = 1;
-          state.rearLens = state.cabinBlend = 0;
-        } else if (reqExplode === '1' || reqView === 'exploded') {
-          frameAssembly();
-          state.explode = state.explodeTarget = 1;
-        } else if (reqExplode === '0') {
-          selectedView = null;
-          state.explode = state.explodeTarget = 0;
-          state.theta = state.targetTheta = exteriorView.theta;
-          state.phi = state.targetPhi = exteriorView.phi;
-          state.radius = state.targetRadius = exteriorView.radius;
-          state.targetCenter.copy(FOCUS_EXTERIOR);
-          state.frontLens = 1;
-          state.rearLens = state.cabinBlend = 0;
-        } else {
-          startAssembly();
+        if (!captureMode) {
+          const rawView = urlParams.get('view') || document.documentElement.dataset.matchView || location.hash.slice(1);
+          const view = rawView === 'gearing' ? 'drivetrain' : rawView;
+          const explode = urlParams.get('explode');
+          if (isDetailView(view) && !overrideModel) {
+            matchCivicView(view, { immediate: true });
+          } else if (view === 'rear') {
+            showRearView(true);
+          } else if (location.hash !== '#civic-views') {
+            if (explode === '1' || view === 'exploded') {
+              frameAssembly();
+              state.explode = state.explodeTarget = 1;
+            } else if (view === 'assembly' && explode !== '0') {
+              startAssembly();
+            }
+          }
         }
 
         document.documentElement.dataset.modelReady = overrideModel ? 'custom' : 'stock';
@@ -1102,7 +1103,6 @@
     const pointer = new THREE.Vector2();
 
     let hoveredMesh = null;
-    let hoverCloneMat = null;
     let draggingMode = null;
     let grabbedTarget = null;
     let grabbedMesh = null;
@@ -1167,25 +1167,7 @@
 
     function setHoverMesh(mesh, clientX, clientY) {
       if (hoveredMesh !== mesh) {
-        if (hoveredMesh && hoveredMesh.userData.baseMat) {
-          hoveredMesh.material = hoveredMesh.userData.baseMat;
-        }
-        if (hoverCloneMat) {
-          hoverCloneMat.dispose();
-          hoverCloneMat = null;
-        }
         hoveredMesh = mesh;
-        if (mesh && mesh.userData.baseMat) {
-          hoverCloneMat = mesh.userData.baseMat.clone();
-          hoverCloneMat.onBeforeCompile = mesh.userData.baseMat.onBeforeCompile;
-          hoverCloneMat.customProgramCacheKey = mesh.userData.baseMat.customProgramCacheKey;
-          if (hoverCloneMat.emissive) {
-            hoverCloneMat.emissive.setHex(0xc8102e);
-            hoverCloneMat.emissiveIntensity = 0.24;
-          }
-          mesh.material = hoverCloneMat;
-        }
-        wake(false);
         updateHudText();
       }
       if (mesh) {
@@ -1221,13 +1203,14 @@
       updatePointer(e);
       prevPointerX = e.clientX;
       prevPointerY = e.clientY;
-      pressTime = performance.now();
+      pressTime = e.timeStamp;
       pressX = e.clientX;
       pressY = e.clientY;
 
       const hit = pickMesh();
       if (hit && e.button === 0 && (!state.interiorView || e.altKey)) {
-        draggingMode = e.pointerType === 'touch' ? 'touchPart' : 'pull';
+        const detach = e.shiftKey || e.altKey || (e.pointerType === 'mouse' && state.explodeTarget > 0.05);
+        draggingMode = detach ? 'pull' : 'part';
         grabbedMesh = hit.object;
         grabbedTarget = getAssemblyPivotForMesh(hit.object, e.altKey);
         const ps = getPullState(grabbedTarget);
@@ -1238,7 +1221,7 @@
         raycaster.ray.intersectPlane(dragPlane, dragHitStart);
 
         canvas.classList.add('grabbing');
-        playClickSound(680, 0.04);
+        if (detach) playClickSound(680, 0.04);
         wake(true);
       } else {
         draggingMode = 'orbit';
@@ -1259,15 +1242,16 @@
       }
       if (primaryPointer !== null && primaryPointer !== e.pointerId) return;
       updatePointer(e);
-      if (draggingMode === 'touchPart') {
+      if (draggingMode === 'part') {
         if (Math.hypot(e.clientX - pressX, e.clientY - pressY) < 7) return;
-        if (performance.now() - pressTime >= 350) {
+        if (e.pointerType !== 'mouse' && e.timeStamp - pressTime >= 350) {
           draggingMode = 'pull';
           grabbedTarget = grabbedMesh;
           dragObjStartOffset.copy(getPullState(grabbedTarget).cur);
         } else {
           draggingMode = 'orbit';
           grabbedTarget = grabbedMesh = null;
+          setHoverMesh(null, 0, 0);
         }
       }
       if (draggingMode === 'orbit') {
@@ -1335,7 +1319,7 @@
       if (!touches.size) pinchStart = null;
       if (e.pointerId !== primaryPointer) return;
       primaryPointer = null;
-      if ((draggingMode === 'pull' || draggingMode === 'touchPart') && grabbedTarget) {
+      if ((draggingMode === 'pull' || draggingMode === 'part') && grabbedTarget) {
         const ps = getPullState(grabbedTarget);
         const pullDist = ps.tgt.length();
         const clickedPanel = panelByNode[grabbedTarget.name];
@@ -1723,6 +1707,9 @@
       drivetrainButton.setAttribute('aria-pressed', String(selectedView === 'drivetrain'));
       const showingExplosion = intro ? intro.elapsed <= introHoldMs : state.explodeTarget > 0.05;
       explosionButton.setAttribute('aria-pressed', String(showingExplosion));
+      mouseDragHint.textContent = showingExplosion && !intro
+        ? 'Drag the background to orbit · Drag an assembly to detach'
+        : 'Drag to orbit · Scroll to zoom';
 
       const hasPowertrainRig = Boolean(pivots.Pivot_Drivetrain_6MT || pivots.Pivot_Spin_Crankshaft);
       const showGearBar = !captureMode && !intro && (selectedView === 'drivetrain' || (hasPowertrainRig && state.explodeTarget > 0.05));
@@ -2060,6 +2047,7 @@
       studioFill.groundColor.lerpColors(lighting.ground, cabinLighting.ground, t);
       keyLight.intensity = lerp(lighting.key, cabinLighting.key, t);
       rimLight.intensity = lerp(lighting.rim, cabinLighting.rim, t);
+      rearFill.intensity = lighting === exteriorLighting ? 0.85 * t : 0.85;
       detailFill.intensity = lerp(lighting.lower, cabinLighting.lower, t);
       scene.environmentIntensity = lerp(lighting.environment, cabinLighting.environment, t);
       renderer.toneMappingExposure = lerp(lighting.exposure, cabinLighting.exposure, t);
@@ -2157,15 +2145,19 @@
       const closeUp = isDetailView(selectedView) || selectedView === 'fuel';
       const minimumAspect = closeUp ? 1.02 : 1.52 + 0.06 * portraitMargin;
       const exteriorScale = THREE.MathUtils.lerp(Math.max(1, minimumAspect / camera.aspect, 0.76 / availableHeight), rearScale, state.rearLens);
-      scene.fog.density = studioFogDensity / THREE.MathUtils.lerp(1, dolly * exteriorScale, Math.min(1, state.frontLens + state.rearLens));
-      const assembledRadius = THREE.MathUtils.lerp(state.radius * exteriorScale * dolly, cabinRadius, state.cabinBlend);
+      scene.fog.density = studioFogDensity / THREE.MathUtils.lerp(1, dolly, Math.min(1, state.frontLens + state.rearLens));
+      const assembledRadius = THREE.MathUtils.lerp(state.radius * dolly, cabinRadius, state.cabinBlend);
       const explodedRadius = state.radius / exteriorView.radius * (assemblyView.distance || 7.4 * exteriorScale) * dolly;
       const turnClearance = 1 + 0.55 * portraitMargin * state.explode * (1 - state.explode);
       let effRadius = assemblyFramed ? explodedRadius : THREE.MathUtils.lerp(assembledRadius, explodedRadius, state.explode) * turnClearance;
 
       const cabinLens = Math.max(Math.tan(THREE.MathUtils.degToRad(59 / 2)), Math.tan(0.60) / camera.aspect);
       const cabinFov = THREE.MathUtils.radToDeg(2 * Math.atan(cabinLens * Math.min(1, state.radius / cabinRadius)));
-      let fov = THREE.MathUtils.lerp(exteriorFov, cabinFov, state.cabinBlend);
+      // Fit the same viewpoint into narrow screens without flattening the silhouette by moving the camera back.
+      const fitScale = assemblyFramed ? 1 : THREE.MathUtils.lerp(exteriorScale, 1, state.explode);
+      const fittedTangent = lensTangent * fitScale;
+      const fittedFov = THREE.MathUtils.radToDeg(2 * Math.atan(fittedTangent));
+      let fov = THREE.MathUtils.lerp(fittedFov, cabinFov, state.cabinBlend);
 
       const match = photoPose?.photo ? (1 - state.cabinBlend) * (1 - state.explode) : 0;
       let offsetX = 0, offsetY = 0;
@@ -2202,7 +2194,7 @@
 
       const cameraExplosion = assemblyFramed ? 0 : state.explode;
       const effX = state.targetCenter.x + cameraExplosion * (assemblyView.center.x - FOCUS_EXTERIOR.x);
-      const compactLift = assemblyFramed ? 0 : effRadius * lensTangent * assemblyView.compactInset * (1 - state.explode) * (1 - state.cabinBlend);
+      const compactLift = assemblyFramed ? 0 : effRadius * fittedTangent * assemblyView.compactInset * (1 - state.explode) * (1 - state.cabinBlend);
       const effY = state.targetCenter.y + cameraExplosion * (assemblyView.center.y - FOCUS_EXTERIOR.y) - compactLift * (1 - match);
       const effZ = state.targetCenter.z + cameraExplosion * (assemblyView.center.z - FOCUS_EXTERIOR.z);
       camera.position.set(
@@ -2392,18 +2384,24 @@
         }
       }
 
-      let cabinPull = 0, enginePull = 0, wheelPull = 0;
+      let cabinPull = 0, enginePull = 0, wheelPull = 0, maxPull = 0;
       for (const [object, pull] of pullOffsets) {
         const assembly = object.isMesh ? object.parent?.name || '' : object.name;
         const release = THREE.MathUtils.smoothstep(pull.cur.length(), 0, 0.8);
+        maxPull = Math.max(maxPull, release);
         if (/Body_Assembly|Interior_Cabin|Door_|Hatch_/.test(assembly)) cabinPull = Math.max(cabinPull, release);
         if (/Body_Assembly|Engine_|Drivetrain_6MT|Hood_/.test(assembly)) enginePull = Math.max(enginePull, release);
         if (/Body_Assembly|Wheel|Corner|Suspension|Brake/.test(assembly + object.name)) wheelPull = Math.max(wheelPull, release);
       }
       const enclosed = lastIsolation ? 0 : (1 - state.xray) * (1 - THREE.MathUtils.smoothstep(Math.max(state.explode, state.powertrainCutaway), 0, 0.55));
       const cabinOpen = Math.min(1, state.doorL * 0.35 + state.doorR * 0.35 + state.doorRL * 0.2 + state.doorRR * 0.2 + state.hatch * 0.3);
-      cabinEnclosure.value.set(1 - cabinOpen, cabinOpen).multiplyScalar(enclosed * (1 - cabinPull));
-      engineEnclosure.value.set(1 - state.hood, state.hood).multiplyScalar(enclosed * (1 - enginePull));
+      const exteriorOpen = Math.max(cabinOpen, state.hood, state.hatch, state.fuel);
+      updateEnclosure(trimEnclosure, exteriorOpen, enclosed * (1 - maxPull));
+      for (const key of Object.keys(panelEnclosures)) {
+        updateEnclosure(panelEnclosures[key], state[key], enclosed * (1 - maxPull));
+      }
+      updateEnclosure(cabinEnclosure, cabinOpen, enclosed * (1 - cabinPull));
+      updateEnclosure(engineEnclosure, state.hood, enclosed * (1 - enginePull));
       // The barrel, spokes and arch limit how much of the studio the brakes see.
       // Exposing the mechanism restores the full environment for inspection.
       const wheelOcclusion = enclosed * (1 - wheelPull);

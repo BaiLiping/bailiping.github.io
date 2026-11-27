@@ -45,3 +45,9 @@ To reproduce the published refinement from the archived assembly without the ori
 git show b436dba528:honda-civic-type-r/honda_civic_type_r.glb > /tmp/fk8-assembly.glb
 python honda-civic-type-r/model/rebuild/refine_exterior.py /tmp/fk8-assembly.glb /tmp/fk8-refined.glb
 ```
+
+The viewer uses a separate pair of ambient visibility values per vertex for the closed and open assemblies. To regenerate it from the published GLB, install NumPy, SciPy, DracoPy and Mitsuba 3 and run the following from the viewer directory. Add `--variant cuda_ad_rgb` to use an NVIDIA GPU.
+
+```sh
+python model/rebuild/bake_visibility.py honda_civic_type_r.glb studio-visibility.bin.gz
+```

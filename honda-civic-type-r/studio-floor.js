@@ -1,4 +1,4 @@
-import * as THREE from './vendor/three-r170.js?v=31c84364';
+import * as THREE from './vendor/three-r170.js?v=655c60e5';
 
 // A capture from beneath the floor locates the actual tires and chassis (1:1 metric meters).
 // Each channel records occlusion at a different height above the ground plane (Y = 0).

@@ -1,3 +1,45 @@
+import { BufferAttribute } from './vendor/three-r170.js?v=655c60e5';
+
+export async function loadStudioVisibility(url) {
+  const response = await fetch(url);
+  if (!response.ok) throw new Error(`HTTP ${response.status} loading studio visibility`);
+  const bytes = new Uint8Array(await response.arrayBuffer());
+  // A server can also deliver the file with Content-Encoding: gzip.
+  if (bytes[0] !== 0x1f || bytes[1] !== 0x8b) return bytes;
+  const stream = new Blob([bytes]).stream().pipeThrough(new DecompressionStream('gzip'));
+  return new Uint8Array(await new Response(stream).arrayBuffer());
+}
+
+export function attachStudioVisibility(gltf, bytes, modelVersion) {
+  const dv = new DataView(bytes.buffer, bytes.byteOffset, bytes.byteLength);
+  const primitiveCount = dv.getUint32(4, true);
+  const modelHash = Array.from(bytes.subarray(8, 40), b => b.toString(16).padStart(2, '0')).join('');
+  if (dv.getUint32(0) !== 0x464b5631 || !modelVersion || !modelHash.startsWith(modelVersion)) {
+    throw new Error('Studio visibility was baked for a different model');
+  }
+  const { meshes, accessors } = gltf.parser.json;
+  let offset = 40 + 4 * primitiveCount;
+  let index = 0;
+  const attributes = meshes.map(mesh => mesh.primitives.map(primitive => {
+    const count = dv.getUint32(40 + 4 * index++, true);
+    if (count !== accessors[primitive.attributes.POSITION].count) throw new Error('Studio visibility vertex count mismatch');
+    const values = bytes.subarray(offset, offset + 2 * count);
+    offset += 2 * count;
+    return new BufferAttribute(values, 2, true);
+  }));
+  if (index !== primitiveCount || offset !== bytes.length) throw new Error('Incomplete studio visibility data');
+
+  const bindings = new Map();
+  gltf.scene.traverse(obj => {
+    if (!obj.isMesh) return;
+    const source = gltf.parser.associations.get(obj);
+    const attribute = attributes[source?.meshes]?.[source?.primitives];
+    if (attribute?.count !== obj.geometry.getAttribute('position').count) throw new Error('Studio visibility geometry mismatch');
+    bindings.set(obj.geometry, attribute);
+  });
+  for (const [geometry, attribute] of bindings) geometry.setAttribute('_studio_visibility', attribute);
+}
+
 // The two vertex values give the fraction of the studio visible from the
 // surface with the closures shut and open. Zero weights expose the assembly
 // to the whole room for exploded, pulled-apart and isolated inspections.

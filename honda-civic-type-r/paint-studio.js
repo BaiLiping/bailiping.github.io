@@ -1,4 +1,4 @@
-import * as THREE from './vendor/three-r170.js?v=31c84364';
+import * as THREE from './vendor/three-r170.js?v=655c60e5';
 
 // Neutral studio shared by the paint and exterior glass. American Honda's twelve full 360° frames
 // provide the intensity and direction of the softboxes. The fitted radiance is clamped and smoothed
