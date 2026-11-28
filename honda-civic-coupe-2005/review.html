@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>2005 Civic EX Coupe · Photo comparisons</title>
+<link rel="canonical" href="https://bailiping.com/honda-civic-coupe-2005/review.html">
+<style>
+*{box-sizing:border-box}html{color-scheme:light}body{margin:0;background:#f5f3ee;color:#232523;font:16px/1.55 Arial,Helvetica,sans-serif}main{width:min(1100px,calc(100% - 36px));margin:auto;padding:22px 0 52px}h1,h2,p{margin:0 0 .65em}h1{font-size:clamp(2rem,5vw,3.5rem);line-height:1.05;letter-spacing:-.05em}h2{font-size:1.4rem;line-height:1.17;letter-spacing:-.025em}header{margin:25px 0 20px}a{color:#81342c;text-underline-offset:3px}section{margin-top:32px}label{font-weight:bold}.entry{max-width:78ch}.links{display:flex;gap:12px 24px;flex-wrap:wrap}.bar{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin:15px 0}select,button{font:inherit;border:1px solid #767570;border-radius:6px;background:#fff;color:#303331;padding:.43rem .65rem}select{max-width:100%}.stage{position:relative;background:#e1e2e1;overflow:hidden;border-radius:8px;border:1px solid #c3c4c2}.stage img{width:100%;height:auto;display:block}.stage #over{position:absolute;inset:0;height:100%;object-fit:contain}.switch{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin:.65rem 0}.switch input{width:min(220px,40vw);accent-color:#a23937}.detail{font-variant-numeric:tabular-nums;color:#555852;font-size:.92rem}footer{border-top:1px solid #cdcecb;margin:30px 0 0;padding:18px 0}details{margin:18px 0}summary{cursor:pointer}.swatch{display:inline-block;vertical-align:baseline;width:.78em;height:.78em;background:#b72029;border-radius:50%;margin-right:.35em}table{border-collapse:collapse;text-align:left;width:min(660px,100%);font-variant-numeric:tabular-nums}th,td{padding:.42rem .5rem;border-bottom:1px solid #c5c5bd}a:focus-visible,select:focus-visible,input:focus-visible,button:focus-visible{outline:3px solid #683427;outline-offset:3px}[hidden]{display:none!important}
+</style></head>
+<body><main>
+<nav aria-label="Breadcrumb"><a href="/cars/">Cars</a> &nbsp;/&nbsp; <a href="./#model">2005 Honda Civic Coupe</a></nav>
+<header><h1>Photo comparisons</h1><p><span class="swatch"></span>2005 Honda Civic EX Coupe in Rallye Red</p></header>
+<p class="entry">The US-market, five-speed EX has 15-inch five-spoke alloys, a glass moonroof and a separate trunk. Honda’s 2005 coupe brochure establishes this configuration. Six independent photographs check the body from the front and rear. Twelve exterior cameras follow Honda’s press and brochure views. Two further cameras match the EX cockpit and the VTEC ignition-cover detail.</p>
+<section aria-labelledby="frame-title"><h2 id="frame-title">Reference view</h2>
+<div class="bar"><label for="frames">Photograph</label><select id="frames"></select><button id="prev" aria-label="Previous photograph">←</button><button id="next" aria-label="Next photograph">→</button></div>
+<p id="reference-type" class="detail" aria-live="polite"></p>
+<div class="stage"><img id="base" referrerpolicy="no-referrer" alt=""><img id="over" alt="" hidden></div>
+<div class="switch" id="slider"><label id="blend-label" for="blend">Model opacity</label><span id="left-label">Photo</span><input type="range" id="blend" min="0" max="100" value="0"><span>Model</span></div>
+<p id="desc" class="entry" aria-live="polite"></p><p id="limits" class="detail"></p><p id="measurement" class="detail"></p>
+<p class="links"><a id="match">Match in 3D</a><a id="source">Source photograph</a><a id="native">Full-size reference</a><a id="render">Model capture</a></p>
+<p id="credit" class="detail"></p></section>
+<section><h2>Factory dimensions</h2><p class="entry">Honda’s US specifications define overall length, body width, height, wheelbase and front/rear track. The exported mesh is measured in metres. Body width excludes mirrors and track is measured between the wheel pivots.</p>
+<table><thead><tr><th>Dimension</th><th>Honda</th><th>Export</th></tr></thead><tbody id="metrics"></tbody></table></section>
+<section><h2>Cabin and mechanical detail</h2><p class="links"><a href="#cockpit-five-speed" id="cabin-frame">Compare the EX cockpit</a><a href="#vtec-cover" id="cover-frame">Compare the VTEC ignition cover</a><a href="./#powertrain">Inspect the engine and five-speed transaxle in 3D</a></p><p class="entry">Honda’s brochure shows the left-hand-drive cockpit, five-speed shift lever, seats, power moonroof and SOHC VTEC cover. The viewer opens the doors, hood and trunk. The engine bay and gearbox use inferred dimensions. The internal gear train and exact hose routing remain undocumented in this study.</p>
+<p class="entry">The photo review covers the exterior. Camera-fit residuals measure the displacement of marked landmarks used in fitting. Differences in wheels, lighting, trim and reproduction scale are recorded by view. Honda’s archive supplied press photographs and specifications. A complete factory mesh and a 2005 EX turntable were unavailable.</p>
+<div class="links"><a href="https://hondanews.com/en-US/honda-automobiles/releases/release-efedf544db86f0338d9eb7004c34c378-2005-honda-civic-coupe-specifications">Honda specifications</a><a href="https://xr793.com/wp-content/uploads/2019/05/2005-Honda-Civic-Coupe.pdf">US coupe brochure</a><a href="https://www.helminc.com/helm/product2.asp?Sku=61S5A30&amp;class_2=AHM&amp;itemtype=N">Factory body repair manual listing</a></div></section>
+<footer class="links"><a href="./#model">3D model</a><a href="civic.glb" download>Download GLB</a><a href="civic-source.zip" download>Editable Blender model and rebuild scripts</a><a href="comparison-data.json">Frame inventory and measurements</a><a href="studio.json">Saved cameras</a></footer>
+</main>
+<script type="module">
+const $=id=>document.getElementById(id);
+const data=await (await fetch('comparison-data.json')).json(),rows=data.frames;
+for(const [k,v,w] of data.dimensions){const tr=$('metrics').insertRow();for(const s of [k,v+' mm',w+' mm'])tr.insertCell().textContent=s;}
+for(const [i,r] of rows.entries())$('frames').add(new Option(r.label,i));
+let selection=0,loadVersion=0;
+function setReference(r,url,tracing){
+ const label=tracing?'Feature tracing':'Photo';
+ $('base').alt=r.label+(tracing?' · edge tracing from the reference photograph':' · reference photograph');
+ $('base').src=url;
+ $('left-label').textContent=label;
+ $('blend-label').textContent=tracing?'Model opacity over tracing':'Model opacity over photograph';
+ $('reference-type').textContent=tracing?(r.file.startsWith('brochure')?'Photo-derived feature tracing · Honda brochure, page '+r.source.split('page=')[1]:'Photo-derived feature tracing · Honda press photograph'):'Reference photograph';
+}
+function show(i){
+ selection=(i+rows.length)%rows.length;const r=rows[selection];$('frames').value=String(selection);
+ const version=++loadVersion;
+ setReference(r,r.publicPhoto||r.tracing,!r.publicPhoto);
+ if(r.remotePhoto){
+   const original=new Image();original.referrerPolicy='no-referrer';
+   original.src=r.remotePhoto;
+   original.decode().then(()=>{if(version===loadVersion)setReference(r,r.remotePhoto,false);}).catch(()=>{});
+ }
+ $('over').hidden=false;$('slider').hidden=false;
+ $('over').alt=r.label+' · matched 3D model';$('over').src=r.render;$('over').style.opacity=$('blend').value/100;
+ $('desc').textContent=r.observation;$('limits').textContent=r.limit;$('measurement').textContent=r.dimensions.join(' × ')+' px · '+r.status+' · median landmark residual '+r.medianPx+' px · largest '+r.worstPx+' px ('+r.worstDescription+').';
+ $('source').href=r.source;$('source').textContent=r.file.startsWith('brochure')?'Honda brochure page':'Source photograph';
+ $('native').href=r.original;$('native').hidden=r.original===r.source;
+ $('match').href='./?frame='+r.id+'#model';$('render').href=r.render;$('credit').replaceChildren(document.createTextNode(r.credit));
+ if(r.licenseURL){const a=document.createElement('a');a.href=r.licenseURL;a.textContent=r.license;$('credit').append(' · ',a);}
+ history.replaceState(null,'','#'+r.id);
+}
+$('frames').onchange=e=>show(+e.target.value);$('next').onclick=()=>show(selection+1);$('prev').onclick=()=>show(selection-1);$('blend').oninput=e=>{$('over').style.opacity=e.target.value/100};
+for(const [id,frame] of [['cabin-frame','cockpit-five-speed'],['cover-frame','vtec-cover']]) $(id).onclick=e=>{e.preventDefault();show(rows.findIndex(r=>r.id===frame));$('frame-title').scrollIntoView();$('frames').focus({preventScroll:true});};
+const initial=rows.findIndex(r=>r.id===location.hash.slice(1));show(initial<0?0:initial);
+</script></body></html>

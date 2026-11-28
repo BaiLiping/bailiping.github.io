@@ -1,0 +1,747 @@
+{
+  "title": "2023 Tesla Model Y",
+  "subtitle": "U.S. Long Range AWD \u00b7 Five seats \u00b7 19-inch Gemini wheels \u00b7 Deep Blue Metallic (PPSB)",
+  "model": "model-y.glb",
+  "poster": "poster.webp",
+  "review": "review.html",
+  "home": [
+    5.9,
+    2.5,
+    5.5
+  ],
+  "target": [
+    0,
+    0.72,
+    0
+  ],
+  "eye": [
+    0.37,
+    1.225,
+    -0.125
+  ],
+  "look": [
+    0.22,
+    1.005,
+    1.12
+  ],
+  "parts": [
+    {
+      "node": "Lid",
+      "offset": [
+        0,
+        0.04,
+        0.15
+      ]
+    },
+    {
+      "node": "AncillaryCover",
+      "offset": [
+        0,
+        0.12,
+        0.15
+      ]
+    },
+    {
+      "node": "HighVoltage",
+      "offset": [
+        0,
+        0.01,
+        0.15
+      ]
+    },
+    {
+      "node": "Pack",
+      "offset": [
+        0,
+        0.01,
+        0.15
+      ]
+    },
+    {
+      "node": "FrontDrive",
+      "offset": [
+        0,
+        0.05,
+        0.56
+      ]
+    },
+    {
+      "node": "RearDrive",
+      "offset": [
+        0,
+        0.08,
+        -0.55
+      ]
+    },
+    {
+      "node": "Body",
+      "offset": [
+        0,
+        0.84,
+        0
+      ]
+    },
+    {
+      "node": "Cabin",
+      "offset": [
+        0,
+        0.05,
+        -0.48
+      ]
+    },
+    {
+      "node": "Hood",
+      "offset": [
+        0,
+        1.45,
+        0.52
+      ]
+    },
+    {
+      "node": "Liftgate",
+      "offset": [
+        0,
+        1.3,
+        -0.65
+      ]
+    },
+    {
+      "node": "DoorFrontLeft",
+      "offset": [
+        1.25,
+        0.92,
+        0
+      ]
+    },
+    {
+      "node": "WheelFrontLeft",
+      "offset": [
+        0.92,
+        0.01,
+        0
+      ]
+    },
+    {
+      "node": "BrakeFrontLeft",
+      "offset": [
+        0.23,
+        0.06,
+        0
+      ]
+    },
+    {
+      "node": "DoorFrontRight",
+      "offset": [
+        -1.25,
+        0.92,
+        0
+      ]
+    },
+    {
+      "node": "WheelFrontRight",
+      "offset": [
+        -0.92,
+        0.01,
+        0
+      ]
+    },
+    {
+      "node": "BrakeFrontRight",
+      "offset": [
+        -0.23,
+        0.06,
+        0
+      ]
+    },
+    {
+      "node": "DoorRearLeft",
+      "offset": [
+        1.25,
+        0.92,
+        -0.34
+      ]
+    },
+    {
+      "node": "WheelRearLeft",
+      "offset": [
+        0.92,
+        0.01,
+        0
+      ]
+    },
+    {
+      "node": "BrakeRearLeft",
+      "offset": [
+        0.23,
+        0.06,
+        0
+      ]
+    },
+    {
+      "node": "DoorRearRight",
+      "offset": [
+        -1.25,
+        0.92,
+        -0.34
+      ]
+    },
+    {
+      "node": "WheelRearRight",
+      "offset": [
+        -0.92,
+        0.01,
+        0
+      ]
+    },
+    {
+      "node": "BrakeRearRight",
+      "offset": [
+        -0.23,
+        0.06,
+        0
+      ]
+    }
+  ],
+  "actions": [
+    {
+      "label": "Open front doors",
+      "nodes": [
+        {
+          "node": "DoorFrontLeft",
+          "axis": "y",
+          "degrees": -54
+        },
+        {
+          "node": "DoorFrontRight",
+          "axis": "y",
+          "degrees": 54
+        }
+      ]
+    },
+    {
+      "label": "Open rear doors",
+      "nodes": [
+        {
+          "node": "DoorRearLeft",
+          "axis": "y",
+          "degrees": -54
+        },
+        {
+          "node": "DoorRearRight",
+          "axis": "y",
+          "degrees": 54
+        }
+      ]
+    },
+    {
+      "label": "Raise hood",
+      "nodes": [
+        {
+          "node": "Hood",
+          "axis": "x",
+          "degrees": -48
+        }
+      ]
+    },
+    {
+      "label": "Open liftgate",
+      "nodes": [
+        {
+          "node": "Liftgate",
+          "axis": "x",
+          "degrees": 63
+        }
+      ]
+    }
+  ],
+  "views": [
+    {
+      "id": "STUD_3QTR",
+      "label": "Front three-quarter \u00b7 Tesla studio",
+      "source": "https://static-assets.tesla.com/configurator/compositor?model=my&view=STUD_3QTR&size=2880&options=%24MTY03%2C%24PPSB%2C%24WY19B%2C%24INPB0&bkba_opt=1",
+      "position": [
+        6.463270107939549,
+        1.2106070063055014,
+        5.469029716194442
+      ],
+      "target": [
+        0.0,
+        0.79,
+        0.0
+      ],
+      "up": [
+        -0.04059554574097044,
+        0.9987594722777589,
+        -0.028836057314503113
+      ],
+      "imageSize": [
+        1920,
+        1080
+      ],
+      "principalPoint": [
+        1007.476814866033,
+        496.8940970362022
+      ],
+      "fov": 30.071847411733746,
+      "fitResidualPx": [
+        0.8,
+        11.85
+      ]
+    },
+    {
+      "id": "STUD_SIDE",
+      "label": "Driver side \u00b7 Tesla studio",
+      "source": "https://static-assets.tesla.com/configurator/compositor?model=my&view=STUD_SIDE&size=2880&options=%24MTY03%2C%24PPSB%2C%24WY19B%2C%24INPB0&bkba_opt=1",
+      "position": [
+        9.013372084795419,
+        1.0154973440764903,
+        0.192490097347173
+      ],
+      "target": [
+        0.0,
+        0.79,
+        0.0
+      ],
+      "up": [
+        -0.024980865049612912,
+        0.999686982074331,
+        -0.0013763184549858867
+      ],
+      "imageSize": [
+        1920,
+        1080
+      ],
+      "principalPoint": [
+        947.1437263928977,
+        496.0059078315189
+      ],
+      "fov": 29.954910932167056,
+      "fitResidualPx": [
+        1.28,
+        0.6
+      ]
+    },
+    {
+      "id": "STUD_REAR34",
+      "label": "Rear three-quarter \u00b7 Tesla studio",
+      "source": "https://static-assets.tesla.com/configurator/compositor?model=my&view=STUD_REAR34&size=2880&options=%24MTY03%2C%24PPSB%2C%24WY19B%2C%24INPB0&bkba_opt=1",
+      "position": [
+        6.727243746316087,
+        1.1230425839923859,
+        -7.234314732080733
+      ],
+      "target": [
+        0.0,
+        0.79,
+        0.0
+      ],
+      "up": [
+        -0.038289162867817014,
+        0.9992126332761216,
+        0.010394878944987057
+      ],
+      "imageSize": [
+        1920,
+        1080
+      ],
+      "principalPoint": [
+        894.992436534953,
+        505.4821718857291
+      ],
+      "fov": 25.807593251919222,
+      "fitResidualPx": [
+        5.33,
+        1.18
+      ]
+    },
+    {
+      "id": "owner-01",
+      "label": "Front three-quarter \u00b7 owner photograph",
+      "source": "https://media.carsandbids.com/8bbf0f64fbfad81f6867cff798d92495738b23a7/photos/exterior/92X2GZo6-rkemwPyR9Jt/edit/VdvI4.jpg",
+      "position": [
+        5.591632578915139,
+        1.097671968839586,
+        8.703866572933409
+      ],
+      "target": [
+        0.0,
+        0.79,
+        0.0
+      ],
+      "up": [
+        -0.03897688357605632,
+        0.9991872297183413,
+        -0.010280200118945386
+      ],
+      "imageSize": [
+        2307,
+        1538
+      ],
+      "principalPoint": [
+        1285.8438884408777,
+        742.0748160222334
+      ],
+      "fov": 14.7506759101978,
+      "fitResidualPx": [
+        0.66,
+        17.09,
+        32.92
+      ]
+    },
+    {
+      "id": "owner-02",
+      "label": "Front elevation \u00b7 owner photograph",
+      "source": "https://media.carsandbids.com/8bbf0f64fbfad81f6867cff798d92495738b23a7/photos/exterior/92X2GZo6-fAbxhFkdsrJ/edit/_YAYA.jpg",
+      "position": [
+        -0.005620122905282632,
+        0.8199370767213527,
+        8.695642217983297
+      ],
+      "target": [
+        0.0,
+        0.79,
+        0.0
+      ],
+      "up": [
+        -6.895378451736682e-05,
+        0.9999940711970134,
+        -0.00344279191905503
+      ],
+      "imageSize": [
+        1987,
+        1325
+      ],
+      "principalPoint": [
+        991.014459476495,
+        617.3944289904339
+      ],
+      "fov": 12.617942780623483,
+      "fitResidualPx": [
+        20.63,
+        7.02,
+        2.27
+      ]
+    },
+    {
+      "id": "owner-03",
+      "label": "Passenger side \u00b7 owner photograph",
+      "source": "https://media.carsandbids.com/8bbf0f64fbfad81f6867cff798d92495738b23a7/photos/exterior/92X2GZo6-9loNQoPOf4A/edit/WKKJZ.jpg",
+      "position": [
+        -10.454925275001901,
+        1.2388828854954284,
+        0.06022094910288936
+      ],
+      "target": [
+        0.0,
+        0.79,
+        0.0
+      ],
+      "up": [
+        0.04286349811590076,
+        0.9990660042713713,
+        -0.005462567025168751
+      ],
+      "imageSize": [
+        2320,
+        1547
+      ],
+      "principalPoint": [
+        1185.9668702126876,
+        786.0250976372118
+      ],
+      "fov": 19.074252188117644,
+      "fitResidualPx": [
+        6.94,
+        0.68
+      ]
+    },
+    {
+      "id": "owner-04",
+      "label": "Rear three-quarter \u00b7 owner photograph",
+      "source": "https://media.carsandbids.com/8bbf0f64fbfad81f6867cff798d92495738b23a7/photos/exterior/92X2GZo6-FIeuFOzm_u6/edit/GbwxA.jpg",
+      "position": [
+        5.8231597297061555,
+        0.9855056075876183,
+        -9.407986773877566
+      ],
+      "target": [
+        0.0,
+        0.79,
+        0.0
+      ],
+      "up": [
+        -0.034677976059904914,
+        0.9993982957958814,
+        -0.0006959430126249957
+      ],
+      "imageSize": [
+        2110,
+        1406
+      ],
+      "principalPoint": [
+        923.9094651214201,
+        697.0314543813015
+      ],
+      "fov": 13.709269057894542,
+      "fitResidualPx": [
+        4.16,
+        3.22,
+        4.58
+      ]
+    },
+    {
+      "id": "owner-05",
+      "label": "Rear elevation \u00b7 owner photograph",
+      "source": "https://media.carsandbids.com/8bbf0f64fbfad81f6867cff798d92495738b23a7/photos/exterior/92X2GZo6-99h6532Zlrs/edit/NkmNE.jpg",
+      "position": [
+        -0.005699756381422123,
+        0.7570766540047604,
+        -10.592706693236154
+      ],
+      "target": [
+        0.0,
+        0.79,
+        0.0
+      ],
+      "up": [
+        0.008057308834645244,
+        0.9999626958795206,
+        -0.0031123341248816697
+      ],
+      "imageSize": [
+        1887,
+        1258
+      ],
+      "principalPoint": [
+        940.9421543326372,
+        616.0469580641824
+      ],
+      "fov": 10.455866580406234,
+      "fitResidualPx": [
+        0.54
+      ]
+    },
+    {
+      "id": "gravity-01",
+      "label": "Front three-quarter \u00b7 dealer photograph",
+      "source": "https://static.overfuel.com/photos/490/507533/image-1.webp",
+      "position": [
+        4.689002135023746,
+        0.9862022090324878,
+        7.9420079066077856
+      ],
+      "target": [
+        0.0,
+        0.79,
+        0.0
+      ],
+      "up": [
+        -0.06555815782538267,
+        0.9977497310125646,
+        0.014057105210424317
+      ],
+      "imageSize": [
+        1024,
+        768
+      ],
+      "principalPoint": [
+        577.1623888904412,
+        391.0117674898021
+      ],
+      "fov": 19.573706361435317,
+      "fitResidualPx": [
+        4.47,
+        19.31,
+        7.02
+      ]
+    },
+    {
+      "id": "STUD_WHEEL",
+      "label": "19-inch Gemini \u00b7 Tesla studio",
+      "position": [
+        4.6,
+        0.53,
+        1.56
+      ],
+      "target": [
+        0.93,
+        0.52,
+        1.39
+      ],
+      "fov": 19.7,
+      "source": "https://static-assets.tesla.com/configurator/compositor?model=my&view=STUD_WHEEL&size=2880&options=%24MTY03%2C%24PPSB%2C%24WY19B%2C%24INPB0&bkba_opt=1",
+      "imageSize": [
+        1920,
+        1080
+      ],
+      "up": [
+        0,
+        1,
+        0
+      ]
+    },
+    {
+      "id": "STUD_INTERIOR",
+      "label": "Front cabin \u00b7 Tesla studio",
+      "position": [
+        -0.76,
+        1.2,
+        -0.17
+      ],
+      "target": [
+        0.16,
+        0.98,
+        0.13
+      ],
+      "fov": 80,
+      "source": "https://static-assets.tesla.com/configurator/compositor?model=my&view=STUD_INTERIOR&size=2880&options=%24MTY03%2C%24PPSB%2C%24WY19B%2C%24INPB0&bkba_opt=1",
+      "imageSize": [
+        1920,
+        1080
+      ],
+      "up": [
+        0,
+        1,
+        0
+      ]
+    },
+    {
+      "id": "owner-06",
+      "label": "Steering wheel and dash \u00b7 owner photograph",
+      "position": [
+        0.68,
+        1.146,
+        0.06
+      ],
+      "target": [
+        0.28,
+        0.993,
+        0.439
+      ],
+      "fov": 55,
+      "source": "https://media.carsandbids.com/8bbf0f64fbfad81f6867cff798d92495738b23a7/photos/interior/92X2GZo6-I1P7sAMRnJM/edit/5r69T.jpg",
+      "imageSize": [
+        1666,
+        1111
+      ],
+      "up": [
+        0,
+        1,
+        0
+      ]
+    },
+    {
+      "id": "owner-07",
+      "label": "Second row \u00b7 owner photograph",
+      "position": [
+        0.665,
+        1.21,
+        -0.486
+      ],
+      "target": [
+        -0.22,
+        0.96,
+        -1.11
+      ],
+      "fov": 69,
+      "source": "https://media.carsandbids.com/8bbf0f64fbfad81f6867cff798d92495738b23a7/photos/mechanical/92X2GZo6-ZKwsX0hs7Yb/edit/ciN3H.jpg",
+      "imageSize": [
+        1873,
+        1248
+      ],
+      "up": [
+        0,
+        1,
+        0
+      ]
+    }
+  ],
+  "inspectionLabel": "Electric drive",
+  "inspections": [
+    {
+      "id": "electric-drive",
+      "label": "Electric drivetrain",
+      "show": [
+        "Pack",
+        "Lid",
+        "AncillaryCover",
+        "FrontDrive",
+        "RearDrive",
+        "HighVoltage",
+        "WheelFrontLeft",
+        "BrakeFrontLeft",
+        "WheelFrontRight",
+        "BrakeFrontRight",
+        "WheelRearLeft",
+        "BrakeRearLeft",
+        "WheelRearRight",
+        "BrakeRearRight"
+      ],
+      "direction": [
+        0.82,
+        0.82,
+        1.15
+      ],
+      "note": "The underfloor pack sits between the axles. Orange cables connect the pack to the front and rear drive inverters. Drag to inspect from above or below.",
+      "source": "https://service.tesla.com/docs/BodyRepair/Body_Repair_Procedures/Model_Y/HTML/en-us/GUID-390C618B-07BD-465B-A9D9-685FCD1830AF.html"
+    },
+    {
+      "id": "battery",
+      "label": "Battery enclosure",
+      "show": [
+        "Pack",
+        "Lid",
+        "AncillaryCover"
+      ],
+      "direction": [
+        1.05,
+        1.4,
+        1.02
+      ],
+      "note": "Non-structural pack with perimeter mounting flanges, a stamped lid and a raised electronics compartment beneath the second row.",
+      "source": "https://service.tesla.com/docs/BodyRepair/Body_Repair_Procedures/Model_Y/HTML/en-us/GUID-390C618B-07BD-465B-A9D9-685FCD1830AF.html"
+    },
+    {
+      "id": "battery-modules",
+      "label": "Battery modules",
+      "show": [
+        "Pack"
+      ],
+      "direction": [
+        0.25,
+        1.6,
+        0.68
+      ],
+      "note": "With both covers removed, four longitudinal modules and the rear electronics bay are visible. The two inner modules are longer. Module covers and terminals are schematic.",
+      "source": "https://rosap.ntl.bts.gov/view/dot/78512/dot_78512_DS1.pdf#page=31"
+    },
+    {
+      "id": "front-motor",
+      "label": "Front induction drive",
+      "show": [
+        "FrontDrive"
+      ],
+      "direction": [
+        0.95,
+        0.74,
+        1.36
+      ],
+      "note": "The front electric drive combines an induction motor, inverter and fixed reduction gearbox. Two halfshafts transmit torque to the front wheels.",
+      "source": "https://service.tesla.com/docs/ModelY/ServiceManual/en-us/GUID-570C5BCC-9F9B-45C4-BB30-01359A87B55F.html"
+    },
+    {
+      "id": "rear-motor",
+      "label": "Rear permanent-magnet drive",
+      "show": [
+        "RearDrive"
+      ],
+      "direction": [
+        -0.96,
+        0.77,
+        -1.38
+      ],
+      "note": "A permanent-magnet synchronous motor drives the rear axle through a fixed reduction. The housing, coolant exchanger, high-voltage inlet and halfshafts are represented.",
+      "source": "https://service.tesla.com/docs/ModelY/ServiceManual/en-us/GUID-47D29C3A-2BB8-4AAD-8DE9-21CB2C49B930.html"
+    }
+  ]
+}

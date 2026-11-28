@@ -1,0 +1,749 @@
+{
+  "title": "2005 Honda Civic EX Coupe",
+  "subtitle": "Rallye Red \u00b7 US-market EM2 \u00b7 5-speed manual",
+  "model": "civic.glb",
+  "poster": "poster.webp",
+  "home": [
+    -5.4,
+    2.0,
+    5.6
+  ],
+  "target": [
+    0.08,
+    0.64,
+    0
+  ],
+  "eye": [
+    0.18,
+    1.065,
+    0.365
+  ],
+  "look": [
+    -1.7,
+    0.86,
+    0.26
+  ],
+  "parts": [
+    {
+      "node": "Body",
+      "offset": [
+        0,
+        0.15,
+        0
+      ]
+    },
+    {
+      "node": "Hood",
+      "offset": [
+        -0.17,
+        0.83,
+        0
+      ]
+    },
+    {
+      "node": "Trunk",
+      "offset": [
+        0.3,
+        0.74,
+        0
+      ]
+    },
+    {
+      "node": "DoorLeft",
+      "offset": [
+        0,
+        0.04,
+        0.7
+      ]
+    },
+    {
+      "node": "DoorRight",
+      "offset": [
+        0,
+        0.04,
+        -0.7
+      ]
+    },
+    {
+      "node": "Interior",
+      "offset": [
+        0,
+        0.8,
+        0
+      ]
+    },
+    {
+      "node": "Powertrain",
+      "offset": [
+        -0.66,
+        0.12,
+        0
+      ]
+    },
+    {
+      "node": "WheelFrontLeft",
+      "offset": [
+        -0.17,
+        0,
+        0.6
+      ]
+    },
+    {
+      "node": "WheelFrontRight",
+      "offset": [
+        -0.17,
+        0,
+        -0.6
+      ]
+    },
+    {
+      "node": "WheelRearLeft",
+      "offset": [
+        0.17,
+        0,
+        0.6
+      ]
+    },
+    {
+      "node": "WheelRearRight",
+      "offset": [
+        0.17,
+        0,
+        -0.6
+      ]
+    }
+  ],
+  "actions": [
+    {
+      "label": "Open doors",
+      "nodes": [
+        {
+          "node": "DoorLeft",
+          "axis": "y",
+          "degrees": -55
+        },
+        {
+          "node": "DoorRight",
+          "axis": "y",
+          "degrees": 55
+        }
+      ]
+    },
+    {
+      "label": "Raise hood",
+      "nodes": [
+        {
+          "node": "Hood",
+          "axis": "z",
+          "degrees": -55
+        }
+      ]
+    },
+    {
+      "label": "Open trunk",
+      "nodes": [
+        {
+          "node": "Trunk",
+          "axis": "z",
+          "degrees": 55
+        }
+      ]
+    },
+    {
+      "label": "Lower driver window",
+      "nodes": [
+        {
+          "node": "DoorLeft_\u00b7_Smoke_blue-green_glass",
+          "hidden": true
+        }
+      ]
+    },
+    {
+      "label": "Isolate ignition cover",
+      "nodes": [
+        {
+          "node": "Body",
+          "hidden": true
+        },
+        {
+          "node": "Interior",
+          "hidden": true
+        },
+        {
+          "node": "DoorLeft",
+          "hidden": true
+        },
+        {
+          "node": "DoorRight",
+          "hidden": true
+        },
+        {
+          "node": "Trunk",
+          "hidden": true
+        },
+        {
+          "node": "Hood",
+          "hidden": true
+        },
+        {
+          "node": "WheelFrontLeft",
+          "hidden": true
+        },
+        {
+          "node": "WheelFrontRight",
+          "hidden": true
+        },
+        {
+          "node": "WheelRearLeft",
+          "hidden": true
+        },
+        {
+          "node": "WheelRearRight",
+          "hidden": true
+        },
+        {
+          "node": "Powertrain_\u00b7_Brake_casting",
+          "hidden": true
+        },
+        {
+          "node": "Powertrain_\u00b7_Machined_aluminum",
+          "hidden": true
+        },
+        {
+          "node": "Powertrain_\u00b7_Satin_black_trim",
+          "hidden": true
+        },
+        {
+          "node": "Powertrain_\u00b7_Weatherstrips",
+          "hidden": true
+        }
+      ]
+    }
+  ],
+  "views": [
+    {
+      "id": "us-profile",
+      "label": "EX passenger profile",
+      "position": [
+        -0.49622772928534686,
+        0.8065874483565926,
+        -8.165036597360857
+      ],
+      "target": [
+        0.22702418177460648,
+        1.2114816207306744,
+        -0.025717224225585866
+      ],
+      "up": [
+        -0.0003741189242007503,
+        0.9987665655523578,
+        -0.049650856687254774
+      ],
+      "fov": 25.972108724195586,
+      "imageSize": [
+        927,
+        617
+      ],
+      "source": "https://hondanews.com/en-US/honda-automobiles/releases/release-097cf65c8040d1c03d8ded004c34c334/photos/0"
+    },
+    {
+      "id": "studio-front",
+      "label": "Studio front three-quarter",
+      "position": [
+        -9.867061406073956,
+        0.4030217503031501,
+        8.487795302246198
+      ],
+      "target": [
+        -0.08485038219981611,
+        0.7296168743745792,
+        -0.09528635961698484
+      ],
+      "up": [
+        -0.02777744652246117,
+        0.9995937887105941,
+        0.006377384721979795
+      ],
+      "fov": 10.047786106536325,
+      "imageSize": [
+        928,
+        536
+      ],
+      "source": "https://hondanews.ca/en-CA/hci-automobiles/releases/release-519a23469582d80780152ae423069fcf/photos/0"
+    },
+    {
+      "id": "studio-profile",
+      "label": "Studio driver profile",
+      "position": [
+        -0.270253945932314,
+        0.7706191752687838,
+        9.786020990890522
+      ],
+      "target": [
+        0.14057415470250362,
+        0.6783959726087396,
+        0.004702276933851834
+      ],
+      "up": [
+        -0.005877428338611521,
+        0.9999359253795291,
+        -0.00967475950653532
+      ],
+      "fov": 10.503673396555303,
+      "imageSize": [
+        928,
+        324
+      ],
+      "source": "https://hondanews.ca/en-CA/hci-automobiles/releases/release-519a23469582d80780152ae423069fcf/photos/1"
+    },
+    {
+      "id": "studio-rear",
+      "label": "Rear quarter and fuel door",
+      "position": [
+        2.7176557659850906,
+        0.8081415431646732,
+        3.946468376533767
+      ],
+      "target": [
+        0.27550678740325996,
+        0.9136475629071842,
+        -0.17748461451670128
+      ],
+      "up": [
+        -0.06032740474267828,
+        0.9962998725423582,
+        0.06121411772699088
+      ],
+      "fov": 40.053844064212456,
+      "imageSize": [
+        928,
+        577
+      ],
+      "source": "https://hondanews.ca/en-CA/hci-automobiles/releases/release-519a23469582d80780152ae423069fcf/photos/2"
+    },
+    {
+      "id": "road-front",
+      "label": "Facelift grille and bumper",
+      "position": [
+        -9.192134214767421,
+        0.857650752908428,
+        -2.8003023084809473
+      ],
+      "target": [
+        -0.09422167513453417,
+        1.0280379820759007,
+        0.29405479350876407
+      ],
+      "up": [
+        -0.030799748668627003,
+        0.9988930542826053,
+        0.03555336254023633
+      ],
+      "fov": 19.80733185509084,
+      "imageSize": [
+        928,
+        696
+      ],
+      "source": "https://hondanews.ca/en-CA/hci-automobiles/releases/release-519a23469582d80780152ae423069fcf/photos/3"
+    },
+    {
+      "id": "road-quarter",
+      "label": "Driver-side front wing",
+      "position": [
+        -5.730361193258524,
+        0.9666584144164818,
+        5.239625689497456
+      ],
+      "target": [
+        -0.11722892810851704,
+        0.8473942254884967,
+        -0.1328298367538956
+      ],
+      "up": [
+        -0.002135813043287915,
+        0.9996994076928363,
+        -0.024424016075092148
+      ],
+      "fov": 27.31449843942553,
+      "imageSize": [
+        928,
+        696
+      ],
+      "source": "https://hondanews.ca/en-CA/hci-automobiles/releases/release-519a23469582d80780152ae423069fcf/photos/4"
+    },
+    {
+      "id": "brochure-red",
+      "label": "Rallye Red front",
+      "position": [
+        -6.177029614358352,
+        1.6564022047683469,
+        0.024725680981078774
+      ],
+      "target": [
+        -0.046967919001978053,
+        0.4040397982704025,
+        -0.03055165200912549
+      ],
+      "up": [
+        0.19994716798003165,
+        0.9739996094067223,
+        0.10651709201962767
+      ],
+      "fov": 24.491151768747695,
+      "imageSize": [
+        1004,
+        754
+      ],
+      "source": "https://xr793.com/wp-content/uploads/2019/05/2005-Honda-Civic-Coupe.pdf#page=14"
+    },
+    {
+      "id": "brochure-rear",
+      "label": "Stock trunk and rear lamps",
+      "position": [
+        6.633663104977131,
+        0.796176663662775,
+        3.9992630880863653
+      ],
+      "target": [
+        0.01543949332472927,
+        0.661324506875494,
+        -0.02554332263299708
+      ],
+      "up": [
+        -0.01865025423163047,
+        0.9998220592214898,
+        -0.002831591636325126
+      ],
+      "fov": 13.628061516977105,
+      "imageSize": [
+        1050,
+        400
+      ],
+      "source": "https://xr793.com/wp-content/uploads/2019/05/2005-Honda-Civic-Coupe.pdf#page=4"
+    },
+    {
+      "id": "brochure-blue",
+      "label": "EX bumper and stance",
+      "position": [
+        -6.178808605609862,
+        1.6096930714954885,
+        2.8335875086650217
+      ],
+      "target": [
+        -0.11465835538656055,
+        0.7819364662564449,
+        -0.2728109894783288
+      ],
+      "up": [
+        0.10005614695862258,
+        0.9925748997164594,
+        -0.06916527964705282
+      ],
+      "fov": 26.42942129111744,
+      "imageSize": [
+        1004,
+        754
+      ],
+      "source": "https://xr793.com/wp-content/uploads/2019/05/2005-Honda-Civic-Coupe.pdf#page=5"
+    },
+    {
+      "id": "brochure-high",
+      "label": "Rallye Red elevated view",
+      "position": [
+        -4.33857330188057,
+        2.534898315231356,
+        4.0852357731398925
+      ],
+      "target": [
+        -0.10279730598553538,
+        0.5413030417098175,
+        -0.051356170523653155
+      ],
+      "up": [
+        0.24761972288340295,
+        0.947349648500015,
+        -0.20301013848092672
+      ],
+      "fov": 35.27544755917619,
+      "imageSize": [
+        955,
+        472
+      ],
+      "source": "https://xr793.com/wp-content/uploads/2019/05/2005-Honda-Civic-Coupe.pdf#page=7"
+    },
+    {
+      "id": "brochure-side",
+      "label": "Studio rear wheel and greenhouse",
+      "position": [
+        -3.2309175316033323,
+        0.8206471051112671,
+        6.720758599246
+      ],
+      "target": [
+        0.008227580426920511,
+        1.5645440576108323,
+        0.04334982001031218
+      ],
+      "up": [
+        -0.057500300263847504,
+        0.9948940205803064,
+        0.08294337395548973
+      ],
+      "fov": 30.32157729640221,
+      "imageSize": [
+        1008,
+        768
+      ],
+      "source": "https://xr793.com/wp-content/uploads/2019/05/2005-Honda-Civic-Coupe.pdf#page=3"
+    },
+    {
+      "id": "brochure-aft",
+      "label": "Rear lamps and trunk width",
+      "position": [
+        7.408784286499042,
+        0.67201567490124,
+        -4.780959909968081
+      ],
+      "target": [
+        0.1554960197437243,
+        0.6478527938129505,
+        0.23272457507558553
+      ],
+      "up": [
+        -0.007631914111973226,
+        0.9999515195996929,
+        -0.0062219239188616715
+      ],
+      "fov": 12.157822456370726,
+      "imageSize": [
+        333,
+        164
+      ],
+      "source": "https://xr793.com/wp-content/uploads/2019/05/2005-Honda-Civic-Coupe.pdf#page=16"
+    },
+    {
+      "id": "field-front-2005",
+      "label": "2005 LX front \u2022 MercurySable99",
+      "position": [
+        -10.613628821252238,
+        1.7316363105815276,
+        -7.605623418215914
+      ],
+      "target": [
+        -0.051548948636332526,
+        0.5710433304218916,
+        0.05848262333083731
+      ],
+      "up": [
+        0.07336360111612011,
+        0.9960644985045561,
+        0.04973225160941264
+      ],
+      "fov": 10.598364255629797,
+      "imageSize": [
+        4494,
+        2986
+      ],
+      "source": "https://commons.wikimedia.org/wiki/File:2005_Honda_Civic_LX_coupe%2C_front_right%2C_05-23-2024.jpg"
+    },
+    {
+      "id": "field-rear-2005",
+      "label": "2005 LX rear \u2022 MercurySable99",
+      "position": [
+        5.707246501661679,
+        1.3703318680127956,
+        -4.820276048835406
+      ],
+      "target": [
+        0.25954891221736,
+        0.5171259494072797,
+        0.2696086075040087
+      ],
+      "up": [
+        -0.06653663415800387,
+        0.9932245442048424,
+        0.09527791509057826
+      ],
+      "fov": 19.877819806321178,
+      "imageSize": [
+        4175,
+        2666
+      ],
+      "source": "https://commons.wikimedia.org/wiki/File:2005_Honda_Civic_LX_coupe%2C_rear_right%2C_05-23-2024.jpg"
+    },
+    {
+      "id": "field-lx-fascia",
+      "label": "Facelifted front \u2022 IFCAR",
+      "position": [
+        -5.460594208530328,
+        1.563855213199492,
+        4.3732545449702025
+      ],
+      "target": [
+        -0.1351592941066535,
+        0.5855957776887187,
+        -0.14815564664444913
+      ],
+      "up": [
+        0.062054149037839346,
+        0.9881057827169921,
+        -0.1406991284565392
+      ],
+      "fov": 17.004731034067493,
+      "imageSize": [
+        1668,
+        908
+      ],
+      "source": "https://commons.wikimedia.org/wiki/File:04-05_Honda_Civic_LX_coupe.jpg"
+    },
+    {
+      "id": "field-red",
+      "label": "Red facelift coupe \u2022 IFCAR",
+      "position": [
+        -13.070816370753876,
+        1.358577322287937,
+        10.945711988754889
+      ],
+      "target": [
+        -0.014449313688702503,
+        0.649080007876978,
+        -0.016530238361879057
+      ],
+      "up": [
+        0.027562494318584818,
+        0.9991129724084977,
+        -0.03183672834942053
+      ],
+      "fov": 5.543937559501543,
+      "imageSize": [
+        1200,
+        508
+      ],
+      "source": "https://commons.wikimedia.org/wiki/File:Honda_Civic_coupe.JPG"
+    },
+    {
+      "id": "field-front-2004",
+      "label": "2004 LX front \u2022 Cutlass",
+      "position": [
+        -3.218658095315442,
+        1.1682334501946856,
+        -2.1826951162392954
+      ],
+      "target": [
+        -0.2785648778469363,
+        0.29592220060991326,
+        0.2621247342476165
+      ],
+      "up": [
+        0.14491880683058878,
+        0.9741487634412271,
+        0.17329952715667585
+      ],
+      "fov": 35.30613494143869,
+      "imageSize": [
+        3633,
+        2278
+      ],
+      "source": "https://commons.wikimedia.org/wiki/File:2004_Honda_Civic_LX_Coupe_in_Satin_Silver_Metallic%2C_front_right%2C_05-17-2022.jpg"
+    },
+    {
+      "id": "field-rear-2004",
+      "label": "2004 LX rear \u2022 Cutlass",
+      "position": [
+        2.621355527541477,
+        1.013705497201232,
+        -2.3244121682857997
+      ],
+      "target": [
+        0.5850266356089642,
+        0.4651144490079058,
+        0.49550215919309837
+      ],
+      "up": [
+        -0.14770982375813968,
+        0.9853687751823168,
+        0.0850304937127827
+      ],
+      "fov": 44.53273034459174,
+      "imageSize": [
+        3448,
+        1912
+      ],
+      "source": "https://commons.wikimedia.org/wiki/File:2004_Honda_Civic_LX_Coupe_in_Satin_Silver_Metallic%2C_rear_right%2C_05-17-2022.jpg"
+    },
+    {
+      "id": "cockpit-five-speed",
+      "label": "Five-speed EX cockpit",
+      "position": [
+        0.39040090546151274,
+        1.3015496283973766,
+        1.0192032648839287
+      ],
+      "target": [
+        -0.297082791253368,
+        0.662211375137899,
+        0.039044885945260344
+      ],
+      "up": [
+        -0.22202790166514197,
+        0.8805846430030719,
+        -0.41865773298641773
+      ],
+      "fov": 44.309666192832964,
+      "imageSize": [
+        1050,
+        550
+      ],
+      "source": "https://xr793.com/wp-content/uploads/2019/05/2005-Honda-Civic-Coupe.pdf#page=8",
+      "actions": [
+        "Lower driver window"
+      ]
+    },
+    {
+      "id": "vtec-cover",
+      "label": "D17 VTEC ignition-cover detail",
+      "position": [
+        -1.1597391963139743,
+        1.0768851054192328,
+        0.40849366399318143
+      ],
+      "target": [
+        -1.302658225846739,
+        0.7002107693661033,
+        0.24142962750821226
+      ],
+      "up": [
+        0.9040588774415261,
+        -0.16888119267092777,
+        -0.3926279267719158
+      ],
+      "fov": 22.920291252307997,
+      "imageSize": [
+        1004,
+        367
+      ],
+      "source": "https://xr793.com/wp-content/uploads/2019/05/2005-Honda-Civic-Coupe.pdf#page=4",
+      "actions": [
+        "Isolate ignition cover"
+      ]
+    }
+  ],
+  "review": "review.html",
+  "inspectionLabel": "Powertrain",
+  "inspections": [
+    {
+      "id": "powertrain",
+      "label": "Engine and five-speed transaxle",
+      "show": [
+        "Powertrain"
+      ],
+      "direction": [
+        -1.1,
+        0.62,
+        -0.43
+      ],
+      "note": "The transverse 1.7-litre VTEC four sits beside the manual transaxle. The model shows the cam cover, exhaust runners, simplified gearbox housing and two front halfshafts.",
+      "source": "https://hondanews.com/en-US/honda-automobiles/releases/release-efedf544db86f0338d9eb7004c34c378-2005-honda-civic-coupe-specifications"
+    }
+  ]
+}

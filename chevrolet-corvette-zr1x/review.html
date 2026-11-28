@@ -1,0 +1,61 @@
+<!doctype html><html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="theme-color" content="#f7f7f5"><title>Corvette ZR1X · Photo comparisons</title>
+<meta name="description" content="Compare the 2027 Chevrolet Corvette ZR1X 3LZ Coupe reconstruction across 32 matched views and browse 110 Chevrolet references.">
+<link rel="canonical" href="https://bailiping.com/chevrolet-corvette-zr1x/review.html">
+<style>
+*{box-sizing:border-box}body{margin:0;background:#f7f7f5;color:#202126;font:16px/1.55 system-ui,sans-serif}main{max-width:1180px;margin:auto;padding:28px clamp(15px,4vw,48px) 60px}a{color:#94332b;text-underline-offset:.18em}h1,h2,p{margin:.35em 0 .65em}h1{font-size:clamp(2rem,5vw,4.6rem);letter-spacing:-.065em;line-height:1.04;margin:28px 0 11px}h2{font-size:clamp(1.4rem,3vw,2rem);letter-spacing:-.045em;margin-top:1.55em}.lead{font-size:1.1rem;color:#535458}.bar,.links{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:14px 0}.bar select,.bar button{font:inherit;color:inherit;border:1px solid #c5c6c7;background:white;border-radius:6px;padding:8px 12px;min-height:42px}.bar button[aria-pressed=true]{background:#242529;color:white;border-color:#242529}.bar select{max-width:100%}.stage{display:grid;grid-template-columns:1fr 1fr;gap:2px;background:#ddd;position:relative;border:1px solid #ddd;border-radius:12px;overflow:hidden}.shot{position:relative;background:white;min-width:0;display:grid;place-items:center}.shot img{width:100%;display:block}.tag{position:absolute;background:#ffffffdf;padding:2px 8px;border-radius:4px;top:6px;left:6px;font-size:.77rem}.stage.layer{display:block}.stage.layer .model{position:absolute;inset:0;background:transparent}.stage.layer .model .tag{display:none}.slider{width:min(500px,100%)}.links a{padding-right:8px}.small,.stat{color:#55575b}.stat{font-variant-numeric:tabular-nums}.links a:focus-visible,button:focus-visible,select:focus-visible,input:focus-visible{outline:3px solid #286c9f;outline-offset:2px}table{width:100%;border-collapse:collapse;max-width:750px}th,td{padding:7px 5px;text-align:left;border-bottom:1px solid #d6d6d6}details summary{cursor:pointer;font-weight:650}@media(max-width:670px){.stage{grid-template-columns:1fr}.bar{gap:5px}.bar button,.bar select{font-size:.91rem;padding:6px 8px}}
+</style>
+</head>
+<body>
+<main>
+<a href="./#model">← Corvette studio</a>
+<h1>Corvette ZR1X</h1><p class="lead">2027 3LZ Coupe in Torch Red, with Chevrolet’s carbon-fiber high wing and Jet Black cabin.</p>
+<div class="bar"><button id="prev" aria-label="Previous view">←</button><select id="frames" aria-label="Reference view"></select><button id="next" aria-label="Next view">→</button></div>
+<div class="bar" aria-label="Comparison mode"><button data-mode="pair" aria-pressed="true">Pair</button><button data-mode="wipe" aria-pressed="false">Wipe</button><button data-mode="edge" aria-pressed="false">Outline</button></div>
+<div class="stage" id="stage"><div class="shot"><img id="photo" alt="Chevrolet reference"><span class="tag" id="ref-tag">Chevrolet reference</span></div><div class="shot model" id="modelSide"><img id="model" alt="Render from the exported 3D model"><span class="tag">Model render</span></div></div>
+<input id="wipe" class="slider" type="range" min="0" max="100" value="50" aria-label="Wipe position" hidden>
+<p id="note"></p><div class="stat" id="metrics"></div><div class="links"><a id="match" href="./#model">Match in 3D</a><a id="native">Chevrolet original</a><a id="capture">Full-size render</a></div>
+<h2>Dimensions and coverage</h2><p>Chevrolet’s 30 Torch Red studio renders are 1,500 × 750 pixels. The wheelbase sets the reconstruction scale. Stereo depth and silhouettes constrain the shell, while the overhead Blade Silver coupe photo establishes the shape of the glazing and cooling openings. Its rear aero configuration differs.</p>
+<table><thead><tr><th>Measurement</th><th>Reference</th><th>Model</th></tr></thead><tbody><tr><td>Wheelbase</td><td>2,723 mm</td><td>2,723 mm</td></tr><tr><td>Front / rear track</td><td>1,685 / 1,678 mm</td><td>1,685 / 1,678 mm</td></tr><tr><td>Body width without mirrors</td><td>2,025 mm</td><td>2,031 mm fitted shell · 2,054 mm with exterior trim</td></tr><tr><td>Length</td><td>4,742 mm nominal</td><td>4,723 mm fitted shell · 4,841 mm with high wing and aero</td></tr><tr><td>Overall height</td><td>1,234 mm</td><td id="heightField"></td></tr></tbody></table>
+<p class="small"><a href="https://www.vetteregistry.net/corvette-order-guide/2027/zr1x-coupe/">ZR1X Coupe order-guide dimensions</a> · <a href="https://www.chevrolet.com/performance/corvette/zr1x">Chevrolet model and configurator</a></p>
+<p id="summary"></p><p>Each exterior measurement compares the published GLB to the same source frame used to fit the body. The outline distance samples both outer boundaries and excludes cast shadows. The report retains differences in brake detail, lens construction, duct depth and finish. Independent factory CAD was unavailable. The internal propulsion assemblies show the engine, transaxle and front electric-drive layout with approximate housings.</p>
+<div class="links"><a href="editable-zr1x.zip" download>Editable Blender model and build scripts</a><a href="sources.json">Reference inventory</a><a href="comparison.json">Measurements</a><a href="studio.json">Saved cameras</a></div>
+
+<section id="archive"><h2>Reference archive</h2><p>Browse all 110 Chevrolet images. The 30 studio angles document the Torch Red exterior. The other records cover cabin panoramas, equipment details and press photography of additional configurations.</p>
+<div class="bar"><button id="aprev" aria-label="Previous reference">←</button><select id="archive-select" aria-label="Browse reference archive"></select><button id="anext" aria-label="Next reference">→</button></div>
+<figure style="margin:8px 0"><div class="shot" style="border:1px solid #ddd;border-radius:10px;overflow:hidden;max-width:880px"><img id="archive-image" style="width:100%;height:clamp(240px,40vw,470px);object-fit:contain" alt=""><span id="archive-tag" class="tag">Chevrolet reference</span></div><figcaption><strong id="archive-caption"></strong> <span id="archive-size" class="small"></span></figcaption></figure>
+<p id="archive-note"></p><div class="links"><a id="archive-original">Chevrolet original</a><a id="archive-trace">Full-size feature tracing</a><a href="#ext-001" id="archive-match">Open comparison</a></div></section>
+<script type="module">
+const [d,c]=await Promise.all(['comparison.json','studio.json'].map(p=>fetch(p).then(r=>r.json()))),$=id=>document.getElementById(id),records=d.frames;
+$('heightField').textContent='1232 mm including aero';
+let i=Math.max(0,records.findIndex(o=>o.id===location.hash.slice(1))),mode='pair';
+for(const [j,v] of c.views.entries())$('frames').add(new Option(v.label,j));
+const buttons=[...document.querySelectorAll('[data-mode]')];
+function show(){const q=records[i],hasEdge=q.p95_px!==undefined;if(!hasEdge&&mode==='edge')mode='pair';
+$('frames').value=i;$('ref-tag').textContent='Chevrolet reference';$('photo').onerror=()=>{if($('photo').getAttribute('src')!==q.source)return;$('photo').onerror=null;$('photo').src='captures/'+q.id+'-reference.webp';$('photo').alt='Measured reference contours for '+q.id;$('ref-tag').textContent='Reference contours · Chevrolet image unavailable'};$('photo').referrerPolicy='no-referrer';$('photo').src=q.source;$('photo').alt='Chevrolet · '+c.views[i].label;$('model').src='captures/'+q.id+(mode==='edge'?'-edge.png':'.webp');$('model').alt=mode==='edge'?'Cyan outline of the shipped model':'Model render · '+c.views[i].label;
+$('stage').classList.toggle('layer',mode!=='pair');$('modelSide').style.clipPath=mode==='wipe'?'inset(0 '+(100-$('wipe').value)+'% 0 0)':'';$('wipe').hidden=mode!=='wipe';buttons.forEach(b=>{b.disabled=b.dataset.mode==='edge'&&!hasEdge;b.setAttribute('aria-pressed',String(b.dataset.mode===mode))});
+$('note').textContent=q.note;$('metrics').textContent=hasEdge?'Silhouette overlap '+(100*q.overlap).toFixed(1)+'% · Median edge distance '+q.median_px+' px · 95th percentile '+q.p95_px+' px ('+q.p95_percent+'% of visible width)':'Configuration-limited comparison';
+$('match').href='./?frame='+q.id+'#model';$('native').href=q.source;$('capture').href='captures/'+q.id+'.webp';history.replaceState(null,'','#'+q.id)}
+function step(v){i=(i+v+records.length)%records.length;show()}
+$('frames').onchange=e=>{i=Number(e.target.value);show()};$('prev').onclick=()=>step(-1);$('next').onclick=()=>step(1);buttons.forEach(b=>b.onclick=()=>{mode=b.dataset.mode;show()});$('wipe').oninput=()=>{$('modelSide').style.clipPath='inset(0 '+(100-$('wipe').value)+'% 0 0)'};window.onkeydown=e=>{if(e.target.matches('select,input'))return;if(e.key==='ArrowLeft')step(-1);if(e.key==='ArrowRight')step(1)};
+const ex=records.filter(r=>r.overlap!==undefined),over=ex.map(x=>x.overlap),lo=Math.min(...over),hi=Math.max(...over);$('summary').textContent='Across the 30 exterior views, silhouette overlap ranges from '+(100*lo).toFixed(1)+'% to '+(100*hi).toFixed(1)+'%. The nine verified profile and shallow-quarter views support the named exterior contours. The other 23 comparisons retain the limits described below each frame.';show();
+
+const srcRecords=await (await fetch('sources.json')).json();
+const cats={'manufacturer turntable':'Torch Red studio turntable','manufacturer detail':'Chevrolet model-page details','cabin panorama':'Jet Black cabin panorama','manufacturer gallery':'Chevrolet press gallery'},groups={};
+for (const [j,r] of srcRecords.entries()){
+ if(!groups[r.kind]){const group=document.createElement('optgroup');group.label=cats[r.kind]||r.kind;groups[r.kind]=group;$('archive-select').add(group)}
+ groups[r.kind].append(new Option(r.id+' · '+r.subject.slice(0,75),j))
+}
+let ai=Number($('archive-select').value)||0;
+function archiveView(){
+ const r=srcRecords[ai],el=$('archive-image');$('archive-select').value=ai;el.alt=r.subject;$('archive-tag').textContent='Chevrolet reference';el.onerror=()=>{if(el.getAttribute('src')!==r.original_url)return;el.onerror=null;el.src=r.tracing;el.alt='Feature tracing · '+r.subject;$('archive-tag').textContent='Feature tracing · Chevrolet image unavailable'};el.referrerPolicy='no-referrer';el.src=r.original_url;
+ $('archive-caption').textContent=r.subject;$('archive-size').textContent=' · '+r.width+' × '+r.height+' px';$('archive-note').textContent=r.note+(r.duplicate_of?' Identical file to '+r.duplicate_of+'.':'');$('archive-original').href=r.original_url;$('archive-trace').href=r.tracing;
+ const j=records.findIndex(f=>r.id===f.id);$('archive-match').hidden=j<0;$('archive-match').onclick=e=>{e.preventDefault();if(j<0)return;i=j;show();$('frames').scrollIntoView({block:'center'});$('frames').focus({preventScroll:true})};
+}
+function astep(n){ai=(ai+n+srcRecords.length)%srcRecords.length;archiveView()}
+$('aprev').onclick=()=>astep(-1);$('anext').onclick=()=>astep(1);$('archive-select').onchange=e=>{ai=Number(e.target.value);archiveView()};archiveView();
+</script>
+</main>
+</body>
+</html>
