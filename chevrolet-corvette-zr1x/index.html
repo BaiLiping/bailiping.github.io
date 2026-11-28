@@ -7,7 +7,7 @@
   <script>
     if (location.hash === '#chevrolet-views') document.documentElement.classList.add('show-photos');
     const overrideModel = new URLSearchParams(location.search).get('model');
-    const modelFile = overrideModel || './corvette_zr1x_2027.glb?v=782dfe1a7fba';
+    const modelFile = overrideModel || './corvette_zr1x_2027.glb?v=8d8f75ff89ce';
     const preload = document.createElement('link');
     preload.rel = 'preload';
     preload.as = 'fetch';
@@ -283,6 +283,7 @@
         [/Chassis_AirCleaner_Plaque/, 'ZR1X engine-bay specification plaque', 'mounted on the air cleaner cover behind the blue LT7 intake'],
         [/Chassis_AirCleaner_Cover/, 'Engine-bay air cleaner cover', 'chassis-mounted intake housing behind the LT7'],
         [/Fuel_Flap/, 'Fuel filler door', 'left rear quarter · click to open or close'],
+        [/Body_Front_Wheelhouse_/, 'Front wheel-well liner', 'attached to the body above the front tyre'],
         [/Front_Hood|Hood_ExtractorLip|Hood_Divider/, 'Flow-through carbon front hood', 'rear-hinged · click to open or close · routes radiator air over the cowl'],
         [/Rear_Hatch|Hatch_SpineLouvers|Hatch_Scoop/, 'Split-window rear engine hatch', 'front-hinged · click to open or close · carbon spine louvers over LT7'],
         [/Roof_CarbonPanel|Roof_CantRail|Roof_Headliner/, 'Removable visible carbon roof (C2Z)', 'click to lift or seat · 2×2 carbon twill targa panel'],
@@ -535,7 +536,7 @@
     let rootCar = null;
 
     const EXTERIOR_RE = /Body_|Front_Fascia|Front_Splitter|Front_DivePlane|Front_Grille|Front_Intake|Side_Skirt|Side_Wishbone|Rear_Fascia|Rear_Diffuser|Rear_Plate|Badge_|Roof_Fin|Wiper_|Door_Shell|Door_Handle|Mirror_|Front_Hood|Hood_|Rear_Hatch|Hatch_|Roof_CarbonPanel|Roof_CantRail|Fuel_Flap|Wing_|Glass_|Headlight_|Taillight_|CHMSL|DCT_Case_|EDU_Case_|Battery_Cover_/;
-    const SHADOW_CASTER_RE = /Body_Shell|Body_Quarter|Front_Fascia|Front_Splitter|Rear_Fascia|Rear_Diffuser|Door_Shell|Front_Hood|Rear_Hatch|Roof_CarbonPanel|Wing_Mainplane|Wing_Endplate|Wing_Stanchion|Mirror_|Tire_|Eng_Crankcase|Exh_Muffler|Chassis_Undertray/;
+    const SHADOW_CASTER_RE = /Body_Shell|Body_Quarter|Body_Front_Wheelhouse_|Front_Fascia|Front_Splitter|Rear_Fascia|Rear_Diffuser|Door_Shell|Front_Hood|Rear_Hatch|Roof_CarbonPanel|Wing_Mainplane|Wing_Endplate|Wing_Stanchion|Mirror_|Tire_|Eng_Crankcase|Exh_Muffler|Chassis_Undertray/;
     const ENCLOSED_INTERNALS_RE = /_(DCT|EDU|Battery)_Int_/;
 
     const loadModel = () => loader.load(
