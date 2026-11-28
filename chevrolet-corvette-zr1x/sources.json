@@ -67,7 +67,7 @@
     "sha256": "a95e1e5911b9c668e8914d82e7f71e36cb7b58432736b34812204665e1ff09ad",
     "tracing": "captures/ext-005-reference.webp",
     "status": "verified",
-    "note": "The left sill, roof drop and axle spacing agree in this shallow quarter view. The molded tire lettering is unresolved."
+    "note": "The left sill, roof drop and axle spacing agree in this shallow quarter view. The black sidewall markings follow the band above the outer rim."
   },
   {
     "id": "ext-006",
@@ -151,7 +151,7 @@
     "sha256": "830c31915a8006d90844763c503e28e80452fbe1aae02c903476c085e26102b1",
     "tracing": "captures/ext-011-reference.webp",
     "status": "limited",
-    "note": "The wing crosses above the split backlight at the same height. The stock wheel photograph reveals more of the individual spokes."
+    "note": "The wing crosses above the split backlight at the same height. The rim flange and the carbon-ceramic rotor sit at different depths behind the spokes."
   },
   {
     "id": "ext-012",
@@ -249,7 +249,7 @@
     "sha256": "16d1ec85db1355a7400e994af33affeb24b29036c634246e22dcb0c37a888ac3",
     "tracing": "captures/ext-018-reference.webp",
     "status": "verified",
-    "note": "The arc of the right rear fender and the roof-to-deck slope align. The wheel face carries simplified center hardware."
+    "note": "The arc of the right rear fender and the roof-to-deck slope align. Five lug wells and the forked wheel webs can be compared in the close-up."
   },
   {
     "id": "ext-019",
@@ -305,7 +305,7 @@
     "sha256": "f34141fcfd2ec4e3b904ee10098e91cfbeb5dbdc2a63756d9eab7a16695518e3",
     "tracing": "captures/ext-022-reference.webp",
     "status": "verified",
-    "note": "Roof height, arch spacing and rocker height are consistent in this right-side frame. The raised splitter flic is shallower."
+    "note": "Roof height, arch spacing and rocker height are consistent in this right-side frame. The raised corner flic follows the lower sill in projection."
   },
   {
     "id": "ext-023",
@@ -375,7 +375,7 @@
     "sha256": "514abbd80a0fc4b1c08683d1e2128751c97aa7cce5c9228b3bf1a0c6c9f1e262",
     "tracing": "captures/ext-027-reference.webp",
     "status": "limited",
-    "note": "The two lamp positions converge correctly toward the nose. The projected corner flic is smaller."
+    "note": "The two lamp positions converge correctly toward the nose. The raised carbon flic crosses the lower edge of the outer cooling duct."
   },
   {
     "id": "ext-028",
@@ -879,7 +879,7 @@
     "sha256": "154990026f73fd1c6d614d68f2fed8bcc8bba2dc7f84e907c5314386c1c6f86b",
     "tracing": "captures/cabin-front-reference.webp",
     "status": "limited",
-    "note": "The 90\u00b0 forward camera uses the Jet Black panorama. The projected wheel extrema agree with the marked reference within 5 pixels on the 2,000-pixel cube face. The three displays, crossed-flags wheel, narrow selector bridge and carpeted tunnel share the factory sightline. Fine upholstery, display iconography and reflections are approximations."
+    "note": "The 90\u00b0 forward camera uses the Jet Black panorama. The three displays, crossed-flags wheel, narrow selector bridge and carpeted tunnel share the factory sightline. Fine upholstery, display iconography and reflections are approximations."
   },
   {
     "id": "cabin-back",
@@ -1538,5 +1538,107 @@
     "tracing": "reference-tracings/press-42.webp",
     "status": "limited",
     "note": "Supporting Chevrolet detail or alternate-configuration press image. No calibrated whole-car comparison recorded."
+  },
+  {
+    "id": "gm-engine",
+    "original_url": "https://gm-techlink.com/wp-content/uploads/2026/01/F09-ZR1X-1.png",
+    "source": "https://gm-techlink.com/?p=20730",
+    "credit": "GM TechLink",
+    "width": 1015,
+    "height": 653,
+    "subject": "LT7 twin-turbo V8 and charge-air plumbing",
+    "kind": "Factory engineering",
+    "sha256": "4486784c7758ed30c31fb0dc7f4336eb790713e90fdee4bb2f7ed918d4135bdf",
+    "note": "The central upper intake and paired ducts establish the arrangement above the two cylinder banks.",
+    "status": "limited",
+    "tracing": "reference-tracings/gm-engine.webp"
+  },
+  {
+    "id": "gm-axles",
+    "original_url": "https://gm-techlink.com/wp-content/uploads/2026/01/F10-ZR1X-3.png",
+    "source": "https://gm-techlink.com/?p=20730",
+    "credit": "GM TechLink",
+    "width": 1071,
+    "height": 656,
+    "subject": "Hybrid powertrain in plan",
+    "kind": "Factory engineering",
+    "sha256": "d317053a2a54f7628491bcce075ca797f8713cd8f42931a77bede29a83204e60",
+    "note": "The isolated front drive, narrow tunnel battery, rear engine and transaxle establish the order and spacing of the major assemblies.",
+    "status": "limited",
+    "tracing": "reference-tracings/gm-axles.webp"
+  },
+  {
+    "id": "gm-battery",
+    "original_url": "https://gm-techlink.com/wp-content/uploads/2026/01/F11-ZR1X-2.png",
+    "source": "https://gm-techlink.com/?p=20730",
+    "credit": "GM TechLink",
+    "width": 1114,
+    "height": 638,
+    "subject": "High-voltage battery in the center tunnel",
+    "kind": "Factory engineering",
+    "sha256": "d46c2bbb7bdf62cd2325321d11793bc1713f0c47c6d349c0641ebf57954f840a",
+    "note": "The cutaway shows an elongated enclosure with a low row of modules and electrical connections at its ends.",
+    "status": "limited",
+    "tracing": "reference-tracings/gm-battery.webp"
+  },
+  {
+    "id": "gm-brake",
+    "original_url": "https://gm-techlink.com/wp-content/uploads/2026/01/F12-ZR1X-10.jpg",
+    "source": "https://gm-techlink.com/?p=20730",
+    "credit": "GM TechLink",
+    "width": 3000,
+    "height": 2001,
+    "subject": "Alcon front brake and carbon-ceramic rotor",
+    "kind": "Factory engineering",
+    "sha256": "4d06ffd7fad84130e804ca4c1b2ee6cfec4b7f831c96f5bd74e6c22562d7c18e",
+    "note": "The large fixed caliper reaches around the outboard side of the drilled rotor. The wheel and yellow finish differ from the Torch Red studio configuration.",
+    "status": "limited",
+    "tracing": "reference-tracings/gm-brake.webp"
+  },
+  {
+    "id": "ring-front",
+    "original_url": "https://news.chevrolet.com/content/dam/Media/images/US/Release_Images/2025/jul/0731-Nurburgring/Nurburgring_CattellZR1X.jpg",
+    "source": "https://news.chevrolet.com/newsroom.detail.html/Pages/news/us/en/2025/jul/0731-Corvette-ZR1X-ZR1.html",
+    "credit": "Chevrolet",
+    "width": 3000,
+    "height": 2000,
+    "subject": "N\u00fcrburgring ZR1X front three-quarter",
+    "kind": "Chevrolet track photography",
+    "sha256": "0302178162da5ad29cd8260c66a73e390897608ba7acadb7613994621bb11a75",
+    "note": "The yellow ZTK coupe shows the splitter, hood lip and span of the carbon high wing. The driver obscures part of the near door.",
+    "status": "limited",
+    "display_url": "https://emptytank.ca/wp-content/uploads/2025/07/nurburgring_cattellzr1x.jpg",
+    "display_source": "https://emptytank.ca/2025/07/31/corvette-zr1x-zr1-become-fastest-american-cars-at-nurburgring/",
+    "tracing": "reference-tracings/ring-front.webp"
+  },
+  {
+    "id": "ring-high",
+    "original_url": "https://news.chevrolet.com/content/dam/Media/images/US/Release_Images/2025/jul/0731-Nurburgring/Nurburgring_Three2.jpg",
+    "source": "https://news.chevrolet.com/newsroom.detail.html/Pages/news/us/en/2025/jul/0731-Corvette-ZR1X-ZR1.html",
+    "credit": "Chevrolet",
+    "width": 3000,
+    "height": 1687,
+    "subject": "N\u00fcrburgring ZR1X high front three-quarter",
+    "kind": "Chevrolet track photography",
+    "sha256": "44f10ea39d0bb2a461bed14cbeda10e40b602316aa2e7e2291345340daf98549",
+    "note": "Chevrolet\u2019s yellow ZTK coupe is closest to the camera. Its wheel hubs, mirrors, nose and wing ends register this independent photo. The track car has different wheels, body finish and safety equipment. Lens contours and wing endplates retain visible differences.",
+    "status": "limited",
+    "display_url": "https://emptytank.ca/wp-content/uploads/2025/07/nurburgring_three2.jpg",
+    "display_source": "https://emptytank.ca/2025/07/31/corvette-zr1x-zr1-become-fastest-american-cars-at-nurburgring/",
+    "tracing": "captures/ring-high-reference.webp"
+  },
+  {
+    "id": "ring-rear",
+    "original_url": "https://news.chevrolet.com/content/dam/Media/images/US/Release_Images/2025/jul/0731-Nurburgring/Nurburgring_ZR1Xtrack.jpg",
+    "source": "https://news.chevrolet.com/newsroom.detail.html/Pages/news/us/en/2025/jul/0731-Corvette-ZR1X-ZR1.html",
+    "credit": "Chevrolet",
+    "width": 3000,
+    "height": 2000,
+    "subject": "N\u00fcrburgring ZR1X on track from the rear",
+    "kind": "Chevrolet track photography",
+    "sha256": "e27ee190a444b693f9182e550478358397844859c10fba499dd7de29006d2cf9",
+    "note": "The ZTK coupe shows daylight below the high wing, its narrow stanchions and the diffuser around the four central outlets.",
+    "status": "limited",
+    "tracing": "reference-tracings/ring-rear.webp"
   }
 ]

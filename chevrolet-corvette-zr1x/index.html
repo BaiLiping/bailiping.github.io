@@ -8,7 +8,14 @@
 <meta property="og:type" content="website"><meta property="og:title" content="2027 Chevrolet Corvette ZR1X · Torch Red"><meta property="og:description" content="Explore the Torch Red 2027 Corvette ZR1X 3LZ Coupe. Isolate the LT7, front electric drive and hybrid battery, and compare all 30 Chevrolet turntable angles."><meta property="og:image" content="https://bailiping.com/chevrolet-corvette-zr1x/poster.webp">
 <link rel="canonical" href="https://bailiping.com/chevrolet-corvette-zr1x/">
 <link rel="icon" href="/favicon.ico"><link rel="stylesheet" href="/assets/car-studio/studio.css">
-<script type="module" src="/assets/car-studio/studio.js"></script>
+<script type="module" data-assembly="./assembly.js" src="/assets/car-studio/studio.js?v=zr1x-20261128"></script>
+<style>
+#part-name{position:absolute;pointer-events:none;color:#fff;background:#23333df2;font-size:13px;padding:5px 9px;border-radius:4px}
+#assembly-picker{display:flex;flex-wrap:wrap;justify-content:center;align-items:center;gap:4px 14px;padding:7px 10px 0}
+#assembly-picker[hidden],#assembly-picker label[hidden]{display:none}
+#assembly-picker label{display:flex;align-items:center;gap:7px;margin:0;font-size:13px}
+#assembly-picker select{font-size:13px;padding:5px 7px;max-width:min(78vw,290px)}
+</style>
 </head>
 <body style="--paint:#bf181d">
 <header>
@@ -16,7 +23,11 @@
 <nav aria-label="Studio views"><a id="model-link" href="#model" aria-current="page">3D model</a><a id="review" href="review.html">Photo comparisons</a></nav>
 </header>
 <main>
-<div id="room"><canvas id="stage" tabindex="0" aria-label="Interactive 2027 Chevrolet Corvette ZR1X. Use arrow keys to orbit and plus or minus to zoom."></canvas><p id="status" role="status">Loading the model…</p></div>
+<div id="room"><canvas id="stage" tabindex="0" aria-label="Interactive 2027 Chevrolet Corvette ZR1X. Use arrow keys to orbit and plus or minus to zoom."></canvas><span id="part-name" hidden></span><p id="status" role="status">Loading the model…</p></div>
+<div id="assembly-picker" hidden>
+<label>Assembly <select id="assembly-group"><option value="">Whole vehicle</option></select></label>
+<label hidden>Part <select id="assembly-piece"><option value="">All component parts</option></select></label>
+</div>
 <div class="tools-wrap"><div id="tools" role="group" aria-label="Model controls" inert>
 <button id="explode" aria-pressed="false">Exploded view</button>
 <button id="cabin" aria-pressed="false">Cabin view</button>

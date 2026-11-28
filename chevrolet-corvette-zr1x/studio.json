@@ -4,9 +4,9 @@
   "model": "zr1x.glb",
   "poster": "poster.webp",
   "home": [
-    -5.1,
-    2.48,
-    6.3
+    -6.6,
+    1.65,
+    5.35
   ],
   "target": [
     -0.02,
@@ -947,6 +947,35 @@
         2000
       ],
       "source": "https://www.chevrolet.com/content/dam/chevrolet/na/us/english/index/Performance/2027-corvette-zr1x/colorizer/trims/3lz/interior/panorama-models/hte/v2/pano_f.png"
+    },
+    {
+      "id": "ring-high",
+      "label": "Track \u00b7 High front three-quarter",
+      "position": [
+        -7.6342473,
+        3.5777993,
+        6.9620076
+      ],
+      "target": [
+        0.8089281,
+        1.5927562,
+        0.606619
+      ],
+      "up": [
+        0.181571,
+        0.9812105,
+        -0.0652531
+      ],
+      "fov": 42.269722,
+      "imageSize": [
+        3000,
+        1687
+      ],
+      "principalPoint": [
+        1500.0,
+        843.5
+      ],
+      "source": "https://news.chevrolet.com/content/dam/Media/images/US/Release_Images/2025/jul/0731-Nurburgring/Nurburgring_Three2.jpg"
     }
   ],
   "parts": [
@@ -1079,63 +1108,51 @@
         2.3,
         3.85
       ],
-      "note": "The LT7 V8 and eight-speed dual-clutch transaxle drive the rear wheels. A separate electric unit drives the front axle. Between them, the low central enclosure represents the hybrid battery. Housing shapes and dimensions are approximate.",
-      "source": "https://www.chevrolet.com/performance/corvette/zr1x"
+      "note": "The front electric drive and rear LT7 each drive a pair of half-shafts. The orange phase leads connect the electric axle to the battery in the center tunnel. The component spacing follows GM\u2019s overhead powertrain illustration.",
+      "source": "https://gm-techlink.com/wp-content/uploads/2026/02/GM_TechLink_02_Mid-January_2026.pdf#page=3"
     },
     {
       "id": "rear-powertrain",
       "label": "Rear LT7 V8 and transaxle",
       "show": [
-        "LT7_crankcase",
-        "Rear_dual-clutch_transaxle_housing",
-        "Turbocharger_housing",
-        "Turbocharger_housing001",
-        "Twin_cam_bank_covers",
-        "Twin_cam_bank_covers001",
-        "Coil_housing",
-        "Coil_housing001",
-        "Coil_housing002",
-        "Coil_housing003",
-        "Coil_housing004",
-        "Coil_housing005",
-        "Coil_housing006",
-        "Coil_housing007"
+        "LT7_engine",
+        "Rear_transaxle"
       ],
       "direction": [
         2.4,
         1.7,
         3.25
       ],
-      "note": "Two cylinder banks, eight coil housings and the two turbocharger housings surround the schematic crankcase. The adjacent housing represents the eight-speed dual-clutch transaxle. The internal gears and turbo routing are unmodeled.",
-      "source": "https://news.chevrolet.com/newsroom.detail.html/Pages/news/us/en/2025/jun/0617-2026-Corvette-ZR1X-hypercar.html"
+      "note": "The blue intake sits above the two cylinder banks. The outer castings carry the twin turbochargers. The bellhousing joins the engine to the ribbed eight-speed dual-clutch transaxle ahead of its tapered tail case.",
+      "source": "https://gm-techlink.com/wp-content/uploads/2026/02/GM_TechLink_02_Mid-January_2026.pdf#page=2"
     },
     {
       "id": "front-electric-drive",
       "label": "Front electric drive unit",
       "show": [
-        "Front_drive_unit"
+        "Front_electric_drive"
       ],
       "direction": [
-        -2.4,
-        1.65,
-        3.2
+        -1.8,
+        1.9,
+        2.8
       ],
-      "note": "This envelope locates the 186 hp electric drive unit on the front axle. Chevrolet describes regenerative charging through this unit. Its internal motor and reduction gears are unmodeled.",
-      "source": "https://news.chevrolet.com/newsroom.detail.html/Pages/news/us/en/2025/jun/0617-2026-Corvette-ZR1X-hypercar.html"
+      "note": "The compact motor, final-drive case, three orange phase leads and two half-shafts share the front axle. The ribs, fasteners and CV boots are reconstructed external details.",
+      "source": "https://gm-techlink.com/wp-content/uploads/2026/02/GM_TechLink_02_Mid-January_2026.pdf#page=3"
     },
     {
       "id": "hybrid-battery",
       "label": "Central hybrid battery",
       "show": [
-        "Battery_tunnel"
+        "Tunnel_battery"
       ],
       "direction": [
-        -2.3,
-        2.0,
-        3.4
+        -2.0,
+        1.75,
+        3.35
       ],
-      "note": "The 1.9 kWh high-voltage battery sits low in the central chassis spine. The enclosure approximates its position and occupied space. Cell and cooling layouts are unmodeled.",
-      "source": "https://news.chevrolet.com/newsroom.detail.html/Pages/news/us/en/2025/jun/0617-2026-Corvette-ZR1X-hypercar.html"
+      "note": "The 1.9 kWh battery sits low between the seats. GM\u2019s exposed pack illustration guides the long tray, bracketed sections, electronics cover and orange insulated connections.",
+      "source": "https://gm-techlink.com/wp-content/uploads/2026/02/GM_TechLink_02_Mid-January_2026.pdf#page=3"
     }
   ]
 }
