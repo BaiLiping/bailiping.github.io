@@ -7,7 +7,7 @@
   <script>
     if (location.hash === '#chevrolet-views') document.documentElement.classList.add('show-photos');
     const overrideModel = new URLSearchParams(location.search).get('model');
-    const modelFile = overrideModel || './corvette_zr1x_2027.glb?v=8d8f75ff89ce';
+    const modelFile = overrideModel || './corvette_zr1x_2027.glb?v=540bc40424ab';
     const preload = document.createElement('link');
     preload.rel = 'preload';
     preload.as = 'fetch';
@@ -78,6 +78,7 @@
             <button type="button" data-panel="fuel" aria-pressed="false" aria-keyshortcuts="G" disabled>Fuel filler</button>
           </div>
           <a class="top-view" href="#top">View from directly above</a>
+          <div class="sources"><a href="https://bringatrailer.com/wp-content/uploads/2026/08/2027_chevrolet_corvette-zr1x-coupe-3lz-ztk_2027_chevrolet_corvette-zr1x-coupe-3lz-ztk_ffb5c943-3aa5-4661-8df7-5bbd362b4335-sV7MDs-86695-86696-scaled.jpg">Raised hood underside photo · TeamRydell / Bring a Trailer</a></div>
           <details class="notes"><summary>Inspect the powertrain</summary>
             <p class="inspection-links"><a href="#powertrain">Hybrid powertrain</a><a href="#rear-powertrain">LT7 and transaxle</a><a href="#front-electric-drive">Front electric drive</a><a href="#hybrid-battery">Tunnel battery</a></p>
           </details>
@@ -340,6 +341,7 @@
         [/Susp_Coilover/, 'Magnetic Ride 4.0 coilover damper', 'ZTK high-rate helical spring & monotube damper'],
         [/Susp_ARB/, 'Stabilizer anti-roll bar', 'front/rear torsional roll control bar'],
         [/Drive_Halfshaft/, 'Half-shaft & CV joints', 'transmits e-AWD torque to all four wheel hubs'],
+        [/Chassis_CoolingDuct/, 'Front cooling duct and cowl', 'routes air from the central heat exchanger to the hood extractor'],
         [/Chassis_Radiator/, 'Front & side heat exchangers', 'cooling stack for LT7 engine, charge air and hybrid electronics'],
         [/Chassis_FuelTank/, 'Saddle fuel tanks', 'twin mid-mounted fuel cells flanking the central tunnel'],
         [/Chassis_/, 'Die-cast aluminum spaceframe & tunnel', 'Bedford-cast C8 structural spine, cradles & flat underfloor'],
@@ -729,7 +731,8 @@
         state.loaded = true;
         window.__zr1xModelLoaded = true;
         window.dispatchEvent(new Event('zr1x-model-loaded'));
-        if (document.documentElement.dataset.matchView) matchChevroletView(document.documentElement.dataset.matchView);
+        if (location.hash === '#front-hood') matchChevroletView('Raised front hood');
+        else if (document.documentElement.dataset.matchView) matchChevroletView(document.documentElement.dataset.matchView);
         updateHudText();
         wake(true);
       },
@@ -1139,11 +1142,15 @@
       }
       if (state.loaded) {
         window.dispatchEvent(new Event('zr1x-model-loaded'));
-        if (document.documentElement.dataset.matchView) matchChevroletView(document.documentElement.dataset.matchView);
+        if (location.hash === '#front-hood') matchChevroletView('Raised front hood');
+        else if (document.documentElement.dataset.matchView) matchChevroletView(document.documentElement.dataset.matchView);
       }
     }
     window.addEventListener('chevrolet-views-loaded', event => registerFrames(event.detail));
     registerFrames(frames);
+    registerFrames([{ label: 'Raised front hood', pose: {
+      theta: -0.19, phi: 1.39, radius: 139, fov: 25, center: [76, 57, 0], panels: { hood: 1 }
+    }}]);
 
     function showRearView(immediate = false) {
       stopIntro();
@@ -1212,6 +1219,7 @@
     });
 
     window.addEventListener('hashchange', () => {
+      if (state.loaded && location.hash === '#front-hood') matchChevroletView('Raised front hood');
       if (state.loaded && location.hash === '#exploded') { stopIntro(); setExplosion(1); }
       if (state.loaded && location.hash === '#top') showTopView();
       if (state.loaded && location.hash === '#assembly') startAssembly();

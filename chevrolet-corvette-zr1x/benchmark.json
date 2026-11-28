@@ -1,5 +1,5 @@
 {
-  "model_sha256": "8d8f75ff89cef5be6b83f13e9ea41162e34945740376168bcdcf567276a1615a",
+  "model_sha256": "540bc40424ab43216d75712467aa7204e1019c3eb5aee94c929a658a4b8daa31",
   "method": "Shipped mesh and materials, native-resolution GPU silhouette, fixed V2 cameras. Both masks are filled to their external contours. Symmetric outer-contour distance in pixels. Orbit foreground uses the manufacturer alpha. The seven JPEG foreground masks estimate the visible exterior by color, texture and a hand-traced lower boundary separating cast shadow. These seven masks are approximate. Cropped image borders are excluded from wheel-view distances. The shaded pass uses the production studio materials and lighting, with the floor hidden. The transparent overlay combines the independently measured outer boundary with visible tonal edges.",
   "summary": {
     "orbit": {
@@ -9,7 +9,7 @@
     },
     "hires": {
       "n": 7,
-      "mean_iou": 0.96415,
+      "mean_iou": 0.96413,
       "mean_p95_px": 24.31
     }
   },
@@ -22,7 +22,7 @@
         750
       ],
       "photo_sha256": "5323f48f740c4a0d76bb722b8dfcadc1db1e9fb89f74ddb83332af7fae64e8db",
-      "iou": 0.97092,
+      "iou": 0.97093,
       "median_px": 2.0,
       "p95_px": 7.62,
       "mask_source": "manufacturer alpha",
@@ -57,7 +57,7 @@
         750
       ],
       "photo_sha256": "1dfe856b326798ce10b0fbb75a2b330a9e69d73a01cdbe0e4d07247167b77d4e",
-      "iou": 0.97256,
+      "iou": 0.97257,
       "median_px": 2.0,
       "p95_px": 10.0,
       "mask_source": "manufacturer alpha",
@@ -92,7 +92,7 @@
         750
       ],
       "photo_sha256": "0d60083ae6afc582575eba51f3fd9cdb744842565f2f684cb15a661f93e035a7",
-      "iou": 0.97359,
+      "iou": 0.9736,
       "median_px": 1.41,
       "p95_px": 10.0,
       "mask_source": "manufacturer alpha",
@@ -127,7 +127,7 @@
         750
       ],
       "photo_sha256": "7cdbddd3b1981332355e4f7989fb5c1ca5051556a21cfaa592e2b42df686706b",
-      "iou": 0.96813,
+      "iou": 0.96814,
       "median_px": 1.41,
       "p95_px": 13.42,
       "mask_source": "manufacturer alpha",
@@ -162,9 +162,9 @@
         750
       ],
       "photo_sha256": "a95e1e5911b9c668e8914d82e7f71e36cb7b58432736b34812204665e1ff09ad",
-      "iou": 0.9622,
-      "median_px": 1.0,
-      "p95_px": 14.1,
+      "iou": 0.96217,
+      "median_px": 1.41,
+      "p95_px": 14.13,
       "mask_source": "manufacturer alpha",
       "reference": "https://www.chevrolet.com/performance/corvette/zr1x",
       "pose": {
@@ -183,7 +183,7 @@
         ]
       },
       "photo_span_px": 1390,
-      "p95_percent_span": 1.014,
+      "p95_percent_span": 1.017,
       "status": "fix",
       "note": "The side angle exposes the lower rocker and the hatch contour. Inspect the height changes along the rear glass and the lower rear bumper.",
       "render": "benchmark/view-04-render.webp",
@@ -197,7 +197,7 @@
         750
       ],
       "photo_sha256": "90ed9bca3f00d36cc86efefbf9e7da62f7dc65823ccdf431aa7438fd9b5372af",
-      "iou": 0.95474,
+      "iou": 0.95449,
       "median_px": 2.0,
       "p95_px": 21.02,
       "mask_source": "manufacturer alpha",
@@ -232,7 +232,7 @@
         750
       ],
       "photo_sha256": "02e0861013fa1420d07bfb36113edaa98fb89113d7b1dcb15794c2356bc5695d",
-      "iou": 0.95819,
+      "iou": 0.95839,
       "median_px": 2.0,
       "p95_px": 16.55,
       "mask_source": "manufacturer alpha",
@@ -302,7 +302,7 @@
         750
       ],
       "photo_sha256": "a76daa4f11c1ea16cf5684013efb58881c8f48991cac1d22a131bb49b2395a5e",
-      "iou": 0.96745,
+      "iou": 0.96747,
       "median_px": 1.0,
       "p95_px": 27.0,
       "mask_source": "manufacturer alpha",
@@ -337,8 +337,8 @@
         750
       ],
       "photo_sha256": "b5472277bee3b9dcb459141713adf5877978f0f4d762bf12d4fab2938413edc4",
-      "iou": 0.97613,
-      "median_px": 1.41,
+      "iou": 0.97619,
+      "median_px": 1.0,
       "p95_px": 8.06,
       "mask_source": "manufacturer alpha",
       "reference": "https://www.chevrolet.com/performance/corvette/zr1x",
@@ -372,7 +372,7 @@
         750
       ],
       "photo_sha256": "830c31915a8006d90844763c503e28e80452fbe1aae02c903476c085e26102b1",
-      "iou": 0.97253,
+      "iou": 0.97254,
       "median_px": 2.0,
       "p95_px": 9.0,
       "mask_source": "manufacturer alpha",
@@ -407,7 +407,7 @@
         750
       ],
       "photo_sha256": "593a7a91e1437630623d54f1091f05d7cc838bfcb896d2208c6119b3d0a0431f",
-      "iou": 0.97189,
+      "iou": 0.9719,
       "median_px": 2.0,
       "p95_px": 9.0,
       "mask_source": "manufacturer alpha",
@@ -582,7 +582,7 @@
         750
       ],
       "photo_sha256": "144409bf8a484305b9306f05431e02abf943b13a78cd4edb07da6c14def19fab",
-      "iou": 0.9737,
+      "iou": 0.97373,
       "median_px": 2.0,
       "p95_px": 9.0,
       "mask_source": "manufacturer alpha",
@@ -617,7 +617,7 @@
         750
       ],
       "photo_sha256": "16d1ec85db1355a7400e994af33affeb24b29036c634246e22dcb0c37a888ac3",
-      "iou": 0.97545,
+      "iou": 0.97546,
       "median_px": 1.41,
       "p95_px": 8.0,
       "mask_source": "manufacturer alpha",
@@ -652,7 +652,7 @@
         750
       ],
       "photo_sha256": "a609bac81efa3f5379aba9beced5e210404c0243db38caa2707268bf1a21d301",
-      "iou": 0.96587,
+      "iou": 0.96588,
       "median_px": 1.0,
       "p95_px": 11.0,
       "mask_source": "manufacturer alpha",
@@ -687,7 +687,7 @@
         750
       ],
       "photo_sha256": "8689e3f5513957489625927a81505229ddf4f5b8f7555c83c5b5c3492f881ff7",
-      "iou": 0.96089,
+      "iou": 0.96085,
       "median_px": 1.41,
       "p95_px": 12.17,
       "mask_source": "manufacturer alpha",
@@ -722,7 +722,7 @@
         750
       ],
       "photo_sha256": "b117934bfc63db37546074964e2fa7baab7addee91f63d732dde4146d17ee097",
-      "iou": 0.95518,
+      "iou": 0.95553,
       "median_px": 2.0,
       "p95_px": 17.8,
       "mask_source": "manufacturer alpha",
@@ -757,7 +757,7 @@
         750
       ],
       "photo_sha256": "f34141fcfd2ec4e3b904ee10098e91cfbeb5dbdc2a63756d9eab7a16695518e3",
-      "iou": 0.954,
+      "iou": 0.95366,
       "median_px": 2.0,
       "p95_px": 19.65,
       "mask_source": "manufacturer alpha",
@@ -792,7 +792,7 @@
         750
       ],
       "photo_sha256": "e2d905e2a0f43d4684d873f185f781caa23354507264e88b1e7130e371953565",
-      "iou": 0.96308,
+      "iou": 0.96302,
       "median_px": 1.41,
       "p95_px": 12.19,
       "mask_source": "manufacturer alpha",
@@ -827,7 +827,7 @@
         750
       ],
       "photo_sha256": "b668820e07588c3162ed314252c34a4c1f8d2c92282680bdc3eba3fe7fa89a1c",
-      "iou": 0.96868,
+      "iou": 0.96869,
       "median_px": 1.41,
       "p95_px": 13.12,
       "mask_source": "manufacturer alpha",
@@ -862,7 +862,7 @@
         750
       ],
       "photo_sha256": "c36500aa5ed981e9755c7aea1264b40d5465913f945ecf56d6bc76e7c2c6b490",
-      "iou": 0.9749,
+      "iou": 0.97491,
       "median_px": 1.41,
       "p95_px": 10.0,
       "mask_source": "manufacturer alpha",
@@ -897,7 +897,7 @@
         750
       ],
       "photo_sha256": "a5df9a932af5974b2f54f609a2378e172fd0a77e913c54cf782bc44ab2a6cfd7",
-      "iou": 0.97321,
+      "iou": 0.97323,
       "median_px": 2.0,
       "p95_px": 10.0,
       "mask_source": "manufacturer alpha",
@@ -932,7 +932,7 @@
         750
       ],
       "photo_sha256": "514abbd80a0fc4b1c08683d1e2128751c97aa7cce5c9228b3bf1a0c6c9f1e262",
-      "iou": 0.97106,
+      "iou": 0.97107,
       "median_px": 2.0,
       "p95_px": 8.06,
       "mask_source": "manufacturer alpha",
@@ -1134,7 +1134,7 @@
         1407
       ],
       "photo_sha256": "05a04729f0384e728b58f9c7c1c9ee2d2484bd551d39d06a9942a2538f56f236",
-      "iou": 0.96912,
+      "iou": 0.96911,
       "median_px": 6.0,
       "p95_px": 17.0,
       "mask_source": "estimated JPEG foreground",
@@ -1165,7 +1165,7 @@
         1407
       ],
       "photo_sha256": "21a56e7fb3cbd31bf56352fc5ed0cd2c49e93ecc1cfd7293fad094aade72a799",
-      "iou": 0.95203,
+      "iou": 0.95201,
       "median_px": 5.83,
       "p95_px": 27.0,
       "mask_source": "estimated JPEG foreground",
@@ -1196,7 +1196,7 @@
         1407
       ],
       "photo_sha256": "36c71de88e6eacc253b06618986459b516ff4ab1f9da8512f65477e39847ffa0",
-      "iou": 0.96348,
+      "iou": 0.96346,
       "median_px": 5.0,
       "p95_px": 21.0,
       "mask_source": "estimated JPEG foreground",
@@ -1227,7 +1227,7 @@
         1407
       ],
       "photo_sha256": "c05970259850eb2e9aba72c04c6d2ae42b78447a7b2294e7c1f3c2e0f3b523cf",
-      "iou": 0.96552,
+      "iou": 0.96543,
       "median_px": 4.0,
       "p95_px": 17.03,
       "mask_source": "estimated JPEG foreground",
@@ -2463,8 +2463,8 @@
     "limited": 17,
     "fix": 8,
     "pending": 0,
-    "excluded": 40
+    "excluded": 43
   },
-  "archive_only": 40,
-  "coverage": "27 verified for the visible features noted, 8 with further fitting needed, 17 limited comparisons and 0 pending; 40 further images are retained as reference material."
+  "archive_only": 43,
+  "coverage": "27 verified for the visible features noted, 8 with further fitting needed, 17 limited comparisons and 0 pending; 43 further images are retained as reference material."
 }
