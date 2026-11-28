@@ -22,13 +22,14 @@ from scipy.spatial.transform import Rotation
 HINGES = {
     'Pivot_Door_L': ('y', -62), 'Pivot_Door_R': ('y', 62),
     'Pivot_Door_RL': ('y', -60), 'Pivot_Door_RR': ('y', 60),
-    'Pivot_Hood_Assembly': ('z', 52), 'Pivot_Hatch_Assembly': ('z', -72),
+    'Pivot_Hood_Assembly': ('z', 52), 'Pivot_Hatch_Assembly': ('z', -88),
     'Pivot_Fuel_Flap': ('y', -75),
 }
 
 
 def primitive_transforms(doc, opened):
     transforms = {}
+    lift_meshes = {}
 
     def visit(index, parent):
         node = doc['nodes'][index]
@@ -44,11 +45,29 @@ def primitive_transforms(doc, opened):
             if node['mesh'] in transforms:
                 raise ValueError('Instanced meshes need independent visibility values')
             transforms[node['mesh']] = world
+            if node.get('name', '').startswith(('Civic_Body_Shell_Lift_Support_', 'Civic_Hatch_Lift_Rod_')):
+                lift_meshes[node['name']] = node['mesh']
         for child in node.get('children', []):
             visit(child, world)
 
     for root in doc['scenes'][doc['scene']]['nodes']:
         visit(root, np.eye(4))
+    if opened:
+        for side in ('L', 'R'):
+            tube = lift_meshes.get('Civic_Body_Shell_Lift_Support_'+side)
+            rod = lift_meshes.get('Civic_Hatch_Lift_Rod_'+side)
+            if tube is None or rod is None:
+                continue
+            for part, target in ((tube, rod), (rod, tube)):
+                world = transforms[part]
+                direction = transforms[target][:3, 3] - world[:3, 3]
+                direction /= np.linalg.norm(direction)
+                axis = world[:3, 1] / np.linalg.norm(world[:3, 1])
+                cross = np.cross(axis, direction)
+                sine = np.linalg.norm(cross)
+                if sine > 1e-8:
+                    align = Rotation.from_rotvec(cross / sine * np.arctan2(sine, axis @ direction))
+                    world[:3, :3] = align.as_matrix() @ world[:3, :3]
     return transforms
 
 

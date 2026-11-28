@@ -80,6 +80,7 @@ a { color: inherit; text-underline-offset: .2em; }
   padding: 22px; background: #fff; border: 1px solid var(--line); border-radius: 12px; box-shadow: 0 8px 35px #19252d25;
 }
 .controls-panel h2 { font-size: 20px; font-weight: 650; letter-spacing: -.035em; margin: 0 0 12px; }
+.panel-buttons + h2 { margin-top: 18px; }
 .panel-buttons { display: grid; grid-template-columns: repeat(2, 1fr); gap: 6px; }
 .panel-buttons button { background: #f4f5f6; color: var(--ink); border: 1px solid #e0e2e4; border-radius: 5px; min-height: 44px; padding: 4px 10px; font-weight: 500; font-size: 14px; line-height: 1.2; }
 .panel-buttons button[aria-pressed=true] { color: white; background: #23282e; border-color: #23282e; }
@@ -157,8 +158,8 @@ a { color: inherit; text-underline-offset: .2em; }
   .mode-switch a { flex: 1 1 auto; padding: 0 10px; font-size: 13px; }
 }
 @media (max-width: 460px) and (orientation: portrait) {
-  #tools { width: min(100%, 420px); flex-wrap: wrap; justify-content: center; }
-  #tools > * { flex: 0 0 25%; min-width: 0; }
+  #tools { width: min(100%, 420px); }
+  #tools > * { flex: 1 1 auto; min-width: 0; }
   #tools > :nth-child(4)::after { display: none; }
   .controls-panel { max-height: calc(100dvh - var(--header-height) - 152px); }
 }

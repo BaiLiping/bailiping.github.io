@@ -1,4 +1,4 @@
-import { loadCivicViews } from './civic-views.js?v=aa54ee9733';
+import { loadCivicViews } from './civic-views.js?v=37fa5358e1';
 
 const room = document.getElementById('photo-room');
 const photo = document.getElementById('photo');
@@ -140,7 +140,7 @@ document.addEventListener('pointerdown', event => {
   if (more.open && !more.contains(event.target)) more.open = false;
 });
 more.addEventListener('click', event => {
-  if (event.target.closest('[data-panel]')) {
+  if (event.target.closest('.panel-buttons button')) {
     more.open = false;
     more.querySelector('summary').focus({ preventScroll: true });
   }

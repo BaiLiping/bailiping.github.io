@@ -16,7 +16,9 @@ from scipy.spatial import cKDTree
 
 from bumper_vents import refine_bumper_vents
 from finishes import set_gltf_finishes
+from door_grips import refine_grips
 from headlamps import refine_headlamps
+from hatch_supports import build_lift_supports
 from rear_diffuser import refine_rear_diffuser
 
 
@@ -76,6 +78,28 @@ class CivicModel:
         indices = accessors[primitive['indices']]
         indices['count'] = mesh.faces.size
         indices['componentType'] = 5125 if len(mesh.points) > 65535 else 5123
+
+    def add_mesh(self, name, parent, material, translation, rotation, points, normals, faces):
+        """Append a rigged, locally authored primitive to this Draco glTF."""
+        doc = self.document
+        attrs = {}
+        def accessor(kind, component):
+            idx = len(doc['accessors'])
+            doc['accessors'].append({'type': kind, 'componentType': component, 'count': 0})
+            return idx
+        for key in ('POSITION','NORMAL'):
+            attrs[key] = accessor('VEC3',5126)
+        view = len(self.payloads)
+        self.payloads.append(b'')
+        doc['bufferViews'].append({'buffer':0})
+        primitive = {'attributes':attrs, 'indices':accessor('SCALAR',5123), 'mode':4,
+                     'material':material,'extensions':{'KHR_draco_mesh_compression':{'bufferView':view}}}
+        node = {'name':name,'mesh':len(doc['meshes']),'translation':translation.tolist(),'rotation':rotation.tolist()}
+        doc['meshes'].append({'name':name,'primitives':[primitive]})
+        doc['nodes'][parent]['children'].append(len(doc['nodes']))
+        doc['nodes'].append(node)
+        self.nodes[name] = node
+        self.replace_geometry(name,points,normals,faces)
 
     def write(self, path):
         binary = bytearray()
@@ -185,7 +209,8 @@ def refine_body(model):
             smooth_pressing(model, name)
         elif name.startswith('Civic_Glass_'):
             form_glass(model, name)
-    fit_hatch_shutline(model)
+    if 'Civic_Hatch_Shutline' in model.nodes:
+        fit_hatch_shutline(model)
     form_headliner(model)
 
 
@@ -199,7 +224,10 @@ if __name__ == '__main__':
         parser.error('The input already has the FK8 refinements. Supply the original assembly.')
     set_gltf_finishes(car.document)
     refine_body(car)
+    refine_grips(car)
     refine_headlamps(car)
     refine_bumper_vents(car)
     refine_rear_diffuser(car)
+    if 'Civic_Hatch_Reveal' in car.nodes:
+        build_lift_supports(car)
     car.write(args.output)

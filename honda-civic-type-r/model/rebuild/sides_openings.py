@@ -22,6 +22,8 @@ import cv2
 from scipy import ndimage
 from scipy.spatial import Delaunay
 import outlines
+import tailgate
+from hood_pressing import form_hood
 
 RES = 0.002                 # mask resolution (m)
 GAP = 0.005                 # shut-line gap between panel and body jamb
@@ -186,6 +188,122 @@ def group(d, index, pivot, exclude=()):
     return (np.vstack(Vs), np.vstack(Fs)) if Vs else (None, None)
 
 
+def add_liftgate(parts, field, add, clear):
+    """Sweep the fixed jamb, bulb seal and moving hem from the same cut as the skin."""
+    a, e1, e2 = tailgate.AXIS, tailgate.ACROSS, tailgate.ALONG
+    loop = tailgate.outline()[::2]
+    forward = np.roll(loop, -1, axis=0) - np.roll(loop, 1, axis=0)
+    outward = np.column_stack([forward[:, 1], -forward[:, 0]])
+    outward /= np.linalg.norm(outward, axis=1, keepdims=True)
+    n = len(loop)
+    fr = Frame2D(loop)
+    mask = np.zeros(fr.shape, np.uint8)
+    cv2.fillPoly(mask, [np.round(fr.px(loop)*16).astype(np.int32)], 1, shift=4)
+
+    def inner_depth(uv):
+        # Some oblique rays enter through the floor or the opposite quarter.
+        # Bracket the last crossing of the actual shell on every ray.
+        base = uv[:, :1]*e1 + uv[:, 1:2]*e2
+        inside = np.full(len(uv), np.nan)
+        for depth in np.arange(1.35, 2.40, .025):
+            inside[field(base + depth*a) < 0] = depth
+        if not np.isfinite(inside).all():
+            raise ValueError('Liftgate profile falls outside the rear body')
+        return inside
+
+    def surface(uv):
+        return skin(field, a, e1, e2, uv, inner_depth(uv), t_out=3.)[0]
+
+    # The skin can turn back on itself at the spoiler ledge. Follow the hem
+    # once; both jambs must meet that very same edge on the installed tailgate.
+    outer = surface(loop)
+    radial = to3(outward, e1, e2)
+    def sweep(profile, *, inner=False, rows=None):
+        rings = [outer + spread*radial - depth*a for spread, depth in profile]
+        verts = np.vstack(rings)
+        normals = []
+        triangles = []
+        ids = np.arange(n)
+        selected = ids if rows is None else ids[rows & np.roll(rows, -1)]
+        k, nxt = selected, (selected + 1) % n
+        for i, ring in enumerate(rings):
+            across = rings[min(i+1, len(rings)-1)] - rings[max(0, i-1)]
+            around = np.roll(ring, -1, axis=0) - np.roll(ring, 1, axis=0)
+            direction = np.cross(across, around)
+            normals.append(-direction if inner else direction)
+            if i == len(rings)-1:
+                continue
+            base = i*n
+            triangles.extend([np.column_stack([base+k, base+n+k, base+n+nxt]),
+                              np.column_stack([base+k, base+n+nxt, base+nxt])])
+        return verts, np.vstack(triangles), np.vstack(normals)
+
+    pivot = tailgate.PIVOT
+    # Profiles are (radial offset, inward depth). The outer flanges tuck under
+    # the painted skins. The broad gutter and bulb follow the open-car photograph.
+    add('Civic_Body_Shell_Cargo_Jamb', 'paint', '',
+        sweep([(.007, .001), (.003, .003), (-.001, .010), (-.006, .024),
+               (-.012, .031), (-.035, .034), (-.047, .038), (-.052, .047),
+               (-.054, .069)], inner=True))
+    add('Civic_Hatch_Weatherstrip_Body', 'black', '',
+        sweep([(-.046, .046), (-.044, .038), (-.046, .032), (-.051, .029),
+               (-.057, .031), (-.061, .037), (-.061, .045), (-.057, .055),
+               (-.055, .074)], inner=True))
+    add('Civic_Body_Shell_Cargo_Aperture_Trim', 'black', '',
+        sweep([(-.054, .060), (-.058, .065), (-.066, .087), (-.084, .124),
+               (-.091, .149)], inner=True))
+    add('Civic_Body_Shell_Cargo_Sill_Plate', 'black', '',
+        sweep([(-.060, .046), (-.068, .055), (-.082, .078), (-.092, .121)],
+              inner=True, rows=loop[:, 1] < -.761))
+    add('Civic_Hatch_Jamb', 'paint', pivot,
+        sweep([(-.001, -.004), (-.003, .002), (-.004, .010), (-.008, .019),
+               (-.014, .025), (-.031, .030), (-.055, .033)]))
+    add('Civic_Hatch_Window_Trim', 'black', pivot,
+        sweep([(-.017, .029), (-.022, .034), (-.029, .037), (-.043, .039),
+               (-.056, .042)]))
+
+    # Molded interior trim behind the outer pressing. Cut only the actual
+    # glazing out of it, including the narrow lower window below the crossbar.
+    trim = grow(mask, -.032)
+    for name in ('Civic_Glass_Hatch', 'Civic_Hatch_Lower_Glass'):
+        pts, faces = parts[name+'/V'], parts[name+'/F']
+        uv = np.column_stack([pts @ e1, pts @ e2])
+        pane = closed(fr.mask(uv, faces), r_close=.005)
+        trim &= ~grow(pane, -.009)
+    add('Civic_Hatch_Inner_Trim', 'black', pivot,
+        cap(fr, trim, a, e1, e2, field, inner_depth,
+            lambda uv: np.full(len(uv), .041), -a, grid=.013, t_out=3.))
+    # Close the gap between the rubber aperture trim and the cargo tub.
+    # Sweep the carpeted side panels and floor forward to the rear seatbacks.
+    rim = outer - .089*radial - .141*a
+    fraction = np.clip((outer[:,1]-.66)/.68, 0., 1.)
+    rings = [rim]
+    for t in np.linspace(.1, 1., 10):
+        h = t*t*(3-2*t)
+        dest_x = -1.014 - .16*fraction
+        x = rim[:,0]*(1-t) + dest_x*t
+        y = rim[:,1]*(1-h) + (.531+.769*fraction)*h
+        z = rim[:,2]*(1-h) + loop[:,0]*(.90+.085*fraction)*h
+        # The carpet draws in over the wheel housings, with a rounded shoulder.
+        arch = np.exp(-((x+1.35)/.29)**4)*np.exp(-((y-.64)/.165)**2)
+        z *= 1.-.115*arch*np.clip(abs(z)/.57, 0, 1)**3
+        rings.append(np.column_stack([x,y,z]))
+    faces, normals = [], []
+    k = np.arange(n)
+    v = (k+1)%n
+    for i,row in enumerate(rings):
+        forward = rings[min(i+1,len(rings)-1)]-rings[max(0,i-1)]
+        tangent = np.roll(row,-1,axis=0)-np.roll(row,1,axis=0)
+        normals.append(np.cross(tangent,forward))
+        if i < len(rings)-1:
+            faces.extend([np.column_stack([k,v,v+n])+i*n,np.column_stack([k,v+n,k+n])+i*n])
+    add('Civic_Interior_CargoBay', 'Mat_Interior_Rear_Cloth', 'Pivot_Interior_Cabin',
+        (np.vstack(rings),np.vstack(faces),np.vstack(normals)))
+
+    clear.append({'a': a.tolist(), 'e1': e1.tolist(), 'e2': e2.tolist(),
+                  'poly': loop[::3].tolist(), 'margin': .058})
+
+
 def main():
     d = np.load(sys.argv[1]); index = json.loads(str(d['index'])); field = Field(sys.argv[2])
     out, idx, clear, cutout = {}, [], [], {}
@@ -325,8 +443,8 @@ def main():
         S, ok = skin(field, a, e1, e2, P, t_in(P))
         Vs, Fs, Ns = strip(S, np.full(len(P), HOOD['d']), a, to3(N2, e1, e2)); keep = ok & np.roll(ok, -1)
         add('Civic_Hood_Jamb', 'paint', 'Pivot_Hood_Assembly', (Vs, Fs[np.concatenate([keep, keep])], Ns))
-        add('Civic_Hood_Inner_Frame', 'paint', 'Pivot_Hood_Assembly',
-            cap(fr, grow(m, 0.002), a, e1, e2, field, t_in, lambda UV: np.full(len(UV), HOOD['d']), -a))
+        form_hood(cap(fr, grow(m, .002), a, e1, e2, field, t_in,
+                      lambda uv: np.full(len(uv), HOOD['d']), -a), add)
         P, N2 = contour(fr, grow(m, GAP))
         S, ok = skin(field, a, e1, e2, P, t_in(P)); n3 = -to3(N2, e1, e2)
         Vs, Fs, Ns = strip(S, np.full(len(P), HOOD['dj']), a, n3); keep = ok & np.roll(ok, -1)
@@ -338,33 +456,7 @@ def main():
         inlays(d, index, fr, m, a, e1, e2, lambda C, N: C[:, 1] > 0.6, 'Civic_Hood', 'Pivot_Hood_Assembly', cutout, add)
 
     # ---------------- hatch ----------------
-    V, F = group(d, index, 'Pivot_Hatch_Assembly')
-    if V is not None:
-        a = np.array([-1.0, 0.85, 0]); a /= np.linalg.norm(a)
-        e1 = np.array([0, 0, 1.0]); e2 = np.cross(a, e1)
-        uvf = lambda P3: np.stack([P3 @ e1, P3 @ e2], 1)
-        fr = Frame2D(uvf(V)); m = closed(fr.mask(uvf(V), F), r_close=0.010)
-        c_in = np.array([-1.55, 0.80, 0.0])
-        t_in = lambda UV: np.full(len(UV), c_in @ a)
-        P, N2 = contour(fr, grow(m, -0.001))
-        S, ok = skin(field, a, e1, e2, P, t_in(P), t_out=4.0)
-        Vs, Fs, Ns = strip(S, np.full(len(P), HATCH['d']), a, to3(N2, e1, e2)); keep = ok & np.roll(ok, -1)
-        add('Civic_Hatch_Jamb', 'paint', 'Pivot_Hatch_Assembly', (Vs, Fs[np.concatenate([keep, keep])], Ns))
-        Vg, Fg = group(d, index, 'Pivot_Hatch_Assembly', exclude=('Panel', 'Deck'))
-        gm = grow(closed(fr.mask(uvf(Vg), Fg), r_close=0.006), 0.010)
-        trim = grow(m, 0.002) & ~gm
-        add('Civic_Hatch_Inner_Trim', 'black', 'Pivot_Hatch_Assembly',
-            cap(fr, trim, a, e1, e2, field, lambda UV: np.full(len(UV), c_in @ a), lambda UV: np.full(len(UV), HATCH['d']), -a, t_out=4.0))
-        P, N2 = contour(fr, grow(m, GAP))
-        S, ok = skin(field, a, e1, e2, P, t_in(P), t_out=4.0); n3 = -to3(N2, e1, e2)
-        Vs, Fs, Ns = strip(S, np.full(len(P), HATCH['dj']), a, n3); keep = ok & np.roll(ok, -1)
-        add('Civic_Body_Shell_Cargo_Jamb', 'paint', '', (Vs, Fs[np.concatenate([keep, keep])], Ns))
-        add('Civic_Hatch_Weatherstrip_Body', 'black', '', band(S, np.full(len(P), SEAL[0]), np.full(len(P), SEAL[1]), a, n3, SEAL[2], ok))
-        low = ok & (S[:, 1] < S[ok, 1].min() + 0.06)
-        add('Civic_Body_Shell_Cargo_Sill_Plate', 'black', '', band(S, np.full(len(P), 0.015), np.full(len(P), 0.085), a, n3, 0.002, low))
-        Pc, _ = contour(fr, m)
-        clear.append({'a': a.tolist(), 'e1': e1.tolist(), 'e2': e2.tolist(), 'poly': Pc[::4].tolist(), 'margin': HATCH['d'] + 0.010})
-        inlays(d, index, fr, m, a, e1, e2, lambda C, N: C[:, 0] < -1.0, 'Civic_Hatch', 'Pivot_Hatch_Assembly', cutout, add)
+    add_liftgate(d, field, add, clear)
 
     out['index'] = np.array(json.dumps(idx)); out['clear'] = np.array(json.dumps(clear))
     out['cutout'] = np.array(json.dumps({k: sorted(set(v)) for k, v in cutout.items()}))

@@ -503,6 +503,12 @@ def main():
     bpy.ops.wm.read_factory_settings(use_empty=True)
     bpy.ops.import_scene.gltf(filepath=base)
     gone = [o.name for o in bpy.data.objects if o.type == 'MESH' and REMOVE.match(o.name)]
+    if bpy.data.objects.get('Civic_Interior_CargoBay') is not None:
+        for path in parts_npz:
+            with np.load(path) as parts:
+                if 'Civic_Interior_CargoBay/V' in parts.files:
+                    gone.append('Civic_Interior_CargoBay')
+                    break
     for n in gone: bpy.data.objects.remove(bpy.data.objects[n], do_unlink=True)
     for o in [o for o in bpy.data.objects if o.type == 'EMPTY' and REMOVE.match(o.name) and not o.children]:
         bpy.data.objects.remove(o, do_unlink=True)
@@ -513,6 +519,16 @@ def main():
             print(f'  fit {n:40s} poking {poke:5d} moved {moved:5d} verts, max {exc:6.1f} mm -> {after:6.1f} mm')
     for n, kind, r0, r1 in fit_wheels():
         print(f'  wheel {n:36s} {kind:5s} r {r0:.4f} -> {r1:.4f}')
+    # Place the transverse hinge just inside the leading edge of the actual
+    # liftgate. Preserve the assembled position of the original rig's children.
+    hinge = bpy.data.objects['Pivot_Hatch_Assembly']
+    children = [(obj, obj.matrix_world.copy()) for obj in hinge.children]
+    placement = hinge.matrix_world.copy()
+    placement.translation = (-1.183, 0., 1.330)
+    hinge.matrix_world = placement
+    bpy.context.view_layer.update()
+    for obj, matrix in children:
+        obj.matrix_world = matrix
     report = []
     has_pillar = any(e['name'].startswith('Civic_Body_Shell_BPillar_') for p in parts_npz if p
                      for e in json.loads(str(np.load(p)['index'])))

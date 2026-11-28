@@ -19,7 +19,7 @@ import sys, json
 import numpy as np
 import cv2
 from skimage import measure
-import p24, outlines
+import p24, outlines, tailgate
 from rear_chart import Field, Chart, LAMP
 
 HERE = __file__.rsplit('/', 1)[0] if '/' in __file__ else '.'
@@ -155,7 +155,7 @@ def lamps(fld):
         if not len(F1): continue
         V1 = project(fld, V1)
         for piv, sgn in (('', 1), ('Pivot_Hatch_Assembly', -1)):
-            sh = sgn * -np.maximum(HATCH_Y - V1[:, 1], V1[:, 2] - HATCH_Z)          # < 0: this pivot's part
+            sh = -sgn * tailgate.signed_distance(V1) + tailgate.HALF_GAP
             V2, F2, _, _ = cut(V1, F1, sh)
             if not len(F2): continue
             V2, F2, N2 = refine(fld, V2, F2, 0.004, off)
@@ -186,24 +186,40 @@ def skin(fld, ch, UV, Fg, s, off):
     return refine(fld, project(fld, V1), F1, 0.005, off)
 
 
-def flat_plate(fld, ch, poly, lift, step=0.004):
-    """A flat plate: the (convex) chart polygon's points on the surface, a least-squares plane through them, the
-    polygon (edges subdivided every step, fanned from its centre) projected onto that plane and lifted along its
-    outward normal. Returns V, F, N."""
-    Q = np.array(poly, float)
-    E = [Q[i] + t * (Q[(i + 1) % len(Q)] - Q[i]) for i in range(len(Q))
-         for t in np.linspace(0, 1, max(int(np.linalg.norm(Q[(i + 1) % len(Q)] - Q[i]) / step), 1), endpoint=False)]
-    E = np.array(E); P = ch.point(E[:, 0], E[:, 1])
-    c = P.mean(0); _, _, vt = np.linalg.svd(P - c); n = vt[2]
-    if n @ fld.grad(c[None])[0] < 0: n = -n
-    a = vt[0]; b = np.cross(n, a)
-    loop = np.stack([(P - c) @ a, (P - c) @ b], 1)
-    V2 = np.vstack([loop.mean(0)[None], loop]); m = len(loop)
-    F2 = np.stack([np.zeros(m, int), 1 + np.arange(m), 1 + (np.arange(m) + 1) % m], 1)
-    V = c + V2[:, :1] * a + V2[:, 1:2] * b + n * lift
-    fn = np.cross(V[F2[:, 1]] - V[F2[:, 0]], V[F2[:, 2]] - V[F2[:, 0]]) @ n
-    if fn.sum() < 0: F2 = F2[:, ::-1]
-    return V, F2, np.repeat(n[None], len(V), 0)
+def reflector(ch, poly):
+    """A solid tapered reflector. Fit its face outside the entire recessed bezel."""
+    q = np.array(poly)
+    ends = np.array([q[:2].mean(0),q[2:].mean(0)])
+    centers = ch.point(ends[:,0], ends[:,1])
+    axis = centers[1]-centers[0]
+    radial = np.array([centers[0,0]-ch.xc,0.,centers[0,2]-ch.zc])
+    radial /= np.linalg.norm(radial)
+    lateral = np.cross(axis,radial)
+    lateral /= np.linalg.norm(lateral)
+    normal = np.cross(lateral,axis)
+    normal /= np.linalg.norm(normal)
+    # Check the face against the shell at both edges along its entire length.
+    t = np.linspace(0,1,48)
+    uv = ends[0] + t[:,None]*(ends[1]-ends[0])
+    line = centers[0] + t[:,None]*axis
+    lift = max(np.max((ch.point(uv[:,0]+du, uv[:,1])-line) @ normal) for du in (-.009,0.,.009)) + .003
+    rings = []
+    for f,w in ((0.,.005),(.027,.008),(.96,.0085),(1.,.0055)):
+        center = centers[0]+f*axis+normal*lift
+        rings.append(np.array([center-w*lateral-.004*normal,center-w*lateral,
+                               center-.8*w*lateral+.0013*normal,center+.8*w*lateral+.0013*normal,
+                               center+w*lateral,center+w*lateral-.004*normal]))
+    triangles=[]
+    for a,b in zip(rings,rings[1:]):
+        for i in range(6):
+            j=(i+1)%6
+            triangles.extend([[a[i],a[j],b[j]],[a[i],b[j],b[i]]])
+    for ring in [rings[0][::-1], rings[-1]]:
+        triangles.extend([[ring[0],ring[i],ring[i+1]] for i in range(1,5)])
+    tri=np.asarray(triangles)
+    face_n=np.cross(tri[:,1]-tri[:,0],tri[:,2]-tri[:,0])
+    face_n/=np.maximum(np.linalg.norm(face_n,axis=1,keepdims=True),1e-12)
+    return tri.reshape(-1,3),np.arange(tri.size//3).reshape(-1,3),np.repeat(face_n,3,axis=0)
 
 
 def vents(fld):
@@ -212,6 +228,11 @@ def vents(fld):
     and lower band) with the corner's red pinstripe (designed polygons in rear_vent_gfx.json on the VENT chart)."""
     from rear_chart import VENT
     ch = Chart(fld, **VENT, dy=0.002)          # chart of the carved body: the graphics were drawn on it
+    # Lock the drawing's horizontal scale through the height of the insert.
+    # Measuring arc length again on each recessed row kinks the same vertical
+    # edge at the grille and cuts the reflector into separate visible pieces.
+    reference_rows = (ch.YS >= .48) & (ch.YS <= .65)
+    ch.S[:] = np.median(ch.S[reference_rows], axis=0)
     gfx = json.load(open(f'{HERE}/rear_vent_gfx.json'))
     U0, U1, Y0, Y1 = -0.20, 0.64, 0.25, 0.74
     def union(polys, uv):
@@ -237,7 +258,7 @@ def vents(fld):
     trim = np.maximum(union(gfx['trim'], UV), np.maximum(-(opening(UV) + 0.006), -blade(UV)))
     out.append(('Civic_Rear_Bumper_Corner_Trim', 'black', '', *skin(fld, ch, UV, Fg, trim, 0.0025)))
     UV2, Fg2 = chart_grid(U0, U1, Y0, Y1, 0.002)
-    out.append(('Civic_Rear_Bumper_Vent_Reflector', 'Mat_Rear_Reflector_Red', '', *flat_plate(fld, ch, gfx['reflector'], HEX_LIFT + 0.002)))
+    out.append(('Civic_Rear_Bumper_Vent_Reflector', 'Mat_Rear_Reflector_Red', '', *reflector(ch, gfx['reflector'])))
     out.append(('Civic_Rear_Bumper_Corner_Pinstripe', 'red', '', *skin(fld, ch, UV2, Fg2, pin(UV2), 0.0026)))
     # honeycomb: one hexagonal ring per lattice cell (outer = cell boundary, inner = wall inset), clipped to the
     # opening minus the blade and the reflector
@@ -297,31 +318,6 @@ def pinstripe(fld):
     a, b, c, d = q[:-1, :-1].ravel(), q[:-1, 1:].ravel(), q[1:, :-1].ravel(), q[1:, 1:].ravel()
     F = np.concatenate([np.stack([a, b, d], 1), np.stack([a, d, c], 1)])
     return [('Civic_Rear_Diffuser_Pinstripe', 'red', '', *refine(fld, P, F, 0.003, 0.0028))]       # above the trim skin
-
-
-# ---------------------------------------------------------------- hatch bottom shut line
-SHUT_ZY = [(0.0, 0.665), (0.40, 0.665), (0.418, 0.6665), (0.432, 0.674), (0.58, 0.778)]
-SHUT_W = 0.0045
-
-
-def hatch_shutline(fld):
-    """Returns [(name, mat, pivot, V, F, N)]: the hatch bottom shut line as a dark ribbon on the rear face, from the
-    driver-side lamp bottom across to the passenger side (SHUT_ZY mirrored)."""
-    from scipy.ndimage import gaussian_filter1d
-    zy = np.array(SHUT_ZY)
-    L = np.concatenate([[0], np.cumsum(np.linalg.norm(np.diff(zy, axis=0), axis=1))])
-    t = np.arange(0, L[-1], 0.003)
-    half = np.stack([np.interp(t, L, zy[:, 0]), np.interp(t, L, zy[:, 1])], 1)
-    line = np.concatenate([half[::-1] * [-1, 1], half[1:]])
-    line[:, 1] = gaussian_filter1d(line[:, 1], 1.5)
-    d = np.gradient(line, axis=0); d /= np.linalg.norm(d, axis=1, keepdims=True); nrm2 = np.stack([-d[:, 1], d[:, 0]], 1)
-    rows = [line - nrm2 * SHUT_W / 2, line, line + nrm2 * SHUT_W / 2]
-    Z = np.concatenate([r[:, 0] for r in rows]); Y = np.concatenate([r[:, 1] for r in rows])
-    P = project(fld, np.stack([rear_face_x(fld, Y, Z), Y, Z], 1))
-    n = len(line); q = np.arange(3 * n).reshape(3, n)
-    a, b, c, e = q[:-1, :-1].ravel(), q[:-1, 1:].ravel(), q[1:, :-1].ravel(), q[1:, 1:].ravel()
-    F = np.concatenate([np.stack([a, b, e], 1), np.stack([a, e, c], 1)])
-    return [('Civic_Hatch_Shutline', 'seam', 'Pivot_Hatch_Assembly', *refine(fld, P, F, 0.003, 0.0006))]
 
 
 # ---------------------------------------------------------------- high-mount stop lamp
@@ -450,7 +446,7 @@ def vortex_generators(fld, fldL):
     V = np.concatenate([p[0] for p in pieces]); N = np.concatenate([p[2] for p in pieces])
     offs = np.cumsum([0] + [len(p[0]) for p in pieces[:-1]])
     F = np.concatenate([p[1] + o for p, o in zip(pieces, offs)])
-    return [('Civic_Roof_Hatch_Vortex_Generators', 'paint', '', V, F, N)]
+    return [('Civic_Roof_Hatch_Vortex_Generators', 'paint', tailgate.PIVOT, V, F, N)]
 
 
 def rear_face_top(fld, x, z):
@@ -561,7 +557,7 @@ def main():
         add(nm + '_R', mat, piv, V, F, N)
     for nm, mat, piv, V, F, N in vents(fldL):
         add(nm + '_L', mat, piv, *mirror(V, F, N))
-    for nm, mat, piv, V, F, N in pinstripe(fld) + hatch_shutline(fld) + wiper(fld) + vortex_generators(fld, fldL) + hmsl():
+    for nm, mat, piv, V, F, N in pinstripe(fld) + wiper(fld) + vortex_generators(fld, fldL) + hmsl():
         add(nm, mat, piv, V, F, N)
     for nm, mat, piv, V, F, N, mir in wing_parts():
         if mir:

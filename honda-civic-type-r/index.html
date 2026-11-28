@@ -9,7 +9,7 @@
     const params = new URLSearchParams(location.search);
     if (params.get('capture') === '1' || params.get('hud') === '0') document.documentElement.classList.add('hide-hud');
     const overrideModel = params.get('model');
-    const modelFile = overrideModel || './honda_civic_type_r.glb?v=fd1b49fe0a';
+    const modelFile = overrideModel || './honda_civic_type_r.glb?v=f973a927a1';
     const preload = document.createElement('link');
     preload.rel = 'preload';
     preload.as = 'fetch';
@@ -21,8 +21,8 @@
   <link rel="icon" href="/favicon.ico" />
   <title>2020 Honda Civic Type R (FK8) — Boost Blue</title>
   <meta name="description" content="Explore the 2020 Honda Civic Type R (FK8) in Boost Blue. Rotate the 3D model, open the rear hatch and compare its wing, C-shaped taillights and triple exhaust with photographs." />
-  <link rel="stylesheet" href="./studio.css?v=f545ff0d26">
-  <script type="module" src="./studio.js?v=9820c7e4aa"></script>
+  <link rel="stylesheet" href="./studio.css?v=2125ba1565">
+  <script type="module" src="./studio.js?v=bb6eb887c4"></script>
 </head>
 <body>
   <noscript><p style="position:fixed;inset:0;z-index:30;background:#eceeef;padding:2em">The interactive Honda Civic Type R (FK8) viewer requires JavaScript. <a href="https://bringatrailer.com/listing/2021-honda-civic-type-r-touring-5/">View the reference listing</a> or <a href="./frame-by-frame/">open the frame-by-frame photo comparison</a>.</p></noscript>
@@ -80,13 +80,16 @@
   <div id="bar" inert>
     <p id="drag-hint"><span class="mouse">Drag to orbit · Scroll to zoom</span><span class="touch">Drag to orbit · Pinch to zoom</span><span class="cabin-hint mouse">Drag to look around · Scroll to zoom</span><span class="cabin-hint touch">Drag to look around · Pinch to zoom</span></p>
     <div id="tools" role="group" aria-label="Model controls">
-      <button type="button" id="exploded-view" aria-pressed="false">Exploded</button>
-      <button type="button" data-command="i" aria-pressed="false">Cabin</button>
-      <button type="button" id="engine-view" aria-pressed="false">Engine</button>
-      <button type="button" id="drivetrain-view" aria-pressed="false">Gearing</button>
-      <button type="button" data-command="x" aria-pressed="false">X-ray</button>
+      <button type="button" id="exploded-view" aria-pressed="false">Exploded view</button>
+      <button type="button" data-command="i" aria-pressed="false">Cabin view</button>
       <details id="more"><summary>Controls</summary>
         <section class="controls-panel" aria-label="Additional model controls">
+          <h2>Model views</h2>
+          <div class="panel-buttons">
+            <button type="button" id="engine-view" aria-pressed="false">Engine</button>
+            <button type="button" id="drivetrain-view" aria-pressed="false">Gearing</button>
+            <button type="button" data-command="x" aria-pressed="false">X-ray</button>
+          </div>
           <h2>Body panels</h2>
           <div class="panel-buttons">
             <button type="button" data-panel="doorL" aria-pressed="false" aria-keyshortcuts="1" disabled>Front left door</button>
@@ -135,12 +138,12 @@
     import { applyStudioVisibility, attachStudioVisibility, loadStudioVisibility } from './studio-visibility.js?v=4983a6eba7';
     import { createPlanarMirror } from './mirror-reflection.js?v=a806e09fc7';
     import { createPaintEnvironment } from './paint-studio.js?v=c7567331f0';
-    import { DEFAULT_CAMERAS, orbitRadius, normalizeCameraPose, buildReferenceViews, loadCivicViews } from './civic-views.js?v=aa54ee9733';
+    import { DEFAULT_CAMERAS, orbitRadius, normalizeCameraPose, buildReferenceViews, loadCivicViews } from './civic-views.js?v=37fa5358e1';
 
     const { GLTFLoader, DRACOLoader } = THREE;
     const MODEL_URL = modelFile;
     const urlParams = new URLSearchParams(location.search);
-    const visibilityReady = !overrideModel && loadStudioVisibility('./studio-visibility.bin.gz?v=0e3c2527c0')
+    const visibilityReady = !overrideModel && loadStudioVisibility('./studio-visibility.bin.gz?v=2f49921fec')
       .catch(error => { console.warn('Studio visibility unavailable', error); return null; });
     const captureMode = urlParams.get('capture') === '1';
     let fullViewportCapture = captureMode;
@@ -622,15 +625,15 @@
       points: [],
       distance: 7.8,
     };
-    const introHoldMs = 700;
-    const introAssemblyMs = 2600;
+    const introHoldMs = 1200;
+    const introAssemblyMs = 2100;
     let intro = null;
+    let modelEntered = false;
 
     function stopIntro() {
       if (!intro) return;
       intro = null;
-      if (selectedView === 'assembly') selectedView = null;
-      state.explodeTarget = 0;
+      state.explodeTarget = state.explode;
       updateHudText();
     }
 
@@ -653,7 +656,7 @@
       doorRL: { nodes: ['Pivot_Door_RL'], axis: 'y', angle: -60 * Math.PI / 180 },
       doorRR: { nodes: ['Pivot_Door_RR'], axis: 'y', angle:  60 * Math.PI / 180 },
       hood:   { nodes: ['Pivot_Hood_Assembly'], axis: 'z', angle:  52 * Math.PI / 180 },
-      hatch:  { nodes: ['Pivot_Hatch_Assembly'], axis: 'z', angle: -72 * Math.PI / 180 },
+      hatch:  { nodes: ['Pivot_Hatch_Assembly'], axis: 'z', angle: -88 * Math.PI / 180 },
       fuel:   { nodes: ['Pivot_Fuel_Flap'], axis: 'y', angle: -75 * Math.PI / 180 },
     };
     const panelByNode = {};
@@ -848,6 +851,25 @@
     const loader = new GLTFLoader();
     loader.setDRACOLoader(dracoLoader);
     let rootCar = null;
+    const liftSupports = [];
+    const supportAxis = new THREE.Vector3(0, 1, 0);
+    const supportTarget = new THREE.Vector3();
+
+    function aimLiftSupports(exploded) {
+      for (const [tube, rod, tubeRest, rodRest] of liftSupports) {
+        if (exploded) {
+          tube.quaternion.copy(tubeRest);
+          rod.quaternion.copy(rodRest);
+          continue;
+        }
+        for (const [part, mate] of [[tube, rod], [rod, tube]]) {
+          mate.getWorldPosition(supportTarget);
+          part.parent.worldToLocal(supportTarget);
+          supportTarget.sub(part.position).normalize();
+          part.quaternion.setFromUnitVectors(supportAxis, supportTarget);
+        }
+      }
+    }
 
     let resolveReady;
     const readyPromise = new Promise(resolve => { resolveReady = resolve; });
@@ -1050,6 +1072,11 @@
           }
         }
 
+        for (const side of ['L', 'R']) {
+          const tube = rootCar.getObjectByName('Civic_Body_Shell_Lift_Support_' + side);
+          const rod = rootCar.getObjectByName('Civic_Hatch_Lift_Rod_' + side);
+          if (tube && rod) liftSupports.push([tube, rod, tube.quaternion.clone(), rod.quaternion.clone()]);
+        }
         rootCar.updateMatrixWorld(true);
         if (pivots.Pivot_Body_Assembly) {
           measureExplodedView();
@@ -1063,6 +1090,7 @@
           const rawView = urlParams.get('view') || document.documentElement.dataset.matchView || location.hash.slice(1);
           const view = rawView === 'gearing' ? 'drivetrain' : rawView;
           const explode = urlParams.get('explode');
+          modelEntered = location.hash !== '#civic-views';
           if (isDetailView(view) && !overrideModel) {
             matchCivicView(view, { immediate: true });
           } else if (view === 'rear') {
@@ -1071,7 +1099,7 @@
             if (explode === '1' || view === 'exploded') {
               frameAssembly();
               state.explode = state.explodeTarget = 1;
-            } else if (view === 'assembly' && explode !== '0') {
+            } else if ((!view || view === 'model' || view === 'assembly') && explode !== '0') {
               startAssembly();
             }
           }
@@ -1490,26 +1518,13 @@
     function startAssembly() {
       if (!pivots.Pivot_Body_Assembly) return;
       runCommand('r');
-      if (reducedMotion.matches || captureMode) {
-        selectedView = null;
-        state.customPose = null;
-        state.explode = state.explodeTarget = 0;
-        state.theta = state.targetTheta = exteriorView.theta;
-        state.phi = state.targetPhi = exteriorView.phi;
-        state.radius = state.targetRadius = exteriorView.radius;
-        state.targetCenter.copy(FOCUS_EXTERIOR);
-        state.frontLens = 1;
-        state.rearLens = state.cabinBlend = 0;
-        updateHudText();
-        wake(true);
-        return;
-      }
       frameAssembly();
       // Keep targetCenter anchored at FOCUS_EXTERIOR during intro so cameraExplosion smoothly
       // interpolates effCenter from assemblyView.center (explode=1) -> FOCUS_EXTERIOR (explode=0).
       state.targetCenter.copy(FOCUS_EXTERIOR);
       state.explode = state.explodeTarget = 1;
-      intro = { elapsed: 0, previous: null };
+      intro = reducedMotion.matches || captureMode ? null : { elapsed: 0, previous: null };
+      if (!intro) state.targetCenter.copy(assemblyView.center);
       updateHudText();
       wake(true);
     }
@@ -1528,7 +1543,11 @@
     window.addEventListener('hashchange', () => {
       const rawHash = location.hash.slice(1);
       const hash = rawHash === 'gearing' ? 'drivetrain' : rawHash;
-      if (state.loaded && isDetailView(hash)) matchCivicView(hash, { skipHash: true });
+      if (state.loaded && isDetailView(hash)) modelEntered = true;
+      if (state.loaded && !modelEntered && (hash === 'model' || !hash)) {
+        modelEntered = true;
+        if (!captureMode && urlParams.get('explode') !== '0') startAssembly();
+      } else if (state.loaded && isDetailView(hash)) matchCivicView(hash, { skipHash: true });
       else if (state.loaded && location.hash === '#assembly') startAssembly();
       else if (state.loaded && location.hash === '#exploded') {
         stopIntro();
@@ -1668,7 +1687,8 @@
     reducedMotion.addEventListener('change', () => {
       if (intro && reducedMotion.matches) {
         stopIntro();
-        state.explode = state.explodeTarget = 0;
+        frameAssembly();
+        state.explode = state.explodeTarget = 1;
         updateHudText();
         wake(true);
       }
@@ -2344,6 +2364,7 @@
         for (const [mesh, part] of explodedParts) {
           mesh.position.copy(part.home).addScaledVector(part.offset, ex);
         }
+        aimLiftSupports(ex > .001);
         for (const [obj, ps] of pullOffsets.entries()) {
           if (obj.isMesh) {
             if (damp >= 1) ps.cur.copy(ps.tgt);
