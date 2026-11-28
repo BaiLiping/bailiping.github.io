@@ -4,12 +4,12 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>2000 Acura Integra GS-R (DC2) — Flamenco Black Pearl</title>
-  <meta name="description" content="Explore the 2000 Acura Integra GS-R in 3D. Open the doors, pull apart the DC2, inspect the engine in X-ray and match the model to reference photographs.">
+  <meta name="description" content="Explore the 2000 Acura Integra GS-R in 3D. Watch the DC2 assemble, sit in the cockpit, inspect the five-speed gearbox and compare the car with photographs and Acura’s factory drawings.">
   <link rel="canonical" href="https://bailiping.com/acura-integra-gsr/">
   <link rel="icon" href="/favicon.ico">
   <link rel="stylesheet" href="../honda-civic-type-r/studio.css">
-  <link rel="stylesheet" href="./integra.css?v=08615a207a">
-  <script type="module" src="./studio.js?v=b73d9265b8"></script>
+  <link rel="stylesheet" href="./integra.css?v=21977e913b">
+  <script type="module" src="./studio.js?v=25e3b2fcc0"></script>
 </head>
 <body>
   <header id="studio-header">
@@ -25,28 +25,27 @@
       <label id="separation-control" hidden>Separation <input id="separation" type="range" min="0" max="100" value="100"><output for="separation">100%</output></label>
       <button id="reattach" type="button" hidden>Reattach parts</button>
     </div>
+    <p id="gearbox-caption" hidden>Five-speed manual · schematic cutaway <a href="./frame-by-frame/#factory-drivetrain">Factory drawings</a></p>
     <div id="callout" aria-hidden="true"><strong class="title"></strong><span class="sub"></span></div>
     <span id="part-status" class="visually-hidden" role="status"></span>
     <div id="bar" inert>
-      <p id="drag-hint"><span class="mouse">Click a panel to open · Drag a part to detach · Drag the background to orbit</span><span class="touch">Tap a panel to open · Hold a part to pull · Swipe to orbit</span><span class="cabin-hint mouse">Drag to look around · Scroll to zoom</span><span class="cabin-hint touch">Swipe to look around · Pinch to zoom</span></p>
+      <p id="drag-hint"><span class="mouse">Click a panel to open · Drag a part to detach · Drag the background to orbit</span><span class="touch">Tap a panel to open · Hold a part to pull · Swipe to orbit</span><span class="cabin-hint mouse">Drag to look around · Scroll to zoom</span><span class="cabin-hint touch">Swipe to look around · Pinch to zoom</span><span class="gearbox-hint mouse">Drag to orbit the gears · Scroll to zoom</span><span class="gearbox-hint touch">Swipe to orbit the gears · Pinch to zoom</span></p>
       <div id="tools" role="group" aria-label="Model controls">
         <button id="exploded-view" type="button" aria-pressed="false" aria-keyshortcuts="E">Exploded view</button>
-        <button type="button" data-panel="hood" aria-pressed="false" aria-keyshortcuts="F">Hood</button>
-        <button type="button" data-panel="doors" aria-pressed="false" aria-keyshortcuts="D">Doors</button>
-        <button type="button" data-panel="hatch" aria-pressed="false" aria-keyshortcuts="K">Liftback</button>
-        <button id="xray" type="button" aria-pressed="false" aria-keyshortcuts="X">X-ray</button>
+        <button id="cabin-view" type="button" aria-pressed="false" aria-keyshortcuts="I">Cabin view</button>
         <details id="more"><summary>Controls</summary><section class="controls-panel" aria-label="Additional model controls">
           <h2>Inspect the Integra</h2>
-          <div class="panel-buttons"><button type="button" data-view="rear">Rear three-quarter</button><button type="button" data-view="cabin" aria-keyshortcuts="I">Driver’s seat</button><button type="button" data-view="engine">Engine bay</button><button type="button" data-view="wheel">GS-R wheel</button></div>
+          <div class="panel-buttons"><button type="button" data-view="rear">Rear three-quarter</button><button type="button" data-view="wheel">GS-R wheel</button><button type="button" data-view="engine">Engine bay</button><button type="button" data-view="gearbox">Gearbox cutaway</button></div>
+          <div class="panel-buttons moving-parts"><button type="button" data-panel="hood" aria-pressed="false" aria-keyshortcuts="F">Hood</button><button type="button" data-panel="hatch" aria-pressed="false" aria-keyshortcuts="K">Liftback</button><button type="button" data-panel="doors" aria-pressed="false" aria-keyshortcuts="D">Both doors</button><button id="xray" type="button" aria-pressed="false" aria-keyshortcuts="X">X-ray</button></div>
           <div class="panel-buttons moving-parts"><button type="button" data-panel="leftDoor" aria-pressed="false" aria-keyshortcuts="1">Driver’s door</button><button type="button" data-panel="rightDoor" aria-pressed="false" aria-keyshortcuts="2">Passenger door</button><button type="button" id="steer" aria-pressed="false" aria-keyshortcuts="S">Turn front wheels</button><button type="button" id="spin" aria-pressed="false" aria-keyshortcuts="W">Spin wheels</button></div>
           <div class="assembly-picker"><label for="part-choice">Assembly</label><select id="part-choice"></select><button type="button" id="move-part">Detach</button></div>
-          <p class="quick-links"><a id="replay-assembly" href="#assembly">Replay the assembly sequence</a></p>
+          <p class="quick-links"><a id="replay-assembly" href="#assembly">Replay assembly</a><a href="./frame-by-frame/#factory-references">Acura photos and factory drawings</a></p>
           <details class="notes"><summary>Gestures and shortcuts</summary>
             <p>Click a door, hood or liftback to open it. Drag a part to pull its assembly away. Alt-drag moves just the mesh under the pointer. Click a detached part to put it back. On a touchscreen, hold before pulling.</p>
-            <p id="keyboard-help">Arrow keys orbit the car. Plus and minus zoom. E opens the exploded view, X toggles X-ray, and R resets the car.</p>
+            <p id="keyboard-help">Arrow keys orbit the car or look around the cabin. Plus and minus zoom. E toggles the exploded view, I toggles the cabin, X toggles X-ray, and R resets the car.</p>
           </details>
           <p id="info">U.S. three-door Sports Coupe · 1.8 L B18C1 DOHC VTEC · 170 hp · Five-speed manual · 2,570 mm wheelbase</p>
-          <details class="notes"><summary>Model references</summary><div class="sources"><p>The primary car supplies the low spoiler, Ebony leather cabin and red B18C1 cam cover. A second black 2000 GS-R shows the six-spoke castings, door mirror seals, recessed projectors and separate reflector chambers. The cabin and engine bay are simplified.</p><a href="https://bringatrailer.com/listing/2000-acura-integra-36/">rmwcali · Bring a Trailer lot 263,334</a><br><a href="https://bringatrailer.com/listing/2000-acura-integra-20/">Elevatordude · Bring a Trailer lot 157,928</a><br><a href="https://acuranews.com/en-US/releases/release-516d49d9d1f53ced13279f004c34c93b-2000-acura-integra-specifications">Acura · 2000 Integra specifications</a></div></details>
+          <details class="notes"><summary>Model references</summary><div class="sources"><p>The primary car supplies the low spoiler, Ebony leather cabin and red B18C1 cam cover. A second black 2000 GS-R shows the six-spoke castings, door mirror seals, recessed projectors and separate reflector chambers. The instrument cluster follows the photographed dashboard. Acura’s five-speed diagrams identify the gear shafts, differential and connections.</p><a href="https://bringatrailer.com/listing/2000-acura-integra-36/">rmwcali · Bring a Trailer lot 263,334</a><br><a href="https://bringatrailer.com/listing/2000-acura-integra-20/">Elevatordude · Bring a Trailer lot 157,928</a><br><a href="https://acuranews.com/en-US/releases/release-516d49d9d1f53ced13279f004c34c93b-2000-acura-integra-specifications">Acura · 2000 Integra specifications</a></div></details>
           <p class="return"><a href="/#cars">Back to Cars</a></p>
         </section></details>
         <button id="reset" type="button">Reset</button>
@@ -56,7 +55,7 @@
       <figure><img id="photo" width="2048" height="1365" alt="" referrerpolicy="no-referrer"><p id="photo-error" hidden role="status">This photograph could not load. Open the full-size photograph below.</p></figure>
       <div id="photo-footer">
         <div class="photo-tools"><button id="previous-view" type="button" aria-label="Previous photograph">‹</button><select id="photo-angle" aria-label="Reference photograph"></select><button id="next-view" type="button" aria-label="Next photograph">›</button><button id="match-view" type="button">Match in 3D</button></div>
-        <p><span id="frame-count"></span> · <a id="photo-credit" href="https://bringatrailer.com/listing/2000-acura-integra-36/">rmwcali · Bring a Trailer lot 263,334</a> · <a id="full-photo" href="https://bringatrailer.com/listing/2000-acura-integra-36/">Full-size photograph</a></p>
+        <p><span id="frame-count"></span> · <a id="photo-credit" href="https://bringatrailer.com/listing/2000-acura-integra-36/">rmwcali · Bring a Trailer lot 263,334</a> · <a id="full-photo" href="https://bringatrailer.com/listing/2000-acura-integra-36/">Full-size photograph</a> · <a href="https://importarchive.com/brochure/acuraintegra2000_01#page26">Acura studio photograph</a> · <a href="./frame-by-frame/#factory-references">Factory references</a></p>
       </div>
     </section>
   </main>

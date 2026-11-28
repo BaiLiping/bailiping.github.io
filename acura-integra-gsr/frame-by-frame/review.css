@@ -20,3 +20,21 @@ header.site nav { flex-wrap:wrap; }
   header.site { display:grid; gap:5px; }
   header.site nav { justify-content:flex-start; gap:15px; }
 }
+
+.factory-dimensions { display:grid; grid-template-columns:1.3fr 1fr; gap:clamp(18px,3.2vw,52px); align-items:center; margin:24px 0 12px; }
+.factory-dimensions figcaption { display:block; margin-top:8px; max-width:72ch; }
+.factory-dimensions table { width:100%; border-collapse:collapse; font-size:.9rem; font-variant-numeric:tabular-nums; }
+.factory-dimensions caption { text-align:left; font-weight:650; margin-bottom:7px; }
+.factory-dimensions :is(th,td) { border-bottom:1px solid #cdd1d2; text-align:right; padding:6px 4px; }
+.factory-dimensions th:first-child { text-align:left; }
+.factory-dimensions tbody th { font-weight:500; }
+.factory-note,.source-links { color:#495057; font-size:.88rem; }
+.factory-note,.factory-sources p { margin-top:9px; }
+.factory-sources { display:grid; grid-template-columns:1fr 1fr; gap:24px clamp(24px,4vw,60px); margin-top:26px; }
+.factory-sources > div { border-top:1px solid #cdd1d2; padding-top:16px; }
+.factory-sources h3 { font-size:clamp(19px,1.6vw,25px); }
+.source-links a { text-underline-offset:.18em; }
+@media(max-width:800px) {
+  .factory-dimensions,.factory-sources { grid-template-columns:1fr; }
+  .index nav { flex-wrap:wrap; }
+}

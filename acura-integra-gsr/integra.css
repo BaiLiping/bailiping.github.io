@@ -17,13 +17,13 @@
 .assembly-picker label { grid-column:1 / -1; font-size:13px; }
 .assembly-picker :is(select,button) { min-width:0; min-height:38px; padding:4px 8px; border:1px solid var(--line); border-radius:5px; color:var(--ink); background:white; }
 .visually-hidden { position:absolute; width:1px; height:1px; overflow:hidden; clip-path:inset(50%); white-space:nowrap; }
-.show-photos :is(#inspection-tools,#callout) { visibility:hidden; }
+.show-photos :is(#inspection-tools,#gearbox-caption,#callout) { visibility:hidden; }
 #bar { pointer-events:none; }
 #bar .return { font-size:.88rem; margin-top:10px; }
 .fallback { position:fixed; z-index:28; inset:40% 1rem auto; text-align:center; background:#fff; padding:1rem; }
 #loader { pointer-events:none; }
 #load-status a { pointer-events:auto; }
-body.capture :is(#studio-header,#bar,#photo-tools-3d,#inspection-tools,#callout) { display:none; }
+body.capture :is(#studio-header,#bar,#photo-tools-3d,#inspection-tools,#gearbox-caption,#callout) { display:none; }
 body.capture #room { inset:0; }
 @media(max-width:460px) and (orientation:portrait) {
   #tools > button { padding-inline:3px; }
@@ -36,3 +36,11 @@ body.capture #room { inset:0; }
   #callout.visible { display:grid; left:50% !important; top:auto !important; bottom:calc(var(--toolbar-height,100px) + 12px); transform:translateX(-50%); width:max-content; max-width:calc(100% - 24px); text-align:center; }
 }
 .mode-switch a[aria-current="page"] { color:white; background:var(--ink); }
+#gearbox-caption { position:fixed; top:calc(var(--header-height) + 12px); left:var(--edge); z-index:7; max-width:calc(100% - 28px); padding:6px 10px; background:#fffffff2; border:1px solid var(--line); border-radius:6px; font-size:13px; }
+#gearbox-caption a { display:inline-block; margin-left:.5em; color:inherit; text-underline-offset:.18em; }
+#drag-hint .gearbox-hint, #bar.in-gearbox #drag-hint > span { display:none; }
+#bar.in-gearbox #drag-hint .gearbox-hint.mouse { display:inline; }
+@media(pointer:coarse) {
+  #bar.in-gearbox #drag-hint .gearbox-hint.mouse { display:none; }
+  #bar.in-gearbox #drag-hint .gearbox-hint.touch { display:inline; }
+}

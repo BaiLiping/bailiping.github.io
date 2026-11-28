@@ -2,7 +2,7 @@ import * as THREE from '../honda-civic-type-r/vendor/three-r170.js?v=31c84364';
 
 const assemblyNames = {
   Body: 'Body shell', Hood: 'Hood', Liftback: 'Liftback', DoorLeft: 'Driver’s door',
-  DoorRight: 'Passenger door', Powertrain: 'B18C1 engine and gearbox', Interior: 'Cabin',
+  DoorRight: 'Passenger door', Powertrain: 'B18C1 engine', Transmission: 'Five-speed transaxle', Interior: 'Cabin',
   WheelFrontLeft: 'Left front wheel', WheelFrontRight: 'Right front wheel',
   WheelRearLeft: 'Left rear wheel', WheelRearRight: 'Right rear wheel',
 };
@@ -53,7 +53,7 @@ export function bindPartInteraction(canvas, camera, model, assemblies, actions) 
       if (!mesh.isMesh) return;
       home.set(mesh, mesh.position.clone());
       const meshName = (mesh.userData.name || mesh.name).replaceAll('_', ' ');
-      const label = partLabels.find(([test]) => test.test(meshName))?.[1] || assemblyNames[node.name];
+      const label = node.name === 'Transmission' ? (mesh.parent === node ? meshName : mesh.parent.userData.name || meshName) : partLabels.find(([test]) => test.test(meshName))?.[1] || assemblyNames[node.name];
       meshInfo.set(mesh, { assembly: node, label, shell, material: mesh.material, castShadow: mesh.castShadow });
     });
   }
@@ -70,7 +70,13 @@ export function bindPartInteraction(canvas, camera, model, assemblies, actions) 
   function pick(x, y) {
     model.updateMatrixWorld(true);
     rayAt(x, y);
-    return raycaster.intersectObjects(meshes, false).find(hit => !(xray && meshInfo.get(hit.object).shell));
+    return raycaster.intersectObjects(meshes, false).find(hit => {
+      const info = meshInfo.get(hit.object);
+      for (let node = hit.object; node !== model; node = node.parent) {
+        if (!node.visible) return false;
+      }
+      return !(xray && info.shell);
+    });
   }
   function applyPosition(node) {
     node.position.copy(home.get(node));
@@ -166,7 +172,7 @@ export function bindPartInteraction(canvas, camera, model, assemblies, actions) 
     title.textContent = label;
     const detached = offsets.has(mesh) || offsets.has(assembly);
     const verb = touch ? 'Tap' : 'Click';
-    let gesture = touch ? 'Hold and drag to detach' : 'Drag to detach';
+    let gesture = actions.lookAround() ? (touch ? 'Swipe to look around' : 'Drag to look around') : (touch ? 'Hold and drag to detach' : 'Drag to detach');
     if (detached) gesture = verb + ' to reattach';
     else if (panelNames[assembly.name]) gesture = verb + (actions.isPanelOpen(panelNames[assembly.name]) ? ' to close' : ' to open');
     hint.textContent = label === assemblyNames[assembly.name] ? gesture : assemblyNames[assembly.name] + ' · ' + gesture;
@@ -248,7 +254,7 @@ export function bindPartInteraction(canvas, camera, model, assemblies, actions) 
     const previous = pendingTap;
     clearTap();
     if (previous && Math.hypot(x - previous.x, y - previous.y) < 12 && previous.type === event.pointerType) {
-      actions.leavePhoto();
+      actions.showCar(); actions.leavePhoto();
       setXray(!xray);
       return;
     }
@@ -279,7 +285,7 @@ export function bindPartInteraction(canvas, camera, model, assemblies, actions) 
     const node = hit && (event.altKey || offsets.has(hit.object) ? hit.object : meshInfo.get(hit.object).assembly);
     active = { id: event.pointerId, startX: event.clientX, startY: event.clientY, x: event.clientX, y: event.clientY,
       mode: 'pressed', touch, hit, node, held: false };
-    if (touch && hit && !actions.inCabin()) {
+    if (touch && hit && !actions.lookAround()) {
       holdTimer = setTimeout(() => { if (active?.mode === 'pressed') { active.held = true; showPart(hit, active.x, active.y, true); } }, 350);
     }
   });
@@ -300,7 +306,7 @@ export function bindPartInteraction(canvas, camera, model, assemblies, actions) 
     if (active.mode === 'pressed') {
       if (Math.hypot(x - active.startX, y - active.startY) < (active.touch ? 8 : 5)) return;
       clearTimeout(holdTimer); clearTap(); clearHover();
-      const pull = active.hit && (!active.touch || active.held) && (!actions.inCabin() || event.altKey);
+      const pull = active.hit && (!active.touch || active.held) && (!actions.lookAround() || event.altKey);
       active.mode = pull && preparePull(active) ? 'pull' : 'orbit';
       canvas.classList.add('grabbing');
     }
@@ -338,7 +344,7 @@ export function bindPartInteraction(canvas, camera, model, assemblies, actions) 
 
   chooser.addEventListener('change', updateCount);
   moveButton.addEventListener('click', () => {
-    actions.stopIntro(); actions.leavePhoto(); clearHover();
+    actions.stopIntro(); actions.showCar(); actions.leavePhoto(); clearHover();
     const node = model.getObjectByName(chooser.value);
     if (offsets.has(node)) reattach(node);
     else {

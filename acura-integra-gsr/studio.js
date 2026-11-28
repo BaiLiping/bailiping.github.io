@@ -1,6 +1,6 @@
 import * as THREE from '../honda-civic-type-r/vendor/three-r170.js?v=31c84364';
 import {createStudioFloor} from '../honda-civic-type-r/studio-floor.js';
-import {bindPartInteraction} from './part-interaction.js?v=99b104300f';
+import {bindPartInteraction} from './part-interaction.js?v=8cb3fe9cf2';
 
 const $ = selector => document.querySelector(selector);
 const canvas = $('#stage');
@@ -23,6 +23,8 @@ let exteriorOrbit = true;
 let currentView = 'front';
 let lastAspect;
 const exteriorRadius = aspect => Math.max(6.9,1.45+7.5/aspect);
+const gearboxRadius = aspect => Math.max(.70, .82 / aspect);
+const cabinFov = aspect => THREE.MathUtils.clamp(THREE.MathUtils.radToDeg(2 * Math.atan(.47 / aspect)), 72, 96);
 let radius = 6, yaw = 0, elevation = .23;
 const target = new THREE.Vector3(0,.6,0);
 const panelSpec = {
@@ -54,6 +56,7 @@ const assemblyOffsets = {
   DoorLeft: [0, .63, 1.40],
   DoorRight: [-.45, .90, -2.05],
   Powertrain: [-1.17, .18, 0],
+  Transmission: [-1.10, .32, -1.30],
   Interior: [1.42, .08, .35],
   WheelFrontLeft: [-.27, 0, 1.05], WheelFrontRight: [-.27, 0, -1.05],
   WheelRearLeft: [.24, 0, 1.05], WheelRearRight: [.24, 0, -1.05],
@@ -69,6 +72,8 @@ let assemblyDistance = 0;
 let explosion = 0;
 let intro = null;
 let spreadMotion = null;
+let firstModelVisit = true;
+let lastRoute = '';
 
 function prepareAssembly() {
   const boxes = [];
@@ -139,7 +144,6 @@ function frameExterior(rear = false) {
   rememberOrbit();
 }
 function showExplosion(animate) {
-  if (animate && reducedMotion.matches) return;
   setExplosion(1);
   frameExterior();
   if (animate && !reducedMotion.matches) intro = {elapsed: 0, previous: null};
@@ -149,9 +153,13 @@ function draw(now) {
   pending = false;
   if (document.hidden || gallery()) return;
   if (intro && !document.hidden) {
-    if (intro.previous !== null) intro.elapsed += now - intro.previous;
+    if (intro.previous !== null) {
+      const elapsed = now - intro.previous;
+      // A slow first GPU frame can consume the hold. Still show the full assembly motion.
+      intro.elapsed = intro.elapsed < 1200 ? Math.min(1200, intro.elapsed + elapsed) : intro.elapsed + Math.min(elapsed, 120);
+    }
     intro.previous = now;
-    const amount = 1 - THREE.MathUtils.smoothstep(intro.elapsed, 700, 3300);
+    const amount = 1 - THREE.MathUtils.smoothstep(intro.elapsed, 1200, 3300);
     if (amount !== explosion) {
       setExplosion(amount);
       frameExterior();
@@ -188,6 +196,19 @@ document.addEventListener('visibilitychange', () => {
   if (document.hidden) partInteraction?.stopGesture();
   else invalidate();
 });
+reducedMotion.addEventListener('change', () => {
+  if (!reducedMotion.matches || !ready) return;
+  if (intro) {
+    intro = null;
+    showExplosion(false);
+  } else if (spreadMotion) {
+    setExplosion(spreadMotion.to);
+    spreadMotion = null;
+    frameExterior();
+    updateInspectionTools();
+    invalidate();
+  }
+});
 function invalidate() {
   if (!pending) { pending = true; requestAnimationFrame(draw); }
 }
@@ -210,7 +231,7 @@ function orbitBy(dx, dy) {
 function zoomBy(scale) {
   leaveCalibration();
   if (currentView === 'cabin') {
-    camera.fov = THREE.MathUtils.clamp(camera.fov * scale, 36, 92);
+    camera.fov = THREE.MathUtils.clamp(camera.fov * scale, 36, 98);
     camera.updateProjectionMatrix();
     invalidate();
   } else {
@@ -295,6 +316,19 @@ function clearMatch() {
   layout();
   updateInspectionTools();
 }
+function showGearboxCutaway(visible) {
+  for (const {node} of assemblyParts) {
+    node.visible = !visible || node.name === 'Transmission';
+    if (node.name === 'Transmission') {
+      for (const piece of node.children) {
+        if (piece.userData.caseCover || piece.userData.name === 'Driveshaft joints and shift linkage') piece.visible = !visible;
+      }
+    }
+  }
+  $('#gearbox-caption').hidden = !visible;
+  $('#bar').classList.toggle('in-gearbox', visible);
+  floorDirty = true;
+}
 function setView(name) {
   if (!ready) return;
   intro = null;
@@ -302,7 +336,9 @@ function setView(name) {
   setExplosion(0);
   clearMatch();
   currentView = name;
+  showGearboxCutaway(name === 'gearbox');
   $('#bar').classList.toggle('in-cabin', name === 'cabin');
+  $('#cabin-view').setAttribute('aria-pressed', String(name === 'cabin'));
   exteriorOrbit = name === 'front' || name === 'rear';
   if (name === 'front' || name === 'rear') {
     camera.fov = 32;
@@ -311,8 +347,13 @@ function setView(name) {
     setPanels({hood:true}); target.set(-1.36,.55,.03);camera.position.set(-2.98,2.16,1.06);camera.fov=38;
   } else if (name === 'wheel') {
     target.set(-1.285,.30,.80);camera.position.set(-1.54,.49,2.10);camera.fov=35;
+  } else if (name === 'gearbox') {
+    target.set(-1.34,.405,-.397);
+    const distance = gearboxRadius(camera.aspect);
+    camera.position.set(-.83,.68,-.36).normalize().multiplyScalar(distance).add(target);
+    camera.fov = 37;
   } else {
-    target.set(-.77,.83,.17);camera.position.set(.04,1.04,.36);camera.fov=67;
+    target.set(-.48,.76,.29);camera.position.set(.25,1.08,.365);camera.fov=cabinFov(camera.aspect);
   }
   camera.up.set(0,1,0);camera.lookAt(target);camera.updateProjectionMatrix();rememberOrbit();layout();
 }
@@ -362,8 +403,11 @@ function setURL(index,hash) {
 function match(index) {
   if (!ready) return;
   const frame=frames[index];
+  intro = null; spreadMotion = null;
   partInteraction?.reset();setWheels(false,false,true);setExplosion(0);
+  showGearboxCutaway(false);
   clearMatch();matched=frame;currentView='photo';exteriorOrbit=false;$('#bar').classList.remove('in-cabin');
+  $('#cabin-view').setAttribute('aria-pressed', 'false');
   setPanels({hood:['open','engine'].includes(frame.state),leftDoor:frame.state==='open',rightDoor:['open','cabin'].includes(frame.state),hatch:frame.state==='open'},frame.angles);
   camera.position.fromArray(frame.camera.position);target.fromArray(frame.camera.target);
   camera.up.fromArray(frame.camera.up);camera.lookAt(target);camera.fov=frame.camera.fov;
@@ -371,10 +415,11 @@ function match(index) {
   $('#match-label').textContent=frame.title;$('#photo-tools-3d').hidden=false;
   if (capture) { floor.update(); floorDirty = false; }
 }
-function route({opening = false} = {}) {
+function route() {
   intro = null;
   spreadMotion = null;
   const url=new URL(location.href);
+  lastRoute = url.href;
   active=Math.max(0,frames.findIndex(f=>f.id===url.searchParams.get('frame')));
   const photos=gallery();
   document.documentElement.classList.toggle('show-photos',photos);
@@ -387,20 +432,25 @@ function route({opening = false} = {}) {
     lastSpinTime = undefined;
     selectPhoto(active);
   }
-  else if (frames.length && url.searchParams.has('frame')) match(active);
+  else if (url.searchParams.has('frame')) {
+    firstModelVisit = false;
+    if (frames.length) match(active);
+  }
   else if (ready) {
     partInteraction.reset(); setWheels(false,false,true);
     setPanels({hood:false,leftDoor:false,rightDoor:false,hatch:false});
     const view = url.hash.slice(1);
-    setView(['cabin','engine','wheel','rear'].includes(view) ? view : 'front');
+    setView(['cabin','engine','wheel','rear','gearbox'].includes(view) ? view : 'front');
     if (url.hash === '#exploded') showExplosion(false);
-    else if (!capture && (url.hash === '#assembly' || (opening && !url.hash && !url.searchParams.has('frame')))) showExplosion(true);
+    else if (!capture && (view === 'assembly' || (firstModelVisit && (!view || view === 'model')))) showExplosion(true);
+    firstModelVisit = false;
   }
   updateInspectionTools();
 }
 function baseURL(hash = 'model') {
   const url=new URL(location.href);url.searchParams.delete('frame');url.hash=hash;
   if (url.href!==location.href) history.pushState(null,'',url);
+  lastRoute = url.href;
 }
 function stopIntro() {
   if (!intro && !spreadMotion) return;
@@ -408,13 +458,14 @@ function stopIntro() {
   spreadMotion = null;
   if (explosion > 0) {
     const url = new URL(location.href); url.hash = 'exploded'; history.replaceState(null, '', url);
+    lastRoute = url.href;
     updateInspectionTools();
   }
 }
 function leaveCalibration(assemble = false) {
   stopIntro();
   if (matched || (!frames.length && new URLSearchParams(location.search).has('frame'))) {baseURL();clearMatch();}
-  if (assemble && (explosion || location.hash === '#exploded')) { baseURL(); setView('front'); }
+  if (assemble && (explosion || location.hash === '#exploded' || currentView === 'gearbox')) { baseURL(); setView('front'); }
 }
 function initGL() {
   renderer=new THREE.WebGLRenderer({canvas,antialias:true,alpha:false,preserveDrawingBuffer:capture,powerPreference:'high-performance'});
@@ -454,7 +505,7 @@ function initGL() {
   layout();
   const decoder = new THREE.DRACOLoader().setDecoderPath('../honda-civic-type-r/vendor/');
   const loader = new THREE.GLTFLoader().setDRACOLoader(decoder);
-  return loader.loadAsync('./integra.glb?v=02a3e08042').finally(() => decoder.dispose());
+  return loader.loadAsync('./integra.glb?v=851e0b0ce1').finally(() => decoder.dispose());
 }
 $('#previous-view').onclick=()=>setURL((active+frames.length-1)%frames.length,'integra-views');
 $('#next-view').onclick=()=>setURL((active+1)%frames.length,'integra-views');
@@ -471,6 +522,8 @@ $('#overlay-toggle').onclick=()=>{
 };
 $('#overlay-opacity').oninput=event=>{overlay.style.opacity=event.target.value/100;};
 $('#reset').onclick=()=>{baseURL();route();$('#more').open=false;};
+$('#cabin-view').onclick = () => { baseURL(currentView === 'cabin' ? 'model' : 'cabin'); route(); };
+$('#more > summary').addEventListener('click', stopIntro);
 $('#exploded-view').onclick = () => {
   const from = explosion;
   const open = spreadMotion ? spreadMotion.to === 0 : from === 0 && location.hash !== '#exploded';
@@ -506,9 +559,12 @@ document.querySelectorAll('[data-panel]').forEach(button => button.onclick = () 
 document.querySelectorAll('[data-view]').forEach(button => button.onclick = () => {
   baseURL(button.dataset.view); route();
 });
-$('#xray').onclick = () => partInteraction?.toggleXray();
-$('#steer').onclick = () => { leaveCalibration(); setWheels(!steering, spinning); };
-$('#spin').onclick = () => { leaveCalibration(); setWheels(steering, !spinning); };
+function leaveCutaway() {
+  if (currentView === 'gearbox') { baseURL(); route(); }
+}
+$('#xray').onclick = () => { leaveCutaway(); partInteraction?.toggleXray(); };
+$('#steer').onclick = () => { leaveCutaway(); leaveCalibration(); setWheels(!steering, spinning); };
+$('#spin').onclick = () => { leaveCutaway(); leaveCalibration(); setWheels(steering, !spinning); };
 function shortcuts(event) {
   if (event.defaultPrevented || event.altKey || event.ctrlKey || event.metaKey ||
       event.target.closest('input,select,textarea,[contenteditable="true"]')) return;
@@ -527,7 +583,7 @@ function shortcuts(event) {
   const key = event.key.toLowerCase();
   const commands = { e: '#exploded-view', x: '#xray', r: '#reset', f: '[data-panel="hood"]',
     d: '[data-panel="doors"]', k: '[data-panel="hatch"]', '1': '[data-panel="leftDoor"]',
-    '2': '[data-panel="rightDoor"]', s: '#steer', w: '#spin', i: currentView === 'cabin' ? '#reset' : '[data-view="cabin"]' };
+    '2': '[data-panel="rightDoor"]', s: '#steer', w: '#spin', i: '#cabin-view' };
   if (commands[key]) {
     event.preventDefault();
     if (!event.repeat) $(commands[key]).click();
@@ -562,7 +618,9 @@ $('#photo').draggable = false;
 document.addEventListener('pointerdown', event => {
   if ($('#more').open && !$('#more').contains(event.target)) $('#more').open = false;
 });
-window.addEventListener('popstate',route);window.addEventListener('hashchange',route);
+function followHistory() { if (location.href !== lastRoute) route(); }
+window.addEventListener('popstate', followHistory);
+window.addEventListener('hashchange', followHistory);
 const observer=new ResizeObserver(()=>{
   const aspect=Math.max(.40,room.clientWidth/Math.max(1,room.clientHeight));
   const oldAssemblyDistance = assemblyDistance;
@@ -573,6 +631,13 @@ const observer=new ResizeObserver(()=>{
     radius *= THREE.MathUtils.lerp(exteriorRadius(aspect), assemblyDistance, explosion) / previous;
     target.addScaledVector(oldFocus.sub(assemblyFocus), -explosion);
     redrawOrbit();
+  }
+  if (ready && lastAspect && currentView === 'gearbox') {
+    radius *= gearboxRadius(aspect) / gearboxRadius(lastAspect);
+    redrawOrbit();
+  }
+  if (ready && lastAspect && currentView === 'cabin') {
+    camera.fov = THREE.MathUtils.clamp(camera.fov * cabinFov(aspect) / cabinFov(lastAspect), 36, 98);
   }
   lastAspect=aspect;layout();
 });observer.observe(room);
@@ -601,12 +666,12 @@ try {
     node.traverse(mesh => { if (mesh.isMesh && !/Brake[ _]casting/i.test(mesh.name)) rollingMeshes.push(mesh); });
   }
   partInteraction = bindPartInteraction(canvas, camera, model, assemblyParts, {
-    orbit: orbitBy, zoom: zoomBy, stopIntro, leavePhoto: leaveCalibration,
-    inCabin: () => currentView === 'cabin', panel: togglePanel, isPanelOpen: key => panels[key],
+    orbit: orbitBy, zoom: zoomBy, stopIntro, leavePhoto: leaveCalibration, showCar: leaveCutaway,
+    lookAround: () => currentView === 'cabin' || currentView === 'gearbox', panel: togglePanel, isPanelOpen: key => panels[key],
     render: invalidate, moved: geometryChanged, detached: count => { detachedCount = count; updateInspectionTools(); },
   });
   ready=true;floor.update();$('#loader').hidden=true;$('#bar').inert=false;$('#match-view').disabled=!frames.length;
-  setView('front');route({opening:true});renderer.render(scene,camera);
+  setView('front');route();renderer.render(scene,camera);
   document.documentElement.dataset.modelReady='true';
 } catch (error) {
   console.error(error);
