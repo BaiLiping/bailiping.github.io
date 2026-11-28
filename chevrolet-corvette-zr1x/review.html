@@ -1,130 +1,86 @@
-<!doctype html><html lang="en">
+<!doctype html>
+<html lang="en">
 <head>
-<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="theme-color" content="#f7f7f5"><title>Corvette ZR1X · Photo comparisons</title>
-<meta name="description" content="Compare the 2027 Chevrolet Corvette ZR1X 3LZ Coupe reconstruction across 33 matched views and browse 117 Chevrolet and GM references.">
-<link rel="canonical" href="https://bailiping.com/chevrolet-corvette-zr1x/review.html">
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Corvette ZR1X photo benchmark | Bai Liping</title>
 <style>
-*{box-sizing:border-box}body{margin:0;background:#f7f7f5;color:#202126;font:16px/1.55 system-ui,sans-serif}main{max-width:1180px;margin:auto;padding:28px clamp(15px,4vw,48px) 60px}a{color:#94332b;text-underline-offset:.18em}h1,h2,p{margin:.35em 0 .65em}h1{font-size:clamp(2rem,5vw,4.6rem);letter-spacing:-.065em;line-height:1.04;margin:28px 0 11px}h2{font-size:clamp(1.4rem,3vw,2rem);letter-spacing:-.045em;margin-top:1.55em}.lead{font-size:1.1rem;color:#535458}.bar,.links{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:14px 0}.bar select,.bar button{font:inherit;color:inherit;border:1px solid #c5c6c7;background:white;border-radius:6px;padding:8px 12px;min-height:42px}.bar button[aria-pressed=true]{background:#242529;color:white;border-color:#242529}.bar select{max-width:100%}.stage{display:grid;grid-template-columns:1fr 1fr;gap:2px;background:#ddd;position:relative;border:1px solid #ddd;border-radius:12px;overflow:hidden}.shot{position:relative;background:white;min-width:0;display:grid;place-items:center}.shot img{width:100%;display:block}.tag{position:absolute;background:#ffffffdf;padding:2px 8px;border-radius:4px;top:6px;left:6px;font-size:.77rem}.stage.layer{display:block}.stage.layer .model{position:absolute;inset:0;background:transparent}.stage.layer .model .tag{display:none}.slider{width:min(500px,100%)}.links a{padding-right:8px}.small,.stat{color:#55575b}.stat{font-variant-numeric:tabular-nums}.links a:focus-visible,button:focus-visible,select:focus-visible,input:focus-visible{outline:3px solid #286c9f;outline-offset:2px}table{width:100%;border-collapse:collapse;max-width:750px}th,td{padding:7px 5px;text-align:left;border-bottom:1px solid #d6d6d6}details summary{cursor:pointer;font-weight:650}@media(max-width:670px){.stage{grid-template-columns:1fr}.bar{gap:5px}.bar button,.bar select{font-size:.91rem;padding:6px 8px}}
-.stage.crop .shot {display:block;aspect-ratio:var(--crop-ratio);overflow:hidden}
-.stage.crop .shot img {position:absolute;width:var(--image-width);height:auto;max-width:none;top:var(--image-top);left:var(--image-left)}
-.bar label {display:inline-flex;align-items:center;gap:6px}.bar label select{min-width:0}
+:root{font-family:system-ui,sans-serif;color:#1b2327;background:#fafafa}body{max-width:1120px;margin:auto;padding:1.25rem}a{color:#12596c}h1{font-size:clamp(2rem,5vw,3.1rem);margin:.5rem 0}h2{font-size:1.15rem}p{line-height:1.55;margin: .65rem 0}.tools,.links{display:flex;gap:.6rem;align-items:center;flex-wrap:wrap;margin:.8rem 0}select,button{font:inherit;padding:.45rem .6rem;border:1px solid #a0a8ac;border-radius:.35rem;background:white;color:inherit}select{max-width:100%}button{cursor:pointer}button[aria-pressed=true]{background:#194a58;color:white}.panel{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.5rem}figure{margin:0;min-width:0}figcaption{font-size:.85rem;margin:5px 0;color:#43545c}.box{position:relative;display:grid;place-items:center;background:white;overflow:hidden}.box img{width:100%;height:auto;display:block;grid-area:1/1}.panel.single{display:block}.panel.single figure+figure{display:none}.metric{font-variant-numeric:tabular-nums}table{border-collapse:collapse;font-size:.92rem}th,td{text-align:left;padding:.45rem .8rem .45rem 0;border-bottom:1px solid #d9dfe1}footer{border-top:1px solid #ced3d5;margin-top:1.4rem;padding-top:.7rem}[hidden]{display:none!important}summary{cursor:pointer}#slider{width:min(24rem,100%)}#notice{color:#9a3232}code{overflow-wrap:anywhere}
+@media(max-width:650px){body{padding:.85rem}.panel{grid-template-columns:1fr;gap:.15rem}.links a{padding:.2rem 0}select{min-width:0;flex:1}}
 </style>
 </head>
 <body>
-<main>
-<a href="./#model">← Corvette studio</a>
-<h1>Corvette ZR1X</h1><p class="lead">2027 3LZ Coupe in Torch Red, with Chevrolet’s carbon-fiber high wing and Jet Black cabin.</p>
-<div class="bar"><button id="prev" aria-label="Previous view">←</button><select id="frames" aria-label="Reference view"></select><button id="next" aria-label="Next view">→</button><label for="detail">Detail <select id="detail"><option value="">Whole view</option></select></label></div>
-<div class="bar" aria-label="Comparison mode"><button data-mode="pair" aria-pressed="true">Pair</button><button data-mode="wipe" aria-pressed="false">Wipe</button><button data-mode="edge" aria-pressed="false">Outline</button></div>
-<div class="stage" id="stage"><div class="shot"><img id="photo" alt="Chevrolet reference"><span class="tag" id="ref-tag">Chevrolet reference</span></div><div class="shot model" id="modelSide"><img id="model" alt="Render from the exported 3D model"><span class="tag">Model render</span></div></div>
-<input id="wipe" class="slider" type="range" min="0" max="100" value="50" aria-label="Wipe position" hidden>
-<p id="note"></p><div class="stat" id="metrics"></div><div class="links"><a id="match" href="./#model">Match in 3D</a><a id="native">Chevrolet original</a><a id="capture">Full-size render</a></div>
-<h2>Dimensions and coverage</h2><p>Chevrolet’s 30 Torch Red studio renders are 1,500 × 750 pixels. The wheelbase sets the reconstruction scale. Stereo depth and silhouettes constrain the shell, while the overhead Blade Silver coupe photo establishes the shape of the glazing and cooling openings. Its rear aero configuration differs.</p>
-<table><thead><tr><th>Measurement</th><th>Reference</th><th>Model</th></tr></thead><tbody><tr><td>Wheelbase</td><td>2,723 mm</td><td>2,723 mm</td></tr><tr><td>Front / rear track</td><td>1,685 / 1,678 mm</td><td>1,685 / 1,678 mm</td></tr><tr><td>Body width without mirrors</td><td>2,025 mm</td><td id="widthField"></td></tr><tr><td>Length</td><td>4,742 mm nominal</td><td id="lengthField"></td></tr><tr><td>Overall height</td><td>1,234 mm</td><td id="heightField"></td></tr></tbody></table>
-<p class="small"><a href="https://www.vetteregistry.net/corvette-order-guide/2027/zr1x-coupe/">ZR1X Coupe order-guide dimensions</a> · <a href="https://www.chevrolet.com/performance/corvette/zr1x">Chevrolet model and configurator</a></p>
-<p id="summary"></p><p>Each studio measurement compares the published GLB to a frame used to fit the body. The high front three-quarter camera uses a separate Chevrolet track photograph of the yellow ZTK coupe. The comparison crops both full-size frames to the car. The outline distance samples both outer boundaries and excludes cast shadows. The report retains differences in brake detail, lens construction, duct depth and finish. Independent factory CAD was unavailable. The internal propulsion assemblies show the engine, transaxle and front electric-drive layout with approximate housings.</p>
-<div class="links"><a href="editable-zr1x.zip" download>Editable Blender model and build scripts</a><a href="sources.json">Reference inventory</a><a href="comparison.json">Measurements</a><a href="studio.json">Saved cameras</a></div>
-
-<section id="archive"><h2>Reference archive</h2><p>Browse 117 images from Chevrolet and GM TechLink. The 30 studio angles document the Torch Red exterior. Three Nürburgring photographs show a yellow high-wing ZR1X from above, from the front quarter and from the rear. GM’s engineering images show the LT7, axle layout, tunnel battery and front brake.</p>
-<div class="bar"><button id="aprev" aria-label="Previous reference">←</button><select id="archive-select" aria-label="Browse reference archive"></select><button id="anext" aria-label="Next reference">→</button></div>
-<figure style="margin:8px 0"><div class="shot" style="border:1px solid #ddd;border-radius:10px;overflow:hidden;max-width:880px"><img id="archive-image" style="width:100%;height:clamp(240px,40vw,470px);object-fit:contain" alt=""><span id="archive-tag" class="tag">Chevrolet reference</span></div><figcaption><strong id="archive-caption"></strong> <span id="archive-size" class="small"></span></figcaption></figure>
-<p id="archive-note"></p><div class="links"><a id="archive-original">Full-size original</a><a id="archive-trace">Full-size feature tracing</a><a href="#ext-001" id="archive-match">Open comparison</a><a id="archive-page">Source page</a></div></section>
+<nav><a href="./#model">3D model</a> · <a href="./#chevrolet-views">Chevrolet views</a></nav>
+<h1>Corvette ZR1X photo benchmark</h1>
+<p id="summary">Loading the per-frame results…</p>
+<div class="tools"><button id="prev" aria-label="Previous frame">←</button><select id="frame" aria-label="Reference frame"></select><button id="next" aria-label="Next frame">→</button></div>
+<div class="tools" id="modes" aria-label="Image comparison"><button data-mode="pair" aria-pressed="true">Side by side</button><button data-mode="blend" aria-pressed="false">Blend</button><button data-mode="outline" aria-pressed="false">Mesh outline</button></div>
+<div id="images" class="panel"><figure><div class="box"><img id="photo" alt="Reference"><img id="overlay" alt="" hidden></div><figcaption id="credit"></figcaption></figure><figure><div class="box"><img id="render" alt="Exported 3D model"></div><figcaption>Exported model with studio materials and lighting</figcaption></figure></div>
+<label id="opacity" hidden>Model opacity <input id="slider" aria-label="Model opacity" type="range" min="0" max="100" value="50"></label>
+<p id="status"></p><p id="metric" class="metric"></p><p id="note"></p><div class="links"><a id="live">Compare in the interactive studio</a><a id="src">Native reference</a><a id="full">Full-size model render</a><a id="edge">Full-size mesh outline</a></div>
+<details><summary>Comparison with the earlier builds</summary><p>All three GLBs use the same 37 camera poses, original images and foreground masks. The overlap values are means across views. A larger overlap indicates closer agreement on the outside shape.</p><table><thead><tr><th scope="col">Build</th><th scope="col">30-angle orbit</th><th scope="col">7 larger views</th></tr></thead><tbody id="runs"></tbody></table></details>
+<details><summary>Measurement method and source files</summary><p id="coverage"></p><p id="method"></p><p id="revision"></p><div class="links"><a href="./benchmark.json">Per-frame measurements</a><a href="./cameras.json">Saved cameras</a><a href="./sources.json">Reference inventory</a><a href="./editable-zr1x.zip">Blender master and build scripts</a></div></details>
+<footer><details><summary>Earlier reference archive</summary><p>The earlier build collected 117 Chevrolet and GM TechLink images, including alternate paint, press photography, interior details and component illustrations.</p><select id="archive" aria-label="Earlier reference archive"></select> <a id="archive-link">Open original image</a></details></footer>
+<p role="alert" id="notice"></p>
 <script type="module">
-const [d,c,srcRecords]=await Promise.all(['comparison.json','studio.json','sources.json'].map(p=>fetch(p).then(r=>r.json()))),$=id=>document.getElementById(id),records=d.frames;
-const mm=v=>Math.round(v).toLocaleString('en-US')+' mm';
-const dims=d.dimensions_mm;
-if(dims){
- $('widthField').textContent=mm(dims.panel_width)+' across body panels';
- $('lengthField').textContent=mm(dims.panel_length)+' across body panels · '+mm(dims.overall_length)+' including aero';
- $('heightField').textContent=mm(dims.overall_height)+' including aero';
-}
-const details=[
- {id:'front-wheel',note:'The five lug nuts, forked spokes and drilled rotor are visible through the near wheel. Use Wipe to compare the branch points with the hub and rim aligned.',label:'Front wheel and brake',frame:'ext-006',crop:[225,318,320,260]},
- {id:'side-inlet',note:'Follow the upper carbon blade across the door seam to its junction with the descending arm. The fuel door and ZR1X badge locate the rear edge of the opening.',label:'Side inlet and wishbone',frame:'ext-006',crop:[755,265,420,255]},
- {id:'headlamp',note:'The swept housing surrounds the projector and two light guides. Compare the width of the bright guide along the top edge and its turn at the outer corner.',label:'Front headlamp',frame:'ext-029',crop:[830,305,250,156]},
- {id:'front-intakes',note:'The painted dividers separate the central grille from the two outboard cooling ducts. The upper bridge and lower splitter run across all three openings.',label:'Front cooling intakes',frame:'ext-029',crop:[385,360,710,230]},
- {id:'tail-lamps',note:'Each rear corner carries two angular red signatures around dark pockets. Compare the taper of the lower red edges and the clear elements above them.',label:'Rear lamps',frame:'ext-014',crop:[846,268,243,143]},
- {id:'high-wing',note:'The raised endplates terminate the blade and two stanchions support it above the engine hatch. Chevrolet’s yellow ZTK coupe supplies this independent elevated view.',label:'High wing and endplates',frame:'ring-high',crop:[1340,800,407,177]},
- {id:'exhaust',note:'Four circular outlets sit in the center of the diffuser. The dark surround and the lower fins make the tip spacing visible in both frames.',label:'Quad exhaust and diffuser',frame:'ext-014',crop:[488,404,492,180]},
- {id:'steering-wheel',note:'The forward cabin camera centers the squared rim, crossed-flags horn pad and spoke controls against the driver display.',label:'Steering wheel and controls',frame:'cabin-front',crop:[425,555,1120,1060]}
-];
-for(const item of details)$('detail').add(new Option(item.label,item.id));
-const query=new URLSearchParams(location.search);
-let detail=details.find(item=>item.id===query.get('detail'));
-let i=Math.max(0,records.findIndex(v=>v.id===(detail?.frame||location.hash.slice(1))));
-let mode=['wipe','edge'].includes(query.get('mode'))?query.get('mode'):'pair';
-
-function cropImages(rect, imageWidth){
- const stage=$('stage');
- stage.classList.toggle('crop',Boolean(rect));
- if(!rect)return;
- const [x,y,width,height]=rect;
- stage.style.setProperty('--crop-ratio',width+' / '+height);
- stage.style.setProperty('--image-width',(100*imageWidth/width)+'%');
- stage.style.setProperty('--image-left',(-100*x/width)+'%');
- stage.style.setProperty('--image-top',(-100*y/height)+'%');
-}
-function syncLink(frame){
- const url=new URL(location.href);
- if(detail)url.searchParams.set('detail',detail.id);
- else url.searchParams.delete('detail');
- if(mode==='pair')url.searchParams.delete('mode');
- else url.searchParams.set('mode',mode);
- url.hash=frame;
- history.replaceState(null,'',url);
-}
-function selectView(index){
- detail=undefined;
- i=index;
- show();
-}
-for(const [j,v] of c.views.entries())$('frames').add(new Option(v.label,j));
-const buttons=[...document.querySelectorAll('[data-mode]')];
-function displayReference(image, original, mirror, tracing, onTrace) {
- const urls=[original,mirror,tracing].filter(Boolean);
- let step=0;
- image.onerror=()=>{
-  if(image.getAttribute('src')!==urls[step]||step+1>=urls.length)return;
-  step+=1;
-  if(urls[step]===tracing)onTrace();
-  image.src=urls[step];
- };
- image.referrerPolicy='no-referrer';
- image.src=original;
-}
-function show(){const q=records[i],hasMetrics=q.p95_px!==undefined,hasEdge=hasMetrics||Boolean(detail);
-if(!hasEdge&&mode==='edge')mode='pair';
-const crop=detail?.crop || (q.id==='ring-high'?[790,815,970,585]:null);
-cropImages(crop,c.views[i].imageSize[0]);
-$('detail').value=detail?.id||'';
-$('frames').value=i;$('ref-tag').textContent='Chevrolet reference';$('photo').alt='Chevrolet · '+(detail?.label||c.views[i].label);displayReference($('photo'),q.source,srcRecords.find(r=>r.id===q.id)?.display_url,'captures/'+q.id+'-reference.webp',()=>{$('photo').alt='Measured reference contours for '+q.id;$('ref-tag').textContent='Reference contours · original unavailable'});$('model').src='captures/'+q.id+(mode==='edge'?(detail?'-features.png':'-edge.png'):'.webp');$('model').alt=mode==='edge'?(detail?'Cyan feature edges of the modeled '+detail.label:'Cyan outline of the shipped model'):'Model render · '+(detail?.label||c.views[i].label);
-$('stage').classList.toggle('layer',mode!=='pair');$('modelSide').style.clipPath=mode==='wipe'?'inset(0 '+(100-$('wipe').value)+'% 0 0)':'';$('wipe').hidden=mode!=='wipe';buttons.forEach(b=>{b.disabled=b.dataset.mode==='edge'&&!hasEdge;b.setAttribute('aria-pressed',String(b.dataset.mode===mode))});
-$('note').textContent=detail?.note||q.note;$('metrics').textContent=hasMetrics?(detail?'Whole-frame silhouette overlap ':'Silhouette overlap ')+(100*q.overlap).toFixed(1)+'% · Median edge distance '+q.median_px+' px · 95th percentile '+q.p95_px+' px ('+q.p95_percent+'% of visible width)':'Configuration-limited comparison';
-$('match').href='./?frame='+q.id+'#model';$('native').href=q.source;$('capture').href='captures/'+q.id+'.webp';syncLink(q.id)}
-function step(v){selectView((i+v+records.length)%records.length)}
-$('detail').onchange=e=>{
- detail=details.find(item=>item.id===e.target.value);
- if(detail)i=records.findIndex(frame=>frame.id===detail.frame);
- show();
-};
-$('frames').onchange=e=>selectView(Number(e.target.value));$('prev').onclick=()=>step(-1);$('next').onclick=()=>step(1);buttons.forEach(b=>b.onclick=()=>{mode=b.dataset.mode;show()});$('wipe').oninput=()=>{$('modelSide').style.clipPath='inset(0 '+(100-$('wipe').value)+'% 0 0)'};window.onkeydown=e=>{if(e.target.matches('select,input'))return;if(e.key==='ArrowLeft')step(-1);if(e.key==='ArrowRight')step(1)};
-const ex=records.filter(r=>r.overlap!==undefined),over=ex.map(x=>x.overlap),lo=Math.min(...over),hi=Math.max(...over);$('summary').textContent='Across the 30 exterior views, silhouette overlap ranges from '+(100*lo).toFixed(1)+'% to '+(100*hi).toFixed(1)+'%. Each frame includes its own measurements or comparison limits.';show();
-
-
-const cats={'manufacturer turntable':'Torch Red studio turntable','manufacturer detail':'Chevrolet model-page details','cabin panorama':'Jet Black cabin panorama','manufacturer gallery':'Chevrolet press gallery'},groups={};
-for (const [j,r] of srcRecords.entries()){
- if(!groups[r.kind]){const group=document.createElement('optgroup');group.label=cats[r.kind]||r.kind;groups[r.kind]=group;$('archive-select').add(group)}
- groups[r.kind].append(new Option(r.id+' · '+r.subject.slice(0,75),j))
-}
-let ai=Number($('archive-select').value)||0;
-function archiveView(){
- const r=srcRecords[ai],el=$('archive-image');$('archive-select').value=ai;el.alt=r.subject;$('archive-tag').textContent=r.credit+' reference';displayReference(el,r.original_url,r.display_url,r.tracing,()=>{el.alt='Feature tracing · '+r.subject;$('archive-tag').textContent='Feature tracing · original unavailable'});
- $('archive-caption').textContent=r.subject;$('archive-size').textContent=' · '+r.width+' × '+r.height+' px';$('archive-note').textContent=r.note+(r.duplicate_of?' Identical file to '+r.duplicate_of+'.':'');$('archive-original').href=r.original_url;$('archive-page').href=r.source;$('archive-trace').href=r.tracing;
- const j=records.findIndex(f=>r.id===f.id);$('archive-match').hidden=j<0;$('archive-match').onclick=e=>{e.preventDefault();if(j<0)return;selectView(j);$('frames').scrollIntoView({block:'center'});$('frames').focus({preventScroll:true})};
-}
-function astep(n){ai=(ai+n+srcRecords.length)%srcRecords.length;archiveView()}
-$('aprev').onclick=()=>astep(-1);$('anext').onclick=()=>astep(1);$('archive-select').onchange=e=>{ai=Number(e.target.value);archiveView()};archiveView();
-</script>
-</main>
-</body>
-</html>
+const el=id=>document.getElementById(id);
+try{
+  const fetchJson=async url=>{const r=await fetch(url);if(!r.ok)throw Error(url);return r.json()};
+  const [report,views]=await Promise.all([fetchJson('./benchmark.json'),fetchJson('./chevrolet-views.json')]);
+  const ids=views.map(f=>f.id), metrics=new Map(report.frames.map(f=>[f.id,f]));
+  const oldDetail={'front-wheel':'view-36','side-inlet':'view-05','headlamp':'view-28','front-intakes':'view-28','tail-lamps':'view-13','high-wing':'ring-high','exhaust':'view-13','steering-wheel':'cabin-front'};
+  const hash=decodeURIComponent(location.hash.slice(1)),params=new URLSearchParams(location.search);
+  const legacy=/^ext-(\d{3})$/.exec(hash);
+  let active=ids.indexOf(oldDetail[params.get('detail')] || (legacy?'view-'+String(Number(legacy[1])-1).padStart(2,'0'):hash));
+  if(active<0)active=0;
+  let mode=({edge:'outline',wipe:'blend'})[params.get('mode')]||'pair';
+  const fm=el('frame'); views.forEach(v=>fm.add(new Option(v.label,v.id)));
+  el('summary').textContent=report.overview;
+  el('method').textContent=report.method;el('coverage').textContent=report.coverage || '';
+  for(const [label,run] of [...Object.entries(report.baselines),['Current model',report]]){
+    const tr=document.createElement('tr');
+    for(const text of [label,(run.summary.orbit.mean_iou*100).toFixed(2)+'%',(run.summary.hires.mean_iou*100).toFixed(2)+'%']){
+      const cell=document.createElement('td');cell.textContent=text;tr.append(cell);
+    }
+    el('runs').append(tr);
+  }
+  el('revision').textContent='GLB SHA-256 '+report.model_sha256;
+  function modeChange(){
+    const row=metrics.get(ids[active]),paired=Boolean(row?.render);
+    el('modes').hidden=!paired;
+    const current=paired?mode:'photo';
+    el('images').classList.toggle('single',current!=='pair');
+    const overlay=el('overlay');
+    overlay.hidden=!['blend','outline'].includes(current);
+    if(!overlay.hidden)overlay.src=current==='blend'?row.render:row.outline;
+    overlay.style.opacity=current==='blend'?el('slider').value/100:1;
+    el('opacity').hidden=current!=='blend';
+    for(const b of document.querySelectorAll('[data-mode]'))b.setAttribute('aria-pressed',String(b.dataset.mode===current));
+  }
+  function show(){
+    const v=views[active],m=metrics.get(v.id);
+    fm.value=v.id;
+    el('photo').src=v.image;el('photo').alt=v.label+' reference';
+    el('credit').textContent=v.credit+' · '+v.width+' × '+v.height;
+    el('src').href=v.originalUrl || v.image;el('live').href='./?frame='+encodeURIComponent(v.id)+'&compare=1#chevrolet-views';
+    el('full').hidden=el('edge').hidden=!m?.render;
+    if(m?.render){el('render').src=m.render;el('full').href=m.render;el('edge').href=m.outline}
+    const statuses={verified:'Verified visible features',fix:'Further fitting needed',limited:'Limited comparison'};
+    el('status').textContent=statuses[m?.status] || '';
+    el('metric').textContent=m?.iou!==undefined?'Silhouette overlap '+(100*m.iou).toFixed(1)+'% · median contour distance '+m.median_px+' px · 95th percentile '+m.p95_px+' px ('+m.p95_percent_span+'% of visible width)':'';
+    el('note').textContent=m?.note||'See the live studio for this assembly view.';
+    modeChange();
+    const url=new URL(location.href);url.searchParams.delete('detail');url.searchParams.delete('mode');
+    url.hash=encodeURIComponent(v.id);history.replaceState(null,'',url);
+  }
+  fm.onchange=()=>{active=fm.selectedIndex;show()};
+  el('prev').onclick=()=>{active=(active-1+views.length)%views.length;show()};
+  el('next').onclick=()=>{active=(active+1)%views.length;show()};
+  document.querySelectorAll('[data-mode]').forEach(button=>button.onclick=()=>{mode=button.dataset.mode;modeChange()});
+  el('slider').oninput=modeChange;
+  const arch=el('archive');
+  for(const entry of report.earlier_sources)arch.add(new Option(entry.id+' · '+entry.subject,entry.original_url));
+  arch.onchange=()=>el('archive-link').href=arch.value;
+  if(hash.startsWith('archive-')){const i=report.earlier_sources.findIndex(r=>r.id===hash.slice(8));if(i>=0){arch.selectedIndex=i;arch.closest('details').open=true}}
+  arch.onchange();show();
+}catch(e){el('notice').textContent='The comparison data could not be loaded. Open Chevrolet views to inspect the live studio.';el('summary').textContent=''}
+</script></body></html>

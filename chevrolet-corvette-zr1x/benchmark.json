@@ -1,0 +1,1954 @@
+{
+  "model_sha256": "782dfe1a7fba1c566eb24151e334f452f101b291fa56a12b74972a3741fef41b",
+  "method": "Shipped mesh and materials, native-resolution GPU silhouette, fixed V2 cameras. Both masks are filled to their external contours. Symmetric outer-contour distance in pixels. Orbit foreground uses the manufacturer alpha. The seven JPEG foreground masks estimate the visible exterior by color, texture and a hand-traced lower boundary separating cast shadow. These seven masks are approximate. Cropped image borders are excluded from wheel-view distances. The shaded pass uses the production studio materials and lighting, with the floor hidden. The transparent overlay combines the independently measured outer boundary with visible tonal edges.",
+  "summary": {
+    "orbit": {
+      "n": 30,
+      "mean_iou": 0.9674,
+      "mean_p95_px": 11.6
+    },
+    "hires": {
+      "n": 7,
+      "mean_iou": 0.96415,
+      "mean_p95_px": 24.31
+    }
+  },
+  "frames": [
+    {
+      "id": "view-00",
+      "label": "Front-left 25\u00b0",
+      "size": [
+        1500,
+        750
+      ],
+      "photo_sha256": "5323f48f740c4a0d76bb722b8dfcadc1db1e9fb89f74ddb83332af7fae64e8db",
+      "iou": 0.97092,
+      "median_px": 2.0,
+      "p95_px": 7.62,
+      "mask_source": "manufacturer alpha",
+      "reference": "https://www.chevrolet.com/performance/corvette/zr1x",
+      "photo_span_px": 983,
+      "p95_percent_span": 0.775,
+      "status": "verified",
+      "note": "The near front tire, left headlamp and outer splitter align in this front-quarter projection. The outline measurement covers the full car.",
+      "render": "benchmark/view-00-render.webp",
+      "outline": "benchmark/view-00-lines.png"
+    },
+    {
+      "id": "view-01",
+      "label": "Front-left 36\u00b0",
+      "size": [
+        1500,
+        750
+      ],
+      "photo_sha256": "1dfe856b326798ce10b0fbb75a2b330a9e69d73a01cdbe0e4d07247167b77d4e",
+      "iou": 0.97256,
+      "median_px": 2.0,
+      "p95_px": 10.0,
+      "mask_source": "manufacturer alpha",
+      "reference": "https://www.chevrolet.com/performance/corvette/zr1x",
+      "photo_span_px": 1135,
+      "p95_percent_span": 0.881,
+      "status": "verified",
+      "note": "Check the left front arch, headlamp tip and nose against the outside boundary. Reflections across the door remain lighting dependent.",
+      "render": "benchmark/view-01-render.webp",
+      "outline": "benchmark/view-01-lines.png"
+    },
+    {
+      "id": "view-02",
+      "label": "Front-left 48\u00b0",
+      "size": [
+        1500,
+        750
+      ],
+      "photo_sha256": "0d60083ae6afc582575eba51f3fd9cdb744842565f2f684cb15a661f93e035a7",
+      "iou": 0.97359,
+      "median_px": 1.41,
+      "p95_px": 10.0,
+      "mask_source": "manufacturer alpha",
+      "reference": "https://www.chevrolet.com/performance/corvette/zr1x",
+      "photo_span_px": 1242,
+      "p95_percent_span": 0.805,
+      "status": "verified",
+      "note": "The two wheel locations, nose overhang and rear wing establish this front-left silhouette. The door inlet can be compared in the shaded render.",
+      "render": "benchmark/view-02-render.webp",
+      "outline": "benchmark/view-02-lines.png"
+    },
+    {
+      "id": "view-03",
+      "label": "Front-left 60\u00b0",
+      "size": [
+        1500,
+        750
+      ],
+      "photo_sha256": "7cdbddd3b1981332355e4f7989fb5c1ca5051556a21cfaa592e2b42df686706b",
+      "iou": 0.96813,
+      "median_px": 1.41,
+      "p95_px": 13.42,
+      "mask_source": "manufacturer alpha",
+      "reference": "https://www.chevrolet.com/performance/corvette/zr1x",
+      "photo_span_px": 1341,
+      "p95_percent_span": 1.001,
+      "status": "verified",
+      "note": "The front-left wheel, splitter end and greenhouse follow the general contour. Small differences remain in the front-intake shading.",
+      "render": "benchmark/view-03-render.webp",
+      "outline": "benchmark/view-03-lines.png"
+    },
+    {
+      "id": "view-04",
+      "label": "Front-left 73\u00b0",
+      "size": [
+        1500,
+        750
+      ],
+      "photo_sha256": "a95e1e5911b9c668e8914d82e7f71e36cb7b58432736b34812204665e1ff09ad",
+      "iou": 0.9622,
+      "median_px": 1.0,
+      "p95_px": 14.1,
+      "mask_source": "manufacturer alpha",
+      "reference": "https://www.chevrolet.com/performance/corvette/zr1x",
+      "photo_span_px": 1390,
+      "p95_percent_span": 1.014,
+      "status": "fix",
+      "note": "The side angle exposes the lower rocker and the hatch contour. Inspect the height changes along the rear glass and the lower rear bumper.",
+      "render": "benchmark/view-04-render.webp",
+      "outline": "benchmark/view-04-lines.png"
+    },
+    {
+      "id": "view-05",
+      "label": "Front-left 84\u00b0",
+      "size": [
+        1500,
+        750
+      ],
+      "photo_sha256": "90ed9bca3f00d36cc86efefbf9e7da62f7dc65823ccdf431aa7438fd9b5372af",
+      "iou": 0.95474,
+      "median_px": 2.0,
+      "p95_px": 21.02,
+      "mask_source": "manufacturer alpha",
+      "reference": "https://www.chevrolet.com/performance/corvette/zr1x",
+      "photo_span_px": 1403,
+      "p95_percent_span": 1.498,
+      "status": "verified",
+      "note": "The left broadside wheelbase anchors the wing check. Its top falls on the same image row as Chevrolet\u2019s tip. The aft edge is about five pixels forward.",
+      "render": "benchmark/view-05-render.webp",
+      "outline": "benchmark/view-05-lines.png"
+    },
+    {
+      "id": "view-06",
+      "label": "Left broadside",
+      "size": [
+        1500,
+        750
+      ],
+      "photo_sha256": "02e0861013fa1420d07bfb36113edaa98fb89113d7b1dcb15794c2356bc5695d",
+      "iou": 0.95819,
+      "median_px": 2.0,
+      "p95_px": 16.55,
+      "mask_source": "manufacturer alpha",
+      "reference": "https://www.chevrolet.com/performance/corvette/zr1x",
+      "photo_span_px": 1394,
+      "p95_percent_span": 1.187,
+      "status": "fix",
+      "note": "The two axles define the left profile. Follow the outline over the hatch and under the rear bumper to see where the mesh departs from the source.",
+      "render": "benchmark/view-06-render.webp",
+      "outline": "benchmark/view-06-lines.png"
+    },
+    {
+      "id": "view-07",
+      "label": "Rear-left 71\u00b0",
+      "size": [
+        1500,
+        750
+      ],
+      "photo_sha256": "f25f4e29cffeda3c43c69771ffc6c1952864555033fdd4a0b99b7821b3df78e2",
+      "iou": 0.96193,
+      "median_px": 1.41,
+      "p95_px": 12.08,
+      "mask_source": "manufacturer alpha",
+      "reference": "https://www.chevrolet.com/performance/corvette/zr1x",
+      "photo_span_px": 1360,
+      "p95_percent_span": 0.888,
+      "status": "fix",
+      "note": "The rear overhang is photo-constrained in the outline. The broad bright reflection in Chevrolet\u2019s side door narrows differently toward the inlet in the model.",
+      "render": "benchmark/view-07-render.webp",
+      "outline": "benchmark/view-07-lines.png"
+    },
+    {
+      "id": "view-08",
+      "label": "Rear-left 60\u00b0",
+      "size": [
+        1500,
+        750
+      ],
+      "photo_sha256": "a76daa4f11c1ea16cf5684013efb58881c8f48991cac1d22a131bb49b2395a5e",
+      "iou": 0.96745,
+      "median_px": 1.0,
+      "p95_px": 27.0,
+      "mask_source": "manufacturer alpha",
+      "reference": "https://www.chevrolet.com/performance/corvette/zr1x",
+      "photo_span_px": 1318,
+      "p95_percent_span": 2.049,
+      "status": "fix",
+      "note": "The rear tire and rocker meet the lower body at visibly different edges. This view retains one of the larger contour residuals on the orbit.",
+      "render": "benchmark/view-08-render.webp",
+      "outline": "benchmark/view-08-lines.png"
+    },
+    {
+      "id": "view-09",
+      "label": "Rear-left 47\u00b0",
+      "size": [
+        1500,
+        750
+      ],
+      "photo_sha256": "b5472277bee3b9dcb459141713adf5877978f0f4d762bf12d4fab2938413edc4",
+      "iou": 0.97612,
+      "median_px": 1.41,
+      "p95_px": 8.06,
+      "mask_source": "manufacturer alpha",
+      "reference": "https://www.chevrolet.com/performance/corvette/zr1x",
+      "photo_span_px": 1266,
+      "p95_percent_span": 0.637,
+      "status": "verified",
+      "note": "The left rear tire, wing tip and rocker track the contour. Surface detail in the grille above the diffuser has coarser separation.",
+      "render": "benchmark/view-09-render.webp",
+      "outline": "benchmark/view-09-lines.png"
+    },
+    {
+      "id": "view-10",
+      "label": "Rear-left 36\u00b0",
+      "size": [
+        1500,
+        750
+      ],
+      "photo_sha256": "830c31915a8006d90844763c503e28e80452fbe1aae02c903476c085e26102b1",
+      "iou": 0.97253,
+      "median_px": 2.0,
+      "p95_px": 9.0,
+      "mask_source": "manufacturer alpha",
+      "reference": "https://www.chevrolet.com/performance/corvette/zr1x",
+      "photo_span_px": 1162,
+      "p95_percent_span": 0.775,
+      "status": "verified",
+      "note": "The wing supports, outside tail-lamp edges and rear wheel align broadly. The recess around the four central tips is approximate.",
+      "render": "benchmark/view-10-render.webp",
+      "outline": "benchmark/view-10-lines.png"
+    },
+    {
+      "id": "view-11",
+      "label": "Rear-left 24\u00b0",
+      "size": [
+        1500,
+        750
+      ],
+      "photo_sha256": "593a7a91e1437630623d54f1091f05d7cc838bfcb896d2208c6119b3d0a0431f",
+      "iou": 0.97189,
+      "median_px": 2.0,
+      "p95_px": 9.0,
+      "mask_source": "manufacturer alpha",
+      "reference": "https://www.chevrolet.com/performance/corvette/zr1x",
+      "photo_span_px": 1004,
+      "p95_percent_span": 0.896,
+      "status": "verified",
+      "note": "The rear lamps, axle line and tip of the left quarter line up across the split. Use the outline to inspect the small remaining endplate offsets.",
+      "render": "benchmark/view-11-render.webp",
+      "outline": "benchmark/view-11-lines.png"
+    },
+    {
+      "id": "view-12",
+      "label": "Rear-left 11\u00b0",
+      "size": [
+        1500,
+        750
+      ],
+      "photo_sha256": "78441fccf1247fdda7bdb1e955db81975d6881bbf8ae59845cc234c78151d6bf",
+      "iou": 0.9719,
+      "median_px": 2.0,
+      "p95_px": 8.0,
+      "mask_source": "manufacturer alpha",
+      "reference": "https://www.chevrolet.com/performance/corvette/zr1x",
+      "photo_span_px": 800,
+      "p95_percent_span": 1.0,
+      "status": "verified",
+      "note": "The rear width and wing span can be read against the source. The central exhaust photograph establishes four outlets; their depth is less certain.",
+      "render": "benchmark/view-12-render.webp",
+      "outline": "benchmark/view-12-lines.png"
+    },
+    {
+      "id": "view-13",
+      "label": "Rear square",
+      "size": [
+        1500,
+        750
+      ],
+      "photo_sha256": "6d9ece5da2601d3e0863ac75db538982d65cd96785e6516d18487081daa4bd82",
+      "iou": 0.95926,
+      "median_px": 2.83,
+      "p95_px": 9.0,
+      "mask_source": "manufacturer alpha",
+      "reference": "https://www.chevrolet.com/performance/corvette/zr1x",
+      "photo_span_px": 657,
+      "p95_percent_span": 1.37,
+      "status": "verified",
+      "note": "The upper wing spans approximately x=417 to 1065 in the rendered rear view; Chevrolet spans x=421 to 1066. The central exhaust and diffuser surfaces are less closely matched.",
+      "render": "benchmark/view-13-render.webp",
+      "outline": "benchmark/view-13-lines.png"
+    },
+    {
+      "id": "view-14",
+      "label": "Rear-right 13\u00b0",
+      "size": [
+        1500,
+        750
+      ],
+      "photo_sha256": "d927f95f64deebf2a1c62a0dd978baa130b48b8f7473b0698e683e07da3ee49a",
+      "iou": 0.97069,
+      "median_px": 2.24,
+      "p95_px": 7.28,
+      "mask_source": "manufacturer alpha",
+      "reference": "https://www.chevrolet.com/performance/corvette/zr1x",
+      "photo_span_px": 828,
+      "p95_percent_span": 0.879,
+      "status": "verified",
+      "note": "The near-square rear view supports the width of the rear fascia, both tires and the lamp band at the measured outline precision.",
+      "render": "benchmark/view-14-render.webp",
+      "outline": "benchmark/view-14-lines.png"
+    },
+    {
+      "id": "view-15",
+      "label": "Rear-right 25\u00b0",
+      "size": [
+        1500,
+        750
+      ],
+      "photo_sha256": "7764d6800f89d2d5ebe24671edb6dca57a23110a82d33d227b51781d55c6eea0",
+      "iou": 0.97105,
+      "median_px": 2.0,
+      "p95_px": 9.0,
+      "mask_source": "manufacturer alpha",
+      "reference": "https://www.chevrolet.com/performance/corvette/zr1x",
+      "photo_span_px": 1026,
+      "p95_percent_span": 0.877,
+      "status": "verified",
+      "note": "The wing, near rear arch and diffuser outer corner establish the right rear-quarter silhouette. Internal diffuser depth is approximate.",
+      "render": "benchmark/view-15-render.webp",
+      "outline": "benchmark/view-15-lines.png"
+    },
+    {
+      "id": "view-16",
+      "label": "Rear-right 37\u00b0",
+      "size": [
+        1500,
+        750
+      ],
+      "photo_sha256": "144409bf8a484305b9306f05431e02abf943b13a78cd4edb07da6c14def19fab",
+      "iou": 0.97369,
+      "median_px": 2.0,
+      "p95_px": 9.0,
+      "mask_source": "manufacturer alpha",
+      "reference": "https://www.chevrolet.com/performance/corvette/zr1x",
+      "photo_span_px": 1178,
+      "p95_percent_span": 0.764,
+      "status": "verified",
+      "note": "The near wheel and main lower bumper follow the right rear-quarter contour. Internal exhaust and diffuser shapes have weaker registration.",
+      "render": "benchmark/view-16-render.webp",
+      "outline": "benchmark/view-16-lines.png"
+    },
+    {
+      "id": "view-17",
+      "label": "Rear-right 49\u00b0",
+      "size": [
+        1500,
+        750
+      ],
+      "photo_sha256": "16d1ec85db1355a7400e994af33affeb24b29036c634246e22dcb0c37a888ac3",
+      "iou": 0.97545,
+      "median_px": 1.41,
+      "p95_px": 8.0,
+      "mask_source": "manufacturer alpha",
+      "reference": "https://www.chevrolet.com/performance/corvette/zr1x",
+      "photo_span_px": 1275,
+      "p95_percent_span": 0.627,
+      "status": "verified",
+      "note": "The lower bumper and rear tire are anchored by the right side and wing tip. The intake and brake appearance differ from the reference inside the silhouette.",
+      "render": "benchmark/view-17-render.webp",
+      "outline": "benchmark/view-17-lines.png"
+    },
+    {
+      "id": "view-18",
+      "label": "Rear-right 61\u00b0",
+      "size": [
+        1500,
+        750
+      ],
+      "photo_sha256": "a609bac81efa3f5379aba9beced5e210404c0243db38caa2707268bf1a21d301",
+      "iou": 0.96587,
+      "median_px": 1.0,
+      "p95_px": 11.0,
+      "mask_source": "manufacturer alpha",
+      "reference": "https://www.chevrolet.com/performance/corvette/zr1x",
+      "photo_span_px": 1326,
+      "p95_percent_span": 0.83,
+      "status": "fix",
+      "note": "The side inlet mouth is recessed, with a clear upper blade. The highlight across the lower door and rocker differs from the Chevrolet finish.",
+      "render": "benchmark/view-18-render.webp",
+      "outline": "benchmark/view-18-lines.png"
+    },
+    {
+      "id": "view-19",
+      "label": "Rear-right 72\u00b0",
+      "size": [
+        1500,
+        750
+      ],
+      "photo_sha256": "8689e3f5513957489625927a81505229ddf4f5b8f7555c83c5b5c3492f881ff7",
+      "iou": 0.96089,
+      "median_px": 1.41,
+      "p95_px": 12.17,
+      "mask_source": "manufacturer alpha",
+      "reference": "https://www.chevrolet.com/performance/corvette/zr1x",
+      "photo_span_px": 1366,
+      "p95_percent_span": 0.891,
+      "status": "verified",
+      "note": "The right rear wheel and endplate follow the reference contour. The hatch louvers and glossy door highlight remain easier to distinguish in the photograph.",
+      "render": "benchmark/view-19-render.webp",
+      "outline": "benchmark/view-19-lines.png"
+    },
+    {
+      "id": "view-20",
+      "label": "Rear-right 85\u00b0",
+      "size": [
+        1500,
+        750
+      ],
+      "photo_sha256": "b117934bfc63db37546074964e2fa7baab7addee91f63d732dde4146d17ee097",
+      "iou": 0.95518,
+      "median_px": 2.0,
+      "p95_px": 17.8,
+      "mask_source": "manufacturer alpha",
+      "reference": "https://www.chevrolet.com/performance/corvette/zr1x",
+      "photo_span_px": 1398,
+      "p95_percent_span": 1.273,
+      "status": "verified",
+      "note": "The opposite broadside confirms the wing adjustment. The two upper edges are one pixel apart in height, and the aft tip has the same image column.",
+      "render": "benchmark/view-20-render.webp",
+      "outline": "benchmark/view-20-lines.png"
+    },
+    {
+      "id": "view-21",
+      "label": "Right broadside",
+      "size": [
+        1500,
+        750
+      ],
+      "photo_sha256": "f34141fcfd2ec4e3b904ee10098e91cfbeb5dbdc2a63756d9eab7a16695518e3",
+      "iou": 0.954,
+      "median_px": 2.0,
+      "p95_px": 19.65,
+      "mask_source": "manufacturer alpha",
+      "reference": "https://www.chevrolet.com/performance/corvette/zr1x",
+      "photo_span_px": 1401,
+      "p95_percent_span": 1.403,
+      "status": "fix",
+      "note": "Both right wheels sit against the source wheelbase. The roof and hatch details remain more prominent in the model\u2019s upper outline.",
+      "render": "benchmark/view-21-render.webp",
+      "outline": "benchmark/view-21-lines.png"
+    },
+    {
+      "id": "view-22",
+      "label": "Front-right 72\u00b0",
+      "size": [
+        1500,
+        750
+      ],
+      "photo_sha256": "e2d905e2a0f43d4684d873f185f781caa23354507264e88b1e7130e371953565",
+      "iou": 0.96308,
+      "median_px": 1.41,
+      "p95_px": 12.19,
+      "mask_source": "manufacturer alpha",
+      "reference": "https://www.chevrolet.com/performance/corvette/zr1x",
+      "photo_span_px": 1386,
+      "p95_percent_span": 0.88,
+      "status": "fix",
+      "note": "The right door and front arch establish the side profile. The shaded panel treatment and the front intake return differ at oblique incidence.",
+      "render": "benchmark/view-22-render.webp",
+      "outline": "benchmark/view-22-lines.png"
+    },
+    {
+      "id": "view-23",
+      "label": "Front-right 59\u00b0",
+      "size": [
+        1500,
+        750
+      ],
+      "photo_sha256": "b668820e07588c3162ed314252c34a4c1f8d2c92282680bdc3eba3fe7fa89a1c",
+      "iou": 0.96868,
+      "median_px": 1.41,
+      "p95_px": 13.12,
+      "mask_source": "manufacturer alpha",
+      "reference": "https://www.chevrolet.com/performance/corvette/zr1x",
+      "photo_span_px": 1333,
+      "p95_percent_span": 0.984,
+      "status": "verified",
+      "note": "The front-right angle supports the overall arch placement, front overhang and cabin roofline. Check the intake and lamps separately for surface detail.",
+      "render": "benchmark/view-23-render.webp",
+      "outline": "benchmark/view-23-lines.png"
+    },
+    {
+      "id": "view-24",
+      "label": "Front-right 47\u00b0",
+      "size": [
+        1500,
+        750
+      ],
+      "photo_sha256": "c36500aa5ed981e9755c7aea1264b40d5465913f945ecf56d6bc76e7c2c6b490",
+      "iou": 0.9749,
+      "median_px": 1.41,
+      "p95_px": 10.0,
+      "mask_source": "manufacturer alpha",
+      "reference": "https://www.chevrolet.com/performance/corvette/zr1x",
+      "photo_span_px": 1231,
+      "p95_percent_span": 0.812,
+      "status": "verified",
+      "note": "The right headlamp tip, front tire and high wing establish the front quarter. Shading across the door and intake differs from the reference.",
+      "render": "benchmark/view-24-render.webp",
+      "outline": "benchmark/view-24-lines.png"
+    },
+    {
+      "id": "view-25",
+      "label": "Front-right 35\u00b0",
+      "size": [
+        1500,
+        750
+      ],
+      "photo_sha256": "a5df9a932af5974b2f54f609a2378e172fd0a77e913c54cf782bc44ab2a6cfd7",
+      "iou": 0.97321,
+      "median_px": 2.0,
+      "p95_px": 10.0,
+      "mask_source": "manufacturer alpha",
+      "reference": "https://www.chevrolet.com/performance/corvette/zr1x",
+      "photo_span_px": 1119,
+      "p95_percent_span": 0.894,
+      "status": "verified",
+      "note": "The nose, windshield perimeter and right arch sit close to their photographed positions. The rear wheel is partly occluded at this angle.",
+      "render": "benchmark/view-25-render.webp",
+      "outline": "benchmark/view-25-lines.png"
+    },
+    {
+      "id": "view-26",
+      "label": "Front-right 23\u00b0",
+      "size": [
+        1500,
+        750
+      ],
+      "photo_sha256": "514abbd80a0fc4b1c08683d1e2128751c97aa7cce5c9228b3bf1a0c6c9f1e262",
+      "iou": 0.97106,
+      "median_px": 2.0,
+      "p95_px": 8.06,
+      "mask_source": "manufacturer alpha",
+      "reference": "https://www.chevrolet.com/performance/corvette/zr1x",
+      "photo_span_px": 960,
+      "p95_percent_span": 0.84,
+      "status": "verified",
+      "note": "The nose and outer corners of the splitter provide a clear comparison at this front-right angle. Lighting changes the apparent depth of the grilles.",
+      "render": "benchmark/view-26-render.webp",
+      "outline": "benchmark/view-26-lines.png"
+    },
+    {
+      "id": "view-27",
+      "label": "Front-right 11\u00b0",
+      "size": [
+        1500,
+        750
+      ],
+      "photo_sha256": "99a4216457ea992bf0d51dddfacb678a246e0ed3bfe6a9df927c39f1f98958a3",
+      "iou": 0.96496,
+      "median_px": 2.0,
+      "p95_px": 10.0,
+      "mask_source": "manufacturer alpha",
+      "reference": "https://www.chevrolet.com/performance/corvette/zr1x",
+      "photo_span_px": 764,
+      "p95_percent_span": 1.309,
+      "status": "verified",
+      "note": "The two headlamps, windshield and high rear wing are visible. The outer outline is more tightly constrained here than the recessed grille surfaces.",
+      "render": "benchmark/view-27-render.webp",
+      "outline": "benchmark/view-27-lines.png"
+    },
+    {
+      "id": "view-28",
+      "label": "Front square",
+      "size": [
+        1500,
+        750
+      ],
+      "photo_sha256": "27ce0b5b8ad36e4ba0235847bc6762a7340693c3c40c38ef5bf4fc3d0e864df0",
+      "iou": 0.96704,
+      "median_px": 2.0,
+      "p95_px": 8.25,
+      "mask_source": "manufacturer alpha",
+      "reference": "https://www.chevrolet.com/performance/corvette/zr1x",
+      "photo_span_px": 664,
+      "p95_percent_span": 1.242,
+      "status": "verified",
+      "note": "The straight-on front view establishes the centered nose, hood opening and paired lamps. The splitter and wing edges set the outer width.",
+      "render": "benchmark/view-28-render.webp",
+      "outline": "benchmark/view-28-lines.png"
+    },
+    {
+      "id": "view-29",
+      "label": "Front-left 14\u00b0",
+      "size": [
+        1500,
+        750
+      ],
+      "photo_sha256": "cddb542e648dd68e320e57ef730adc4f7cdf04b8b82d0dc0e3df79d8c77460c7",
+      "iou": 0.97083,
+      "median_px": 2.0,
+      "p95_px": 7.62,
+      "mask_source": "manufacturer alpha",
+      "reference": "https://www.chevrolet.com/performance/corvette/zr1x",
+      "photo_span_px": 808,
+      "p95_percent_span": 0.943,
+      "status": "verified",
+      "note": "The front-left view shows both corner intakes and the near headlamp. The visible front outline is the scope of the numerical check.",
+      "render": "benchmark/view-29-render.webp",
+      "outline": "benchmark/view-29-lines.png"
+    },
+    {
+      "id": "view-30",
+      "label": "Overhead plan (ZTK)",
+      "size": [
+        2500,
+        1407
+      ],
+      "photo_sha256": "904ae9b3542530506b9a4764003c9680b5035cc9435fd2f7b277f0588f3ef926",
+      "iou": 0.97703,
+      "median_px": 4.0,
+      "p95_px": 12.08,
+      "mask_source": "estimated JPEG foreground",
+      "reference": "https://www.chevrolet.com/performance/corvette/zr1x",
+      "photo_span_px": 690,
+      "p95_percent_span": 1.751,
+      "status": "limited",
+      "note": "The overhead image places the nose at the top and the high wing at the bottom. It shows the roof, engine cover and wing footprint clearly. Few shared landmarks constrain camera height or pitch independently.",
+      "render": "benchmark/view-30-render.webp",
+      "outline": "benchmark/view-30-lines.png"
+    },
+    {
+      "id": "view-31",
+      "label": "High front-left 3/4 (ZTK)",
+      "size": [
+        2500,
+        1407
+      ],
+      "photo_sha256": "b9e89b37f8bea80baf2e62b199e5f3e49b43aa05bc9f466488bee14bff910b3b",
+      "iou": 0.95967,
+      "median_px": 8.49,
+      "p95_px": 20.62,
+      "mask_source": "estimated JPEG foreground",
+      "reference": "https://www.chevrolet.com/performance/corvette/zr1x",
+      "photo_span_px": 2098,
+      "p95_percent_span": 0.983,
+      "status": "verified",
+      "note": "The hood badge, wheel centers and wing corner constrain the elevated left view. Six held-out landmarks have a median reprojection error of 5.94 pixels at native resolution.",
+      "render": "benchmark/view-31-render.webp",
+      "outline": "benchmark/view-31-lines.png"
+    },
+    {
+      "id": "view-32",
+      "label": "Studio front-left 3/4 (ZTK)",
+      "size": [
+        2500,
+        1407
+      ],
+      "photo_sha256": "05a04729f0384e728b58f9c7c1c9ee2d2484bd551d39d06a9942a2538f56f236",
+      "iou": 0.96912,
+      "median_px": 6.0,
+      "p95_px": 17.0,
+      "mask_source": "estimated JPEG foreground",
+      "reference": "https://www.chevrolet.com/performance/corvette/zr1x",
+      "photo_span_px": 2221,
+      "p95_percent_span": 0.765,
+      "status": "verified",
+      "note": "The left lamp, front grille and near tire establish the nose in the 2500-pixel view. The intake mesh, glazing and lighting still differ inside the outer contour.",
+      "render": "benchmark/view-32-render.webp",
+      "outline": "benchmark/view-32-lines.png"
+    },
+    {
+      "id": "view-33",
+      "label": "Studio left oblique (ZTK)",
+      "size": [
+        2500,
+        1407
+      ],
+      "photo_sha256": "21a56e7fb3cbd31bf56352fc5ed0cd2c49e93ecc1cfd7293fad094aade72a799",
+      "iou": 0.95203,
+      "median_px": 5.83,
+      "p95_px": 27.0,
+      "mask_source": "estimated JPEG foreground",
+      "reference": "https://www.chevrolet.com/performance/corvette/zr1x",
+      "photo_span_px": 2102,
+      "p95_percent_span": 1.284,
+      "status": "verified",
+      "note": "The outer endplate top is within two native pixels of Chevrolet\u2019s tip. Both wheel centers and the near sill anchor this oblique view. The door reflection and rim finish differ.",
+      "render": "benchmark/view-33-render.webp",
+      "outline": "benchmark/view-33-lines.png"
+    },
+    {
+      "id": "view-34",
+      "label": "Studio rear-left 3/4 (ZTK)",
+      "size": [
+        2500,
+        1407
+      ],
+      "photo_sha256": "36c71de88e6eacc253b06618986459b516ff4ab1f9da8512f65477e39847ffa0",
+      "iou": 0.96348,
+      "median_px": 5.0,
+      "p95_px": 21.0,
+      "mask_source": "estimated JPEG foreground",
+      "reference": "https://www.chevrolet.com/performance/corvette/zr1x",
+      "photo_span_px": 1935,
+      "p95_percent_span": 1.085,
+      "status": "verified",
+      "note": "The outer endplate crest is within one native pixel of Chevrolet\u2019s tip. The near rear tire and lamp band establish the angle. The diffuser surface and exhaust tips remain approximate.",
+      "render": "benchmark/view-34-render.webp",
+      "outline": "benchmark/view-34-lines.png"
+    },
+    {
+      "id": "view-35",
+      "label": "Studio rear-right 3/4 (ZTK)",
+      "size": [
+        2500,
+        1407
+      ],
+      "photo_sha256": "c05970259850eb2e9aba72c04c6d2ae42b78447a7b2294e7c1f3c2e0f3b523cf",
+      "iou": 0.96552,
+      "median_px": 4.0,
+      "p95_px": 17.03,
+      "mask_source": "estimated JPEG foreground",
+      "reference": "https://www.chevrolet.com/performance/corvette/zr1x",
+      "photo_span_px": 2120,
+      "p95_percent_span": 0.803,
+      "status": "fix",
+      "note": "The right rear-quarter image reveals the endplate and the upward turn of the sill behind the side inlet. The lower diffuser and the door highlight remain different.",
+      "render": "benchmark/view-35-render.webp",
+      "outline": "benchmark/view-35-lines.png"
+    },
+    {
+      "id": "view-36",
+      "label": "Front wheel, Alcon brake & side inlet",
+      "size": [
+        2500,
+        1407
+      ],
+      "photo_sha256": "882dbf7fa44c91ede83459be6b3936d357b27cc5996c0183ac7480248f488529",
+      "iou": 0.96219,
+      "median_px": 23.41,
+      "p95_px": 55.46,
+      "mask_source": "estimated JPEG foreground",
+      "reference": "https://www.chevrolet.com/performance/corvette/zr1x",
+      "pose": {
+        "theta": 0.6367406,
+        "phi": 1.5921207,
+        "radius": 95.78384,
+        "fov": 25.915012,
+        "center": [
+          53.20048,
+          19.22306,
+          47.73545
+        ],
+        "steer": 0.6
+      },
+      "photo_span_px": 2500,
+      "p95_percent_span": 2.218,
+      "status": "limited",
+      "note": "The close-up exposes the rim, drilled rotor, fender lip and right-side intake. The camera and approximately 34\u00b0 of front steering were inferred together. The tyre, spoke shapes and lower rocker still differ, and the rear hub is partly occluded.",
+      "render": "benchmark/view-36-render.webp",
+      "outline": "benchmark/view-36-lines.png"
+    },
+    {
+      "id": "mech-hybrid-plan",
+      "status": "limited",
+      "note": "The underbody drawing locates the engine, transaxle, tunnel battery and front electric drive. Housing, pipe and cable shapes are approximate.",
+      "render": "benchmark/mech-hybrid-plan-render.webp",
+      "outline": "benchmark/mech-hybrid-plan-lines.png"
+    },
+    {
+      "id": "mech-lt7-34",
+      "status": "limited",
+      "note": "The front three-quarter LT7 image establishes the intake, block and turbocharger package. Cast surfaces and small plumbing remain approximate.",
+      "render": "benchmark/mech-lt7-34-render.webp",
+      "outline": "benchmark/mech-lt7-34-lines.png"
+    },
+    {
+      "id": "mech-lt7-side",
+      "status": "limited",
+      "note": "The housing profile, turbos and plumbing are visible in the side reference. The model simplifies the cast transitions, pipe bends and fasteners.",
+      "render": "benchmark/mech-lt7-side-render.webp",
+      "outline": "benchmark/mech-lt7-side-lines.png"
+    },
+    {
+      "id": "mech-lt7-rear",
+      "status": "limited",
+      "note": "The flywheel view locates the rear face of the LT7. Fastener placement and the depth of individual castings have limited evidence.",
+      "render": "benchmark/mech-lt7-rear-render.webp",
+      "outline": "benchmark/mech-lt7-rear-lines.png"
+    },
+    {
+      "id": "mech-bay-top",
+      "status": "limited",
+      "note": "The installed engine view shows the intake beneath the hatch. Wiring, clamps and bay finishes differ across the two images.",
+      "render": "benchmark/mech-bay-top-render.webp",
+      "outline": "benchmark/mech-bay-top-lines.png"
+    },
+    {
+      "id": "mech-dct-cutaway",
+      "status": "limited",
+      "note": "The cutaway shows the approximate shaft and clutch arrangement; individual tooth geometry, cuts and concealed hardware have limited source coverage.",
+      "render": "benchmark/mech-dct-cutaway-render.webp",
+      "outline": "benchmark/mech-dct-cutaway-lines.png"
+    },
+    {
+      "id": "mech-dct-rear34",
+      "status": "limited",
+      "note": "The transaxle reference supplies casing and axle orientation. Vehicle variant, fixture and housing detail limit the visual registration.",
+      "render": "benchmark/mech-dct-rear34-render.webp",
+      "outline": "benchmark/mech-dct-rear34-lines.png"
+    },
+    {
+      "id": "mech-edu-front-render",
+      "status": "limited",
+      "note": "The component reference locates the front e-AWD housing and axle interfaces. Cast detail and interior gear dimensions are approximate.",
+      "render": "benchmark/mech-edu-front-render-render.webp",
+      "outline": "benchmark/mech-edu-front-render-lines.png"
+    },
+    {
+      "id": "mech-batt-cutaway-hi",
+      "status": "limited",
+      "note": "The tunnel housing and module rows can be compared with the engineering cutaway. The exposed module construction and enclosure cross-section are illustrative.",
+      "render": "benchmark/mech-batt-cutaway-hi-render.webp",
+      "outline": "benchmark/mech-batt-cutaway-hi-lines.png"
+    },
+    {
+      "id": "mech-brake-alcon",
+      "status": "limited",
+      "note": "The brake reference establishes rotor and multi-piston caliper layout. Drill pattern, lettering and surface finish remain approximate.",
+      "render": "benchmark/mech-brake-alcon-render.webp",
+      "outline": "benchmark/mech-brake-alcon-lines.png"
+    },
+    {
+      "id": "cabin-front",
+      "status": "limited",
+      "note": "The Jet Black driver view establishes wheel, display and console arrangement. The instrument artwork, upholstery and physical controls are reconstructed.",
+      "render": "benchmark/cabin-front-render.webp",
+      "outline": "benchmark/cabin-front-lines.png"
+    },
+    {
+      "id": "cabin-3screen-dash",
+      "status": "limited",
+      "note": "The three-screen close-up shows the relative display locations. The graphic artwork, wheel position and panel reflections differ from the source.",
+      "render": "benchmark/cabin-3screen-dash-render.webp",
+      "outline": "benchmark/cabin-3screen-dash-lines.png"
+    },
+    {
+      "id": "press-07",
+      "status": "limited",
+      "note": "The Blade Silver coupe shows the plan shape of the glass and cooling openings. Paint and rear aero differ from the Torch Red high-wing studio configuration.",
+      "render": "benchmark/press-07-render.webp",
+      "outline": "benchmark/press-07-lines.png"
+    },
+    {
+      "id": "ring-high",
+      "status": "limited",
+      "note": "The N\u00fcrburgring photo provides a real-car check on the wing and overall proportions. Yellow paint, wheel configuration, lighting and track perspective differ.",
+      "render": "benchmark/ring-high-render.webp",
+      "outline": "benchmark/ring-high-lines.png"
+    },
+    {
+      "id": "mech-lt7-front",
+      "status": "limited",
+      "note": "The 6000-pixel accessory-drive image exposes the belt route and the arrangement of pulleys. The model simplifies individual fittings and auxiliary supports.",
+      "render": "benchmark/mech-lt7-front-render.webp",
+      "outline": "benchmark/mech-lt7-front-lines.png"
+    }
+  ],
+  "studio_camera_sha256": "db6186c552a482ceb263f5d7aa643de2d5d0c4ad5fe79661195e9fe7082f744e",
+  "floor_trace_sha256": "b9f35043d97c51f91f890874b440a085f60feff643dfad5d10f200aa10c63d8a",
+  "baselines": {
+    "Earlier public build": {
+      "model_sha256": "3022bca8d0eb6fd3303c9bba13db96ca931bf3c005b996fedd68d127343437cd",
+      "summary": {
+        "orbit": {
+          "n": 30,
+          "mean_iou": 0.95867,
+          "mean_p95_px": 14.41
+        },
+        "hires": {
+          "n": 7,
+          "mean_iou": 0.95812,
+          "mean_p95_px": 28.44
+        }
+      },
+      "frames": [
+        {
+          "id": "view-00",
+          "iou": 0.96645,
+          "median_px": 3.0,
+          "p95_px": 8.06
+        },
+        {
+          "id": "view-01",
+          "iou": 0.96608,
+          "median_px": 2.83,
+          "p95_px": 11.0
+        },
+        {
+          "id": "view-02",
+          "iou": 0.96655,
+          "median_px": 2.0,
+          "p95_px": 11.4
+        },
+        {
+          "id": "view-03",
+          "iou": 0.9655,
+          "median_px": 2.0,
+          "p95_px": 11.66
+        },
+        {
+          "id": "view-04",
+          "iou": 0.95129,
+          "median_px": 2.83,
+          "p95_px": 18.03
+        },
+        {
+          "id": "view-05",
+          "iou": 0.94321,
+          "median_px": 2.83,
+          "p95_px": 22.42
+        },
+        {
+          "id": "view-06",
+          "iou": 0.9486,
+          "median_px": 2.24,
+          "p95_px": 17.89
+        },
+        {
+          "id": "view-07",
+          "iou": 0.95053,
+          "median_px": 2.0,
+          "p95_px": 15.81
+        },
+        {
+          "id": "view-08",
+          "iou": 0.95699,
+          "median_px": 2.0,
+          "p95_px": 26.89
+        },
+        {
+          "id": "view-09",
+          "iou": 0.961,
+          "median_px": 2.0,
+          "p95_px": 16.0
+        },
+        {
+          "id": "view-10",
+          "iou": 0.95893,
+          "median_px": 2.24,
+          "p95_px": 16.5
+        },
+        {
+          "id": "view-11",
+          "iou": 0.96306,
+          "median_px": 2.24,
+          "p95_px": 13.89
+        },
+        {
+          "id": "view-12",
+          "iou": 0.96383,
+          "median_px": 2.24,
+          "p95_px": 10.0
+        },
+        {
+          "id": "view-13",
+          "iou": 0.94894,
+          "median_px": 3.0,
+          "p95_px": 13.45
+        },
+        {
+          "id": "view-14",
+          "iou": 0.96359,
+          "median_px": 2.83,
+          "p95_px": 10.44
+        },
+        {
+          "id": "view-15",
+          "iou": 0.96179,
+          "median_px": 2.83,
+          "p95_px": 13.0
+        },
+        {
+          "id": "view-16",
+          "iou": 0.95892,
+          "median_px": 2.24,
+          "p95_px": 17.46
+        },
+        {
+          "id": "view-17",
+          "iou": 0.96024,
+          "median_px": 2.0,
+          "p95_px": 16.12
+        },
+        {
+          "id": "view-18",
+          "iou": 0.95275,
+          "median_px": 2.0,
+          "p95_px": 17.03
+        },
+        {
+          "id": "view-19",
+          "iou": 0.95016,
+          "median_px": 2.0,
+          "p95_px": 15.65
+        },
+        {
+          "id": "view-20",
+          "iou": 0.94545,
+          "median_px": 2.24,
+          "p95_px": 19.65
+        },
+        {
+          "id": "view-21",
+          "iou": 0.94322,
+          "median_px": 2.83,
+          "p95_px": 21.47
+        },
+        {
+          "id": "view-22",
+          "iou": 0.9531,
+          "median_px": 2.24,
+          "p95_px": 17.46
+        },
+        {
+          "id": "view-23",
+          "iou": 0.96677,
+          "median_px": 2.0,
+          "p95_px": 12.0
+        },
+        {
+          "id": "view-24",
+          "iou": 0.96874,
+          "median_px": 2.0,
+          "p95_px": 12.0
+        },
+        {
+          "id": "view-25",
+          "iou": 0.96808,
+          "median_px": 2.0,
+          "p95_px": 11.0
+        },
+        {
+          "id": "view-26",
+          "iou": 0.9668,
+          "median_px": 3.0,
+          "p95_px": 9.0
+        },
+        {
+          "id": "view-27",
+          "iou": 0.96106,
+          "median_px": 3.0,
+          "p95_px": 10.0
+        },
+        {
+          "id": "view-28",
+          "iou": 0.96129,
+          "median_px": 3.0,
+          "p95_px": 9.0
+        },
+        {
+          "id": "view-29",
+          "iou": 0.96733,
+          "median_px": 2.83,
+          "p95_px": 8.0
+        },
+        {
+          "id": "view-30",
+          "iou": 0.97273,
+          "median_px": 5.0,
+          "p95_px": 13.34
+        },
+        {
+          "id": "view-31",
+          "iou": 0.95317,
+          "median_px": 9.49,
+          "p95_px": 26.31
+        },
+        {
+          "id": "view-32",
+          "iou": 0.96385,
+          "median_px": 7.0,
+          "p95_px": 21.21
+        },
+        {
+          "id": "view-33",
+          "iou": 0.95022,
+          "median_px": 7.0,
+          "p95_px": 21.02
+        },
+        {
+          "id": "view-34",
+          "iou": 0.95109,
+          "median_px": 6.08,
+          "p95_px": 25.96
+        },
+        {
+          "id": "view-35",
+          "iou": 0.95293,
+          "median_px": 5.0,
+          "p95_px": 35.7
+        },
+        {
+          "id": "view-36",
+          "iou": 0.96284,
+          "median_px": 24.02,
+          "p95_px": 55.53
+        }
+      ]
+    },
+    "Recovered build before refitting": {
+      "model_sha256": "1c0c54ea955799087222565911e37ab4f7d00f3e49f76f04bde99e588d3ebfbd",
+      "summary": {
+        "orbit": {
+          "n": 30,
+          "mean_iou": 0.93493,
+          "mean_p95_px": 16.37
+        },
+        "hires": {
+          "n": 7,
+          "mean_iou": 0.94278,
+          "mean_p95_px": 37.79
+        }
+      },
+      "frames": [
+        {
+          "id": "view-00",
+          "iou": 0.93575,
+          "median_px": 6.0,
+          "p95_px": 14.0
+        },
+        {
+          "id": "view-01",
+          "iou": 0.94026,
+          "median_px": 5.83,
+          "p95_px": 14.04
+        },
+        {
+          "id": "view-02",
+          "iou": 0.94305,
+          "median_px": 5.39,
+          "p95_px": 14.87
+        },
+        {
+          "id": "view-03",
+          "iou": 0.94125,
+          "median_px": 5.83,
+          "p95_px": 16.28
+        },
+        {
+          "id": "view-04",
+          "iou": 0.93318,
+          "median_px": 5.1,
+          "p95_px": 17.46
+        },
+        {
+          "id": "view-05",
+          "iou": 0.9364,
+          "median_px": 5.0,
+          "p95_px": 18.36
+        },
+        {
+          "id": "view-06",
+          "iou": 0.93828,
+          "median_px": 5.0,
+          "p95_px": 17.0
+        },
+        {
+          "id": "view-07",
+          "iou": 0.94263,
+          "median_px": 5.0,
+          "p95_px": 14.0
+        },
+        {
+          "id": "view-08",
+          "iou": 0.94344,
+          "median_px": 5.83,
+          "p95_px": 16.0
+        },
+        {
+          "id": "view-09",
+          "iou": 0.93974,
+          "median_px": 5.83,
+          "p95_px": 18.0
+        },
+        {
+          "id": "view-10",
+          "iou": 0.93207,
+          "median_px": 6.0,
+          "p95_px": 19.1
+        },
+        {
+          "id": "view-11",
+          "iou": 0.92668,
+          "median_px": 6.32,
+          "p95_px": 19.42
+        },
+        {
+          "id": "view-12",
+          "iou": 0.91762,
+          "median_px": 7.0,
+          "p95_px": 17.14
+        },
+        {
+          "id": "view-13",
+          "iou": 0.90468,
+          "median_px": 7.0,
+          "p95_px": 18.0
+        },
+        {
+          "id": "view-14",
+          "iou": 0.92148,
+          "median_px": 7.0,
+          "p95_px": 17.0
+        },
+        {
+          "id": "view-15",
+          "iou": 0.92765,
+          "median_px": 6.0,
+          "p95_px": 19.0
+        },
+        {
+          "id": "view-16",
+          "iou": 0.93346,
+          "median_px": 6.0,
+          "p95_px": 18.68
+        },
+        {
+          "id": "view-17",
+          "iou": 0.94081,
+          "median_px": 5.83,
+          "p95_px": 18.0
+        },
+        {
+          "id": "view-18",
+          "iou": 0.93487,
+          "median_px": 6.0,
+          "p95_px": 15.81
+        },
+        {
+          "id": "view-19",
+          "iou": 0.94201,
+          "median_px": 5.0,
+          "p95_px": 14.14
+        },
+        {
+          "id": "view-20",
+          "iou": 0.93784,
+          "median_px": 5.0,
+          "p95_px": 17.49
+        },
+        {
+          "id": "view-21",
+          "iou": 0.93435,
+          "median_px": 5.0,
+          "p95_px": 18.0
+        },
+        {
+          "id": "view-22",
+          "iou": 0.93141,
+          "median_px": 5.66,
+          "p95_px": 17.8
+        },
+        {
+          "id": "view-23",
+          "iou": 0.93996,
+          "median_px": 5.83,
+          "p95_px": 17.46
+        },
+        {
+          "id": "view-24",
+          "iou": 0.94196,
+          "median_px": 5.66,
+          "p95_px": 16.23
+        },
+        {
+          "id": "view-25",
+          "iou": 0.93919,
+          "median_px": 6.0,
+          "p95_px": 15.52
+        },
+        {
+          "id": "view-26",
+          "iou": 0.93566,
+          "median_px": 6.0,
+          "p95_px": 14.21
+        },
+        {
+          "id": "view-27",
+          "iou": 0.93231,
+          "median_px": 6.0,
+          "p95_px": 13.42
+        },
+        {
+          "id": "view-28",
+          "iou": 0.93767,
+          "median_px": 5.0,
+          "p95_px": 12.0
+        },
+        {
+          "id": "view-29",
+          "iou": 0.94219,
+          "median_px": 5.0,
+          "p95_px": 12.81
+        },
+        {
+          "id": "view-30",
+          "iou": 0.95856,
+          "median_px": 6.0,
+          "p95_px": 25.0
+        },
+        {
+          "id": "view-31",
+          "iou": 0.94535,
+          "median_px": 12.65,
+          "p95_px": 27.8
+        },
+        {
+          "id": "view-32",
+          "iou": 0.93096,
+          "median_px": 14.0,
+          "p95_px": 29.0
+        },
+        {
+          "id": "view-33",
+          "iou": 0.94736,
+          "median_px": 7.28,
+          "p95_px": 24.7
+        },
+        {
+          "id": "view-34",
+          "iou": 0.93138,
+          "median_px": 10.2,
+          "p95_px": 34.0
+        },
+        {
+          "id": "view-35",
+          "iou": 0.93127,
+          "median_px": 11.18,
+          "p95_px": 31.38
+        },
+        {
+          "id": "view-36",
+          "iou": 0.95456,
+          "median_px": 26.57,
+          "p95_px": 92.63
+        }
+      ]
+    }
+  },
+  "earlier_sources": [
+    {
+      "id": "ext-001",
+      "subject": "Torch Red US 3LZ, closed, index 1",
+      "original_url": "https://www.chevrolet.com/content/dam/chevrolet/na/us/english/index/Performance/2027-corvette-zr1x/colorizer/trims/3lz/exterior/flipbook-models/gkz/my27-corvette-3lz-gkz-ext.001.png"
+    },
+    {
+      "id": "ext-002",
+      "subject": "Torch Red US 3LZ, closed, index 2",
+      "original_url": "https://www.chevrolet.com/content/dam/chevrolet/na/us/english/index/Performance/2027-corvette-zr1x/colorizer/trims/3lz/exterior/flipbook-models/gkz/my27-corvette-3lz-gkz-ext.002.png"
+    },
+    {
+      "id": "ext-003",
+      "subject": "Torch Red US 3LZ, closed, index 3",
+      "original_url": "https://www.chevrolet.com/content/dam/chevrolet/na/us/english/index/Performance/2027-corvette-zr1x/colorizer/trims/3lz/exterior/flipbook-models/gkz/my27-corvette-3lz-gkz-ext.003.png"
+    },
+    {
+      "id": "ext-004",
+      "subject": "Torch Red US 3LZ, closed, index 4",
+      "original_url": "https://www.chevrolet.com/content/dam/chevrolet/na/us/english/index/Performance/2027-corvette-zr1x/colorizer/trims/3lz/exterior/flipbook-models/gkz/my27-corvette-3lz-gkz-ext.004.png"
+    },
+    {
+      "id": "ext-005",
+      "subject": "Torch Red US 3LZ, closed, index 5",
+      "original_url": "https://www.chevrolet.com/content/dam/chevrolet/na/us/english/index/Performance/2027-corvette-zr1x/colorizer/trims/3lz/exterior/flipbook-models/gkz/my27-corvette-3lz-gkz-ext.005.png"
+    },
+    {
+      "id": "ext-006",
+      "subject": "Torch Red US 3LZ, closed, index 6",
+      "original_url": "https://www.chevrolet.com/content/dam/chevrolet/na/us/english/index/Performance/2027-corvette-zr1x/colorizer/trims/3lz/exterior/flipbook-models/gkz/my27-corvette-3lz-gkz-ext.006.png"
+    },
+    {
+      "id": "ext-007",
+      "subject": "Torch Red US 3LZ, closed, index 7",
+      "original_url": "https://www.chevrolet.com/content/dam/chevrolet/na/us/english/index/Performance/2027-corvette-zr1x/colorizer/trims/3lz/exterior/flipbook-models/gkz/my27-corvette-3lz-gkz-ext.007.png"
+    },
+    {
+      "id": "ext-008",
+      "subject": "Torch Red US 3LZ, closed, index 8",
+      "original_url": "https://www.chevrolet.com/content/dam/chevrolet/na/us/english/index/Performance/2027-corvette-zr1x/colorizer/trims/3lz/exterior/flipbook-models/gkz/my27-corvette-3lz-gkz-ext.008.png"
+    },
+    {
+      "id": "ext-009",
+      "subject": "Torch Red US 3LZ, closed, index 9",
+      "original_url": "https://www.chevrolet.com/content/dam/chevrolet/na/us/english/index/Performance/2027-corvette-zr1x/colorizer/trims/3lz/exterior/flipbook-models/gkz/my27-corvette-3lz-gkz-ext.009.png"
+    },
+    {
+      "id": "ext-010",
+      "subject": "Torch Red US 3LZ, closed, index 10",
+      "original_url": "https://www.chevrolet.com/content/dam/chevrolet/na/us/english/index/Performance/2027-corvette-zr1x/colorizer/trims/3lz/exterior/flipbook-models/gkz/my27-corvette-3lz-gkz-ext.010.png"
+    },
+    {
+      "id": "ext-011",
+      "subject": "Torch Red US 3LZ, closed, index 11",
+      "original_url": "https://www.chevrolet.com/content/dam/chevrolet/na/us/english/index/Performance/2027-corvette-zr1x/colorizer/trims/3lz/exterior/flipbook-models/gkz/my27-corvette-3lz-gkz-ext.011.png"
+    },
+    {
+      "id": "ext-012",
+      "subject": "Torch Red US 3LZ, closed, index 12",
+      "original_url": "https://www.chevrolet.com/content/dam/chevrolet/na/us/english/index/Performance/2027-corvette-zr1x/colorizer/trims/3lz/exterior/flipbook-models/gkz/my27-corvette-3lz-gkz-ext.012.png"
+    },
+    {
+      "id": "ext-013",
+      "subject": "Torch Red US 3LZ, closed, index 13",
+      "original_url": "https://www.chevrolet.com/content/dam/chevrolet/na/us/english/index/Performance/2027-corvette-zr1x/colorizer/trims/3lz/exterior/flipbook-models/gkz/my27-corvette-3lz-gkz-ext.013.png"
+    },
+    {
+      "id": "ext-014",
+      "subject": "Torch Red US 3LZ, closed, index 14",
+      "original_url": "https://www.chevrolet.com/content/dam/chevrolet/na/us/english/index/Performance/2027-corvette-zr1x/colorizer/trims/3lz/exterior/flipbook-models/gkz/my27-corvette-3lz-gkz-ext.014.png"
+    },
+    {
+      "id": "ext-015",
+      "subject": "Torch Red US 3LZ, closed, index 15",
+      "original_url": "https://www.chevrolet.com/content/dam/chevrolet/na/us/english/index/Performance/2027-corvette-zr1x/colorizer/trims/3lz/exterior/flipbook-models/gkz/my27-corvette-3lz-gkz-ext.015.png"
+    },
+    {
+      "id": "ext-016",
+      "subject": "Torch Red US 3LZ, closed, index 16",
+      "original_url": "https://www.chevrolet.com/content/dam/chevrolet/na/us/english/index/Performance/2027-corvette-zr1x/colorizer/trims/3lz/exterior/flipbook-models/gkz/my27-corvette-3lz-gkz-ext.016.png"
+    },
+    {
+      "id": "ext-017",
+      "subject": "Torch Red US 3LZ, closed, index 17",
+      "original_url": "https://www.chevrolet.com/content/dam/chevrolet/na/us/english/index/Performance/2027-corvette-zr1x/colorizer/trims/3lz/exterior/flipbook-models/gkz/my27-corvette-3lz-gkz-ext.017.png"
+    },
+    {
+      "id": "ext-018",
+      "subject": "Torch Red US 3LZ, closed, index 18",
+      "original_url": "https://www.chevrolet.com/content/dam/chevrolet/na/us/english/index/Performance/2027-corvette-zr1x/colorizer/trims/3lz/exterior/flipbook-models/gkz/my27-corvette-3lz-gkz-ext.018.png"
+    },
+    {
+      "id": "ext-019",
+      "subject": "Torch Red US 3LZ, closed, index 19",
+      "original_url": "https://www.chevrolet.com/content/dam/chevrolet/na/us/english/index/Performance/2027-corvette-zr1x/colorizer/trims/3lz/exterior/flipbook-models/gkz/my27-corvette-3lz-gkz-ext.019.png"
+    },
+    {
+      "id": "ext-020",
+      "subject": "Torch Red US 3LZ, closed, index 20",
+      "original_url": "https://www.chevrolet.com/content/dam/chevrolet/na/us/english/index/Performance/2027-corvette-zr1x/colorizer/trims/3lz/exterior/flipbook-models/gkz/my27-corvette-3lz-gkz-ext.020.png"
+    },
+    {
+      "id": "ext-021",
+      "subject": "Torch Red US 3LZ, closed, index 21",
+      "original_url": "https://www.chevrolet.com/content/dam/chevrolet/na/us/english/index/Performance/2027-corvette-zr1x/colorizer/trims/3lz/exterior/flipbook-models/gkz/my27-corvette-3lz-gkz-ext.021.png"
+    },
+    {
+      "id": "ext-022",
+      "subject": "Torch Red US 3LZ, closed, index 22",
+      "original_url": "https://www.chevrolet.com/content/dam/chevrolet/na/us/english/index/Performance/2027-corvette-zr1x/colorizer/trims/3lz/exterior/flipbook-models/gkz/my27-corvette-3lz-gkz-ext.022.png"
+    },
+    {
+      "id": "ext-023",
+      "subject": "Torch Red US 3LZ, closed, index 23",
+      "original_url": "https://www.chevrolet.com/content/dam/chevrolet/na/us/english/index/Performance/2027-corvette-zr1x/colorizer/trims/3lz/exterior/flipbook-models/gkz/my27-corvette-3lz-gkz-ext.023.png"
+    },
+    {
+      "id": "ext-024",
+      "subject": "Torch Red US 3LZ, closed, index 24",
+      "original_url": "https://www.chevrolet.com/content/dam/chevrolet/na/us/english/index/Performance/2027-corvette-zr1x/colorizer/trims/3lz/exterior/flipbook-models/gkz/my27-corvette-3lz-gkz-ext.024.png"
+    },
+    {
+      "id": "ext-025",
+      "subject": "Torch Red US 3LZ, closed, index 25",
+      "original_url": "https://www.chevrolet.com/content/dam/chevrolet/na/us/english/index/Performance/2027-corvette-zr1x/colorizer/trims/3lz/exterior/flipbook-models/gkz/my27-corvette-3lz-gkz-ext.025.png"
+    },
+    {
+      "id": "ext-026",
+      "subject": "Torch Red US 3LZ, closed, index 26",
+      "original_url": "https://www.chevrolet.com/content/dam/chevrolet/na/us/english/index/Performance/2027-corvette-zr1x/colorizer/trims/3lz/exterior/flipbook-models/gkz/my27-corvette-3lz-gkz-ext.026.png"
+    },
+    {
+      "id": "ext-027",
+      "subject": "Torch Red US 3LZ, closed, index 27",
+      "original_url": "https://www.chevrolet.com/content/dam/chevrolet/na/us/english/index/Performance/2027-corvette-zr1x/colorizer/trims/3lz/exterior/flipbook-models/gkz/my27-corvette-3lz-gkz-ext.027.png"
+    },
+    {
+      "id": "ext-028",
+      "subject": "Torch Red US 3LZ, closed, index 28",
+      "original_url": "https://www.chevrolet.com/content/dam/chevrolet/na/us/english/index/Performance/2027-corvette-zr1x/colorizer/trims/3lz/exterior/flipbook-models/gkz/my27-corvette-3lz-gkz-ext.028.png"
+    },
+    {
+      "id": "ext-029",
+      "subject": "Torch Red US 3LZ, closed, index 29",
+      "original_url": "https://www.chevrolet.com/content/dam/chevrolet/na/us/english/index/Performance/2027-corvette-zr1x/colorizer/trims/3lz/exterior/flipbook-models/gkz/my27-corvette-3lz-gkz-ext.029.png"
+    },
+    {
+      "id": "ext-030",
+      "subject": "Torch Red US 3LZ, closed, index 30",
+      "original_url": "https://www.chevrolet.com/content/dam/chevrolet/na/us/english/index/Performance/2027-corvette-zr1x/colorizer/trims/3lz/exterior/flipbook-models/gkz/my27-corvette-3lz-gkz-ext.030.png"
+    },
+    {
+      "id": "detail-01",
+      "subject": "2027 Chevy Corvette ZR1X Parked in a Warehouse",
+      "original_url": "https://www.chevrolet.com/content/dam/chevrolet/na/us/english/index/Performance/2027-corvette-zr1x/images/mh/2027-zr1x-reveal-mh-s-v2.png"
+    },
+    {
+      "id": "detail-02",
+      "subject": "2027 Chevy Corvette ZR1X Intro Video Thumbnail",
+      "original_url": "https://www.chevrolet.com/content/dam/chevrolet/na/us/english/index/Performance/2027-corvette-zr1x/images/intro/zr1x-looping-posterframe.gif"
+    },
+    {
+      "id": "detail-03",
+      "subject": "Josh Holder Corvette Chief Engineer",
+      "original_url": "https://www.chevrolet.com/content/dam/chevrolet/na/us/english/index/Performance/2027-corvette-zr1x/images/intro/2027-zr1x-reveal-intro-quote.png"
+    },
+    {
+      "id": "detail-04",
+      "subject": "2027 Chevy Corvette ZO6 Interior in Natural Dipped",
+      "original_url": "https://www.chevrolet.com/content/dam/chevrolet/na/us/english/index/Performance/2027-corvette-zr1x/images/design/2027-zr1x-interior-05-retouched-xs.png"
+    },
+    {
+      "id": "detail-05",
+      "subject": "A Silver Chevy Corvette ZR1X with Black Alloy Wheels and Orange LED Taillights Accelerating on a Dark Studio Track with Dramatic Accent Lighting.",
+      "original_url": "https://www.chevrolet.com/content/dam/chevrolet/na/us/english/index/Performance/2027-corvette-zr1x/images/design/2027-zr1x-reveal-design-s.png"
+    },
+    {
+      "id": "detail-06",
+      "subject": "Aerodynamic Technology Diagram of the 2027 Chevy Corvette ZR1X",
+      "original_url": "https://www.chevrolet.com/content/dam/chevrolet/na/us/english/index/Performance/2027-corvette-zr1x/images/design/2026-zr1x-reveal-des-01-v2.jpg"
+    },
+    {
+      "id": "detail-07",
+      "subject": "Bird-Eye View of the Roof of the 2027 Chevy Corvette ZR1X",
+      "original_url": "https://www.chevrolet.com/content/dam/chevrolet/na/us/english/index/Performance/2027-corvette-zr1x/images/design/2027-zr1x-reveal-des-02-v2.jpg"
+    },
+    {
+      "id": "detail-08",
+      "subject": "2027 Chevy Corvette ZR1X Badging on the Exterior Side Panel",
+      "original_url": "https://www.chevrolet.com/content/dam/chevrolet/na/us/english/index/Performance/2027-corvette-zr1x/images/design/2027-zr1x-reveal-des-03-v2.jpg"
+    },
+    {
+      "id": "detail-09",
+      "subject": "Birds-Eye View of the 2027 Chevy Corvette ZR1X Front End",
+      "original_url": "https://www.chevrolet.com/content/dam/chevrolet/na/us/english/index/Performance/2027-corvette-zr1x/images/design/2027-zr1x-reveal-des-04-v2.jpg"
+    },
+    {
+      "id": "detail-10",
+      "subject": "Birds-Eye View of the 2027 Chevy Corvette ZR1X Full Length Body",
+      "original_url": "https://www.chevrolet.com/content/dam/chevrolet/na/us/english/index/Performance/2027-corvette-zr1x/images/design/2027-zr1x-reveal-des-05-v3.jpg"
+    },
+    {
+      "id": "detail-11",
+      "subject": "A Close-Up of Blue Leather Performance Seats Inside the Chevy Corvette ZR1X Featuring Perforated Upholstery, Contrast Stitching, and an Embossed Corvette Logo on the Headrest.",
+      "original_url": "https://www.chevrolet.com/content/dam/chevrolet/na/us/english/index/Performance/2027-corvette-zr1x/images/design/2027-zr1x-reveal-seats-modal.png"
+    },
+    {
+      "id": "detail-12",
+      "subject": "A Close-Up of a Black Multi-Spoke Performance Wheel on the Chevy Corvette ZR1X Featuring Cross-Drilled Brake Rotors, a Red Brake Caliper, and a Corvette Center Cap.",
+      "original_url": "https://www.chevrolet.com/content/dam/chevrolet/na/us/english/index/Performance/2027-corvette-zr1x/images/design/v2/2027-zr1x-reveal-wheels-modal.png"
+    },
+    {
+      "id": "detail-13",
+      "subject": "2027 Chevy Corvette ZR1X Engine",
+      "original_url": "https://www.chevrolet.com/content/dam/chevrolet/na/us/english/index/Performance/2027-corvette-zr1x/images/gallery-preview/2027-zr1x-reveal-gallery-preview-01.png"
+    },
+    {
+      "id": "detail-14",
+      "subject": "A Close-Up of the ZR1X Badge on the Rear Body Panel of a Silver Chevy Corvette ZR1X with Sharp Body Lines and Subtle Studio Lighting.",
+      "original_url": "https://www.chevrolet.com/content/dam/chevrolet/na/us/english/index/Performance/2027-corvette-zr1x/images/gallery-preview/v2/2027-zr1x-reveal-gallery-preview-02-v2.png"
+    },
+    {
+      "id": "detail-15",
+      "subject": "A Close-Up of a Black Carbon Fiber Performance Wheel Hub on the Chevy Corvette ZR1X Featuring a Corvette Crossed Flags Emblem at the Center Surrounded by Glossy Lug Nuts and Textured Spokes.",
+      "original_url": "https://www.chevrolet.com/content/dam/chevrolet/na/us/english/index/Performance/2027-corvette-zr1x/images/gallery-preview/2027-zr1x-reveal-gallery-preview-03.png"
+    },
+    {
+      "id": "detail-16",
+      "subject": "Front End and Headlight on the 2027 Chevy Corvette ZR1X",
+      "original_url": "https://www.chevrolet.com/content/dam/chevrolet/na/us/english/index/Performance/2027-corvette-zr1x/images/gallery-preview/2027-zr1x-reveal-gallery-preview-04.png"
+    },
+    {
+      "id": "detail-17",
+      "subject": "Close-Up of Headrest Logo Inside the 2027 Chevy Corvette ZR1X",
+      "original_url": "https://www.chevrolet.com/content/dam/chevrolet/na/us/english/index/Performance/2027-corvette-zr1x/images/gallery-preview/v2/2027-zr1x-reveal-gallery-preview-01.png"
+    },
+    {
+      "id": "detail-18",
+      "subject": "A Close-Up of a Digital Driver Display Inside the Chevy Corvette ZR1X Showing a Curved Screen with Driving Information, a Central Tachometer, and Carbon Fiber Trim with Blue Ambient Lighting.",
+      "original_url": "https://www.chevrolet.com/content/dam/chevrolet/na/us/english/index/Performance/2027-corvette-zr1x/images/gallery-preview/v2/2027-zr1x-reveal-gallery-preview-02.png"
+    },
+    {
+      "id": "detail-19",
+      "subject": "A Close-Up of a Speaker Grille Inside the Chevy Corvette ZR1X Featuring Perforated Metal Integrated into a Blue Leather Door Panel with Subtle Stitching and Soft Lighting.",
+      "original_url": "https://www.chevrolet.com/content/dam/chevrolet/na/us/english/index/Performance/2027-corvette-zr1x/images/gallery-preview/v2/2027-zr1x-reveal-gallery-preview-03.png"
+    },
+    {
+      "id": "detail-20",
+      "subject": "2027 Chevy Corvette ZR1X Interior Center Console",
+      "original_url": "https://www.chevrolet.com/content/dam/chevrolet/na/us/english/index/Performance/2027-corvette-zr1x/images/gallery-preview/v2/2027-zr1x-reveal-gallery-preview-04.png"
+    },
+    {
+      "id": "detail-21",
+      "subject": "2027 Chevy Corvette ZR1X Racing Around a Bend on a Racetrack",
+      "original_url": "https://www.chevrolet.com/content/dam/chevrolet/na/us/english/index/Performance/2027-corvette-zr1x/images/performance/2027-zr1x-reveal-perf-xs-02.jpg"
+    },
+    {
+      "id": "detail-22",
+      "subject": "A Gloved Worker Assembles a Chevy Engine With Exposed Metal Components and Hoses on a Factory Assembly Line.",
+      "original_url": "https://www.chevrolet.com/content/dam/chevrolet/na/us/english/index/Performance/2027-corvette-zr1x/images/performance/v3/2027-zr1x-perf-engine-build-program.png"
+    },
+    {
+      "id": "detail-23",
+      "subject": "Close-Up of Rims and Tires on the 2027 Chevy Corvette ZR1X",
+      "original_url": "https://www.chevrolet.com/content/dam/chevrolet/na/us/english/index/Performance/2027-corvette-zr1x/images/performance/2027-zr1x-reveal-perf-03-v2.jpg"
+    },
+    {
+      "id": "detail-24",
+      "subject": "Rear End View of the 2027 Chevy Corvette ZR1X Pulling Out of a Warehouse",
+      "original_url": "https://www.chevrolet.com/content/dam/chevrolet/na/us/english/index/Performance/2027-corvette-zr1x/images/performance/2027-zr1x-reveal-perf-04-v3.jpg"
+    },
+    {
+      "id": "detail-25",
+      "subject": "Two 2027 Chevy Corvette ZR1Xs Racing on a Track",
+      "original_url": "https://www.chevrolet.com/content/dam/chevrolet/na/us/english/index/Performance/2027-corvette-zr1x/images/performance/2027-zr1x-reveal-perf-fs-04-v2.jpg"
+    },
+    {
+      "id": "detail-26",
+      "subject": "2027 Chevy Corvette ZR1X Steering Wheel",
+      "original_url": "https://www.chevrolet.com/content/dam/chevrolet/na/us/english/index/Performance/2027-corvette-zr1x/images/tech/2027-zr1x-reveal-tech-xs-02-v2.jpg"
+    },
+    {
+      "id": "detail-27",
+      "subject": "A Close-Up of a Digital Instrument Cluster Inside the Chevy Corvette ZR1X Displaying Driving Information on a Wide Screen with Blue Graphics and a Red Dashboard Surround.",
+      "original_url": "https://www.chevrolet.com/content/dam/chevrolet/na/us/english/index/Performance/2027-corvette-zr1x/images/performance/my27-gs-tech-2-retouched.png"
+    },
+    {
+      "id": "detail-28",
+      "subject": "A Close-Up of the Center Console Inside the Chevy Corvette ZR1X Featuring Drive Mode Buttons, Dual Cup Holders, and Red Interior Trim with the Text \u201cDrive Modes\u201d Visible in the Lower Corner.",
+      "original_url": "https://www.chevrolet.com/content/dam/chevrolet/na/us/english/index/Performance/2027-corvette-zr1x/images/performance/2027-zr1x-reveal-drive-modes-modal-retouched.png"
+    },
+    {
+      "id": "detail-29",
+      "subject": "An Orange Chevy Corvette ZR1X Driving on a Paved Track with Smooth Body Lines, Low Profile Stance, and Green Grass Along the Roadside.",
+      "original_url": "https://www.chevrolet.com/content/dam/chevrolet/na/us/english/index/Performance/2027-corvette-zr1x/images/performance/2027-zr1x-reveal-pdr-modal.png"
+    },
+    {
+      "id": "detail-30",
+      "subject": "A Close-Up of the Performance Traction Management Interface on the Chevy Corvette ZR1X Displaying \u201cSport\u201d Mode on a Digital Screen with the Text \u201cPerformance Traction Management\u201d Visible Along the Side.",
+      "original_url": "https://www.chevrolet.com/content/dam/chevrolet/na/us/english/index/Performance/2027-corvette-zr1x/images/performance/2027-zr1x-ptm-modal.png"
+    },
+    {
+      "id": "detail-31",
+      "subject": "Interview portrait",
+      "original_url": "https://www.chevrolet.com/content/dam/chevrolet/na/us/english/index/Performance/2027-corvette-zr1x/images/intro/2027-zr1x-reveal-quote2-01.png"
+    },
+    {
+      "id": "detail-32",
+      "subject": "ZR1X 3LZ Convertible in Sebring Orange Tintcoat (extra-cost color) with available ZR1 Carbon Fiber Aero Package and other available features; ZR1X 3LZ Coupe in Blade Silver Metallic with available features",
+      "original_url": "https://www.chevrolet.com/content/dam/chevrolet/na/us/english/index/Performance/2027-corvette-zr1x/images/performance/2026-zr1x-reveal-corv-track.jpg"
+    },
+    {
+      "id": "cabin-front",
+      "subject": "Jet Black cabin panorama, front face",
+      "original_url": "https://www.chevrolet.com/content/dam/chevrolet/na/us/english/index/Performance/2027-corvette-zr1x/colorizer/trims/3lz/interior/panorama-models/hte/v2/pano_f.png"
+    },
+    {
+      "id": "cabin-back",
+      "subject": "Jet Black cabin panorama, back face",
+      "original_url": "https://www.chevrolet.com/content/dam/chevrolet/na/us/english/index/Performance/2027-corvette-zr1x/colorizer/trims/3lz/interior/panorama-models/hte/v2/pano_b.png"
+    },
+    {
+      "id": "cabin-top",
+      "subject": "Jet Black cabin panorama, top face",
+      "original_url": "https://www.chevrolet.com/content/dam/chevrolet/na/us/english/index/Performance/2027-corvette-zr1x/colorizer/trims/3lz/interior/panorama-models/hte/v2/pano_u.png"
+    },
+    {
+      "id": "cabin-bottom",
+      "subject": "Jet Black cabin panorama, bottom face",
+      "original_url": "https://www.chevrolet.com/content/dam/chevrolet/na/us/english/index/Performance/2027-corvette-zr1x/colorizer/trims/3lz/interior/panorama-models/hte/v2/pano_d.png"
+    },
+    {
+      "id": "cabin-left",
+      "subject": "Jet Black cabin panorama, left face",
+      "original_url": "https://www.chevrolet.com/content/dam/chevrolet/na/us/english/index/Performance/2027-corvette-zr1x/colorizer/trims/3lz/interior/panorama-models/hte/v2/pano_l.png"
+    },
+    {
+      "id": "cabin-right",
+      "subject": "Jet Black cabin panorama, right face",
+      "original_url": "https://www.chevrolet.com/content/dam/chevrolet/na/us/english/index/Performance/2027-corvette-zr1x/colorizer/trims/3lz/interior/panorama-models/hte/v2/pano_r.png"
+    },
+    {
+      "id": "press-01",
+      "subject": "A Top-Down Three-Quarter View of a Silver Chevy Corvette ZR1X Showcasing Sculpted Aerodynamic Body Lines, a Vented Engine Cover, and Black Performance Wheels on a Dark Studio Floor.",
+      "original_url": "https://www.chevrolet.com/content/dam/chevrolet/na/us/english/index/Performance/2027-corvette-zr1x/images/gallery/ext/2027-zr1x-gallery-01.jpg"
+    },
+    {
+      "id": "press-02",
+      "subject": "2027 Chevy Corvette ZR1X in Blade Silver Metallic",
+      "original_url": "https://www.chevrolet.com/content/dam/chevrolet/na/us/english/index/Performance/2027-corvette-zr1x/images/gallery/ext/2027-zr1x-gallery-02.jpg"
+    },
+    {
+      "id": "press-03",
+      "subject": "2027 Chevy Corvette ZR1X Badging on the Exterior Side Panel",
+      "original_url": "https://www.chevrolet.com/content/dam/chevrolet/na/us/english/index/Performance/2027-corvette-zr1x/images/gallery/ext/2027-zr1x-gallery-03.jpg"
+    },
+    {
+      "id": "press-04",
+      "subject": "Front End and Headlight on the 2027 Chevy Corvette ZR1X",
+      "original_url": "https://www.chevrolet.com/content/dam/chevrolet/na/us/english/index/Performance/2027-corvette-zr1x/images/gallery/ext/2027-zr1x-gallery-04.jpg"
+    },
+    {
+      "id": "press-05",
+      "subject": "Worms-Eye View of the 2027 Chevy Corvette ZR1X in Blade Silver Metallic",
+      "original_url": "https://www.chevrolet.com/content/dam/chevrolet/na/us/english/index/Performance/2027-corvette-zr1x/images/gallery/ext/2027-zr1-gallery-05.jpg"
+    },
+    {
+      "id": "press-06",
+      "subject": "2027 Chevy Corvette ZR1X in Blade Silver Metallic Parked in a Warehouse",
+      "original_url": "https://www.chevrolet.com/content/dam/chevrolet/na/us/english/index/Performance/2027-corvette-zr1x/images/gallery/ext/2026-zr1-gallery-06.jpg"
+    },
+    {
+      "id": "press-07",
+      "subject": "ZR1X 3LZ Coupe in Blade Silver Metallic with available features",
+      "original_url": "https://www.chevrolet.com/content/dam/chevrolet/na/us/english/index/Performance/2027-corvette-zr1x/images/gallery/ext/2026-zr1-gallery-07.jpg"
+    },
+    {
+      "id": "press-08",
+      "subject": "Close-Up of Rims and Tires on the 2027 Chevy Corvette ZR1X",
+      "original_url": "https://www.chevrolet.com/content/dam/chevrolet/na/us/english/index/Performance/2027-corvette-zr1x/images/gallery/ext/2027-zr1-gallery-08.jpg"
+    },
+    {
+      "id": "press-09",
+      "subject": "2027 Chevy Corvette ZR1X Parked on a Racetrack",
+      "original_url": "https://www.chevrolet.com/content/dam/chevrolet/na/us/english/index/Performance/2027-corvette-zr1x/images/gallery/ext/2026-zr1x-gallery-09.jpg"
+    },
+    {
+      "id": "press-10",
+      "subject": "ZR1X 3LZ Coupe in Blade Silver Metallic with available features",
+      "original_url": "https://www.chevrolet.com/content/dam/chevrolet/na/us/english/index/Performance/2027-corvette-zr1x/images/gallery/ext/2026-zr1x-gallery-10.jpg"
+    },
+    {
+      "id": "press-11",
+      "subject": "ZR1X 3LZ Coupe in Blade Silver Metallic with available features",
+      "original_url": "https://www.chevrolet.com/content/dam/chevrolet/na/us/english/index/Performance/2027-corvette-zr1x/images/gallery/ext/2026-zr1-gallery-11.jpg"
+    },
+    {
+      "id": "press-12",
+      "subject": "Carbon-fiber hatch intakes draw in cold air for improved engine performance (coupe only)",
+      "original_url": "https://www.chevrolet.com/content/dam/chevrolet/na/us/english/index/Performance/2027-corvette-zr1x/images/gallery/ext/2026-zr1-gallery-12.jpg"
+    },
+    {
+      "id": "press-13",
+      "subject": "2027 Chevy Corvette ZR1X Parked on a Racetrack",
+      "original_url": "https://www.chevrolet.com/content/dam/chevrolet/na/us/english/index/Performance/2027-corvette-zr1x/images/gallery/ext/2026-zr1-gallery-13.jpg"
+    },
+    {
+      "id": "press-14",
+      "subject": "ZR1X 3LZ Coupe in Blade Silver Metallic with available features.; ZR1X 3LZ Convertible in Sebring Orange Tintcoat (extra-cost color) with available ZR1 Carbon Fiber Aero Package and other available features",
+      "original_url": "https://www.chevrolet.com/content/dam/chevrolet/na/us/english/index/Performance/2027-corvette-zr1x/images/gallery/ext/2026-zr1-gallery-14.jpg"
+    },
+    {
+      "id": "press-15",
+      "subject": "ZR1X 3LZ Convertible in Sebring Orange Tintcoat (extra-cost color) with available ZR1 Carbon Fiber Aero Package and other available features; ZR1X 3LZ Coupe in Blade Silver Metallic with available features",
+      "original_url": "https://www.chevrolet.com/content/dam/chevrolet/na/us/english/index/Performance/2027-corvette-zr1x/images/gallery/ext/2026-zr1-gallery-15.jpg"
+    },
+    {
+      "id": "press-16",
+      "subject": "ZR1X 3LZ Convertible in Sebring Orange Tintcoat (extra-cost color) with available ZR1 Carbon Fiber Aero Package and other available features; ZR1X 3LZ Coupe in Blade Silver Metallic with available features",
+      "original_url": "https://www.chevrolet.com/content/dam/chevrolet/na/us/english/index/Performance/2027-corvette-zr1x/images/gallery/ext/2026-zr1-gallery-16.jpg"
+    },
+    {
+      "id": "press-17",
+      "subject": "ZR1X 3LZ Convertible in Sebring Orange Tintcoat (extra-cost color) with available available features",
+      "original_url": "https://www.chevrolet.com/content/dam/chevrolet/na/us/english/index/Performance/2027-corvette-zr1x/images/gallery/ext/2026-zr1-gallery-17.jpg"
+    },
+    {
+      "id": "press-18",
+      "subject": "20-spoke Sterling Silver-painted forged aluminum wheels",
+      "original_url": "https://www.chevrolet.com/content/dam/chevrolet/na/us/english/index/Performance/2027-corvette-zr1x/images/gallery/ext/2026-zr1-gallery-18.jpg"
+    },
+    {
+      "id": "press-19",
+      "subject": "Available Chrome Exterior Badge Package",
+      "original_url": "https://www.chevrolet.com/content/dam/chevrolet/na/us/english/index/Performance/2027-corvette-zr1x/images/gallery/ext/2026-zr1-gallery-19.jpg"
+    },
+    {
+      "id": "press-20",
+      "subject": "ZR1X 3LZ Convertible in Sebring Orange Tintcoat (extra-cost color) with available ZR1 Carbon Fiber Aero Package and other available features",
+      "original_url": "https://www.chevrolet.com/content/dam/chevrolet/na/us/english/index/Performance/2027-corvette-zr1x/images/gallery/ext/2026-zr1-gallery-20.jpg"
+    },
+    {
+      "id": "press-21",
+      "subject": "ZR1X 3LZ Convertible in Sebring Orange Tintcoat (extra-cost color) with available ZR1 Carbon Fiber Aero Package and other available features",
+      "original_url": "https://www.chevrolet.com/content/dam/chevrolet/na/us/english/index/Performance/2027-corvette-zr1x/images/gallery/ext/2026-zr1-gallery-21.jpg"
+    },
+    {
+      "id": "press-22",
+      "subject": "ZR1X 3LZ Convertible in Black with available ZR1 Carbon Fiber Aero Package and other available features",
+      "original_url": "https://www.chevrolet.com/content/dam/chevrolet/na/us/english/index/Performance/2027-corvette-zr1x/images/gallery/ext/2026-zr1-gallery-22.jpg"
+    },
+    {
+      "id": "press-23",
+      "subject": "ZR1X 3LZ Convertible in Black with available ZR1 Carbon Fiber Aero Package and other available features",
+      "original_url": "https://www.chevrolet.com/content/dam/chevrolet/na/us/english/index/Performance/2027-corvette-zr1x/images/gallery/ext/2026-zr1-gallery-23.jpg"
+    },
+    {
+      "id": "press-24",
+      "subject": "Visible carbon-fiber high wing spoiler available with ZR1 Carbon Fiber Aero Package",
+      "original_url": "https://www.chevrolet.com/content/dam/chevrolet/na/us/english/index/Performance/2027-corvette-zr1x/images/gallery/ext/2026-zr1-gallery-24.jpg"
+    },
+    {
+      "id": "press-25",
+      "subject": "ZR1X 3LZ Convertible in Black with available ZR1Carbon Fiber Aero Package and other available features",
+      "original_url": "https://www.chevrolet.com/content/dam/chevrolet/na/us/english/index/Performance/2027-corvette-zr1x/images/gallery/ext/2026-zr1-gallery-25.jpg"
+    },
+    {
+      "id": "press-26",
+      "subject": "ZR1X 3LZ Convertible in Black with available ZR1 Carbon Fiber Aero Package and other available features",
+      "original_url": "https://www.chevrolet.com/content/dam/chevrolet/na/us/english/index/Performance/2027-corvette-zr1x/images/gallery/ext/2026-zr1-gallery-26.jpg"
+    },
+    {
+      "id": "press-27",
+      "subject": "Overhead front of the black ZR1X with a red stripe",
+      "original_url": "https://www.chevrolet.com/content/dam/chevrolet/na/us/english/index/Performance/2027-corvette-zr1x/images/gallery/ext/2026-zr1-gallery-27.jpg"
+    },
+    {
+      "id": "press-28",
+      "subject": "2027 Chevy Corvette ZR1X Racing Around a Bend on a Racetrack",
+      "original_url": "https://www.chevrolet.com/content/dam/chevrolet/na/us/english/index/Performance/2027-corvette-zr1x/images/gallery/ext/v2/2027-zr1x-gallery-07.png"
+    },
+    {
+      "id": "press-29",
+      "subject": "A Silver Chevy Corvette ZR1X Driving on an Open Test Track With Black Wheels Surrounded by Guardrails and a Tree-Lined Background.",
+      "original_url": "https://www.chevrolet.com/content/dam/chevrolet/na/us/english/index/Performance/2027-corvette-zr1x/images/gallery/ext/v2/2027-zr1x-gallery-10.png"
+    },
+    {
+      "id": "press-30",
+      "subject": "2027 Chevy Corvette ZR1X Engine",
+      "original_url": "https://www.chevrolet.com/content/dam/chevrolet/na/us/english/index/Performance/2027-corvette-zr1x/images/gallery/int/2026-zr1x-gallery-int-08.jpg"
+    },
+    {
+      "id": "press-31",
+      "subject": "2027 Chevy Corvette ZR1X Racing Around a Bend on a Racetrack",
+      "original_url": "https://www.chevrolet.com/content/dam/chevrolet/na/us/english/index/Performance/2027-corvette-zr1x/images/gallery/ext/v2/2027-zr1x-gallery-11.png"
+    },
+    {
+      "id": "press-32",
+      "subject": "2027 Chevy Corvette ZR1X with Santorini Blue / Jet Black Interior",
+      "original_url": "https://www.chevrolet.com/content/dam/chevrolet/na/us/english/index/Performance/2027-corvette-zr1x/images/gallery/int/2027-zr1x-gallery-int-01.jpg"
+    },
+    {
+      "id": "press-33",
+      "subject": "2027 Chevy Corvette ZR1X with Santorini Blue / Jet Black interior",
+      "original_url": "https://www.chevrolet.com/content/dam/chevrolet/na/us/english/index/Performance/2027-corvette-zr1x/images/gallery/int/2027-zr1x-gallery-int-02.jpg"
+    },
+    {
+      "id": "press-34",
+      "subject": "2027 Chevy Corvette ZR1X Interior Dashboard View",
+      "original_url": "https://www.chevrolet.com/content/dam/chevrolet/na/us/english/index/Performance/2027-corvette-zr1x/images/gallery/int/2027-zr1x-gallery-int-03.jpg"
+    },
+    {
+      "id": "press-35",
+      "subject": "2027 Chevy Corvette ZR1X with Santorini Blue / Jet Black Interior",
+      "original_url": "https://www.chevrolet.com/content/dam/chevrolet/na/us/english/index/Performance/2027-corvette-zr1x/images/gallery/int/2026-zr1x-gallery-int-04.jpg"
+    },
+    {
+      "id": "press-36",
+      "subject": "2027 Chevy Corvette ZR1X Interior Door Panel Audio Speaker",
+      "original_url": "https://www.chevrolet.com/content/dam/chevrolet/na/us/english/index/Performance/2027-corvette-zr1x/images/gallery/int/2027-zr1x-gallery-int-05.jpg"
+    },
+    {
+      "id": "press-37",
+      "subject": "2027 Chevy Corvette ZR1X interior Driver's Side POV",
+      "original_url": "https://www.chevrolet.com/content/dam/chevrolet/na/us/english/index/Performance/2027-corvette-zr1x/images/gallery/int/2027-zr1x-gallery-int-06.jpg"
+    },
+    {
+      "id": "press-38",
+      "subject": "2027 Chevy Corvette ZR1X Interior Center Console",
+      "original_url": "https://www.chevrolet.com/content/dam/chevrolet/na/us/english/index/Performance/2027-corvette-zr1x/images/gallery/int/2027-zr1x-gallery-int-07.jpg"
+    },
+    {
+      "id": "press-39",
+      "subject": "2027 Chevy Corvette ZR1X with Asymmetrical Adrenaline Red / Jet Black Interior",
+      "original_url": "https://www.chevrolet.com/content/dam/chevrolet/na/us/english/index/Performance/2027-corvette-zr1x/images/gallery/int/2027-zr1x-gallery-int-09.jpg"
+    },
+    {
+      "id": "press-40",
+      "subject": "2027 Chevy Corvette ZR1X Seating with Asymmetrical Adrenaline Red / Jet Black Interior",
+      "original_url": "https://www.chevrolet.com/content/dam/chevrolet/na/us/english/index/Performance/2027-corvette-zr1x/images/gallery/int/2027-zr1x-gallery-int-10.jpg"
+    },
+    {
+      "id": "press-41",
+      "subject": "2027 Chevy Corvette ZR1X with Asymmetrical Adrenaline Red / Jet Black Interior",
+      "original_url": "https://www.chevrolet.com/content/dam/chevrolet/na/us/english/index/Performance/2027-corvette-zr1x/images/gallery/int/2027-zr1x-gallery-int-11.jpg"
+    },
+    {
+      "id": "press-42",
+      "subject": "2027 Chevy Corvette ZR1X Interior Driver Mode Selector",
+      "original_url": "https://www.chevrolet.com/content/dam/chevrolet/na/us/english/index/Performance/2027-corvette-zr1x/images/gallery/int/2027-zr1x-gallery-int-12.jpg"
+    },
+    {
+      "id": "gm-engine",
+      "subject": "LT7 twin-turbo V8 and charge-air plumbing",
+      "original_url": "https://gm-techlink.com/wp-content/uploads/2026/01/F09-ZR1X-1.png"
+    },
+    {
+      "id": "gm-axles",
+      "subject": "Hybrid powertrain in plan",
+      "original_url": "https://gm-techlink.com/wp-content/uploads/2026/01/F10-ZR1X-3.png"
+    },
+    {
+      "id": "gm-battery",
+      "subject": "High-voltage battery in the center tunnel",
+      "original_url": "https://gm-techlink.com/wp-content/uploads/2026/01/F11-ZR1X-2.png"
+    },
+    {
+      "id": "gm-brake",
+      "subject": "Alcon front brake and carbon-ceramic rotor",
+      "original_url": "https://gm-techlink.com/wp-content/uploads/2026/01/F12-ZR1X-10.jpg"
+    },
+    {
+      "id": "ring-front",
+      "subject": "N\u00fcrburgring ZR1X front three-quarter",
+      "original_url": "https://news.chevrolet.com/content/dam/Media/images/US/Release_Images/2025/jul/0731-Nurburgring/Nurburgring_CattellZR1X.jpg"
+    },
+    {
+      "id": "ring-high",
+      "subject": "N\u00fcrburgring ZR1X high front three-quarter",
+      "original_url": "https://news.chevrolet.com/content/dam/Media/images/US/Release_Images/2025/jul/0731-Nurburgring/Nurburgring_Three2.jpg"
+    },
+    {
+      "id": "ring-rear",
+      "subject": "N\u00fcrburgring ZR1X on track from the rear",
+      "original_url": "https://news.chevrolet.com/content/dam/Media/images/US/Release_Images/2025/jul/0731-Nurburgring/Nurburgring_ZR1Xtrack.jpg"
+    }
+  ],
+  "overview": "30 turntable angles at 1500 \u00d7 750 and seven Chevrolet studio images at 2500 \u00d7 1407. The average silhouette overlap is 96.7% on the turntable and 96.4% on the larger images. The studio also offers 15 component, cabin and alternate-configuration comparisons.",
+  "counts": {
+    "verified": 27,
+    "limited": 17,
+    "fix": 8,
+    "pending": 0,
+    "excluded": 40
+  },
+  "archive_only": 40,
+  "coverage": "27 verified for the visible features noted, 8 with further fitting needed, 17 limited comparisons and 0 pending; 40 further images are retained as reference material."
+}
