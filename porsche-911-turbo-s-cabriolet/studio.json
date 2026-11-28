@@ -23,112 +23,6 @@
     0.906,
     1.1
   ],
-  "parts": [
-    {
-      "node": "Bodywork",
-      "offset": [
-        0,
-        0.1,
-        0
-      ]
-    },
-    {
-      "node": "Soft_Top",
-      "offset": [
-        0,
-        1.27,
-        -0.24
-      ]
-    },
-    {
-      "node": "Cabin",
-      "offset": [
-        0,
-        0.67,
-        0
-      ]
-    },
-    {
-      "node": "Rear_Spoiler",
-      "offset": [
-        0,
-        0.64,
-        -0.68
-      ]
-    },
-    {
-      "node": "Front_Left_Wheel",
-      "offset": [
-        0.75,
-        -0.04,
-        0.09
-      ]
-    },
-    {
-      "node": "Front_Right_Wheel",
-      "offset": [
-        -0.75,
-        -0.04,
-        0.09
-      ]
-    },
-    {
-      "node": "Rear_Left_Wheel",
-      "offset": [
-        0.75,
-        -0.04,
-        -0.09
-      ]
-    },
-    {
-      "node": "Rear_Right_Wheel",
-      "offset": [
-        -0.75,
-        -0.04,
-        -0.09
-      ]
-    },
-    {
-      "node": "Boxer_Engine",
-      "offset": [
-        0,
-        0.28,
-        -1.65
-      ]
-    },
-    {
-      "node": "Left_eTurbo",
-      "offset": [
-        0.42,
-        0.28,
-        -1.65
-      ]
-    },
-    {
-      "node": "Right_eTurbo",
-      "offset": [
-        -0.42,
-        0.28,
-        -1.65
-      ]
-    },
-    {
-      "node": "PDK_Hybrid",
-      "offset": [
-        0,
-        0.35,
-        -1.26
-      ]
-    },
-    {
-      "node": "PDK_Motor_Envelope",
-      "offset": [
-        0,
-        0.35,
-        -1.26
-      ]
-    }
-  ],
   "actions": [
     {
       "label": "Lower roof and windows",
@@ -199,7 +93,8 @@
         1920,
         1080
       ],
-      "source": "https://prs.porsche.com/iod/image/US/992652/1/N4Igxg9gdgZglgcxALlAQynAtmgLnaAZxQG0BdAGnDSwFMAnNFUOAExRFoA9cBaAGwgB3XjHrQ+-WjFwgqEAA74izEADc09OBlnIQrWoQDWuRSAC+5qrShq44qHSi6W7PQHUAFnFwMIELABBfgVPJnklAihiVEsqfkRPfCgkVBA2DgARQIBNORBFZWjmOJAFcVYAVzAXdLcQAE4GgCYANgBWZvzCqJjQSFhEUhAARkD8kYBxAA4JgDV8gGYAGQAWfNWAMVaNyYAFDYBVACF89umALTOADWv81s2R+4BJRfyAdkDl-Ia995+LgBRfKAgCyXSokym+WecwhIGe7jeVGWkwAKpkAErfKgARRGACl8rjMQ1iYdZlQ5gBheFzK5UC4jADKIEo4AglWc9AAnhxDqyqFgIAZ+DlaJoUM0AAzNd6WKwgQi0XDJBB9EAwCD0HC6MopfK4RjRBSaGy6I2VWiWIA?clientId=icc"
+      "source": "https://prs.porsche.com/iod/image/US/992652/1/N4Igxg9gdgZglgcxALlAQynAtmgLnaAZxQG0BdAGnDSwFMAnNFUOAExRFoA9cBaAGwgB3XjHrQ+-WjFwgqEAA74izEADc09OBlnIQrWoQDWuRSAC+5qrShq44qHSi6W7PQHUAFnFwMIELABBfgVPJnklAihiVEsqfkRPfCgkVBA2DgARQIBNORBFZWjmOJAFcVYAVzAXdLcQAE4GgCYANgBWZvzCqJjQSFhEUhAARkD8kYBxAA4JgDV8gGYAGQAWfNWAMVaNyYAFDYBVACF89umALTOADWv81s2R+4BJRfyAdkDl-Ia995+LgBRfKAgCyXSokym+WecwhIGe7jeVGWkwAKpkAErfKgARRGACl8rjMQ1iYdZlQ5gBheFzK5UC4jADKIEo4AglWc9AAnhxDqyqFgIAZ+DlaJoUM0AAzNd6WKwgQi0XDJBB9EAwCD0HC6MopfK4RjRBSaGy6I2VWiWIA?clientId=icc",
+      "steeringDegrees": -19
     },
     {
       "id": "ext-low-rear-left",
@@ -219,7 +114,8 @@
         1920,
         1080
       ],
-      "source": "https://prs.porsche.com/iod/image/US/992652/1/N4Igxg9gdgZglgcxALlAQynAtmgLnaAZxQG0BdAGnDSwFMAnNFUOAExRFoA9cBaAGwgB3XvVpp6A2jFwgqEAA74izEADcJcDLOQhWtQgGtcikAF8zVWlDVx60OlB0t2ugOoALOLgYQIWAEF+BQ8meSUCKGJUCyp+RA98KCRUEDYOABEAgE05EEVlKOZYkAV7VgBXMGc01xAATnqAJgA2AFYmvILI6NBIWERSEABGALzhgHEADnGANTyAZgAZABY8lYAxFvWJgAV1gFUAITy2qYAtU4ANK7yWjeG7gEkFvIB2AKW8+t237-OAKJ5AEAWU6VAmkzyT1m4JATzcryoSwmABUMgAlL5UACKwwAUnkcRj6kSDjMqLMAMJw2aXKjnYYAZRAlHAEAqTnoAE8OAcWVQsBB9PxsuJ6CgmgAGJpvCyWECEWi4JIIXogGAQeg4HSlZJ5XCMKIKCTWHSGiq0CxAA?clientId=icc"
+      "source": "https://prs.porsche.com/iod/image/US/992652/1/N4Igxg9gdgZglgcxALlAQynAtmgLnaAZxQG0BdAGnDSwFMAnNFUOAExRFoA9cBaAGwgB3XvVpp6A2jFwgqEAA74izEADcJcDLOQhWtQgGtcikAF8zVWlDVx60OlB0t2ugOoALOLgYQIWAEF+BQ8meSUCKGJUCyp+RA98KCRUEDYOABEAgE05EEVlKOZYkAV7VgBXMGc01xAATnqAJgA2AFYmvILI6NBIWERSEABGALzhgHEADnGANTyAZgAZABY8lYAxFvWJgAV1gFUAITy2qYAtU4ANK7yWjeG7gEkFvIB2AKW8+t237-OAKJ5AEAWU6VAmkzyT1m4JATzcryoSwmABUMgAlL5UACKwwAUnkcRj6kSDjMqLMAMJw2aXKjnYYAZRAlHAEAqTnoAE8OAcWVQsBB9PxsuJ6CgmgAGJpvCyWECEWi4JIIXogGAQeg4HSlZJ5XCMKIKCTWHSGiq0CxAA?clientId=icc",
+      "steeringDegrees": 14
     },
     {
       "id": "ext-low-rear-right",
@@ -239,7 +135,8 @@
         1920,
         1080
       ],
-      "source": "https://prs.porsche.com/iod/image/US/992652/1/N4Igxg9gdgZglgcxALlAQynAtmgLnaAZxQG0BdAGnDSwFMAnNFUOAExRFoA9cBaAGwgB3XvVpp6oxAAtcIKhAAO+IsxAA3CXAxzkIVrUIBrXEpABfc1VpR1cetDpRdLdnoDq0uLgYQIWAEF+RWkmBWUCKGJUSyp+GXwoJFQQNg4AEQCATXkQJRUo5liQRQdWAFcwF1S3EABOOoAmADYAVkbc-Mjo0EhYRFIQAEYA3KGAcQAOMYA1XIBmABkAFlzlgDFmtfGABTWAVQAhXNbJgC0TgA1L3Ob1oduASXncgHYAxdy6ndevs4BRXL-ACyHSo4wmuUeMzBIEe7heVEW4wAKukAEqfKgARSGAClctj0XVCftplQZgBhWEzC5UM5DADKIEo4Ag5Wc9AAnhx9syqFgIAZ+FlxPQUI0AAyNV6WKwgQi0XCJBA9EAwCD0HC6EpJXK4RhRRQSGy6A3lWiWIA?clientId=icc"
+      "source": "https://prs.porsche.com/iod/image/US/992652/1/N4Igxg9gdgZglgcxALlAQynAtmgLnaAZxQG0BdAGnDSwFMAnNFUOAExRFoA9cBaAGwgB3XvVpp6oxAAtcIKhAAO+IsxAA3CXAxzkIVrUIBrXEpABfc1VpR1cetDpRdLdnoDq0uLgYQIWAEF+RWkmBWUCKGJUSyp+GXwoJFQQNg4AEQCATXkQJRUo5liQRQdWAFcwF1S3EABOOoAmADYAVkbc-Mjo0EhYRFIQAEYA3KGAcQAOMYA1XIBmABkAFlzlgDFmtfGABTWAVQAhXNbJgC0TgA1L3Ob1oduASXncgHYAxdy6ndevs4BRXL-ACyHSo4wmuUeMzBIEe7heVEW4wAKukAEqfKgARSGAClctj0XVCftplQZgBhWEzC5UM5DADKIEo4Ag5Wc9AAnhx9syqFgIAZ+FlxPQUI0AAyNV6WKwgQi0XCJBA9EAwCD0HC6EpJXK4RhRRQSGy6A3lWiWIA?clientId=icc",
+      "steeringDegrees": -12
     },
     {
       "id": "ext-high-rear-left",
@@ -259,7 +156,8 @@
         1920,
         1080
       ],
-      "source": "https://prs.porsche.com/iod/image/US/992652/1/N4Igxg9gdgZglgcxALlAQynAtmgLnaAZxQG0BdAGnDSwFMAnNFUOAExRFoA9cBaAC0T9e9Wmnq8ANrRi4QVCAAd8RZiABu4uBjnIQrWoQDWuJSAC+5qrSjq49aHSi6W7PQHVBuBhAhYAgpKK-EwKygRQxKiWVJJC+FBIqCBsHAAi-gCa8iBKKpHMMSCKDqwArmAuKW4gAJy1AEwAbACsDTl5EVGgkLCIpCAAjP45gwDiAByjAGo5AMwAMgAsOUsAYk2rYwAKqwCqAEI5LRMAWscAGhc5TWuDNwCSczkA7P4LObXbL5+nAKI5P4AWXaVDG4xyD2moJAD3czyoCzGABU0gAlD5UACKgwAUjksWjagS9lMqNMAMIw6bnKinQYAZRAlHAEDKznoAE8OHsmVQsBADJJMmJ6CgGgAGBovSxWECEWi4BIIbogGAQeg4XTFRI5XCMSKKcQ2XT6sq0SxAA?clientId=icc"
+      "source": "https://prs.porsche.com/iod/image/US/992652/1/N4Igxg9gdgZglgcxALlAQynAtmgLnaAZxQG0BdAGnDSwFMAnNFUOAExRFoA9cBaAC0T9e9Wmnq8ANrRi4QVCAAd8RZiABu4uBjnIQrWoQDWuJSAC+5qrSjq49aHSi6W7PQHVBuBhAhYAgpKK-EwKygRQxKiWVJJC+FBIqCBsHAAi-gCa8iBKKpHMMSCKDqwArmAuKW4gAJy1AEwAbACsDTl5EVGgkLCIpCAAjP45gwDiAByjAGo5AMwAMgAsOUsAYk2rYwAKqwCqAEI5LRMAWscAGhc5TWuDNwCSczkA7P4LObXbL5+nAKI5P4AWXaVDG4xyD2moJAD3czyoCzGABU0gAlD5UACKgwAUjksWjagS9lMqNMAMIw6bnKinQYAZRAlHAEDKznoAE8OHsmVQsBADJJMmJ6CgGgAGBovSxWECEWi4BIIbogGAQeg4XTFRI5XCMSKKcQ2XT6sq0SxAA?clientId=icc",
+      "steeringDegrees": 15.5
     },
     {
       "id": "ext-low-front-left-wheel",
@@ -368,16 +266,16 @@
       "id": "front-seats",
       "label": "Front seats",
       "position": [
-        -0.44,
-        1.01,
-        0.45
+        -0.2656366965407519,
+        0.9772079573413106,
+        0.39371345368432553
       ],
       "target": [
-        0.015,
-        0.732,
-        -0.49
+        0.12717554164586675,
+        0.7067406490283927,
+        -0.48523249497508114
       ],
-      "fov": 75,
+      "fov": 60.1682253433697,
       "imageSize": [
         1920,
         1080
@@ -388,21 +286,156 @@
       "id": "rear-seats",
       "label": "Rear seats",
       "position": [
-        -0.608,
+        -0.62,
         1.01,
-        -0.676
+        -0.63
       ],
       "target": [
-        0.31,
-        0.654,
-        -0.475
+        0.33,
+        0.58,
+        -0.57
       ],
-      "fov": 85,
+      "fov": 51,
       "imageSize": [
         1920,
         1080
       ],
-      "source": "https://prs.porsche.com/iod/image/US/992652/1/N4Igxg9gdgZglgcxALlAQynAtmgLnaAZxQG0BdAGnDSwFMAnNFUOAExRDilwFp7a09HoQG5iVCAAd8RZiABuguBlwdWtQgGtcUkAF89VWlHlx60OtzlsOAeTSE44kFJlRiqA1QA2iABb4UEionOzIIAAiAIIAmiAS0gTuzF4gkuasAK5gqiE24QCcBQBMAGwArMXxLomyIZCwiKQgAIxR1S0A4gAcHQBq1QDMADIALNWjAGKlE50AChMAqgBC1eXdAFprABrb1aWTLfsAkoPVAOxRw9UFc+c3GwCi1Y8AslVUnV3Vx30fIMcAOpnKjDToAFQiACVrlQAIotABS1ThUIKKMWvSofQAwv8+lsqBsWgBlECUcAQTLcegATw4izJVCwEHU3hiAnoKGKAAZiucDIYQCJcIEEB5QDAIPQcLkQAArSS0JBUXCMdySQTGXIwNDeEQGIA?clientId=icc"
+      "source": "https://prs.porsche.com/iod/image/US/992652/1/N4Igxg9gdgZglgcxALlAQynAtmgLnaAZxQG0BdAGnDSwFMAnNFUOAExRDilwFp7a09HoQG5iVCAAd8RZiABuguBlwdWtQgGtcUkAF89VWlHlx60OtzlsOAeTSE44kFJlRiqA1QA2iABb4UEionOzIIAAiAIIAmiAS0gTuzF4gkuasAK5gqiE24QCcBQBMAGwArMXxLomyIZCwiKQgAIxR1S0A4gAcHQBq1QDMADIALNWjAGKlE50AChMAqgBC1eXdAFprABrb1aWTLfsAkoPVAOxRw9UFc+c3GwCi1Y8AslVUnV3Vx30fIMcAOpnKjDToAFQiACVrlQAIotABS1ThUIKKMWvSofQAwv8+lsqBsWgBlECUcAQTLcegATw4izJVCwEHU3hiAnoKGKAAZiucDIYQCJcIEEB5QDAIPQcLkQAArSS0JBUXCMdySQTGXIwNDeEQGIA?clientId=icc",
+      "hide": [
+        "Passenger_Seat"
+      ]
+    },
+    {
+      "id": "provence-front",
+      "label": "Provence \u00b7 front three-quarter",
+      "position": [
+        4.0729782,
+        0.9642226,
+        6.7134132
+      ],
+      "target": [
+        -0.2075388,
+        1.3810755,
+        0.1859792
+      ],
+      "up": [
+        0.0080534,
+        0.9982567,
+        0.0584691
+      ],
+      "fov": 17.625988747616226,
+      "imageSize": [
+        1440,
+        773
+      ],
+      "source": "https://newsroom.porsche.com/dam/jcr:4a13720d-b448-4a18-b892-2beb7f645795/911%20Turbo%20S%20Cabrio%20Provence%2017.jpg",
+      "actions": [
+        "Lower roof and windows"
+      ],
+      "fullFrameFov": 38.89490687619371,
+      "principalPoint": [
+        751.3043478260869,
+        119.72769759045356
+      ]
+    },
+    {
+      "id": "provence-rear",
+      "label": "Provence \u00b7 rear three-quarter",
+      "position": [
+        -3.7778386,
+        0.8780088,
+        -5.9983792
+      ],
+      "target": [
+        -0.104171,
+        1.0919575,
+        0.0459006
+      ],
+      "up": [
+        -0.0471104,
+        0.9988671,
+        -0.0067235
+      ],
+      "fov": 18.45087871534535,
+      "imageSize": [
+        1440,
+        737
+      ],
+      "source": "https://newsroom.porsche.com/dam/jcr:06120bf6-5030-43e9-8aa9-a0bac2c14930/911%20Turbo%20S%20Cabrio%20Provence%2018.jpg",
+      "actions": [
+        "Lower roof and windows"
+      ],
+      "fullFrameFov": 39.42005255386418,
+      "principalPoint": [
+        881.9277108433735,
+        191.40542143932828
+      ]
+    },
+    {
+      "id": "ice-grey-profile",
+      "label": "Ice Grey \u00b7 open profile",
+      "position": [
+        -9.1324036,
+        1.4170324,
+        0.1630538
+      ],
+      "target": [
+        0.0069359,
+        1.3384925,
+        0.0460514
+      ],
+      "up": [
+        0.0089588,
+        0.999544,
+        0.0288353
+      ],
+      "fov": 13.507789282440468,
+      "imageSize": [
+        1440,
+        578
+      ],
+      "source": "https://newsroom.porsche.com/dam/jcr:a90b3307-fcda-448e-ad91-b4fdb9427d66/911%20Turbo%20S%20Cabrio%20Ice%20Grey%20Metallic%2020.jpg",
+      "actions": [
+        "Lower roof and windows"
+      ],
+      "fullFrameFov": 26.673157248747824,
+      "principalPoint": [
+        740.5714285714284,
+        113.6459074733096
+      ]
+    },
+    {
+      "id": "provence-overhead",
+      "label": "Provence \u00b7 overhead",
+      "position": [
+        1.4754837,
+        18.4927428,
+        -4.1820157
+      ],
+      "target": [
+        1.6237523,
+        0.6418467,
+        0.117739
+      ],
+      "up": [
+        0.0195,
+        0.2342817,
+        0.9719732
+      ],
+      "fov": 19.659545426453054,
+      "imageSize": [
+        1440,
+        1366
+      ],
+      "source": "https://newsroom.porsche.com/dam/jcr:0bc57b5c-ff75-4db8-9964-fa446676e3a5/911%20Turbo%20S%20Cabrio%20Provence%2015.jpg",
+      "actions": [
+        "Lower roof and windows"
+      ],
+      "fullFrameFov": 36.56489038156868,
+      "principalPoint": [
+        361.15755627009645,
+        621.6457627118643
+      ]
     }
   ],
   "review": "review.html",
@@ -470,6 +503,34 @@
       ],
       "note": "Porsche specifies a 286 mm diameter and a 55 mm axial length for the permanent-magnet motor inside the PDK. The solid shows its occupied space. The shaft opening is estimated.",
       "source": "https://newsroom.porsche.com/en/press-kits/pfv-porsche-911-turbo-s/Powertrain.html"
+    },
+    {
+      "id": "running-gear",
+      "label": "Axles, battery and driveline",
+      "direction": [
+        1.1,
+        1.45,
+        1.65
+      ],
+      "show": [
+        "Front_Axle",
+        "Rear_Axle",
+        "Propeller_Shaft",
+        "HV_Battery",
+        "Boxer_Engine",
+        "Left_eTurbo",
+        "Right_eTurbo",
+        "PDK_Hybrid"
+      ],
+      "note": "The front differential connects to the rear transaxle through the propeller shaft. The 400 V battery sits above the front axle. Suspension castings, mounting points and cable ends are approximated from the factory cutaway.",
+      "source": "https://newsroom.porsche.com/en/press-kits/pfv-porsche-911-turbo-s/Powertrain.html"
     }
+  ],
+  "sideSoftboxes": true,
+  "steeringPivots": [
+    "Front_Left_Wheel",
+    "Front_Right_Wheel",
+    "Front_Left_Brake",
+    "Front_Right_Brake"
   ]
 }

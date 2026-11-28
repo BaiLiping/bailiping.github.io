@@ -1,6 +1,6 @@
 {
   "vehicle": "2027 Porsche 911 Turbo S Cabriolet",
-  "revision": "f74af2349a8b3c705d9d28be1a41d6916d183882b2c62388b7de0e2025a08fd1",
+  "revision": "a2bba64b5c0aa570e67e72fa96f59e9fb066bab6ebfecc83abb085cbe8be5d3a",
   "frames": [
     {
       "id": "ext-low-front-left",
@@ -10,14 +10,14 @@
       "width": 1920,
       "height": 1080,
       "credit": "Porsche AG \u00b7 factory configurator",
-      "status": "verified",
-      "note": "The blue fender crowns, oval headlight openings and three lower intakes follow the front three-quarter view. The painted corners above the outer air blades are sharper on the model.",
+      "status": "limited",
+      "note": "The fender crowns carry the lamps above the bonnet, and the two outer intakes flank the central grille. The model has a narrower painted bridge beside the central grille and a lighter reflection across the bonnet.",
       "render": "comparisons/ext-low-front-left.webp",
       "outline": "comparisons/ext-low-front-left-outline.png",
-      "median_px": 5.0,
-      "p95_px": 17.7,
+      "median_px": 4.1,
+      "p95_px": 20.0,
       "reference_span_px": 1464,
-      "measurement": "Visible outline at 1920 \u00d7 1080 \u00b7 median 5.0 px \u00b7 95th percentile 17.7 px (1.21% of the visible reference width)"
+      "measurement": "Visible outline at 1920 \u00d7 1080 \u00b7 median 4.1 px \u00b7 95th percentile 20.0 px (1.37% of the visible reference width)"
     },
     {
       "id": "ext-low-front",
@@ -27,14 +27,14 @@
       "width": 1920,
       "height": 1080,
       "credit": "Porsche AG \u00b7 factory configurator",
-      "status": "verified",
-      "note": "The four-point lights and vertical air blades sit symmetrically around the central radiator. The bumper brow, badge and splitter register separately from the light lenses. The front surface remains fuller near the duct rims.",
+      "status": "limited",
+      "note": "The four optical modules and vertical cooling blades are visible on both sides. The model\u2019s central intake is shallower vertically, and its A-pillars appear thicker in this view.",
       "render": "comparisons/ext-low-front.webp",
       "outline": "comparisons/ext-low-front-outline.png",
-      "median_px": 5.0,
-      "p95_px": 14.6,
+      "median_px": 4.0,
+      "p95_px": 14.3,
       "reference_span_px": 1137,
-      "measurement": "Visible outline at 1920 \u00d7 1080 \u00b7 median 5.0 px \u00b7 95th percentile 14.6 px (1.28% of the visible reference width)"
+      "measurement": "Visible outline at 1920 \u00d7 1080 \u00b7 median 4.0 px \u00b7 95th percentile 14.3 px (1.26% of the visible reference width)"
     },
     {
       "id": "ext-low-side-left",
@@ -45,13 +45,13 @@
       "height": 1080,
       "credit": "Porsche AG \u00b7 factory configurator",
       "status": "verified",
-      "note": "Both center locks, the upper windscreen edge and the black sail panel follow the side profile. The sill-to-door transition and the turbo intake behind the door are less deeply sculpted on the mesh.",
+      "note": "The wheel centers, beltline and crown of the raised roof register in profile. The quarter intake has a narrower opening, and the rendered door shows a weaker reflection through the center of the panel.",
       "render": "comparisons/ext-low-side-left.webp",
       "outline": "comparisons/ext-low-side-left-outline.png",
       "median_px": 3.6,
-      "p95_px": 18.0,
+      "p95_px": 24.2,
       "reference_span_px": 1583,
-      "measurement": "Visible outline at 1920 \u00d7 1080 \u00b7 median 3.6 px \u00b7 95th percentile 18.0 px (1.14% of the visible reference width)"
+      "measurement": "Visible outline at 1920 \u00d7 1080 \u00b7 median 3.6 px \u00b7 95th percentile 24.2 px (1.53% of the visible reference width)"
     },
     {
       "id": "ext-low-side-right",
@@ -62,13 +62,13 @@
       "height": 1080,
       "credit": "Porsche AG \u00b7 factory configurator",
       "status": "verified",
-      "note": "The front and rear wheel openings, low fabric crown and spoiler position agree in profile. The trailing bumper and rear quarter are slightly shorter in projection.",
+      "note": "The axle positions and tire diameters register from the opposite side. The real rocker turns up behind the door and the rear haunch falls more gradually toward the light bar.",
       "render": "comparisons/ext-low-side-right.webp",
       "outline": "comparisons/ext-low-side-right-outline.png",
       "median_px": 4.0,
-      "p95_px": 17.7,
+      "p95_px": 24.2,
       "reference_span_px": 1583,
-      "measurement": "Visible outline at 1920 \u00d7 1080 \u00b7 median 4.0 px \u00b7 95th percentile 17.7 px (1.12% of the visible reference width)"
+      "measurement": "Visible outline at 1920 \u00d7 1080 \u00b7 median 4.0 px \u00b7 95th percentile 24.2 px (1.53% of the visible reference width)"
     },
     {
       "id": "ext-low-rear-left",
@@ -79,13 +79,13 @@
       "height": 1080,
       "credit": "Porsche AG \u00b7 factory configurator",
       "status": "limited",
-      "note": "Both wheels and the span of the horizontal light band locate the camera. The diffuser lip and aft fender contours differ, with the largest silhouette residuals around the front extremity and rear bumper.",
+      "note": "The rear haunch, wing and red light band are visible together. The black light housing and spoiler cassette extend across the rear deck. The model\u2019s quarter panel has a smoother return into the rear bumper.",
       "render": "comparisons/ext-low-rear-left.webp",
       "outline": "comparisons/ext-low-rear-left-outline.png",
-      "median_px": 6.4,
-      "p95_px": 25.0,
+      "median_px": 7.0,
+      "p95_px": 26.0,
       "reference_span_px": 1463,
-      "measurement": "Visible outline at 1920 \u00d7 1080 \u00b7 median 6.4 px \u00b7 95th percentile 25.0 px (1.71% of the visible reference width)"
+      "measurement": "Visible outline at 1920 \u00d7 1080 \u00b7 median 7.0 px \u00b7 95th percentile 26.0 px (1.77% of the visible reference width)"
     },
     {
       "id": "ext-low-rear-right",
@@ -96,13 +96,13 @@
       "height": 1080,
       "credit": "Porsche AG \u00b7 factory configurator",
       "status": "limited",
-      "note": "The opposite side confirms the four exhaust outlets and continuous light band. The modeled wing uses simplified supports and the right-hand diffuser recess is shallower.",
+      "note": "The opposite side shows where the diffuser joins the rear fender. The dark lamp carrier and spoiler opening are visible in both. The model has simpler diffuser sidewalls and a flatter bumper face.",
       "render": "comparisons/ext-low-rear-right.webp",
       "outline": "comparisons/ext-low-rear-right-outline.png",
-      "median_px": 8.0,
-      "p95_px": 24.0,
+      "median_px": 7.0,
+      "p95_px": 23.3,
       "reference_span_px": 1460,
-      "measurement": "Visible outline at 1920 \u00d7 1080 \u00b7 median 8.0 px \u00b7 95th percentile 24.0 px (1.65% of the visible reference width)"
+      "measurement": "Visible outline at 1920 \u00d7 1080 \u00b7 median 7.0 px \u00b7 95th percentile 23.3 px (1.60% of the visible reference width)"
     },
     {
       "id": "ext-low-rear",
@@ -112,14 +112,14 @@
       "width": 1920,
       "height": 1080,
       "credit": "Porsche AG \u00b7 factory configurator",
-      "status": "verified",
-      "note": "The rear glass, centered rear spoiler, red light band and paired exhausts match the stacked layout. The wing section and bumper reflectors are simplified.",
+      "status": "limited",
+      "note": "The two divided exhaust bezels, diffuser outlets, light band and raised wing can be compared in a single plane. The factory rear glass is narrower and the model\u2019s upper deck shows more of the grille under the wing.",
       "render": "comparisons/ext-low-rear.webp",
       "outline": "comparisons/ext-low-rear-outline.png",
-      "median_px": 6.0,
-      "p95_px": 19.8,
+      "median_px": 5.0,
+      "p95_px": 20.1,
       "reference_span_px": 1177,
-      "measurement": "Visible outline at 1920 \u00d7 1080 \u00b7 median 6.0 px \u00b7 95th percentile 19.8 px (1.68% of the visible reference width)"
+      "measurement": "Visible outline at 1920 \u00d7 1080 \u00b7 median 5.0 px \u00b7 95th percentile 20.1 px (1.71% of the visible reference width)"
     },
     {
       "id": "ext-high-rear-left",
@@ -129,14 +129,14 @@
       "width": 1920,
       "height": 1080,
       "credit": "Porsche AG \u00b7 factory configurator",
-      "status": "verified",
-      "note": "The raised black top, rear window aperture, engine-cover slats and wing are visible from above. The modeled rear glass has a more regular outline and the wheel arches retain sharper creases.",
+      "status": "limited",
+      "note": "The roof aperture, rear glass, deck grille and spoiler register from above. The rear-window corners and the transition from the shoulder into the deck grille are rounder in the factory render.",
       "render": "comparisons/ext-high-rear-left.webp",
       "outline": "comparisons/ext-high-rear-left-outline.png",
-      "median_px": 5.4,
-      "p95_px": 19.4,
+      "median_px": 8.1,
+      "p95_px": 20.6,
       "reference_span_px": 1425,
-      "measurement": "Visible outline at 1920 \u00d7 1080 \u00b7 median 5.4 px \u00b7 95th percentile 19.4 px (1.36% of the visible reference width)"
+      "measurement": "Visible outline at 1920 \u00d7 1080 \u00b7 median 8.1 px \u00b7 95th percentile 20.6 px (1.45% of the visible reference width)"
     },
     {
       "id": "ext-low-front-left-wheel",
@@ -147,13 +147,13 @@
       "height": 1080,
       "credit": "Porsche AG \u00b7 factory configurator",
       "status": "limited",
-      "note": "The split-spoke layout, exposed flange, yellow caliper and center lock read at this scale. The caliper casting, tire lettering and valve are simplified. The outline measurement uses the visible crop and excludes its image borders.",
+      "note": "The center lock, split spokes, yellow caliper and drilled rotor are separately visible. The spoke cross-sections and tire sidewall relief are approximate. The silhouette measurement excludes the image borders.",
       "render": "comparisons/ext-low-front-left-wheel.webp",
       "outline": "comparisons/ext-low-front-left-wheel-outline.png",
-      "median_px": 8.0,
-      "p95_px": 23.6,
+      "median_px": 7.6,
+      "p95_px": 27.7,
       "reference_span_px": 1433,
-      "measurement": "Visible outline at 1920 \u00d7 1080 \u00b7 median 8.0 px \u00b7 95th percentile 23.6 px (1.65% of the visible reference width)"
+      "measurement": "Visible outline at 1920 \u00d7 1080 \u00b7 median 7.6 px \u00b7 95th percentile 27.7 px (1.94% of the visible reference width)"
     },
     {
       "id": "ascari-top-down",
@@ -164,10 +164,10 @@
       "height": 812,
       "credit": "Porsche AG \u00b7 Ascari media drive",
       "status": "limited",
-      "note": "This independent photograph shows the same-generation Cabriolet in another finish. Both wheel centres and the door handle register. The A-pillar header, seat tops and exposed rear shelf differ in profile.",
+      "note": "The two visible wheel centers anchor this open-roof profile. The press car shows a more prominent side inlet and a fuller rear-deck cover. Its finish and wheel package differ.",
       "render": "comparisons/ascari-top-down.webp",
       "outline": "comparisons/ascari-top-down-outline.png",
-      "measurement": "Independent photograph \u00b7 1440 \u00d7 812 \u00b7 front and rear hub residuals approximately 1.3 and 2.1 px after camera registration."
+      "measurement": "Independent photograph \u00b7 1440 \u00d7 812 \u00b7 perspective estimated from the two hubs, windshield, door handle and body extremities."
     },
     {
       "id": "dashboard",
@@ -178,7 +178,7 @@
       "height": 1080,
       "credit": "Porsche AG \u00b7 factory configurator",
       "status": "limited",
-      "note": "The curved instrument cluster, three-spoke wheel, PCM screen and PDK selector are visible. The instrument graphics, console controls and door handles are interpreted from the factory cabin view.",
+      "note": "The wheel, PCM display and Sport Chrono clock establish the dashboard layout. The switch rows, selector trim and door pockets have less detail in the modeled cabin.",
       "render": "comparisons/dashboard.webp",
       "outline": "comparisons/dashboard-outline.png"
     },
@@ -191,7 +191,7 @@
       "height": 1080,
       "credit": "Porsche AG \u00b7 factory configurator",
       "status": "limited",
-      "note": "The two integrated headrests, bolsters, rear bench and center console establish the seating layout. The seating material and insert stitching are simplified, and the camera lens is estimated.",
+      "note": "The two seats show integrated headrests, shoulder bolsters, textured center inserts and Turbo S lettering. The headrest curvature and the height of the rear window differ from the factory cabin view.",
       "render": "comparisons/front-seats.webp",
       "outline": "comparisons/front-seats-outline.png"
     },
@@ -204,14 +204,192 @@
       "height": 1080,
       "credit": "Porsche AG \u00b7 factory configurator",
       "status": "limited",
-      "note": "The front seat back, rear seat cushion and belt placement show the compact 2+2 cabin. The upholstered center tunnel covers the forward transmission housing between the rear seats. The trim and seat padding are approximate.",
+      "note": "This cutaway hides the front passenger seat so the camera can see the rear cushion, transmission tunnel and driver\u2019s seatback. The factory view shows more side trim and a fuller backrest.",
       "render": "comparisons/rear-seats.webp",
       "outline": "comparisons/rear-seats-outline.png"
+    },
+    {
+      "id": "provence-front",
+      "label": "Provence \u00b7 front three-quarter",
+      "source": "https://newsroom.porsche.com/en_US/model-range/911/911-turbo-s-cabriolet.html",
+      "original": "https://newsroom.porsche.com/dam/jcr:4a13720d-b448-4a18-b892-2beb7f645795/911%20Turbo%20S%20Cabrio%20Provence%2017.jpg",
+      "width": 1440,
+      "height": 773,
+      "credit": "Porsche AG \u00b7 992.2 Cabriolet media drive",
+      "status": "limited",
+      "note": "The front wheel, fender peaks and windshield header register from the open-roof press car. The factory headlamps show broader highlights, and the model\u2019s outer duct surrounds and windshield posts are thicker. The press car carries a front plate.",
+      "render": "comparisons/provence-front.webp",
+      "outline": "comparisons/provence-front-outline.png",
+      "originalSize": [
+        8798,
+        4949
+      ],
+      "preview": "https://newsroom.porsche.com/.imaging/mte/porsche-templating-theme/teaser_original_720/dam/US-local/Vehicles/911/992-II/911-Turbo-S/911-Turbo-S-Cabrio-Provence/911-Turbo-S-Cabrio-Provence-17.jpg/jcr:content/911%20Turbo%20S%20Cabrio%20Provence%2017.jpg",
+      "crop": [
+        2287,
+        2138,
+        4047,
+        2173
+      ],
+      "measurement": "Camera registered to visible landmarks. Comparison displayed as a matching crop of both frames. Original photograph 8,798 \u00d7 4,949 px. Front and rear hub centers differ by 3.5 and 2.6 px in the 1440 px-wide crop.",
+      "hubRegistration": [
+        {
+          "landmark": "front left center lock",
+          "marked_px": [
+            876.7,
+            503.9
+          ],
+          "projected_px": [
+            880.0,
+            502.6
+          ],
+          "residual_px": 3.5
+        },
+        {
+          "landmark": "rear left center lock",
+          "marked_px": [
+            1255.5,
+            444.4
+          ],
+          "projected_px": [
+            1257.7,
+            445.8
+          ],
+          "residual_px": 2.6
+        }
+      ]
+    },
+    {
+      "id": "provence-rear",
+      "label": "Provence \u00b7 rear three-quarter",
+      "source": "https://newsroom.porsche.com/en_US/model-range/911/911-turbo-s-cabriolet.html",
+      "original": "https://newsroom.porsche.com/dam/jcr:06120bf6-5030-43e9-8aa9-a0bac2c14930/911%20Turbo%20S%20Cabrio%20Provence%2018.jpg",
+      "width": 1440,
+      "height": 737,
+      "credit": "Porsche AG \u00b7 992.2 Cabriolet media drive",
+      "status": "limited",
+      "note": "Both road wheels and the windshield locate the rear three-quarter camera. The rear shelf, light-band recess and diffuser differ in depth. The press car uses oval sport-exhaust outlets.",
+      "render": "comparisons/provence-rear.webp",
+      "outline": "comparisons/provence-rear-outline.png",
+      "originalSize": [
+        9023,
+        5075
+      ],
+      "preview": "https://newsroom.porsche.com/.imaging/mte/porsche-templating-theme/teaser_original_720/dam/US-local/Vehicles/911/992-II/911-Turbo-S/911-Turbo-S-Cabrio-Provence/911-Turbo-S-Cabrio-Provence-18.jpg/jcr:content/911%20Turbo%20S%20Cabrio%20Provence%2018.jpg",
+      "crop": [
+        1759,
+        1940,
+        4493,
+        2301
+      ],
+      "measurement": "Camera registered to visible landmarks. Comparison displayed as a matching crop of both frames. Original photograph 9,023 \u00d7 5,075 px. Front and rear hub centers differ by 3.1 and 5.0 px in the 1440 px-wide crop.",
+      "hubRegistration": [
+        {
+          "landmark": "front right center lock",
+          "marked_px": [
+            1269.7,
+            401.7
+          ],
+          "projected_px": [
+            1271.1,
+            404.5
+          ],
+          "residual_px": 3.1
+        },
+        {
+          "landmark": "rear right center lock",
+          "marked_px": [
+            905.3,
+            473.9
+          ],
+          "projected_px": [
+            907.8,
+            469.6
+          ],
+          "residual_px": 5.0
+        }
+      ]
+    },
+    {
+      "id": "ice-grey-profile",
+      "label": "Ice Grey \u00b7 open profile",
+      "source": "https://newsroom.porsche.com/en_US/model-range/911/911-turbo-s-cabriolet.html",
+      "original": "https://newsroom.porsche.com/dam/jcr:a90b3307-fcda-448e-ad91-b4fdb9427d66/911%20Turbo%20S%20Cabrio%20Ice%20Grey%20Metallic%2020.jpg",
+      "width": 1440,
+      "height": 578,
+      "credit": "Porsche AG \u00b7 992.2 Cabriolet media drive",
+      "status": "limited",
+      "note": "The axle centers and windshield rake align in this open profile. The red tonneau in the photograph rises farther above the rear fender than the modeled cover. The launch car has a different wheel design.",
+      "render": "comparisons/ice-grey-profile.webp",
+      "outline": "comparisons/ice-grey-profile-outline.png",
+      "originalSize": [
+        8192,
+        4608
+      ],
+      "preview": "https://newsroom.porsche.com/.imaging/mte/porsche-templating-theme/teaser_original_720/dam/US-local/Vehicles/911/992-II/911-Turbo-S/911-Turbo-S-Cabrio-Ice-Grey-Metallic/911-Turbo-S-Cabrio-Ice-Grey-Metallic-20.jpg/jcr:content/911%20Turbo%20S%20Cabrio%20Ice%20Grey%20Metallic%2020.jpg",
+      "crop": [
+        1147,
+        1851,
+        5734,
+        2302
+      ],
+      "measurement": "Camera registered to visible landmarks. Comparison displayed as a matching crop of both frames. Original photograph 8,192 \u00d7 4,608 px. Front and rear hub centers differ by 0.7 and 1.2 px in the 1440 px-wide crop.",
+      "hubRegistration": [
+        {
+          "landmark": "front right center lock",
+          "marked_px": [
+            1094.4,
+            401.2
+          ],
+          "projected_px": [
+            1094.9,
+            400.7
+          ],
+          "residual_px": 0.7
+        },
+        {
+          "landmark": "rear right center lock",
+          "marked_px": [
+            370.3,
+            415.6
+          ],
+          "projected_px": [
+            369.1,
+            415.5
+          ],
+          "residual_px": 1.2
+        }
+      ]
+    },
+    {
+      "id": "provence-overhead",
+      "label": "Provence \u00b7 overhead",
+      "source": "https://newsroom.porsche.com/en_US/model-range/911/911-turbo-s-cabriolet.html",
+      "original": "https://newsroom.porsche.com/dam/jcr:0bc57b5c-ff75-4db8-9964-fa446676e3a5/911%20Turbo%20S%20Cabrio%20Provence%2015.jpg",
+      "width": 1440,
+      "height": 1366,
+      "credit": "Porsche AG \u00b7 992.2 Cabriolet media drive",
+      "status": "limited",
+      "note": "The overhead photograph shows how the windshield bows and how the open cabin narrows into the rear deck. The model has a more rectangular rear cover and a wider-looking deck grille. The launch car carries a driver.",
+      "render": "comparisons/provence-overhead.webp",
+      "outline": "comparisons/provence-overhead-outline.png",
+      "originalSize": [
+        12288,
+        6912
+      ],
+      "preview": "https://newsroom.porsche.com/.imaging/mte/porsche-templating-theme/teaser_original_720/dam/US-local/Vehicles/911/992-II/911-Turbo-S/911-Turbo-S-Cabrio-Provence/911-Turbo-S-Cabrio-Provence-15.jpg/jcr:content/911%20Turbo%20S%20Cabrio%20Provence%2015.jpg",
+      "crop": [
+        5186,
+        1806,
+        3822,
+        3625
+      ],
+      "measurement": "Camera registered to visible landmarks. Comparison displayed as a matching crop of both frames. Original photograph 12,288 \u00d7 6,912 px."
     }
   ],
   "status_counts": {
-    "verified": 6,
-    "limited": 7,
+    "verified": 2,
+    "limited": 15,
     "pending": 0,
     "fix": 0,
     "excluded": 0
@@ -323,6 +501,46 @@
         582
       ],
       "role": "Launch Cabriolet with another paint and interior, door open and roof down. Open-panel and cabin layout context."
+    },
+    {
+      "id": "detail-1-24",
+      "source": "https://newsroom.porsche.com/en_US/model-range/911/911-turbo-s-cabriolet.html",
+      "original": "https://newsroom.porsche.com/dam/jcr:d2b92684-75dc-4654-8576-58ab380c1032/911%20Turbo%20S%20Cabrio%20Provence%2024.jpg",
+      "size": [
+        8144,
+        4581
+      ],
+      "role": "Headlight lens and fender in the alternate press configuration."
+    },
+    {
+      "id": "detail-2-24",
+      "source": "https://newsroom.porsche.com/en_US/model-range/911/911-turbo-s-cabriolet.html",
+      "original": "https://newsroom.porsche.com/dam/jcr:df4fcab9-9683-4e41-8409-ca2a76e874a6/911%20Turbo%20S%20Cabrio%20Ice%20Grey%20Metallic%2024.jpg",
+      "size": [
+        8192,
+        4608
+      ],
+      "role": "Front air blades in the alternate press configuration."
+    },
+    {
+      "id": "detail-1-25",
+      "source": "https://newsroom.porsche.com/en_US/model-range/911/911-turbo-s-cabriolet.html",
+      "original": "https://newsroom.porsche.com/dam/jcr:c6e5915a-a620-4975-a293-7c7fda77bae9/911%20Turbo%20S%20Cabrio%20Provence%2025.jpg",
+      "size": [
+        8144,
+        4581
+      ],
+      "role": "Wheel face and arch in the alternate press configuration."
+    },
+    {
+      "id": "detail-2-23",
+      "source": "https://newsroom.porsche.com/en_US/model-range/911/911-turbo-s-cabriolet.html",
+      "original": "https://newsroom.porsche.com/dam/jcr:854a3de4-18e2-4143-af50-c0405022ccfb/911%20Turbo%20S%20Cabrio%20Ice%20Grey%20Metallic%2023.jpg",
+      "size": [
+        8192,
+        4608
+      ],
+      "role": "Rear spoiler support in the alternate press configuration."
     }
   ],
   "factoryGeometry": {
@@ -335,12 +553,13 @@
       "height": 1304,
       "wheelbase": 2450
     },
+    "measurement": "World-space bounds of the GLB position accessors. Primary panel width includes the doors and bumpers and excludes the mirrors. Wheelbase uses the front and rear tire centers.",
     "exported_mm": {
-      "length": 4555.7,
-      "primaryPanelWidth": 1902.1,
+      "length": 4551.0,
       "overallWidth": 2033.0,
       "height": 1304.0,
-      "wheelbase": 2450.0
+      "wheelbase": 2450.0,
+      "primaryPanelWidth": 1900.0
     }
   },
   "powertrainReferences": [
@@ -357,28 +576,28 @@
       "role": "Rear-facing comparison supports the flanking low turbo location, opposed engine banks and rear carrier. The top induction, cable paths and case castings are approximate.",
       "referenceCompressorCenters_px": [
         [
-          120.5,
-          622.5
+          119.6,
+          619.3
         ],
         [
-          1187.5,
-          622.5
+          1188.6,
+          619.2
         ]
       ],
       "renderCompressorCentersBeforeRegistration_px": [
         [
-          157.5,
-          627.5
+          162.0,
+          624.0
         ],
         [
-          1149.5,
-          626.5
+          1144.9,
+          624.0
         ]
       ],
-      "registeredScale": 1.075605,
+      "registeredScale": 1.087598,
       "registeredTranslation_px": [
-        -48.908,
-        -51.904
+        -56.591,
+        -59.411
       ]
     },
     {
@@ -392,36 +611,5 @@
       "role": "Vehicle cutaway establishes the rear engine with forward PDK. Manufacturer specifications give the PDK motor envelope of 286 mm diameter by 55 mm axial length and 73 mm compressor wheel diameter."
     }
   ],
-  "webExport": {
-    "format": "GLB with KHR_draco_mesh_compression",
-    "bytes": 3287744,
-    "uncompressedBytes": 13298968,
-    "quantizationBits": {
-      "position": 16,
-      "normal": 12,
-      "texcoord": 14
-    },
-    "primitives": 334,
-    "matchedBrowserCaptureCheck": {
-      "comparedFrames": 13,
-      "maximumForegroundMeanAbsoluteRGBError_8bit": 0.879,
-      "maximumDifferingHalfAlphaMaskPixels": 30
-    },
-    "nativeMotorEnvelope_mm": [
-      286.0,
-      286.0,
-      55.0
-    ],
-    "interiorOcclusionCheck": {
-      "size": [
-        960,
-        540
-      ],
-      "changedPixelsWithPowertrainHidden": {
-        "rear-seats": 2,
-        "front-seats": 4,
-        "dashboard": 0
-      }
-    }
-  }
+  "status_scope": "The two verified profile frames check axle positions, tire diameters and gross body silhouette. The other frames have part-shape, configuration or camera limitations documented individually."
 }
