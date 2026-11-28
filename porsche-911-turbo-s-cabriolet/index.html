@@ -7,7 +7,7 @@
   <script>
     if (location.hash === '#porsche-views') document.documentElement.classList.add('show-photos');
     const overrideModel = new URLSearchParams(location.search).get('model');
-    const modelFile = overrideModel || './porsche.glb?v=glb-736599cb';
+    const modelFile = overrideModel || './porsche.glb?v=glb-e7d2b6df';
     const preload = document.createElement('link');
     preload.rel = 'preload';
     preload.as = 'fetch';
@@ -102,7 +102,7 @@
           <details class="notes"><summary>Model references</summary><div class="sources">
             <p>Photo-based 992.2 Porsche 911 Turbo S Cabriolet (992652) reconstruction matched against official Porsche 4K 360° studio views, factory technical data (MY T 10/2025), and official Porsche powertrain illustrations. The internal PDK gears use earlier 992.1 diagrams as a guide. The engine castings, wiring and seat contours are approximate.</p>
             <a href="./source/turbo-s-cabriolet.blend" download>Editable Blender model</a> · <a href="./porsche.glb" download>GLB</a> · <a href="./source/rebuild.zip" download>Rebuild source</a> · <a href="./review.html">Frame-by-frame review</a> · <a href="./source/frame-review.json">Measurements</a><br>
-            <a href="#rear">Rear three-quarter view</a> · <a href="https://configurator.porsche.com/en-US/mode/model/992652?options=1A&amp;viz-mode=3d&amp;prs-environment=Whiteroom+Porsche">Compare on Porsche’s configurator</a><br>
+            <a href="#rear">Rear three-quarter view</a> · <a href="./source/rear-rebuild.webp">Rear detail comparison</a> · <a href="https://configurator.porsche.com/en-US/mode/model/992652?options=1A&amp;viz-mode=3d&amp;prs-environment=Whiteroom+Porsche">Compare on Porsche’s configurator</a><br>
             <a href="https://newsroom.porsche.com/en/press-kits/pfv-porsche-911-turbo-s.html">2026 911 Turbo S Press Kit &amp; Powertrain Illustrations · Porsche Newsroom</a><br>
             <a href="https://newsroom.porsche.com/dam/jcr%3Aba520cc9-70d6-4b3b-91f0-514c4b1aa3c7/pag-911-turbo-s-cabriolet-en.pdf">911 Turbo S Cabriolet Technical Data · Porsche AG (PDF)</a><br>
             <a href="https://files.porsche.com/f/332100/2f9f99467e/porsche-rescue-data-sheet-t-hybrid.pdf">911 T-Hybrid Convertible Rescue Data Sheet · Porsche AG (PDF)</a>
@@ -195,7 +195,7 @@
 
     // Both angular maps share the factory studio coordinate system. They take
     // a normal and a reflected ray, so the highlights follow an orbit or hinge.
-    const paintRevision = "22ff0652";
+    const paintRevision = "0d151c10";
     const paintLoader = new THREE.TextureLoader();
     function loadPaintMap(name) {
       const map = paintLoader.load('./paint-' + name + '.png?v=' + paintRevision, () => wake(false));
@@ -209,7 +209,7 @@
     const paintReflection = loadPaintMap('reflection');
     const panelLighting = loadPaintMap('panels');
     function matchStudioPaint(mat) {
-      mat.customProgramCacheKey = () => 'gentian-studio-2';
+      mat.customProgramCacheKey = () => 'gentian-studio-3';
       mat.onBeforeCompile = shader => {
         shader.uniforms.paintNormal = {value: paintNormal};
         shader.uniforms.paintReflection = {value: paintReflection};
@@ -222,12 +222,12 @@
           uniform sampler2D panelLighting;
           varying vec3 vPaintRest;
           vec3 panelSample(vec3 cell, float sector) {
-            float z0 = floor(cell.z), z1 = min(z0+1.0,33.0);
-            vec2 a = vec2(mod(z0,17.0)*112.0,(floor(z0/17.0)+sector*2.0)*50.0);
-            vec2 b = vec2(mod(z1,17.0)*112.0,(floor(z1/17.0)+sector*2.0)*50.0);
+            float z0 = floor(cell.z), z1 = min(z0+1.0,39.0);
+            vec2 a = vec2(mod(z0,20.0)*128.0,(floor(z0/20.0)+sector*2.0)*56.0);
+            vec2 b = vec2(mod(z1,20.0)*128.0,(floor(z1/20.0)+sector*2.0)*56.0);
             vec2 pos = cell.xy + 0.5;
-            return mix(texture2D(panelLighting,(pos+a)/vec2(1904.0,1600.0)).rgb,
-                       texture2D(panelLighting,(pos+b)/vec2(1904.0,1600.0)).rgb,fract(cell.z));
+            return mix(texture2D(panelLighting,(pos+a)/vec2(2560.0,2464.0)).rgb,
+                       texture2D(panelLighting,(pos+b)/vec2(2560.0,2464.0)).rgb,fract(cell.z));
           }
           vec2 paintDirection(vec3 world) {
             return vec2(atan(-world.z, world.x) * 0.15915494 + 0.5,
@@ -241,12 +241,29 @@
             + 1.35 * (texture2D(paintNormal, paintDirection(nStudio)).rgb
                     + texture2D(paintReflection, paintDirection(reflStudio)).rgb);
           vec3 carEye = inverseTransformDirection(normalize(vViewPosition),viewMatrix);
-          float sector = mod(atan(-carEye.z,carEye.x)*2.38732415+15.0,15.0);
-          vec3 cell = clamp((vPaintRest-vec3(-2.34,-1.04,0.06))/vec3(4.61,2.08,1.27),0.0,0.99999)*vec3(111.0,49.0,33.0);
-          vec3 low = mix(panelSample(cell,floor(sector)),panelSample(cell,mod(floor(sector)+1.0,15.0)),fract(sector));
-          vec3 panel = mix(low,panelSample(cell,15.0),smoothstep(0.12,0.72,carEye.y));
-          vec3 studioCoat = mix(panel, max(measured,vec3(0.0)), 0.13);
-          gl_FragColor.rgb = mix(gl_FragColor.rgb,studioCoat,0.94*diffuseColor.a);
+          float sector = mod(atan(-carEye.z,carEye.x)*3.18309886+20.0,20.0);
+          vec3 cell = clamp((vPaintRest-vec3(-2.34,-1.04,0.06))/vec3(4.61,2.08,1.27),0.0,0.99999)*vec3(127.0,55.0,39.0);
+          vec3 low = mix(panelSample(cell,floor(sector)),panelSample(cell,mod(floor(sector)+1.0,20.0)),fract(sector));
+          vec3 raised = mix(panelSample(cell,20.0),panelSample(cell,21.0),smoothstep(0.58, 0.93, carEye.y));
+          vec3 panel = mix(low, raised, smoothstep(0.14,0.55,carEye.y));
+          vec3 studioCoat = mix(panel, max(measured, vec3(0.0)), 0.08);
+          float luminance = dot(studioCoat, vec3(0.2126, 0.7152, 0.0722));
+          float contrast = 1.12 + 0.18 * smoothstep(0.27, 0.58, luminance);
+          studioCoat += vec3((luminance - 0.25) * (contrast - 1.0) - 0.012);
+          // The canvas masks the centre of the rear deck when the top is raised.
+          // Light that narrow strip from its actual normal instead of extending adjacent panel samples across it.
+          float deck = smoothstep(1.10, 1.32, -vPaintRest.x)
+            * (1.0 - smoothstep(1.71, 1.84, -vPaintRest.x))
+            * (1.0 - smoothstep(0.47, 0.73, abs(vPaintRest.y)))
+            * smoothstep(0.82, 0.95, vPaintRest.z);
+          vec3 restWorld = vec3(vPaintRest.x, vPaintRest.z, -vPaintRest.y);
+          vec3 restFace = cross(dFdx(restWorld), dFdy(restWorld));
+          vec3 liveFace = inverseTransformDirection(cross(dFdx(vViewPosition), dFdy(vViewPosition)), viewMatrix);
+          float alignment = abs(dot(restFace, liveFace)) / max(length(restFace), 1.0e-9);
+          float fixedPanel = smoothstep(0.87, 0.995, alignment);
+          vec3 freeCoat = mix(gl_FragColor.rgb, max(measured, vec3(0.0)), 0.54);
+          vec3 finish = mix(freeCoat, clamp(studioCoat, 0.0, 1.0), fixedPanel * (1.0 - deck));
+          gl_FragColor.rgb = mix(gl_FragColor.rgb, finish, 0.95 * diffuseColor.a);
         `);
       };
     }
@@ -359,6 +376,7 @@
         [/Soft_Top|SoftTop|Roof_Fabric|Roof_Bow|Convertible_Top/, 'Fabric convertible soft top', 'black magnesium-bow Z-fold roof · click to lower or raise'],
         [/WindDeflector|Wind_Deflector/, 'Integrated wind deflector', 'electrically deployable mesh screen behind front seats'],
         [/RollBar|Roll_Over|RollHoop/, 'Automatic roll-over protection', 'concealed rear roll hoops behind the rear seats'],
+        [/Rear_AirCurtain|Rear_Bumper_Outlet/, 'Rear bumper corner air outlet', 'Recessed outlet alongside the reflector and lower valance'],
         [/Active_Wing|Wing_Mainplane|Wing_Blade|Wing_Riser|Rear_Spoiler/, 'Active rear spoiler', 'Turbo S deployable wing · click to deploy or stow'],
         [/Rear_Lid|Engine_Decklid|EngineLid|ServiceFlap|Service_Flap/, 'Rear engine decklid & intake grille', 'louvered rear engine bay cover · click to open or close'],
         [/FrunkLid|Frunk_Lid|FrontLid|Front_Lid|Hood_Panel/, 'Front luggage lid', 'click to open or close'],
@@ -763,6 +781,17 @@
                   shared.roughness = 0.88;
                   shared.metalness = 0.0;
                   shared.clearcoat = 0.0;
+                  // Brushed canvas picks up a soft sheen at grazing angles.
+                  shared.customProgramCacheKey = () => 'tsc-top-canvas';
+                  shared.onBeforeCompile = shader => {
+                    shader.fragmentShader = shader.fragmentShader.replace('#include <opaque_fragment>', `
+                      float nap = pow(1.0 - saturate(abs(dot(normal, normalize(vViewPosition)))), 3.0);
+                      vec3 fabricNormal = inverseTransformDirection(normal,viewMatrix);
+                      float overhead = 0.25 + 0.75*smoothstep(0.34,0.96,abs(fabricNormal.y));
+                      outgoingLight += vec3(0.074, 0.080, 0.090) * nap * overhead;
+                      #include <opaque_fragment>
+                    `);
+                  };
                 }
                 if (shared.name === 'Mat_Satin_Black_Aero') {
                   shared.color.setRGB(0.020, 0.022, 0.026);
@@ -795,7 +824,7 @@
                   shared.transparent = true;
                   shared.depthWrite = false;
                   shared.color.setRGB(0.024, 0.039, 0.043);
-                  shared.opacity = backlight ? 0.91 : quarter ? 0.55 : doorPane ? 0.42 : 0.74;
+                  shared.opacity = backlight ? 0.17 : quarter ? 0.19 : doorPane ? 0.15 : 0.30;
                   shared.roughness = backlight ? 0.077 : 0.09;
                   shared.clearcoat = 0.58;
                   shared.clearcoatRoughness = 0.045;
@@ -804,15 +833,25 @@
                   shared.envMap = scene.environment;
                   shared.envMapRotation.copy(scene.environmentRotation);
                   shared.envMapIntensity = 0.97;
-                  shared.customProgramCacheKey = () => 'tsc-window-fresnel';
+                  shared.customProgramCacheKey = () => backlight ? 'tsc-backlight' : 'tsc-window-fresnel';
                   shared.onBeforeCompile = shader => {
                     shader.fragmentShader = shader.fragmentShader.replace('#include <opaque_fragment>', `
                       float facing = saturate(abs(dot(geometryNormal,geometryViewDir)));
                       float grazing = pow(1.0 - facing, 5.0);
                       float paneAlpha = mix(diffuseColor.a, 1.0, grazing * smoothstep(0.1,0.4,diffuseColor.a));
                       vec3 reflection = totalSpecular + clearcoatSpecularDirect + clearcoatSpecularIndirect;
+                      ${backlight ? `
+                        // The rear pane reflects the broad overhead studio panel. Its
+                        // long axis runs across the car, with a softer falloff to the sides.
+                        vec3 reflected = inverseTransformDirection(reflect(-geometryViewDir, geometryNormal), viewMatrix);
+                        float overhead = smoothstep(-0.08, 0.70, reflected.y);
+                        float panel = exp(-3.2 * pow(reflected.x + 0.45, 2.0) - 0.55 * reflected.z * reflected.z);
+                        float sidePanel = overhead * smoothstep(0.60,0.86,abs(reflected.z));
+                        reflection += vec3(0.09, 0.14, 0.19) * overhead * (0.30 + panel + 2.2*sidePanel);
+                        paneAlpha += (1.0-paneAlpha)*0.46*sidePanel*smoothstep(0.06,0.17,diffuseColor.a);
+                      ` : ''}
                       vec3 transmittedTint = totalDiffuse * diffuseColor.a;
-                      gl_FragColor = vec4((transmittedTint + reflection * smoothstep(0.05,0.30,diffuseColor.a)) /
+                      gl_FragColor = vec4((transmittedTint + reflection * smoothstep(0.045,${backlight ? '0.17' : '0.30'},diffuseColor.a)) /
                         max(paneAlpha, 0.05), paneAlpha);
                     `);
                   };

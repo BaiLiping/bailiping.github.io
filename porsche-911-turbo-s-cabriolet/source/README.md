@@ -10,7 +10,11 @@ Extract the rebuild archive. From its root, run the following with Blender 5.2.1
 blender -b --python-exit-code 1 -P blender/build_master.py -- --out-prefix porsche_911_turbo_s_cab_refined
 ```
 
-The build writes the editable metre-scale master and the viewer-scale GLB to `blender/out/`. In the master, +X points forward, +Y to the driver's left and +Z up. The origin is on the ground halfway between the axles. One GLB unit represents 18 real millimetres. Each assembly has a named pivot. The master includes both positions of the fabric hood.
+The build writes the editable metre-scale master and the viewer-scale GLB to `blender/out/`. In the master, +X points forward, +Y to the driver's left and +Z up. The origin is on the ground halfway between the axles. One GLB unit represents 18 real millimetres. Each assembly has a named pivot. The master includes both positions of the fabric hood and 62 named reference cameras. Each camera records the reference dimensions and intended roof state. The saved camera opens on the straight rear view.
+
+The raised rear glass was fitted to eight traced studio frames and checked against two more. The outer bumper outlets have cut openings, return walls and a recessed plenum. The rear script and lettering follow outlines traced from Porsche 992652 imagery and the Turbo S Cabriolet launch photographs in the earlier project.
+
+Shared 992 proportions and the GT3 viewer were checked for reference. The [Car_Photos catalog](https://github.com/BaiLiping/Car_Photos/tree/726ad07ff53ea2797bf83041ad73aba26ede6b18) includes third-party meshes of a 2019 Carrera 4S Cabriolet and a 2025 GT3. The Turbo S Cabriolet body, roof and bumper geometry in this build follow the Turbo S studio photographs.
 
 The archive includes the photo-fitted displacement field, packed optical and mechanical finishes, and the component build scripts. The browser adds the studio illumination, registered cameras and assembly motions. The `viewer/` directory contains the studio shader maps used on the painted panels. The photo references and illustrations are credited to their respective publishers in `inventory.json`.
 
