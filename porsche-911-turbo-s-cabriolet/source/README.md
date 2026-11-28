@@ -1,6 +1,6 @@
 # Porsche 911 Turbo S Cabriolet (992.2)
 
-The Gentian Blue Metallic car uses the EU launch specification, 20/21-inch Turbo S centre-lock wheels, yellow PCCB brakes, a black textile roof and a left-hand-drive four-seat cabin. Porsche’s October 2025 MY T sheet identifies the 2026 model.
+The 2027 Porsche 911 Turbo S Cabriolet is shown in Gentian Blue Metallic with 20/21-inch Turbo S centre-lock wheels, yellow PCCB brakes, a black textile roof and a left-hand-drive four-seat cabin. Its dimensions follow Porsche’s October 2025 MY T sheet for the 2026 EU launch model. [Porsche USA model specifications](https://www.porsche.com/usa/models/911/911-turbo-models/911-turbo-s-cabriolet/)
 
 ## Build
 
