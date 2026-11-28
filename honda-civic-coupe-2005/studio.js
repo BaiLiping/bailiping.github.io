@@ -1,4 +1,4 @@
-import {createAssemblyPicker,detailDirection} from './assembly.js';
+import {createAssemblyPicker,detailDirection} from './assembly.js?v=d85c6708';
 import * as T from '/honda-civic-type-r/vendor/three-r170.js';
 import {createStudioFloor} from '/honda-civic-type-r/studio-floor.js';
 const $ = id => document.getElementById(id);
@@ -11,6 +11,7 @@ let assemblyPicker, focusedAssembly, explodedWide, explodedTall, portraitLayout;
 let amount = 0, frame = 0, aspect = 1;
 let inspection = null, inspectionPose = null, inspectionNav = null;
 const hiddenMeshes = [];
+const photoState = [];
 function focusAssembly(name) {
   reset();
   setModelUrl(null, 'exploded', name);
@@ -99,7 +100,7 @@ function draw() {
 function invalidate() { if (!frame) frame=requestAnimationFrame(draw); }
 function setSpread(a) {
   amount=a;dirtyGround=true;
-  floor.visible=a<.001 && !inspection;
+  floor.visible=a<.001 && !inspection && !matched?.noFloor;
   assemblyPicker?.setAmount(a);
   for (const p of parts) p.object.position.copy(p.original).addScaledVector(p.offset,a);
   pressed('explode',a>.001);
@@ -215,6 +216,7 @@ function resize() {
   else if(model && !cabin && !matched && !userOrbit) frameCamera();
   invalidate();
 }
+let photoCrop = null;
 function applyViewport(w,h) {
   const ar = matched && (matched.aspect || (matched.imageSize && matched.imageSize[0]/matched.imageSize[1]) || (matched.width/matched.height));
   let vw=w,vh=h;
@@ -227,11 +229,24 @@ function applyViewport(w,h) {
     camera.projectionMatrix.elements[9]=2*cy/ih-1;
     camera.projectionMatrixInverse.copy(camera.projectionMatrix).invert();
   }
+  if(photoCrop && matched) {
+    // Crop the projected image after the camera intrinsics, including its principal point.
+    const {zoom,left,top}=photoCrop;
+    const matrix=camera.projectionMatrix.elements;
+    matrix[0]*=zoom;matrix[5]*=zoom;
+    matrix[8]=zoom*matrix[8]-(zoom-1-2*zoom*left);
+    matrix[9]=zoom*matrix[9]-(1-zoom+2*zoom*top);
+    camera.projectionMatrixInverse.copy(camera.projectionMatrix).invert();
+  }
   renderer.setViewport((w-vw)/2,(h-vh)/2,vw,vh);
 }
 function stop() { motion=null; }
 let userOrbit=false;
 function unmatch() {
+  for (const {object, rotation, visible} of photoState.splice(0)) {
+    object.rotation.copy(rotation);
+    object.visible = visible;
+  }
   matched=null;camera.clearViewOffset();camera.up.set(0,1,0);
   $('angles').value='';$('ref-line').hidden=true;applyViewport(canvas.clientWidth,canvas.clientHeight);
 }
@@ -242,6 +257,7 @@ function clearActions() {
   }
 }
 function reset() {
+  assemblyPicker?.clear();
   stop();if(inspection)clearInspection();
   if(focusedAssembly){assemblyPicker.select('');focusedAssembly=null;inspectionPose=null;}
   unmatch();cabin=false;userOrbit=false;pressed('cabin',false);
@@ -252,6 +268,30 @@ function match(id){
   if(!v)return false;
   reset();matched=v;userOrbit=true;
   if(v.actions){matched=null;for(const a of actions)if(v.actions.includes(a.label))a.button.click();matched=v;}
+  // A calibrated detail view includes the photographed panel position and any occluders.
+  const remember = object => photoState.push({object, rotation:object.rotation.clone(), visible:object.visible});
+  for (const [name, degrees] of Object.entries(v.rotate || {})) {
+    const object = model.getObjectByName(name);
+    if (!object) continue;
+    remember(object);
+    object.rotation.set(...degrees.map(T.MathUtils.degToRad));
+  }
+  if (v.only?.length) {
+    const allowed = new Set(v.only);
+    model.traverse(object => {
+      if (!object.isMesh) return;
+      for (let parent=object; parent; parent=parent.parent) if (allowed.has(parent.name)) return;
+      remember(object);
+      object.visible=false;
+    });
+  }
+  for (const name of v.hide || []) {
+    const object = model.getObjectByName(name);
+    if (!object) continue;
+    remember(object);
+    object.visible=false;
+  }
+  if(v.noFloor){remember(floor);floor.visible=false;}
   camera.fov=v.fov||32;camera.position.copy(vec(v.position));target.copy(vec(v.target));
   camera.up.copy(vec(v.up||[0,1,0]));camera.lookAt(target);
   if(v.shiftX || v.shiftY) {
@@ -341,10 +381,21 @@ function input(){
     if (e.target.value) { match(e.target.value); setModelUrl(e.target.value); }
     else resetView();
   };
-  $('model-link').onclick=e=>{e.preventDefault();resetView();};
+  $('model-link').onclick=e=>{
+    if (location.hash==='#honda-views') {
+      e.preventDefault();
+      const url=new URL(location.href);
+      url.searchParams.delete('frame');url.searchParams.delete('compare');
+      url.hash='model';location.assign(url.href);
+    } else {e.preventDefault();resetView();}
+  };
   window.addEventListener('hashchange',()=>{
     if(location.hash==='#exploded') openExplodedLink();
-    else if(!inspect(location.hash.slice(1)) && location.hash==='#model') reset();
+    else if(!inspect(location.hash.slice(1)) && location.hash==='#model') {
+      if(!match(new URLSearchParams(location.search).get('frame'))) reset();
+      $('review').removeAttribute('aria-current');
+      $('model-link').setAttribute('aria-current','page');
+    }
   });
 }
 function openExplodedLink() {
@@ -352,8 +403,8 @@ function openExplodedLink() {
   focusAssembly(cfg.parts.some(part => part.node === requested) ? requested : '');
 }
 async function init(){
-  cfg=await (await fetch('studio.json')).json();
-  $('review').href=cfg.review;$('spec').textContent=cfg.subtitle;
+  cfg=await (await fetch('studio.json?v=d85c6708')).json();
+  $('spec').textContent=cfg.subtitle;
   renderer=new T.WebGLRenderer({canvas,antialias:true,alpha:true,preserveDrawingBuffer:params.has('capture')});
   renderer.setPixelRatio(params.has('capture')?1:Math.min(devicePixelRatio,2));
   renderer.toneMapping=T.ACESFilmicToneMapping;renderer.toneMappingExposure=1.03;
@@ -397,7 +448,19 @@ async function init(){
   }
   for(const v of cfg.views||[]){const option=document.createElement('option');option.value=v.id;option.textContent=v.label;$('angles').add(option);}
   buildInspectionMenu();
-  assemblyPicker=createAssemblyPicker(T,model,cfg,canvas,camera,focusAssembly);
+  assemblyPicker=createAssemblyPicker(T,model,cfg,canvas,camera,focusAssembly,{
+    invalidate, stop,
+    open(name) {
+      const action=actions.find(a=>a.nodes.some(n=>n.object.name===name && n.axis));
+      if (!action || inspection || matched || cabin) return;
+      const n=action.nodes.find(n=>n.object.name===name);
+      const opening=Math.abs(n.object.rotation[n.axis]-n.original[n.axis]) < .001;
+      n.object.rotation[n.axis]=n.original[n.axis]+(opening?T.MathUtils.degToRad(n.degrees):0);
+      action.active=action.nodes.every(b=>Math.abs(b.object.rotation[b.axis]-b.original[b.axis])>.001);
+      action.button.setAttribute('aria-pressed',String(action.active));
+      dirtyGround=true;invalidate();
+    },
+  });
   assembled=measurePose();
   setSpread(1);explodedWide=measurePose(cfg.explodedDirection);
   for(const part of parts) part.offset=part.tall;
@@ -405,7 +468,8 @@ async function init(){
   resize();input();
   ground.update();updateGround=ground.update;
   const componentEntry=cfg.inspections?.some(item=>item.id===location.hash.slice(1));
-  if(location.hash==='#exploded')openExplodedLink();
+  if(location.hash==='#honda-views')reset();
+  else if(location.hash==='#exploded')openExplodedLink();
   else if(componentEntry)inspect(location.hash.slice(1));
   else if(!match(params.get('frame')||params.get('view')||'')){
     if(params.has('capture'))reset();
@@ -413,23 +477,43 @@ async function init(){
   }
   $('status').hidden=true;$('tools').inert=false;new ResizeObserver(resize).observe(canvas);draw();return true;
 }
-function capture(width,height,transparent=false){
+let normalMaterial;
+function capture(width,height,transparent=false,normals=false){
   stop();
   const oldRatio=renderer.getPixelRatio();renderer.setPixelRatio(1);renderer.setSize(width,height,false);
   aspect=width/height; applyViewport(width,height);
   if(!matched && !inspection && !focusedAssembly && !cabin && !userOrbit) frameCamera();
   const bg=scene.background, floorVisible=floor.visible;
   if(transparent){scene.background=null;floor.visible=false;renderer.setClearColor(0,0);}
+  const previousMaterial=scene.overrideMaterial;
+  if(normals) scene.overrideMaterial=normalMaterial ??= new T.ShaderMaterial({
+    side:T.DoubleSide,
+    vertexShader:`varying vec3 surfaceNormal;
+      void main() {
+        surfaceNormal=normalMatrix*normal;
+        gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.0);
+      }`,
+    fragmentShader:`varying vec3 surfaceNormal;
+      void main() { gl_FragColor=vec4(normalize(surfaceNormal)*0.5+0.5,1.0); }`
+  });
   renderer.render(scene,camera);const data=canvas.toDataURL('image/png');
+  scene.overrideMaterial=previousMaterial;
   scene.background=bg;floor.visible=floorVisible;renderer.setPixelRatio(oldRatio);resize();return data;
 }
-window.carStudio={match,inspect,reset,capture,get pose(){return {spread:amount,cabin,inspection:inspection?.id,component:focusedAssembly,matched:matched?.id,position:camera?.position.toArray(),target:target.toArray()};},ready:init().catch(e=>{
+function setPhotoCrop(crop) {
+  photoCrop=crop;
+  if(model && camera && canvas.clientWidth && canvas.clientHeight) {
+    applyViewport(canvas.clientWidth,canvas.clientHeight);
+    invalidate();
+  }
+}
+window.carStudio={match,inspect,reset,capture,setPhotoCrop,get pose(){return {spread:amount,cabin,inspection:inspection?.id,component:focusedAssembly,matched:matched?.id,position:camera?.position.toArray(),target:target.toArray()};},ready:init().catch(e=>{
   console.error(e);
   const poster=document.createElement('img');
   poster.className='fallback-poster';
   poster.alt=cfg?.title || document.querySelector('h1').textContent;
   poster.src=cfg?.poster || 'poster.webp';
   canvas.after(poster);
-  $('status').textContent='The interactive model could not load. Open Photo comparisons to see the matched views.';
+  $('status').textContent='The interactive model could not load. Open Honda views to see the reference photographs.';
   throw e;
 })};

@@ -8,15 +8,16 @@
 <meta property="og:type" content="website"><meta property="og:title" content="2005 Honda Civic Coupe · Rallye Red"><meta property="og:description" content="Inspect the Rallye Red 2005 Civic EX Coupe, its D17A2 engine and five-speed transaxle. Compare the 3D model with Honda’s photographs and dimension sheet."><meta property="og:image" content="https://bailiping.com/honda-civic-coupe-2005/poster.webp">
 <link rel="canonical" href="https://bailiping.com/honda-civic-coupe-2005/">
 <link rel="icon" href="/favicon.ico"><link rel="stylesheet" href="/assets/car-studio/studio.css">
-<link rel="stylesheet" href="assembly.css">
-<script type="module" src="studio.js"></script>
+<link rel="stylesheet" href="assembly.css?v=d85c6708"><link rel="stylesheet" href="honda-views.css?v=d85c6708">
+<script type="module" src="studio.js?v=d85c6708"></script>
+<script type="module" src="honda-views.js?v=d85c6708"></script>
 </head>
 <body style="--paint:#ad1829">
 <header>
 <div class="identity"><a class="back" href="/cars/">Cars</a><h1>2005 Honda Civic Coupe</h1><span class="paint">Rallye Red</span></div>
-<nav aria-label="Studio views"><a id="model-link" href="#model" aria-current="page">3D model</a><a id="review" href="review.html">Photo comparisons</a></nav>
+<nav aria-label="Studio views"><a id="model-link" href="#model" aria-current="page">3D model</a><a id="review" href="#honda-views">Honda views</a></nav>
 </header>
-<main>
+<main id="model-main">
 <div id="room"><canvas id="stage" tabindex="0" aria-label="Interactive 2005 Honda Civic Coupe. Use arrow keys to orbit and plus or minus to zoom."></canvas><p id="status" role="status">Loading the model…</p></div>
 <div class="tools-wrap"><div id="tools" role="group" aria-label="Model controls" inert>
 <button id="explode" aria-pressed="false">Exploded view</button>
@@ -26,7 +27,35 @@
 </div>
 <section id="panel" aria-label="Inspection controls" hidden><h2>Inspect the model</h2><p id="spec"></p><div id="actions"></div>
 <label for="angles">Reference camera</label><select id="angles"><option value="">Choose a view</option></select><p id="ref-line" hidden><a id="source">Open reference</a></p>
-<p class="help">Drag or use the arrow keys to look around. Scroll, pinch, or use + and − to zoom. Press R to reset.</p>
+<p class="help">Drag or use the arrow keys to look around. Click a door, hood or trunk to open it. Double-click for X-ray. Drag a part in the exploded view to pull it away. Tap it to return it. Scroll, pinch, or use + and − to zoom. Press R to reset.</p>
 </section></div>
+</main>
+<main id="honda-views" aria-label="Honda reference photographs" hidden>
+  <div class="frame-tools">
+    <button id="previous-photo" aria-label="Previous photograph">‹</button>
+    <select id="photo-choice" aria-label="Reference photograph"></select>
+    <button id="next-photo" aria-label="Next photograph">›</button>
+    <button id="compare-photo" aria-pressed="false">Compare</button>
+    <button id="native-photo" aria-pressed="false" aria-label="Inspect original pixels" title="Inspect original pixels and drag to pan">1:1</button>
+    <a id="match-photo" href="#model">Match in 3D</a>
+  </div>
+  <div id="photo-area">
+    <div id="photo-frame">
+      <div id="photo-model"></div>
+      <div id="reference-window"><img id="reference-photo" referrerpolicy="no-referrer" draggable="false" alt=""></div>
+      <span id="split-line" hidden></span>
+    </div>
+    <p id="photo-error" role="status" hidden></p>
+  </div>
+  <label id="split-control" hidden>Photo <input id="split" type="range" min="0" max="100" value="50" aria-label="Photo and model split"> Model</label>
+  <footer id="photo-caption">
+    <p id="photo-observation"></p>
+    <p><span id="photo-config"></span> <a id="credit-link">Source</a> · <a id="original-link">Original</a></p>
+    <details id="reference-library"><summary>Reference library</summary>
+      <div><select id="library-choice" aria-label="Reference library"></select>
+      <a id="library-original">Original</a> · <a id="library-source">Source</a></div>
+      <p><a href="civic-source.zip" download>Editable Blender model</a> · <a href="studio.json">Saved cameras</a> · <a href="review.html">Earlier measurements</a></p>
+    </details>
+  </footer>
 </main><noscript><p>Enable JavaScript to explore the 3D model.</p></noscript>
 </body></html>

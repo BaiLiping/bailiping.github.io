@@ -1,3 +1,5 @@
 #assembly-picker:not([hidden]){position:absolute;top:10px;left:14px;display:flex;align-items:center;gap:8px;padding:5px 8px;background:#fbfaf7ee;border-radius:6px;margin:0;font-size:12px}
 #assembly-picker select{max-width:min(57vw,260px);padding:4px 7px;font-size:13px}
 @media(max-width:500px),(max-height:500px){#assembly-picker:not([hidden]){top:4px;left:5px;padding:3px 5px;gap:5px;font-size:11px}#assembly-picker select{font-size:12px;padding:3px}}
+
+.assembly-tooltip{position:absolute;z-index:2;pointer-events:none;padding:4px 8px;background:#19232ced;color:white;border-radius:4px;font:13px/1.3 system-ui;max-width:75%}

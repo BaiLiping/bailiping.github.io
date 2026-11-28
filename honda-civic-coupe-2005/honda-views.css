@@ -1,0 +1,28 @@
+[hidden]{display:none!important}
+#honda-views{background:#f7f7f4;overflow:auto}
+.frame-tools{display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:6px;padding:9px 12px;border-bottom:1px solid #d5d9d8}
+.frame-tools select{width:min(48vw,450px)}
+.frame-tools button,.frame-tools a{font-size:14px}
+#previous-photo,#next-photo{font-size:22px;line-height:1}
+#match-photo{padding:7px}
+#photo-area{position:relative;display:grid;place-items:center;min-height:150px;flex:1;background:#e8ebed;container-type:size}
+#photo-frame{--photo-share:50%;position:relative;width:min(100cqw,calc(100cqh * var(--aspect,1.5)));aspect-ratio:var(--aspect,1.5);overflow:hidden}
+#reference-window,#reference-photo,#photo-model,#split-line,#photo-model #room{position:absolute;inset:0;width:100%;height:100%;display:block}
+#photo-frame.native{touch-action:none;cursor:grab}
+#photo-frame.native:active{cursor:grabbing}
+#reference-photo{transform-origin:0 0;object-fit:contain;pointer-events:none}
+#photo-model{pointer-events:none}
+#photo-frame.comparing #reference-window{clip-path:inset(0 calc(100% - var(--photo-share)) 0 0)}
+#split-line{left:var(--photo-share);width:2px;background:white;box-shadow:0 0 3px #17212a;pointer-events:none}
+#split-control{display:flex;align-items:center;justify-content:center;gap:12px;padding:8px;margin:0;font-size:13px}
+#split{accent-color:#ad1829;width:min(54vw,320px)}
+#photo-error{position:absolute;padding:12px;max-width:35em;background:#fbfaf7;text-align:center}
+#photo-caption{padding:8px 14px 13px;text-align:center;font-size:13px;line-height:1.45}
+#photo-caption p{margin:3px auto;max-width:110ch}
+#photo-caption p:last-child{font-size:12px;color:#45535b}
+@media(max-width:550px){.frame-tools{gap:2px;padding:5px 2px}.frame-tools select{width:44vw;font-size:12px}.frame-tools button,.frame-tools a{padding:6px;font-size:12px}#photo-caption{padding:6px 10px}.frame-tools #next-photo,.frame-tools #previous-photo{font-size:18px}}
+@media(max-height:450px){.frame-tools{padding:2px}.frame-tools select{padding:3px}#photo-caption{padding:2px}#split-control{padding:2px}}
+
+#reference-library{font-size:12px;margin:6px auto 0}
+#reference-library summary{cursor:pointer;width:fit-content;margin:auto;text-decoration:underline;text-underline-offset:3px}
+#reference-library select{font-size:12px;max-width:min(44ch,85vw);margin:5px;padding:4px}
