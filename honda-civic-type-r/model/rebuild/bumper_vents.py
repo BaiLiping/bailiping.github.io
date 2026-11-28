@@ -1,6 +1,7 @@
 """Form the four openings beside each fog lamp using Honda frame 07's vent outline."""
 
 import numpy as np
+from scipy.ndimage import gaussian_filter1d
 
 from headlamps import corner_surface
 
@@ -98,13 +99,76 @@ def pocket(sample, side):
     return mesh(paint), mesh(dark)
 
 
+def fog_blade(points, faces, side):
+    """Sweep a solid rail through the original P24 blade footprint (front region 54)."""
+    # This diagonal coordinate keeps sections perpendicular to the blade as its outer
+    # tip turns upward. Intersect the actual mesh so the new lens-shaped section
+    # has the same front outline on both sides of the bend.
+    u = abs(points[:, 2]) + .65 * (points[:, 1] - .43)
+    edges = np.unique(np.sort(faces[:, [[0, 1], [1, 2], [2, 0]]].reshape(-1, 2), axis=1), axis=0)
+    line = points[edges]
+    ua, ub = u[edges].T
+    samples = np.linspace(u.min()+.00015, u.max()-.00015, 96)
+    sections = []
+    for s in samples:
+        hit = (np.minimum(ua, ub) <= s) & (s < np.maximum(ua, ub))
+        t = (s-ua[hit])/(ub[hit]-ua[hit])
+        ps = line[hit, 0] + t[:, None] * (line[hit, 1]-line[hit, 0])
+        sections.append([ps[:, 1].min(), ps[:, 1].max(), ps[:, 0].max()])
+    low, high, front = gaussian_filter1d(sections, 1.15, axis=0, mode='nearest').T
+    # The photographed lip is proud of the black pod. Give it a rounded nose and
+    # bury its return in the backing, so the two surfaces cannot flicker together.
+    angle = np.arange(28)*2*np.pi/28
+    nose = np.cos(angle)
+    rings = []
+    for s, bottom, top, x in zip(samples, low, high, front):
+        y = (bottom+top)/2 + (top-bottom)/2*np.sin(angle)
+        z = side * (s-.65*(y-.43))
+        rings.append(np.column_stack([x-.013+.025*nose, y, z]))
+    p = np.vstack(rings)
+    grid = np.arange(len(p)).reshape(len(rings), -1)
+    a, b = grid[:-1].ravel(), grid[1:].ravel()
+    c, d = np.roll(grid[1:], -1, axis=1).ravel(), np.roll(grid[:-1], -1, axis=1).ravel()
+    tri = [np.column_stack([a, d, c]), np.column_stack([a, c, b])]
+    for cap in (grid[0, ::-1], grid[-1]):
+        tri.append(np.column_stack([np.full(len(cap)-2, cap[0]), cap[1:-1], cap[2:]]))
+    triangles = np.vstack(tri)
+    if side < 0:
+        triangles = triangles[:, ::-1]
+    normals = np.zeros_like(p)
+    v = p[triangles]
+    weights = np.cross(v[:, 1]-v[:, 0], v[:, 2]-v[:, 0])
+    for col in triangles.T:
+        np.add.at(normals, col, weights)
+    normals /= np.maximum(np.linalg.norm(normals, axis=1, keepdims=True), 1e-12)
+    return p, normals, triangles
+
+
 def refine_bumper_vents(model):
     fill = 'Civic_Front_Fascia_Trim_Fill'
     fill_points, fill_normals, fill_faces = model.read_geometry(fill)
     for suffix, side in [('L', -1), ('R', 1)]:
+        blade = 'Civic_Front_Bumper_Painted_Blades_' + suffix
+        rail, _, rail_faces = model.read_geometry(blade)
+        model.replace_geometry(blade, *fog_blade(rail, rail_faces, side))
         slots = 'Civic_Front_Bumper_Vents_' + suffix
         bumper = 'Civic_Front_Bumper_Upper_' + suffix
         points, normals, faces = model.read_geometry(bumper)
+        # Two disconnected islands of the original bumper cut fill the fog pod
+        # immediately under the rail. Keep their shared edges and put these
+        # faces in the satin-black pod with the surrounding faces.
+        x, y, z = points.T
+        in_pod = ((abs(z) > .548) & (abs(z) < .645) & (y > .420) & (y < .454)
+                  & (x > 2.13) & (x < 2.214))
+        pod_faces = in_pod[faces].all(axis=1)
+        if np.any(pod_faces):
+            pod = 'Civic_Front_Bumper_Fog_Surrounds_' + suffix
+            shell, shell_normals, shell_faces = model.read_geometry(pod)
+            ids, moved = np.unique(faces[pod_faces], return_inverse=True)
+            model.replace_geometry(pod, np.vstack([shell, points[ids]]),
+                                   np.vstack([shell_normals, normals[ids]]),
+                                   np.vstack([shell_faces, len(shell)+moved.reshape(-1, 3)]))
+            faces = faces[~pod_faces]
         old_slots, slot_normals, slot_faces = model.read_geometry(slots)
         zone = np.vstack([points, old_slots])
         mask = (zone[:, 0] > 1.85) & (zone[:, 1] < 0.62) & (abs(zone[:, 2]) > 0.735)
