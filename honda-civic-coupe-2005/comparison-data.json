@@ -1,11 +1,11 @@
 {
   "vehicle": "2005 Honda Civic EX Coupe, US, Rallye Red, 5MT",
-  "glbSHA256": "3b5b02c58c705f283b92bd900568a168be66ef8a05159d7897998bbf5b3bbe56",
+  "glbSHA256": "91cce9c602d088d17d3e49a8bb1ce7dada9bd4683164757848997debfb41d521",
   "dimensions": [
     [
       "Length",
       4455.2,
-      4456.5
+      4455.2
     ],
     [
       "Body width",
@@ -15,7 +15,7 @@
     [
       "Height",
       1399.5,
-      1399.9
+      1397.9
     ],
     [
       "Wheelbase",
@@ -30,6 +30,142 @@
   ],
   "frames": [
     {
+      "id": "auction-profile",
+      "label": "Five-speed EX driver profile \u00b7 Nexus Auto Brokers",
+      "file": "auction-profile",
+      "source": "https://bringatrailer.com/listing/2005-honda-civic-10/",
+      "original": "https://bringatrailer.com/wp-content/uploads/2025/09/2005_honda_civic_civic-5-of-70-23213.jpg",
+      "dimensions": [
+        1916,
+        1277
+      ],
+      "limit": "Stock-body US-market five-speed EX photographed in Magnesium Metallic. The listing identifies replacement 195/65 tires.",
+      "medianPx": 7.5,
+      "worstPx": 56.4,
+      "worstLandmark": "WL",
+      "anchors": {
+        "FL": [
+          375.2,
+          966.0
+        ],
+        "RL": [
+          1480.9,
+          970.0
+        ],
+        "GL": [
+          546.9,
+          718.5
+        ],
+        "WL": [
+          830.3,
+          562.8
+        ],
+        "PL": [
+          1445.0,
+          674.6
+        ],
+        "DL": [
+          1053.8,
+          766.4
+        ],
+        "ML": [
+          678.6,
+          686.6
+        ],
+        "TL": [
+          1736.4,
+          794.3
+        ],
+        "JL": [
+          1480.9,
+          1093.7
+        ],
+        "KL": [
+          375.2,
+          1093.7
+        ]
+      },
+      "status": "limited",
+      "observation": "The side view shows the stock EX wheels, door length, rear quarter glass and trunk. At 18 positions along the roof, the registered silhouette averages 3.3 px from the photographed edge at 960 px image width.",
+      "sourceLinkOnly": true,
+      "credit": "Photograph by Nexus Auto Brokers, via Bring a Trailer. The tracing follows visible edges in the photograph.",
+      "render": "comparisons/auction-profile-model.webp",
+      "worstDescription": "upper windshield corner",
+      "tracing": "comparisons/auction-profile-tracing.png"
+    },
+    {
+      "id": "us-ex-front",
+      "label": "EX grille and headlamps \u00b7 American Honda",
+      "file": "us-ex-front",
+      "source": "https://hondanews.com/en-US/releases/release-28b2994dde0c36d818b2ff004c34c274/photos/0",
+      "original": "https://wieck-honda-production.s3.amazonaws.com/photos/fb59475ead9ee8d4ad1dd2f669427dceeeb46bfd/preview-928x522.jpg",
+      "dimensions": [
+        927,
+        617
+      ],
+      "limit": "US-market EX with the five-spoke wheels and stock front bumper. Its metallic paint differs from the Rallye Red model.",
+      "medianPx": 6.3,
+      "worstPx": 17.9,
+      "worstLandmark": "GL",
+      "anchors": {
+        "FL": [
+          538.8,
+          440.3
+        ],
+        "RL": [
+          813.1,
+          430.7
+        ],
+        "GL": [
+          575.5,
+          270.4
+        ],
+        "GR": [
+          210.5,
+          256.9
+        ],
+        "WL": [
+          608.3,
+          162.2
+        ],
+        "WR": [
+          349.6,
+          162.2
+        ],
+        "PL": [
+          791.8,
+          258.8
+        ],
+        "DL": [
+          726.2,
+          305.1
+        ],
+        "ML": [
+          633.4,
+          253.0
+        ],
+        "IL": [
+          343.8,
+          361.1
+        ],
+        "OL": [
+          500.2,
+          312.9
+        ],
+        "B": [
+          239.5,
+          345.7
+        ]
+      },
+      "status": "limited",
+      "observation": "At six columns across the upper grille, its median height is 35 px in Honda\u2019s photograph and 34 px in the model, measured at 960 px image width. The previous model measured 51 px in the earlier camera fit.",
+      "remotePhoto": "https://wieck-honda-production.s3.amazonaws.com/photos/fb59475ead9ee8d4ad1dd2f669427dceeeb46bfd/preview-928x522.jpg",
+      "credit": "Photograph by American Honda Motor Co., Inc. The tracing follows visible edges in the photograph.",
+      "render": "comparisons/us-ex-front-model.webp",
+      "worstDescription": "lower windshield corner",
+      "tracing": "comparisons/us-ex-front-tracing.png"
+    },
+    {
       "id": "field-red",
       "label": "Red facelift coupe \u2022 IFCAR",
       "file": "commons-3",
@@ -40,9 +176,9 @@
         508
       ],
       "limit": "US facelift coupe photographed in 2006. Its black mirrors, wheels and roof differ. Only shared bodywork and red appearance are compared.",
-      "medianPx": 8.3,
-      "worstPx": 28.0,
-      "worstLandmark": "PL",
+      "medianPx": 9.0,
+      "worstPx": 30.8,
+      "worstLandmark": "GL",
       "anchors": {
         "FL": [
           530.0,
@@ -94,9 +230,9 @@
         ]
       },
       "status": "limited",
-      "observation": "The red facelift coupe shows the near wheel arch and strong character line through the door handle. Its roof, wheel covers and black mirrors identify a different configuration.",
+      "observation": "The red coupe shows the near wheel arch and the shoulder line through the door handle. The wheel covers and black mirror housing differ.",
       "render": "comparisons/field-red-model.webp",
-      "worstDescription": "quarter-window tip",
+      "worstDescription": "lower windshield corner",
       "publicPhoto": "comparisons/field-red-photo.webp",
       "credit": "Photograph by IFCAR. Public preview resized and converted to WebP. The opacity slider shows the reconstruction above the image.",
       "license": "Public domain",
@@ -113,9 +249,9 @@
         2666
       ],
       "limit": "Second photograph of the same 2005 LX. Wheel covers, body trim and omission of an EX moonroof differ.",
-      "medianPx": 14.6,
-      "worstPx": 100.2,
-      "worstLandmark": "TR",
+      "medianPx": 36.2,
+      "worstPx": 73.6,
+      "worstLandmark": "MR",
       "anchors": {
         "FR": [
           3879.3,
@@ -155,285 +291,70 @@
         ]
       },
       "status": "limited",
-      "observation": "The rear-right photograph checks trunk height, deck and lamp taper against a regular coupe. The leading tip of the lamp has a larger residual than the hubs.",
+      "observation": "The stock rear three-quarter shows the triangular lamp, lower bumper and fixed rear glass. LX trim changes the wheels and roof equipment.",
       "render": "comparisons/field-rear-2005-model.webp",
-      "worstDescription": "leading tail-lamp tip",
+      "worstDescription": "exterior mirror",
       "publicPhoto": "comparisons/field-rear-2005-photo.webp",
       "credit": "Photograph by MercurySable99. Public preview resized and converted to WebP. The opacity slider shows the reconstruction above the image.",
       "license": "CC BY-SA 4.0",
       "licenseURL": "https://creativecommons.org/licenses/by-sa/4.0/"
     },
     {
-      "id": "field-front-2005",
-      "label": "2005 LX front \u2022 MercurySable99",
-      "file": "commons-0",
-      "source": "https://commons.wikimedia.org/wiki/File:2005_Honda_Civic_LX_coupe%2C_front_right%2C_05-23-2024.jpg",
-      "original": "https://upload.wikimedia.org/wikipedia/commons/e/ef/2005_Honda_Civic_LX_coupe%2C_front_right%2C_05-23-2024.jpg",
+      "id": "field-reverb-rear",
+      "label": "Reverb rear lamp detail \u00b7 Elise240SX",
+      "file": "field-reverb-rear",
+      "source": "https://commons.wikimedia.org/wiki/File:2005_Honda_Civic_Reverb_Coupe_in_Vivid_Blue_Pearl%2C_Rear_Left%2C_10-26-2022.jpg",
+      "original": "https://upload.wikimedia.org/wikipedia/commons/9/94/2005_Honda_Civic_Reverb_Coupe_in_Vivid_Blue_Pearl%2C_Rear_Left%2C_10-26-2022.jpg",
       "dimensions": [
-        4494,
-        2986
+        3455,
+        2061
       ],
-      "limit": "Stock 2005 LX. Wheels, mirror finish and roof equipment differ from the modeled EX.",
-      "medianPx": 34.8,
-      "worstPx": 63.0,
-      "worstLandmark": "PR",
-      "anchors": {
-        "FR": [
-          2284.4,
-          2059.8
-        ],
-        "RR": [
-          458.8,
-          1732.1
-        ],
-        "GR": [
-          2022.3,
-          1161.0
-        ],
-        "WR": [
-          1685.2,
-          608.6
-        ],
-        "PR": [
-          599.2,
-          992.4
-        ],
-        "DR": [
-          1086.0,
-          1254.6
-        ],
-        "MR": [
-          1750.8,
-          1058.0
-        ],
-        "IR": [
-          3379.9,
-          1722.7
-        ],
-        "OR": [
-          2565.3,
-          1479.3
-        ],
-        "B": [
-          3810.5,
-          1629.1
-        ]
-      },
-      "status": "limited",
-      "observation": "The independent front-right view checks the hood width and near headlamp sweep. The fit is least certain at the rear side-glass tip.",
-      "render": "comparisons/field-front-2005-model.webp",
-      "worstDescription": "quarter-window tip",
-      "publicPhoto": "comparisons/field-front-2005-photo.webp",
-      "credit": "Photograph by MercurySable99. Public preview resized and converted to WebP. The opacity slider shows the reconstruction above the image.",
-      "license": "CC BY-SA 4.0",
-      "licenseURL": "https://creativecommons.org/licenses/by-sa/4.0/"
-    },
-    {
-      "id": "field-lx-fascia",
-      "label": "Facelifted front \u2022 IFCAR",
-      "file": "commons-2",
-      "source": "https://commons.wikimedia.org/wiki/File:04-05_Honda_Civic_LX_coupe.jpg",
-      "original": "https://upload.wikimedia.org/wikipedia/commons/f/fb/04-05_Honda_Civic_LX_coupe.jpg",
-      "dimensions": [
-        1668,
-        908
-      ],
-      "limit": "2004\u201305 LX photographed in Maryland. Front plate bracket, wheel covers and trim differ.",
-      "medianPx": 13.2,
-      "worstPx": 44.4,
-      "worstLandmark": "WR",
+      "limit": "The Canadian Reverb adds a wing and lower bumper extensions. The driver\u2019s window is open and the brake and signal lamps are illuminated.",
+      "medianPx": 28.3,
+      "worstPx": 149.7,
+      "worstLandmark": "WL",
       "anchors": {
         "FL": [
-          802.7,
-          719.3
+          201.5,
+          1446.8
         ],
         "RL": [
-          1501.2,
-          587.3
-        ],
-        "GL": [
-          952.2,
-          382.2
-        ],
-        "GR": [
-          430.9,
-          305.8
+          1281.2,
+          1518.8
         ],
         "WL": [
-          1094.6,
-          163.3
-        ],
-        "WR": [
-          768.0,
-          132.0
+          1094.1,
+          381.5
         ],
         "PL": [
-          1466.4,
-          309.3
+          1302.8,
+          734.2
         ],
         "DL": [
-          1306.6,
-          413.5
+          799.0,
+          964.5
         ],
         "ML": [
-          1066.8,
-          351.0
+          424.7,
+          748.6
         ],
-        "IL": [
-          354.4,
-          566.4
-        ],
-        "OL": [
-          691.5,
-          483.0
-        ],
-        "B": [
-          225.9,
-          524.7
-        ]
-      },
-      "status": "limited",
-      "observation": "The Maryland photograph checks the front return and outer lamp against a stock LX. The far glass corner and front plate bracket affect comparison.",
-      "render": "comparisons/field-lx-fascia-model.webp",
-      "worstDescription": "upper windshield corner",
-      "publicPhoto": "comparisons/field-lx-fascia-photo.webp",
-      "credit": "Photograph by IFCAR. Public preview resized and converted to WebP. The opacity slider shows the reconstruction above the image.",
-      "license": "Public domain",
-      "licenseURL": "https://commons.wikimedia.org/wiki/File:04-05_Honda_Civic_LX_coupe.jpg"
-    },
-    {
-      "id": "field-front-2004",
-      "label": "2004 LX front \u2022 Cutlass",
-      "file": "commons-4",
-      "source": "https://commons.wikimedia.org/wiki/File:2004_Honda_Civic_LX_Coupe_in_Satin_Silver_Metallic%2C_front_right%2C_05-17-2022.jpg",
-      "original": "https://upload.wikimedia.org/wikipedia/commons/f/f9/2004_Honda_Civic_LX_Coupe_in_Satin_Silver_Metallic%2C_front_right%2C_05-17-2022.jpg",
-      "dimensions": [
-        3633,
-        2278
-      ],
-      "limit": "The 2004 facelift shares the 2005 panels. This LX has steel-wheel covers, black mirrors and a solid roof.",
-      "medianPx": 32.6,
-      "worstPx": 50.8,
-      "worstLandmark": "WR",
-      "anchors": {
-        "FR": [
-          1604.6,
-          1612.1
-        ],
-        "RR": [
-          317.9,
-          1127.7
-        ],
-        "GR": [
-          1301.8,
-          719.0
-        ],
-        "GL": [
-          2497.7,
-          552.5
-        ],
-        "WR": [
-          999.1,
-          181.6
-        ],
-        "WL": [
-          1922.5,
-          211.9
-        ],
-        "PR": [
-          302.8,
-          552.5
-        ],
-        "DR": [
-          545.0,
-          749.3
-        ],
-        "MR": [
-          961.2,
-          582.8
-        ],
-        "IR": [
-          2853.4,
-          1309.4
-        ],
-        "OR": [
-          1884.6,
-          1021.8
-        ],
-        "B": [
-          3216.7,
-          1150.4
-        ]
-      },
-      "status": "limited",
-      "observation": "The front-right photograph checks the depth of the headlamp beside the grille, the nose corners and the front arch. The model simplifies the fine reflector fluting.",
-      "render": "comparisons/field-front-2004-model.webp",
-      "worstDescription": "upper windshield corner",
-      "publicPhoto": "comparisons/field-front-2004-photo.webp",
-      "credit": "Photograph by Cutlass. Public preview resized and converted to WebP. The opacity slider shows the reconstruction above the image.",
-      "license": "CC0",
-      "licenseURL": "https://creativecommons.org/publicdomain/zero/1.0/"
-    },
-    {
-      "id": "field-rear-2004",
-      "label": "2004 LX rear \u2022 Cutlass",
-      "file": "commons-5",
-      "source": "https://commons.wikimedia.org/wiki/File:2004_Honda_Civic_LX_Coupe_in_Satin_Silver_Metallic%2C_rear_right%2C_05-17-2022.jpg",
-      "original": "https://upload.wikimedia.org/wikipedia/commons/2/2d/2004_Honda_Civic_LX_Coupe_in_Satin_Silver_Metallic%2C_rear_right%2C_05-17-2022.jpg",
-      "dimensions": [
-        3448,
-        1912
-      ],
-      "limit": "The matching 2004 LX rear view establishes bumper and lamp returns. Wheels, paint and roof differ.",
-      "medianPx": 21.7,
-      "worstPx": 121.1,
-      "worstLandmark": "WR",
-      "anchors": {
-        "FR": [
-          3232.5,
-          969.8
-        ],
-        "RR": [
-          1961.0,
-          1443.8
-        ],
-        "GR": [
-          3024.2,
-          567.5
-        ],
-        "WR": [
-          2665.0,
-          179.6
-        ],
-        "PR": [
-          1989.8,
-          553.1
-        ],
-        "DR": [
-          2643.5,
-          725.5
-        ],
-        "MR": [
-          3024.2,
-          502.8
-        ],
-        "TR": [
-          1364.8,
-          1027.2
+        "TL": [
+          1597.9,
+          1079.7
         ],
         "E": [
-          438.2,
-          711.2
+          2584.1,
+          698.2
         ]
       },
       "status": "limited",
-      "observation": "The rear wheel, trunk opening and fixed tail lenses can be compared in this rear-right view. The cropped roof and wide lens weaken the glass-corner fit.",
-      "render": "comparisons/field-rear-2004-model.webp",
-      "worstDescription": "upper windshield corner",
-      "publicPhoto": "comparisons/field-rear-2004-photo.webp",
-      "credit": "Photograph by Cutlass. Public preview resized and converted to WebP. The opacity slider shows the reconstruction above the image.",
-      "license": "CC0",
-      "licenseURL": "https://creativecommons.org/publicdomain/zero/1.0/"
+      "observation": "The outer red triangle, round clear inboard lens and sloping seam of the trunk opening are visible from the left rear.",
+      "publicPhoto": "comparisons/field-reverb-rear-photo.webp",
+      "credit": "Photograph by Elise240SX. Preview resized and converted to WebP.",
+      "license": "CC BY-SA 4.0",
+      "licenseURL": "https://creativecommons.org/licenses/by-sa/4.0/",
+      "render": "comparisons/field-reverb-rear-model.webp",
+      "worstDescription": "upper windshield corner"
     },
     {
       "id": "us-profile",
@@ -446,8 +367,8 @@
         617
       ],
       "limit": "",
-      "medianPx": 3.3,
-      "worstPx": 10.7,
+      "medianPx": 2.8,
+      "worstPx": 8.0,
       "worstLandmark": "PR",
       "anchors": {
         "FR": [
@@ -488,7 +409,7 @@
         ]
       },
       "status": "verified",
-      "observation": "The two axle centers and glass outline agree in broadside. The quarter-window point is the largest residual on this view.",
+      "observation": "The two hub centers set the scale for comparing the long front door, short trunk and raked roof. The model carries the five-spoke EX alloys.",
       "render": "comparisons/us-profile-model.webp",
       "worstDescription": "quarter-window tip",
       "tracing": "comparisons/us-profile-tracing.png",
@@ -506,8 +427,8 @@
         536
       ],
       "limit": "Canadian appearance package has a chin extension, skirt, spoiler and alternate wheels.",
-      "medianPx": 5.8,
-      "worstPx": 29.8,
+      "medianPx": 8.0,
+      "worstPx": 27.7,
       "worstLandmark": "PL",
       "anchors": {
         "FL": [
@@ -552,7 +473,7 @@
         ]
       },
       "status": "limited",
-      "observation": "The stacked openings and swept lamps align in the front corner. The fixed quarter-light tip has the largest residual.",
+      "observation": "The near headlamp turns from the honeycomb grille into the fender. On the Canadian car the accessory front skirt extends below the stock bumper.",
       "render": "comparisons/studio-front-model.webp",
       "worstDescription": "quarter-window tip",
       "tracing": "comparisons/studio-front-tracing.png",
@@ -570,8 +491,8 @@
         324
       ],
       "limit": "Compare roof and wheelbase. The Canadian aero package changes the lowest silhouette.",
-      "medianPx": 3.9,
-      "worstPx": 16.9,
+      "medianPx": 4.6,
+      "worstPx": 17.0,
       "worstLandmark": "WL",
       "anchors": {
         "FL": [
@@ -612,7 +533,7 @@
         ]
       },
       "status": "limited",
-      "observation": "The two axle centers and roof crest register in the studio profile. The upper windshield corner is the largest residual.",
+      "observation": "The axle centers, side glass and roof are visible throughout this broadside view. The accessory rear wing, wheels and side skirts differ.",
       "render": "comparisons/studio-profile-model.webp",
       "worstDescription": "upper windshield corner",
       "tracing": "comparisons/studio-profile-tracing.png",
@@ -630,8 +551,8 @@
         577
       ],
       "limit": "Canadian aero-kit car. Rear lamps and quarter glass are shared.",
-      "medianPx": 5.1,
-      "worstPx": 16.7,
+      "medianPx": 4.8,
+      "worstPx": 20.2,
       "worstLandmark": "GL",
       "anchors": {
         "FL": [
@@ -668,7 +589,7 @@
         ]
       },
       "status": "limited",
-      "observation": "The backlight, shoulder, triangular rear lens and fuel flap follow the Canadian side view. The accessory wing and skirt change the outline.",
+      "observation": "The triangular lens wraps onto the quarter just behind the fuel lid. The Canadian rear wing crosses the top of the trunk.",
       "render": "comparisons/studio-rear-model.webp",
       "worstDescription": "lower windshield corner",
       "tracing": "comparisons/studio-rear-tracing.png",
@@ -686,8 +607,8 @@
         696
       ],
       "limit": "Canadian car in blue with a different wheel option.",
-      "medianPx": 5.9,
-      "worstPx": 16.9,
+      "medianPx": 7.4,
+      "worstPx": 18.8,
       "worstLandmark": "OL",
       "anchors": {
         "FR": [
@@ -744,7 +665,7 @@
         ]
       },
       "status": "limited",
-      "observation": "The outer headlamp, near wheel and grille sit along the photographed nose. The road car has a different wheel design.",
+      "observation": "The lens tips and the ends of the grille define the frontal shape. The photographed blue body catches the sky across the bumper.",
       "render": "comparisons/road-front-model.webp",
       "worstDescription": "outer headlamp",
       "tracing": "comparisons/road-front-tracing.png",
@@ -762,8 +683,8 @@
         696
       ],
       "limit": "Canadian car in blue with a different wheel option.",
-      "medianPx": 6.1,
-      "worstPx": 20.1,
+      "medianPx": 5.4,
+      "worstPx": 18.9,
       "worstLandmark": "PL",
       "anchors": {
         "FL": [
@@ -808,7 +729,7 @@
         ]
       },
       "status": "limited",
-      "observation": "The near wheel opening and visible cowl line follow the three-quarter angle. The rear quarter light differs most.",
+      "observation": "This view exposes the arc of the front arch and the line from the fender to the door pull. The wheels differ.",
       "render": "comparisons/road-quarter-model.webp",
       "worstDescription": "quarter-window tip",
       "tracing": "comparisons/road-quarter-tracing.png",
@@ -826,9 +747,9 @@
         754
       ],
       "limit": "",
-      "medianPx": 6.6,
-      "worstPx": 25.0,
-      "worstLandmark": "WL",
+      "medianPx": 10.7,
+      "worstPx": 18.9,
+      "worstLandmark": "GL",
       "anchors": {
         "IR": [
           353.5,
@@ -876,9 +797,9 @@
         ]
       },
       "status": "verified",
-      "observation": "The Rallye Red brochure frame supports the grille height, central bumper and separate corner ducts. The upper glass corner has greater uncertainty than the grille.",
+      "observation": "The body-colour dividers separate the center intake from the smaller side openings. The red EX also shows the raised outer hood ridges.",
       "render": "comparisons/brochure-red-model.webp",
-      "worstDescription": "upper windshield corner",
+      "worstDescription": "lower windshield corner",
       "tracing": "comparisons/brochure-red-tracing.png",
       "credit": "Reference photography by American Honda Motor Co., Inc. The feature tracing follows visible edges in the original photograph."
     },
@@ -893,8 +814,8 @@
         400
       ],
       "limit": "LX wheels and trim differ. The stock trunk pressing, fixed rear glass and bumper are shared.",
-      "medianPx": 8.8,
-      "worstPx": 25.7,
+      "medianPx": 5.8,
+      "worstPx": 21.7,
       "worstLandmark": "TL",
       "anchors": {
         "FL": [
@@ -935,7 +856,7 @@
         ]
       },
       "status": "limited",
-      "observation": "The raised trunk, rear glass rake and triangular lamp define the notchback. The leading tip of the lamp remains offset in this low perspective.",
+      "observation": "Compare the sloping rear glass, recessed plate pocket, triangular lamps and the lower edge of the stock trunk. The LX wheels differ.",
       "render": "comparisons/brochure-rear-model.webp",
       "worstDescription": "leading tail-lamp tip",
       "tracing": "comparisons/brochure-rear-tracing.png",
@@ -952,9 +873,9 @@
         754
       ],
       "limit": "",
-      "medianPx": 5.6,
-      "worstPx": 29.6,
-      "worstLandmark": "WR",
+      "medianPx": 9.4,
+      "worstPx": 23.3,
+      "worstLandmark": "GL",
       "anchors": {
         "FL": [
           625.4,
@@ -998,9 +919,9 @@
         ]
       },
       "status": "verified",
-      "observation": "The hub centers, hood and outer headlamp follow the same EX in Fiji Blue Pearl. The far upper windshield corner is less closely registered.",
+      "observation": "Honda\u2019s blue EX shows the stock bumper, lamp-to-fender transition and five-spoke front wheel.",
       "render": "comparisons/brochure-blue-model.webp",
-      "worstDescription": "upper windshield corner",
+      "worstDescription": "lower windshield corner",
       "tracing": "comparisons/brochure-blue-tracing.png",
       "credit": "Reference photography by American Honda Motor Co., Inc. The feature tracing follows visible edges in the original photograph."
     },
@@ -1015,9 +936,9 @@
         472
       ],
       "limit": "Other cars in the printed layout are excluded from comparison.",
-      "medianPx": 7.4,
-      "worstPx": 14.8,
-      "worstLandmark": "WR",
+      "medianPx": 8.9,
+      "worstPx": 19.3,
+      "worstLandmark": "B",
       "anchors": {
         "FL": [
           439.7,
@@ -1061,9 +982,9 @@
         ]
       },
       "status": "verified",
-      "observation": "The EX in red supplies the high front view. Its hood length, roof cutout and forward wheel location can be compared in the brochure layout.",
+      "observation": "The elevated view of the red EX exposes the shape of the hood, windshield and moonroof. The other three cars belong to the brochure layout.",
       "render": "comparisons/brochure-high-model.webp",
-      "worstDescription": "upper windshield corner",
+      "worstDescription": "front badge",
       "tracing": "comparisons/brochure-high-tracing.png",
       "credit": "Reference photography by American Honda Motor Co., Inc. The feature tracing follows visible edges in the original photograph."
     },
@@ -1079,7 +1000,7 @@
       ],
       "limit": "Special Edition wheels and wing differ.",
       "medianPx": 2.3,
-      "worstPx": 7.8,
+      "worstPx": 6.9,
       "worstLandmark": "GL",
       "anchors": {
         "FL": [
@@ -1112,7 +1033,7 @@
         ]
       },
       "status": "limited",
-      "observation": "The two-door window line and axle spacing agree in profile. The Special Edition adds a wing and a distinct wheel package.",
+      "observation": "The long door and quarter glass are visible nearly in profile. The Special Edition car carries different wheels and a rear wing.",
       "render": "comparisons/brochure-side-model.webp",
       "worstDescription": "lower windshield corner",
       "tracing": "comparisons/brochure-side-tracing.png",
@@ -1129,8 +1050,8 @@
         164
       ],
       "limit": "Accessory car is cropped at the roof and has a spoiler.",
-      "medianPx": 4.5,
-      "worstPx": 11.9,
+      "medianPx": 2.2,
+      "worstPx": 13.0,
       "worstLandmark": "TR",
       "anchors": {
         "FR": [
@@ -1167,11 +1088,482 @@
         ]
       },
       "status": "limited",
-      "observation": "The trunk lip and positions of the wheel centers can be checked in the accessory view. Fine detail is limited by the small original.",
+      "observation": "The cropped accessory-car image shows the rear deck and bumper. Its wing and low source resolution limit comparisons of small details.",
       "render": "comparisons/brochure-aft-model.webp",
       "worstDescription": "leading tail-lamp tip",
       "tracing": "comparisons/brochure-aft-tracing.png",
       "credit": "Reference photography by American Honda Motor Co., Inc. The feature tracing follows visible edges in the original photograph."
+    },
+    {
+      "id": "field-front-2005",
+      "label": "2005 LX front \u2022 MercurySable99",
+      "file": "commons-0",
+      "source": "https://commons.wikimedia.org/wiki/File:2005_Honda_Civic_LX_coupe%2C_front_right%2C_05-23-2024.jpg",
+      "original": "https://upload.wikimedia.org/wikipedia/commons/e/ef/2005_Honda_Civic_LX_coupe%2C_front_right%2C_05-23-2024.jpg",
+      "dimensions": [
+        4494,
+        2986
+      ],
+      "limit": "Stock 2005 LX. Wheels, mirror finish and roof equipment differ from the modeled EX.",
+      "medianPx": 41.6,
+      "worstPx": 75.7,
+      "worstLandmark": "GR",
+      "anchors": {
+        "FR": [
+          2284.4,
+          2059.8
+        ],
+        "RR": [
+          458.8,
+          1732.1
+        ],
+        "GR": [
+          2022.3,
+          1161.0
+        ],
+        "WR": [
+          1685.2,
+          608.6
+        ],
+        "PR": [
+          599.2,
+          992.4
+        ],
+        "DR": [
+          1086.0,
+          1254.6
+        ],
+        "MR": [
+          1750.8,
+          1058.0
+        ],
+        "IR": [
+          3379.9,
+          1722.7
+        ],
+        "OR": [
+          2565.3,
+          1479.3
+        ],
+        "B": [
+          3810.5,
+          1629.1
+        ]
+      },
+      "status": "limited",
+      "observation": "The right front corner shows the arc of the lens, the hood edge and the bumper return against the front wheel.",
+      "render": "comparisons/field-front-2005-model.webp",
+      "worstDescription": "lower windshield corner",
+      "publicPhoto": "comparisons/field-front-2005-photo.webp",
+      "credit": "Photograph by MercurySable99. Public preview resized and converted to WebP. The opacity slider shows the reconstruction above the image.",
+      "license": "CC BY-SA 4.0",
+      "licenseURL": "https://creativecommons.org/licenses/by-sa/4.0/"
+    },
+    {
+      "id": "field-lx-fascia",
+      "label": "Facelifted front \u2022 IFCAR",
+      "file": "commons-2",
+      "source": "https://commons.wikimedia.org/wiki/File:04-05_Honda_Civic_LX_coupe.jpg",
+      "original": "https://upload.wikimedia.org/wikipedia/commons/f/fb/04-05_Honda_Civic_LX_coupe.jpg",
+      "dimensions": [
+        1668,
+        908
+      ],
+      "limit": "2004\u201305 LX photographed in Maryland. Front plate bracket, wheel covers and trim differ.",
+      "medianPx": 14.6,
+      "worstPx": 40.4,
+      "worstLandmark": "GL",
+      "anchors": {
+        "FL": [
+          802.7,
+          719.3
+        ],
+        "RL": [
+          1501.2,
+          587.3
+        ],
+        "GL": [
+          952.2,
+          382.2
+        ],
+        "GR": [
+          430.9,
+          305.8
+        ],
+        "WL": [
+          1094.6,
+          163.3
+        ],
+        "WR": [
+          768.0,
+          132.0
+        ],
+        "PL": [
+          1466.4,
+          309.3
+        ],
+        "DL": [
+          1306.6,
+          413.5
+        ],
+        "ML": [
+          1066.8,
+          351.0
+        ],
+        "IL": [
+          354.4,
+          566.4
+        ],
+        "OL": [
+          691.5,
+          483.0
+        ],
+        "B": [
+          225.9,
+          524.7
+        ]
+      },
+      "status": "limited",
+      "observation": "The front plate bracket partially covers the center intake. The near lamp and bumper corner remain visible.",
+      "render": "comparisons/field-lx-fascia-model.webp",
+      "worstDescription": "lower windshield corner",
+      "publicPhoto": "comparisons/field-lx-fascia-photo.webp",
+      "credit": "Photograph by IFCAR. Public preview resized and converted to WebP. The opacity slider shows the reconstruction above the image.",
+      "license": "Public domain",
+      "licenseURL": "https://commons.wikimedia.org/wiki/File:04-05_Honda_Civic_LX_coupe.jpg"
+    },
+    {
+      "id": "field-front-2004",
+      "label": "2004 LX front \u2022 Cutlass",
+      "file": "commons-4",
+      "source": "https://commons.wikimedia.org/wiki/File:2004_Honda_Civic_LX_Coupe_in_Satin_Silver_Metallic%2C_front_right%2C_05-17-2022.jpg",
+      "original": "https://upload.wikimedia.org/wikipedia/commons/f/f9/2004_Honda_Civic_LX_Coupe_in_Satin_Silver_Metallic%2C_front_right%2C_05-17-2022.jpg",
+      "dimensions": [
+        3633,
+        2278
+      ],
+      "limit": "The 2004 facelift shares the 2005 panels. This LX has steel-wheel covers, black mirrors and a solid roof.",
+      "medianPx": 36.9,
+      "worstPx": 67.3,
+      "worstLandmark": "GR",
+      "anchors": {
+        "FR": [
+          1604.6,
+          1612.1
+        ],
+        "RR": [
+          317.9,
+          1127.7
+        ],
+        "GR": [
+          1301.8,
+          719.0
+        ],
+        "GL": [
+          2497.7,
+          552.5
+        ],
+        "WR": [
+          999.1,
+          181.6
+        ],
+        "WL": [
+          1922.5,
+          211.9
+        ],
+        "PR": [
+          302.8,
+          552.5
+        ],
+        "DR": [
+          545.0,
+          749.3
+        ],
+        "MR": [
+          961.2,
+          582.8
+        ],
+        "IR": [
+          2853.4,
+          1309.4
+        ],
+        "OR": [
+          1884.6,
+          1021.8
+        ],
+        "B": [
+          3216.7,
+          1150.4
+        ]
+      },
+      "status": "limited",
+      "observation": "The front-right view exposes the amber reflector and the outer curvature of the headlamp. The model approximates the reflector fluting.",
+      "render": "comparisons/field-front-2004-model.webp",
+      "worstDescription": "lower windshield corner",
+      "publicPhoto": "comparisons/field-front-2004-photo.webp",
+      "credit": "Photograph by Cutlass. Public preview resized and converted to WebP. The opacity slider shows the reconstruction above the image.",
+      "license": "CC0",
+      "licenseURL": "https://creativecommons.org/publicdomain/zero/1.0/"
+    },
+    {
+      "id": "field-rear-2004",
+      "label": "2004 LX rear \u2022 Cutlass",
+      "file": "commons-5",
+      "source": "https://commons.wikimedia.org/wiki/File:2004_Honda_Civic_LX_Coupe_in_Satin_Silver_Metallic%2C_rear_right%2C_05-17-2022.jpg",
+      "original": "https://upload.wikimedia.org/wikipedia/commons/2/2d/2004_Honda_Civic_LX_Coupe_in_Satin_Silver_Metallic%2C_rear_right%2C_05-17-2022.jpg",
+      "dimensions": [
+        3448,
+        1912
+      ],
+      "limit": "The matching 2004 LX rear view establishes bumper and lamp returns. Wheels, paint and roof differ.",
+      "medianPx": 26.7,
+      "worstPx": 91.9,
+      "worstLandmark": "WR",
+      "anchors": {
+        "FR": [
+          3232.5,
+          969.8
+        ],
+        "RR": [
+          1961.0,
+          1443.8
+        ],
+        "GR": [
+          3024.2,
+          567.5
+        ],
+        "WR": [
+          2665.0,
+          179.6
+        ],
+        "PR": [
+          1989.8,
+          553.1
+        ],
+        "DR": [
+          2643.5,
+          725.5
+        ],
+        "MR": [
+          3024.2,
+          502.8
+        ],
+        "TR": [
+          1364.8,
+          1027.2
+        ],
+        "E": [
+          438.2,
+          711.2
+        ]
+      },
+      "status": "limited",
+      "observation": "The rear-right view shows the lens corner, trunk pressing and rise in the lower bumper. The top of the roof is cropped.",
+      "render": "comparisons/field-rear-2004-model.webp",
+      "worstDescription": "upper windshield corner",
+      "publicPhoto": "comparisons/field-rear-2004-photo.webp",
+      "credit": "Photograph by Cutlass. Public preview resized and converted to WebP. The opacity slider shows the reconstruction above the image.",
+      "license": "CC0",
+      "licenseURL": "https://creativecommons.org/publicdomain/zero/1.0/"
+    },
+    {
+      "id": "field-lx-alloy-front",
+      "label": "Facelift coupe, front left \u00b7 RL GNZLZ",
+      "file": "field-lx-alloy-front",
+      "source": "https://commons.wikimedia.org/wiki/File:Honda_Civic_LX_Coupe_2005_%2826296168644%29.jpg",
+      "original": "https://upload.wikimedia.org/wikipedia/commons/7/7a/Honda_Civic_LX_Coupe_2005_%2826296168644%29.jpg",
+      "dimensions": [
+        3200,
+        2000
+      ],
+      "limit": "The photographed LX has a different grille emblem and fog lamps. The front tire contact patches are partly hidden by the curb.",
+      "medianPx": 20.0,
+      "worstPx": 49.2,
+      "worstLandmark": "B",
+      "anchors": {
+        "FL": [
+          1160.0,
+          1593.3
+        ],
+        "RL": [
+          2773.3,
+          1400.0
+        ],
+        "GL": [
+          1453.3,
+          1060.0
+        ],
+        "GR": [
+          800.0,
+          933.3
+        ],
+        "WL": [
+          1853.3,
+          700.0
+        ],
+        "WR": [
+          1346.7,
+          640.0
+        ],
+        "PL": [
+          2713.3,
+          920.0
+        ],
+        "DL": [
+          2266.7,
+          1100.0
+        ],
+        "ML": [
+          1720.0,
+          993.3
+        ],
+        "IL": [
+          460.0,
+          1380.0
+        ],
+        "OL": [
+          993.3,
+          1226.7
+        ],
+        "B": [
+          253.3,
+          1293.3
+        ]
+      },
+      "status": "limited",
+      "observation": "Compare the shoulder crease passing through the handle, the glass opening and the lamp position relative to the near wheel.",
+      "publicPhoto": "comparisons/field-lx-alloy-front-photo.webp",
+      "credit": "Photograph by RL GNZLZ. Preview resized and converted to WebP.",
+      "license": "CC BY-SA 2.0",
+      "licenseURL": "https://creativecommons.org/licenses/by-sa/2.0/",
+      "render": "comparisons/field-lx-alloy-front-model.webp",
+      "worstDescription": "front badge"
+    },
+    {
+      "id": "field-lx-alloy-rear",
+      "label": "Facelift coupe, rear left \u00b7 RL GNZLZ",
+      "file": "field-lx-alloy-rear",
+      "source": "https://commons.wikimedia.org/wiki/File:Honda_Civic_LX_Coupe_2005_%2819877148384%29.jpg",
+      "original": "https://upload.wikimedia.org/wikipedia/commons/f/f9/Honda_Civic_LX_Coupe_2005_%2819877148384%29.jpg",
+      "dimensions": [
+        3200,
+        2400
+      ],
+      "limit": "The gray LX has a different mirror and upholstery configuration. Neighboring cars overlap parts of the outer silhouette.",
+      "medianPx": 22.3,
+      "worstPx": 52.1,
+      "worstLandmark": "WL",
+      "anchors": {
+        "FL": [
+          440.0,
+          1766.7
+        ],
+        "RL": [
+          1846.7,
+          1820.0
+        ],
+        "GL": [
+          760.0,
+          1406.7
+        ],
+        "WL": [
+          1093.3,
+          1153.3
+        ],
+        "PL": [
+          1820.0,
+          1340.0
+        ],
+        "DL": [
+          1260.0,
+          1486.7
+        ],
+        "ML": [
+          786.7,
+          1360.0
+        ],
+        "TL": [
+          2240.0,
+          1560.0
+        ],
+        "E": [
+          2733.3,
+          1333.3
+        ]
+      },
+      "status": "limited",
+      "observation": "Compare the raised trunk edge, triangular lens taper, fuel door, rear wheel arch and long door cutline.",
+      "publicPhoto": "comparisons/field-lx-alloy-rear-photo.webp",
+      "credit": "Photograph by RL GNZLZ. Preview resized and converted to WebP.",
+      "license": "CC BY-SA 2.0",
+      "licenseURL": "https://creativecommons.org/licenses/by-sa/2.0/",
+      "render": "comparisons/field-lx-alloy-rear-model.webp",
+      "worstDescription": "upper windshield corner"
+    },
+    {
+      "id": "field-canada-side",
+      "label": "Canadian coupe side glass \u00b7 Mack Male",
+      "file": "field-canada-side",
+      "source": "https://commons.wikimedia.org/wiki/File:Side_View_%2821178802%29.jpg",
+      "original": "https://upload.wikimedia.org/wikipedia/commons/e/e1/Side_View_%2821178802%29.jpg",
+      "dimensions": [
+        3072,
+        2048
+      ],
+      "limit": "The Canadian coupe carries skirts, a wing, tinted glass and a different wheel package.",
+      "medianPx": 17.7,
+      "worstPx": 80.2,
+      "worstLandmark": "WL",
+      "anchors": {
+        "FL": [
+          704.0,
+          1382.4
+        ],
+        "RL": [
+          2131.2,
+          1516.8
+        ],
+        "GL": [
+          896.0,
+          1036.8
+        ],
+        "WL": [
+          1267.2,
+          844.8
+        ],
+        "PL": [
+          2099.2,
+          1036.8
+        ],
+        "DL": [
+          1504.0,
+          1171.2
+        ],
+        "ML": [
+          1011.2,
+          1030.4
+        ],
+        "TL": [
+          2566.4,
+          1267.2
+        ],
+        "JL": [
+          2131.2,
+          1708.8
+        ],
+        "KL": [
+          704.0,
+          1548.8
+        ]
+      },
+      "status": "limited",
+      "observation": "The side view exposes the thin B-pillar, the length of the fixed quarter glass and the rake of the backlight.",
+      "publicPhoto": "comparisons/field-canada-side-photo.webp",
+      "credit": "Photograph by Mack Male. Preview resized and converted to WebP.",
+      "license": "CC BY-SA 2.0",
+      "licenseURL": "https://creativecommons.org/licenses/by-sa/2.0/",
+      "render": "comparisons/field-canada-side-model.webp",
+      "worstDescription": "upper windshield corner"
     },
     {
       "id": "cockpit-five-speed",
@@ -1254,10 +1646,10 @@
         1004,
         367
       ],
-      "medianPx": 12.5,
-      "worstPx": 37.9,
-      "worstLandmark": "Right cover corner",
-      "worstDescription": "right cover corner",
+      "medianPx": 12.0,
+      "worstPx": 33.8,
+      "worstLandmark": "Third skirt notch",
+      "worstDescription": "third skirt notch",
       "anchors": {
         "Left fastener": [
           55,
@@ -1294,6 +1686,94 @@
       "render": "comparisons/vtec-cover-model.webp",
       "tracing": "comparisons/vtec-cover-tracing.png",
       "credit": "Reference photography by American Honda Motor Co., Inc. The feature tracing follows visible edges in the original photograph."
+    },
+    {
+      "id": "auction-engine-bay",
+      "label": "Five-speed EX engine bay \u00b7 Nexus Auto Brokers",
+      "file": "auction-engine-bay",
+      "source": "https://bringatrailer.com/listing/2005-honda-civic-10/",
+      "original": "https://bringatrailer.com/wp-content/uploads/2025/09/Civic-32-of-70-78498-scaled.jpg",
+      "dimensions": [
+        2048,
+        1365
+      ],
+      "medianPx": 16.2,
+      "worstPx": 66.8,
+      "worstLandmark": "Right cover fastener",
+      "worstDescription": "right cover fastener",
+      "anchors": {
+        "Passenger strut stud": [
+          281.6,
+          452.26666666666665
+        ],
+        "Driver strut stud": [
+          1698.1333333333334,
+          422.4
+        ],
+        "Latch receiver": [
+          964.2666666666667,
+          1233.0666666666666
+        ],
+        "Left cover fastener": [
+          964.2666666666667,
+          657.0666666666667
+        ],
+        "Right cover fastener": [
+          1382.4,
+          648.5333333333333
+        ],
+        "Outer passenger coil": [
+          1011.2,
+          780.8
+        ],
+        "Outer driver coil": [
+          1433.6,
+          776.5333333333333
+        ],
+        "Plenum centre": [
+          1066.6666666666667,
+          448.0
+        ],
+        "Passenger shield bolt": [
+          1080.7466666666667,
+          924.5866666666666
+        ],
+        "Driver shield bolt": [
+          1341.0133333333333,
+          921.1733333333334
+        ],
+        "Passenger fuse lid": [
+          149.33333333333334,
+          648.5333333333333
+        ],
+        "Air filter lid": [
+          597.3333333333334,
+          746.6666666666666
+        ],
+        "Battery top centre": [
+          264.53333333333336,
+          1024.0
+        ],
+        "Brake fluid cap": [
+          1480.5333333333333,
+          345.6
+        ],
+        "Washer fluid cap": [
+          1966.9333333333334,
+          797.8666666666667
+        ],
+        "Steering fluid cap": [
+          1864.5333333333333,
+          849.0666666666667
+        ]
+      },
+      "sourceLinkOnly": true,
+      "status": "limited",
+      "credit": "Engine-bay photograph by Nexus Auto Brokers, via Bring a Trailer. The tracing follows visible edges in the photograph.",
+      "limit": "This 2005 US EX has the 1.7-litre VTEC engine and five-speed transaxle. It was photographed with its hood raised. Hardware hidden beneath the engine, hose routing and component depths remain approximate.",
+      "observation": "The open hood reveals the four coil packs, intake plenum, battery, front manifold heat shield and the tops of both struts. The overlaid tracing shows their installed position in the photographed car.",
+      "render": "comparisons/auction-engine-bay-model.webp",
+      "tracing": "comparisons/auction-engine-bay-tracing.png"
     }
   ],
   "fitLandmarks": "Pixel coordinates use the top left of each native source image. Residuals are 2D reprojection distances at native resolution. L/R in landmark IDs denote driver/passenger sides.",

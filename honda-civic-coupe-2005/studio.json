@@ -4,9 +4,9 @@
   "model": "civic.glb",
   "poster": "poster.webp",
   "home": [
-    -5.4,
-    2.0,
-    5.6
+    -4.7,
+    1.8,
+    6.25
   ],
   "target": [
     0.08,
@@ -22,96 +22,6 @@
     -1.7,
     0.86,
     0.26
-  ],
-  "parts": [
-    {
-      "node": "Body",
-      "offset": [
-        0,
-        0.15,
-        0
-      ]
-    },
-    {
-      "node": "Hood",
-      "offset": [
-        -0.17,
-        0.83,
-        0
-      ]
-    },
-    {
-      "node": "Trunk",
-      "offset": [
-        0.3,
-        0.74,
-        0
-      ]
-    },
-    {
-      "node": "DoorLeft",
-      "offset": [
-        0,
-        0.04,
-        0.7
-      ]
-    },
-    {
-      "node": "DoorRight",
-      "offset": [
-        0,
-        0.04,
-        -0.7
-      ]
-    },
-    {
-      "node": "Interior",
-      "offset": [
-        0,
-        0.8,
-        0
-      ]
-    },
-    {
-      "node": "Powertrain",
-      "offset": [
-        -0.66,
-        0.12,
-        0
-      ]
-    },
-    {
-      "node": "WheelFrontLeft",
-      "offset": [
-        -0.17,
-        0,
-        0.6
-      ]
-    },
-    {
-      "node": "WheelFrontRight",
-      "offset": [
-        -0.17,
-        0,
-        -0.6
-      ]
-    },
-    {
-      "node": "WheelRearLeft",
-      "offset": [
-        0.17,
-        0,
-        0.6
-      ]
-    },
-    {
-      "node": "WheelRearRight",
-      "offset": [
-        0.17,
-        0,
-        -0.6
-      ]
-    }
   ],
   "actions": [
     {
@@ -153,7 +63,7 @@
       "label": "Lower driver window",
       "nodes": [
         {
-          "node": "DoorLeft_\u00b7_Smoke_blue-green_glass",
+          "node": "DoorGlassLeft",
           "hidden": true
         }
       ]
@@ -162,11 +72,55 @@
       "label": "Isolate ignition cover",
       "nodes": [
         {
+          "node": "AccessoryDrive",
+          "hidden": true
+        },
+        {
+          "node": "BackGlass",
+          "hidden": true
+        },
+        {
+          "node": "Battery",
+          "hidden": true
+        },
+        {
           "node": "Body",
           "hidden": true
         },
         {
-          "node": "Interior",
+          "node": "BrakeFrontLeft",
+          "hidden": true
+        },
+        {
+          "node": "BrakeFrontRight",
+          "hidden": true
+        },
+        {
+          "node": "BrakeRearLeft",
+          "hidden": true
+        },
+        {
+          "node": "BrakeRearRight",
+          "hidden": true
+        },
+        {
+          "node": "Console",
+          "hidden": true
+        },
+        {
+          "node": "CylinderHead",
+          "hidden": true
+        },
+        {
+          "node": "Dashboard",
+          "hidden": true
+        },
+        {
+          "node": "DoorGlassLeft",
+          "hidden": true
+        },
+        {
+          "node": "DoorGlassRight",
           "hidden": true
         },
         {
@@ -178,11 +132,179 @@
           "hidden": true
         },
         {
-          "node": "Trunk",
+          "node": "DoorTrimLeft",
+          "hidden": true
+        },
+        {
+          "node": "DoorTrimRight",
+          "hidden": true
+        },
+        {
+          "node": "Engine",
+          "hidden": true
+        },
+        {
+          "node": "Exhaust",
+          "hidden": true
+        },
+        {
+          "node": "FenderLeft",
+          "hidden": true
+        },
+        {
+          "node": "FenderRight",
+          "hidden": true
+        },
+        {
+          "node": "FrontBumper",
+          "hidden": true
+        },
+        {
+          "node": "FuelTank",
+          "hidden": true
+        },
+        {
+          "node": "HalfshaftLeft",
+          "hidden": true
+        },
+        {
+          "node": "HalfshaftRight",
+          "hidden": true
+        },
+        {
+          "node": "HeadlampLeft",
+          "hidden": true
+        },
+        {
+          "node": "HeadlampRight",
           "hidden": true
         },
         {
           "node": "Hood",
+          "hidden": true
+        },
+        {
+          "node": "Intake",
+          "hidden": true
+        },
+        {
+          "node": "Interior",
+          "hidden": true
+        },
+        {
+          "node": "LuggageLiner",
+          "hidden": true
+        },
+        {
+          "node": "MirrorLeft",
+          "hidden": true
+        },
+        {
+          "node": "MirrorRight",
+          "hidden": true
+        },
+        {
+          "node": "Moonroof",
+          "hidden": true
+        },
+        {
+          "node": "OilPan",
+          "hidden": true
+        },
+        {
+          "node": "ParcelShelf",
+          "hidden": true
+        },
+        {
+          "node": "QuarterGlassLeft",
+          "hidden": true
+        },
+        {
+          "node": "QuarterGlassRight",
+          "hidden": true
+        },
+        {
+          "node": "Radiator",
+          "hidden": true
+        },
+        {
+          "node": "RearBench",
+          "hidden": true
+        },
+        {
+          "node": "RearBumper",
+          "hidden": true
+        },
+        {
+          "node": "SeatLeft",
+          "hidden": true
+        },
+        {
+          "node": "SeatRight",
+          "hidden": true
+        },
+        {
+          "node": "SpareWheel",
+          "hidden": true
+        },
+        {
+          "node": "Steering",
+          "hidden": true
+        },
+        {
+          "node": "Subframes",
+          "hidden": true
+        },
+        {
+          "node": "SuspensionFrontLeft",
+          "hidden": true
+        },
+        {
+          "node": "SuspensionFrontRight",
+          "hidden": true
+        },
+        {
+          "node": "SuspensionRearLeft",
+          "hidden": true
+        },
+        {
+          "node": "SuspensionRearRight",
+          "hidden": true
+        },
+        {
+          "node": "TaillampLeft",
+          "hidden": true
+        },
+        {
+          "node": "TaillampRight",
+          "hidden": true
+        },
+        {
+          "node": "TireFrontLeft",
+          "hidden": true
+        },
+        {
+          "node": "TireFrontRight",
+          "hidden": true
+        },
+        {
+          "node": "TireRearLeft",
+          "hidden": true
+        },
+        {
+          "node": "TireRearRight",
+          "hidden": true
+        },
+        {
+          "node": "Transaxle",
+          "hidden": true
+        },
+        {
+          "node": "Trunk",
+          "hidden": true
+        },
+        {
+          "node": "ValveCover",
           "hidden": true
         },
         {
@@ -202,19 +324,7 @@
           "hidden": true
         },
         {
-          "node": "Powertrain_\u00b7_Brake_casting",
-          "hidden": true
-        },
-        {
-          "node": "Powertrain_\u00b7_Machined_aluminum",
-          "hidden": true
-        },
-        {
-          "node": "Powertrain_\u00b7_Satin_black_trim",
-          "hidden": true
-        },
-        {
-          "node": "Powertrain_\u00b7_Weatherstrips",
+          "node": "Windshield",
           "hidden": true
         }
       ]
@@ -225,21 +335,21 @@
       "id": "us-profile",
       "label": "EX passenger profile",
       "position": [
-        -0.49622772928534686,
-        0.8065874483565926,
-        -8.165036597360857
+        -0.3885026313069834,
+        0.7332581914214122,
+        -7.1388165880806795
       ],
       "target": [
-        0.22702418177460648,
-        1.2114816207306744,
-        -0.025717224225585866
+        0.2209047051487048,
+        1.231914574853585,
+        -0.03255400885276405
       ],
       "up": [
-        -0.0003741189242007503,
-        0.9987665655523578,
-        -0.049650856687254774
+        -0.002118634614247321,
+        0.9975574740587715,
+        -0.06981831662862537
       ],
-      "fov": 25.972108724195586,
+      "fov": 30.13855372124271,
       "imageSize": [
         927,
         617
@@ -250,21 +360,21 @@
       "id": "studio-front",
       "label": "Studio front three-quarter",
       "position": [
-        -9.867061406073956,
-        0.4030217503031501,
-        8.487795302246198
+        -8.114702949667901,
+        0.32949505701873955,
+        7.185137491561221
       ],
       "target": [
-        -0.08485038219981611,
-        0.7296168743745792,
-        -0.09528635961698484
+        -0.1039603568260965,
+        0.7439389215682077,
+        -0.11144236791336048
       ],
       "up": [
-        -0.02777744652246117,
-        0.9995937887105941,
-        0.006377384721979795
+        -0.03402416369051786,
+        0.9992326681619196,
+        0.019401834015675884
       ],
-      "fov": 10.047786106536325,
+      "fov": 12.267822130257777,
       "imageSize": [
         928,
         536
@@ -275,21 +385,21 @@
       "id": "studio-profile",
       "label": "Studio driver profile",
       "position": [
-        -0.270253945932314,
-        0.7706191752687838,
-        9.786020990890522
+        -0.2835044513004374,
+        0.6789071546483276,
+        8.876215557468543
       ],
       "target": [
-        0.14057415470250362,
-        0.6783959726087396,
-        0.004702276933851834
+        0.1427832917853502,
+        0.6914500374936341,
+        0.005699433068823367
       ],
       "up": [
-        -0.005877428338611521,
-        0.9999359253795291,
-        -0.00967475950653532
+        -0.007248845359116372,
+        0.9999731590049438,
+        0.0010656034126057192
       ],
-      "fov": 10.503673396555303,
+      "fov": 11.701293191063609,
       "imageSize": [
         928,
         324
@@ -300,21 +410,21 @@
       "id": "studio-rear",
       "label": "Rear quarter and fuel door",
       "position": [
-        2.7176557659850906,
-        0.8081415431646732,
-        3.946468376533767
+        2.4486635913379833,
+        0.7497266767753334,
+        3.696968649832412
       ],
       "target": [
-        0.27550678740325996,
-        0.9136475629071842,
-        -0.17748461451670128
+        0.3136193026769747,
+        0.9420853129729514,
+        -0.1858351693746898
       ],
       "up": [
-        -0.06032740474267828,
-        0.9962998725423582,
-        0.06121411772699088
+        -0.05760061950641879,
+        0.9950508528896869,
+        0.0809689372289358
       ],
-      "fov": 40.053844064212456,
+      "fov": 44.42131589161608,
       "imageSize": [
         928,
         577
@@ -325,21 +435,21 @@
       "id": "road-front",
       "label": "Facelift grille and bumper",
       "position": [
-        -9.192134214767421,
-        0.857650752908428,
-        -2.8003023084809473
+        -8.748345512936561,
+        0.784567456691569,
+        -2.697421314851518
       ],
       "target": [
-        -0.09422167513453417,
-        1.0280379820759007,
-        0.29405479350876407
+        -0.09990547953563578,
+        1.0380388205440572,
+        0.2968040058573478
       ],
       "up": [
-        -0.030799748668627003,
-        0.9988930542826053,
-        0.03555336254023633
+        -0.0398899305929013,
+        0.9987332442792343,
+        0.030670836453688288
       ],
-      "fov": 19.80733185509084,
+      "fov": 20.84817069298037,
       "imageSize": [
         928,
         696
@@ -350,21 +460,21 @@
       "id": "road-quarter",
       "label": "Driver-side front wing",
       "position": [
-        -5.730361193258524,
-        0.9666584144164818,
-        5.239625689497456
+        -5.056571424563053,
+        0.886786155942133,
+        4.721816939388211
       ],
       "target": [
-        -0.11722892810851704,
-        0.8473942254884967,
-        -0.1328298367538956
+        -0.134448865665604,
+        0.8561251551390373,
+        -0.1451812278141018
       ],
       "up": [
-        -0.002135813043287915,
-        0.9996994076928363,
-        -0.024424016075092148
+        -0.010970514433456202,
+        0.9997885396267062,
+        -0.017393212588922374
       ],
-      "fov": 27.31449843942553,
+      "fov": 30.94784400452016,
       "imageSize": [
         928,
         696
@@ -375,21 +485,21 @@
       "id": "brochure-red",
       "label": "Rallye Red front",
       "position": [
-        -6.177029614358352,
-        1.6564022047683469,
-        0.024725680981078774
+        -6.160010519320743,
+        1.6129268437727802,
+        0.022424854368908967
       ],
       "target": [
-        -0.046967919001978053,
-        0.4040397982704025,
-        -0.03055165200912549
+        -0.0423920598195231,
+        0.4186168466547231,
+        -0.029247735775357525
       ],
       "up": [
-        0.19994716798003165,
-        0.9739996094067223,
-        0.10651709201962767
+        0.1914090296572788,
+        0.9759355335413649,
+        0.10446251833548181
       ],
-      "fov": 24.491151768747695,
+      "fov": 24.685365878276038,
       "imageSize": [
         1004,
         754
@@ -400,21 +510,21 @@
       "id": "brochure-rear",
       "label": "Stock trunk and rear lamps",
       "position": [
-        6.633663104977131,
-        0.796176663662775,
-        3.9992630880863653
+        5.978731056931064,
+        0.7459507294521831,
+        3.7370689139501874
       ],
       "target": [
-        0.01543949332472927,
-        0.661324506875494,
-        -0.02554332263299708
+        0.030964831411097293,
+        0.6729042695997439,
+        -0.04935919019826107
       ],
       "up": [
-        -0.01865025423163047,
-        0.9998220592214898,
-        -0.002831591636325126
+        -0.016176286946755714,
+        0.9998504185327498,
+        0.006121135556500706
       ],
-      "fov": 13.628061516977105,
+      "fov": 15.34556370599488,
       "imageSize": [
         1050,
         400
@@ -425,21 +535,21 @@
       "id": "brochure-blue",
       "label": "EX bumper and stance",
       "position": [
-        -6.178808605609862,
-        1.6096930714954885,
-        2.8335875086650217
+        -5.605723669961405,
+        1.513865480480688,
+        2.6795768330933134
       ],
       "target": [
-        -0.11465835538656055,
-        0.7819364662564449,
-        -0.2728109894783288
+        -0.13085463336205727,
+        0.7909582747307747,
+        -0.29306009918298814
       ],
       "up": [
-        0.10005614695862258,
-        0.9925748997164594,
-        -0.06916527964705282
+        0.094748340902923,
+        0.993241333280017,
+        -0.06704032935687121
       ],
-      "fov": 26.42942129111744,
+      "fov": 29.4226641159125,
       "imageSize": [
         1004,
         754
@@ -450,21 +560,21 @@
       "id": "brochure-high",
       "label": "Rallye Red elevated view",
       "position": [
-        -4.33857330188057,
-        2.534898315231356,
-        4.0852357731398925
+        -4.217782135096635,
+        2.585385941451565,
+        4.067221362405199
       ],
       "target": [
-        -0.10279730598553538,
-        0.5413030417098175,
-        -0.051356170523653155
+        -0.11387244298627941,
+        0.5388198880716115,
+        -0.05692453724970292
       ],
       "up": [
-        0.24761972288340295,
-        0.947349648500015,
-        -0.20301013848092672
+        0.2511857839947646,
+        0.9430629064185235,
+        -0.2180322371952884
       ],
-      "fov": 35.27544755917619,
+      "fov": 36.11047705292939,
       "imageSize": [
         955,
         472
@@ -475,21 +585,21 @@
       "id": "brochure-side",
       "label": "Studio rear wheel and greenhouse",
       "position": [
-        -3.2309175316033323,
-        0.8206471051112671,
-        6.720758599246
+        -2.549513883109864,
+        0.7565275014775861,
+        5.868062147881393
       ],
       "target": [
-        0.008227580426920511,
-        1.5645440576108323,
-        0.04334982001031218
+        -0.04264657539417405,
+        1.6155950911077361,
+        0.04387884478531401
       ],
       "up": [
-        -0.057500300263847504,
-        0.9948940205803064,
-        0.08294337395548973
+        -0.06601799077610482,
+        0.9908482297926766,
+        0.11773449116807286
       ],
-      "fov": 30.32157729640221,
+      "fov": 36.63650086757589,
       "imageSize": [
         1008,
         768
@@ -500,21 +610,21 @@
       "id": "brochure-aft",
       "label": "Rear lamps and trunk width",
       "position": [
-        7.408784286499042,
-        0.67201567490124,
-        -4.780959909968081
+        7.170436425042021,
+        0.7672182950060006,
+        -4.6502285870772315
       ],
       "target": [
-        0.1554960197437243,
-        0.6478527938129505,
-        0.23272457507558553
+        0.161005261437416,
+        0.6389744728612159,
+        0.23881104102908957
       ],
       "up": [
-        -0.007631914111973226,
-        0.9999515195996929,
-        -0.0062219239188616715
+        -0.012021379649675978,
+        0.999887301307196,
+        0.00899283692342212
       ],
-      "fov": 12.157822456370726,
+      "fov": 12.580117345547867,
       "imageSize": [
         333,
         164
@@ -525,21 +635,21 @@
       "id": "field-front-2005",
       "label": "2005 LX front \u2022 MercurySable99",
       "position": [
-        -10.613628821252238,
-        1.7316363105815276,
-        -7.605623418215914
+        -8.070356985007662,
+        1.3496339917323605,
+        -6.080290675297159
       ],
       "target": [
-        -0.051548948636332526,
-        0.5710433304218916,
-        0.05848262333083731
+        -0.07622057619787004,
+        0.5835651332886971,
+        0.09086101507512545
       ],
       "up": [
-        0.07336360111612011,
-        0.9960644985045561,
-        0.04973225160941264
+        0.06665947857703797,
+        0.9970737400436278,
+        0.03742286508605763
       ],
-      "fov": 10.598364255629797,
+      "fov": 14.110266809734112,
       "imageSize": [
         4494,
         2986
@@ -550,21 +660,21 @@
       "id": "field-rear-2005",
       "label": "2005 LX rear \u2022 MercurySable99",
       "position": [
-        5.707246501661679,
-        1.3703318680127956,
-        -4.820276048835406
+        4.5221198177357165,
+        1.1581793518944945,
+        -4.079116710215322
       ],
       "target": [
-        0.25954891221736,
-        0.5171259494072797,
-        0.2696086075040087
+        0.32153106369703366,
+        0.5323586761785792,
+        0.31409920178584283
       ],
       "up": [
-        -0.06653663415800387,
-        0.9932245442048424,
-        0.09527791509057826
+        -0.06293375515745814,
+        0.9946827931871532,
+        0.08151983439129484
       ],
-      "fov": 19.877819806321178,
+      "fov": 25.570843148724993,
       "imageSize": [
         4175,
         2666
@@ -575,21 +685,21 @@
       "id": "field-lx-fascia",
       "label": "Facelifted front \u2022 IFCAR",
       "position": [
-        -5.460594208530328,
-        1.563855213199492,
-        4.3732545449702025
+        -5.222535042827921,
+        1.4877621710349593,
+        4.249509664196576
       ],
       "target": [
-        -0.1351592941066535,
-        0.5855957776887187,
-        -0.14815564664444913
+        -0.13848953767161465,
+        0.5971203707071739,
+        -0.15249367024912797
       ],
       "up": [
-        0.062054149037839346,
-        0.9881057827169921,
-        -0.1406991284565392
+        0.05880253247465489,
+        0.9894664015610479,
+        -0.13228190487137237
       ],
-      "fov": 17.004731034067493,
+      "fov": 17.788440307333595,
       "imageSize": [
         1668,
         908
@@ -600,21 +710,21 @@
       "id": "field-red",
       "label": "Red facelift coupe \u2022 IFCAR",
       "position": [
-        -13.070816370753876,
-        1.358577322287937,
-        10.945711988754889
+        -10.72267102903639,
+        1.0204409562216448,
+        9.158041000097889
       ],
       "target": [
-        -0.014449313688702503,
-        0.649080007876978,
-        -0.016530238361879057
+        -0.017586381045003208,
+        0.6642001112435909,
+        -0.0207150037972319
       ],
       "up": [
-        0.027562494318584818,
-        0.9991129724084977,
-        -0.03183672834942053
+        0.019971943388892188,
+        0.9996802919235902,
+        -0.01550598003470055
       ],
-      "fov": 5.543937559501543,
+      "fov": 6.731859873531253,
       "imageSize": [
         1200,
         508
@@ -625,21 +735,21 @@
       "id": "field-front-2004",
       "label": "2004 LX front \u2022 Cutlass",
       "position": [
-        -3.218658095315442,
-        1.1682334501946856,
-        -2.1826951162392954
+        -3.1751233225159052,
+        1.115947736666278,
+        -2.171692427328335
       ],
       "target": [
-        -0.2785648778469363,
-        0.29592220060991326,
-        0.2621247342476165
+        -0.2669421719576075,
+        0.31547204250123473,
+        0.2587942542355006
       ],
       "up": [
-        0.14491880683058878,
-        0.9741487634412271,
-        0.17329952715667585
+        0.1322087016459772,
+        0.9775981309372166,
+        0.16377653555117666
       ],
-      "fov": 35.30613494143869,
+      "fov": 35.49579945797182,
       "imageSize": [
         3633,
         2278
@@ -650,26 +760,176 @@
       "id": "field-rear-2004",
       "label": "2004 LX rear \u2022 Cutlass",
       "position": [
-        2.621355527541477,
-        1.013705497201232,
-        -2.3244121682857997
+        2.581672605915574,
+        1.0143999007202267,
+        -2.2605564542167436
       ],
       "target": [
-        0.5850266356089642,
-        0.4651144490079058,
-        0.49550215919309837
+        0.5761115091173381,
+        0.45832148176601806,
+        0.4906704894302605
       ],
       "up": [
-        -0.14770982375813968,
-        0.9853687751823168,
-        0.0850304937127827
+        -0.1466979278409729,
+        0.9848819676325445,
+        0.09212615154999182
       ],
-      "fov": 44.53273034459174,
+      "fov": 44.98039891188698,
       "imageSize": [
         3448,
         1912
       ],
       "source": "https://commons.wikimedia.org/wiki/File:2004_Honda_Civic_LX_Coupe_in_Satin_Silver_Metallic%2C_rear_right%2C_05-17-2022.jpg"
+    },
+    {
+      "id": "us-ex-front",
+      "label": "EX grille and headlamps \u00b7 American Honda",
+      "position": [
+        -15.485671859449397,
+        0.7237015685366022,
+        7.2689675979978805
+      ],
+      "target": [
+        -0.04068236195354302,
+        0.7579526463263251,
+        -0.08624192009425258
+      ],
+      "up": [
+        -0.013026037446477678,
+        0.9996575056399991,
+        -0.02269788021067609
+      ],
+      "fov": 7.861374013773257,
+      "imageSize": [
+        927,
+        617
+      ],
+      "source": "https://hondanews.com/en-US/releases/release-28b2994dde0c36d818b2ff004c34c274/photos/0"
+    },
+    {
+      "id": "field-lx-alloy-front",
+      "label": "Facelift coupe, front left \u00b7 RL GNZLZ",
+      "position": [
+        -5.533911346014157,
+        1.712349492812633,
+        6.755662198788483
+      ],
+      "target": [
+        -0.044695253594203344,
+        0.8485832091698501,
+        -0.06291540087749237
+      ],
+      "up": [
+        0.04423196071297453,
+        0.9949203924261817,
+        -0.09042646949880569
+      ],
+      "fov": 17.280206495555237,
+      "imageSize": [
+        3200,
+        2000
+      ],
+      "source": "https://commons.wikimedia.org/wiki/File:Honda_Civic_LX_Coupe_2005_%2826296168644%29.jpg"
+    },
+    {
+      "id": "field-lx-alloy-rear",
+      "label": "Facelift coupe, rear left \u00b7 RL GNZLZ",
+      "position": [
+        4.246200881544825,
+        0.6149751657811917,
+        6.730183994912747
+      ],
+      "target": [
+        0.31593214323458874,
+        1.2843012836203167,
+        -0.1569500941077253
+      ],
+      "up": [
+        0.027480521617468112,
+        0.9963233617485872,
+        0.08114542356550787
+      ],
+      "fov": 28.550022515553206,
+      "imageSize": [
+        3200,
+        2400
+      ],
+      "source": "https://commons.wikimedia.org/wiki/File:Honda_Civic_LX_Coupe_2005_%2819877148384%29.jpg"
+    },
+    {
+      "id": "field-reverb-rear",
+      "label": "Reverb rear lamp detail \u00b7 Elise240SX",
+      "position": [
+        21.518786668462877,
+        0.8406464051533016,
+        9.662672622406076
+      ],
+      "target": [
+        0.07322935507433215,
+        0.7297011837715663,
+        -0.16248985412966732
+      ],
+      "up": [
+        -0.008577719524394734,
+        0.9999355955389432,
+        0.007431520836261807
+      ],
+      "fov": 4.684720890677757,
+      "imageSize": [
+        3455,
+        2061
+      ],
+      "source": "https://commons.wikimedia.org/wiki/File:2005_Honda_Civic_Reverb_Coupe_in_Vivid_Blue_Pearl%2C_Rear_Left%2C_10-26-2022.jpg"
+    },
+    {
+      "id": "field-canada-side",
+      "label": "Canadian coupe side glass \u00b7 Mack Male",
+      "position": [
+        1.6424339657332674,
+        1.0043881674328452,
+        4.285211007412694
+      ],
+      "target": [
+        0.032479394319393506,
+        1.0076430701993977,
+        -0.026083647711741875
+      ],
+      "up": [
+        -0.021260415723028447,
+        0.9997361698377097,
+        0.008693988814688074
+      ],
+      "fov": 48.052292009108996,
+      "imageSize": [
+        3072,
+        2048
+      ],
+      "source": "https://commons.wikimedia.org/wiki/File:Side_View_%2821178802%29.jpg"
+    },
+    {
+      "id": "auction-profile",
+      "label": "Five-speed EX driver profile \u00b7 Nexus Auto Brokers",
+      "position": [
+        -0.1790084438923605,
+        0.7129310443776234,
+        9.683307912956765
+      ],
+      "target": [
+        0.08166355685159801,
+        1.117065134890158,
+        0.01014795353871989
+      ],
+      "up": [
+        -0.0032727882534680387,
+        0.9991267256148435,
+        0.041654231708303034
+      ],
+      "fov": 19.320050773340853,
+      "imageSize": [
+        1916,
+        1277
+      ],
+      "source": "https://bringatrailer.com/listing/2005-honda-civic-10/"
     },
     {
       "id": "cockpit-five-speed",
@@ -703,21 +963,21 @@
       "id": "vtec-cover",
       "label": "D17 VTEC ignition-cover detail",
       "position": [
-        -1.1597391963139743,
-        1.0768851054192328,
-        0.40849366399318143
+        -1.4710025645567744,
+        1.0855730436917423,
+        0.42194248966471254
       ],
       "target": [
-        -1.302658225846739,
-        0.7002107693661033,
-        0.24142962750821226
+        -1.3865345003451377,
+        0.7174382288790241,
+        0.2444006346037676
       ],
       "up": [
-        0.9040588774415261,
-        -0.16888119267092777,
-        -0.3926279267719158
+        0.8403028009248795,
+        0.3795067667714324,
+        -0.3871250660090298
       ],
-      "fov": 22.920291252307997,
+      "fov": 22.903954667906167,
       "imageSize": [
         1004,
         367
@@ -725,6 +985,34 @@
       "source": "https://xr793.com/wp-content/uploads/2019/05/2005-Honda-Civic-Coupe.pdf#page=4",
       "actions": [
         "Isolate ignition cover"
+      ]
+    },
+    {
+      "id": "auction-engine-bay",
+      "label": "Five-speed EX engine bay \u00b7 Nexus Auto Brokers",
+      "position": [
+        -1.7429430609968242,
+        1.3430487620950775,
+        0.0474629851337341
+      ],
+      "target": [
+        -1.4237847983995424,
+        0.6717960285131923,
+        0.03028017935918667
+      ],
+      "up": [
+        0.9031547918683893,
+        0.42928049503313676,
+        0.005447798571142082
+      ],
+      "fov": 71.96408891014457,
+      "imageSize": [
+        2048,
+        1365
+      ],
+      "source": "https://bringatrailer.com/listing/2005-honda-civic-10/",
+      "actions": [
+        "Raise hood"
       ]
     }
   ],
@@ -742,8 +1030,925 @@
         0.62,
         -0.43
       ],
-      "note": "The transverse 1.7-litre VTEC four sits beside the manual transaxle. The model shows the cam cover, exhaust runners, simplified gearbox housing and two front halfshafts.",
+      "note": "The transverse D17A2 four-cylinder engine drives the front wheels through the five-speed manual transaxle. Open Exploded view to inspect the cylinder head, valve cover, sump, accessory drive and halfshafts.",
       "source": "https://hondanews.com/en-US/honda-automobiles/releases/release-efedf544db86f0338d9eb7004c34c378-2005-honda-civic-coupe-specifications"
     }
+  ],
+  "parts": [
+    {
+      "node": "AccessoryDrive",
+      "label": "Accessory belt and alternator",
+      "offset": [
+        -4.06281,
+        -0.33354,
+        -1.2956
+      ],
+      "portraitOffset": [
+        1.25928,
+        5.91536,
+        -3.13158
+      ]
+    },
+    {
+      "node": "Intake",
+      "label": "Air cleaner and intake duct",
+      "offset": [
+        -3.18902,
+        1.75284,
+        -2.5312
+      ],
+      "portraitOffset": [
+        4.05613,
+        6.11319,
+        -2.39971
+      ]
+    },
+    {
+      "node": "Battery",
+      "label": "Battery",
+      "offset": [
+        -3.51664,
+        1.23654,
+        -2.36993
+      ],
+      "portraitOffset": [
+        3.30625,
+        6.24634,
+        -2.81941
+      ]
+    },
+    {
+      "node": "SpareWheel",
+      "label": "Compact spare wheel",
+      "offset": [
+        3.1115,
+        -1.01223,
+        1.95843
+      ],
+      "portraitOffset": [
+        -4.25756,
+        -6.88861,
+        2.73927
+      ]
+    },
+    {
+      "node": "Console",
+      "label": "Console and gear lever",
+      "offset": [
+        3.63443,
+        1.03537,
+        1.54666
+      ],
+      "portraitOffset": [
+        -1.5509,
+        2.38552,
+        -1.38412
+      ]
+    },
+    {
+      "node": "Engine",
+      "label": "D17A2 engine block",
+      "offset": [
+        -1.45583,
+        0.05417,
+        -0.5128
+      ],
+      "portraitOffset": [
+        1.60077,
+        5.05718,
+        -2.46448
+      ]
+    },
+    {
+      "node": "Dashboard",
+      "label": "Dashboard and instruments",
+      "offset": [
+        -2.61039,
+        4.38246,
+        -3.38135
+      ],
+      "portraitOffset": [
+        3.45709,
+        7.47005,
+        -2.91338
+      ]
+    },
+    {
+      "node": "OilPan",
+      "label": "Engine oil pan",
+      "offset": [
+        -3.62434,
+        -1.0648,
+        -0.76045
+      ],
+      "portraitOffset": [
+        -0.078,
+        4.01775,
+        -2.5667
+      ]
+    },
+    {
+      "node": "Exhaust",
+      "label": "Exhaust system",
+      "offset": [
+        0.22522,
+        -2.96928,
+        1.72696
+      ],
+      "portraitOffset": [
+        -1.99665,
+        -3.9946,
+        1.48876
+      ]
+    },
+    {
+      "node": "Transaxle",
+      "label": "Five-speed transaxle",
+      "offset": [
+        -3.96518,
+        0.22803,
+        -1.90572
+      ],
+      "portraitOffset": [
+        2.45246,
+        6.04217,
+        -3.02763
+      ]
+    },
+    {
+      "node": "FrontBumper",
+      "label": "Front bumper and grille",
+      "offset": [
+        -2.23023,
+        -0.09063,
+        -0.92442
+      ],
+      "portraitOffset": [
+        1.62416,
+        4.60433,
+        -2.36153
+      ]
+    },
+    {
+      "node": "FuelTank",
+      "label": "Fuel tank",
+      "offset": [
+        2.31079,
+        -2.57353,
+        1.85019
+      ],
+      "portraitOffset": [
+        -2.63313,
+        -6.2521,
+        2.2066
+      ]
+    },
+    {
+      "node": "BackGlass",
+      "label": "Heated rear window",
+      "offset": [
+        2.38171,
+        2.15586,
+        -0.07251
+      ],
+      "portraitOffset": [
+        -1.76113,
+        -6.34661,
+        3.66503
+      ]
+    },
+    {
+      "node": "Hood",
+      "label": "Hood",
+      "offset": [
+        -2.38334,
+        1.54812,
+        -1.85655
+      ],
+      "portraitOffset": [
+        3.48439,
+        3.6104,
+        -0.81794
+      ]
+    },
+    {
+      "node": "IgnitionCover",
+      "label": "Ignition cover and coils",
+      "offset": [
+        -3.28686,
+        2.36098,
+        -2.59737
+      ],
+      "portraitOffset": [
+        3.78586,
+        6.72133,
+        -2.53485
+      ]
+    },
+    {
+      "node": "DoorLeft",
+      "label": "Left door",
+      "offset": [
+        2.3001,
+        -1.12787,
+        1.72388
+      ],
+      "portraitOffset": [
+        0.57653,
+        -3.83011,
+        2.74898
+      ]
+    },
+    {
+      "node": "DoorGlassLeft",
+      "label": "Left door glass",
+      "offset": [
+        1.53154,
+        0.76603,
+        0.13602
+      ],
+      "portraitOffset": [
+        -3.79824,
+        -1.19167,
+        -0.75376
+      ]
+    },
+    {
+      "node": "MirrorLeft",
+      "label": "Left door mirror",
+      "offset": [
+        -0.4052,
+        -0.77068,
+        0.45793
+      ],
+      "portraitOffset": [
+        0.64119,
+        6.93491,
+        -4.01258
+      ]
+    },
+    {
+      "node": "WheelFrontLeft",
+      "label": "Left front alloy wheel",
+      "offset": [
+        -2.07041,
+        -2.39825,
+        0.65482
+      ],
+      "portraitOffset": [
+        0.19335,
+        5.47233,
+        -3.43343
+      ]
+    },
+    {
+      "node": "BrakeFrontLeft",
+      "label": "Left front disc brake",
+      "offset": [
+        -2.44484,
+        -2.28435,
+        0.1589
+      ],
+      "portraitOffset": [
+        -0.86741,
+        2.50492,
+        -2.24883
+      ]
+    },
+    {
+      "node": "FenderLeft",
+      "label": "Left front fender",
+      "offset": [
+        -2.53261,
+        -2.18305,
+        0.33802
+      ],
+      "portraitOffset": [
+        -1.57819,
+        1.22183,
+        -1.44055
+      ]
+    },
+    {
+      "node": "HalfshaftLeft",
+      "label": "Left front halfshaft",
+      "offset": [
+        -3.0063,
+        -1.51647,
+        -0.04469
+      ],
+      "portraitOffset": [
+        0.97769,
+        4.69636,
+        -2.39304
+      ]
+    },
+    {
+      "node": "SeatLeft",
+      "label": "Left front seat",
+      "offset": [
+        0.89002,
+        5.35782,
+        -2.22004
+      ],
+      "portraitOffset": [
+        -2.24657,
+        0.7388,
+        -0.54399
+      ]
+    },
+    {
+      "node": "SuspensionFrontLeft",
+      "label": "Left front suspension",
+      "offset": [
+        -1.35722,
+        -2.76629,
+        0.78543
+      ],
+      "portraitOffset": [
+        -0.36831,
+        3.36772,
+        -2.71093
+      ]
+    },
+    {
+      "node": "TireFrontLeft",
+      "label": "Left front tire",
+      "offset": [
+        1.12246,
+        0.05445,
+        0.76012
+      ],
+      "portraitOffset": [
+        -0.03157,
+        -0.46822,
+        0.63013
+      ]
+    },
+    {
+      "node": "HeadlampLeft",
+      "label": "Left headlight",
+      "offset": [
+        -1.86318,
+        0.81989,
+        -1.45049
+      ],
+      "portraitOffset": [
+        1.38072,
+        3.87355,
+        -2.09042
+      ]
+    },
+    {
+      "node": "DoorTrimLeft",
+      "label": "Left inner door trim",
+      "offset": [
+        -4.45633,
+        -0.91882,
+        -1.40436
+      ],
+      "portraitOffset": [
+        -1.51828,
+        6.35132,
+        -4.84191
+      ]
+    },
+    {
+      "node": "WheelRearLeft",
+      "label": "Left rear alloy wheel",
+      "offset": [
+        2.78179,
+        -1.68573,
+        2.57691
+      ],
+      "portraitOffset": [
+        -4.44257,
+        -5.87427,
+        2.34473
+      ]
+    },
+    {
+      "node": "BrakeRearLeft",
+      "label": "Left rear drum brake",
+      "offset": [
+        3.06479,
+        0.58113,
+        1.02365
+      ],
+      "portraitOffset": [
+        -4.41881,
+        -2.67128,
+        0.09381
+      ]
+    },
+    {
+      "node": "QuarterGlassLeft",
+      "label": "Left rear quarter glass",
+      "offset": [
+        3.53909,
+        0.05953,
+        1.44386
+      ],
+      "portraitOffset": [
+        -4.15667,
+        -2.60966,
+        0.05911
+      ]
+    },
+    {
+      "node": "SuspensionRearLeft",
+      "label": "Left rear suspension",
+      "offset": [
+        3.07887,
+        -1.37704,
+        2.19694
+      ],
+      "portraitOffset": [
+        -3.19401,
+        -6.63189,
+        3.02189
+      ]
+    },
+    {
+      "node": "TireRearLeft",
+      "label": "Left rear tire",
+      "offset": [
+        -0.78489,
+        0.63908,
+        -0.42496
+      ],
+      "portraitOffset": [
+        -0.03889,
+        0.72744,
+        -0.18262
+      ]
+    },
+    {
+      "node": "TaillampLeft",
+      "label": "Left taillight",
+      "offset": [
+        3.13473,
+        0.04234,
+        1.34284
+      ],
+      "portraitOffset": [
+        -3.37829,
+        -7.11041,
+        3.27593
+      ]
+    },
+    {
+      "node": "LuggageLiner",
+      "label": "Luggage carpet and wheelhouse lining",
+      "offset": [
+        1.17162,
+        3.52943,
+        -1.30904
+      ],
+      "portraitOffset": [
+        -2.43372,
+        -2.71317,
+        1.20966
+      ]
+    },
+    {
+      "node": "Moonroof",
+      "label": "Moonroof glass",
+      "offset": [
+        -0.0877,
+        3.18167,
+        -1.8051
+      ],
+      "portraitOffset": [
+        0.21473,
+        -4.97328,
+        3.49004
+      ]
+    },
+    {
+      "node": "ParcelShelf",
+      "label": "Parcel shelf and high-mounted brake light",
+      "offset": [
+        3.49361,
+        2.63617,
+        0.39482
+      ],
+      "portraitOffset": [
+        -1.9125,
+        -4.51658,
+        2.77067
+      ]
+    },
+    {
+      "node": "Interior",
+      "label": "Passenger carpet and side trim",
+      "offset": [
+        0.05223,
+        -1.72959,
+        0.66944
+      ],
+      "portraitOffset": [
+        -0.71844,
+        -2.75491,
+        1.01171
+      ]
+    },
+    {
+      "node": "Radiator",
+      "label": "Radiator and upper hose",
+      "offset": [
+        -3.21772,
+        -0.28904,
+        -1.28378
+      ],
+      "portraitOffset": [
+        2.2581,
+        5.74608,
+        -2.92263
+      ]
+    },
+    {
+      "node": "RearBumper",
+      "label": "Rear bumper",
+      "offset": [
+        1.93338,
+        0.06292,
+        0.66655
+      ],
+      "portraitOffset": [
+        -2.20496,
+        -5.03254,
+        2.2442
+      ]
+    },
+    {
+      "node": "RearBench",
+      "label": "Rear seat",
+      "offset": [
+        0.27837,
+        3.73864,
+        -1.73055
+      ],
+      "portraitOffset": [
+        1.19228,
+        0.22435,
+        0.86477
+      ]
+    },
+    {
+      "node": "DoorRight",
+      "label": "Right door",
+      "offset": [
+        -0.08481,
+        1.65876,
+        -1.49798
+      ],
+      "portraitOffset": [
+        2.52004,
+        1.84026,
+        -0.5712
+      ]
+    },
+    {
+      "node": "DoorGlassRight",
+      "label": "Right door glass",
+      "offset": [
+        -1.1257,
+        0.72468,
+        -0.79316
+      ],
+      "portraitOffset": [
+        0.43607,
+        2.97745,
+        -1.5978
+      ]
+    },
+    {
+      "node": "MirrorRight",
+      "label": "Right door mirror",
+      "offset": [
+        -0.31682,
+        1.23662,
+        -1.04246
+      ],
+      "portraitOffset": [
+        1.60231,
+        0.99666,
+        -0.12256
+      ]
+    },
+    {
+      "node": "WheelFrontRight",
+      "label": "Right front alloy wheel",
+      "offset": [
+        -3.01517,
+        1.06453,
+        -2.70321
+      ],
+      "portraitOffset": [
+        2.22122,
+        5.11415,
+        -3.17807
+      ]
+    },
+    {
+      "node": "BrakeFrontRight",
+      "label": "Right front disc brake",
+      "offset": [
+        -3.84359,
+        -1.30809,
+        -1.24795
+      ],
+      "portraitOffset": [
+        1.6381,
+        5.67028,
+        -3.48294
+      ]
+    },
+    {
+      "node": "FenderRight",
+      "label": "Right front fender",
+      "offset": [
+        -1.13278,
+        0.61659,
+        -0.95693
+      ],
+      "portraitOffset": [
+        3.95071,
+        4.89476,
+        -1.63797
+      ]
+    },
+    {
+      "node": "HalfshaftRight",
+      "label": "Right front halfshaft",
+      "offset": [
+        -4.33817,
+        0.23767,
+        -2.20341
+      ],
+      "portraitOffset": [
+        2.65725,
+        6.44321,
+        -3.34256
+      ]
+    },
+    {
+      "node": "SeatRight",
+      "label": "Right front seat",
+      "offset": [
+        2.27834,
+        5.01609,
+        -1.54549
+      ],
+      "portraitOffset": [
+        -0.13393,
+        5.8882,
+        -3.06373
+      ]
+    },
+    {
+      "node": "SuspensionFrontRight",
+      "label": "Right front suspension",
+      "offset": [
+        -3.50185,
+        -1.10103,
+        -1.20384
+      ],
+      "portraitOffset": [
+        1.10829,
+        4.77411,
+        -3.08747
+      ]
+    },
+    {
+      "node": "TireFrontRight",
+      "label": "Right front tire",
+      "offset": [
+        -0.15518,
+        -0.72741,
+        0.10506
+      ],
+      "portraitOffset": [
+        1.12104,
+        0.23276,
+        0.00634
+      ]
+    },
+    {
+      "node": "HeadlampRight",
+      "label": "Right headlight",
+      "offset": [
+        -3.77007,
+        0.13167,
+        -1.71872
+      ],
+      "portraitOffset": [
+        3.35948,
+        6.86054,
+        -3.13626
+      ]
+    },
+    {
+      "node": "DoorTrimRight",
+      "label": "Right inner door trim",
+      "offset": [
+        0.58729,
+        1.25606,
+        -0.60821
+      ],
+      "portraitOffset": [
+        -1.50927,
+        -0.0348,
+        -0.62781
+      ]
+    },
+    {
+      "node": "WheelRearRight",
+      "label": "Right rear alloy wheel",
+      "offset": [
+        4.113,
+        1.51127,
+        0.29791
+      ],
+      "portraitOffset": [
+        1.06194,
+        -3.71566,
+        2.39388
+      ]
+    },
+    {
+      "node": "BrakeRearRight",
+      "label": "Right rear drum brake",
+      "offset": [
+        -0.48574,
+        1.36751,
+        -1.13804
+      ],
+      "portraitOffset": [
+        0.77982,
+        -4.01015,
+        2.78022
+      ]
+    },
+    {
+      "node": "QuarterGlassRight",
+      "label": "Right rear quarter glass",
+      "offset": [
+        0.60311,
+        3.03383,
+        -1.50277
+      ],
+      "portraitOffset": [
+        1.91467,
+        4.89105,
+        -2.15652
+      ]
+    },
+    {
+      "node": "SuspensionRearRight",
+      "label": "Right rear suspension",
+      "offset": [
+        -3.37719,
+        0.10233,
+        -1.37588
+      ],
+      "portraitOffset": [
+        -3.05731,
+        -1.56054,
+        -0.19287
+      ]
+    },
+    {
+      "node": "TireRearRight",
+      "label": "Right rear tire",
+      "offset": [
+        -2.10616,
+        -2.39913,
+        0.33415
+      ],
+      "portraitOffset": [
+        -0.81691,
+        -2.5864,
+        0.96866
+      ]
+    },
+    {
+      "node": "TaillampRight",
+      "label": "Right taillight",
+      "offset": [
+        2.8655,
+        1.66096,
+        0.3462
+      ],
+      "portraitOffset": [
+        -1.02119,
+        -3.25714,
+        1.91197
+      ]
+    },
+    {
+      "node": "CylinderHead",
+      "label": "SOHC cylinder head",
+      "offset": [
+        -4.25158,
+        -0.11808,
+        -1.44622
+      ],
+      "portraitOffset": [
+        1.77911,
+        6.10624,
+        -2.98317
+      ]
+    },
+    {
+      "node": "Steering",
+      "label": "Steering wheel and stalks",
+      "offset": [
+        -0.75177,
+        5.47488,
+        -3.25866
+      ],
+      "portraitOffset": [
+        4.06256,
+        6.0553,
+        -1.70119
+      ]
+    },
+    {
+      "node": "Subframes",
+      "label": "Subframes and anti-roll bars",
+      "offset": [
+        -2.67125,
+        -1.20022,
+        -0.73367
+      ],
+      "portraitOffset": [
+        -0.09888,
+        1.17934,
+        -1.21451
+      ]
+    },
+    {
+      "node": "Trunk",
+      "label": "Trunk lid",
+      "offset": [
+        2.21039,
+        1.7108,
+        0.21482
+      ],
+      "portraitOffset": [
+        -1.75275,
+        -7.73839,
+        4.62491
+      ]
+    },
+    {
+      "node": "Body",
+      "label": "Unit body",
+      "offset": [
+        0.09321,
+        0.40215,
+        -0.23303
+      ],
+      "portraitOffset": [
+        0.55258,
+        -0.62317,
+        0.60126
+      ]
+    },
+    {
+      "node": "ValveCover",
+      "label": "Valve cover",
+      "offset": [
+        -2.77831,
+        2.46356,
+        -2.44143
+      ],
+      "portraitOffset": [
+        4.46592,
+        6.39538,
+        -2.03841
+      ]
+    },
+    {
+      "node": "Windshield",
+      "label": "Windshield and interior mirror",
+      "offset": [
+        -1.68789,
+        1.45871,
+        -1.57374
+      ],
+      "portraitOffset": [
+        1.89362,
+        1.45871,
+        -0.14114
+      ]
+    }
+  ],
+  "explodedDirection": [
+    -0.58,
+    0.92,
+    1.45
   ]
 }
