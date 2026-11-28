@@ -111,8 +111,23 @@
  },
  {
   "name": "Civic_Glass_Windshield",
+  "terms": [
+   [
+    "top",
+    [
+     2
+    ],
+    "in",
+    -0.018
+   ]
+  ],
+  "face": "top",
+  "mat": "glass"
+ },
+ {
+  "name": "Civic_Windshield_Frit_Trim",
   "face": "none",
-  "mat": "glass",
+  "mat": "black",
   "any": [
    [
     [
@@ -179,7 +194,8 @@
   "face": "side",
   "mat": "glass",
   "pivot": "Pivot_Door_{S}",
-  "grow": 0.0015
+  "grow": 0.0015,
+  "shut_line": true
  },
  {
   "names": [
@@ -197,7 +213,8 @@
   "face": "side",
   "mat": "glass",
   "pivot": "Pivot_Door_R{S}",
-  "grow": 0.0015
+  "grow": 0.0015,
+  "shut_line": true
  },
  {
   "names": [
@@ -214,7 +231,8 @@
   ],
   "face": "side",
   "mat": "privacy",
-  "grow": 0.0015
+  "grow": 0.0015,
+  "shut_line": true
  },
  {
   "names": [
@@ -234,7 +252,8 @@
   "face": "side",
   "mat": "gloss_black",
   "pivot": "Pivot_Door_{S}",
-  "grow": 0.0015
+  "grow": 0.0015,
+  "shut_line": true
  },
  {
   "names": [
@@ -266,7 +285,8 @@
   "mat": "gloss_black",
   "pivot": "Pivot_Door_{S}",
   "grow": 0.0015,
-  "mesh": "fine"
+  "mesh": "fine",
+  "shut_line": true
  },
  {
   "names": [
@@ -287,7 +307,8 @@
   "face": "side",
   "mat": "gloss_black",
   "pivot": "Pivot_Door_R{S}",
-  "grow": 0.0015
+  "grow": 0.0015,
+  "shut_line": true
  },
  {
   "names": [
@@ -305,7 +326,8 @@
   ],
   "face": "side",
   "mat": "gloss_black",
-  "grow": 0.0015
+  "grow": 0.0015,
+  "shut_line": true
  },
  {
   "name": "Civic_Body_Shell_Roof",
@@ -487,7 +509,8 @@
   "mat": "paint",
   "pivot": "Pivot_Door_{S}",
   "grow": 0.0015,
-  "close": 15
+  "close": 15,
+  "shut_line": true
  },
  {
   "names": [
@@ -515,7 +538,8 @@
   "mat": "paint",
   "pivot": "Pivot_Door_R{S}",
   "grow": 0.0015,
-  "close": 15
+  "close": 15,
+  "shut_line": true
  },
  {
   "name": "Civic_Fuel_Flap",
@@ -533,7 +557,8 @@
   "mat": "paint",
   "pivot": "Pivot_Fuel_Flap",
   "grow": 0.0015,
-  "mesh": "fine"
+  "mesh": "fine",
+  "shut_line": true
  },
  {
   "name": "Civic_Body_Shell_RearQuarter_L",

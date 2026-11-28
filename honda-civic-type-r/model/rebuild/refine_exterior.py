@@ -11,6 +11,7 @@ from pathlib import Path
 
 import DracoPy
 import numpy as np
+from scipy.interpolate import LinearNDInterpolator
 from scipy.spatial import cKDTree
 
 from bumper_vents import refine_bumper_vents
@@ -128,35 +129,8 @@ def smooth_pressing(model, name):
         normal = unit(np.einsum('ik,ikj->ij', weight, normals[ids]))
         offset = np.einsum('ij,ij->i', np.einsum('ik,ikj->ij', weight, points[ids]) - points[chunk], normal)
         result[chunk] += (fade[chunk] * np.clip(offset, -.003, .003))[:, None] * normal
-        result_normals[chunk] = normal
-    if name == 'Civic_Hood_Panel':
-        result, result_normals = hood_character_lines(result, result_normals)
+        result_normals[chunk] = unit(normals[chunk] + fade[chunk, None] * (normal - normals[chunk]))
     model.replace_geometry(name, result, result_normals, faces)
-
-
-def hood_character_lines(points, normals):
-    """Form the two pressed ridges which widen from the nose towards the cowl.
-
-    Their centres follow the visible breaks in Honda's frame 07 projected on
-    the hood. The inboard face rolls up more gradually than the outboard face.
-    """
-    def relief(x, z):
-        center = .445 + .205 * (1.96 - x)
-        across = np.abs(z) - center
-        width = np.where(across < 0, .068, .024)
-        fade = np.clip((2.015 - x) / .17, 0, 1) * np.clip((x - 1.125) / .12, 0, 1)
-        return .017 * fade**2 * (3 - 2 * fade) * np.exp(-.5 * (across / width)**2)
-
-    x, _, z = points.T
-    step = .0005
-    dx = (relief(x + step, z) - relief(x - step, z)) / (2 * step)
-    dz = (relief(x, z + step) - relief(x, z - step)) / (2 * step)
-    corrected = points.copy()
-    corrected[:, 1] += relief(x, z)
-    adjusted = normals.copy()
-    adjusted[:, 0] -= normals[:, 1] * dx
-    adjusted[:, 2] -= normals[:, 1] * dz
-    return corrected, unit(adjusted)
 
 
 def form_glass(model, name):
@@ -187,6 +161,22 @@ def form_headliner(model):
     model.replace_geometry('Civic_Interior_Headliner', points, -normals, faces[:, ::-1], uv=uv)
 
 
+def fit_hatch_shutline(model):
+    """Seat the lower hatch line on the finished panels all the way to the lamps."""
+    name = 'Civic_Hatch_Shutline'
+    line, normals, faces = model.read_geometry(name)
+    lo, hi = line.min(axis=0) - .035, line.max(axis=0) + .035
+    samples = []
+    for panel in ('Civic_Hatch_Panel', 'Civic_Rear_Bumper', 'Civic_Rear_Body_Fill'):
+        points, directions, _ = model.read_geometry(panel)
+        nearby = np.all((points >= lo) & (points <= hi), axis=1)
+        samples.append(points[nearby & (directions[:, 0] < -.05)])
+    skin = np.vstack(samples)
+    rear_surface = LinearNDInterpolator(skin[:, 1:], skin[:, 0])
+    line[:, 0] = rear_surface(line[:, 1:]) - .0007
+    model.replace_geometry(name, line, normals, faces)
+
+
 def refine_body(model):
     pressing = re.compile(r'Civic_(Body_Shell_(Roof|FrontFender(_Top)?_[LR]|RearQuarter_[LR])|'
                           r'Hood_Panel(_Front)?|Door_Shell_(L|R|RL|RR)|Hatch_Panel)')
@@ -195,6 +185,7 @@ def refine_body(model):
             smooth_pressing(model, name)
         elif name.startswith('Civic_Glass_'):
             form_glass(model, name)
+    fit_hatch_shutline(model)
     form_headliner(model)
 
 

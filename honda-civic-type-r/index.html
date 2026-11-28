@@ -9,7 +9,7 @@
     const params = new URLSearchParams(location.search);
     if (params.get('capture') === '1' || params.get('hud') === '0') document.documentElement.classList.add('hide-hud');
     const overrideModel = params.get('model');
-    const modelFile = overrideModel || './honda_civic_type_r.glb?v=151c854305';
+    const modelFile = overrideModel || './honda_civic_type_r.glb?v=fd1b49fe0a';
     const preload = document.createElement('link');
     preload.rel = 'preload';
     preload.as = 'fetch';
@@ -22,7 +22,7 @@
   <title>2020 Honda Civic Type R (FK8) — Boost Blue</title>
   <meta name="description" content="Explore the 2020 Honda Civic Type R (FK8) in Boost Blue. Rotate the 3D model, open the rear hatch and compare its wing, C-shaped taillights and triple exhaust with photographs." />
   <link rel="stylesheet" href="./studio.css?v=f545ff0d26">
-  <script type="module" src="./studio.js?v=f319756f6d"></script>
+  <script type="module" src="./studio.js?v=9820c7e4aa"></script>
 </head>
 <body>
   <noscript><p style="position:fixed;inset:0;z-index:30;background:#eceeef;padding:2em">The interactive Honda Civic Type R (FK8) viewer requires JavaScript. <a href="https://bringatrailer.com/listing/2021-honda-civic-type-r-touring-5/">View the reference listing</a> or <a href="./frame-by-frame/">open the frame-by-frame photo comparison</a>.</p></noscript>
@@ -135,12 +135,12 @@
     import { applyStudioVisibility, attachStudioVisibility, loadStudioVisibility } from './studio-visibility.js?v=4983a6eba7';
     import { createPlanarMirror } from './mirror-reflection.js?v=a806e09fc7';
     import { createPaintEnvironment } from './paint-studio.js?v=c7567331f0';
-    import { DEFAULT_CAMERAS, orbitRadius, normalizeCameraPose, buildReferenceViews, loadCivicViews } from './civic-views.js?v=15c019fc20';
+    import { DEFAULT_CAMERAS, orbitRadius, normalizeCameraPose, buildReferenceViews, loadCivicViews } from './civic-views.js?v=aa54ee9733';
 
     const { GLTFLoader, DRACOLoader } = THREE;
     const MODEL_URL = modelFile;
     const urlParams = new URLSearchParams(location.search);
-    const visibilityReady = !overrideModel && loadStudioVisibility('./studio-visibility.bin.gz?v=a6a1ec8995')
+    const visibilityReady = !overrideModel && loadStudioVisibility('./studio-visibility.bin.gz?v=0e3c2527c0')
       .catch(error => { console.warn('Studio visibility unavailable', error); return null; });
     const captureMode = urlParams.get('capture') === '1';
     let fullViewportCapture = captureMode;

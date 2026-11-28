@@ -14,8 +14,8 @@ The live model is `../honda_civic_type_r.glb`. The exterior panels were rebuilt 
    - the valley-shaped bonnet with its scoop;
    - the C-pillars and tail;
    - the depth of every front opening.
-3. **Mesh.** The field is meshed twice, at 12 mm for large panels and 6 mm for detailed ones. Vertices are snapped to the surface and normals come from the field, so reflections stay smooth.
-4. **Panels.** Each panel is a combination of drawing regions in the view it faces, and is cut out of the mesh exactly along Honda's strokes. The shut lines therefore follow the drawing, with even gaps between panels.
+3. **Mesh.** The body starts as a single surface sampled at 12 mm. Edges near fine details are bisected before the panels are cut. Both triangles that meet at an edge share its midpoint.
+4. **Panels.** Honda's drawing regions divide the surface into panels. Dark outlines follow the side door openings, window seals and fuel flap. The hood ridges displace all adjoining pieces together. The lower hatch line follows the finished hatch and bumper surfaces.
 5. **Parts and assembly.** Mirrors, wing, endplates, handles, honeycomb grilles, lamp layers, badges, rear wiper and vortex generators are built from their outlines in the drawing and from Honda's frames. Opened-state surfaces sit hidden behind the closed skin: door jambs, shut faces, sill plates, the hood underside and the hatch trim. Kept cabin and engine parts are fitted at least 4 mm inside the new skin.
 6. **Surface refinement.** The finished mesh uses the roof pressing to form the cabin headliner. Cubic patches smooth the glazing, while the cut glass perimeters stay against their seals. The hood ridges, two rows of headlamp optics and recessed bumper vents follow the front three-quarter reference. The rear fascia uses four diffuser fins and three tapered exhaust outlets fitted to the rear and low-angle views. The paint uses a blue dielectric base with a clear coat.
 
@@ -26,7 +26,7 @@ The original visual-hull build recorded these silhouette overlaps against Hondaâ
 - **Frame 19** (passenger side): 0.966
 - **Frame 28** (rear): 0.955
 
-The frame-by-frame page shows every comparison. The model is about 7 MB with Draco compression.
+The frame-by-frame page shows every comparison. The model is about 8 MB with Draco compression.
 
 ## Known differences
 - Taillamp inner cells and the rear vent detail are simpler than Honda's.
@@ -39,12 +39,7 @@ The build scripts are in `rebuild/`. Honda's drawing and renders are not include
 
 `rebuild/build.sh <tag>` builds the body, assembles the rig, compresses it with `compress_model.mjs` and runs the final surface refinement. To repeat the last step with an unrefined compressed assembly, run `python rebuild/refine_exterior.py <assembly.glb> <output.glb>` from this directory with NumPy, SciPy and DracoPy 2.2 or newer.
 
-To reproduce the published refinement from the archived assembly without the original drawings, run these commands at the repository root.
-
-```sh
-git show b436dba528:honda-civic-type-r/honda_civic_type_r.glb > /tmp/fk8-assembly.glb
-python honda-civic-type-r/model/rebuild/refine_exterior.py /tmp/fk8-assembly.glb /tmp/fk8-refined.glb
-```
+Rebuilding the panel edges requires the body field and Honda drawing masks used by `cutpanels.py`. The compressed assembly passed to the final refinement must already contain those panel cuts.
 
 The viewer uses a separate pair of ambient visibility values per vertex for the closed and open assemblies. To regenerate it from the published GLB, install NumPy, SciPy, DracoPy and Mitsuba 3 and run the following from the viewer directory. Add `--variant cuda_ad_rgb` to use an NVIDIA GPU.
 

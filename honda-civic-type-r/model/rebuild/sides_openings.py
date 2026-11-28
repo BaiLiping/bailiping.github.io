@@ -11,8 +11,7 @@ holes filled). From that outline and the designed body field (outer skin found b
       cargo scuff plates on the bottom run, and the body B-pillar between each side's doors (it carries the
       seals and sits just inboard of the doors' inner panels).
 Body pieces lying inside an outline (strokes and catch-all between the group's own panels) are moved to the
-group as '<group>_Inlay_<mat>' meshes, so nothing floats in the opening. Every surface starts 2 mm under the
-skin, so the closed look is unchanged. Writes the meshes like parts3v.py (V/F/N per name + index with mat /
+group as '<group>_Inlay_<mat>' meshes, so nothing floats in the opening. The trim is recessed along the local skin normal and then along the opening axis. Writes the meshes like parts3v.py (V/F/N per name + index with mat /
 pivot) plus 'clear' (kept meshes inside each footprint must stay that deep inside the body, door-pivot meshes
 are clamped into their door's outline; assemble.py fit_inside reads it) and 'cutout' ({cut piece: face indices
 to drop}, applied by assemble.py).
@@ -26,7 +25,7 @@ import outlines
 
 RES = 0.002                 # mask resolution (m)
 GAP = 0.005                 # shut-line gap between panel and body jamb
-SKIN = 0.002                # every surface starts this far under the skin
+SKIN = 0.002                # extra inset along the opening axis, in metres
 DOOR = dict(d_body=0.070, d_frame=0.035, dj_body=0.110, dj_frame=0.050)
 HOOD = dict(d=0.035, dj=0.060)
 HATCH = dict(d=0.040, dj=0.090)
@@ -61,7 +60,13 @@ def skin(field, a, e1, e2, uv, t_in, t_out=1.8):
     for _ in range(26):
         m = 0.5 * (lo + hi); ins = field(base + m[:, None] * a) < 0
         lo = np.where(ins, m, lo); hi = np.where(ins, hi, m)
-    return base + lo[:, None] * a, ok
+    points = base + lo[:, None] * a
+    # A lateral offset barely clears a horizontal roof edge. Recess the
+    # structure along the surface normal too, including at grazing angles.
+    step = np.eye(3) * field.h
+    normal = np.column_stack([field(points + dx) - field(points - dx) for dx in step])
+    normal /= np.maximum(np.linalg.norm(normal, axis=1, keepdims=True), 1e-9)
+    return points - 0.006 * normal, ok
 
 
 class Frame2D:
@@ -216,11 +221,17 @@ def main():
         t_in = lambda UV: np.full(len(UV), 0.30)
         ss = lambda t: (lambda c: c * c * (3 - 2 * c))(np.clip(t, 0, 1))
         frame_w = lambda P: ss((P[:, 1] - belt_y(P[:, 0]) + 0.02) / 0.04)    # 0 below the belt, 1 in the frame
+        def front_pillar_weight(P):
+            # The jamb turns behind the narrow A-pillar here. Extending the
+            # full lower-door return inward shows through the windshield.
+            return ss((P[:, 0] - 0.18) / 0.14) * ss((P[:, 1] - 0.92) / 0.06)
+
         for door, piv in (('', 'Pivot_Door_' + sfx), ('R', 'Pivot_Door_R' + sfx)):
             m = masks[door]; tag = door + sfx
             P, N2 = contour(fr, grow(m, -0.001))
             S, ok = skin(field, a, e1, e2, P, t_in(P))
             w = frame_w(P); D = DOOR['d_body'] * (1 - w) + DOOR['d_frame'] * w
+            D += front_pillar_weight(P) * (0.022 - D)
             V, F, N = strip(S, D, a, to3(N2, e1, e2)); keep = ok & np.roll(ok, -1)
             F = F[np.concatenate([keep, keep])]
             add(f'Civic_Door_Shell_Jamb_{tag}', 'paint', piv, (V, F, N))
@@ -253,6 +264,7 @@ def main():
         P, N2 = contour(fr, grow(mu, GAP))
         S, ok = skin(field, a, e1, e2, P, t_in(P))
         w = frame_w(P); Dj = DOOR['dj_body'] * (1 - w) + DOOR['dj_frame'] * w
+        Dj += front_pillar_weight(P) * (0.032 - Dj)
         n3 = -to3(N2, e1, e2)                                             # faces into the opening
         V, F, N = strip(S, Dj, a, n3); keep = ok & np.roll(ok, -1)
         add(f'Civic_Body_Shell_Door_Jamb_{sfx}', 'paint', '', (V, F[np.concatenate([keep, keep])], N))

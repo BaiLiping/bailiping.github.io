@@ -58,6 +58,38 @@ def _smooth(t):
     t = np.clip(t, 0, 1); return t * t * (3 - 2 * t)
 
 
+def press_hood_ridges(points, normals):
+    """Stamp the paired hood ridges across every adjoining piece of skin.
+
+    Apply the same displacement at a shared position, including inlays and
+    fender edges. Its spatial derivatives tilt the existing shading normals.
+    """
+    x, y, z = points.T
+    selected = (x > 1.125) & (x < 2.015) & (y > 0.68)
+    if not selected.any():
+        return points, normals
+    x, y, z = points[selected].T
+
+    def height(x, y, z):
+        center = .445 + .205 * (1.96 - x)
+        across = np.abs(z) - center
+        width = np.where(across < 0, .068, .024)
+        ends = np.clip((2.015 - x) / .17, 0, 1) * np.clip((x - 1.125) / .12, 0, 1)
+        return .017 * _smooth(ends) * _smooth((y - .68) / .05) * np.exp(-.5 * (across / width)**2)
+
+    step = .0005
+    dx = (height(x + step, y, z) - height(x - step, y, z)) / (2 * step)
+    dy = (height(x, y + step, z) - height(x, y - step, z)) / (2 * step)
+    dz = (height(x, y, z + step) - height(x, y, z - step)) / (2 * step)
+    result = points.copy()
+    result[selected, 1] += height(x, y, z)
+    shading = normals.copy()
+    n = normals[selected]
+    tilted = (1 + dy[:, None]) * n - n[:, 1:2] * np.column_stack([dx, dy, dz])
+    shading[selected] = tilted / np.maximum(np.linalg.norm(tilted, axis=1, keepdims=True), 1e-12)
+    return result, shading
+
+
 def apply_scoop(F, grid):
     """Takes the body field and grid; returns it with the scoop hump added on top of the bonnet."""
     x0, y0, z0, h = grid

@@ -1,6 +1,6 @@
 """Cut the body mesh into panels along Honda's drawn lines.
 
-Run: venv/bin/python cutpanels.py <body-mesh.npz> <field.npz> <specs.json> <out.npz> [fine-mesh.npz]
+Run: venv/bin/python cutpanels.py <body-mesh.npz> <field.npz> <specs.json> <out.npz>
 specs.json: [{"names": [left, right] | "name": both, "terms": [[view, ids, neg?], ...], "face": side|top|front|rear|none,
               "mat": ..., "pivot": ...}, ...] in priority order.
 A panel is the part of the body surface where every term holds: the projection into `view` lies inside the
@@ -8,8 +8,7 @@ merged drawing regions `ids` (or outside, when neg). Top and front masks are mad
 named left/right panels the surface is further limited to that side; `face` keeps only surface facing that
 view, which drops e.g. the underbody under a roof outline. Membership is a smooth signed distance (metres,
 from the region masks), so triangles are split exactly where it crosses zero and the panel edges follow the
-drawn strokes. Unclaimed surface off Honda's strokes becomes 'Civic_Body_Shell_Misc' (paint); everything
-else is 'Civic_Body_Seams' (the dark shut-line gaps, wheelhouses and underbody). Normals of new vertices come
+drawn outlines. Unclaimed exterior surface is paint except at the specified closure perimeters. Normals of new vertices come
 from the field gradient.
 Optional spec keys: nsmooth (voxels, default 2.5) smooths the field the panel's normals come from; nflat: true
 interpolates the panel's normals harmonically from its outline (a flush flap without the hull's bumps); grow (m, default 0) moves the panel edge outward into Honda's stroke (narrower, even shut
@@ -19,10 +18,8 @@ A view term may carry a 4th element, an offset in metres that dilates the merged
 [view, ids, "neg", 0.01] keeps only surface more than 1 cm outside those regions (their shut lines included).
 ["face", dir, thr, "neg"] inside a group keeps surface facing dir LESS than thr (e.g. the inner wheelhouse lip).
 Triangles are partitioned exactly in priority order (clip_all), so the pieces tile the body with no holes.
-With the optional fine mesh (mesh.py step 1 of the same field), a spec with "mesh": "fine" is cut from it
-instead: priority holds across both meshes (its area is still reserved on the coarse mesh, so later panels, the
-catch-all and the seams leave it free; earlier panels still win on the fine mesh). Seams and catch-all stay
-coarse. Without the 5th argument the key is ignored.
+Panels marked "mesh": "fine" receive an extra subdivision of the common surface before any cuts.
+Their neighbours share the same edge vertices, including the transition to the coarse triangles.
 Despeckle: islands of seams / catch-all under 1.5 cm2 go to the panel bordering them most (env CUT_DESPECKLE=<cm2>,
 0 disables).
 Writes one npz with per-panel V, F, N (glTF axes) plus a JSON index of names/materials/pivots.
@@ -32,8 +29,8 @@ import numpy as np
 import cv2
 from scipy import ndimage
 import p24, outlines
+from design_front import press_hood_ridges
 
-mesh = np.load(sys.argv[1]); V0, F0 = mesh['V'].astype(np.float64), mesh['F'].astype(np.int64)
 fd = np.load(sys.argv[2]); FLD = ndimage.gaussian_filter(fd['F'], 2.5)   # normals from a smoother field: even reflections
 GRID = np.array([float(fd['x0']), float(fd['y0']), float(fd['z0'])]); H = float(fd['h'])
 GX, GY, GZ = np.gradient(FLD)
@@ -230,28 +227,25 @@ def clip_all(V, F, S):
     return out
 
 
-def catch_all(N0, claimed):
-    """Per-vertex value of the catch-all paint piece: negative away from Honda's shut-line strokes (judged in
-    the view the surface looks toward); down-facing and wheelhouse surface excluded (stays seams). Positive
-    wherever a panel claims the vertex (claimed = min over the panel columns), so the thin strokes between
-    two panels stay seams even where the mesh is coarser than the stroke."""
-    stroke = {}
-    for view in ('side', 'top', 'front'):
-        lab = p24.labels(view)
-        st = cv2.dilate((lab == 0).astype(np.uint8), np.ones((2, 2), np.uint8)) > 0
-        stroke[view] = p24.sdf2d(~st) / 1000.0          # negative away from strokes
-    an = np.abs(N0)
-    dom = np.where((an[:, 2] >= an[:, 0]) & (an[:, 2] >= an[:, 1]), 0, np.where((N0[:, 1] > an[:, 0]), 1, 2))
-    s_rest = np.full(len(V0), -0.01)
-    for k, view in enumerate(('side', 'top', 'front')):
-        sel = dom == k
-        if view == 'front': sel &= N0[:, 0] > 0
-        u, v = p24.to_px(view, V0[sel, 0], V0[sel, 1], V0[sel, 2])
-        s_rest[sel] = p24.sample(stroke[view], u, v, outside=-0.01) + 0.0008
-    s_rest = np.maximum(s_rest, (-0.5 - N0[:, 1]) * 0.02)
-    for wx in p24.WHEEL_X:                               # inside the wheelhouse (|z| < 0.9): seams
-        s_rest = np.maximum(s_rest, np.where(np.abs(V0[:, 2]) < 0.9, -(np.hypot(V0[:, 0] - wx, V0[:, 1] - p24.WHEEL_Y) - 0.40), -1.0))
-    return np.maximum(s_rest, -claimed)
+def catch_all(points, normals, joint_zone, claimed):
+    """Paint the rest of the outer skin. Reserve dark strips at real panel
+    openings, and leave the underside and inner wheelhouses dark."""
+    x, y, z = points.T
+    # The elevation drawing also depicts stamped creases, roof hardware and
+    # parts seen through the glass. Only the closure outlines describe gaps.
+    side_facing = np.sign(z) * normals[:, 2] > 0.35
+    ink = cv2.dilate((p24.labels('side') == 0).astype(np.uint8), np.ones((2, 2), np.uint8))
+    u, v = p24.to_px('side', x, y, z)
+    stroke = p24.sample(p24.sdf2d(ink == 0), u, v) / 1000 + 0.0008
+    # Clipping can leave a narrow gap even when every corner of a triangle
+    # belongs to a neighbouring panel. Keep those gaps dark at the openings.
+    seam = np.minimum(np.maximum(stroke, -claimed), joint_zone)
+    paint = np.where(side_facing, seam, -0.01)
+    paint = np.maximum(paint, (-0.5 - normals[:, 1]) * 0.02)
+    for axle in p24.WHEEL_X:
+        wheelhouse = 0.40 - np.hypot(x - axle, y - p24.WHEEL_Y)
+        paint = np.maximum(paint, np.where(np.abs(z) < 0.9, wheelhouse, -1.0))
+    return paint
 
 
 DESPECKLE_CM2 = float(__import__('os').environ.get('CUT_DESPECKLE', '1.5'))   # 0 disables
@@ -320,44 +314,72 @@ def flat_normals(V, F, N):
     return out / np.maximum(np.linalg.norm(out, axis=1, keepdims=True), 1e-9)
 
 
-def fine_pieces(path, entries, fine):
-    """Cuts the fine-mesh panels. Takes the fine mesh npz path, the [(spec, side)] column list in priority order
-    and the set of column numbers flagged "mesh": "fine"; returns {column: (V, F)} for those columns. Every
-    column up to the last fine one is evaluated on the fine mesh, so earlier panels (coarse or fine) keep their
-    priority; only faces a fine panel touches are clipped."""
-    m = np.load(path); Vf, Ff = m['V'].astype(np.float64), m['F'].astype(np.int64)
-    Nf = field_normals(Vf)
-    touch = np.zeros(len(Vf), bool)
-    for k in fine:
-        spec, side = entries[k]; touch |= membership(spec, Vf, Nf, side) < 0.02
-    Ff = Ff[touch[Ff].any(1)]
-    used = np.unique(Ff); remap = -np.ones(len(Vf), int); remap[used] = np.arange(len(used))
-    Vs, Ns, Fs = Vf[used], Nf[used], remap[Ff]
-    last = max(fine)
-    S = np.stack([membership(spec, Vs, Ns, side) for spec, side in entries[:last + 1]] + [np.full(len(Vs), -1.0)], 1)
-    pieces = clip_all(Vs, Fs, S.astype(np.float32))
-    print(f'fine mesh: {len(Ff)} faces near {len(fine)} fine panels')
-    return {k: pieces[k] for k in fine}
+def refine_detail_regions(vertices, faces, detailed):
+    """Bisect edges near fine features once for both incident triangles.
+
+    All children stay on the same source triangle. A triangle at the edge
+    of a refined region may have just one or two of its edges bisected.
+    """
+    if not detailed.any():
+        return vertices, faces
+    edges = np.stack([faces, np.roll(faces, -1, axis=1)], axis=2)
+    unique, inverse = np.unique(np.sort(edges, axis=2).reshape(-1, 2), axis=0, return_inverse=True)
+    face_edges = inverse.reshape(-1, 3)
+    split = np.zeros(len(unique), dtype=bool)
+    split[face_edges[detailed[faces].any(axis=1)]] = True
+    midpoints = np.full(len(unique), -1)
+    midpoints[split] = np.arange(split.sum()) + len(vertices)
+    mids = midpoints[face_edges]
+    count = (mids >= 0).sum(axis=1)
+    pieces = [faces[count == 0]]
+    full_vertices, full_mids = faces[count == 3], mids[count == 3]
+    # Rotate partially refined triangles to put the two split edges first
+    # (or the single split edge first). Preserve the original winding.
+    for edge in range(3):
+        a, b, c = edge, (edge + 1) % 3, (edge + 2) % 3
+        one = (count == 1) & (mids[:, a] >= 0)
+        two = (count == 2) & (mids[:, c] < 0)
+        v, m = faces[one], mids[one]
+        pieces.extend([np.column_stack([v[:, a], m[:, a], v[:, c]]),
+                       np.column_stack([m[:, a], v[:, b], v[:, c]])])
+        v, m = faces[two], mids[two]
+        pieces.extend([np.column_stack([v[:, a], m[:, a], v[:, c]]),
+                       np.column_stack([m[:, a], v[:, b], m[:, b]]),
+                       np.column_stack([m[:, a], m[:, b], v[:, c]])])
+        pieces.append(np.column_stack([full_vertices[:, a], full_mids[:, a], full_mids[:, c]]))
+    pieces.append(full_mids)
+    return np.vstack([vertices, vertices[unique[split]].mean(axis=1)]), np.vstack(pieces)
 
 
 def main():
     specs = [s for p in sys.argv[3].split(",") for s in json.load(open(p))]
-    fine_path = sys.argv[5] if len(sys.argv) > 5 else None
-    N0 = field_normals(V0)
-    cols, index, entries, fine = [], [], [], set()
+    mesh = np.load(sys.argv[1])
+    vertices, faces = mesh['V'].astype(float), mesh['F']
+    normals = field_normals(vertices)
+    detailed = np.zeros(len(vertices), dtype=bool)
+    entries, index = [], []
     for spec in specs:
-        names = spec['names'] if 'names' in spec else [spec['name']]
+        names = spec.get('names') or [spec['name']]
         sides = [-1, +1] if len(names) == 2 else [spec.get('side', 0)]
-        for nm, side in zip(names, sides):
-            if fine_path and spec.get('mesh') == 'fine': fine.add(len(cols))
-            cols.append(membership(spec, V0, N0, side).astype(np.float64)); entries.append((spec, side))
-            index.append({'name': nm, 'mat': spec.get('mat', 'paint'), 'pivot': spec.get('pivot', '').replace('{S}', 'L' if side < 0 else 'R')})
-    # catch-all: unclaimed surface off Honda's shut-line strokes becomes paint; the rest is the dark seams
-    cols.append(catch_all(N0, np.min(cols, 0))); index.append({'name': 'Civic_Body_Shell_Misc', 'mat': 'paint', 'pivot': ''})
-    cols.append(np.full(len(V0), -1.0)); index.append({'name': 'Civic_Body_Seams', 'mat': 'seam', 'pivot': ''})
-    pieces = clip_all(V0, F0, np.stack(cols, 1))
-    if fine:                       # fine panels: their coarse pieces only reserve the area (dropped), cut again fine
-        for k, pc in fine_pieces(fine_path, entries, fine).items(): pieces[k] = pc
+        for name, side in zip(names, sides):
+            entries.append((spec, side))
+            if spec.get('mesh') == 'fine':
+                detailed |= membership(spec, vertices, normals, side) < 0.014
+            index.append({'name': name, 'mat': spec.get('mat', 'paint'),
+                          'pivot': spec.get('pivot', '').replace('{S}', 'L' if side < 0 else 'R')})
+    vertices, faces = refine_detail_regions(vertices, faces, detailed)
+    normals = field_normals(vertices)
+    cols = np.empty((len(vertices), len(entries) + 2), dtype=np.float32)
+    joint = np.full(len(vertices), -0.01)
+    for k, (spec, side) in enumerate(entries):
+        cols[:, k] = membership(spec, vertices, normals, side)
+        if spec.get('shut_line'):
+            joint = np.maximum(joint, 0.025 - np.abs(cols[:, k]))
+    cols[:, -2] = catch_all(vertices, normals, joint, cols[:, :-2].min(axis=1))
+    cols[:, -1] = -1
+    index.extend([{'name': 'Civic_Body_Shell_Misc', 'mat': 'paint', 'pivot': ''},
+                  {'name': 'Civic_Body_Seams', 'mat': 'seam', 'pivot': ''}])
+    pieces = clip_all(vertices, faces, cols)
     if DESPECKLE_CM2 > 0: pieces = despeckle(pieces, index, DESPECKLE_CM2 * 1e-4)
     out, idx2 = {}, []
     nsm = [spec.get('nsmooth') for spec, _ in entries] + [None, None]
@@ -368,6 +390,7 @@ def main():
             print('EMPTY', nm); continue
         N = field_normals(V, ns)
         if nf: N = flat_normals(V, F, N)
+        V, N = press_hood_ridges(V, N)
         out[nm + '/V'] = V.astype(np.float32); out[nm + '/F'] = F.astype(np.int32); out[nm + '/N'] = N.astype(np.float32)
         idx2.append(e)
         print(f'{nm:36s} {len(F):7d} faces')
