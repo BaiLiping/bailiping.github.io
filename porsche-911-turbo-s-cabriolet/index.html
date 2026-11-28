@@ -7,7 +7,7 @@
   <script>
     if (location.hash === '#porsche-views') document.documentElement.classList.add('show-photos');
     const overrideModel = new URLSearchParams(location.search).get('model');
-    const modelFile = overrideModel || './porsche.glb?v=glb-e7d2b6df';
+    const modelFile = overrideModel || './porsche.glb?v=glb-ec397e2c';
     const preload = document.createElement('link');
     preload.rel = 'preload';
     preload.as = 'fetch';
@@ -114,7 +114,7 @@
   </div>
   <script type="module">
     import * as THREE from './vendor/three-r170.js?v=99a624f7';
-    import { createPlanarMirror } from './mirror-reflection.js?v=e9651b82';
+    import { createPlanarMirror } from './mirror-reflection.js?v=mr-3c1';
     const { GLTFLoader, DRACOLoader } = THREE;
 
     // -----------------------------------------------------------------------
@@ -193,79 +193,62 @@
     studio.dispose();
     pmrem.dispose();
 
-    // Both angular maps share the factory studio coordinate system. They take
-    // a normal and a reflected ray, so the highlights follow an orbit or hinge.
-    const paintRevision = "0d151c10";
-    const paintLoader = new THREE.TextureLoader();
-    function loadPaintMap(name) {
-      const map = paintLoader.load('./paint-' + name + '.png?v=' + paintRevision, () => wake(false));
-      map.flipY = false;
-      map.wrapS = THREE.RepeatWrapping;
-      map.minFilter = map.magFilter = THREE.LinearFilter;
-      map.generateMipmaps = false;
-      return map;
+    // Gentian Blue gets its own studio environment: a white cyclorama with a soft
+    // overhead panel, a bright horizon wall and side softboxes. Parameters were
+    // fitted to 20 Porsche studio frames (tools/fit_paint.py in the rebuild archive); the base
+    // level and colour were then deepened by eye toward the studio frames' contrast.
+    const PAINT_LOOK = {
+      color: [0.0205, 0.044, 0.145], metalness: 0.6, roughness: 0.332, clearcoat: 1.0,
+      clearcoatRoughness: 0.035, specular: 0.5, gain: 2.703, base: 0.28, floor: 0.279, floorLo: 0.1,
+      floorHi: 0.6, wall: 1.027, wallLo: -0.06, wallMid: 0.1, wallHi: 0.161, ceiling: 0.0, ceilLo: 0.7,
+      ceilHi: 1.3, box: 2.643, boxLo: 0.12, boxHi: 0.75, boxSides: 0.862, boxPhase: 0.18, key: 0.5,
+      keyAz: 0.5, envFollow: 0, envYaw: 0.065, ccF90: 0.35, baseF90: 0.55
+    };
+    try {
+      const override = new URLSearchParams(location.search).get('paintenv');
+      if (override) Object.assign(PAINT_LOOK, JSON.parse(atob(override)));
+    } catch (error) { console.warn('paintenv override ignored', error); }
+    // Takes the look parameters; returns a PMREM environment texture for the paint.
+    function makePaintEnvironment(look) {
+      const canvas = document.createElement('canvas');
+      canvas.width = 512; canvas.height = 256;
+      const ctx2 = canvas.getContext('2d');
+      const img = ctx2.createImageData(canvas.width, canvas.height);
+      const ss = THREE.MathUtils.smoothstep;
+      for (let y = 0; y < canvas.height; y++) {
+        const e = (0.5 - (y + 0.5) / canvas.height) * Math.PI;
+        const floor = look.floor * ss(-e, look.floorLo, look.floorHi);
+        const wall = look.wall * ss(e, look.wallLo, look.wallMid) * (1 - ss(e, look.wallMid, look.wallHi));
+        const ceiling = look.ceiling * ss(e, look.ceilLo, look.ceilHi);
+        const band = ss(e, look.boxLo, (look.boxLo + look.boxHi) / 2) * (1 - ss(e, (look.boxLo + look.boxHi) / 2, look.boxHi));
+        for (let x = 0; x < canvas.width; x++) {
+          const az = ((x + 0.5) / canvas.width - 0.5) * Math.PI * 2;
+          const sides = 0.5 - 0.5 * Math.cos(2 * (az + look.boxPhase));
+          const box = look.box * band * (1 - look.boxSides + look.boxSides * sides
+            + look.key * Math.max(0, Math.cos(az - look.keyAz)));
+          const v = Math.min(255, Math.round(255 * (look.base + floor + wall + ceiling + box) / 4));
+          const o = 4 * (y * canvas.width + x);
+          img.data[o] = img.data[o + 1] = img.data[o + 2] = v;
+          img.data[o + 3] = 255;
+        }
+      }
+      ctx2.putImageData(img, 0, 0);
+      const texture = new THREE.CanvasTexture(canvas);
+      const generator = new THREE.PMREMGenerator(renderer);
+      const env = generator.fromEquirectangular(texture).texture;
+      texture.dispose();
+      generator.dispose();
+      return env;
     }
-    const paintNormal = loadPaintMap('normal');
-    const paintReflection = loadPaintMap('reflection');
-    const panelLighting = loadPaintMap('panels');
-    function matchStudioPaint(mat) {
-      mat.customProgramCacheKey = () => 'gentian-studio-3';
-      mat.onBeforeCompile = shader => {
-        shader.uniforms.paintNormal = {value: paintNormal};
-        shader.uniforms.paintReflection = {value: paintReflection};
-        shader.uniforms.panelLighting = {value: panelLighting};
-        shader.vertexShader = 'attribute vec3 paintRest; varying vec3 vPaintRest;\n' + shader.vertexShader.replace(
-          '#include <begin_vertex>', '#include <begin_vertex>\nvPaintRest=paintRest;');
-        shader.fragmentShader = `
-          uniform sampler2D paintNormal;
-          uniform sampler2D paintReflection;
-          uniform sampler2D panelLighting;
-          varying vec3 vPaintRest;
-          vec3 panelSample(vec3 cell, float sector) {
-            float z0 = floor(cell.z), z1 = min(z0+1.0,39.0);
-            vec2 a = vec2(mod(z0,20.0)*128.0,(floor(z0/20.0)+sector*2.0)*56.0);
-            vec2 b = vec2(mod(z1,20.0)*128.0,(floor(z1/20.0)+sector*2.0)*56.0);
-            vec2 pos = cell.xy + 0.5;
-            return mix(texture2D(panelLighting,(pos+a)/vec2(2560.0,2464.0)).rgb,
-                       texture2D(panelLighting,(pos+b)/vec2(2560.0,2464.0)).rgb,fract(cell.z));
-          }
-          vec2 paintDirection(vec3 world) {
-            return vec2(atan(-world.z, world.x) * 0.15915494 + 0.5,
-                        acos(clamp(world.y, -1.0, 1.0)) * 0.31830989);
-          }
-        ` + shader.fragmentShader.replace('#include <colorspace_fragment>', `
-          #include <colorspace_fragment>
-          vec3 nStudio = inverseTransformDirection(normal, viewMatrix);
-          vec3 reflStudio = inverseTransformDirection(reflect(-normalize(vViewPosition), normal), viewMatrix);
-          vec3 measured = vec3(0.175,0.20,0.30) - 1.10
-            + 1.35 * (texture2D(paintNormal, paintDirection(nStudio)).rgb
-                    + texture2D(paintReflection, paintDirection(reflStudio)).rgb);
-          vec3 carEye = inverseTransformDirection(normalize(vViewPosition),viewMatrix);
-          float sector = mod(atan(-carEye.z,carEye.x)*3.18309886+20.0,20.0);
-          vec3 cell = clamp((vPaintRest-vec3(-2.34,-1.04,0.06))/vec3(4.61,2.08,1.27),0.0,0.99999)*vec3(127.0,55.0,39.0);
-          vec3 low = mix(panelSample(cell,floor(sector)),panelSample(cell,mod(floor(sector)+1.0,20.0)),fract(sector));
-          vec3 raised = mix(panelSample(cell,20.0),panelSample(cell,21.0),smoothstep(0.58, 0.93, carEye.y));
-          vec3 panel = mix(low, raised, smoothstep(0.14,0.55,carEye.y));
-          vec3 studioCoat = mix(panel, max(measured, vec3(0.0)), 0.08);
-          float luminance = dot(studioCoat, vec3(0.2126, 0.7152, 0.0722));
-          float contrast = 1.12 + 0.18 * smoothstep(0.27, 0.58, luminance);
-          studioCoat += vec3((luminance - 0.25) * (contrast - 1.0) - 0.012);
-          // The canvas masks the centre of the rear deck when the top is raised.
-          // Light that narrow strip from its actual normal instead of extending adjacent panel samples across it.
-          float deck = smoothstep(1.10, 1.32, -vPaintRest.x)
-            * (1.0 - smoothstep(1.71, 1.84, -vPaintRest.x))
-            * (1.0 - smoothstep(0.47, 0.73, abs(vPaintRest.y)))
-            * smoothstep(0.82, 0.95, vPaintRest.z);
-          vec3 restWorld = vec3(vPaintRest.x, vPaintRest.z, -vPaintRest.y);
-          vec3 restFace = cross(dFdx(restWorld), dFdy(restWorld));
-          vec3 liveFace = inverseTransformDirection(cross(dFdx(vViewPosition), dFdy(vViewPosition)), viewMatrix);
-          float alignment = abs(dot(restFace, liveFace)) / max(length(restFace), 1.0e-9);
-          float fixedPanel = smoothstep(0.87, 0.995, alignment);
-          vec3 freeCoat = mix(gl_FragColor.rgb, max(measured, vec3(0.0)), 0.54);
-          vec3 finish = mix(freeCoat, clamp(studioCoat, 0.0, 1.0), fixedPanel * (1.0 - deck));
-          gl_FragColor.rgb = mix(gl_FragColor.rgb, finish, 0.95 * diffuseColor.a);
-        `);
-      };
+    const paintEnvironment = makePaintEnvironment(PAINT_LOOK);
+    const paintMaterials = [];
+    // Studio 360 sets turn the car on a turntable under fixed lights, so the paint's studio
+    // turns with the camera azimuth (envFollow +1/-1) rather than staying fixed to the car.
+    function orientPaintEnvironment() {
+      if (!PAINT_LOOK.envFollow || !paintMaterials.length) return;
+      const target = state.targetCenter;
+      const azimuth = Math.atan2(camera.position.z - target.z, camera.position.x - target.x);
+      for (const mat of paintMaterials) mat.envMapRotation.set(0, PAINT_LOOK.envFollow * azimuth + PAINT_LOOK.envYaw, 0);
     }
 
     const exteriorEnvironmentGain = 1.75;
@@ -674,18 +657,6 @@
             }
           }
           if (obj.isMesh) {
-            if (obj.material?.name === 'Mat_Gentian_Blue_Metallic') {
-              const position = obj.geometry.attributes.position;
-              const rest = new Float32Array(position.count * 3);
-              const point = new THREE.Vector3();
-              for (let k=0; k<position.count; k++) {
-                point.fromBufferAttribute(position,k).applyMatrix4(obj.matrixWorld);
-                rest[3*k] = point.x*0.018;
-                rest[3*k+1] = -point.z*0.018;
-                rest[3*k+2] = point.y*0.018;
-              }
-              obj.geometry.setAttribute('paintRest',new THREE.Float32BufferAttribute(rest,3));
-            }
             if (obj.material?.name === 'Mat_Cabin_Rearview') rearMirror = obj;
             const isExterior = EXTERIOR_RE.test(obj.name);
             const isGlass = /Glass_(Windshield|Door|Quarter|Rear)|Headlight_Lens|Headlight_Clear/.test(obj.name) || obj.material?.name === 'Mat_Headlight_Clear_Lens';
@@ -707,7 +678,8 @@
 
             if (obj.material) {
               const doorPane = /Glass_Door/.test(obj.name);
-              const trimRole = /^TSC_Active_Flap_/.test(obj.name) ? 'AF'
+              const trimRole = /^TSC_(Rim_|CenterLockHub_|Wheel)/.test(obj.name) ? 'WH'
+                : /^TSC_Active_Flap_/.test(obj.name) ? 'AF'
                 : /^TSC_Exhaust_Bezel_/.test(obj.name) ? 'EB'
                 : /^TSC_(Rear_TurboSBadge|THybrid_Badge_)/.test(obj.name) ? 'TB'
                 : '';
@@ -739,15 +711,35 @@
                     shared.envMapIntensity = shared.name === 'Mat_PCCB_Ceramic_Rotor' ? 0.32 : 0.22;
                   }
                 }
-                if (shared.name === 'Mat_Gentian_Blue_Metallic') {
-                  matchStudioPaint(shared);
-                  shared.color.setRGB(0.0085, 0.0255, 0.128);
-                  shared.metalness = 0.75;
-                  shared.roughness = 0.195;
-                  shared.clearcoat = 0.94;
-                  shared.clearcoatRoughness = 0.042;
-                  shared.envMapIntensity = 1.18;
-                  shared.specularIntensity = 0.90;
+                if (/^Mat_(Gentian_Blue_Metallic|Wing_Base_Gentian|Active_Wing_Gentian)$/.test(shared.name)) {
+                  // Gentian Blue Metallic: dark blue flake base under a clear lacquer.
+                  shared.color.setRGB(...PAINT_LOOK.color);
+                  shared.metalness = PAINT_LOOK.metalness;
+                  shared.roughness = PAINT_LOOK.roughness;
+                  shared.clearcoat = PAINT_LOOK.clearcoat;
+                  shared.clearcoatRoughness = PAINT_LOOK.clearcoatRoughness;
+                  shared.specularIntensity = PAINT_LOOK.specular;
+                  shared.envMap = paintEnvironment;
+                  shared.envMapIntensity = PAINT_LOOK.gain;
+                  // The studio frames never brighten the paint toward the silhouette (wing, haunch
+                  // edges): cap the grazing reflectance of the lacquer and of the flake layer.
+                  shared.customProgramCacheKey = () => `gentian-pbr-2-${PAINT_LOOK.ccF90}-${PAINT_LOOK.baseF90}`;
+                  shared.onBeforeCompile = shader => {
+                    shader.fragmentShader = shader.fragmentShader.replace('#include <lights_physical_fragment>',
+                      `#include <lights_physical_fragment>
+                      #ifdef USE_CLEARCOAT
+                        material.clearcoatF90 = ${PAINT_LOOK.ccF90.toFixed(3)};
+                      #endif
+                      material.specularF90 = min(material.specularF90, ${PAINT_LOOK.baseF90.toFixed(3)});`)
+                      // The fitted studio carries the paint's reflections; keep the key and rim
+                      // lights for shading and shadow, not as hot spots in the lacquer.
+                      .replace('#include <aomap_fragment>', `#include <aomap_fragment>
+                      reflectedLight.directSpecular *= 0.25;
+                      #ifdef USE_CLEARCOAT
+                        clearcoatSpecularDirect *= 0.0;
+                      #endif`);
+                  };
+                  paintMaterials.push(shared);
                 }
                 if (shared.name === 'Mat_Turbonite_Alloy') {
                   if (trimRole === 'EB') {
@@ -762,12 +754,30 @@
                     shared.roughness = 0.23;
                     shared.clearcoat = 0.25;
                     shared.envMapIntensity = 1.45;
+                  } else if (trimRole === 'WH') {
+                    // Satin Turbonite forged wheels: mid titanium grey in the close-up frame.
+                    shared.color.setRGB(0.165, 0.160, 0.150);
+                    shared.metalness = 0.70;
+                    shared.roughness = 0.44;
+                    shared.envMapIntensity = 0.95;
                   } else {
                     shared.color.setRGB(0.118, 0.110, 0.100);
                     shared.metalness = 0.85;
                     shared.roughness = 0.27;
                     shared.envMapIntensity = 1.15;
                   }
+                }
+                if (/^Mat_Deck_Grille_(Satin|Edge)$/.test(shared.name)) {
+                  // Rear-lid cooling grille: near-black satin slats in the rear frames (12, 19, 41).
+                  shared.color.setRGB(0.018, 0.019, 0.022);
+                  shared.metalness = 0.15;
+                  shared.roughness = 0.55;
+                  shared.envMapIntensity = 0.45;
+                }
+                if (shared.name === 'PCCB carbon ceramic friction surface') {
+                  // The ceramic discs read light grey behind the spokes in every wheel frame.
+                  shared.color.setRGB(3.6, 3.6, 3.7);
+                  shared.roughness = 0.62;
                 }
                 if (shared.name === 'Mat_Rear_Porsche_Silver') {
                   shared.color.setRGB(0.74, 0.76, 0.80);
@@ -824,7 +834,7 @@
                   shared.transparent = true;
                   shared.depthWrite = false;
                   shared.color.setRGB(0.024, 0.039, 0.043);
-                  shared.opacity = backlight ? 0.17 : quarter ? 0.19 : doorPane ? 0.15 : 0.30;
+                  shared.opacity = backlight ? 0.30 : quarter ? 0.30 : doorPane ? 0.27 : 0.36;
                   shared.roughness = backlight ? 0.077 : 0.09;
                   shared.clearcoat = 0.58;
                   shared.clearcoatRoughness = 0.045;
@@ -944,6 +954,19 @@
           }
         }
         explosionButton.disabled = !pivots.Pivot_Body_Assembly;
+        if (new URLSearchParams(location.search).get('debug') === 'paintmask') {
+          // Measurement aid for the build workspace: paint red, everything else black, unlit.
+          const red = new THREE.MeshStandardMaterial({color: 0x000000, emissive: 0xff0000, roughness: 1, metalness: 0});
+          const black = new THREE.MeshStandardMaterial({color: 0x000000, roughness: 1, metalness: 0});
+          scene.environment = null;
+          rootCar.traverse(o => {
+            if (!o.isMesh) return;
+            const paint = /Gentian/.test(o.material?.name || '') && !/outlet return/.test(o.material?.name || '');
+            o.material = paint ? red : black;
+          });
+          for (const light of [hemi, keyLight, rimLight]) light.intensity = 0;
+          renderer.toneMapping = 0;
+        }
         state.loaded = true;
         if (inspectionViews.has(location.hash)) matchPorscheView(location.hash);
         else if (badgeViews.has(new URLSearchParams(location.search).get('frame'))) matchPorscheView(new URLSearchParams(location.search).get('frame'));
@@ -1973,6 +1996,7 @@
       if (!active) {
         wasMoving = false;
         if (shadowDirty) renderer.shadowMap.needsUpdate = true;
+        orientPaintEnvironment();
         renderer.render(scene, camera);
         shadowDirty = false;
         return;
@@ -2176,6 +2200,7 @@
       }
 
       updateCabinMirror(geoMoving);
+      orientPaintEnvironment();
       renderer.render(scene, camera);
       if (!loaderEl.classList.contains('done')) {
         if (intro) intro.previous = performance.now();
