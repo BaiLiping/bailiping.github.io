@@ -9,7 +9,7 @@
     const params = new URLSearchParams(location.search);
     if (params.get('capture') === '1' || params.get('hud') === '0') document.documentElement.classList.add('hide-hud');
     const overrideModel = params.get('model');
-    const modelFile = overrideModel || './honda_civic_type_r.glb?v=cac020472d';
+    const modelFile = overrideModel || './honda_civic_type_r.glb?v=48520ddff4';
     const preload = document.createElement('link');
     preload.rel = 'preload';
     preload.as = 'fetch';
@@ -22,7 +22,7 @@
   <title>2020 Honda Civic Type R (FK8) — Boost Blue</title>
   <meta name="description" content="Explore the 2020 Honda Civic Type R (FK8) in Boost Blue. Rotate the 3D model, open the rear hatch and compare its wing, C-shaped taillights and triple exhaust with photographs." />
   <link rel="stylesheet" href="./studio.css?v=2125ba1565">
-  <script type="module" src="./studio.js?v=70ca5fba09"></script>
+  <script type="module" src="./studio.js?v=da214eb1f0"></script>
 </head>
 <body>
   <noscript><p style="position:fixed;inset:0;z-index:30;background:#eceeef;padding:2em">The interactive Honda Civic Type R (FK8) viewer requires JavaScript. <a href="https://bringatrailer.com/listing/2021-honda-civic-type-r-touring-5/">View the reference listing</a> or <a href="./frame-by-frame/">open the frame-by-frame photo comparison</a>.</p></noscript>
@@ -138,12 +138,12 @@
     import { applyStudioVisibility, attachStudioVisibility, loadStudioVisibility } from './studio-visibility.js?v=4983a6eba7';
     import { createPlanarMirror } from './mirror-reflection.js?v=a806e09fc7';
     import { createPaintEnvironment } from './paint-studio.js?v=c7567331f0';
-    import { DEFAULT_CAMERAS, orbitRadius, normalizeCameraPose, buildReferenceViews, loadCivicViews } from './civic-views.js?v=8958134a68';
+    import { DEFAULT_CAMERAS, orbitRadius, normalizeCameraPose, buildReferenceViews, loadCivicViews } from './civic-views.js?v=72e382940c';
 
     const { GLTFLoader, DRACOLoader } = THREE;
     const MODEL_URL = modelFile;
     const urlParams = new URLSearchParams(location.search);
-    const visibilityReady = !overrideModel && loadStudioVisibility('./studio-visibility.bin.gz?v=63a3ea5487')
+    const visibilityReady = !overrideModel && loadStudioVisibility('./studio-visibility.bin.gz?v=7b093e7b40')
       .catch(error => { console.warn('Studio visibility unavailable', error); return null; });
     const captureMode = urlParams.get('capture') === '1';
     let fullViewportCapture = captureMode;
@@ -856,6 +856,7 @@
     let rootCar = null;
     const liftSupports = [];
     let hoodStay = null;
+    let hoodStayClearance = 0;
     const storedStay = new THREE.Quaternion();
     const raisedStay = new THREE.Quaternion();
     const supportAxis = new THREE.Vector3(0, 1, 0);
@@ -1086,6 +1087,7 @@
         const bonnet = pivots.Pivot_Hood_Assembly;
         if (Number.isFinite(bonnet?.userData.openAngleDegrees)) {
           panels.hood.angle = THREE.MathUtils.degToRad(bonnet.userData.openAngleDegrees);
+          hoodStayClearance = THREE.MathUtils.degToRad(bonnet.userData.stayClearanceDegrees || 0);
         }
         hoodStay = rootCar.getObjectByName('Civic_Body_Shell_Hood_Stay');
         if (hoodStay) {
@@ -2291,6 +2293,9 @@
 
       if (forceSceneUpdate) {
         const ex = state.explode;
+        // Raise the lid above the socket while the stay swings out, then lower it onto the tip.
+        const hoodAngle = (panels.hood.angle + hoodStayClearance) * THREE.MathUtils.smoothstep(state.hood, 0, .73)
+          - hoodStayClearance * THREE.MathUtils.smoothstep(state.hood, .90, 1);
         const pt = state.powertrainCutaway;
         const vib = (state.rpm > 1200 ? (state.rpm / 7000) * 0.004 : 0.0);
         const t = clock.elapsedTime;
@@ -2314,7 +2319,8 @@
           const panelKey = panelByNode[pname];
           if (panelKey) {
             const panel = panels[panelKey];
-            piv.rotation[panel.axis] = rr[panel.axis] + state[panelKey] * panel.angle;
+            const angle = panelKey === 'hood' && hoodStay ? hoodAngle : state[panelKey] * panel.angle;
+            piv.rotation[panel.axis] = rr[panel.axis] + angle;
           } else if (pname === 'Pivot_Corner_FL' || pname === 'Pivot_Corner_FR') {
             piv.rotation.set(rr.x, rr.y + steerRad, rr.z);
           } else if (pname === 'Pivot_WheelSpin_FL' || pname === 'Pivot_WheelSpin_FR') {
@@ -2382,7 +2388,7 @@
         aimLiftSupports(ex > .001);
         if (hoodStay) {
           // The stay rests in its clip until the lid has cleared the fender.
-          const raised = THREE.MathUtils.smoothstep(state.hood, .43, 1) * (1-ex);
+          const raised = THREE.MathUtils.smoothstep(state.hood, .63, .90) * (1-ex);
           hoodStay.quaternion.copy(storedStay).slerp(raisedStay, raised);
         }
         for (const [obj, ps] of pullOffsets.entries()) {

@@ -12,7 +12,7 @@ from scipy.spatial.transform import Rotation
 HINGE = np.array([1.055, 0.899, 0.0])
 ANGLE = 52.0
 STAY_BASE = np.array([1.522, 0.828, 0.744])
-STAY_SOCKET = np.array([1.633, 0.840, 0.688])
+STAY_SOCKET = np.array([1.633, 0.825, 0.688])
 STORED_DIRECTION = np.array([0.91, -0.20, -0.36])
 BODY = 'Pivot_Body_Assembly'
 HOOD = 'Pivot_Hood_Assembly'
@@ -61,18 +61,21 @@ def solid_normals(points, faces):
     return points, normals, faces
 
 
-def turned(profile):
+def turned(profile, hollow=False):
     n = 20
     angle = np.arange(n) * 2 * np.pi / n
     points = np.vstack(
         [np.column_stack([r * np.cos(angle), np.full(n, y), r * np.sin(angle)]) for y, r in profile]
     )
     rings = np.arange(len(points)).reshape(-1, n)
-    a, b = rings[:-1].ravel(), rings[1:].ravel()
-    c, d = np.roll(rings[1:], -1, axis=1).ravel(), np.roll(rings[:-1], -1, axis=1).ravel()
+    lower = rings if hollow else rings[:-1]
+    upper = np.roll(rings, -1, axis=0) if hollow else rings[1:]
+    a, b = lower.ravel(), upper.ravel()
+    c, d = np.roll(upper, -1, axis=1).ravel(), np.roll(lower, -1, axis=1).ravel()
     faces = np.vstack([np.column_stack([a, b, c]), np.column_stack([a, c, d])])
-    for cap in (rings[0], rings[-1, ::-1]):
-        faces = np.vstack([faces, np.column_stack([np.full(n - 2, cap[0]), cap[1:-1], cap[2:]])])
+    if not hollow:
+        for cap in (rings[0], rings[-1, ::-1]):
+            faces = np.vstack([faces, np.column_stack([np.full(n - 2, cap[0]), cap[1:-1], cap[2:]])])
     return solid_normals(points, faces)
 
 
@@ -112,7 +115,7 @@ def install_hardware(model):
         child = model.document['nodes'][idx]
         child['translation'] = (np.array(child.get('translation', [0, 0, 0])) + offset).tolist()
     hood['translation'] = HINGE.tolist()
-    hood.setdefault('extras', {})['openAngleDegrees'] = ANGLE
+    hood.setdefault('extras', {}).update(openAngleDegrees=ANGLE, stayClearanceDegrees=2.0)
 
     pivot_x, pivot_y, _ = HINGE
     base = [
@@ -142,7 +145,8 @@ def install_hardware(model):
         pin = turned([(-0.018, 0.005), (-0.015, 0.009), (0.010, 0.009), (0.013, 0.011), (0.015, 0.010)])
         add('Civic_Body_Shell_Hood_Hinge_Pin_' + side, BODY, hardware, anchor, pin, pin_dir)
 
-    opened = Rotation.from_euler('z', ANGLE, degrees=True).apply(STAY_SOCKET - HINGE) + HINGE
+    open_rotation = Rotation.from_euler('z', ANGLE, degrees=True)
+    opened = open_rotation.apply(STAY_SOCKET - HINGE) + HINGE
     reach = np.linalg.norm(opened - STAY_BASE)
     rod = turned(
         [
@@ -173,7 +177,9 @@ def install_hardware(model):
         HOOD,
         hardware,
         STAY_SOCKET,
-        turned([(-0.002, 0.010), (0, 0.014), (0.016, 0.014), (0.022, 0.009)]),
+        turned([(-0.003, 0.008), (-0.002, 0.014), (0.002, 0.014), (0.012, 0.009),
+                (0.012, 0.006), (0, 0.006)], hollow=True),
+        from_up(open_rotation.inv().apply(opened - STAY_BASE)),
     )
 
     # Two rubber stops and the black center seal are visible along the
