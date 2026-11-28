@@ -1,6 +1,6 @@
 {
   "vehicle": "2026 Porsche 911 Turbo S Cabriolet (992.2), Gentian Blue Metallic, black textile roof",
-  "revision": "ec397e2c2647",
+  "revision": "130c308510b4",
   "frames": [
     {
       "id": "view-00",
@@ -10,9 +10,9 @@
       "photo": "porsche-views/view-00.webp",
       "render": "comparisons/current/view-00.webp",
       "camera": "source/cameras.json#view-00",
-      "revision": "ec397e2c2647",
+      "revision": "130c308510b4",
       "status": "verified",
-      "note": "Checked the headlamp outline and rake, lid shut lines, front wheel, A-pillar and screen header, and the roof edge over the side glass. The bumper shelf and intake detail are softer than in the photograph. Silhouette against the studio mask: IoU 97.2%, median boundary distance 7.2 px, 95th percentile 22.0 px at 3840 px width."
+      "note": "Checked the headlamp outline and rake, the lid shut lines and crown line, front wheel, A-pillar and screen header, and the roof edge over the side glass. The bumper shelf and intake detail are softer than in the photograph. Silhouette against the studio mask: IoU 96.6%, median boundary distance 8.0 px, 95th percentile 32.0 px at 3840 px width."
     },
     {
       "id": "view-01",
@@ -22,9 +22,9 @@
       "photo": "porsche-views/view-01.webp",
       "render": "comparisons/current/view-01.webp",
       "camera": "source/cameras.json#view-01",
-      "revision": "ec397e2c2647",
+      "revision": "130c308510b4",
       "status": "verified",
-      "note": "Checked the headlamp outline and rake, lid shut lines, front wheel, A-pillar and screen header, and the roof edge over the side glass. The bumper shelf and intake detail are softer than in the photograph. Silhouette against the studio mask: IoU 96.8%, median boundary distance 8.0 px, 95th percentile 24.0 px at 3840 px width."
+      "note": "Checked the headlamp outline and rake, the lid shut lines and crown line, front wheel, A-pillar and screen header, and the roof edge over the side glass. The bumper shelf and intake detail are softer than in the photograph. Silhouette against the studio mask: IoU 96.6%, median boundary distance 8.0 px, 95th percentile 25.2 px at 3840 px width."
     },
     {
       "id": "view-02",
@@ -34,9 +34,9 @@
       "photo": "porsche-views/view-02.webp",
       "render": "comparisons/current/view-02.webp",
       "camera": "source/cameras.json#view-02",
-      "revision": "ec397e2c2647",
+      "revision": "130c308510b4",
       "status": "verified",
-      "note": "Checked the headlamp outline and rake, lid shut lines, front wheel, A-pillar and screen header, and the roof edge over the side glass. The bumper shelf and intake detail are softer than in the photograph. Silhouette against the studio mask: IoU 96.8%, median boundary distance 6.0 px, 95th percentile 30.0 px at 3840 px width."
+      "note": "Checked the headlamp outline and rake, the lid shut lines and crown line, front wheel, A-pillar and screen header, and the roof edge over the side glass. The bumper shelf and intake detail are softer than in the photograph. Silhouette against the studio mask: IoU 97.1%, median boundary distance 6.0 px, 95th percentile 26.4 px at 3840 px width."
     },
     {
       "id": "view-03",
@@ -46,9 +46,9 @@
       "photo": "porsche-views/view-03.webp",
       "render": "comparisons/current/view-03.webp",
       "camera": "source/cameras.json#view-03",
-      "revision": "ec397e2c2647",
+      "revision": "130c308510b4",
       "status": "verified",
-      "note": "Checked both wheel centres, arches, sill, mirror, the side-window line and the quarter-glass tip, and the soft-top profile. The fender around the fuel flap faces more sideways than the studio car, so the flap reads rounder from the side. Silhouette against the studio mask: IoU 97.3%, median boundary distance 5.6 px, 95th percentile 28.0 px at 3840 px width."
+      "note": "Checked both wheel centres, arches, sill, mirror, the side-window line and the quarter-glass tip, the soft-top profile and the fuel door outline, which is fitted to its shut line in ten frames. The fender round the fuel door faces slightly more sideways than the car. Silhouette against the studio mask: IoU 97.4%, median boundary distance 5.6 px, 95th percentile 24.8 px at 3840 px width."
     },
     {
       "id": "view-04",
@@ -58,9 +58,9 @@
       "photo": "porsche-views/view-04.webp",
       "render": "comparisons/current/view-04.webp",
       "camera": "source/cameras.json#view-04",
-      "revision": "ec397e2c2647",
+      "revision": "130c308510b4",
       "status": "verified",
-      "note": "Checked both wheel centres, arches, sill, mirror, the side-window line and the quarter-glass tip, and the soft-top profile. The fender around the fuel flap faces more sideways than the studio car, so the flap reads rounder from the side. Silhouette against the studio mask: IoU 97.2%, median boundary distance 4.0 px, 95th percentile 28.4 px at 3840 px width."
+      "note": "Checked both wheel centres, arches, sill, mirror, the side-window line and the quarter-glass tip, the soft-top profile and the fuel door outline, which is fitted to its shut line in ten frames. The fender round the fuel door faces slightly more sideways than the car. Silhouette against the studio mask: IoU 97.6%, median boundary distance 4.0 px, 95th percentile 26.0 px at 3840 px width."
     },
     {
       "id": "view-05",
@@ -70,9 +70,9 @@
       "photo": "porsche-views/view-05.webp",
       "render": "comparisons/current/view-05.webp",
       "camera": "source/cameras.json#view-05",
-      "revision": "ec397e2c2647",
+      "revision": "130c308510b4",
       "status": "verified",
-      "note": "Checked the rear wheel, haunch outline, quarter intake, the sail and quarter window, the light band and the exhaust outlets. The reflectors and lower valance ribs are simpler, and the spoiler reads lighter at grazing angles. Silhouette against the studio mask: IoU 97.2%, median boundary distance 4.4 px, 95th percentile 30.4 px at 3840 px width."
+      "note": "Checked the rear wheel, haunch outline, quarter intake, the sail and quarter window, the light band and the exhaust outlets. The reflectors and lower valance ribs are simpler, and the spoiler reads lighter at grazing angles. Silhouette against the studio mask: IoU 97.3%, median boundary distance 4.4 px, 95th percentile 29.6 px at 3840 px width."
     },
     {
       "id": "view-06",
@@ -82,9 +82,9 @@
       "photo": "porsche-views/view-06.webp",
       "render": "comparisons/current/view-06.webp",
       "camera": "source/cameras.json#view-06",
-      "revision": "ec397e2c2647",
+      "revision": "130c308510b4",
       "status": "verified",
-      "note": "Checked the rear wheel, haunch outline, quarter intake, the sail and quarter window, the light band and the exhaust outlets. The reflectors and lower valance ribs are simpler, and the spoiler reads lighter at grazing angles. Silhouette against the studio mask: IoU 96.9%, median boundary distance 6.4 px, 95th percentile 34.0 px at 3840 px width."
+      "note": "Checked the rear wheel, haunch outline, quarter intake, the sail and quarter window, the light band and the exhaust outlets. The reflectors and lower valance ribs are simpler, and the spoiler reads lighter at grazing angles. Silhouette against the studio mask: IoU 96.8%, median boundary distance 8.0 px, 95th percentile 34.0 px at 3840 px width."
     },
     {
       "id": "view-07",
@@ -94,9 +94,9 @@
       "photo": "porsche-views/view-07.webp",
       "render": "comparisons/current/view-07.webp",
       "camera": "source/cameras.json#view-07",
-      "revision": "ec397e2c2647",
+      "revision": "130c308510b4",
       "status": "verified",
-      "note": "Checked the rear wheel, haunch outline, quarter intake, the sail and quarter window, the light band and the exhaust outlets. The reflectors and lower valance ribs are simpler, and the spoiler reads lighter at grazing angles. Silhouette against the studio mask: IoU 96.6%, median boundary distance 8.0 px, 95th percentile 34.8 px at 3840 px width."
+      "note": "Checked the rear wheel, haunch outline, quarter intake, the sail and quarter window, the light band and the exhaust outlets. The reflectors and lower valance ribs are simpler, and the spoiler reads lighter at grazing angles. Silhouette against the studio mask: IoU 96.4%, median boundary distance 8.4 px, 95th percentile 36.0 px at 3840 px width."
     },
     {
       "id": "view-08",
@@ -106,9 +106,9 @@
       "photo": "porsche-views/view-08.webp",
       "render": "comparisons/current/view-08.webp",
       "camera": "source/cameras.json#view-08",
-      "revision": "ec397e2c2647",
+      "revision": "130c308510b4",
       "status": "verified",
-      "note": "Checked the rear wheel, haunch outline, quarter intake, the sail and quarter window, the light band and the exhaust outlets. The reflectors and lower valance ribs are simpler, and the spoiler reads lighter at grazing angles. Silhouette against the studio mask: IoU 96.5%, median boundary distance 8.8 px, 95th percentile 34.8 px at 3840 px width."
+      "note": "Checked the rear wheel, haunch outline, quarter intake, the sail and quarter window, the light band and the exhaust outlets. The reflectors and lower valance ribs are simpler, and the spoiler reads lighter at grazing angles. Silhouette against the studio mask: IoU 96.3%, median boundary distance 10.0 px, 95th percentile 36.0 px at 3840 px width."
     },
     {
       "id": "view-09",
@@ -118,9 +118,9 @@
       "photo": "porsche-views/view-09.webp",
       "render": "comparisons/current/view-09.webp",
       "camera": "source/cameras.json#view-09",
-      "revision": "ec397e2c2647",
+      "revision": "130c308510b4",
       "status": "verified",
-      "note": "Checked the roof and sail outline, the rear glass, light band, lettering, plate recess and both twin outlets. The wedge reflectors, valance ribs and parking sensors are simplified. Silhouette against the studio mask: IoU 97.1%, median boundary distance 8.4 px, 95th percentile 22.0 px at 3840 px width."
+      "note": "Checked the roof and sail outline, the rear glass, light band, lettering, plate recess and both twin outlets. The wedge reflectors, valance ribs and parking sensors are simplified. Silhouette against the studio mask: IoU 97.1%, median boundary distance 8.8 px, 95th percentile 22.0 px at 3840 px width."
     },
     {
       "id": "view-10",
@@ -130,7 +130,7 @@
       "photo": "porsche-views/view-10.webp",
       "render": "comparisons/current/view-10.webp",
       "camera": "source/cameras.json#view-10",
-      "revision": "ec397e2c2647",
+      "revision": "130c308510b4",
       "status": "verified",
       "note": "Checked the roof and sail outline, the rear glass, light band, lettering, plate recess and both twin outlets. The wedge reflectors, valance ribs and parking sensors are simplified. Silhouette against the studio mask: IoU 97.5%, median boundary distance 6.4 px, 95th percentile 20.4 px at 3840 px width."
     },
@@ -142,7 +142,7 @@
       "photo": "porsche-views/view-11.webp",
       "render": "comparisons/current/view-11.webp",
       "camera": "source/cameras.json#view-11",
-      "revision": "ec397e2c2647",
+      "revision": "130c308510b4",
       "status": "verified",
       "note": "Checked the roof and sail outline, the rear glass, light band, lettering, plate recess and both twin outlets. The wedge reflectors, valance ribs and parking sensors are simplified. Silhouette against the studio mask: IoU 97.6%, median boundary distance 6.0 px, 95th percentile 18.4 px at 3840 px width."
     },
@@ -154,7 +154,7 @@
       "photo": "porsche-views/view-12.webp",
       "render": "comparisons/current/view-12.webp",
       "camera": "source/cameras.json#view-12",
-      "revision": "ec397e2c2647",
+      "revision": "130c308510b4",
       "status": "verified",
       "note": "Checked the roof and sail outline, the rear glass, light band, lettering, plate recess and both twin outlets. The wedge reflectors, valance ribs and parking sensors are simplified. Silhouette against the studio mask: IoU 97.4%, median boundary distance 4.4 px, 95th percentile 23.2 px at 3840 px width."
     },
@@ -166,9 +166,9 @@
       "photo": "porsche-views/view-13.webp",
       "render": "comparisons/current/view-13.webp",
       "camera": "source/cameras.json#view-13",
-      "revision": "ec397e2c2647",
+      "revision": "130c308510b4",
       "status": "verified",
-      "note": "Checked the roof and sail outline, the rear glass, light band, lettering, plate recess and both twin outlets. The wedge reflectors, valance ribs and parking sensors are simplified. Silhouette against the studio mask: IoU 97.6%, median boundary distance 6.0 px, 95th percentile 18.4 px at 3840 px width."
+      "note": "Checked the roof and sail outline, the rear glass, light band, lettering, plate recess and both twin outlets. The wedge reflectors, valance ribs and parking sensors are simplified. Silhouette against the studio mask: IoU 97.7%, median boundary distance 6.0 px, 95th percentile 18.0 px at 3840 px width."
     },
     {
       "id": "view-14",
@@ -178,7 +178,7 @@
       "photo": "porsche-views/view-14.webp",
       "render": "comparisons/current/view-14.webp",
       "camera": "source/cameras.json#view-14",
-      "revision": "ec397e2c2647",
+      "revision": "130c308510b4",
       "status": "verified",
       "note": "Checked the roof and sail outline, the rear glass, light band, lettering, plate recess and both twin outlets. The wedge reflectors, valance ribs and parking sensors are simplified. Silhouette against the studio mask: IoU 97.3%, median boundary distance 6.0 px, 95th percentile 21.2 px at 3840 px width."
     },
@@ -190,9 +190,9 @@
       "photo": "porsche-views/view-15.webp",
       "render": "comparisons/current/view-15.webp",
       "camera": "source/cameras.json#view-15",
-      "revision": "ec397e2c2647",
+      "revision": "130c308510b4",
       "status": "verified",
-      "note": "Checked the roof and sail outline, the rear glass, light band, lettering, plate recess and both twin outlets. The wedge reflectors, valance ribs and parking sensors are simplified. Silhouette against the studio mask: IoU 97.6%, median boundary distance 5.6 px, 95th percentile 21.6 px at 3840 px width."
+      "note": "Checked the roof and sail outline, the rear glass, light band, lettering, plate recess and both twin outlets. The wedge reflectors, valance ribs and parking sensors are simplified. Silhouette against the studio mask: IoU 97.7%, median boundary distance 5.6 px, 95th percentile 21.2 px at 3840 px width."
     },
     {
       "id": "view-16",
@@ -202,9 +202,9 @@
       "photo": "porsche-views/view-16.webp",
       "render": "comparisons/current/view-16.webp",
       "camera": "source/cameras.json#view-16",
-      "revision": "ec397e2c2647",
+      "revision": "130c308510b4",
       "status": "verified",
-      "note": "Checked the roof and sail outline, the rear glass, light band, lettering, plate recess and both twin outlets. The wedge reflectors, valance ribs and parking sensors are simplified. Silhouette against the studio mask: IoU 97.4%, median boundary distance 6.0 px, 95th percentile 21.2 px at 3840 px width."
+      "note": "Checked the roof and sail outline, the rear glass, light band, lettering, plate recess and both twin outlets. The wedge reflectors, valance ribs and parking sensors are simplified. Silhouette against the studio mask: IoU 97.4%, median boundary distance 6.0 px, 95th percentile 20.8 px at 3840 px width."
     },
     {
       "id": "view-17",
@@ -214,9 +214,9 @@
       "photo": "porsche-views/view-17.webp",
       "render": "comparisons/current/view-17.webp",
       "camera": "source/cameras.json#view-17",
-      "revision": "ec397e2c2647",
+      "revision": "130c308510b4",
       "status": "verified",
-      "note": "Checked the rear wheel, haunch outline, quarter intake, the sail and quarter window, the light band and the exhaust outlets. The reflectors and lower valance ribs are simpler, and the spoiler reads lighter at grazing angles. Silhouette against the studio mask: IoU 97.0%, median boundary distance 8.0 px, 95th percentile 28.8 px at 3840 px width."
+      "note": "Checked the rear wheel, haunch outline, quarter intake, the sail and quarter window, the light band and the exhaust outlets. The reflectors and lower valance ribs are simpler, and the spoiler reads lighter at grazing angles. Silhouette against the studio mask: IoU 96.9%, median boundary distance 8.0 px, 95th percentile 28.6 px at 3840 px width."
     },
     {
       "id": "view-18",
@@ -226,9 +226,9 @@
       "photo": "porsche-views/view-18.webp",
       "render": "comparisons/current/view-18.webp",
       "camera": "source/cameras.json#view-18",
-      "revision": "ec397e2c2647",
+      "revision": "130c308510b4",
       "status": "verified",
-      "note": "Checked the rear wheel, haunch outline, quarter intake, the sail and quarter window, the light band and the exhaust outlets. The reflectors and lower valance ribs are simpler, and the spoiler reads lighter at grazing angles. Silhouette against the studio mask: IoU 97.0%, median boundary distance 8.0 px, 95th percentile 30.0 px at 3840 px width."
+      "note": "Checked the rear wheel, haunch outline, quarter intake, the sail and quarter window, the light band and the exhaust outlets. The reflectors and lower valance ribs are simpler, and the spoiler reads lighter at grazing angles. Silhouette against the studio mask: IoU 96.9%, median boundary distance 8.0 px, 95th percentile 30.0 px at 3840 px width."
     },
     {
       "id": "view-19",
@@ -238,9 +238,9 @@
       "photo": "porsche-views/view-19.webp",
       "render": "comparisons/current/view-19.webp",
       "camera": "source/cameras.json#view-19",
-      "revision": "ec397e2c2647",
+      "revision": "130c308510b4",
       "status": "verified",
-      "note": "Checked the rear wheel, haunch outline, quarter intake, the sail and quarter window, the light band and the exhaust outlets. The reflectors and lower valance ribs are simpler, and the spoiler reads lighter at grazing angles. Silhouette against the studio mask: IoU 96.7%, median boundary distance 7.2 px, 95th percentile 30.0 px at 3840 px width."
+      "note": "Checked the rear wheel, haunch outline, quarter intake, the sail and quarter window, the light band and the exhaust outlets. The reflectors and lower valance ribs are simpler, and the spoiler reads lighter at grazing angles. Silhouette against the studio mask: IoU 96.7%, median boundary distance 6.4 px, 95th percentile 30.8 px at 3840 px width."
     },
     {
       "id": "view-20",
@@ -250,9 +250,9 @@
       "photo": "porsche-views/view-20.webp",
       "render": "comparisons/current/view-20.webp",
       "camera": "source/cameras.json#view-20",
-      "revision": "ec397e2c2647",
+      "revision": "130c308510b4",
       "status": "verified",
-      "note": "Checked the rear wheel, haunch outline, quarter intake, the sail and quarter window, the light band and the exhaust outlets. The reflectors and lower valance ribs are simpler, and the spoiler reads lighter at grazing angles. Silhouette against the studio mask: IoU 96.9%, median boundary distance 6.0 px, 95th percentile 32.4 px at 3840 px width."
+      "note": "Checked the rear wheel, haunch outline, quarter intake, the sail and quarter window, the light band and the exhaust outlets. The reflectors and lower valance ribs are simpler, and the spoiler reads lighter at grazing angles. Silhouette against the studio mask: IoU 96.8%, median boundary distance 6.4 px, 95th percentile 32.4 px at 3840 px width."
     },
     {
       "id": "view-21",
@@ -262,9 +262,9 @@
       "photo": "porsche-views/view-21.webp",
       "render": "comparisons/current/view-21.webp",
       "camera": "source/cameras.json#view-21",
-      "revision": "ec397e2c2647",
+      "revision": "130c308510b4",
       "status": "verified",
-      "note": "Checked the rear wheel, haunch outline, quarter intake, the sail and quarter window, the light band and the exhaust outlets. The reflectors and lower valance ribs are simpler, and the spoiler reads lighter at grazing angles. Silhouette against the studio mask: IoU 97.0%, median boundary distance 6.0 px, 95th percentile 32.8 px at 3840 px width."
+      "note": "Checked the rear wheel, haunch outline, quarter intake, the sail and quarter window, the light band and the exhaust outlets. The reflectors and lower valance ribs are simpler, and the spoiler reads lighter at grazing angles. Silhouette against the studio mask: IoU 96.7%, median boundary distance 6.4 px, 95th percentile 32.8 px at 3840 px width."
     },
     {
       "id": "view-22",
@@ -274,9 +274,9 @@
       "photo": "porsche-views/view-22.webp",
       "render": "comparisons/current/view-22.webp",
       "camera": "source/cameras.json#view-22",
-      "revision": "ec397e2c2647",
+      "revision": "130c308510b4",
       "status": "verified",
-      "note": "Checked the rear wheel, haunch outline, quarter intake, the sail and quarter window, the light band and the exhaust outlets. The reflectors and lower valance ribs are simpler, and the spoiler reads lighter at grazing angles. Silhouette against the studio mask: IoU 97.1%, median boundary distance 6.0 px, 95th percentile 32.0 px at 3840 px width."
+      "note": "Checked the rear wheel, haunch outline, quarter intake, the sail and quarter window, the light band and the exhaust outlets. The reflectors and lower valance ribs are simpler, and the spoiler reads lighter at grazing angles. Silhouette against the studio mask: IoU 96.9%, median boundary distance 6.0 px, 95th percentile 30.8 px at 3840 px width."
     },
     {
       "id": "view-23",
@@ -286,9 +286,9 @@
       "photo": "porsche-views/view-23.webp",
       "render": "comparisons/current/view-23.webp",
       "camera": "source/cameras.json#view-23",
-      "revision": "ec397e2c2647",
+      "revision": "130c308510b4",
       "status": "verified",
-      "note": "Checked the rear wheel, haunch outline, quarter intake, the sail and quarter window, the light band and the exhaust outlets. The reflectors and lower valance ribs are simpler, and the spoiler reads lighter at grazing angles. Silhouette against the studio mask: IoU 97.1%, median boundary distance 4.4 px, 95th percentile 31.3 px at 3840 px width."
+      "note": "Checked the rear wheel, haunch outline, quarter intake, the sail and quarter window, the light band and the exhaust outlets. The reflectors and lower valance ribs are simpler, and the spoiler reads lighter at grazing angles. Silhouette against the studio mask: IoU 97.1%, median boundary distance 4.4 px, 95th percentile 29.2 px at 3840 px width."
     },
     {
       "id": "view-24",
@@ -298,9 +298,9 @@
       "photo": "porsche-views/view-24.webp",
       "render": "comparisons/current/view-24.webp",
       "camera": "source/cameras.json#view-24",
-      "revision": "ec397e2c2647",
+      "revision": "130c308510b4",
       "status": "verified",
-      "note": "Checked both wheel centres, arches, sill, mirror, the side-window line and the quarter-glass tip, and the soft-top profile. The fender around the fuel flap faces more sideways than the studio car, so the flap reads rounder from the side. Silhouette against the studio mask: IoU 97.3%, median boundary distance 4.0 px, 95th percentile 28.0 px at 3840 px width."
+      "note": "Checked both wheel centres, arches, sill, mirror, the side-window line and the quarter-glass tip, the soft-top profile and the fuel door outline, which is fitted to its shut line in ten frames. The fender round the fuel door faces slightly more sideways than the car. Silhouette against the studio mask: IoU 97.7%, median boundary distance 4.0 px, 95th percentile 24.0 px at 3840 px width."
     },
     {
       "id": "view-25",
@@ -310,9 +310,9 @@
       "photo": "porsche-views/view-25.webp",
       "render": "comparisons/current/view-25.webp",
       "camera": "source/cameras.json#view-25",
-      "revision": "ec397e2c2647",
+      "revision": "130c308510b4",
       "status": "verified",
-      "note": "Checked both wheel centres, arches, sill, mirror, the side-window line and the quarter-glass tip, and the soft-top profile. The fender around the fuel flap faces more sideways than the studio car, so the flap reads rounder from the side. Silhouette against the studio mask: IoU 97.1%, median boundary distance 4.0 px, 95th percentile 28.0 px at 3840 px width."
+      "note": "Checked both wheel centres, arches, sill, mirror, the side-window line and the quarter-glass tip, the soft-top profile and the fuel door outline, which is fitted to its shut line in ten frames. The fender round the fuel door faces slightly more sideways than the car. Silhouette against the studio mask: IoU 97.5%, median boundary distance 4.0 px, 95th percentile 24.0 px at 3840 px width."
     },
     {
       "id": "view-26",
@@ -322,9 +322,9 @@
       "photo": "porsche-views/view-26.webp",
       "render": "comparisons/current/view-26.webp",
       "camera": "source/cameras.json#view-26",
-      "revision": "ec397e2c2647",
+      "revision": "130c308510b4",
       "status": "verified",
-      "note": "Checked the headlamp outline and rake, lid shut lines, front wheel, A-pillar and screen header, and the roof edge over the side glass. The bumper shelf and intake detail are softer than in the photograph. Silhouette against the studio mask: IoU 97.0%, median boundary distance 6.0 px, 95th percentile 26.4 px at 3840 px width."
+      "note": "Checked the headlamp outline and rake, the lid shut lines and crown line, front wheel, A-pillar and screen header, and the roof edge over the side glass. The bumper shelf and intake detail are softer than in the photograph. Silhouette against the studio mask: IoU 97.2%, median boundary distance 5.6 px, 95th percentile 24.8 px at 3840 px width."
     },
     {
       "id": "view-27",
@@ -334,9 +334,9 @@
       "photo": "porsche-views/view-27.webp",
       "render": "comparisons/current/view-27.webp",
       "camera": "source/cameras.json#view-27",
-      "revision": "ec397e2c2647",
+      "revision": "130c308510b4",
       "status": "verified",
-      "note": "Checked the headlamp outline and rake, lid shut lines, front wheel, A-pillar and screen header, and the roof edge over the side glass. The bumper shelf and intake detail are softer than in the photograph. Silhouette against the studio mask: IoU 96.9%, median boundary distance 6.0 px, 95th percentile 28.8 px at 3840 px width."
+      "note": "Checked the headlamp outline and rake, the lid shut lines and crown line, front wheel, A-pillar and screen header, and the roof edge over the side glass. The bumper shelf and intake detail are softer than in the photograph. Silhouette against the studio mask: IoU 97.2%, median boundary distance 6.0 px, 95th percentile 24.0 px at 3840 px width."
     },
     {
       "id": "view-28",
@@ -346,9 +346,9 @@
       "photo": "porsche-views/view-28.webp",
       "render": "comparisons/current/view-28.webp",
       "camera": "source/cameras.json#view-28",
-      "revision": "ec397e2c2647",
+      "revision": "130c308510b4",
       "status": "verified",
-      "note": "Checked the headlamp outline and rake, lid shut lines, front wheel, A-pillar and screen header, and the roof edge over the side glass. The bumper shelf and intake detail are softer than in the photograph. Silhouette against the studio mask: IoU 97.0%, median boundary distance 6.0 px, 95th percentile 28.0 px at 3840 px width."
+      "note": "Checked the headlamp outline and rake, the lid shut lines and crown line, front wheel, A-pillar and screen header, and the roof edge over the side glass. The bumper shelf and intake detail are softer than in the photograph. Silhouette against the studio mask: IoU 97.2%, median boundary distance 6.0 px, 95th percentile 25.2 px at 3840 px width."
     },
     {
       "id": "view-29",
@@ -358,9 +358,9 @@
       "photo": "porsche-views/view-29.webp",
       "render": "comparisons/current/view-29.webp",
       "camera": "source/cameras.json#view-29",
-      "revision": "ec397e2c2647",
+      "revision": "130c308510b4",
       "status": "verified",
-      "note": "Checked the headlamp outline and rake, lid shut lines, front wheel, A-pillar and screen header, and the roof edge over the side glass. The bumper shelf and intake detail are softer than in the photograph. Silhouette against the studio mask: IoU 97.2%, median boundary distance 6.0 px, 95th percentile 28.0 px at 3840 px width."
+      "note": "Checked the headlamp outline and rake, the lid shut lines and crown line, front wheel, A-pillar and screen header, and the roof edge over the side glass. The bumper shelf and intake detail are softer than in the photograph. Silhouette against the studio mask: IoU 97.1%, median boundary distance 6.0 px, 95th percentile 27.2 px at 3840 px width."
     },
     {
       "id": "view-30",
@@ -370,9 +370,9 @@
       "photo": "porsche-views/view-30.webp",
       "render": "comparisons/current/view-30.webp",
       "camera": "source/cameras.json#view-30",
-      "revision": "ec397e2c2647",
+      "revision": "130c308510b4",
       "status": "verified",
-      "note": "Checked the headlamp outline and rake, lid shut lines, front wheel, A-pillar and screen header, and the roof edge over the side glass. The bumper shelf and intake detail are softer than in the photograph. Silhouette against the studio mask: IoU 97.3%, median boundary distance 6.0 px, 95th percentile 26.0 px at 3840 px width."
+      "note": "Checked the headlamp outline and rake, the lid shut lines and crown line, front wheel, A-pillar and screen header, and the roof edge over the side glass. The bumper shelf and intake detail are softer than in the photograph. Silhouette against the studio mask: IoU 97.0%, median boundary distance 7.2 px, 95th percentile 27.6 px at 3840 px width."
     },
     {
       "id": "view-31",
@@ -382,9 +382,9 @@
       "photo": "porsche-views/view-31.webp",
       "render": "comparisons/current/view-31.webp",
       "camera": "source/cameras.json#view-31",
-      "revision": "ec397e2c2647",
+      "revision": "130c308510b4",
       "status": "verified",
-      "note": "Checked the headlamp outline and rake, lid shut lines, front wheel, A-pillar and screen header, and the roof edge over the side glass. The bumper shelf and intake detail are softer than in the photograph. Silhouette against the studio mask: IoU 97.1%, median boundary distance 8.0 px, 95th percentile 21.2 px at 3840 px width."
+      "note": "Checked the headlamp outline and rake, the lid shut lines and crown line, front wheel, A-pillar and screen header, and the roof edge over the side glass. The bumper shelf and intake detail are softer than in the photograph. Silhouette against the studio mask: IoU 96.6%, median boundary distance 8.0 px, 95th percentile 33.6 px at 3840 px width."
     },
     {
       "id": "view-32",
@@ -394,9 +394,9 @@
       "photo": "porsche-views/view-32.webp",
       "render": "comparisons/current/view-32.webp",
       "camera": "source/cameras.json#view-32",
-      "revision": "ec397e2c2647",
+      "revision": "130c308510b4",
       "status": "verified",
-      "note": "Checked the headlamp outline and rake, lid shut lines, front wheel, A-pillar and screen header, and the roof edge over the side glass. The bumper shelf and intake detail are softer than in the photograph. Silhouette against the studio mask: IoU 97.3%, median boundary distance 7.2 px, 95th percentile 21.2 px at 3840 px width."
+      "note": "Checked the headlamp outline and rake, the lid shut lines and crown line, front wheel, A-pillar and screen header, and the roof edge over the side glass. The bumper shelf and intake detail are softer than in the photograph. Silhouette against the studio mask: IoU 96.7%, median boundary distance 7.2 px, 95th percentile 32.4 px at 3840 px width."
     },
     {
       "id": "view-33",
@@ -406,9 +406,9 @@
       "photo": "porsche-views/view-33.webp",
       "render": "comparisons/current/view-33.webp",
       "camera": "source/cameras.json#view-33",
-      "revision": "ec397e2c2647",
+      "revision": "130c308510b4",
       "status": "verified",
-      "note": "Checked the headlamp outline and rake, lid shut lines, front wheel, A-pillar and screen header, and the roof edge over the side glass. The bumper shelf and intake detail are softer than in the photograph. Silhouette against the studio mask: IoU 97.6%, median boundary distance 5.6 px, 95th percentile 24.0 px at 3840 px width."
+      "note": "Checked the headlamp outline and rake, the lid shut lines and crown line, front wheel, A-pillar and screen header, and the roof edge over the side glass. The bumper shelf and intake detail are softer than in the photograph. Silhouette against the studio mask: IoU 97.1%, median boundary distance 4.4 px, 95th percentile 32.0 px at 3840 px width."
     },
     {
       "id": "view-34",
@@ -418,9 +418,9 @@
       "photo": "porsche-views/view-34.webp",
       "render": "comparisons/current/view-34.webp",
       "camera": "source/cameras.json#view-34",
-      "revision": "ec397e2c2647",
+      "revision": "130c308510b4",
       "status": "fix",
-      "note": "The round headlamps, tapered front lid with its level nose edge and the screen header register. Still different: the bumper shelf below the lid is softer, the outer intakes have thinner flaps and straighter inner edges, and the central opening has no radiator grille. Silhouette against the studio mask: IoU 98.2%, median boundary distance 4.0 px, 95th percentile 16.8 px at 3840 px width."
+      "note": "The front lid follows its outline measured in the overhead and straight-on frames, with the forward-bowed front edge ahead of the crest, and the headlamps sit on their fitted outline. Still different: the lamps read slightly smaller and flatter, the bumper has a rolled upper edge where the car has a crisp shelf crease, the outer intakes sit lower with thinner flaps, and the central opening has no radiator grille. Silhouette against the studio mask: IoU 97.9%, median boundary distance 4.0 px, 95th percentile 20.4 px at 3840 px width."
     },
     {
       "id": "view-35",
@@ -430,9 +430,9 @@
       "photo": "porsche-views/view-35.webp",
       "render": "comparisons/current/view-35.webp",
       "camera": "source/cameras.json#view-35",
-      "revision": "ec397e2c2647",
+      "revision": "130c308510b4",
       "status": "fix",
-      "note": "The round headlamps, tapered front lid with its level nose edge and the screen header register. Still different: the bumper shelf below the lid is softer, the outer intakes have thinner flaps and straighter inner edges, and the central opening has no radiator grille. Silhouette against the studio mask: IoU 98.1%, median boundary distance 4.0 px, 95th percentile 16.0 px at 3840 px width."
+      "note": "The front lid follows its outline measured in the overhead and straight-on frames, with the forward-bowed front edge ahead of the crest, and the headlamps sit on their fitted outline. Still different: the lamps read slightly smaller and flatter, the bumper has a rolled upper edge where the car has a crisp shelf crease, the outer intakes sit lower with thinner flaps, and the central opening has no radiator grille. Silhouette against the studio mask: IoU 98.0%, median boundary distance 4.4 px, 95th percentile 16.0 px at 3840 px width."
     },
     {
       "id": "view-36",
@@ -442,9 +442,9 @@
       "photo": "porsche-views/view-36.webp",
       "render": "comparisons/current/view-36.webp",
       "camera": "source/cameras.json#view-36",
-      "revision": "ec397e2c2647",
+      "revision": "130c308510b4",
       "status": "fix",
-      "note": "The round headlamps, tapered front lid with its level nose edge and the screen header register. Still different: the bumper shelf below the lid is softer, the outer intakes have thinner flaps and straighter inner edges, and the central opening has no radiator grille. Silhouette against the studio mask: IoU 98.1%, median boundary distance 4.0 px, 95th percentile 15.6 px at 3840 px width."
+      "note": "The front lid follows its outline measured in the overhead and straight-on frames, with the forward-bowed front edge ahead of the crest, and the headlamps sit on their fitted outline. Still different: the lamps read slightly smaller and flatter, the bumper has a rolled upper edge where the car has a crisp shelf crease, the outer intakes sit lower with thinner flaps, and the central opening has no radiator grille. Silhouette against the studio mask: IoU 98.0%, median boundary distance 4.0 px, 95th percentile 17.2 px at 3840 px width."
     },
     {
       "id": "view-37",
@@ -454,9 +454,9 @@
       "photo": "porsche-views/view-37.webp",
       "render": "comparisons/current/view-37.webp",
       "camera": "source/cameras.json#view-37",
-      "revision": "ec397e2c2647",
+      "revision": "130c308510b4",
       "status": "verified",
-      "note": "Checked the headlamp outline and rake, lid shut lines, front wheel, A-pillar and screen header, and the roof edge over the side glass. The bumper shelf and intake detail are softer than in the photograph. Silhouette against the studio mask: IoU 97.9%, median boundary distance 4.0 px, 95th percentile 22.9 px at 3840 px width."
+      "note": "Checked the headlamp outline and rake, the lid shut lines and crown line, front wheel, A-pillar and screen header, and the roof edge over the side glass. The bumper shelf and intake detail are softer than in the photograph. Silhouette against the studio mask: IoU 97.6%, median boundary distance 4.0 px, 95th percentile 28.4 px at 3840 px width."
     },
     {
       "id": "view-38",
@@ -466,9 +466,9 @@
       "photo": "porsche-views/view-38.webp",
       "render": "comparisons/current/view-38.webp",
       "camera": "source/cameras.json#view-38",
-      "revision": "ec397e2c2647",
+      "revision": "130c308510b4",
       "status": "verified",
-      "note": "Checked the headlamp outline and rake, lid shut lines, front wheel, A-pillar and screen header, and the roof edge over the side glass. The bumper shelf and intake detail are softer than in the photograph. Silhouette against the studio mask: IoU 97.4%, median boundary distance 6.0 px, 95th percentile 24.0 px at 3840 px width."
+      "note": "Checked the headlamp outline and rake, the lid shut lines and crown line, front wheel, A-pillar and screen header, and the roof edge over the side glass. The bumper shelf and intake detail are softer than in the photograph. Silhouette against the studio mask: IoU 96.9%, median boundary distance 6.0 px, 95th percentile 32.8 px at 3840 px width."
     },
     {
       "id": "view-39",
@@ -478,7 +478,7 @@
       "photo": "porsche-views/view-39.webp",
       "render": "comparisons/current/view-39.webp",
       "camera": "source/cameras.json#view-39",
-      "revision": "ec397e2c2647",
+      "revision": "130c308510b4",
       "status": "verified",
       "note": "Checked the plan of the front lid, the straight screen header with its corners at the A-pillars, the roof edge over the side glass and the mirror positions. Silhouette against the studio mask: IoU 97.6%, median boundary distance 6.4 px, 95th percentile 29.6 px at 3840 px width."
     },
@@ -490,9 +490,9 @@
       "photo": "porsche-views/view-40.webp",
       "render": "comparisons/current/view-40.webp",
       "camera": "source/cameras.json#view-40",
-      "revision": "ec397e2c2647",
+      "revision": "130c308510b4",
       "status": "verified",
-      "note": "Checked the plan of the front lid, the straight screen header with its corners at the A-pillars, the roof edge over the side glass and the mirror positions. Silhouette against the studio mask: IoU 97.8%, median boundary distance 6.0 px, 95th percentile 31.2 px at 3840 px width."
+      "note": "Checked the plan of the front lid, the straight screen header with its corners at the A-pillars, the roof edge over the side glass and the mirror positions. Silhouette against the studio mask: IoU 97.6%, median boundary distance 7.2 px, 95th percentile 34.4 px at 3840 px width."
     },
     {
       "id": "view-41",
@@ -502,9 +502,9 @@
       "photo": "porsche-views/view-41.webp",
       "render": "comparisons/current/view-41.webp",
       "camera": "source/cameras.json#view-41",
-      "revision": "ec397e2c2647",
+      "revision": "130c308510b4",
       "status": "verified",
-      "note": "Checked the plan of the front lid, the straight screen header with its corners at the A-pillars, the roof edge over the side glass and the mirror positions. Silhouette against the studio mask: IoU 97.7%, median boundary distance 8.0 px, 95th percentile 28.8 px at 3840 px width."
+      "note": "Checked the plan of the front lid, the straight screen header with its corners at the A-pillars, the roof edge over the side glass and the mirror positions. Silhouette against the studio mask: IoU 97.6%, median boundary distance 8.0 px, 95th percentile 30.8 px at 3840 px width."
     },
     {
       "id": "view-42",
@@ -514,9 +514,9 @@
       "photo": "porsche-views/view-42.webp",
       "render": "comparisons/current/view-42.webp",
       "camera": "source/cameras.json#view-42",
-      "revision": "ec397e2c2647",
+      "revision": "130c308510b4",
       "status": "verified",
-      "note": "Checked the plan of the front lid, the straight screen header with its corners at the A-pillars, the roof edge over the side glass and the mirror positions. Silhouette against the studio mask: IoU 97.8%, median boundary distance 7.2 px, 95th percentile 26.0 px at 3840 px width."
+      "note": "Checked the plan of the front lid, the straight screen header with its corners at the A-pillars, the roof edge over the side glass and the mirror positions. Silhouette against the studio mask: IoU 97.7%, median boundary distance 8.0 px, 95th percentile 27.6 px at 3840 px width."
     },
     {
       "id": "view-43",
@@ -526,9 +526,9 @@
       "photo": "porsche-views/view-43.webp",
       "render": "comparisons/current/view-43.webp",
       "camera": "source/cameras.json#view-43",
-      "revision": "ec397e2c2647",
+      "revision": "130c308510b4",
       "status": "verified",
-      "note": "Checked the headlamp outline and rake, lid shut lines, front wheel, A-pillar and screen header, and the roof edge over the side glass. The bumper shelf and intake detail are softer than in the photograph. Silhouette against the studio mask: IoU 96.9%, median boundary distance 8.0 px, 95th percentile 22.8 px at 3840 px width."
+      "note": "Checked the headlamp outline and rake, the lid shut lines and crown line, front wheel, A-pillar and screen header, and the roof edge over the side glass. The bumper shelf and intake detail are softer than in the photograph. Silhouette against the studio mask: IoU 96.3%, median boundary distance 8.4 px, 95th percentile 30.8 px at 3840 px width."
     },
     {
       "id": "view-44",
@@ -538,9 +538,9 @@
       "photo": "porsche-views/view-44.webp",
       "render": "comparisons/current/view-44.webp",
       "camera": "source/cameras.json#view-44",
-      "revision": "ec397e2c2647",
+      "revision": "130c308510b4",
       "status": "verified",
-      "note": "Checked both wheel centres, arches, sill, mirror, the side-window line and the quarter-glass tip, and the soft-top profile. The fender around the fuel flap faces more sideways than the studio car, so the flap reads rounder from the side. Silhouette against the studio mask: IoU 96.4%, median boundary distance 4.0 px, 95th percentile 24.0 px at 3840 px width."
+      "note": "Checked both wheel centres, arches, sill, mirror, the side-window line and the quarter-glass tip, the soft-top profile and the fuel door outline, which is fitted to its shut line in ten frames. The fender round the fuel door faces slightly more sideways than the car. Silhouette against the studio mask: IoU 96.6%, median boundary distance 4.0 px, 95th percentile 22.0 px at 3840 px width."
     },
     {
       "id": "view-45",
@@ -550,7 +550,7 @@
       "photo": "porsche-views/view-45.webp",
       "render": "comparisons/current/view-45.webp",
       "camera": "source/cameras.json#view-45",
-      "revision": "ec397e2c2647",
+      "revision": "130c308510b4",
       "status": "verified",
       "note": "Checked the rear wheel, haunch outline, quarter intake, the sail and quarter window, the light band and the exhaust outlets. The reflectors and lower valance ribs are simpler, and the spoiler reads lighter at grazing angles. Silhouette against the studio mask: IoU 94.4%, median boundary distance 8.8 px, 95th percentile 26.8 px at 3840 px width."
     },
@@ -562,7 +562,7 @@
       "photo": "porsche-views/view-46.webp",
       "render": "comparisons/current/view-46.webp",
       "camera": "source/cameras.json#view-46",
-      "revision": "ec397e2c2647",
+      "revision": "130c308510b4",
       "status": "verified",
       "note": "Checked the roof and sail outline, the rear glass, light band, lettering, plate recess and both twin outlets. The wedge reflectors, valance ribs and parking sensors are simplified. Silhouette against the studio mask: IoU 97.3%, median boundary distance 5.6 px, 95th percentile 22.0 px at 3840 px width."
     },
@@ -574,9 +574,9 @@
       "photo": "porsche-views/view-47.webp",
       "render": "comparisons/current/view-47.webp",
       "camera": "source/cameras.json#view-47",
-      "revision": "ec397e2c2647",
+      "revision": "130c308510b4",
       "status": "verified",
-      "note": "Checked both wheel centres, arches, sill, mirror, the side-window line and the quarter-glass tip, and the soft-top profile. The fender around the fuel flap faces more sideways than the studio car, so the flap reads rounder from the side. Silhouette against the studio mask: IoU 96.6%, median boundary distance 6.0 px, 95th percentile 26.4 px at 3840 px width."
+      "note": "Checked both wheel centres, arches, sill, mirror, the side-window line and the quarter-glass tip, the soft-top profile and the fuel door outline, which is fitted to its shut line in ten frames. The fender round the fuel door faces slightly more sideways than the car. Silhouette against the studio mask: IoU 96.8%, median boundary distance 6.0 px, 95th percentile 26.0 px at 3840 px width."
     },
     {
       "id": "view-48",
@@ -586,9 +586,9 @@
       "photo": "porsche-views/view-48.webp",
       "render": "comparisons/current/view-48.webp",
       "camera": "source/cameras.json#view-48",
-      "revision": "ec397e2c2647",
+      "revision": "130c308510b4",
       "status": "fix",
-      "note": "The round headlamps, tapered front lid with its level nose edge and the screen header register. Still different: the bumper shelf below the lid is softer, the outer intakes have thinner flaps and straighter inner edges, and the central opening has no radiator grille. Silhouette against the studio mask: IoU 97.4%, median boundary distance 7.2 px, 95th percentile 18.4 px at 3840 px width."
+      "note": "The front lid follows its outline measured in the overhead and straight-on frames, with the forward-bowed front edge ahead of the crest, and the headlamps sit on their fitted outline. Still different: the lamps read slightly smaller and flatter, the bumper has a rolled upper edge where the car has a crisp shelf crease, the outer intakes sit lower with thinner flaps, and the central opening has no radiator grille. Silhouette against the studio mask: IoU 97.1%, median boundary distance 8.0 px, 95th percentile 22.0 px at 3840 px width."
     },
     {
       "id": "view-49",
@@ -598,9 +598,9 @@
       "photo": "porsche-views/view-49.webp",
       "render": "comparisons/current/view-49.webp",
       "camera": "source/cameras.json#view-49",
-      "revision": "ec397e2c2647",
+      "revision": "130c308510b4",
       "status": "verified",
-      "note": "Checked the plan of the front lid, the straight screen header with its corners at the A-pillars, the roof edge over the side glass and the mirror positions. Silhouette against the studio mask: IoU 97.1%, median boundary distance 8.0 px, 95th percentile 32.0 px at 3840 px width."
+      "note": "Checked the plan of the front lid, the straight screen header with its corners at the A-pillars, the roof edge over the side glass and the mirror positions. Silhouette against the studio mask: IoU 97.2%, median boundary distance 8.0 px, 95th percentile 30.0 px at 3840 px width."
     },
     {
       "id": "view-50",
@@ -610,9 +610,9 @@
       "photo": "porsche-views/view-50.webp",
       "render": "comparisons/current/view-50.webp",
       "camera": "source/cameras.json#view-50",
-      "revision": "ec397e2c2647",
+      "revision": "130c308510b4",
       "status": "verified",
-      "note": "Checked the plan of the front lid, the straight screen header with its corners at the A-pillars, the roof edge over the side glass and the mirror positions. Silhouette against the studio mask: IoU 96.9%, median boundary distance 7.2 px, 95th percentile 30.8 px at 3840 px width."
+      "note": "Checked the plan of the front lid, the straight screen header with its corners at the A-pillars, the roof edge over the side glass and the mirror positions. Silhouette against the studio mask: IoU 96.9%, median boundary distance 6.4 px, 95th percentile 30.8 px at 3840 px width."
     },
     {
       "id": "view-51",
@@ -622,9 +622,9 @@
       "photo": "porsche-views/view-51.webp",
       "render": "comparisons/current/view-51.webp",
       "camera": "source/cameras.json#view-51",
-      "revision": "ec397e2c2647",
+      "revision": "130c308510b4",
       "status": "verified",
-      "note": "Checked the plan of the front lid, the straight screen header with its corners at the A-pillars, the roof edge over the side glass and the mirror positions. Silhouette against the studio mask: IoU 97.8%, median boundary distance 7.2 px, 95th percentile 26.4 px at 3840 px width."
+      "note": "Checked the plan of the front lid, the straight screen header with its corners at the A-pillars, the roof edge over the side glass and the mirror positions. Silhouette against the studio mask: IoU 97.7%, median boundary distance 8.0 px, 95th percentile 27.6 px at 3840 px width."
     },
     {
       "id": "detail-fuel-flap-open",
@@ -634,9 +634,9 @@
       "photo": "porsche-views/detail-fuel-flap-open.webp",
       "render": "comparisons/current/detail-fuel-flap-open.webp",
       "camera": "source/cameras.json#detail-fuel-flap-open",
-      "revision": "ec397e2c2647",
-      "status": "fix",
-      "note": "The flap sits ahead of the door at the photographed position and size and opens on its forward hinge. The open filler bowl and cap are not visible in the model."
+      "revision": "130c308510b4",
+      "status": "verified",
+      "note": "The oval flap opens outward about its forward edge and shows its black underside and arm, the dark filler bowl with its rubber lip and the satin cap. The cap's grip ridges and the bowl's drain hole are not modelled."
     },
     {
       "id": "detail-wheel-pccb-fl",
@@ -646,7 +646,7 @@
       "photo": "porsche-views/detail-wheel-pccb-fl.webp",
       "render": "comparisons/current/detail-wheel-pccb-fl.webp",
       "camera": "source/cameras.json#detail-wheel-pccb-fl",
-      "revision": "ec397e2c2647",
+      "revision": "130c308510b4",
       "status": "fix",
       "note": "The ten Y-spokes fork at about mid-radius with paired legs at the rim, and the ceramic disc and yellow caliper read as in the photograph. This close-up camera does not register the wheel (the model wheel renders larger), so the spoke roots cannot be checked here."
     },
@@ -658,7 +658,7 @@
       "photo": "porsche-views/detail-mech-engine-rear.webp",
       "render": "comparisons/current/detail-mech-engine-rear.webp",
       "camera": "source/cameras.json#detail-mech-engine-rear",
-      "revision": "ec397e2c2647",
+      "revision": "130c308510b4",
       "status": "limited",
       "note": "Unchanged in this revision. Earlier review: engine, PDK and chassis units follow Porsche's illustrations; backs of castings, hose runs and internal tooth profiles are inferred."
     },
@@ -670,7 +670,7 @@
       "photo": "porsche-views/detail-mech-engine-3q.webp",
       "render": "comparisons/current/detail-mech-engine-3q.webp",
       "camera": "source/cameras.json#detail-mech-engine-3q",
-      "revision": "ec397e2c2647",
+      "revision": "130c308510b4",
       "status": "limited",
       "note": "Unchanged in this revision. Earlier review: engine, PDK and chassis units follow Porsche's illustrations; backs of castings, hose runs and internal tooth profiles are inferred."
     },
@@ -682,7 +682,7 @@
       "photo": "porsche-views/detail-mech-pdk-emotor.webp",
       "render": "comparisons/current/detail-mech-pdk-emotor.webp",
       "camera": "source/cameras.json#detail-mech-pdk-emotor",
-      "revision": "ec397e2c2647",
+      "revision": "130c308510b4",
       "status": "limited",
       "note": "Unchanged in this revision. Earlier review: engine, PDK and chassis units follow Porsche's illustrations; backs of castings, hose runs and internal tooth profiles are inferred."
     },
@@ -694,7 +694,7 @@
       "photo": "porsche-views/detail-mech-chassis-front.webp",
       "render": "comparisons/current/detail-mech-chassis-front.webp",
       "camera": "source/cameras.json#detail-mech-chassis-front",
-      "revision": "ec397e2c2647",
+      "revision": "130c308510b4",
       "status": "limited",
       "note": "Unchanged in this revision. Earlier review: engine, PDK and chassis units follow Porsche's illustrations; backs of castings, hose runs and internal tooth profiles are inferred."
     },
@@ -706,7 +706,7 @@
       "photo": "porsche-views/detail-mech-chassis-rear.webp",
       "render": "comparisons/current/detail-mech-chassis-rear.webp",
       "camera": "source/cameras.json#detail-mech-chassis-rear",
-      "revision": "ec397e2c2647",
+      "revision": "130c308510b4",
       "status": "limited",
       "note": "Unchanged in this revision. Earlier review: engine, PDK and chassis units follow Porsche's illustrations; backs of castings, hose runs and internal tooth profiles are inferred."
     },
@@ -718,7 +718,7 @@
       "photo": "porsche-views/detail-cabin-dash.webp",
       "render": "comparisons/current/detail-cabin-dash.webp",
       "camera": "source/cameras.json#detail-cabin-dash",
-      "revision": "ec397e2c2647",
+      "revision": "130c308510b4",
       "status": "limited",
       "note": "Unchanged in this revision apart from the dashboard brow stitching, which now sits on the leather. Earlier review: proportions of the console, seats and trim are approximate."
     },
@@ -730,7 +730,7 @@
       "photo": "porsche-views/detail-cabin-seats-front.webp",
       "render": "comparisons/current/detail-cabin-seats-front.webp",
       "camera": "source/cameras.json#detail-cabin-seats-front",
-      "revision": "ec397e2c2647",
+      "revision": "130c308510b4",
       "status": "limited",
       "note": "Unchanged in this revision apart from the dashboard brow stitching, which now sits on the leather. Earlier review: proportions of the console, seats and trim are approximate."
     },
@@ -742,7 +742,7 @@
       "photo": "porsche-views/detail-cabin-seats-rear.webp",
       "render": "comparisons/current/detail-cabin-seats-rear.webp",
       "camera": "source/cameras.json#detail-cabin-seats-rear",
-      "revision": "ec397e2c2647",
+      "revision": "130c308510b4",
       "status": "limited",
       "note": "Unchanged in this revision apart from the dashboard brow stitching, which now sits on the leather. Earlier review: proportions of the console, seats and trim are approximate."
     },
@@ -804,69 +804,69 @@
     }
   ],
   "summary": {
-    "verified": 48,
-    "fix": 6,
+    "verified": 49,
+    "fix": 5,
     "limited": 11,
     "excluded": 4
   },
   "silhouette": {
     "view-00": {
-      "iou": 0.97246,
-      "med": 7.19,
-      "p95": 22.0
+      "iou": 0.96571,
+      "med": 8.0,
+      "p95": 32.0
     },
     "view-01": {
-      "iou": 0.96825,
+      "iou": 0.9659,
       "med": 8.0,
-      "p95": 24.0
+      "p95": 25.2
     },
     "view-02": {
-      "iou": 0.96815,
+      "iou": 0.97098,
       "med": 6.0,
-      "p95": 30.0
+      "p95": 26.36
     },
     "view-03": {
-      "iou": 0.97263,
+      "iou": 0.97363,
       "med": 5.6,
-      "p95": 28.0
+      "p95": 24.77
     },
     "view-04": {
-      "iou": 0.97233,
+      "iou": 0.97649,
       "med": 4.0,
-      "p95": 28.36
+      "p95": 25.98
     },
     "view-05": {
-      "iou": 0.9719,
+      "iou": 0.97311,
       "med": 4.39,
-      "p95": 30.36
+      "p95": 29.58
     },
     "view-06": {
-      "iou": 0.96918,
-      "med": 6.39,
+      "iou": 0.96805,
+      "med": 8.0,
       "p95": 33.97
     },
     "view-07": {
-      "iou": 0.96563,
-      "med": 8.0,
-      "p95": 34.76
+      "iou": 0.96388,
+      "med": 8.39,
+      "p95": 35.98
     },
     "view-08": {
-      "iou": 0.96481,
-      "med": 8.79,
-      "p95": 34.79
+      "iou": 0.96303,
+      "med": 10.0,
+      "p95": 35.97
     },
     "view-09": {
-      "iou": 0.97096,
-      "med": 8.4,
-      "p95": 21.98
+      "iou": 0.97075,
+      "med": 8.79,
+      "p95": 21.97
     },
     "view-10": {
-      "iou": 0.97463,
+      "iou": 0.97468,
       "med": 6.39,
-      "p95": 20.39
+      "p95": 20.38
     },
     "view-11": {
-      "iou": 0.97609,
+      "iou": 0.9761,
       "med": 6.0,
       "p95": 18.39
     },
@@ -876,9 +876,9 @@
       "p95": 23.18
     },
     "view-13": {
-      "iou": 0.97649,
+      "iou": 0.9765,
       "med": 6.0,
-      "p95": 18.39
+      "p95": 18.04
     },
     "view-14": {
       "iou": 0.97324,
@@ -886,157 +886,157 @@
       "p95": 21.19
     },
     "view-15": {
-      "iou": 0.97639,
+      "iou": 0.97658,
       "med": 5.6,
-      "p95": 21.58
+      "p95": 21.19
     },
     "view-16": {
-      "iou": 0.97354,
+      "iou": 0.97377,
       "med": 6.0,
-      "p95": 21.18
+      "p95": 20.79
     },
     "view-17": {
-      "iou": 0.9697,
+      "iou": 0.96931,
       "med": 8.0,
-      "p95": 28.78
+      "p95": 28.57
     },
     "view-18": {
-      "iou": 0.96979,
+      "iou": 0.96929,
       "med": 8.0,
-      "p95": 29.97
+      "p95": 29.98
     },
     "view-19": {
-      "iou": 0.96745,
-      "med": 7.19,
-      "p95": 29.99
+      "iou": 0.96694,
+      "med": 6.39,
+      "p95": 30.76
     },
     "view-20": {
-      "iou": 0.96915,
-      "med": 6.0,
+      "iou": 0.96801,
+      "med": 6.39,
       "p95": 32.36
     },
     "view-21": {
-      "iou": 0.96979,
-      "med": 6.0,
+      "iou": 0.96739,
+      "med": 6.39,
       "p95": 32.76
     },
     "view-22": {
-      "iou": 0.97067,
+      "iou": 0.96856,
       "med": 6.0,
-      "p95": 31.96
+      "p95": 30.79
     },
     "view-23": {
-      "iou": 0.9714,
+      "iou": 0.97125,
       "med": 4.39,
-      "p95": 31.32
+      "p95": 29.16
     },
     "view-24": {
-      "iou": 0.97341,
+      "iou": 0.97653,
       "med": 4.0,
-      "p95": 28.0
+      "p95": 23.97
     },
     "view-25": {
-      "iou": 0.97104,
+      "iou": 0.97498,
       "med": 4.0,
-      "p95": 27.98
-    },
-    "view-26": {
-      "iou": 0.96968,
-      "med": 6.0,
-      "p95": 26.36
-    },
-    "view-27": {
-      "iou": 0.96922,
-      "med": 6.0,
-      "p95": 28.79
-    },
-    "view-28": {
-      "iou": 0.97004,
-      "med": 6.0,
-      "p95": 28.0
-    },
-    "view-29": {
-      "iou": 0.97191,
-      "med": 6.0,
-      "p95": 28.0
-    },
-    "view-30": {
-      "iou": 0.97326,
-      "med": 6.0,
-      "p95": 26.0
-    },
-    "view-31": {
-      "iou": 0.9711,
-      "med": 8.0,
-      "p95": 21.19
-    },
-    "view-32": {
-      "iou": 0.97291,
-      "med": 7.19,
-      "p95": 21.19
-    },
-    "view-33": {
-      "iou": 0.97599,
-      "med": 5.6,
       "p95": 24.0
     },
+    "view-26": {
+      "iou": 0.97201,
+      "med": 5.6,
+      "p95": 24.79
+    },
+    "view-27": {
+      "iou": 0.9722,
+      "med": 6.0,
+      "p95": 24.0
+    },
+    "view-28": {
+      "iou": 0.97224,
+      "med": 6.0,
+      "p95": 25.2
+    },
+    "view-29": {
+      "iou": 0.97144,
+      "med": 6.0,
+      "p95": 27.18
+    },
+    "view-30": {
+      "iou": 0.96986,
+      "med": 7.19,
+      "p95": 27.58
+    },
+    "view-31": {
+      "iou": 0.96586,
+      "med": 8.0,
+      "p95": 33.56
+    },
+    "view-32": {
+      "iou": 0.96727,
+      "med": 7.19,
+      "p95": 32.39
+    },
+    "view-33": {
+      "iou": 0.97123,
+      "med": 4.39,
+      "p95": 31.96
+    },
     "view-34": {
-      "iou": 0.98153,
+      "iou": 0.97948,
       "med": 4.0,
-      "p95": 16.8
+      "p95": 20.38
     },
     "view-35": {
-      "iou": 0.98074,
-      "med": 4.0,
+      "iou": 0.98011,
+      "med": 4.39,
       "p95": 15.98
     },
     "view-36": {
-      "iou": 0.98141,
+      "iou": 0.98028,
       "med": 4.0,
-      "p95": 15.59
+      "p95": 17.19
     },
     "view-37": {
-      "iou": 0.97868,
+      "iou": 0.97584,
       "med": 4.0,
-      "p95": 22.87
+      "p95": 28.39
     },
     "view-38": {
-      "iou": 0.9737,
+      "iou": 0.96921,
       "med": 6.0,
-      "p95": 23.99
+      "p95": 32.76
     },
     "view-39": {
-      "iou": 0.97593,
+      "iou": 0.97595,
       "med": 6.39,
       "p95": 29.59
     },
     "view-40": {
-      "iou": 0.97771,
-      "med": 6.0,
-      "p95": 31.19
+      "iou": 0.97578,
+      "med": 7.19,
+      "p95": 34.39
     },
     "view-41": {
-      "iou": 0.9765,
+      "iou": 0.97562,
       "med": 8.0,
-      "p95": 28.79
+      "p95": 30.76
     },
     "view-42": {
-      "iou": 0.97795,
-      "med": 7.19,
-      "p95": 26.0
+      "iou": 0.97739,
+      "med": 8.0,
+      "p95": 27.57
     },
     "view-43": {
-      "iou": 0.9687,
-      "med": 8.0,
-      "p95": 22.79
+      "iou": 0.96261,
+      "med": 8.4,
+      "p95": 30.79
     },
     "view-44": {
-      "iou": 0.96366,
+      "iou": 0.9663,
       "med": 4.0,
-      "p95": 23.99
+      "p95": 22.0
     },
     "view-45": {
-      "iou": 0.94361,
+      "iou": 0.94358,
       "med": 8.79,
       "p95": 26.79
     },
@@ -1046,29 +1046,29 @@
       "p95": 21.97
     },
     "view-47": {
-      "iou": 0.96633,
+      "iou": 0.96806,
       "med": 6.0,
-      "p95": 26.36
+      "p95": 25.97
     },
     "view-48": {
-      "iou": 0.97429,
-      "med": 7.19,
-      "p95": 18.39
+      "iou": 0.97092,
+      "med": 8.0,
+      "p95": 22.0
     },
     "view-49": {
-      "iou": 0.97118,
+      "iou": 0.97231,
       "med": 8.0,
-      "p95": 31.96
+      "p95": 30.0
     },
     "view-50": {
-      "iou": 0.96853,
-      "med": 7.19,
+      "iou": 0.96946,
+      "med": 6.39,
       "p95": 30.76
     },
     "view-51": {
-      "iou": 0.97789,
-      "med": 7.19,
-      "p95": 26.36
+      "iou": 0.97731,
+      "med": 8.0,
+      "p95": 27.58
     }
   }
 }

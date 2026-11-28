@@ -7,7 +7,7 @@
   <script>
     if (location.hash === '#porsche-views') document.documentElement.classList.add('show-photos');
     const overrideModel = new URLSearchParams(location.search).get('model');
-    const modelFile = overrideModel || './porsche.glb?v=glb-ec397e2c';
+    const modelFile = overrideModel || './porsche.glb?v=glb-130c3085';
     const preload = document.createElement('link');
     preload.rel = 'preload';
     preload.as = 'fetch';
@@ -492,6 +492,7 @@
     const explosionButton = document.getElementById('exploded-view');
     const capLift = new THREE.Vector3();
     const capPark = new THREE.Vector3();
+    const hingeTurn = new THREE.Quaternion();
     const assemblyView = { theta: exteriorView.theta, phi: exteriorView.phi, compactInset: 0, center: new THREE.Vector3(), points: [], bounds: null };
     const introHoldMs = 1200;
     const introAssemblyMs = 2100;
@@ -650,6 +651,7 @@
             if (pk) {
               if (obj.userData.openAxis) panels[pk].axis = obj.userData.openAxis;
               if (typeof obj.userData.openAngle === 'number') panels[pk].angle = obj.userData.openAngle;
+              if (Array.isArray(obj.userData.hingeAxis)) panels[pk].hinge = new THREE.Vector3().fromArray(obj.userData.hingeAxis).normalize();
               if (pk === 'wing') {
                 if (Array.isArray(obj.userData.wingOffset)) panels.wing.offset.fromArray(obj.userData.wingOffset);
                 if (typeof obj.userData.wingTilt === 'number') panels.wing.tilt = obj.userData.wingTilt;
@@ -2136,7 +2138,8 @@
               piv.rotation.copy(rr);
             } else {
               const opening = panelKey === 'fuel' ? THREE.MathUtils.smoothstep(state.fuel, 0, 0.48) : state[panelKey];
-              piv.rotation[p.axis] = rr[p.axis] + opening * p.angle;
+              if (p.hinge) piv.quaternion.setFromEuler(rr).multiply(hingeTurn.setFromAxisAngle(p.hinge, opening * p.angle));
+              else piv.rotation[p.axis] = rr[p.axis] + opening * p.angle;
             }
           } else if (pname === 'Pivot_Fuel_Cap') {
             const lifted = THREE.MathUtils.smoothstep(state.fuel, 0.48, 0.72);
@@ -2144,7 +2147,8 @@
             piv.position.addScaledVector(capLift, lifted * (1 - parked)).addScaledVector(capPark, parked);
             const flapPull = pullOffsets.get(pivots.Pivot_Fuel_Flap);
             if (flapPull) piv.position.addScaledVector(flapPull.cur, parked);
-            piv.rotation.y = rr.y - parked * Math.PI / 2;
+            // Turn the cap only when the model gives it somewhere to be parked.
+            piv.rotation.y = rr.y - (capPark.lengthSq() > 0 ? parked * Math.PI / 2 : 0);
           } else if (pname === 'Pivot_Corner_FL' || pname === 'Pivot_Corner_FR') {
             piv.rotation.set(rr.x, rr.y + steerRad, rr.z);
           } else if (pname.startsWith('Pivot_WheelSpin_')) {
