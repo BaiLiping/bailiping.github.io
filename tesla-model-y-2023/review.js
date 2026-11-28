@@ -10,7 +10,7 @@ function display(){
   $('ref').src=f.source;
   $('ref').alt=f.label;
   $('credit').textContent=f.credit;
-  $('match').href='./?frame='+encodeURIComponent(f.id)+'#model';
+  $('match').href='technical.html?frame='+encodeURIComponent(f.id)+'#model';
   $('full').href=f.source;
   const file='./comparisons/'+f.id;
   $('native').href=file+'.webp'+revision;

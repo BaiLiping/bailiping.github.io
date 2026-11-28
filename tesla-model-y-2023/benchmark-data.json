@@ -1,0 +1,4846 @@
+{
+  "summary": {
+    "revision": "dbfa5aa777e89699136e55ad8f63a17a96f9627cf8bb251f1253fca368bc7ec5",
+    "coverage": {
+      "verified": 38,
+      "limited": 81,
+      "fix": 15,
+      "pending": 69
+    },
+    "source_images": 203,
+    "source_documents": 3,
+    "primary_frames": 28,
+    "primary_mean_iou": 0.9552035714285714,
+    "second_mask_mean_iou": 0.9423892857142857,
+    "median_frame_p95_native_px": 35.03,
+    "previous_public_model": {
+      "mean_iou": 0.9415928571428571,
+      "second_mask_mean_iou": 0.9419,
+      "median_frame_p95_native_px": 50.239999999999995
+    },
+    "handoff_model": {
+      "mean_iou": 0.9541678571428571,
+      "second_mask_mean_iou": 0.9426535714285714,
+      "median_frame_p95_native_px": 35.915000000000006
+    },
+    "model_dimensions_mm": {
+      "length_mm": 4753.6,
+      "mirror_width_mm": 2124.5,
+      "body_width_excl_mirrors_mm": 1919.8,
+      "gemini_cover_width_mm": 1888.3,
+      "width_across_tire_sidewalls_mm": 1892.4,
+      "min_cover_recess_from_sidewall_mm": 2.1,
+      "wheelbase_mm": 2890.0,
+      "front_track_mm": 1636.0,
+      "rear_track_mm": 1636.0,
+      "height_mm": 1624.0,
+      "min_nonwheel_clearance_mm": 172.0,
+      "lateral_asymmetry_mm": -0.05
+    },
+    "lamp_check": [
+      {
+        "feature": "tail",
+        "set": "turntable",
+        "observations": 9,
+        "baseline_median_px": 59.08,
+        "baseline_p95_px": 74.78,
+        "revised_median_px": 10.72,
+        "revised_p95_px": 20.29
+      },
+      {
+        "feature": "tail",
+        "set": "independent still",
+        "observations": 4,
+        "baseline_median_px": 78.99,
+        "baseline_p95_px": 81.61,
+        "revised_median_px": 21.34,
+        "revised_p95_px": 22.89
+      },
+      {
+        "feature": "reflector",
+        "set": "turntable",
+        "observations": 10,
+        "baseline_median_px": 48.76,
+        "baseline_p95_px": 64.77,
+        "revised_median_px": 48.76,
+        "revised_p95_px": 64.77
+      },
+      {
+        "feature": "reflector",
+        "set": "independent still",
+        "observations": 4,
+        "baseline_median_px": 67.78,
+        "baseline_p95_px": 70.61,
+        "revised_median_px": 67.77,
+        "revised_p95_px": 70.6
+      }
+    ]
+  },
+  "frames": [
+    {
+      "id": "jam-view-00",
+      "original_url": "https://cdn.spinio.fi/carla/JAM20U/outside/tiles/c10_l0_0_0.jpg",
+      "source": "https://www.carla.se/bil/tesla-model-y-2023-daanvk29io6g00dg9r90",
+      "sha256": "07f45866b73cefc3e7ad0f4b02b5c6ee6f4429b7a45b8b6728c978aeb224741e",
+      "width": 3000,
+      "height": 1687,
+      "view": "Front-left three-quarter (36°)",
+      "credit": "Carla / Spinio",
+      "gallery_index": 0,
+      "group": "2023 · Blue Long Range AWD",
+      "pose": {
+        "theta": -0.5762785359941476,
+        "phi": 1.5738079987226685,
+        "radius": 369.3472425193806,
+        "fov": 34.05433009474937,
+        "center": [
+          -10.053207272616417,
+          63.30767798781959,
+          7.9016160175962975
+        ]
+      },
+      "status": "verified",
+      "note": "Front-left three-quarter. The near hub and inner headlamp corner register. The US bumper omits the Swedish plate. The 95th-percentile contour distance is 24 native-equivalent px.",
+      "measurements": {
+        "mask_fit": {
+          "iou": 0.9628,
+          "median_px": 8.75,
+          "mean_px": 9.73,
+          "p95_px": 23.72
+        },
+        "independent_mask": {
+          "iou": 0.9488,
+          "median_px": 12.5,
+          "mean_px": 13.51,
+          "p95_px": 31.84
+        },
+        "image_landmarks": {
+          "FL": {
+            "residual_native_xy": [
+              -5.7,
+              -4.84
+            ],
+            "distance_native_px": 7.48
+          },
+          "RL": {
+            "residual_native_xy": [
+              0.56,
+              13.49
+            ],
+            "distance_native_px": 13.51
+          },
+          "front_badge": {
+            "residual_native_xy": [
+              -12.94,
+              6.68
+            ],
+            "distance_native_px": 14.56
+          },
+          "head_L": {
+            "residual_native_xy": [
+              -7.63,
+              12.1
+            ],
+            "distance_native_px": 14.3
+          }
+        },
+        "rendered_x_span_native": [
+          350.0,
+          2256.2
+        ],
+        "held_out_frame": {
+          "mask_fit": {
+            "iou": 0.9631,
+            "median_px": 8.75,
+            "mean_px": 9.68,
+            "p95_px": 23.72
+          },
+          "independent_mask": {
+            "iou": 0.9491,
+            "median_px": 12.5,
+            "mean_px": 13.42,
+            "p95_px": 31.25
+          },
+          "image_landmarks": {
+            "FL": {
+              "residual_native_xy": [
+                -6.07,
+                -5.5
+              ],
+              "distance_native_px": 8.19
+            },
+            "RL": {
+              "residual_native_xy": [
+                0.73,
+                14.23
+              ],
+              "distance_native_px": 14.25
+            },
+            "front_badge": {
+              "residual_native_xy": [
+                -12.89,
+                6.0
+              ],
+              "distance_native_px": 14.22
+            },
+            "head_L": {
+              "residual_native_xy": [
+                -7.76,
+                11.14
+              ],
+              "distance_native_px": 13.58
+            }
+          },
+          "rendered_x_span_native": [
+            350.0,
+            2256.2
+          ]
+        }
+      }
+    },
+    {
+      "id": "jam-view-01",
+      "original_url": "https://cdn.spinio.fi/carla/JAM20U/outside/tiles/c11_l0_0_0.jpg",
+      "source": "https://www.carla.se/bil/tesla-model-y-2023-daanvk29io6g00dg9r90",
+      "sha256": "ca75d97763762e4886b063fa01f86c3961c97caf13639c70e6d5d0daef9f6f58",
+      "width": 3000,
+      "height": 1687,
+      "view": "Front-left 54°",
+      "credit": "Carla / Spinio",
+      "gallery_index": 1,
+      "group": "2023 · Blue Long Range AWD",
+      "pose": {
+        "theta": -0.8904378013531269,
+        "phi": 1.5738079987226685,
+        "radius": 369.3472425193806,
+        "fov": 34.05433009474937,
+        "center": [
+          -9.882645081682089,
+          63.30767798781959,
+          7.747942309468742
+        ]
+      },
+      "status": "verified",
+      "note": "Both left hub centers register, as does the leading edge of the hood above the left lamp. The photographed lamp is lit. The 95th-percentile contour distance is 38 native-equivalent px.",
+      "measurements": {
+        "mask_fit": {
+          "iou": 0.9552,
+          "median_px": 9.38,
+          "mean_px": 11.4,
+          "p95_px": 37.5
+        },
+        "independent_mask": {
+          "iou": 0.943,
+          "median_px": 9.38,
+          "mean_px": 15.56,
+          "p95_px": 58.92
+        },
+        "image_landmarks": {
+          "FL": {
+            "residual_native_xy": [
+              3.29,
+              -5.69
+            ],
+            "distance_native_px": 6.57
+          },
+          "RL": {
+            "residual_native_xy": [
+              -2.01,
+              14.28
+            ],
+            "distance_native_px": 14.42
+          },
+          "front_badge": {
+            "residual_native_xy": [
+              9.33,
+              1.35
+            ],
+            "distance_native_px": 9.42
+          },
+          "head_L": {
+            "residual_native_xy": [
+              7.38,
+              6.72
+            ],
+            "distance_native_px": 9.98
+          }
+        },
+        "rendered_x_span_native": [
+          225.0,
+          2421.9
+        ],
+        "held_out_frame": {
+          "mask_fit": {
+            "iou": 0.9551,
+            "median_px": 9.38,
+            "mean_px": 11.44,
+            "p95_px": 37.5
+          },
+          "independent_mask": {
+            "iou": 0.9427,
+            "median_px": 9.38,
+            "mean_px": 15.65,
+            "p95_px": 59.3
+          },
+          "image_landmarks": {
+            "FL": {
+              "residual_native_xy": [
+                3.4,
+                -6.4
+              ],
+              "distance_native_px": 7.24
+            },
+            "RL": {
+              "residual_native_xy": [
+                -2.62,
+                14.73
+              ],
+              "distance_native_px": 14.96
+            },
+            "front_badge": {
+              "residual_native_xy": [
+                9.14,
+                0.8
+              ],
+              "distance_native_px": 9.18
+            },
+            "head_L": {
+              "residual_native_xy": [
+                7.26,
+                5.8
+              ],
+              "distance_native_px": 9.29
+            }
+          },
+          "rendered_x_span_native": [
+            225.0,
+            2421.9
+          ]
+        }
+      }
+    },
+    {
+      "id": "jam-view-02",
+      "original_url": "https://cdn.spinio.fi/carla/JAM20U/outside/tiles/c12_l0_0_0.jpg",
+      "source": "https://www.carla.se/bil/tesla-model-y-2023-daanvk29io6g00dg9r90",
+      "sha256": "1931026abd3d06c21a6da0d5810a55efaf708d00e29f6c17b6ff16dd8d412723",
+      "width": 3000,
+      "height": 1687,
+      "view": "Front-left 72°",
+      "credit": "Carla / Spinio",
+      "gallery_index": 2,
+      "group": "2023 · Blue Long Range AWD",
+      "pose": {
+        "theta": -1.204597066712106,
+        "phi": 1.5738079987226685,
+        "radius": 369.3472425193806,
+        "fov": 34.05433009474937,
+        "center": [
+          -9.767918585960448,
+          63.30767798781959,
+          7.549083312374263
+        ]
+      },
+      "status": "verified",
+      "note": "The left-side wheel centers and door cuts track through this stop. The model carries a stronger highlight on the lower doors. The 95th-percentile contour distance is 50 native-equivalent px.",
+      "measurements": {
+        "mask_fit": {
+          "iou": 0.9504,
+          "median_px": 8.75,
+          "mean_px": 12.11,
+          "p95_px": 50.0
+        },
+        "independent_mask": {
+          "iou": 0.9529,
+          "median_px": 6.87,
+          "mean_px": 12.85,
+          "p95_px": 49.34
+        },
+        "image_landmarks": {
+          "FL": {
+            "residual_native_xy": [
+              0.37,
+              -8.39
+            ],
+            "distance_native_px": 8.4
+          },
+          "RL": {
+            "residual_native_xy": [
+              -0.44,
+              2.55
+            ],
+            "distance_native_px": 2.59
+          }
+        },
+        "rendered_x_span_native": [
+          184.4,
+          2565.6
+        ],
+        "held_out_frame": {
+          "mask_fit": {
+            "iou": 0.9503,
+            "median_px": 8.75,
+            "mean_px": 12.15,
+            "p95_px": 50.0
+          },
+          "independent_mask": {
+            "iou": 0.9526,
+            "median_px": 6.87,
+            "mean_px": 12.93,
+            "p95_px": 49.34
+          },
+          "image_landmarks": {
+            "FL": {
+              "residual_native_xy": [
+                -0.03,
+                -8.67
+              ],
+              "distance_native_px": 8.67
+            },
+            "RL": {
+              "residual_native_xy": [
+                -0.77,
+                2.7
+              ],
+              "distance_native_px": 2.81
+            }
+          },
+          "rendered_x_span_native": [
+            184.4,
+            2565.6
+          ]
+        }
+      }
+    },
+    {
+      "id": "jam-view-03",
+      "original_url": "https://cdn.spinio.fi/carla/JAM20U/outside/tiles/c13_l0_0_0.jpg",
+      "source": "https://www.carla.se/bil/tesla-model-y-2023-daanvk29io6g00dg9r90",
+      "sha256": "5806899ab12016678a1030feb57356fee05237242547648915dd1905d182599e",
+      "width": 3000,
+      "height": 1687,
+      "view": "Left side profile (90°)",
+      "credit": "Carla / Spinio",
+      "gallery_index": 3,
+      "group": "2023 · Blue Long Range AWD",
+      "pose": {
+        "theta": -1.5187563320710853,
+        "phi": 1.5738079987226685,
+        "radius": 369.3472425193806,
+        "fov": 34.05433009474937,
+        "center": [
+          -9.720258014199226,
+          63.30767798781959,
+          7.324504730480564
+        ]
+      },
+      "status": "verified",
+      "note": "Broadside wheelbase, roof peak and rising sill register. The rear glass is darker than the front in both images. The 95th-percentile contour distance is 31 native-equivalent px.",
+      "measurements": {
+        "mask_fit": {
+          "iou": 0.959,
+          "median_px": 6.87,
+          "mean_px": 10.07,
+          "p95_px": 31.25
+        },
+        "independent_mask": {
+          "iou": 0.9547,
+          "median_px": 9.38,
+          "mean_px": 12.27,
+          "p95_px": 43.75
+        },
+        "image_landmarks": {
+          "FL": {
+            "residual_native_xy": [
+              -0.27,
+              -6.45
+            ],
+            "distance_native_px": 6.46
+          },
+          "RL": {
+            "residual_native_xy": [
+              0.17,
+              1.4
+            ],
+            "distance_native_px": 1.41
+          }
+        },
+        "rendered_x_span_native": [
+          196.9,
+          2650.0
+        ],
+        "held_out_frame": {
+          "mask_fit": {
+            "iou": 0.9587,
+            "median_px": 6.87,
+            "mean_px": 10.14,
+            "p95_px": 31.25
+          },
+          "independent_mask": {
+            "iou": 0.9547,
+            "median_px": 9.38,
+            "mean_px": 12.25,
+            "p95_px": 43.75
+          },
+          "image_landmarks": {
+            "FL": {
+              "residual_native_xy": [
+                -0.31,
+                -6.48
+              ],
+              "distance_native_px": 6.49
+            },
+            "RL": {
+              "residual_native_xy": [
+                0.68,
+                1.45
+              ],
+              "distance_native_px": 1.6
+            }
+          },
+          "rendered_x_span_native": [
+            196.9,
+            2650.0
+          ]
+        }
+      }
+    },
+    {
+      "id": "jam-view-04",
+      "original_url": "https://cdn.spinio.fi/carla/JAM20U/outside/tiles/c14_l0_0_0.jpg",
+      "source": "https://www.carla.se/bil/tesla-model-y-2023-daanvk29io6g00dg9r90",
+      "sha256": "4e756101053760fa9e861c4c1f2d2bea5980647c95955fbc7fef197abdfa4da5",
+      "width": 3000,
+      "height": 1687,
+      "view": "Rear-left 108°",
+      "credit": "Carla / Spinio",
+      "gallery_index": 4,
+      "group": "2023 · Blue Long Range AWD",
+      "pose": {
+        "theta": -1.8329155974300646,
+        "phi": 1.5738079987226685,
+        "radius": 369.3472425193806,
+        "fov": 34.05433009474937,
+        "center": [
+          -9.744328715233141,
+          63.30767798781959,
+          7.0961898801143946
+        ]
+      },
+      "status": "verified",
+      "note": "The left rear arch, quarter window and trailing roof edge can be followed across the split. The 95th-percentile contour distance is 28 native-equivalent px.",
+      "measurements": {
+        "mask_fit": {
+          "iou": 0.9681,
+          "median_px": 6.25,
+          "mean_px": 8.04,
+          "p95_px": 28.12
+        },
+        "independent_mask": {
+          "iou": 0.954,
+          "median_px": 6.25,
+          "mean_px": 12.16,
+          "p95_px": 42.47
+        },
+        "image_landmarks": {
+          "FL": {
+            "residual_native_xy": [
+              -0.93,
+              -7.73
+            ],
+            "distance_native_px": 7.78
+          },
+          "RL": {
+            "residual_native_xy": [
+              -1.83,
+              -2.55
+            ],
+            "distance_native_px": 3.14
+          }
+        },
+        "rendered_x_span_native": [
+          287.5,
+          2668.8
+        ],
+        "held_out_frame": {
+          "mask_fit": {
+            "iou": 0.968,
+            "median_px": 6.25,
+            "mean_px": 8.09,
+            "p95_px": 28.12
+          },
+          "independent_mask": {
+            "iou": 0.9538,
+            "median_px": 6.25,
+            "mean_px": 12.22,
+            "p95_px": 43.08
+          },
+          "image_landmarks": {
+            "FL": {
+              "residual_native_xy": [
+                -0.69,
+                -8.04
+              ],
+              "distance_native_px": 8.07
+            },
+            "RL": {
+              "residual_native_xy": [
+                -1.34,
+                -2.78
+              ],
+              "distance_native_px": 3.08
+            }
+          },
+          "rendered_x_span_native": [
+            287.5,
+            2668.8
+          ]
+        }
+      }
+    },
+    {
+      "id": "jam-view-05",
+      "original_url": "https://cdn.spinio.fi/carla/JAM20U/outside/tiles/c15_l0_0_0.jpg",
+      "source": "https://www.carla.se/bil/tesla-model-y-2023-daanvk29io6g00dg9r90",
+      "sha256": "d7284df0fa96392de517331554974d9308f1455514b49b95c729f22ba003c2ed",
+      "width": 3000,
+      "height": 1687,
+      "view": "Rear-left 126°",
+      "credit": "Carla / Spinio",
+      "gallery_index": 5,
+      "group": "2023 · Blue Long Range AWD",
+      "pose": {
+        "theta": -2.147074862789044,
+        "phi": 1.5738079987226685,
+        "radius": 369.3472425193806,
+        "fov": 34.05433009474937,
+        "center": [
+          -9.83777448113456,
+          63.30767798781959,
+          6.886487809592694
+        ]
+      },
+      "status": "limited",
+      "note": "The rear wheel and hatch are visible. The towball and floor shadow complicate the lower bumper boundary. The 95th-percentile contour distance is 34 native-equivalent px.",
+      "measurements": {
+        "mask_fit": {
+          "iou": 0.9657,
+          "median_px": 6.25,
+          "mean_px": 8.68,
+          "p95_px": 33.71
+        },
+        "independent_mask": {
+          "iou": 0.9374,
+          "median_px": 9.38,
+          "mean_px": 17.1,
+          "p95_px": 48.72
+        },
+        "image_landmarks": {
+          "FL": {
+            "residual_native_xy": [
+              7.79,
+              -9.85
+            ],
+            "distance_native_px": 12.55
+          },
+          "RL": {
+            "residual_native_xy": [
+              -7.35,
+              -2.62
+            ],
+            "distance_native_px": 7.8
+          },
+          "reflector_L": {
+            "residual_native_xy": [
+              9.81,
+              27.0
+            ],
+            "distance_native_px": 28.72
+          }
+        },
+        "rendered_x_span_native": [
+          434.4,
+          2640.6
+        ],
+        "held_out_frame": {
+          "mask_fit": {
+            "iou": 0.9659,
+            "median_px": 6.25,
+            "mean_px": 8.65,
+            "p95_px": 34.38
+          },
+          "independent_mask": {
+            "iou": 0.9363,
+            "median_px": 9.38,
+            "mean_px": 17.39,
+            "p95_px": 49.34
+          },
+          "image_landmarks": {
+            "FL": {
+              "residual_native_xy": [
+                8.63,
+                -10.27
+              ],
+              "distance_native_px": 13.42
+            },
+            "RL": {
+              "residual_native_xy": [
+                -7.01,
+                -2.67
+              ],
+              "distance_native_px": 7.5
+            },
+            "reflector_L": {
+              "residual_native_xy": [
+                10.64,
+                26.97
+              ],
+              "distance_native_px": 29.0
+            }
+          },
+          "rendered_x_span_native": [
+            434.4,
+            2640.6
+          ]
+        }
+      }
+    },
+    {
+      "id": "jam-view-06",
+      "original_url": "https://cdn.spinio.fi/carla/JAM20U/outside/tiles/c16_l0_0_0.jpg",
+      "source": "https://www.carla.se/bil/tesla-model-y-2023-daanvk29io6g00dg9r90",
+      "sha256": "da6306b67112560f4f29a04ae288e9b5a694a04ac09ff0a07854b33c5cdca8ce",
+      "width": 3000,
+      "height": 1687,
+      "view": "Rear-left three-quarter (144°)",
+      "credit": "Carla / Spinio",
+      "gallery_index": 6,
+      "group": "2023 · Blue Long Range AWD",
+      "pose": {
+        "theta": -2.4612341281480234,
+        "phi": 1.5738079987226685,
+        "radius": 369.3472425193806,
+        "fov": 34.05433009474937,
+        "center": [
+          -9.991448189262114,
+          63.30767798781959,
+          6.715925618658366
+        ]
+      },
+      "status": "verified",
+      "note": "The inner left running light terminates inside the lens. The roof glass carries a much brighter studio reflection in the model. The 95th-percentile contour distance is 50 native-equivalent px.",
+      "measurements": {
+        "mask_fit": {
+          "iou": 0.9574,
+          "median_px": 6.25,
+          "mean_px": 11.04,
+          "p95_px": 50.0
+        },
+        "independent_mask": {
+          "iou": 0.9415,
+          "median_px": 11.24,
+          "mean_px": 15.98,
+          "p95_px": 43.75
+        },
+        "image_landmarks": {
+          "FL": {
+            "residual_native_xy": [
+              -1.54,
+              -5.08
+            ],
+            "distance_native_px": 5.31
+          },
+          "RL": {
+            "residual_native_xy": [
+              -10.05,
+              1.5
+            ],
+            "distance_native_px": 10.16
+          },
+          "rear_badge": {
+            "residual_native_xy": [
+              13.76,
+              23.65
+            ],
+            "distance_native_px": 27.36
+          },
+          "tail_L": {
+            "residual_native_xy": [
+              1.08,
+              6.99
+            ],
+            "distance_native_px": 7.07
+          },
+          "reflector_L": {
+            "residual_native_xy": [
+              31.51,
+              31.36
+            ],
+            "distance_native_px": 44.46
+          }
+        },
+        "rendered_x_span_native": [
+          631.2,
+          2559.4
+        ],
+        "held_out_frame": {
+          "mask_fit": {
+            "iou": 0.9567,
+            "median_px": 6.25,
+            "mean_px": 11.25,
+            "p95_px": 50.0
+          },
+          "independent_mask": {
+            "iou": 0.9414,
+            "median_px": 11.24,
+            "mean_px": 16.01,
+            "p95_px": 44.98
+          },
+          "image_landmarks": {
+            "FL": {
+              "residual_native_xy": [
+                -2.52,
+                -5.65
+              ],
+              "distance_native_px": 6.19
+            },
+            "RL": {
+              "residual_native_xy": [
+                -11.19,
+                2.35
+              ],
+              "distance_native_px": 11.44
+            },
+            "rear_badge": {
+              "residual_native_xy": [
+                12.38,
+                24.87
+              ],
+              "distance_native_px": 27.78
+            },
+            "tail_L": {
+              "residual_native_xy": [
+                -0.45,
+                8.46
+              ],
+              "distance_native_px": 8.47
+            },
+            "reflector_L": {
+              "residual_native_xy": [
+                29.8,
+                32.63
+              ],
+              "distance_native_px": 44.19
+            }
+          },
+          "rendered_x_span_native": [
+            631.2,
+            2559.4
+          ]
+        }
+      }
+    },
+    {
+      "id": "jam-view-07",
+      "original_url": "https://cdn.spinio.fi/carla/JAM20U/outside/tiles/c17_l0_0_0.jpg",
+      "source": "https://www.carla.se/bil/tesla-model-y-2023-daanvk29io6g00dg9r90",
+      "sha256": "7e2e0ca2178a8f5e3a0ce33fcb3fd2514d359f8b6fa5c0f8742cb05af4c4708f",
+      "width": 3000,
+      "height": 1687,
+      "view": "Rear-left 162°",
+      "credit": "Carla / Spinio",
+      "gallery_index": 7,
+      "group": "2023 · Blue Long Range AWD",
+      "pose": {
+        "theta": -2.7753933935070028,
+        "phi": 1.5738079987226685,
+        "radius": 369.3472425193806,
+        "fov": 34.05433009474937,
+        "center": [
+          -10.190307186356595,
+          63.30767798781959,
+          6.601199122936724
+        ]
+      },
+      "status": "limited",
+      "note": "The near rear lamp and hatch corners align more closely than the boundary under the bumper, where the towball projects. The 95th-percentile contour distance is 52 native-equivalent px.",
+      "measurements": {
+        "mask_fit": {
+          "iou": 0.94,
+          "median_px": 9.38,
+          "mean_px": 14.98,
+          "p95_px": 52.46
+        },
+        "independent_mask": {
+          "iou": 0.9435,
+          "median_px": 9.99,
+          "mean_px": 14.24,
+          "p95_px": 42.47
+        },
+        "image_landmarks": {
+          "RL": {
+            "residual_native_xy": [
+              -5.33,
+              -7.66
+            ],
+            "distance_native_px": 9.33
+          },
+          "rear_badge": {
+            "residual_native_xy": [
+              13.21,
+              23.11
+            ],
+            "distance_native_px": 26.62
+          },
+          "tail_L": {
+            "residual_native_xy": [
+              -1.87,
+              10.56
+            ],
+            "distance_native_px": 10.72
+          },
+          "tail_R": {
+            "residual_native_xy": [
+              -5.98,
+              14.2
+            ],
+            "distance_native_px": 15.41
+          },
+          "reflector_L": {
+            "residual_native_xy": [
+              46.11,
+              33.99
+            ],
+            "distance_native_px": 57.29
+          },
+          "reflector_R": {
+            "residual_native_xy": [
+              -38.7,
+              36.29
+            ],
+            "distance_native_px": 53.06
+          }
+        },
+        "rendered_x_span_native": [
+          853.1,
+          2368.8
+        ],
+        "held_out_frame": {
+          "mask_fit": {
+            "iou": 0.9391,
+            "median_px": 9.38,
+            "mean_px": 15.21,
+            "p95_px": 51.85
+          },
+          "independent_mask": {
+            "iou": 0.9427,
+            "median_px": 9.99,
+            "mean_px": 14.45,
+            "p95_px": 41.87
+          },
+          "image_landmarks": {
+            "RL": {
+              "residual_native_xy": [
+                -6.52,
+                -7.57
+              ],
+              "distance_native_px": 9.99
+            },
+            "rear_badge": {
+              "residual_native_xy": [
+                11.25,
+                23.58
+              ],
+              "distance_native_px": 26.13
+            },
+            "tail_L": {
+              "residual_native_xy": [
+                -3.78,
+                11.02
+              ],
+              "distance_native_px": 11.65
+            },
+            "tail_R": {
+              "residual_native_xy": [
+                -7.77,
+                14.58
+              ],
+              "distance_native_px": 16.52
+            },
+            "reflector_L": {
+              "residual_native_xy": [
+                44.13,
+                34.23
+              ],
+              "distance_native_px": 55.85
+            },
+            "reflector_R": {
+              "residual_native_xy": [
+                -40.6,
+                36.54
+              ],
+              "distance_native_px": 54.62
+            }
+          },
+          "rendered_x_span_native": [
+            853.1,
+            2365.6
+          ]
+        }
+      }
+    },
+    {
+      "id": "jam-view-08",
+      "original_url": "https://cdn.spinio.fi/carla/JAM20U/outside/tiles/c18_l0_0_0.jpg",
+      "source": "https://www.carla.se/bil/tesla-model-y-2023-daanvk29io6g00dg9r90",
+      "sha256": "ad6299116ccf633e4bd8837f80b7da6a1d262431863e8c8f1a0608132fa36dde",
+      "width": 3000,
+      "height": 1687,
+      "view": "Rear elevation (180°)",
+      "credit": "Carla / Spinio",
+      "gallery_index": 8,
+      "group": "2023 · Blue Long Range AWD",
+      "pose": {
+        "theta": -3.089552658865982,
+        "phi": 1.5738079987226685,
+        "radius": 369.3472425193806,
+        "fov": 34.05433009474937,
+        "center": [
+          -10.414885768250292,
+          63.30767798781959,
+          6.553538551175502
+        ]
+      },
+      "status": "fix",
+      "note": "Straight rear elevation. The top of the liftgate and outer body width register. The lower red reflectors sit too close to the centerline. The 95th-percentile contour distance is 50 native-equivalent px.",
+      "measurements": {
+        "mask_fit": {
+          "iou": 0.9334,
+          "median_px": 6.25,
+          "mean_px": 16.46,
+          "p95_px": 50.0
+        },
+        "independent_mask": {
+          "iou": 0.9327,
+          "median_px": 12.5,
+          "mean_px": 16.3,
+          "p95_px": 43.46
+        },
+        "image_landmarks": {
+          "rear_badge": {
+            "residual_native_xy": [
+              -6.9,
+              24.02
+            ],
+            "distance_native_px": 24.99
+          },
+          "tail_L": {
+            "residual_native_xy": [
+              -8.46,
+              9.71
+            ],
+            "distance_native_px": 12.87
+          },
+          "tail_R": {
+            "residual_native_xy": [
+              -4.37,
+              8.66
+            ],
+            "distance_native_px": 9.7
+          },
+          "reflector_L": {
+            "residual_native_xy": [
+              40.93,
+              34.02
+            ],
+            "distance_native_px": 53.22
+          },
+          "reflector_R": {
+            "residual_native_xy": [
+              -54.24,
+              35.38
+            ],
+            "distance_native_px": 64.76
+          }
+        },
+        "rendered_x_span_native": [
+          853.1,
+          2093.8
+        ],
+        "held_out_frame": {
+          "mask_fit": {
+            "iou": 0.9333,
+            "median_px": 6.25,
+            "mean_px": 16.5,
+            "p95_px": 50.0
+          },
+          "independent_mask": {
+            "iou": 0.9325,
+            "median_px": 12.5,
+            "mean_px": 16.35,
+            "p95_px": 42.47
+          },
+          "image_landmarks": {
+            "rear_badge": {
+              "residual_native_xy": [
+                -7.47,
+                24.42
+              ],
+              "distance_native_px": 25.54
+            },
+            "tail_L": {
+              "residual_native_xy": [
+                -8.73,
+                10.04
+              ],
+              "distance_native_px": 13.31
+            },
+            "tail_R": {
+              "residual_native_xy": [
+                -5.17,
+                9.0
+              ],
+              "distance_native_px": 10.38
+            },
+            "reflector_L": {
+              "residual_native_xy": [
+                40.64,
+                33.99
+              ],
+              "distance_native_px": 52.98
+            },
+            "reflector_R": {
+              "residual_native_xy": [
+                -55.06,
+                35.37
+              ],
+              "distance_native_px": 65.44
+            }
+          },
+          "rendered_x_span_native": [
+            853.1,
+            2093.8
+          ]
+        }
+      }
+    },
+    {
+      "id": "jam-view-09",
+      "original_url": "https://cdn.spinio.fi/carla/JAM20U/outside/tiles/c19_l0_0_0.jpg",
+      "source": "https://www.carla.se/bil/tesla-model-y-2023-daanvk29io6g00dg9r90",
+      "sha256": "95224c3102a05d67aa996a14406f63fcc1e30417f987f3e3fb430767f204c485",
+      "width": 3000,
+      "height": 1687,
+      "view": "Rear-right 198°",
+      "credit": "Carla / Spinio",
+      "gallery_index": 9,
+      "group": "2023 · Blue Long Range AWD",
+      "pose": {
+        "theta": 2.8794733829546253,
+        "phi": 1.5738079987226685,
+        "radius": 369.3472425193806,
+        "fov": 34.05433009474937,
+        "center": [
+          -10.643200618616463,
+          63.30767798781959,
+          6.577609252209418
+        ]
+      },
+      "status": "limited",
+      "note": "The rear badge and inner right lamp can be compared above the plate. The photographed towball affects the bottom-center contour. The 95th-percentile contour distance is 44 native-equivalent px.",
+      "measurements": {
+        "mask_fit": {
+          "iou": 0.9394,
+          "median_px": 11.24,
+          "mean_px": 14.75,
+          "p95_px": 43.75
+        },
+        "independent_mask": {
+          "iou": 0.9339,
+          "median_px": 15.62,
+          "mean_px": 16.13,
+          "p95_px": 37.5
+        },
+        "image_landmarks": {
+          "rear_badge": {
+            "residual_native_xy": [
+              -17.2,
+              20.02
+            ],
+            "distance_native_px": 26.39
+          },
+          "tail_L": {
+            "residual_native_xy": [
+              -4.57,
+              4.78
+            ],
+            "distance_native_px": 6.61
+          },
+          "tail_R": {
+            "residual_native_xy": [
+              -8.16,
+              10.2
+            ],
+            "distance_native_px": 13.06
+          },
+          "reflector_L": {
+            "residual_native_xy": [
+              35.07,
+              26.68
+            ],
+            "distance_native_px": 44.07
+          },
+          "reflector_R": {
+            "residual_native_xy": [
+              -56.87,
+              31.01
+            ],
+            "distance_native_px": 64.78
+          }
+        },
+        "rendered_x_span_native": [
+          581.2,
+          1984.4
+        ],
+        "held_out_frame": {
+          "mask_fit": {
+            "iou": 0.9384,
+            "median_px": 11.24,
+            "mean_px": 15.02,
+            "p95_px": 43.75
+          },
+          "independent_mask": {
+            "iou": 0.9327,
+            "median_px": 15.62,
+            "mean_px": 16.42,
+            "p95_px": 38.15
+          },
+          "image_landmarks": {
+            "rear_badge": {
+              "residual_native_xy": [
+                -15.98,
+                20.83
+              ],
+              "distance_native_px": 26.26
+            },
+            "tail_L": {
+              "residual_native_xy": [
+                -3.3,
+                5.45
+              ],
+              "distance_native_px": 6.37
+            },
+            "tail_R": {
+              "residual_native_xy": [
+                -7.15,
+                10.98
+              ],
+              "distance_native_px": 13.11
+            },
+            "reflector_L": {
+              "residual_native_xy": [
+                36.44,
+                27.1
+              ],
+              "distance_native_px": 45.42
+            },
+            "reflector_R": {
+              "residual_native_xy": [
+                -55.81,
+                31.47
+              ],
+              "distance_native_px": 64.07
+            }
+          },
+          "rendered_x_span_native": [
+            584.4,
+            1984.4
+          ]
+        }
+      }
+    },
+    {
+      "id": "jam-view-10",
+      "original_url": "https://cdn.spinio.fi/carla/JAM20U/outside/tiles/c0_l0_0_0.jpg",
+      "source": "https://www.carla.se/bil/tesla-model-y-2023-daanvk29io6g00dg9r90",
+      "sha256": "f1b2b1531d3192d8c3ed9515e98a968a74c75b57bd182227afbf14ed2e5c36b4",
+      "width": 3000,
+      "height": 1687,
+      "view": "Rear-right three-quarter (216°)",
+      "credit": "Carla / Spinio",
+      "gallery_index": 10,
+      "group": "2023 · Blue Long Range AWD",
+      "pose": {
+        "theta": 2.565314117595646,
+        "phi": 1.5738079987226685,
+        "radius": 369.3472425193806,
+        "fov": 34.05433009474937,
+        "center": [
+          -10.852902689138164,
+          63.30767798781959,
+          6.6710550181108355
+        ]
+      },
+      "status": "verified",
+      "note": "Rear-right three-quarter. The wheel and quarter window track across the split. The lens is unlit in the render. The 95th-percentile contour distance is 52 native-equivalent px.",
+      "measurements": {
+        "mask_fit": {
+          "iou": 0.9453,
+          "median_px": 9.38,
+          "mean_px": 13.91,
+          "p95_px": 52.44
+        },
+        "independent_mask": {
+          "iou": 0.9377,
+          "median_px": 13.12,
+          "mean_px": 16.36,
+          "p95_px": 43.09
+        },
+        "image_landmarks": {
+          "FR": {
+            "residual_native_xy": [
+              -7.08,
+              0.67
+            ],
+            "distance_native_px": 7.11
+          },
+          "RR": {
+            "residual_native_xy": [
+              16.19,
+              -1.82
+            ],
+            "distance_native_px": 16.29
+          },
+          "rear_badge": {
+            "residual_native_xy": [
+              3.83,
+              17.5
+            ],
+            "distance_native_px": 17.91
+          },
+          "tail_R": {
+            "residual_native_xy": [
+              22.28,
+              7.61
+            ],
+            "distance_native_px": 23.55
+          },
+          "reflector_R": {
+            "residual_native_xy": [
+              -14.57,
+              26.54
+            ],
+            "distance_native_px": 30.28
+          }
+        },
+        "rendered_x_span_native": [
+          403.1,
+          2206.2
+        ],
+        "held_out_frame": {
+          "mask_fit": {
+            "iou": 0.9445,
+            "median_px": 9.38,
+            "mean_px": 14.12,
+            "p95_px": 52.44
+          },
+          "independent_mask": {
+            "iou": 0.9369,
+            "median_px": 13.12,
+            "mean_px": 16.6,
+            "p95_px": 43.7
+          },
+          "image_landmarks": {
+            "FR": {
+              "residual_native_xy": [
+                -7.59,
+                0.62
+              ],
+              "distance_native_px": 7.61
+            },
+            "RR": {
+              "residual_native_xy": [
+                17.34,
+                -1.69
+              ],
+              "distance_native_px": 17.42
+            },
+            "rear_badge": {
+              "residual_native_xy": [
+                5.15,
+                17.77
+              ],
+              "distance_native_px": 18.5
+            },
+            "tail_R": {
+              "residual_native_xy": [
+                23.81,
+                7.89
+              ],
+              "distance_native_px": 25.08
+            },
+            "reflector_R": {
+              "residual_native_xy": [
+                -13.01,
+                26.84
+              ],
+              "distance_native_px": 29.83
+            }
+          },
+          "rendered_x_span_native": [
+            403.1,
+            2206.2
+          ]
+        }
+      }
+    },
+    {
+      "id": "jam-view-11",
+      "original_url": "https://cdn.spinio.fi/carla/JAM20U/outside/tiles/c1_l0_0_0.jpg",
+      "source": "https://www.carla.se/bil/tesla-model-y-2023-daanvk29io6g00dg9r90",
+      "sha256": "3e4df1781a7edb7de416ea74c602ec1eefac645f0099439f62af88ce4e7bf621",
+      "width": 3000,
+      "height": 1687,
+      "view": "Rear-right 234°",
+      "credit": "Carla / Spinio",
+      "gallery_index": 11,
+      "group": "2023 · Blue Long Range AWD",
+      "pose": {
+        "theta": 2.2511548522366667,
+        "phi": 1.5738079987226685,
+        "radius": 369.3472425193806,
+        "fov": 34.05433009474937,
+        "center": [
+          -11.023464880072492,
+          63.30767798781959,
+          6.824728726238389
+        ]
+      },
+      "status": "limited",
+      "note": "The right rear quarter reads clearly. The reflector and valance are more sensitive to registration than the roof and upper glass. The 95th-percentile contour distance is 53 native-equivalent px.",
+      "measurements": {
+        "mask_fit": {
+          "iou": 0.9435,
+          "median_px": 6.25,
+          "mean_px": 13.78,
+          "p95_px": 53.12
+        },
+        "independent_mask": {
+          "iou": 0.9405,
+          "median_px": 9.99,
+          "mean_px": 15.29,
+          "p95_px": 50.62
+        },
+        "image_landmarks": {
+          "FR": {
+            "residual_native_xy": [
+              -1.78,
+              -4.64
+            ],
+            "distance_native_px": 4.97
+          },
+          "RR": {
+            "residual_native_xy": [
+              4.88,
+              -4.18
+            ],
+            "distance_native_px": 6.42
+          },
+          "tail_R": {
+            "residual_native_xy": [
+              4.7,
+              3.57
+            ],
+            "distance_native_px": 5.9
+          },
+          "reflector_R": {
+            "residual_native_xy": [
+              -14.09,
+              19.48
+            ],
+            "distance_native_px": 24.04
+          }
+        },
+        "rendered_x_span_native": [
+          346.9,
+          2415.6
+        ],
+        "held_out_frame": {
+          "mask_fit": {
+            "iou": 0.9435,
+            "median_px": 6.25,
+            "mean_px": 13.77,
+            "p95_px": 53.12
+          },
+          "independent_mask": {
+            "iou": 0.9405,
+            "median_px": 9.99,
+            "mean_px": 15.28,
+            "p95_px": 50.62
+          },
+          "image_landmarks": {
+            "FR": {
+              "residual_native_xy": [
+                -1.94,
+                -4.79
+              ],
+              "distance_native_px": 5.17
+            },
+            "RR": {
+              "residual_native_xy": [
+                5.42,
+                -4.42
+              ],
+              "distance_native_px": 6.99
+            },
+            "tail_R": {
+              "residual_native_xy": [
+                5.25,
+                3.34
+              ],
+              "distance_native_px": 6.23
+            },
+            "reflector_R": {
+              "residual_native_xy": [
+                -13.55,
+                19.27
+              ],
+              "distance_native_px": 23.56
+            }
+          },
+          "rendered_x_span_native": [
+            346.9,
+            2412.5
+          ]
+        }
+      }
+    },
+    {
+      "id": "jam-view-12",
+      "original_url": "https://cdn.spinio.fi/carla/JAM20U/outside/tiles/c2_l0_0_0.jpg",
+      "source": "https://www.carla.se/bil/tesla-model-y-2023-daanvk29io6g00dg9r90",
+      "sha256": "7563f28122876121a4049baef928abcce4c1cd314c70f31e25110cdf6be78693",
+      "width": 3000,
+      "height": 1687,
+      "view": "Rear-right 252°",
+      "credit": "Carla / Spinio",
+      "gallery_index": 12,
+      "group": "2023 · Blue Long Range AWD",
+      "pose": {
+        "theta": 1.9369955868776874,
+        "phi": 1.5738079987226685,
+        "radius": 369.3472425193806,
+        "fov": 34.05433009474937,
+        "center": [
+          -11.138191375794133,
+          63.30767798781959,
+          7.023587723332872
+        ]
+      },
+      "status": "verified",
+      "note": "Both right-wheel centers are visible. The lower door highlight changes with lighting; the arch outlines remain comparable. The 95th-percentile contour distance is 36 native-equivalent px.",
+      "measurements": {
+        "mask_fit": {
+          "iou": 0.961,
+          "median_px": 6.25,
+          "mean_px": 9.2,
+          "p95_px": 36.21
+        },
+        "independent_mask": {
+          "iou": 0.9557,
+          "median_px": 6.25,
+          "mean_px": 11.18,
+          "p95_px": 38.38
+        },
+        "image_landmarks": {
+          "FR": {
+            "residual_native_xy": [
+              1.93,
+              -0.4
+            ],
+            "distance_native_px": 1.97
+          },
+          "RR": {
+            "residual_native_xy": [
+              1.71,
+              -1.48
+            ],
+            "distance_native_px": 2.26
+          }
+        },
+        "rendered_x_span_native": [
+          356.2,
+          2590.6
+        ],
+        "held_out_frame": {
+          "mask_fit": {
+            "iou": 0.9608,
+            "median_px": 6.25,
+            "mean_px": 9.27,
+            "p95_px": 36.22
+          },
+          "independent_mask": {
+            "iou": 0.9554,
+            "median_px": 6.25,
+            "mean_px": 11.24,
+            "p95_px": 38.1
+          },
+          "image_landmarks": {
+            "FR": {
+              "residual_native_xy": [
+                1.83,
+                -0.37
+              ],
+              "distance_native_px": 1.87
+            },
+            "RR": {
+              "residual_native_xy": [
+                1.24,
+                -1.49
+              ],
+              "distance_native_px": 1.94
+            }
+          },
+          "rendered_x_span_native": [
+            356.2,
+            2590.6
+          ]
+        }
+      }
+    },
+    {
+      "id": "jam-view-13",
+      "original_url": "https://cdn.spinio.fi/carla/JAM20U/outside/tiles/c3_l0_0_0.jpg",
+      "source": "https://www.carla.se/bil/tesla-model-y-2023-daanvk29io6g00dg9r90",
+      "sha256": "71e7f9d3cc27e7fd74635900b3ec21c9f6d07fd7f2d57e422f221c611a22645f",
+      "width": 3000,
+      "height": 1687,
+      "view": "Right side profile (270°)",
+      "credit": "Carla / Spinio",
+      "gallery_index": 13,
+      "group": "2023 · Blue Long Range AWD",
+      "pose": {
+        "theta": 1.6228363215187072,
+        "phi": 1.5738079987226685,
+        "radius": 369.3472425193806,
+        "fov": 34.05433009474937,
+        "center": [
+          -11.185851947555355,
+          63.30767798781959,
+          7.248166305226569
+        ]
+      },
+      "status": "verified",
+      "note": "Right broadside. The hub spacing, roof apex and side glass provide a check from the opposite side. The 95th-percentile contour distance is 24 native-equivalent px.",
+      "measurements": {
+        "mask_fit": {
+          "iou": 0.9629,
+          "median_px": 6.25,
+          "mean_px": 8.57,
+          "p95_px": 23.72
+        },
+        "independent_mask": {
+          "iou": 0.9598,
+          "median_px": 6.25,
+          "mean_px": 10.21,
+          "p95_px": 40.62
+        },
+        "image_landmarks": {
+          "FR": {
+            "residual_native_xy": [
+              1.16,
+              0.15
+            ],
+            "distance_native_px": 1.17
+          },
+          "RR": {
+            "residual_native_xy": [
+              -1.81,
+              -4.24
+            ],
+            "distance_native_px": 4.61
+          }
+        },
+        "rendered_x_span_native": [
+          400.0,
+          2725.0
+        ],
+        "held_out_frame": {
+          "mask_fit": {
+            "iou": 0.9623,
+            "median_px": 6.25,
+            "mean_px": 8.72,
+            "p95_px": 23.72
+          },
+          "independent_mask": {
+            "iou": 0.9597,
+            "median_px": 6.25,
+            "mean_px": 10.26,
+            "p95_px": 40.62
+          },
+          "image_landmarks": {
+            "FR": {
+              "residual_native_xy": [
+                1.03,
+                0.12
+              ],
+              "distance_native_px": 1.04
+            },
+            "RR": {
+              "residual_native_xy": [
+                -2.55,
+                -4.23
+              ],
+              "distance_native_px": 4.94
+            }
+          },
+          "rendered_x_span_native": [
+            400.0,
+            2725.0
+          ]
+        }
+      }
+    },
+    {
+      "id": "jam-view-14",
+      "original_url": "https://cdn.spinio.fi/carla/JAM20U/outside/tiles/c4_l0_0_0.jpg",
+      "source": "https://www.carla.se/bil/tesla-model-y-2023-daanvk29io6g00dg9r90",
+      "sha256": "901ac77d7d8de405129d8cf43687feabce0dc1b1f5ed0a6191aa31cc4410cd4d",
+      "width": 3000,
+      "height": 1687,
+      "view": "Front-right 288°",
+      "credit": "Carla / Spinio",
+      "gallery_index": 14,
+      "group": "2023 · Blue Long Range AWD",
+      "pose": {
+        "theta": 1.3086770561597278,
+        "phi": 1.5738079987226685,
+        "radius": 369.3472425193806,
+        "fov": 34.05433009474937,
+        "center": [
+          -11.16178124652144,
+          63.30767798781959,
+          7.476481155592739
+        ]
+      },
+      "status": "verified",
+      "note": "The taper to the right rear quarter window and front wheel center register as the nose comes into view. The 95th-percentile contour distance is 41 native-equivalent px.",
+      "measurements": {
+        "mask_fit": {
+          "iou": 0.9546,
+          "median_px": 6.25,
+          "mean_px": 10.48,
+          "p95_px": 40.62
+        },
+        "independent_mask": {
+          "iou": 0.9543,
+          "median_px": 6.87,
+          "mean_px": 11.64,
+          "p95_px": 41.87
+        },
+        "image_landmarks": {
+          "FR": {
+            "residual_native_xy": [
+              3.08,
+              2.44
+            ],
+            "distance_native_px": 3.93
+          },
+          "RR": {
+            "residual_native_xy": [
+              -1.85,
+              -5.52
+            ],
+            "distance_native_px": 5.82
+          }
+        },
+        "rendered_x_span_native": [
+          490.6,
+          2800.0
+        ],
+        "held_out_frame": {
+          "mask_fit": {
+            "iou": 0.9544,
+            "median_px": 6.25,
+            "mean_px": 10.52,
+            "p95_px": 40.62
+          },
+          "independent_mask": {
+            "iou": 0.9543,
+            "median_px": 6.87,
+            "mean_px": 11.64,
+            "p95_px": 41.87
+          },
+          "image_landmarks": {
+            "FR": {
+              "residual_native_xy": [
+                3.36,
+                2.63
+              ],
+              "distance_native_px": 4.27
+            },
+            "RR": {
+              "residual_native_xy": [
+                -2.08,
+                -5.41
+              ],
+              "distance_native_px": 5.8
+            }
+          },
+          "rendered_x_span_native": [
+            490.6,
+            2800.0
+          ]
+        }
+      }
+    },
+    {
+      "id": "jam-view-15",
+      "original_url": "https://cdn.spinio.fi/carla/JAM20U/outside/tiles/c5_l0_0_0.jpg",
+      "source": "https://www.carla.se/bil/tesla-model-y-2023-daanvk29io6g00dg9r90",
+      "sha256": "5e8928158966b572eaab84737b125b0304ddd7440db3923502df06e92e73ee54",
+      "width": 3000,
+      "height": 1687,
+      "view": "Front-right 306°",
+      "credit": "Carla / Spinio",
+      "gallery_index": 15,
+      "group": "2023 · Blue Long Range AWD",
+      "pose": {
+        "theta": 0.9945177908007485,
+        "phi": 1.5738079987226685,
+        "radius": 369.3472425193806,
+        "fov": 34.05433009474937,
+        "center": [
+          -11.068335480620021,
+          63.30767798781959,
+          7.68618322611444
+        ]
+      },
+      "status": "verified",
+      "note": "The front wheel and windshield rake track. The headlamp brightness and body reflections differ between studio setups. The 95th-percentile contour distance is 34 native-equivalent px.",
+      "measurements": {
+        "mask_fit": {
+          "iou": 0.9547,
+          "median_px": 6.87,
+          "mean_px": 10.71,
+          "p95_px": 33.71
+        },
+        "independent_mask": {
+          "iou": 0.9563,
+          "median_px": 6.87,
+          "mean_px": 11.4,
+          "p95_px": 41.99
+        },
+        "image_landmarks": {
+          "FR": {
+            "residual_native_xy": [
+              0.92,
+              -5.36
+            ],
+            "distance_native_px": 5.44
+          },
+          "RR": {
+            "residual_native_xy": [
+              1.06,
+              -9.77
+            ],
+            "distance_native_px": 9.83
+          }
+        },
+        "rendered_x_span_native": [
+          634.4,
+          2831.2
+        ],
+        "held_out_frame": {
+          "mask_fit": {
+            "iou": 0.9551,
+            "median_px": 6.87,
+            "mean_px": 10.61,
+            "p95_px": 33.1
+          },
+          "independent_mask": {
+            "iou": 0.9562,
+            "median_px": 6.87,
+            "mean_px": 11.44,
+            "p95_px": 42.47
+          },
+          "image_landmarks": {
+            "FR": {
+              "residual_native_xy": [
+                1.18,
+                -5.7
+              ],
+              "distance_native_px": 5.82
+            },
+            "RR": {
+              "residual_native_xy": [
+                1.44,
+                -9.89
+              ],
+              "distance_native_px": 10.0
+            }
+          },
+          "rendered_x_span_native": [
+            634.4,
+            2831.2
+          ]
+        }
+      }
+    },
+    {
+      "id": "jam-view-16",
+      "original_url": "https://cdn.spinio.fi/carla/JAM20U/outside/tiles/c6_l0_0_0.jpg",
+      "source": "https://www.carla.se/bil/tesla-model-y-2023-daanvk29io6g00dg9r90",
+      "sha256": "91cd4deeed500593c925bae7979c38e8ee390343c545ca1b14c0fc0e04b8deb7",
+      "width": 3000,
+      "height": 1687,
+      "view": "Front-right three-quarter (324°)",
+      "credit": "Carla / Spinio",
+      "gallery_index": 16,
+      "group": "2023 · Blue Long Range AWD",
+      "pose": {
+        "theta": 0.6803585254417692,
+        "phi": 1.5738079987226685,
+        "radius": 369.3472425193806,
+        "fov": 34.05433009474937,
+        "center": [
+          -10.914661772492467,
+          63.30767798781959,
+          7.856745417048767
+        ]
+      },
+      "status": "verified",
+      "note": "The right inner headlamp corner and neighboring hood seam register in the native crop. The 95th-percentile contour distance is 21 native-equivalent px.",
+      "measurements": {
+        "mask_fit": {
+          "iou": 0.9643,
+          "median_px": 6.87,
+          "mean_px": 8.85,
+          "p95_px": 20.6
+        },
+        "independent_mask": {
+          "iou": 0.9486,
+          "median_px": 9.38,
+          "mean_px": 13.56,
+          "p95_px": 37.5
+        },
+        "image_landmarks": {
+          "FR": {
+            "residual_native_xy": [
+              0.03,
+              -1.49
+            ],
+            "distance_native_px": 1.49
+          },
+          "RR": {
+            "residual_native_xy": [
+              -1.48,
+              -4.4
+            ],
+            "distance_native_px": 4.64
+          },
+          "head_R": {
+            "residual_native_xy": [
+              4.58,
+              14.0
+            ],
+            "distance_native_px": 14.73
+          },
+          "front_badge": {
+            "residual_native_xy": [
+              10.06,
+              13.68
+            ],
+            "distance_native_px": 16.98
+          }
+        },
+        "rendered_x_span_native": [
+          800.0,
+          2806.2
+        ],
+        "held_out_frame": {
+          "mask_fit": {
+            "iou": 0.9642,
+            "median_px": 6.87,
+            "mean_px": 8.87,
+            "p95_px": 20.6
+          },
+          "independent_mask": {
+            "iou": 0.9485,
+            "median_px": 9.38,
+            "mean_px": 13.59,
+            "p95_px": 37.5
+          },
+          "image_landmarks": {
+            "FR": {
+              "residual_native_xy": [
+                -0.06,
+                -1.34
+              ],
+              "distance_native_px": 1.34
+            },
+            "RR": {
+              "residual_native_xy": [
+                -1.32,
+                -4.55
+              ],
+              "distance_native_px": 4.74
+            },
+            "head_R": {
+              "residual_native_xy": [
+                4.57,
+                14.19
+              ],
+              "distance_native_px": 14.91
+            },
+            "front_badge": {
+              "residual_native_xy": [
+                10.1,
+                13.81
+              ],
+              "distance_native_px": 17.11
+            }
+          },
+          "rendered_x_span_native": [
+            800.0,
+            2806.2
+          ]
+        }
+      }
+    },
+    {
+      "id": "jam-view-17",
+      "original_url": "https://cdn.spinio.fi/carla/JAM20U/outside/tiles/c7_l0_0_0.jpg",
+      "source": "https://www.carla.se/bil/tesla-model-y-2023-daanvk29io6g00dg9r90",
+      "sha256": "2d203c999eb6c68ca097db8bb746b143ace381486e9ed88d7d3362bd2e7b8a19",
+      "width": 3000,
+      "height": 1687,
+      "view": "Front-right 342°",
+      "credit": "Carla / Spinio",
+      "gallery_index": 17,
+      "group": "2023 · Blue Long Range AWD",
+      "pose": {
+        "theta": 0.3661992600827899,
+        "phi": 1.5738079987226685,
+        "radius": 369.3472425193806,
+        "fov": 34.05433009474937,
+        "center": [
+          -10.715802775397986,
+          63.30767798781959,
+          7.971471912770409
+        ]
+      },
+      "status": "limited",
+      "note": "Front-right oblique. The light is on in the photograph, making the internal projector boundary indistinct. The 95th-percentile contour distance is 23 native-equivalent px.",
+      "measurements": {
+        "mask_fit": {
+          "iou": 0.961,
+          "median_px": 9.38,
+          "mean_px": 10.06,
+          "p95_px": 23.11
+        },
+        "independent_mask": {
+          "iou": 0.9468,
+          "median_px": 13.73,
+          "mean_px": 13.92,
+          "p95_px": 28.12
+        },
+        "image_landmarks": {
+          "FR": {
+            "residual_native_xy": [
+              1.73,
+              -6.76
+            ],
+            "distance_native_px": 6.98
+          },
+          "RR": {
+            "residual_native_xy": [
+              0.84,
+              -12.24
+            ],
+            "distance_native_px": 12.27
+          },
+          "front_badge": {
+            "residual_native_xy": [
+              12.24,
+              12.35
+            ],
+            "distance_native_px": 17.38
+          },
+          "head_R": {
+            "residual_native_xy": [
+              5.71,
+              19.01
+            ],
+            "distance_native_px": 19.85
+          }
+        },
+        "rendered_x_span_native": [
+          981.2,
+          2668.8
+        ],
+        "held_out_frame": {
+          "mask_fit": {
+            "iou": 0.9606,
+            "median_px": 9.38,
+            "mean_px": 10.15,
+            "p95_px": 23.11
+          },
+          "independent_mask": {
+            "iou": 0.9463,
+            "median_px": 13.73,
+            "mean_px": 14.03,
+            "p95_px": 28.12
+          },
+          "image_landmarks": {
+            "FR": {
+              "residual_native_xy": [
+                1.86,
+                -6.71
+              ],
+              "distance_native_px": 6.96
+            },
+            "RR": {
+              "residual_native_xy": [
+                1.18,
+                -12.69
+              ],
+              "distance_native_px": 12.74
+            },
+            "front_badge": {
+              "residual_native_xy": [
+                11.84,
+                12.75
+              ],
+              "distance_native_px": 17.4
+            },
+            "head_R": {
+              "residual_native_xy": [
+                5.43,
+                19.45
+              ],
+              "distance_native_px": 20.19
+            }
+          },
+          "rendered_x_span_native": [
+            981.2,
+            2668.8
+          ]
+        }
+      }
+    },
+    {
+      "id": "jam-view-18",
+      "original_url": "https://cdn.spinio.fi/carla/JAM20U/outside/tiles/c8_l0_0_0.jpg",
+      "source": "https://www.carla.se/bil/tesla-model-y-2023-daanvk29io6g00dg9r90",
+      "sha256": "27800dd6f0cd8fac094f9e364eca11d99258b7ab1b62d717acd235558a92a144",
+      "width": 3000,
+      "height": 1687,
+      "view": "Front elevation (0°)",
+      "credit": "Carla / Spinio",
+      "gallery_index": 18,
+      "group": "2023 · Blue Long Range AWD",
+      "pose": {
+        "theta": 0.0520399947238106,
+        "phi": 1.5738079987226685,
+        "radius": 369.3472425193806,
+        "fov": 34.05433009474937,
+        "center": [
+          -10.491224193504289,
+          63.30767798781959,
+          8.01913248453163
+        ]
+      },
+      "status": "limited",
+      "note": "Straight front. The body width is close, while the lower intake, mirror outline and plate region diverge. The 95th-percentile contour distance is 42 native-equivalent px.",
+      "measurements": {
+        "mask_fit": {
+          "iou": 0.9494,
+          "median_px": 9.38,
+          "mean_px": 12.84,
+          "p95_px": 42.19
+        },
+        "independent_mask": {
+          "iou": 0.8995,
+          "median_px": 13.73,
+          "mean_px": 24.7,
+          "p95_px": 78.12
+        },
+        "image_landmarks": {
+          "front_badge": {
+            "residual_native_xy": [
+              13.8,
+              12.61
+            ],
+            "distance_native_px": 18.69
+          },
+          "head_L": {
+            "residual_native_xy": [
+              -3.37,
+              18.05
+            ],
+            "distance_native_px": 18.36
+          },
+          "head_R": {
+            "residual_native_xy": [
+              16.11,
+              11.46
+            ],
+            "distance_native_px": 19.77
+          }
+        },
+        "rendered_x_span_native": [
+          987.5,
+          2365.6
+        ],
+        "held_out_frame": {
+          "mask_fit": {
+            "iou": 0.9489,
+            "median_px": 9.38,
+            "mean_px": 12.94,
+            "p95_px": 41.61
+          },
+          "independent_mask": {
+            "iou": 0.9002,
+            "median_px": 13.73,
+            "mean_px": 24.47,
+            "p95_px": 76.82
+          },
+          "image_landmarks": {
+            "front_badge": {
+              "residual_native_xy": [
+                13.47,
+                12.78
+              ],
+              "distance_native_px": 18.57
+            },
+            "head_L": {
+              "residual_native_xy": [
+                -3.41,
+                18.25
+              ],
+              "distance_native_px": 18.56
+            },
+            "head_R": {
+              "residual_native_xy": [
+                15.46,
+                11.67
+              ],
+              "distance_native_px": 19.37
+            }
+          },
+          "rendered_x_span_native": [
+            987.5,
+            2368.8
+          ]
+        }
+      }
+    },
+    {
+      "id": "jam-view-19",
+      "original_url": "https://cdn.spinio.fi/carla/JAM20U/outside/tiles/c9_l0_0_0.jpg",
+      "source": "https://www.carla.se/bil/tesla-model-y-2023-daanvk29io6g00dg9r90",
+      "sha256": "f21b8795c0bcaa3bcb8f6a05bc041ae9cd3a9c3d4d0a8c0e961999d194b3cc14",
+      "width": 3000,
+      "height": 1687,
+      "view": "Front-left 18°",
+      "credit": "Carla / Spinio",
+      "gallery_index": 19,
+      "group": "2023 · Blue Long Range AWD",
+      "pose": {
+        "theta": -0.2621192706351687,
+        "phi": 1.5738079987226685,
+        "radius": 369.3472425193806,
+        "fov": 34.05433009474937,
+        "center": [
+          -10.262909343138118,
+          63.30767798781959,
+          7.995061783497715
+        ]
+      },
+      "status": "limited",
+      "note": "The front badge and headlamp remain visible. The asymmetric lamp highlights make an optical-detail match uncertain. The 95th-percentile contour distance is 22 native-equivalent px.",
+      "measurements": {
+        "mask_fit": {
+          "iou": 0.965,
+          "median_px": 8.75,
+          "mean_px": 9.05,
+          "p95_px": 21.88
+        },
+        "independent_mask": {
+          "iou": 0.9332,
+          "median_px": 12.5,
+          "mean_px": 17.05,
+          "p95_px": 46.88
+        },
+        "image_landmarks": {
+          "front_badge": {
+            "residual_native_xy": [
+              -0.97,
+              10.0
+            ],
+            "distance_native_px": 10.05
+          },
+          "head_L": {
+            "residual_native_xy": [
+              -0.53,
+              13.39
+            ],
+            "distance_native_px": 13.4
+          },
+          "head_R": {
+            "residual_native_xy": [
+              15.16,
+              12.83
+            ],
+            "distance_native_px": 19.86
+          }
+        },
+        "rendered_x_span_native": [
+          590.6,
+          2071.9
+        ],
+        "held_out_frame": {
+          "mask_fit": {
+            "iou": 0.9643,
+            "median_px": 8.75,
+            "mean_px": 9.26,
+            "p95_px": 21.88
+          },
+          "independent_mask": {
+            "iou": 0.9318,
+            "median_px": 12.5,
+            "mean_px": 17.45,
+            "p95_px": 47.49
+          },
+          "image_landmarks": {
+            "front_badge": {
+              "residual_native_xy": [
+                0.46,
+                10.46
+              ],
+              "distance_native_px": 10.47
+            },
+            "head_L": {
+              "residual_native_xy": [
+                0.55,
+                13.81
+              ],
+              "distance_native_px": 13.82
+            },
+            "head_R": {
+              "residual_native_xy": [
+                16.75,
+                13.21
+              ],
+              "distance_native_px": 21.34
+            }
+          },
+          "rendered_x_span_native": [
+            593.8,
+            2071.9
+          ]
+        }
+      }
+    },
+    {
+      "id": "jam-view-20",
+      "original_url": "https://cdn.spinio.fi/carla/JAM20U/extra/outside07.jpg",
+      "source": "https://www.carla.se/bil/tesla-model-y-2023-daanvk29io6g00dg9r90",
+      "sha256": "1d274fc3ce9c78c476d51235533fa380a2db0d5d46afab5b25d46b09719af304",
+      "width": 2500,
+      "height": 1666,
+      "view": "Front-left three-quarter still (studio)",
+      "credit": "Carla / Spinio",
+      "gallery_index": 20,
+      "group": "2023 · Blue Long Range AWD",
+      "pose": {
+        "theta": -0.6465759104593656,
+        "phi": 1.5356670928895195,
+        "radius": 311.12675855738524,
+        "fov": 33.38032417599754,
+        "center": [
+          13.555229163459158,
+          48.03282074384978,
+          17.958334457736882
+        ]
+      },
+      "status": "verified",
+      "note": "Separate front-left still. The lamp tip and front wheel align in this tighter composition. The lower sill edge has a residual. The 95th-percentile contour distance is 30 native-equivalent px.",
+      "measurements": {
+        "mask_fit": {
+          "iou": 0.9579,
+          "median_px": 10.42,
+          "mean_px": 12.59,
+          "p95_px": 30.18
+        },
+        "independent_mask": {
+          "iou": 0.9642,
+          "median_px": 7.29,
+          "mean_px": 10.57,
+          "p95_px": 31.25
+        },
+        "image_landmarks": {
+          "FL": {
+            "residual_native_xy": [
+              -0.61,
+              -0.87
+            ],
+            "distance_native_px": 1.06
+          },
+          "RL": {
+            "residual_native_xy": [
+              0.36,
+              -0.49
+            ],
+            "distance_native_px": 0.61
+          },
+          "front_badge": {
+            "residual_native_xy": [
+              -39.48,
+              -12.51
+            ],
+            "distance_native_px": 41.42
+          },
+          "head_L": {
+            "residual_native_xy": [
+              -33.74,
+              -3.17
+            ],
+            "distance_native_px": 33.88
+          }
+        },
+        "rendered_x_span_native": [
+          171.9,
+          2315.1
+        ]
+      }
+    },
+    {
+      "id": "jam-view-21",
+      "original_url": "https://cdn.spinio.fi/carla/JAM20U/extra/outside06.jpg",
+      "source": "https://www.carla.se/bil/tesla-model-y-2023-daanvk29io6g00dg9r90",
+      "sha256": "7dc7bd058fcd16e3e271effb31dd95e36e1795e08154c940dd7605a51fd4c392",
+      "width": 2500,
+      "height": 1666,
+      "view": "Left side profile still (studio)",
+      "credit": "Carla / Spinio",
+      "gallery_index": 21,
+      "group": "2023 · Blue Long Range AWD",
+      "pose": {
+        "theta": -1.5174678563012027,
+        "phi": 1.5872584551036322,
+        "radius": 404.766575718198,
+        "fov": 38.76722018501971,
+        "center": [
+          -2.5125797504567213,
+          78.76152825147031,
+          -0.1341192008809131
+        ]
+      },
+      "status": "verified",
+      "note": "Separate left profile. The two hubs and roof arc register. Cover rotation and sidewall lettering differ. The 95th-percentile contour distance is 24 native-equivalent px.",
+      "measurements": {
+        "mask_fit": {
+          "iou": 0.9592,
+          "median_px": 7.81,
+          "mean_px": 9.06,
+          "p95_px": 24.45
+        },
+        "independent_mask": {
+          "iou": 0.9569,
+          "median_px": 7.29,
+          "mean_px": 10.41,
+          "p95_px": 34.37
+        },
+        "image_landmarks": {
+          "FL": {
+            "residual_native_xy": [
+              0.98,
+              -2.2
+            ],
+            "distance_native_px": 2.41
+          },
+          "RL": {
+            "residual_native_xy": [
+              0.03,
+              1.01
+            ],
+            "distance_native_px": 1.01
+          }
+        },
+        "rendered_x_span_native": [
+          156.2,
+          2322.9
+        ]
+      }
+    },
+    {
+      "id": "jam-view-22",
+      "original_url": "https://cdn.spinio.fi/carla/JAM20U/extra/outside05.jpg",
+      "source": "https://www.carla.se/bil/tesla-model-y-2023-daanvk29io6g00dg9r90",
+      "sha256": "cdd28a58465df255d8fe826d2e7f9c24198d4b3aa69455ee57f90b7f997e34b7",
+      "width": 2500,
+      "height": 1667,
+      "view": "Rear-left three-quarter still (studio)",
+      "credit": "Carla / Spinio",
+      "gallery_index": 22,
+      "group": "2023 · Blue Long Range AWD",
+      "pose": {
+        "theta": -2.40499260802711,
+        "phi": 1.556154798568583,
+        "radius": 331.0249269134544,
+        "fov": 32.54271340795879,
+        "center": [
+          -16.917256707256456,
+          54.1719884220394,
+          18.654469110232853
+        ]
+      },
+      "status": "limited",
+      "note": "Separate rear-left still. The red guide is visible inside its clear lens. The rear fascia and hitch differ from the US model. The 95th-percentile contour distance is 49 native-equivalent px.",
+      "measurements": {
+        "mask_fit": {
+          "iou": 0.9587,
+          "median_px": 7.81,
+          "mean_px": 12.12,
+          "p95_px": 49.43
+        },
+        "independent_mask": {
+          "iou": 0.9524,
+          "median_px": 10.94,
+          "mean_px": 14.58,
+          "p95_px": 39.06
+        },
+        "image_landmarks": {
+          "FL": {
+            "residual_native_xy": [
+              0.86,
+              0.09
+            ],
+            "distance_native_px": 0.86
+          },
+          "RL": {
+            "residual_native_xy": [
+              -0.24,
+              -1.71
+            ],
+            "distance_native_px": 1.73
+          },
+          "rear_badge": {
+            "residual_native_xy": [
+              32.75,
+              14.85
+            ],
+            "distance_native_px": 35.96
+          },
+          "tail_L": {
+            "residual_native_xy": [
+              22.8,
+              -3.82
+            ],
+            "distance_native_px": 23.12
+          },
+          "reflector_L": {
+            "residual_native_xy": [
+              60.36,
+              23.82
+            ],
+            "distance_native_px": 64.89
+          }
+        },
+        "rendered_x_span_native": [
+          143.2,
+          2307.3
+        ]
+      }
+    },
+    {
+      "id": "jam-view-23",
+      "original_url": "https://cdn.spinio.fi/carla/JAM20U/extra/outside08.jpg",
+      "source": "https://www.carla.se/bil/tesla-model-y-2023-daanvk29io6g00dg9r90",
+      "sha256": "db075758e5cd7daa6432450055788122bfefa185a9fbb3f7bd95e46363059a04",
+      "width": 2500,
+      "height": 1667,
+      "view": "Rear elevation still (studio)",
+      "credit": "Carla / Spinio",
+      "gallery_index": 23,
+      "group": "2023 · Blue Long Range AWD",
+      "pose": {
+        "theta": -3.0863717196343625,
+        "phi": 1.5643002548112765,
+        "radius": 277.71371460537944,
+        "fov": 22.638820317707317,
+        "center": [
+          -0.30923358348381763,
+          52.9396615689243,
+          5.594240749005216
+        ]
+      },
+      "status": "fix",
+      "note": "Separate rear elevation. The full body width and badge register. Both lower reflectors sit too far inboard. The EU plate and towball differ from the US configuration. The 95th-percentile contour distance is 34 native-equivalent px.",
+      "measurements": {
+        "mask_fit": {
+          "iou": 0.9644,
+          "median_px": 8.33,
+          "mean_px": 11.27,
+          "p95_px": 33.85
+        },
+        "independent_mask": {
+          "iou": 0.913,
+          "median_px": 13.01,
+          "mean_px": 28.71,
+          "p95_px": 109.38
+        },
+        "image_landmarks": {
+          "rear_badge": {
+            "residual_native_xy": [
+              1.37,
+              -0.61
+            ],
+            "distance_native_px": 1.5
+          },
+          "tail_L": {
+            "residual_native_xy": [
+              0.76,
+              -21.6
+            ],
+            "distance_native_px": 21.61
+          },
+          "tail_R": {
+            "residual_native_xy": [
+              -4.2,
+              -20.63
+            ],
+            "distance_native_px": 21.06
+          },
+          "reflector_L": {
+            "residual_native_xy": [
+              70.92,
+              1.9
+            ],
+            "distance_native_px": 70.94
+          },
+          "reflector_R": {
+            "residual_native_xy": [
+              -68.32,
+              6.74
+            ],
+            "distance_native_px": 68.65
+          }
+        },
+        "rendered_x_span_native": [
+          442.7,
+          2046.9
+        ]
+      }
+    },
+    {
+      "id": "jam-view-24",
+      "original_url": "https://cdn.spinio.fi/carla/JAM20U/extra/outside03.jpg",
+      "source": "https://www.carla.se/bil/tesla-model-y-2023-daanvk29io6g00dg9r90",
+      "sha256": "fbc6338894ef880d836b1290764313a8aa164219c03d560dfd3d001173ebe564",
+      "width": 2500,
+      "height": 1666,
+      "view": "Rear-right three-quarter still (studio)",
+      "credit": "Carla / Spinio",
+      "gallery_index": 24,
+      "group": "2023 · Blue Long Range AWD",
+      "pose": {
+        "theta": 2.4806931975590976,
+        "phi": 1.54102556582278,
+        "radius": 319.95715529989616,
+        "fov": 30.52406741488983,
+        "center": [
+          -14.014570702788907,
+          52.96732075283568,
+          -18.024078208522607
+        ]
+      },
+      "status": "limited",
+      "note": "Separate rear-right still. The outer lamp and hatch follow the same slope; illumination differs around the red light guide. The 95th-percentile contour distance is 66 native-equivalent px.",
+      "measurements": {
+        "mask_fit": {
+          "iou": 0.9479,
+          "median_px": 10.42,
+          "mean_px": 15.61,
+          "p95_px": 65.54
+        },
+        "independent_mask": {
+          "iou": 0.9501,
+          "median_px": 8.33,
+          "mean_px": 14.96,
+          "p95_px": 57.29
+        },
+        "image_landmarks": {
+          "FR": {
+            "residual_native_xy": [
+              -2.43,
+              19.06
+            ],
+            "distance_native_px": 19.22
+          },
+          "RR": {
+            "residual_native_xy": [
+              -0.69,
+              -1.8
+            ],
+            "distance_native_px": 1.93
+          },
+          "rear_badge": {
+            "residual_native_xy": [
+              -31.34,
+              9.23
+            ],
+            "distance_native_px": 32.67
+          },
+          "tail_R": {
+            "residual_native_xy": [
+              -6.05,
+              -1.62
+            ],
+            "distance_native_px": 6.26
+          },
+          "reflector_R": {
+            "residual_native_xy": [
+              -59.8,
+              29.97
+            ],
+            "distance_native_px": 66.89
+          }
+        },
+        "rendered_x_span_native": [
+          171.9,
+          2325.5
+        ]
+      }
+    },
+    {
+      "id": "jam-view-25",
+      "original_url": "https://cdn.spinio.fi/carla/JAM20U/extra/outside02.jpg",
+      "source": "https://www.carla.se/bil/tesla-model-y-2023-daanvk29io6g00dg9r90",
+      "sha256": "25363e523fd56c2119c8d159df53991bef293c0bce5755b811c61ed656c3d45d",
+      "width": 2500,
+      "height": 1667,
+      "view": "Right side profile still (studio)",
+      "credit": "Carla / Spinio",
+      "gallery_index": 25,
+      "group": "2023 · Blue Long Range AWD",
+      "pose": {
+        "theta": 1.616851280751293,
+        "phi": 1.6093913032492932,
+        "radius": 404.9759692293002,
+        "fov": 37.16668358935046,
+        "center": [
+          -3.964021047899873,
+          82.37872312688351,
+          -0.18269199192967853
+        ]
+      },
+      "status": "verified",
+      "note": "Separate right profile. The wheel spacing and roof crest register, with a stronger specular streak along the modeled doors. The 95th-percentile contour distance is 31 native-equivalent px.",
+      "measurements": {
+        "mask_fit": {
+          "iou": 0.9567,
+          "median_px": 7.81,
+          "mean_px": 9.37,
+          "p95_px": 31.25
+        },
+        "independent_mask": {
+          "iou": 0.9367,
+          "median_px": 8.33,
+          "mean_px": 14.17,
+          "p95_px": 49.48
+        },
+        "image_landmarks": {
+          "FR": {
+            "residual_native_xy": [
+              0.27,
+              1.77
+            ],
+            "distance_native_px": 1.8
+          },
+          "RR": {
+            "residual_native_xy": [
+              0.14,
+              -2.45
+            ],
+            "distance_native_px": 2.45
+          }
+        },
+        "rendered_x_span_native": [
+          166.7,
+          2335.9
+        ]
+      }
+    },
+    {
+      "id": "jam-view-26",
+      "original_url": "https://cdn.spinio.fi/carla/JAM20U/extra/outside01.jpg",
+      "source": "https://www.carla.se/bil/tesla-model-y-2023-daanvk29io6g00dg9r90",
+      "sha256": "df1bac3fe3a644559be746912b60769562f3f7609c7ec1bc5a34f2db3d4f20c7",
+      "width": 2500,
+      "height": 1666,
+      "view": "Front-right three-quarter still (studio)",
+      "credit": "Carla / Spinio",
+      "gallery_index": 26,
+      "group": "2023 · Blue Long Range AWD",
+      "pose": {
+        "theta": 0.7662098746042574,
+        "phi": 1.541950317755635,
+        "radius": 324.4217170974666,
+        "fov": 31.4619617483438,
+        "center": [
+          14.189403518131456,
+          52.869272732255965,
+          -14.744666967813286
+        ]
+      },
+      "status": "verified",
+      "note": "Separate front-right still. Both the wheel and inner lamp tip are visible. The clear lamp has a different highlight. The 95th-percentile contour distance is 31 native-equivalent px.",
+      "measurements": {
+        "mask_fit": {
+          "iou": 0.9476,
+          "median_px": 13.02,
+          "mean_px": 14.79,
+          "p95_px": 31.25
+        },
+        "independent_mask": {
+          "iou": 0.9303,
+          "median_px": 15.09,
+          "mean_px": 20.16,
+          "p95_px": 88.96
+        },
+        "image_landmarks": {
+          "FR": {
+            "residual_native_xy": [
+              0.71,
+              -1.0
+            ],
+            "distance_native_px": 1.22
+          },
+          "RR": {
+            "residual_native_xy": [
+              0.22,
+              -1.23
+            ],
+            "distance_native_px": 1.25
+          },
+          "front_badge": {
+            "residual_native_xy": [
+              27.5,
+              8.08
+            ],
+            "distance_native_px": 28.66
+          },
+          "head_R": {
+            "residual_native_xy": [
+              8.54,
+              8.48
+            ],
+            "distance_native_px": 12.03
+          }
+        },
+        "rendered_x_span_native": [
+          143.2,
+          2322.9
+        ]
+      }
+    },
+    {
+      "id": "jam-view-27",
+      "original_url": "https://cdn.spinio.fi/carla/JAM20U/extra/outside04.jpg",
+      "source": "https://www.carla.se/bil/tesla-model-y-2023-daanvk29io6g00dg9r90",
+      "sha256": "be95453e639a6564d678b9f17ad7b75cdd2e473a5ebb8dcd5716e3604a60068b",
+      "width": 2500,
+      "height": 1667,
+      "view": "Front elevation still (studio)",
+      "credit": "Carla / Spinio",
+      "gallery_index": 27,
+      "group": "2023 · Blue Long Range AWD",
+      "pose": {
+        "theta": 0.09570142168598608,
+        "phi": 1.5443236625988275,
+        "radius": 274.3650637318608,
+        "fov": 25.398654998196598,
+        "center": [
+          0.8589642014981276,
+          49.09050805758873,
+          -8.948041045304313
+        ]
+      },
+      "status": "limited",
+      "note": "Separate straight front. The hood badge and two inner headlamp corners register in this view. The lower intake and the reflected highlights differ. The 95th-percentile contour distance is 44 native-equivalent px.",
+      "measurements": {
+        "mask_fit": {
+          "iou": 0.9602,
+          "median_px": 7.29,
+          "mean_px": 11.55,
+          "p95_px": 44.25
+        },
+        "independent_mask": {
+          "iou": 0.9085,
+          "median_px": 14.05,
+          "mean_px": 26.85,
+          "p95_px": 95.5
+        },
+        "image_landmarks": {
+          "front_badge": {
+            "residual_native_xy": [
+              14.14,
+              0.26
+            ],
+            "distance_native_px": 14.14
+          },
+          "head_L": {
+            "residual_native_xy": [
+              -8.45,
+              5.79
+            ],
+            "distance_native_px": 10.25
+          },
+          "head_R": {
+            "residual_native_xy": [
+              14.08,
+              3.22
+            ],
+            "distance_native_px": 14.44
+          }
+        },
+        "rendered_x_span_native": [
+          380.2,
+          2114.6
+        ]
+      }
+    },
+    {
+      "id": "white-view-00",
+      "original_url": "https://cdn.spinio.fi/carla/MUT06Z/outside/tiles/c10_l0_0_0.jpg",
+      "source": "https://www.carla.se/bil/tesla-model-y-2023-d9vd57a9io6g00efh8bg",
+      "sha256": "45a52589283aa51a98d93b98951e7679e592eb457092032c07af6f4843a2976f",
+      "width": 3000,
+      "height": 1687,
+      "view": "Front-left three-quarter (36°)",
+      "credit": "Carla.se / Spinio studio turntable (unofficial dealer studio photography)",
+      "gallery_index": 28,
+      "group": "2023 · White Long Range AWD",
+      "pose": {
+        "theta": -0.6375,
+        "phi": 1.58098,
+        "radius": 369.889,
+        "fov": 38.29,
+        "center": [
+          -2.43,
+          62.684,
+          -3.281
+        ]
+      },
+      "status": "verified",
+      "note": "The near headlamp perimeter, wheel arch and outer mirror register together at this three-quarter angle.",
+      "contour": {
+        "iou": 0.9557,
+        "median_px": 6.87,
+        "mean_px": 11.03,
+        "p95_px": 33.71
+      }
+    },
+    {
+      "id": "white-view-01",
+      "original_url": "https://cdn.spinio.fi/carla/MUT06Z/outside/tiles/c11_l0_0_0.jpg",
+      "source": "https://www.carla.se/bil/tesla-model-y-2023-d9vd57a9io6g00efh8bg",
+      "sha256": "b6dffa6735b92d6aa7e4ca4ad84e41a6fdb2221e1a31b2da05f7cbdd9f5e65ee",
+      "width": 3000,
+      "height": 1687,
+      "view": "Front-left 54°",
+      "credit": "Carla.se / Spinio studio turntable (unofficial dealer studio photography)",
+      "gallery_index": 29,
+      "group": "2023 · White Long Range AWD",
+      "pose": {
+        "theta": -0.92074,
+        "phi": 1.55809,
+        "radius": 362.713,
+        "fov": 33.151,
+        "center": [
+          -6.487,
+          62.989,
+          -4.932
+        ]
+      },
+      "status": "verified",
+      "note": "The hood, A-pillar and rear roof corner follow the photograph. Both wheel centers sit inside the photographed hubs.",
+      "contour": {
+        "iou": 0.9614,
+        "median_px": 6.25,
+        "mean_px": 9.52,
+        "p95_px": 23.72
+      }
+    },
+    {
+      "id": "white-view-02",
+      "original_url": "https://cdn.spinio.fi/carla/MUT06Z/outside/tiles/c12_l0_0_0.jpg",
+      "source": "https://www.carla.se/bil/tesla-model-y-2023-d9vd57a9io6g00efh8bg",
+      "sha256": "e615c4719d6d97aefcc8054deab5b8f4eee854ec23aad8ce0d2a1d5a39fb39d8",
+      "width": 3000,
+      "height": 1687,
+      "view": "Front-left 72°",
+      "credit": "Carla.se / Spinio studio turntable (unofficial dealer studio photography)",
+      "gallery_index": 30,
+      "group": "2023 · White Long Range AWD",
+      "pose": {
+        "theta": -1.2506,
+        "phi": 1.56793,
+        "radius": 372.248,
+        "fov": 36.559,
+        "center": [
+          -8.033,
+          63.109,
+          -2.664
+        ]
+      },
+      "status": "verified",
+      "note": "The repeater, near arch and shoulder line stay aligned as the nose rotates away.",
+      "contour": {
+        "iou": 0.9461,
+        "median_px": 6.87,
+        "mean_px": 12.89,
+        "p95_px": 46.88
+      }
+    },
+    {
+      "id": "white-view-03",
+      "original_url": "https://cdn.spinio.fi/carla/MUT06Z/outside/tiles/c13_l0_0_0.jpg",
+      "source": "https://www.carla.se/bil/tesla-model-y-2023-d9vd57a9io6g00efh8bg",
+      "sha256": "2587944b5a146dc6efb7e3257f30e0f4393d68c35be7cb9a22e903a149c487d7",
+      "width": 3000,
+      "height": 1687,
+      "view": "Left side profile (90°)",
+      "credit": "Carla.se / Spinio studio turntable (unofficial dealer studio photography)",
+      "gallery_index": 31,
+      "group": "2023 · White Long Range AWD",
+      "pose": {
+        "theta": -1.55894,
+        "phi": 1.55971,
+        "radius": 374.435,
+        "fov": 34.941,
+        "center": [
+          -10.256,
+          63.552,
+          -0.122
+        ]
+      },
+      "status": "limited",
+      "note": "Both hubs and the roof crown register. The C-pillar taper is easier to judge than the white car’s trim reflections.",
+      "contour": {
+        "iou": 0.9493,
+        "median_px": 9.38,
+        "mean_px": 11.93,
+        "p95_px": 35.76
+      }
+    },
+    {
+      "id": "white-view-04",
+      "original_url": "https://cdn.spinio.fi/carla/MUT06Z/outside/tiles/c14_l0_0_0.jpg",
+      "source": "https://www.carla.se/bil/tesla-model-y-2023-d9vd57a9io6g00efh8bg",
+      "sha256": "63e28ad5a604857cec1b671d195ec1f67cc532b04fb3060dffa62f50ee2361b9",
+      "width": 3000,
+      "height": 1687,
+      "view": "Rear-left 108°",
+      "credit": "Carla.se / Spinio studio turntable (unofficial dealer studio photography)",
+      "gallery_index": 32,
+      "group": "2023 · White Long Range AWD",
+      "pose": {
+        "theta": -1.84766,
+        "phi": 1.57171,
+        "radius": 378.511,
+        "fov": 33.59,
+        "center": [
+          -9.144,
+          63.973,
+          2.598
+        ]
+      },
+      "status": "verified",
+      "note": "The near rear arch, side glass and lamp entry follow the white quarter panel. The towball projects beyond the model.",
+      "contour": {
+        "iou": 0.946,
+        "median_px": 9.99,
+        "mean_px": 12.96,
+        "p95_px": 40.62
+      }
+    },
+    {
+      "id": "white-view-05",
+      "original_url": "https://cdn.spinio.fi/carla/MUT06Z/outside/tiles/c15_l0_0_0.jpg",
+      "source": "https://www.carla.se/bil/tesla-model-y-2023-d9vd57a9io6g00efh8bg",
+      "sha256": "2590394fee8df39b770878de1392902cc0ba2563e7891c1b85dfb14d73664796",
+      "width": 3000,
+      "height": 1687,
+      "view": "Rear-left 126°",
+      "credit": "Carla.se / Spinio studio turntable (unofficial dealer studio photography)",
+      "gallery_index": 33,
+      "group": "2023 · White Long Range AWD",
+      "pose": {
+        "theta": -2.1552,
+        "phi": 1.59735,
+        "radius": 389.458,
+        "fov": 37.859,
+        "center": [
+          -7.473,
+          64.426,
+          4.943
+        ]
+      },
+      "status": "limited",
+      "note": "The liftgate lip and quarter lamp housing align. The white paint shows the haunch crease more clearly than the dark render.",
+      "contour": {
+        "iou": 0.9443,
+        "median_px": 9.38,
+        "mean_px": 13.59,
+        "p95_px": 43.09
+      }
+    },
+    {
+      "id": "white-view-06",
+      "original_url": "https://cdn.spinio.fi/carla/MUT06Z/outside/tiles/c16_l0_0_0.jpg",
+      "source": "https://www.carla.se/bil/tesla-model-y-2023-d9vd57a9io6g00efh8bg",
+      "sha256": "d58c819123637304a0752210870f1cb154bfcbe3ec32b0cf3f1d1178f03887a9",
+      "width": 3000,
+      "height": 1687,
+      "view": "Rear-left three-quarter (144°)",
+      "credit": "Carla.se / Spinio studio turntable (unofficial dealer studio photography)",
+      "gallery_index": 34,
+      "group": "2023 · White Long Range AWD",
+      "pose": {
+        "theta": -2.47011,
+        "phi": 1.59707,
+        "radius": 393.681,
+        "fov": 38.366,
+        "center": [
+          -4.273,
+          64.292,
+          5.378
+        ]
+      },
+      "status": "limited",
+      "note": "The hatch perimeter is close. The European plate and tow fitting mask the center of the rear bumper.",
+      "contour": {
+        "iou": 0.9592,
+        "median_px": 6.25,
+        "mean_px": 10.07,
+        "p95_px": 38.73
+      }
+    },
+    {
+      "id": "white-view-07",
+      "original_url": "https://cdn.spinio.fi/carla/MUT06Z/outside/tiles/c17_l0_0_0.jpg",
+      "source": "https://www.carla.se/bil/tesla-model-y-2023-d9vd57a9io6g00efh8bg",
+      "sha256": "f43fb84a07b3bcf3a04ca9f6cf0aa7c66e03501ad345fe3518c4f7a073a3ffd3",
+      "width": 3000,
+      "height": 1687,
+      "view": "Rear-left 162°",
+      "credit": "Carla.se / Spinio studio turntable (unofficial dealer studio photography)",
+      "gallery_index": 35,
+      "group": "2023 · White Long Range AWD",
+      "pose": {
+        "theta": -2.81413,
+        "phi": 1.61132,
+        "radius": 385.943,
+        "fov": 36.132,
+        "center": [
+          -0.729,
+          64.664,
+          2.147
+        ]
+      },
+      "status": "fix",
+      "note": "The projected lower reflector and the upper edge of the black bumper insert sit above their photographed counterparts.",
+      "contour": {
+        "iou": 0.9549,
+        "median_px": 8.75,
+        "mean_px": 10.73,
+        "p95_px": 29.97
+      }
+    },
+    {
+      "id": "white-view-08",
+      "original_url": "https://cdn.spinio.fi/carla/MUT06Z/outside/tiles/c18_l0_0_0.jpg",
+      "source": "https://www.carla.se/bil/tesla-model-y-2023-d9vd57a9io6g00efh8bg",
+      "sha256": "ec0670b1bef6839369fc1afb4850e34c042935cf45b881147f7e5c340836130f",
+      "width": 3000,
+      "height": 1687,
+      "view": "Rear elevation (180°)",
+      "credit": "Carla.se / Spinio studio turntable (unofficial dealer studio photography)",
+      "gallery_index": 36,
+      "group": "2023 · White Long Range AWD",
+      "pose": {
+        "theta": -3.10328,
+        "phi": 1.62197,
+        "radius": 354.726,
+        "fov": 25.757,
+        "center": [
+          -0.005,
+          66.39,
+          0.121
+        ]
+      },
+      "status": "fix",
+      "note": "The straight rear projection puts the two reflectors high. The towball also extends below the rendered bumper.",
+      "contour": {
+        "iou": 0.9585,
+        "median_px": 6.25,
+        "mean_px": 9.44,
+        "p95_px": 25.0
+      }
+    },
+    {
+      "id": "white-view-09",
+      "original_url": "https://cdn.spinio.fi/carla/MUT06Z/outside/tiles/c19_l0_0_0.jpg",
+      "source": "https://www.carla.se/bil/tesla-model-y-2023-d9vd57a9io6g00efh8bg",
+      "sha256": "30021e19792d1356b9647a3586fd3e3303e85ab40a381b79fc0654b767f3f29b",
+      "width": 3000,
+      "height": 1687,
+      "view": "Rear-right 198°",
+      "credit": "Carla.se / Spinio studio turntable (unofficial dealer studio photography)",
+      "gallery_index": 37,
+      "group": "2023 · White Long Range AWD",
+      "pose": {
+        "theta": 2.86748,
+        "phi": 1.62545,
+        "radius": 382.812,
+        "fov": 35.013,
+        "center": [
+          -0.942,
+          65.753,
+          -3.351
+        ]
+      },
+      "status": "fix",
+      "note": "The right rear three-quarter view repeats the high lower-bumper reflector. Its red strip is distinct against the dark insert.",
+      "contour": {
+        "iou": 0.9436,
+        "median_px": 9.38,
+        "mean_px": 13.52,
+        "p95_px": 38.7
+      }
+    },
+    {
+      "id": "white-view-10",
+      "original_url": "https://cdn.spinio.fi/carla/MUT06Z/outside/tiles/c0_l0_0_0.jpg",
+      "source": "https://www.carla.se/bil/tesla-model-y-2023-d9vd57a9io6g00efh8bg",
+      "sha256": "66f1b45410e2b7f114f0fd30681f93bd774eeffb6d1a802a507deae3953e7769",
+      "width": 3000,
+      "height": 1687,
+      "view": "Rear-right three-quarter (216°)",
+      "credit": "Carla.se / Spinio studio turntable (unofficial dealer studio photography)",
+      "gallery_index": 38,
+      "group": "2023 · White Long Range AWD",
+      "pose": {
+        "theta": 2.5067,
+        "phi": 1.5923,
+        "radius": 387.583,
+        "fov": 36.99,
+        "center": [
+          -5.286,
+          63.884,
+          -7.176
+        ]
+      },
+      "status": "verified",
+      "note": "The rear-right arch and glass taper follow the photographic outline as the plate recedes.",
+      "contour": {
+        "iou": 0.9532,
+        "median_px": 6.25,
+        "mean_px": 11.91,
+        "p95_px": 40.58
+      }
+    },
+    {
+      "id": "white-view-11",
+      "original_url": "https://cdn.spinio.fi/carla/MUT06Z/outside/tiles/c1_l0_0_0.jpg",
+      "source": "https://www.carla.se/bil/tesla-model-y-2023-d9vd57a9io6g00efh8bg",
+      "sha256": "91f4695037e0a838617172ad1eacf0a573c6c5589fc25b0ed7fef40af200ce01",
+      "width": 3000,
+      "height": 1687,
+      "view": "Rear-right 234°",
+      "credit": "Carla.se / Spinio studio turntable (unofficial dealer studio photography)",
+      "gallery_index": 39,
+      "group": "2023 · White Long Range AWD",
+      "pose": {
+        "theta": 2.23649,
+        "phi": 1.54953,
+        "radius": 366.381,
+        "fov": 27.665,
+        "center": [
+          -4.818,
+          62.926,
+          -3.783
+        ]
+      },
+      "status": "limited",
+      "note": "The towball protrudes behind the left edge of the overlay. The cabin beltline and rear arch are easier to compare.",
+      "contour": {
+        "iou": 0.9309,
+        "median_px": 12.5,
+        "mean_px": 17.13,
+        "p95_px": 52.46
+      }
+    },
+    {
+      "id": "white-view-12",
+      "original_url": "https://cdn.spinio.fi/carla/MUT06Z/outside/tiles/c2_l0_0_0.jpg",
+      "source": "https://www.carla.se/bil/tesla-model-y-2023-d9vd57a9io6g00efh8bg",
+      "sha256": "3808b3a9e2892005b3cc7f9c9612786e7d4e1154ee913482a7080cf769faf19f",
+      "width": 3000,
+      "height": 1687,
+      "view": "Rear-right 252°",
+      "credit": "Carla.se / Spinio studio turntable (unofficial dealer studio photography)",
+      "gallery_index": 40,
+      "group": "2023 · White Long Range AWD",
+      "pose": {
+        "theta": 1.89284,
+        "phi": 1.5663,
+        "radius": 374.41,
+        "fov": 32.305,
+        "center": [
+          -10.799,
+          63.571,
+          -3.603
+        ]
+      },
+      "status": "verified",
+      "note": "The roof taper, outer tire positions and door-handle row carry through the shallow right rear angle.",
+      "contour": {
+        "iou": 0.9492,
+        "median_px": 8.75,
+        "mean_px": 12.24,
+        "p95_px": 40.62
+      }
+    },
+    {
+      "id": "white-view-13",
+      "original_url": "https://cdn.spinio.fi/carla/MUT06Z/outside/tiles/c3_l0_0_0.jpg",
+      "source": "https://www.carla.se/bil/tesla-model-y-2023-d9vd57a9io6g00efh8bg",
+      "sha256": "3cf052b757913772ed1a87a795953b36501a5a98e95f9f0677b7cad6967a9f87",
+      "width": 3000,
+      "height": 1687,
+      "view": "Right side profile (270°)",
+      "credit": "Carla.se / Spinio studio turntable (unofficial dealer studio photography)",
+      "gallery_index": 41,
+      "group": "2023 · White Long Range AWD",
+      "pose": {
+        "theta": 1.58124,
+        "phi": 1.55979,
+        "radius": 371.856,
+        "fov": 34.645,
+        "center": [
+          -11.652,
+          63.527,
+          -0.122
+        ]
+      },
+      "status": "verified",
+      "note": "The two axle centers and roof crown follow the right-side elevation. The wheel faces have different rotation.",
+      "contour": {
+        "iou": 0.9308,
+        "median_px": 9.38,
+        "mean_px": 16.19,
+        "p95_px": 53.12
+      }
+    },
+    {
+      "id": "white-view-14",
+      "original_url": "https://cdn.spinio.fi/carla/MUT06Z/outside/tiles/c4_l0_0_0.jpg",
+      "source": "https://www.carla.se/bil/tesla-model-y-2023-d9vd57a9io6g00efh8bg",
+      "sha256": "5b36df15d83711b33a4906848a01991dcf20fa61fcfeacc6c4a7eb1748a5edcf",
+      "width": 3000,
+      "height": 1687,
+      "view": "Front-right 288°",
+      "credit": "Carla.se / Spinio studio turntable (unofficial dealer studio photography)",
+      "gallery_index": 42,
+      "group": "2023 · White Long Range AWD",
+      "pose": {
+        "theta": 1.27821,
+        "phi": 1.5777,
+        "radius": 368.356,
+        "fov": 34.895,
+        "center": [
+          -9.322,
+          63.779,
+          2.808
+        ]
+      },
+      "status": "limited",
+      "note": "Side glass shape and both hubs agree. The angled foreground wheel obscures part of the front rocker junction.",
+      "contour": {
+        "iou": 0.959,
+        "median_px": 6.25,
+        "mean_px": 9.8,
+        "p95_px": 37.5
+      }
+    },
+    {
+      "id": "white-view-15",
+      "original_url": "https://cdn.spinio.fi/carla/MUT06Z/outside/tiles/c5_l0_0_0.jpg",
+      "source": "https://www.carla.se/bil/tesla-model-y-2023-d9vd57a9io6g00efh8bg",
+      "sha256": "8843a15d56eadfe223a7db416ab3ae1fee9ddd1581cfc1d57a49f7efeededb91",
+      "width": 3000,
+      "height": 1687,
+      "view": "Front-right 306°",
+      "credit": "Carla.se / Spinio studio turntable (unofficial dealer studio photography)",
+      "gallery_index": 43,
+      "group": "2023 · White Long Range AWD",
+      "pose": {
+        "theta": 0.95359,
+        "phi": 1.56474,
+        "radius": 361.053,
+        "fov": 32.73,
+        "center": [
+          -7.134,
+          63.392,
+          5.063
+        ]
+      },
+      "status": "verified",
+      "note": "The right headlamp outer corner, forward arch and windshield pillar register at this oblique angle.",
+      "contour": {
+        "iou": 0.9574,
+        "median_px": 8.75,
+        "mean_px": 10.39,
+        "p95_px": 26.23
+      }
+    },
+    {
+      "id": "white-view-16",
+      "original_url": "https://cdn.spinio.fi/carla/MUT06Z/outside/tiles/c6_l0_0_0.jpg",
+      "source": "https://www.carla.se/bil/tesla-model-y-2023-d9vd57a9io6g00efh8bg",
+      "sha256": "ed2968d63ee3b2dfc467a1620126c7de93b118f82adf920b95c5956f83ef4cf5",
+      "width": 3000,
+      "height": 1687,
+      "view": "Front-right three-quarter (324°)",
+      "credit": "Carla.se / Spinio studio turntable (unofficial dealer studio photography)",
+      "gallery_index": 44,
+      "group": "2023 · White Long Range AWD",
+      "pose": {
+        "theta": 0.66487,
+        "phi": 1.59079,
+        "radius": 370.192,
+        "fov": 39.576,
+        "center": [
+          -1.577,
+          62.578,
+          2.011
+        ]
+      },
+      "status": "limited",
+      "note": "The nose envelope is close. Reflected studio light and illuminated lamps obscure the fine lower lens edge.",
+      "contour": {
+        "iou": 0.9586,
+        "median_px": 8.75,
+        "mean_px": 10.33,
+        "p95_px": 28.74
+      }
+    },
+    {
+      "id": "white-view-17",
+      "original_url": "https://cdn.spinio.fi/carla/MUT06Z/outside/tiles/c7_l0_0_0.jpg",
+      "source": "https://www.carla.se/bil/tesla-model-y-2023-d9vd57a9io6g00efh8bg",
+      "sha256": "57f31ea15cbec060eea157d10b9fee48164792286464f035c0dc1c1d9e3ab900",
+      "width": 3000,
+      "height": 1687,
+      "view": "Front-right 342°",
+      "credit": "Carla.se / Spinio studio turntable (unofficial dealer studio photography)",
+      "gallery_index": 45,
+      "group": "2023 · White Long Range AWD",
+      "pose": {
+        "theta": 0.3472,
+        "phi": 1.59313,
+        "radius": 369.694,
+        "fov": 38.407,
+        "center": [
+          -0.218,
+          63.491,
+          0.603
+        ]
+      },
+      "status": "fix",
+      "note": "The lower intake projects below the dark opening on the white car. The slight camera angle accentuates the near corner.",
+      "contour": {
+        "iou": 0.9704,
+        "median_px": 6.25,
+        "mean_px": 7.54,
+        "p95_px": 18.75
+      }
+    },
+    {
+      "id": "white-view-18",
+      "original_url": "https://cdn.spinio.fi/carla/MUT06Z/outside/tiles/c8_l0_0_0.jpg",
+      "source": "https://www.carla.se/bil/tesla-model-y-2023-d9vd57a9io6g00efh8bg",
+      "sha256": "68ec603af4ea3de365f23968a198d74cb4bbad54f47d5a9f6cec592e1bacbad8",
+      "width": 3000,
+      "height": 1687,
+      "view": "Front elevation (0°)",
+      "credit": "Carla.se / Spinio studio turntable (unofficial dealer studio photography)",
+      "gallery_index": 46,
+      "group": "2023 · White Long Range AWD",
+      "pose": {
+        "theta": 0.0106,
+        "phi": 1.56132,
+        "radius": 379.969,
+        "fov": 39.778,
+        "center": [
+          0.002,
+          63.594,
+          -0.222
+        ]
+      },
+      "status": "fix",
+      "note": "The mesh headlamp lower edges and central grille extend below the photographed cut lines on both sides.",
+      "contour": {
+        "iou": 0.9215,
+        "median_px": 11.24,
+        "mean_px": 19.56,
+        "p95_px": 52.46
+      }
+    },
+    {
+      "id": "white-view-19",
+      "original_url": "https://cdn.spinio.fi/carla/MUT06Z/outside/tiles/c9_l0_0_0.jpg",
+      "source": "https://www.carla.se/bil/tesla-model-y-2023-d9vd57a9io6g00efh8bg",
+      "sha256": "c8d3456683adb3e5d1dd6b313848757e57dda0f96900baa2a8b4c6e23d129ac9",
+      "width": 3000,
+      "height": 1687,
+      "view": "Front-left 18°",
+      "credit": "Carla.se / Spinio studio turntable (unofficial dealer studio photography)",
+      "gallery_index": 47,
+      "group": "2023 · White Long Range AWD",
+      "pose": {
+        "theta": -0.31226,
+        "phi": 1.58941,
+        "radius": 367.595,
+        "fov": 37.477,
+        "center": [
+          -0.584,
+          63.391,
+          -1.811
+        ]
+      },
+      "status": "limited",
+      "note": "The badge and outer windshield are close. The front plate and the lit headlamps restrict fascia-detail comparison.",
+      "contour": {
+        "iou": 0.97,
+        "median_px": 6.25,
+        "mean_px": 7.64,
+        "p95_px": 21.88
+      }
+    },
+    {
+      "id": "white-view-20",
+      "original_url": "https://cdn.spinio.fi/carla/MUT06Z/extra/outside07.jpg",
+      "source": "https://www.carla.se/bil/tesla-model-y-2023-d9vd57a9io6g00efh8bg",
+      "sha256": "9b661f500f61c2d10f8857778f073b386449e35ccef55ab1d9dc836370b5d084",
+      "width": 2500,
+      "height": 1667,
+      "view": "Front-left three-quarter still (studio)",
+      "credit": "Carla.se / Spinio studio turntable (unofficial dealer studio photography)",
+      "gallery_index": 48,
+      "group": "2023 · White Long Range AWD",
+      "pose": {
+        "theta": -0.71396,
+        "phi": 1.54611,
+        "radius": 320.085,
+        "fov": 35.951,
+        "center": [
+          15.394,
+          49.081,
+          17.767
+        ]
+      },
+      "status": "verified",
+      "note": "The still confirms the hood-to-fender seam and the near front wheel center seen in the first orbit frame.",
+      "contour": {
+        "iou": 0.9438,
+        "median_px": 13.53,
+        "mean_px": 16.47,
+        "p95_px": 39.02
+      }
+    },
+    {
+      "id": "white-view-21",
+      "original_url": "https://cdn.spinio.fi/carla/MUT06Z/extra/outside06.jpg",
+      "source": "https://www.carla.se/bil/tesla-model-y-2023-d9vd57a9io6g00efh8bg",
+      "sha256": "be91471737193f7d90bc39430509db316e3fc58d681516f739c23c22f6635d6f",
+      "width": 2500,
+      "height": 1667,
+      "view": "Left side profile still (studio)",
+      "credit": "Carla.se / Spinio studio turntable (unofficial dealer studio photography)",
+      "gallery_index": 49,
+      "group": "2023 · White Long Range AWD",
+      "pose": {
+        "theta": -1.55507,
+        "phi": 1.62428,
+        "radius": 406.071,
+        "fov": 36.74,
+        "center": [
+          -3.21,
+          82.82,
+          -0.05
+        ]
+      },
+      "status": "limited",
+      "note": "The door seam and front handle sit close at native scale. A small lateral disagreement remains at the B-pillar.",
+      "contour": {
+        "iou": 0.9572,
+        "median_px": 7.81,
+        "mean_px": 9.25,
+        "p95_px": 26.04
+      }
+    },
+    {
+      "id": "white-view-22",
+      "original_url": "https://cdn.spinio.fi/carla/MUT06Z/extra/outside05.jpg",
+      "source": "https://www.carla.se/bil/tesla-model-y-2023-d9vd57a9io6g00efh8bg",
+      "sha256": "93586baa315a4758acb2f52b76ea14fb6e09f246bb129088a23e519a6ad09ab1",
+      "width": 2500,
+      "height": 1667,
+      "view": "Rear-left three-quarter still (studio)",
+      "credit": "Carla.se / Spinio studio turntable (unofficial dealer studio photography)",
+      "gallery_index": 50,
+      "group": "2023 · White Long Range AWD",
+      "pose": {
+        "theta": -2.43543,
+        "phi": 1.56226,
+        "radius": 330.869,
+        "fov": 32.177,
+        "center": [
+          -16.512,
+          54.936,
+          19.361
+        ]
+      },
+      "status": "verified",
+      "note": "The hatch lip and left tail-lamp housing register with the still. The EU tow fitting remains visible under the bumper.",
+      "contour": {
+        "iou": 0.9599,
+        "median_px": 5.72,
+        "mean_px": 11.67,
+        "p95_px": 36.46
+      }
+    },
+    {
+      "id": "white-view-23",
+      "original_url": "https://cdn.spinio.fi/carla/MUT06Z/extra/outside08.jpg",
+      "source": "https://www.carla.se/bil/tesla-model-y-2023-d9vd57a9io6g00efh8bg",
+      "sha256": "5f6ebe246e3a7db211b093f16ce052e2535be874b7003634562262a15bc86b86",
+      "width": 2500,
+      "height": 1667,
+      "view": "Rear elevation still (studio)",
+      "credit": "Carla.se / Spinio studio turntable (unofficial dealer studio photography)",
+      "gallery_index": 51,
+      "group": "2023 · White Long Range AWD",
+      "pose": {
+        "theta": -3.10535,
+        "phi": 1.60908,
+        "radius": 277.107,
+        "fov": 20.083,
+        "center": [
+          -0.134,
+          56.069,
+          3.704
+        ]
+      },
+      "status": "fix",
+      "note": "The rear reflectors appear above the photographed red strips. The DUAL MOTOR badge is also high and too narrow in projection.",
+      "contour": {
+        "iou": 0.9503,
+        "median_px": 7.81,
+        "mean_px": 14.26,
+        "p95_px": 44.27
+      }
+    },
+    {
+      "id": "white-view-24",
+      "original_url": "https://cdn.spinio.fi/carla/MUT06Z/extra/outside03.jpg",
+      "source": "https://www.carla.se/bil/tesla-model-y-2023-d9vd57a9io6g00efh8bg",
+      "sha256": "b98c09ea4ace72ec90cac4900f0959e22b8f85ca4424f65243d1ab76a850e103",
+      "width": 2500,
+      "height": 1667,
+      "view": "Rear-right three-quarter still (studio)",
+      "credit": "Carla.se / Spinio studio turntable (unofficial dealer studio photography)",
+      "gallery_index": 52,
+      "group": "2023 · White Long Range AWD",
+      "pose": {
+        "theta": 2.45934,
+        "phi": 1.54795,
+        "radius": 324.344,
+        "fov": 31.758,
+        "center": [
+          -14.659,
+          52.542,
+          -18.044
+        ]
+      },
+      "status": "limited",
+      "note": "The rear quarter, fender arch and near lamp are close. The EU plate recess and tow fitting limit center-rear checks.",
+      "contour": {
+        "iou": 0.9559,
+        "median_px": 9.89,
+        "mean_px": 13.09,
+        "p95_px": 37.99
+      }
+    },
+    {
+      "id": "white-view-25",
+      "original_url": "https://cdn.spinio.fi/carla/MUT06Z/extra/outside02.jpg",
+      "source": "https://www.carla.se/bil/tesla-model-y-2023-d9vd57a9io6g00efh8bg",
+      "sha256": "2e26fd941a511f3f89d0d688a9436e5d274c3a09cec25594a9039dff95cc437c",
+      "width": 2500,
+      "height": 1666,
+      "view": "Right side profile still (studio)",
+      "credit": "Carla.se / Spinio studio turntable (unofficial dealer studio photography)",
+      "gallery_index": 53,
+      "group": "2023 · White Long Range AWD",
+      "pose": {
+        "theta": 1.591,
+        "phi": 1.61165,
+        "radius": 409.438,
+        "fov": 38.285,
+        "center": [
+          -2.732,
+          81.582,
+          -0.055
+        ]
+      },
+      "status": "verified",
+      "note": "Both tire centers, roof crest and handle spacing register on the right-side still.",
+      "contour": {
+        "iou": 0.9545,
+        "median_px": 7.29,
+        "mean_px": 9.86,
+        "p95_px": 31.25
+      }
+    },
+    {
+      "id": "white-view-26",
+      "original_url": "https://cdn.spinio.fi/carla/MUT06Z/extra/outside01.jpg",
+      "source": "https://www.carla.se/bil/tesla-model-y-2023-d9vd57a9io6g00efh8bg",
+      "sha256": "ef0cacc58e4159e50b92658063cd684ca81cedba68ab31468744b753212ab9ab",
+      "width": 2500,
+      "height": 1667,
+      "view": "Front-right three-quarter still (studio)",
+      "credit": "Carla.se / Spinio studio turntable (unofficial dealer studio photography)",
+      "gallery_index": 54,
+      "group": "2023 · White Long Range AWD",
+      "pose": {
+        "theta": 0.7472,
+        "phi": 1.53583,
+        "radius": 325.842,
+        "fov": 35.56,
+        "center": [
+          17.056,
+          49.094,
+          -18.412
+        ]
+      },
+      "status": "limited",
+      "note": "The near headlamp and front tire center agree. The EU front plate blocks the middle of the fascia.",
+      "contour": {
+        "iou": 0.949,
+        "median_px": 13.01,
+        "mean_px": 14.45,
+        "p95_px": 33.3
+      }
+    },
+    {
+      "id": "white-view-27",
+      "original_url": "https://cdn.spinio.fi/carla/MUT06Z/extra/outside04.jpg",
+      "source": "https://www.carla.se/bil/tesla-model-y-2023-d9vd57a9io6g00efh8bg",
+      "sha256": "5f2ce28712c30d3214f87e6fc39b9572a8eb93d68796c0fff1fb3dec533cfdd6",
+      "width": 2500,
+      "height": 1666,
+      "view": "Front elevation still (studio)",
+      "credit": "Carla.se / Spinio studio turntable (unofficial dealer studio photography)",
+      "gallery_index": 55,
+      "group": "2023 · White Long Range AWD",
+      "pose": {
+        "theta": 0.01632,
+        "phi": 1.49449,
+        "radius": 299.415,
+        "fov": 31.726,
+        "center": [
+          0.022,
+          46.419,
+          -1.353
+        ]
+      },
+      "status": "fix",
+      "note": "The hood leading seam and lower headlamp perimeter project below the corresponding lines on this frontal still.",
+      "contour": {
+        "iou": 0.9085,
+        "median_px": 19.77,
+        "mean_px": 28.6,
+        "p95_px": 75.52
+      }
+    },
+    {
+      "id": "view-00",
+      "original_url": "https://cdn.spinio.fi/carla/FEZ73B/outside/tiles/c10_l0_0_0.jpg",
+      "source": "https://www.carla.se/bil/tesla-model-y-2024-daqds2i9io6g00ejc86g",
+      "sha256": "72b411c87fc974f7f3f4e700211d3c633768e848c66a9c200cf690a4675c7849",
+      "width": 3000,
+      "height": 1687,
+      "view": "Front-left three-quarter (36°)",
+      "credit": "Carla.se / Spinio studio turntable (unofficial dealer studio photography)",
+      "gallery_index": 56,
+      "group": "2024 · Blue Long Range AWD",
+      "pose": {
+        "theta": -0.69253,
+        "phi": 1.58161,
+        "radius": 366.925,
+        "fov": 39.964,
+        "center": [
+          0.208,
+          61.848,
+          0.251
+        ]
+      },
+      "status": "verified",
+      "note": "The near headlamp shell, front wheel arch and windshield envelope follow the blue studio photograph.",
+      "contour": {
+        "iou": 0.9638,
+        "median_px": 6.87,
+        "mean_px": 9.23,
+        "p95_px": 23.35
+      }
+    },
+    {
+      "id": "view-01",
+      "original_url": "https://cdn.spinio.fi/carla/FEZ73B/outside/tiles/c11_l0_0_0.jpg",
+      "source": "https://www.carla.se/bil/tesla-model-y-2024-daqds2i9io6g00ejc86g",
+      "sha256": "02bc0790522837b696d23e716c1f3046507e16baf6bdf90d481ba84ac067e02c",
+      "width": 3000,
+      "height": 1687,
+      "view": "Front-left 54°",
+      "credit": "Carla.se / Spinio studio turntable (unofficial dealer studio photography)",
+      "gallery_index": 57,
+      "group": "2024 · Blue Long Range AWD",
+      "pose": {
+        "theta": -0.96759,
+        "phi": 1.55517,
+        "radius": 355.885,
+        "fov": 32.563,
+        "center": [
+          -5.71,
+          62.388,
+          -3.933
+        ]
+      },
+      "status": "limited",
+      "note": "The blue roof and front fender register. Strong strip-light reflections obscure the shoulder contour behind the mirror.",
+      "contour": {
+        "iou": 0.966,
+        "median_px": 6.25,
+        "mean_px": 8.49,
+        "p95_px": 25.62
+      }
+    },
+    {
+      "id": "view-02",
+      "original_url": "https://cdn.spinio.fi/carla/FEZ73B/outside/tiles/c12_l0_0_0.jpg",
+      "source": "https://www.carla.se/bil/tesla-model-y-2024-daqds2i9io6g00ejc86g",
+      "sha256": "f2e88a52fcf5b74f6890afab236cca045384f7d1264a96531b2dad25d3ac0e16",
+      "width": 3000,
+      "height": 1687,
+      "view": "Front-left 72°",
+      "credit": "Carla.se / Spinio studio turntable (unofficial dealer studio photography)",
+      "gallery_index": 58,
+      "group": "2024 · Blue Long Range AWD",
+      "pose": {
+        "theta": -1.30314,
+        "phi": 1.55561,
+        "radius": 364.733,
+        "fov": 36.539,
+        "center": [
+          -7.999,
+          62.274,
+          -2.194
+        ]
+      },
+      "status": "verified",
+      "note": "The two wheel centers, near-side door line and hood silhouette carry through the shallow front angle.",
+      "contour": {
+        "iou": 0.9598,
+        "median_px": 6.25,
+        "mean_px": 9.61,
+        "p95_px": 37.5
+      }
+    },
+    {
+      "id": "view-03",
+      "original_url": "https://cdn.spinio.fi/carla/FEZ73B/outside/tiles/c13_l0_0_0.jpg",
+      "source": "https://www.carla.se/bil/tesla-model-y-2024-daqds2i9io6g00ejc86g",
+      "sha256": "7a04d04609ca6da8534eae52c2404361741410fb4551fa4c4c2f935ea212dd45",
+      "width": 3000,
+      "height": 1687,
+      "view": "Left side profile (90°)",
+      "credit": "Carla.se / Spinio studio turntable (unofficial dealer studio photography)",
+      "gallery_index": 59,
+      "group": "2024 · Blue Long Range AWD",
+      "pose": {
+        "theta": -1.58691,
+        "phi": 1.56052,
+        "radius": 369.729,
+        "fov": 37.645,
+        "center": [
+          -10.724,
+          62.567,
+          0.173
+        ]
+      },
+      "status": "verified",
+      "note": "The side elevation aligns at both axles, roof crown and lower window trim. The photographed glass is more reflective.",
+      "contour": {
+        "iou": 0.9667,
+        "median_px": 6.25,
+        "mean_px": 8.29,
+        "p95_px": 21.88
+      }
+    },
+    {
+      "id": "view-04",
+      "original_url": "https://cdn.spinio.fi/carla/FEZ73B/outside/tiles/c14_l0_0_0.jpg",
+      "source": "https://www.carla.se/bil/tesla-model-y-2024-daqds2i9io6g00ejc86g",
+      "sha256": "50eecfa5330ee433fc042490395f68f21917b6d8d7c4aacf23aa64ba90f16ce1",
+      "width": 3000,
+      "height": 1687,
+      "view": "Rear-left 108°",
+      "credit": "Carla.se / Spinio studio turntable (unofficial dealer studio photography)",
+      "gallery_index": 60,
+      "group": "2024 · Blue Long Range AWD",
+      "pose": {
+        "theta": -1.88083,
+        "phi": 1.58196,
+        "radius": 373.704,
+        "fov": 35.684,
+        "center": [
+          -11.135,
+          63.54,
+          3.567
+        ]
+      },
+      "status": "limited",
+      "note": "The C-pillar and near arch agree. The removable hitch extends outside the model’s rear silhouette.",
+      "contour": {
+        "iou": 0.9748,
+        "median_px": 4.38,
+        "mean_px": 6.27,
+        "p95_px": 20.6
+      }
+    },
+    {
+      "id": "view-05",
+      "original_url": "https://cdn.spinio.fi/carla/FEZ73B/outside/tiles/c15_l0_0_0.jpg",
+      "source": "https://www.carla.se/bil/tesla-model-y-2024-daqds2i9io6g00ejc86g",
+      "sha256": "30cee0cd9f5ab23647f08f0394070815a28630a694eae9c36d2135ccc00e7f32",
+      "width": 3000,
+      "height": 1687,
+      "view": "Rear-left 126°",
+      "credit": "Carla.se / Spinio studio turntable (unofficial dealer studio photography)",
+      "gallery_index": 61,
+      "group": "2024 · Blue Long Range AWD",
+      "pose": {
+        "theta": -2.2405,
+        "phi": 1.55987,
+        "radius": 363.607,
+        "fov": 29.053,
+        "center": [
+          -5.658,
+          63.016,
+          4.48
+        ]
+      },
+      "status": "verified",
+      "note": "The left lamp housing and sharp hatch lip land on the photographed features as the car rotates toward the rear.",
+      "contour": {
+        "iou": 0.9622,
+        "median_px": 6.25,
+        "mean_px": 9.49,
+        "p95_px": 35.61
+      }
+    },
+    {
+      "id": "view-06",
+      "original_url": "https://cdn.spinio.fi/carla/FEZ73B/outside/tiles/c16_l0_0_0.jpg",
+      "source": "https://www.carla.se/bil/tesla-model-y-2024-daqds2i9io6g00ejc86g",
+      "sha256": "009216f5f7c7b313f578bb9eef3d6ee8d96040f6795bed77257f5bc6a8e3fdef",
+      "width": 3000,
+      "height": 1687,
+      "view": "Rear-left three-quarter (144°)",
+      "credit": "Carla.se / Spinio studio turntable (unofficial dealer studio photography)",
+      "gallery_index": 62,
+      "group": "2024 · Blue Long Range AWD",
+      "pose": {
+        "theta": -2.52821,
+        "phi": 1.59993,
+        "radius": 381.828,
+        "fov": 36.237,
+        "center": [
+          -5.235,
+          64.101,
+          7.436
+        ]
+      },
+      "status": "limited",
+      "note": "The lamp housing and hatch edge are legible. Wide plate, lit optics and tow assembly change the center-rear appearance.",
+      "contour": {
+        "iou": 0.9625,
+        "median_px": 6.25,
+        "mean_px": 9.61,
+        "p95_px": 43.75
+      }
+    },
+    {
+      "id": "view-07",
+      "original_url": "https://cdn.spinio.fi/carla/FEZ73B/outside/tiles/c17_l0_0_0.jpg",
+      "source": "https://www.carla.se/bil/tesla-model-y-2024-daqds2i9io6g00ejc86g",
+      "sha256": "99e319c960f7aef1fcf2747577df9dab19031bc8a5bf6fd74286b1337198918d",
+      "width": 3000,
+      "height": 1687,
+      "view": "Rear-left 162°",
+      "credit": "Carla.se / Spinio studio turntable (unofficial dealer studio photography)",
+      "gallery_index": 63,
+      "group": "2024 · Blue Long Range AWD",
+      "pose": {
+        "theta": -2.85559,
+        "phi": 1.6132,
+        "radius": 380.106,
+        "fov": 35.683,
+        "center": [
+          -1.637,
+          64.298,
+          5.565
+        ]
+      },
+      "status": "fix",
+      "note": "The lower black insert and reflector line project high even with the roof and lamp housing closely registered.",
+      "contour": {
+        "iou": 0.9574,
+        "median_px": 9.38,
+        "mean_px": 10.14,
+        "p95_px": 23.72
+      }
+    },
+    {
+      "id": "view-08",
+      "original_url": "https://cdn.spinio.fi/carla/FEZ73B/outside/tiles/c18_l0_0_0.jpg",
+      "source": "https://www.carla.se/bil/tesla-model-y-2024-daqds2i9io6g00ejc86g",
+      "sha256": "20c6eb8320e3308e65b836f8b5400feefca2a51eb6422830b6c668ee682b4cdd",
+      "width": 3000,
+      "height": 1687,
+      "view": "Rear elevation (180°)",
+      "credit": "Carla.se / Spinio studio turntable (unofficial dealer studio photography)",
+      "gallery_index": 64,
+      "group": "2024 · Blue Long Range AWD",
+      "pose": {
+        "theta": 3.1074,
+        "phi": 1.63388,
+        "radius": 345.227,
+        "fov": 23.497,
+        "center": [
+          0.041,
+          66.836,
+          1.185
+        ]
+      },
+      "status": "fix",
+      "note": "At native scale, the mesh reflector sits distinctly above the red strip. The adjacent black insert has the same offset.",
+      "contour": {
+        "iou": 0.9454,
+        "median_px": 6.87,
+        "mean_px": 12.38,
+        "p95_px": 40.62
+      }
+    },
+    {
+      "id": "view-09",
+      "original_url": "https://cdn.spinio.fi/carla/FEZ73B/outside/tiles/c19_l0_0_0.jpg",
+      "source": "https://www.carla.se/bil/tesla-model-y-2024-daqds2i9io6g00ejc86g",
+      "sha256": "b0b62cf1ab0cf7457864b36eccb3fcaa42508dc5afbc695f0aad86020e3bcd18",
+      "width": 3000,
+      "height": 1687,
+      "view": "Rear-right 198°",
+      "credit": "Carla.se / Spinio studio turntable (unofficial dealer studio photography)",
+      "gallery_index": 65,
+      "group": "2024 · Blue Long Range AWD",
+      "pose": {
+        "theta": 2.81957,
+        "phi": 1.61812,
+        "radius": 383.773,
+        "fov": 36.017,
+        "center": [
+          -0.558,
+          64.742,
+          -1.673
+        ]
+      },
+      "status": "fix",
+      "note": "The right-side reflector and black bumper boundary repeat the high projection seen straight from behind.",
+      "contour": {
+        "iou": 0.9519,
+        "median_px": 9.99,
+        "mean_px": 11.98,
+        "p95_px": 28.74
+      }
+    },
+    {
+      "id": "view-10",
+      "original_url": "https://cdn.spinio.fi/carla/FEZ73B/outside/tiles/c0_l0_0_0.jpg",
+      "source": "https://www.carla.se/bil/tesla-model-y-2024-daqds2i9io6g00ejc86g",
+      "sha256": "2f5b07ad162a0ee5e2d8f4bb9ac0a964d8bec244f6916514b2ee1eceb2fc7890",
+      "width": 3000,
+      "height": 1687,
+      "view": "Rear-right three-quarter (216°)",
+      "credit": "Carla.se / Spinio studio turntable (unofficial dealer studio photography)",
+      "gallery_index": 66,
+      "group": "2024 · Blue Long Range AWD",
+      "pose": {
+        "theta": 2.45317,
+        "phi": 1.58694,
+        "radius": 388.679,
+        "fov": 37.331,
+        "center": [
+          -4.499,
+          63.285,
+          -5.469
+        ]
+      },
+      "status": "limited",
+      "note": "The rear-right arch and roof taper register. The illuminated lamp and EU plate limit an intensity-based comparison.",
+      "contour": {
+        "iou": 0.9634,
+        "median_px": 6.25,
+        "mean_px": 9.15,
+        "p95_px": 41.24
+      }
+    },
+    {
+      "id": "view-11",
+      "original_url": "https://cdn.spinio.fi/carla/FEZ73B/outside/tiles/c1_l0_0_0.jpg",
+      "source": "https://www.carla.se/bil/tesla-model-y-2024-daqds2i9io6g00ejc86g",
+      "sha256": "734f6170e0bfe58491abf23f1d420a424690fba9ad37b22b6a4ef2681e2d0405",
+      "width": 3000,
+      "height": 1687,
+      "view": "Rear-right 234°",
+      "credit": "Carla.se / Spinio studio turntable (unofficial dealer studio photography)",
+      "gallery_index": 67,
+      "group": "2024 · Blue Long Range AWD",
+      "pose": {
+        "theta": 2.16152,
+        "phi": 1.56016,
+        "radius": 377.805,
+        "fov": 32.798,
+        "center": [
+          -6.472,
+          62.718,
+          -4.34
+        ]
+      },
+      "status": "verified",
+      "note": "The right-hand rear wheel arch, rear side-glass taper and beltline track the studio car through the oblique view.",
+      "contour": {
+        "iou": 0.9541,
+        "median_px": 6.25,
+        "mean_px": 11.52,
+        "p95_px": 44.98
+      }
+    },
+    {
+      "id": "view-12",
+      "original_url": "https://cdn.spinio.fi/carla/FEZ73B/outside/tiles/c2_l0_0_0.jpg",
+      "source": "https://www.carla.se/bil/tesla-model-y-2024-daqds2i9io6g00ejc86g",
+      "sha256": "563ed7ddbb271dc28266f4b3c8068948e6492eeb8f5c0bfe3c61a8c2afb3bb96",
+      "width": 3000,
+      "height": 1687,
+      "view": "Rear-right 252°",
+      "credit": "Carla.se / Spinio studio turntable (unofficial dealer studio photography)",
+      "gallery_index": 68,
+      "group": "2024 · Blue Long Range AWD",
+      "pose": {
+        "theta": 1.83636,
+        "phi": 1.56565,
+        "radius": 378.317,
+        "fov": 35.014,
+        "center": [
+          -11.133,
+          62.841,
+          -3.028
+        ]
+      },
+      "status": "limited",
+      "note": "Wheel centers and glass limits agree. Dark paint and studio reflections conceal the crease across the rear door.",
+      "contour": {
+        "iou": 0.9611,
+        "median_px": 6.87,
+        "mean_px": 9.27,
+        "p95_px": 25.0
+      }
+    },
+    {
+      "id": "view-13",
+      "original_url": "https://cdn.spinio.fi/carla/FEZ73B/outside/tiles/c3_l0_0_0.jpg",
+      "source": "https://www.carla.se/bil/tesla-model-y-2024-daqds2i9io6g00ejc86g",
+      "sha256": "5534a58cb8971d4e348c1ae4c509af83ec16399af84baffa2bc38b202dcb116e",
+      "width": 3000,
+      "height": 1687,
+      "view": "Right side profile (270°)",
+      "credit": "Carla.se / Spinio studio turntable (unofficial dealer studio photography)",
+      "gallery_index": 69,
+      "group": "2024 · Blue Long Range AWD",
+      "pose": {
+        "theta": 1.54549,
+        "phi": 1.55897,
+        "radius": 374.308,
+        "fov": 36.561,
+        "center": [
+          -12.209,
+          62.677,
+          0.309
+        ]
+      },
+      "status": "verified",
+      "note": "Both hubs and the rear quarter-window profile register. Bright wall reflections alter the apparent depth of the doors.",
+      "contour": {
+        "iou": 0.9661,
+        "median_px": 6.87,
+        "mean_px": 8.03,
+        "p95_px": 18.11
+      }
+    },
+    {
+      "id": "view-14",
+      "original_url": "https://cdn.spinio.fi/carla/FEZ73B/outside/tiles/c4_l0_0_0.jpg",
+      "source": "https://www.carla.se/bil/tesla-model-y-2024-daqds2i9io6g00ejc86g",
+      "sha256": "aef9cce49355b8361f19ba09c8a5295534489677ca1b01599cafa4714d32f400",
+      "width": 3000,
+      "height": 1687,
+      "view": "Front-right 288°",
+      "credit": "Carla.se / Spinio studio turntable (unofficial dealer studio photography)",
+      "gallery_index": 70,
+      "group": "2024 · Blue Long Range AWD",
+      "pose": {
+        "theta": 1.2343,
+        "phi": 1.56975,
+        "radius": 365.395,
+        "fov": 32.684,
+        "center": [
+          -11.644,
+          63.229,
+          4.073
+        ]
+      },
+      "status": "verified",
+      "note": "The roof crest, front arch and flush door handles follow the shallow front-right projection.",
+      "contour": {
+        "iou": 0.9472,
+        "median_px": 6.25,
+        "mean_px": 12.38,
+        "p95_px": 46.83
+      }
+    },
+    {
+      "id": "view-15",
+      "original_url": "https://cdn.spinio.fi/carla/FEZ73B/outside/tiles/c5_l0_0_0.jpg",
+      "source": "https://www.carla.se/bil/tesla-model-y-2024-daqds2i9io6g00ejc86g",
+      "sha256": "94d473fed461697b8fdbda4c0ac9bb9c5405638481588c3bc646da7a9602804d",
+      "width": 3000,
+      "height": 1687,
+      "view": "Front-right 306°",
+      "credit": "Carla.se / Spinio studio turntable (unofficial dealer studio photography)",
+      "gallery_index": 71,
+      "group": "2024 · Blue Long Range AWD",
+      "pose": {
+        "theta": 0.92458,
+        "phi": 1.57511,
+        "radius": 363.557,
+        "fov": 35.121,
+        "center": [
+          -8.112,
+          62.477,
+          6.118
+        ]
+      },
+      "status": "limited",
+      "note": "The bright headlamp reflection corresponds to a dark unlit lens in the model. The outer shell remains visible.",
+      "contour": {
+        "iou": 0.9592,
+        "median_px": 6.25,
+        "mean_px": 9.92,
+        "p95_px": 39.35
+      }
+    },
+    {
+      "id": "view-16",
+      "original_url": "https://cdn.spinio.fi/carla/FEZ73B/outside/tiles/c6_l0_0_0.jpg",
+      "source": "https://www.carla.se/bil/tesla-model-y-2024-daqds2i9io6g00ejc86g",
+      "sha256": "28dc7c0ce1f5b08fcb836c66622cac7494dde32ad672b350389b1477b3305d94",
+      "width": 3000,
+      "height": 1687,
+      "view": "Front-right three-quarter (324°)",
+      "credit": "Carla.se / Spinio studio turntable (unofficial dealer studio photography)",
+      "gallery_index": 72,
+      "group": "2024 · Blue Long Range AWD",
+      "pose": {
+        "theta": 0.61823,
+        "phi": 1.58373,
+        "radius": 365.351,
+        "fov": 37.62,
+        "center": [
+          -4.135,
+          62.115,
+          5.814
+        ]
+      },
+      "status": "verified",
+      "note": "The near front arch, hood envelope and right lamp housing remain close at this three-quarter angle.",
+      "contour": {
+        "iou": 0.9665,
+        "median_px": 6.87,
+        "mean_px": 8.36,
+        "p95_px": 21.88
+      }
+    },
+    {
+      "id": "view-17",
+      "original_url": "https://cdn.spinio.fi/carla/FEZ73B/outside/tiles/c7_l0_0_0.jpg",
+      "source": "https://www.carla.se/bil/tesla-model-y-2024-daqds2i9io6g00ejc86g",
+      "sha256": "165baaa5a67fdc16407070cb1377b04687d0b4eba370512f6c45cab3127adba8",
+      "width": 3000,
+      "height": 1687,
+      "view": "Front-right 342°",
+      "credit": "Carla.se / Spinio studio turntable (unofficial dealer studio photography)",
+      "gallery_index": 73,
+      "group": "2024 · Blue Long Range AWD",
+      "pose": {
+        "theta": 0.2961,
+        "phi": 1.59061,
+        "radius": 360.712,
+        "fov": 36.46,
+        "center": [
+          -1.559,
+          62.938,
+          5.109
+        ]
+      },
+      "status": "limited",
+      "note": "The mirrors and windshield track the outline. The fitted front plate covers the grille centerline in the photograph.",
+      "contour": {
+        "iou": 0.9731,
+        "median_px": 6.25,
+        "mean_px": 6.93,
+        "p95_px": 18.11
+      }
+    },
+    {
+      "id": "view-18",
+      "original_url": "https://cdn.spinio.fi/carla/FEZ73B/outside/tiles/c8_l0_0_0.jpg",
+      "source": "https://www.carla.se/bil/tesla-model-y-2024-daqds2i9io6g00ejc86g",
+      "sha256": "f48ea3cf0bcee0aafb3728caf3721bc556024635c9d3ef9c4cf7bd6bba633388",
+      "width": 3000,
+      "height": 1687,
+      "view": "Front elevation (0°)",
+      "credit": "Carla.se / Spinio studio turntable (unofficial dealer studio photography)",
+      "gallery_index": 74,
+      "group": "2024 · Blue Long Range AWD",
+      "pose": {
+        "theta": -0.03842,
+        "phi": 1.56135,
+        "radius": 368.964,
+        "fov": 37.887,
+        "center": [
+          0.172,
+          62.743,
+          4.467
+        ]
+      },
+      "status": "fix",
+      "note": "The native front crop shows the lower lens contour below the observed lamp edge; the grille also projects low.",
+      "contour": {
+        "iou": 0.9332,
+        "median_px": 12.5,
+        "mean_px": 16.04,
+        "p95_px": 35.0
+      }
+    },
+    {
+      "id": "view-19",
+      "original_url": "https://cdn.spinio.fi/carla/FEZ73B/outside/tiles/c9_l0_0_0.jpg",
+      "source": "https://www.carla.se/bil/tesla-model-y-2024-daqds2i9io6g00ejc86g",
+      "sha256": "06444e2df04ed445e036417afda1bdfe692359078d93ce84e555e2f9fffc6aca",
+      "width": 3000,
+      "height": 1687,
+      "view": "Front-left 18°",
+      "credit": "Carla.se / Spinio studio turntable (unofficial dealer studio photography)",
+      "gallery_index": 75,
+      "group": "2024 · Blue Long Range AWD",
+      "pose": {
+        "theta": -0.35935,
+        "phi": 1.58526,
+        "radius": 364.282,
+        "fov": 38.238,
+        "center": [
+          0.838,
+          62.573,
+          2.232
+        ]
+      },
+      "status": "limited",
+      "note": "The bumper corners and outer shell are close. Glare through the near lens limits inspection of its internals.",
+      "contour": {
+        "iou": 0.9701,
+        "median_px": 6.25,
+        "mean_px": 7.84,
+        "p95_px": 19.99
+      }
+    },
+    {
+      "id": "view-20",
+      "original_url": "https://cdn.spinio.fi/carla/FEZ73B/extra/outside07.jpg",
+      "source": "https://www.carla.se/bil/tesla-model-y-2024-daqds2i9io6g00ejc86g",
+      "sha256": "dd8cc3409a85bbf044bc06811d72fc3e38e836df325b5ed348537945d0ea3b54",
+      "width": 2500,
+      "height": 1667,
+      "view": "Front-left three-quarter still (studio)",
+      "credit": "Carla.se / Spinio studio turntable (unofficial dealer studio photography)",
+      "gallery_index": 76,
+      "group": "2024 · Blue Long Range AWD",
+      "pose": {
+        "theta": -0.74519,
+        "phi": 1.53972,
+        "radius": 325.712,
+        "fov": 35.716,
+        "center": [
+          14.99,
+          49.417,
+          16.247
+        ]
+      },
+      "status": "verified",
+      "note": "The near lamp housing and hood outline register in the separately framed front-left still.",
+      "contour": {
+        "iou": 0.963,
+        "median_px": 8.33,
+        "mean_px": 10.31,
+        "p95_px": 27.58
+      }
+    },
+    {
+      "id": "view-21",
+      "original_url": "https://cdn.spinio.fi/carla/FEZ73B/extra/outside06.jpg",
+      "source": "https://www.carla.se/bil/tesla-model-y-2024-daqds2i9io6g00ejc86g",
+      "sha256": "ea90ba6476d84e0ca78619ad742150fb8056b2f73e958763cffb5e2b153e3e45",
+      "width": 2500,
+      "height": 1666,
+      "view": "Left side profile still (studio)",
+      "credit": "Carla.se / Spinio studio turntable (unofficial dealer studio photography)",
+      "gallery_index": 77,
+      "group": "2024 · Blue Long Range AWD",
+      "pose": {
+        "theta": -1.58981,
+        "phi": 1.5829,
+        "radius": 406.03,
+        "fov": 38.173,
+        "center": [
+          -4.397,
+          80.716,
+          0.084
+        ]
+      },
+      "status": "verified",
+      "note": "Left profile confirms axle spacing and roof curvature. The narrow line beneath the side windows has a small offset.",
+      "contour": {
+        "iou": 0.9615,
+        "median_px": 7.81,
+        "mean_px": 8.57,
+        "p95_px": 18.73
+      }
+    },
+    {
+      "id": "view-22",
+      "original_url": "https://cdn.spinio.fi/carla/FEZ73B/extra/outside05.jpg",
+      "source": "https://www.carla.se/bil/tesla-model-y-2024-daqds2i9io6g00ejc86g",
+      "sha256": "1665e739dab2c0f2abf0bc5bedb4e2da5b28e8587f1946e5c9a6a6070e8d5c6d",
+      "width": 2500,
+      "height": 1667,
+      "view": "Rear-left three-quarter still (studio)",
+      "credit": "Carla.se / Spinio studio turntable (unofficial dealer studio photography)",
+      "gallery_index": 78,
+      "group": "2024 · Blue Long Range AWD",
+      "pose": {
+        "theta": -2.47164,
+        "phi": 1.55618,
+        "radius": 323.026,
+        "fov": 31.607,
+        "center": [
+          -15.692,
+          53.269,
+          19.809
+        ]
+      },
+      "status": "limited",
+      "note": "The rear lamp and liftgate lip register. The European plate and removable towball change the rear detail.",
+      "contour": {
+        "iou": 0.9594,
+        "median_px": 7.29,
+        "mean_px": 12.02,
+        "p95_px": 55.69
+      }
+    },
+    {
+      "id": "view-23",
+      "original_url": "https://cdn.spinio.fi/carla/FEZ73B/extra/outside08.jpg",
+      "source": "https://www.carla.se/bil/tesla-model-y-2024-daqds2i9io6g00ejc86g",
+      "sha256": "233260a2bd3c60bf0479cf348ef9d35d2f5ab176def6215db10d76ff3b4db5ad",
+      "width": 2500,
+      "height": 1667,
+      "view": "Rear elevation still (studio)",
+      "credit": "Carla.se / Spinio studio turntable (unofficial dealer studio photography)",
+      "gallery_index": 79,
+      "group": "2024 · Blue Long Range AWD",
+      "pose": {
+        "theta": 3.10308,
+        "phi": 1.61919,
+        "radius": 265.328,
+        "fov": 18.092,
+        "center": [
+          -0.108,
+          56.318,
+          -2.802
+        ]
+      },
+      "status": "fix",
+      "note": "The reflector and black bumper insert sit higher in projection than the photographed parts on both sides.",
+      "contour": {
+        "iou": 0.938,
+        "median_px": 10.93,
+        "mean_px": 18.18,
+        "p95_px": 62.5
+      }
+    },
+    {
+      "id": "view-24",
+      "original_url": "https://cdn.spinio.fi/carla/FEZ73B/extra/outside03.jpg",
+      "source": "https://www.carla.se/bil/tesla-model-y-2024-daqds2i9io6g00ejc86g",
+      "sha256": "08e6852b8ceab9bf8d38541d1bca09aae456ff1a281e989420a3e4307d7ed7bf",
+      "width": 2500,
+      "height": 1666,
+      "view": "Rear-right three-quarter still (studio)",
+      "credit": "Carla.se / Spinio studio turntable (unofficial dealer studio photography)",
+      "gallery_index": 80,
+      "group": "2024 · Blue Long Range AWD",
+      "pose": {
+        "theta": 2.41535,
+        "phi": 1.54178,
+        "radius": 327.821,
+        "fov": 31.095,
+        "center": [
+          -15.1,
+          53.477,
+          -17.001
+        ]
+      },
+      "status": "limited",
+      "note": "The near arch, shoulder and lamp shell are close. The rear plate and hitch preclude a full-width fascia match.",
+      "contour": {
+        "iou": 0.951,
+        "median_px": 11.44,
+        "mean_px": 14.34,
+        "p95_px": 49.48
+      }
+    },
+    {
+      "id": "view-25",
+      "original_url": "https://cdn.spinio.fi/carla/FEZ73B/extra/outside02.jpg",
+      "source": "https://www.carla.se/bil/tesla-model-y-2024-daqds2i9io6g00ejc86g",
+      "sha256": "6e68061e921b7630331e44b2dbdfd254cc0936cc73b4ea69b2edd666a270935d",
+      "width": 2500,
+      "height": 1667,
+      "view": "Right side profile still (studio)",
+      "credit": "Carla.se / Spinio studio turntable (unofficial dealer studio photography)",
+      "gallery_index": 81,
+      "group": "2024 · Blue Long Range AWD",
+      "pose": {
+        "theta": 1.55452,
+        "phi": 1.61185,
+        "radius": 400.305,
+        "fov": 35.584,
+        "center": [
+          -2.353,
+          81.628,
+          0.038
+        ]
+      },
+      "status": "verified",
+      "note": "The right-side still corroborates the door-handle line and wheel positions across the full wheelbase.",
+      "contour": {
+        "iou": 0.9546,
+        "median_px": 5.21,
+        "mean_px": 9.93,
+        "p95_px": 36.46
+      }
+    },
+    {
+      "id": "view-26",
+      "original_url": "https://cdn.spinio.fi/carla/FEZ73B/extra/outside01.jpg",
+      "source": "https://www.carla.se/bil/tesla-model-y-2024-daqds2i9io6g00ejc86g",
+      "sha256": "c0e85f46729301d1d97cf08848057529f4248cd0d3d0fb423c1c555b9d589584",
+      "width": 2500,
+      "height": 1666,
+      "view": "Front-right three-quarter still (studio)",
+      "credit": "Carla.se / Spinio studio turntable (unofficial dealer studio photography)",
+      "gallery_index": 82,
+      "group": "2024 · Blue Long Range AWD",
+      "pose": {
+        "theta": 0.72269,
+        "phi": 1.53801,
+        "radius": 321.997,
+        "fov": 35.149,
+        "center": [
+          16.246,
+          48.704,
+          -18.423
+        ]
+      },
+      "status": "limited",
+      "note": "The outer lamp and windshield are close. The car’s lit optics make the internal reflector geometry difficult to judge.",
+      "contour": {
+        "iou": 0.9506,
+        "median_px": 13.01,
+        "mean_px": 14.24,
+        "p95_px": 33.85
+      }
+    },
+    {
+      "id": "view-27",
+      "original_url": "https://cdn.spinio.fi/carla/FEZ73B/extra/outside04.jpg",
+      "source": "https://www.carla.se/bil/tesla-model-y-2024-daqds2i9io6g00ejc86g",
+      "sha256": "f89cfb894ea017a05e6eb8a698471170ddc4694dd576c05de3d72c0d960c2868",
+      "width": 2500,
+      "height": 1667,
+      "view": "Front elevation still (studio)",
+      "credit": "Carla.se / Spinio studio turntable (unofficial dealer studio photography)",
+      "gallery_index": 83,
+      "group": "2024 · Blue Long Range AWD",
+      "pose": {
+        "theta": -0.0201,
+        "phi": 1.51927,
+        "radius": 286.572,
+        "fov": 28.459,
+        "center": [
+          0.043,
+          47.61,
+          2.159
+        ]
+      },
+      "status": "fix",
+      "note": "The intake opening projects lower than the studio opening, matching the discrepancy in the frontal orbit frame.",
+      "contour": {
+        "iou": 0.9531,
+        "median_px": 13.02,
+        "mean_px": 13.41,
+        "p95_px": 28.1
+      }
+    },
+    {
+      "id": "tesla-stud-3qtr",
+      "original_url": "https://static-assets.tesla.com/configurator/compositor?model=my&view=STUD_3QTR&size=2880&options=%24MTY03%2C%24PPSB%2C%24WY19B%2C%24INPB0&bkba_opt=1",
+      "source": "https://www.tesla.com/modely/design",
+      "sha256": "e404e20d154437ed7a50cfe322876e649a579681e691ae8357d384c4cf9b0341",
+      "width": 1920,
+      "height": 1080,
+      "view": "Front-left three-quarter (official CGI)",
+      "credit": "Tesla, Inc. (official Design Studio compositor render)",
+      "gallery_index": 84,
+      "group": "Tesla Design Studio",
+      "pose": {
+        "theta": -0.8802,
+        "phi": 1.50474,
+        "radius": 470.401,
+        "fov": 29.98,
+        "center": [
+          7.972,
+          33.854,
+          6.588
+        ]
+      },
+      "status": "limited",
+      "note": "The roof, hood and mirror positions follow the official CGI. Its lighting and shadows limit paint and surface comparison.",
+      "contour": {
+        "iou": 0.9612,
+        "median_px": 2.8,
+        "mean_px": 4.64,
+        "p95_px": 14.0
+      }
+    },
+    {
+      "id": "tesla-stud-side",
+      "original_url": "https://static-assets.tesla.com/configurator/compositor?model=my&view=STUD_SIDE&size=2880&options=%24MTY03%2C%24PPSB%2C%24WY19B%2C%24INPB0&bkba_opt=1",
+      "source": "https://www.tesla.com/modely/design",
+      "sha256": "c27770a102ebff7b049ed3d2181932a349d1147ff4e015348aafea9913f240b6",
+      "width": 1920,
+      "height": 1080,
+      "view": "Left side profile (official CGI)",
+      "credit": "Tesla, Inc. (official Design Studio compositor render)",
+      "gallery_index": 85,
+      "group": "Tesla Design Studio",
+      "pose": {
+        "theta": -1.55866,
+        "phi": 1.50591,
+        "radius": 501.957,
+        "fov": 30.699,
+        "center": [
+          -3.429,
+          32.695,
+          -0.042
+        ]
+      },
+      "status": "limited",
+      "note": "The CGI side view corroborates the wheelbase and beltline. The rear-window transparency and door reflections differ.",
+      "contour": {
+        "iou": 0.975,
+        "median_px": 2.0,
+        "mean_px": 2.77,
+        "p95_px": 8.39
+      }
+    },
+    {
+      "id": "tesla-stud-rear34",
+      "original_url": "https://static-assets.tesla.com/configurator/compositor?model=my&view=STUD_REAR34&size=2880&options=%24MTY03%2C%24PPSB%2C%24WY19B%2C%24INPB0&bkba_opt=1",
+      "source": "https://www.tesla.com/modely/design",
+      "sha256": "a23c11b83b9f6fbe1d69db7df0e4686099a09d438eb394020dbaaae206cec23e",
+      "width": 1920,
+      "height": 1080,
+      "view": "Rear-left three-quarter (official CGI)",
+      "credit": "Tesla, Inc. (official Design Studio compositor render)",
+      "gallery_index": 86,
+      "group": "Tesla Design Studio",
+      "pose": {
+        "theta": -2.3302,
+        "phi": 1.545,
+        "radius": 478.789,
+        "fov": 31.974,
+        "center": [
+          -12.498,
+          36.292,
+          11.865
+        ]
+      },
+      "status": "limited",
+      "note": "The CGI supports the rear lamp location and hatch lip. Plate treatment and a dark diffuse render limit the lower fascia check.",
+      "contour": {
+        "iou": 0.9636,
+        "median_px": 2.0,
+        "mean_px": 4.35,
+        "p95_px": 17.18
+      }
+    },
+    {
+      "id": "tesla-stud-wheel",
+      "original_url": "https://static-assets.tesla.com/configurator/compositor?model=my&view=STUD_WHEEL&size=2880&options=%24MTY03%2C%24PPSB%2C%24WY19B%2C%24INPB0&bkba_opt=1",
+      "source": "https://www.tesla.com/modely/design",
+      "sha256": "6fad51d4c0915d1c137222219638c0522db67888509314e88db5aae25280ee4c",
+      "width": 1920,
+      "height": 1080,
+      "view": "19-inch Gemini wheel three-quarter (official CGI)",
+      "credit": "Tesla, Inc. (official Design Studio compositor render)",
+      "gallery_index": 87,
+      "group": "Tesla Design Studio",
+      "pose": {
+        "theta": -1.4011730405517082,
+        "phi": 1.5632958872240221,
+        "radius": 124.10840852373832,
+        "fov": 26.000725863028123,
+        "center": [
+          77.79808206951861,
+          27.963179099140767,
+          -52.58446084984509
+        ]
+      },
+      "status": "limited",
+      "note": "The hub, cover diameter and fender repeater are visible. The lower intake and arch lip diverge away from the wheel."
+    },
+    {
+      "id": "tesla-stud-rimclose",
+      "original_url": "https://static-assets.tesla.com/configurator/compositor?model=my&view=RIMCLOSEUP&size=2880&options=%24MTY03%2C%24PPSB%2C%24WY19B%2C%24INPB0&bkba_opt=1",
+      "source": "https://www.tesla.com/modely/design",
+      "sha256": "7bf129a2ae91731d4aa4e97531e1c24f0c8e8adaa5a97e06b7cab613d31909eb",
+      "width": 1920,
+      "height": 1080,
+      "view": "19-inch Gemini wheel straight-on close-up (official CGI)",
+      "credit": "Tesla, Inc. (official Design Studio compositor render)",
+      "gallery_index": 88,
+      "group": "Tesla Design Studio",
+      "pose": {
+        "theta": -1.9669027623277457,
+        "phi": 1.6406094968746696,
+        "radius": 125.36953661244559,
+        "fov": 22.000000000066166,
+        "center": [
+          82.7021825013699,
+          20.747149227173892,
+          -53.30912593821325
+        ]
+      },
+      "status": "limited",
+      "note": "The oblique wheel fit registers the center and lip. Body perspective outside the wheel is approximate in this narrow crop."
+    },
+    {
+      "id": "jam-detail-wheel",
+      "original_url": "https://cdn.spinio.fi/carla/JAM20U/extra/152.jpg",
+      "source": "https://www.carla.se/bil/tesla-model-y-2023-daanvk29io6g00dg9r90",
+      "sha256": "a4e386927c94297ddb08995101dda4e9bf83c2e8228e601ff443d1b9451eeac7",
+      "width": 2500,
+      "height": 1663,
+      "view": "Silver 19-inch Gemini aero cover profile and seven silver vanes",
+      "credit": "Carla / Spinio",
+      "gallery_index": 89,
+      "group": "2023 · Wheel close-up",
+      "pose": {
+        "theta": -1.5723977960912103,
+        "phi": 1.298302880001143,
+        "radius": 73.7044379638244,
+        "fov": 33.99999999999999,
+        "center": [
+          80.27446680125885,
+          19.545697365083935,
+          -52.287468991374304
+        ]
+      },
+      "status": "limited",
+      "note": "Hub and cover lip register against the exact-year close-up. Seven silver vanes extend to the rim. Parked rotation, molded sidewall lettering and surface finish differ."
+    },
+    {
+      "id": "mech-fez73b-gemini-cover",
+      "original_url": "https://cdn.spinio.fi/carla/FEZ73B/extra/147.jpg",
+      "source": "https://www.carla.se/bil/tesla-model-y-2024-daqds2i9io6g00ejc86g",
+      "sha256": "cca1cb528ed3e52b10838a0fc10e7a5242c9db7ea529a2a7a4527a19ec8b3645",
+      "width": 2500,
+      "height": 1663,
+      "view": "19-inch silver Gemini aero wheel cover straight-on close-up",
+      "credit": "Carla.se / Spinio studio photography",
+      "gallery_index": 90,
+      "group": "2024 · Wheel close-up",
+      "pose": {
+        "theta": -1.5361602632017362,
+        "phi": 1.4437272970917148,
+        "radius": 74.43694954125351,
+        "fov": 26.417003870397068,
+        "center": [
+          80.41351539454246,
+          19.423070260832702,
+          -52.262932178239
+        ]
+      },
+      "status": "limited",
+      "note": "The head-on 2024 close-up resolves the cover lip and its seven broad vanes. The center badge and tire lettering differ."
+    }
+  ]
+}
