@@ -35,8 +35,11 @@ def primitive_transforms(doc, opened):
         node = doc['nodes'][index]
         local = np.eye(4)
         rotation = Rotation.from_quat(node.get('rotation', [0, 0, 0, 1]))
+        if opened and 'raisedRotation' in node.get('extras', {}):
+            rotation = Rotation.from_quat(node['extras']['raisedRotation'])
         if opened and node.get('name') in HINGES:
             axis, angle = HINGES[node['name']]
+            angle = node.get('extras', {}).get('openAngleDegrees', angle)
             rotation = rotation * Rotation.from_euler(axis, angle, degrees=True)
         local[:3, :3] = rotation.as_matrix() @ np.diag(node.get('scale', [1, 1, 1]))
         local[:3, 3] = node.get('translation', [0, 0, 0])

@@ -23,7 +23,9 @@ The live model is `../honda_civic_type_r.glb`. The exterior panels were rebuilt 
 
 The rear opening has a continuous painted flange, a rubber seal, a sill plate and a carpeted load floor. The wing, upper spoiler, glass and inner lamp segments follow the hatch through its 88° travel. Two telescoping supports aim at the body and hatch sockets throughout the motion. A 2021 U.S. FK8 in Boost Blue supplies the open-hatch reference. Its rear seatbacks are folded. [Matched open-hatch photograph and model](https://bailiping.com/honda-civic-type-r/frame-by-frame/#photo-fk8-open-hatch)
 
-Four pressed recesses, a crosswise scoop air guide and the latch sit under the hood. Honda's accessory installation drawing locates the guide and its fasteners. A photograph of a bare FK8 hood supplies the pressing outline. [American Honda installation drawing](https://www.bernardiparts.com/Images/Install/2020_CivicTypeR_AirIntakeTrim_AII11806-113.pdf) · [Redline Auto Parts FK8 hood](https://www.redlineautoparts.com/honda/2017-2021-civic-type-r/2017-2021-fk8-honda-civic-type-r-oem-hood-panel-w-scoop-tr105/)
+The hood seam follows Honda’s P24 plan across the painted strip ahead of the bonnet and along the upper edges of both headlamps. The bumper garnish and lights stay on the body. The moving skin folds into a continuous inner pressing, with four recesses, a crosswise scoop air guide and the latch. A pair of cowl hinges carries the panel through approximately 52° of travel. The passenger-side support rod swings out of its clip and reaches a socket in the hood. The open angle and hinge depth are estimated from photographs of a 2021 Boost Blue FK8. [Front photograph and model](https://bailiping.com/honda-civic-type-r/frame-by-frame/#photo-fk8-open-hood) · [Side photograph](https://bringatrailer.com/wp-content/uploads/2023/05/untitled-98-09851-scaled.jpg) · [Honda hood operation](https://owners.honda.com/utility/download?path=%2Fstatic%2Fpdfs%2F2020%2FCivic+Hatchback%2F2020_Civic_5D_Hood_Release.pdf)
+
+Honda's accessory installation drawing locates the guide and its fasteners. A photograph of a bare FK8 hood supplies the pressing outline. [American Honda installation drawing](https://www.bernardiparts.com/Images/Install/2020_CivicTypeR_AirIntakeTrim_AII11806-113.pdf) · [Redline Auto Parts FK8 hood](https://www.redlineautoparts.com/honda/2017-2021-civic-type-r/2017-2021-fk8-honda-civic-type-r-oem-hood-panel-w-scoop-tr105/)
 
 ## Match to Honda's renders
 The original visual-hull build recorded these silhouette overlaps against Honda’s alpha masks, using the solved cameras and intersection over union (IoU).
@@ -32,7 +34,7 @@ The original visual-hull build recorded these silhouette overlaps against Honda�
 - **Frame 19** (passenger side): 0.966
 - **Frame 28** (rear): 0.955
 
-The public viewer includes 29 matched views. The final compressed model was checked against all 36 original studio frames at 1920 × 1080. With the studio floor shadow removed, the mean silhouette overlap is 0.948 and the mean distance between boundaries is 4.6 pixels. The model measures 4564.6 mm long, 1876.0 mm wide across the body and 1456.4 mm high including the roof antenna. The corresponding U.S. factory dimensions are 4556.8, 1877.1 and 1435.1 mm. The model’s wheelbase matches the 2700 mm factory figure. [Honda U.S. specifications](https://hondanews.com/en-US/honda-automobiles/releases/release-9349200e0db74014eece042d0a003399-2020-civic-type-r-specifications-features) · [Honda Japan three-view drawing](https://www.honda.co.jp/factbook/auto/CIVIC_TYPE_R/202010/P24.pdf)
+The public viewer includes 30 matched views. The final compressed model was checked against all 36 original studio frames at 1920 × 1080. With the studio floor shadow removed, the mean silhouette overlap is 0.948 and the mean distance between boundaries is 4.6 pixels. The model measures 4564.6 mm long, 1876.0 mm wide across the body and 1456.4 mm high including the roof antenna. The corresponding U.S. factory dimensions are 4556.8, 1877.1 and 1435.1 mm. The model’s wheelbase matches the 2700 mm factory figure. [Honda U.S. specifications](https://hondanews.com/en-US/honda-automobiles/releases/release-9349200e0db74014eece042d0a003399-2020-civic-type-r-specifications-features) · [Honda Japan three-view drawing](https://www.honda.co.jp/factbook/auto/CIVIC_TYPE_R/202010/P24.pdf)
 
 ## Known differences
 - Taillamp inner cells and the rear vent detail are simpler than Honda's.
@@ -43,7 +45,7 @@ The public viewer includes 29 matched views. The final compressed model was chec
 ## Rebuild
 The build scripts are in `rebuild/`. Honda's drawing and renders are not included, so the scripts document the method rather than run on their own.
 
-`rebuild/build.sh <tag>` builds the body, assembles the rig, compresses it with `compress_model.mjs` and runs the final surface refinement. To repeat the last step with an unrefined compressed assembly, run `python rebuild/refine_exterior.py <assembly.glb> <output.glb>` from this directory with NumPy, SciPy and DracoPy 2.2 or newer.
+`rebuild/build.sh <tag>` builds the body, assembles the rig, compresses it with `compress_model.mjs` and runs the final surface refinement. To repeat the last step with an unrefined compressed assembly, run `python rebuild/refine_exterior.py <assembly.glb> <output.glb>` from this directory with NumPy, SciPy, OpenCV and DracoPy 2.2 or newer.
 
 Rebuilding the panel edges requires the body field and Honda drawing masks used by `cutpanels.py`. The compressed assembly passed to the final refinement must already contain those panel cuts.
 

@@ -1,6 +1,6 @@
 import * as THREE from './vendor/three-r170.js?v=655c60e5';
 
-export const VIEWS_URL = './civic-views.json?v=6b1d385e81';
+export const VIEWS_URL = './civic-views.json?v=664faf8e06';
 
 // Default 1:1 metric studio cameras (glTF Y-up: +X forward, +Y up, -Z driver left, +Z passenger right).
 export const DEFAULT_CAMERAS = {
@@ -104,7 +104,7 @@ export function buildReferenceViews(views) {
       fov: 30,
       radius: orbitRadius({ distance: 2.25, fov: 30 }),
       center: new THREE.Vector3(1.38, 0.78, 0.0),
-      panels: { hood: 1.15 },
+      panels: { hood: 1 },
       group: 'Powertrain',
     }],
     ['drivetrain', {

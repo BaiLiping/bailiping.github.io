@@ -29,6 +29,7 @@ import numpy as np
 import cv2
 from scipy import ndimage
 import p24, outlines, tailgate
+import hood_pressing as hood
 from design_front import press_hood_ridges
 
 fd = np.load(sys.argv[2]); FLD = ndimage.gaussian_filter(fd['F'], 2.5)   # normals from a smoother field: even reflections
@@ -369,17 +370,25 @@ def main():
                           'pivot': spec.get('pivot', '').replace('{S}', 'L' if side < 0 else 'R')})
     vertices, faces = refine_detail_regions(vertices, faces, detailed)
     normals = field_normals(vertices)
-    cols = np.empty((len(vertices), len(entries) + 4), dtype=np.float32)
+    cols = np.empty((len(vertices), len(entries) + 5), dtype=np.float32)
+    bonnet = hood.signed_distance(vertices)
     hatch = tailgate.signed_distance(vertices)
     joint = np.full(len(vertices), -0.01)
     for k, (spec, side) in enumerate(entries):
-        cols[:, k] = membership(spec, vertices, normals, side)
+        if spec.get('surface') == 'hood':
+            cols[:, k] = bonnet + hood.HALF_GAP
+        else:
+            local = membership(spec, vertices, normals, side)
+            moving_hood = index[k]['pivot'] == hood.PIVOT
+            cols[:, k] = np.maximum(local, (bonnet if moving_hood else -bonnet) + hood.HALF_GAP)
         moving = index[k]['pivot'] == tailgate.PIVOT
         cols[:, k] = np.maximum(cols[:, k], (hatch if moving else -hatch) + tailgate.HALF_GAP)
         if spec.get('shut_line'):
             joint = np.maximum(joint, 0.025 - np.abs(cols[:, k]))
     # Every paint, glass and trim boundary must agree on which side of the
     # physical hem it occupies, including the strips between the drawing regions.
+    cols[:, -5] = bonnet - hood.HALF_GAP
+    index.append({'name': 'Civic_Hood_Shutline', 'mat': 'seam', 'pivot': ''})
     cols[:, -4] = hatch + tailgate.HALF_GAP
     # The preceding column claimed the inner half-space. Clip the other
     # side of the reveal independently even when a triangle spans both edges.
@@ -393,8 +402,8 @@ def main():
     pieces = clip_all(vertices, faces, cols)
     if DESPECKLE_CM2 > 0: pieces = despeckle(pieces, index, DESPECKLE_CM2 * 1e-4)
     out, idx2 = {}, []
-    nsm = [spec.get('nsmooth') for spec, _ in entries] + [3., 3., None, None]
-    nfl = [spec.get('nflat', False) for spec, _ in entries] + [False] * 4
+    nsm = [spec.get('nsmooth') for spec, _ in entries] + [3., 3., 3., None, None]
+    nfl = [spec.get('nflat', False) for spec, _ in entries] + [False] * 5
     for e, (V, F), ns, nf in zip(index, pieces, nsm, nfl):
         nm = e['name']
         if len(F) == 0:

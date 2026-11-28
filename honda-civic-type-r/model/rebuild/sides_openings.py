@@ -29,7 +29,6 @@ RES = 0.002                 # mask resolution (m)
 GAP = 0.005                 # shut-line gap between panel and body jamb
 SKIN = 0.002                # extra inset along the opening axis, in metres
 DOOR = dict(d_body=0.070, d_frame=0.035, dj_body=0.110, dj_frame=0.050)
-HOOD = dict(d=0.035, dj=0.060)
 HATCH = dict(d=0.040, dj=0.090)
 SEAL = (0.012, 0.030, 0.003)   # seal depth range along the jamb and its stand-off toward the opening
 TRIM = 'Mat_Interior_Black_Suede'   # cabin-side trim (the kept door cards' material)
@@ -433,27 +432,7 @@ def main():
         clear.append({'a': a.tolist(), 'e1': e1.tolist(), 'e2': e2.tolist(), 'poly': Pb2.tolist(), 'margin': 0.125})
 
     # ---------------- hood ----------------
-    V, F = group(d, index, 'Pivot_Hood_Assembly')
-    if V is not None:
-        a = np.array([0, 1.0, 0]); e1 = np.array([1.0, 0, 0]); e2 = np.array([0, 0, -1.0])   # (x, -z), right-handed with a
-        uvf = lambda P3: np.stack([P3 @ e1, P3 @ e2], 1)
-        fr = Frame2D(uvf(V)); m = closed(fr.mask(uvf(V), F), r_close=0.010)
-        t_in = lambda UV: np.full(len(UV), 0.45)
-        P, N2 = contour(fr, grow(m, -0.001))
-        S, ok = skin(field, a, e1, e2, P, t_in(P))
-        Vs, Fs, Ns = strip(S, np.full(len(P), HOOD['d']), a, to3(N2, e1, e2)); keep = ok & np.roll(ok, -1)
-        add('Civic_Hood_Jamb', 'paint', 'Pivot_Hood_Assembly', (Vs, Fs[np.concatenate([keep, keep])], Ns))
-        form_hood(cap(fr, grow(m, .002), a, e1, e2, field, t_in,
-                      lambda uv: np.full(len(uv), HOOD['d']), -a), add)
-        P, N2 = contour(fr, grow(m, GAP))
-        S, ok = skin(field, a, e1, e2, P, t_in(P)); n3 = -to3(N2, e1, e2)
-        Vs, Fs, Ns = strip(S, np.full(len(P), HOOD['dj']), a, n3); keep = ok & np.roll(ok, -1)
-        add('Civic_Body_Shell_Hood_Jamb', 'paint', '', (Vs, Fs[np.concatenate([keep, keep])], Ns))
-        rear = ok & (P[:, 0] < P[:, 0].min() + 0.12)                     # cowl seal along the rear edge
-        add('Civic_Hood_Weatherstrip_Cowl', 'black', '', band(S, np.full(len(P), 0.004), np.full(len(P), 0.018), a, n3, 0.002, rear))
-        Pc, _ = contour(fr, m)
-        clear.append({'a': a.tolist(), 'e1': e1.tolist(), 'e2': e2.tolist(), 'poly': Pc[::4].tolist(), 'margin': HOOD['d'] + 0.008})
-        inlays(d, index, fr, m, a, e1, e2, lambda C, N: C[:, 1] > 0.6, 'Civic_Hood', 'Pivot_Hood_Assembly', cutout, add)
+    form_hood(d['Civic_Hood_Panel/V'], d['Civic_Hood_Panel/F'], add, clear)
 
     # ---------------- hatch ----------------
     add_liftgate(d, field, add, clear)

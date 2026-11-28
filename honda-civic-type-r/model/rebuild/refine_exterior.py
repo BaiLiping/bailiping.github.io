@@ -1,7 +1,7 @@
 """Refine the assembled FK8 GLB, preserving its rig and untouched compressed meshes.
 
 Usage: python refine_exterior.py assembled.draco.glb output.glb
-Requires numpy, scipy and DracoPy >= 2.2.
+Requires NumPy, SciPy, OpenCV and DracoPy >= 2.2.
 """
 import argparse
 import json
@@ -19,6 +19,7 @@ from finishes import set_gltf_finishes
 from door_grips import refine_grips
 from headlamps import refine_headlamps
 from hatch_supports import build_lift_supports
+from hood_hardware import install_hardware
 from rear_diffuser import refine_rear_diffuser
 
 
@@ -203,7 +204,7 @@ def fit_hatch_shutline(model):
 
 def refine_body(model):
     pressing = re.compile(r'Civic_(Body_Shell_(Roof|FrontFender(_Top)?_[LR]|RearQuarter_[LR])|'
-                          r'Hood_Panel(_Front)?|Door_Shell_(L|R|RL|RR)|Hatch_Panel)')
+                          r'Front_Grille_Upper_Garnish|Hood_Panel(_Front)?|Door_Shell_(L|R|RL|RR)|Hatch_Panel)')
     for name in model.nodes:
         if pressing.fullmatch(name):
             smooth_pressing(model, name)
@@ -230,4 +231,6 @@ if __name__ == '__main__':
     refine_rear_diffuser(car)
     if 'Civic_Hatch_Reveal' in car.nodes:
         build_lift_supports(car)
+    if 'Civic_Hood_Shutline' in car.nodes:
+        install_hardware(car)
     car.write(args.output)

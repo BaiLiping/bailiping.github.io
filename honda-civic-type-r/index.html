@@ -9,7 +9,7 @@
     const params = new URLSearchParams(location.search);
     if (params.get('capture') === '1' || params.get('hud') === '0') document.documentElement.classList.add('hide-hud');
     const overrideModel = params.get('model');
-    const modelFile = overrideModel || './honda_civic_type_r.glb?v=d1811c7a10';
+    const modelFile = overrideModel || './honda_civic_type_r.glb?v=cac020472d';
     const preload = document.createElement('link');
     preload.rel = 'preload';
     preload.as = 'fetch';
@@ -22,7 +22,7 @@
   <title>2020 Honda Civic Type R (FK8) — Boost Blue</title>
   <meta name="description" content="Explore the 2020 Honda Civic Type R (FK8) in Boost Blue. Rotate the 3D model, open the rear hatch and compare its wing, C-shaped taillights and triple exhaust with photographs." />
   <link rel="stylesheet" href="./studio.css?v=2125ba1565">
-  <script type="module" src="./studio.js?v=34c25836cc"></script>
+  <script type="module" src="./studio.js?v=70ca5fba09"></script>
 </head>
 <body>
   <noscript><p style="position:fixed;inset:0;z-index:30;background:#eceeef;padding:2em">The interactive Honda Civic Type R (FK8) viewer requires JavaScript. <a href="https://bringatrailer.com/listing/2021-honda-civic-type-r-touring-5/">View the reference listing</a> or <a href="./frame-by-frame/">open the frame-by-frame photo comparison</a>.</p></noscript>
@@ -138,12 +138,12 @@
     import { applyStudioVisibility, attachStudioVisibility, loadStudioVisibility } from './studio-visibility.js?v=4983a6eba7';
     import { createPlanarMirror } from './mirror-reflection.js?v=a806e09fc7';
     import { createPaintEnvironment } from './paint-studio.js?v=c7567331f0';
-    import { DEFAULT_CAMERAS, orbitRadius, normalizeCameraPose, buildReferenceViews, loadCivicViews } from './civic-views.js?v=6ee14cc616';
+    import { DEFAULT_CAMERAS, orbitRadius, normalizeCameraPose, buildReferenceViews, loadCivicViews } from './civic-views.js?v=8958134a68';
 
     const { GLTFLoader, DRACOLoader } = THREE;
     const MODEL_URL = modelFile;
     const urlParams = new URLSearchParams(location.search);
-    const visibilityReady = !overrideModel && loadStudioVisibility('./studio-visibility.bin.gz?v=abb6c07d60')
+    const visibilityReady = !overrideModel && loadStudioVisibility('./studio-visibility.bin.gz?v=63a3ea5487')
       .catch(error => { console.warn('Studio visibility unavailable', error); return null; });
     const captureMode = urlParams.get('capture') === '1';
     let fullViewportCapture = captureMode;
@@ -377,6 +377,10 @@
     function describePart(meshName) {
       const n = meshName || 'Component';
       const checks = [
+        [/Front_Grille_Upper_Garnish/, 'Painted grille garnish', 'fixed above the grille'],
+        [/Hood_Stay_Socket/, 'Hood prop socket', 'receives the tip of the support rod'],
+        [/Hood_Stay/, 'Hood support rod', 'stows along the passenger-side apron'],
+        [/Hood_Hinge/, 'Cowl hinge', 'connects the hood to the body'],
         [/Hood_Scoop|Hood_Duct/, 'Forward-facing hood scoop', 'painted intake above the turbocharged engine'],
         [/Hood/, 'Aluminum Type R hood', 'cowl-hinged with forward-facing intake · click or press F'],
         [/Rear_Wing|Wing_Upright|Wing_Endplate|Spoiler/, 'FK8 high rear wing', 'black aerofoil between body-colour endplates · opens with hatch'],
@@ -672,7 +676,7 @@
       doorR:  new THREE.Vector3(0.05, 0.72,  0.55),
       doorRL: new THREE.Vector3(-0.70, 0.72, -0.55),
       doorRR: new THREE.Vector3(-0.70, 0.72,  0.55),
-      hood:   new THREE.Vector3(1.32, 0.82, 0.0),
+      hood:   new THREE.Vector3(1.22, 0.96, 0.0),
       hatch:  new THREE.Vector3(-1.42, 0.92, 0.0),
       fuel:   new THREE.Vector3(-1.15, 0.82, -0.88),
       rear:   rearView.center.clone(),
@@ -684,7 +688,7 @@
         doorR:  [ 1.08, 1.38, 6.6],
         doorRL: [-1.85, 1.38, 6.6],
         doorRR: [ 1.85, 1.38, 6.6],
-        hood:   [-0.45, 0.96, 4.8],
+        hood:   [ 0.49, 1.37, 5.65],
         hatch:  [ 2.66, 1.08, 5.4],
         fuel:   [-1.85, 1.28, 2.4],
       };
@@ -791,7 +795,6 @@
     const enclosureWeights = { exterior: trimEnclosure, cabin: cabinEnclosure, engine: engineEnclosure, ...panelEnclosures };
 
     function updateEnclosure(weights, opening, strength) {
-      // Some inspection poses swing the hood farther than the baked open angle.
       const fraction = THREE.MathUtils.clamp(opening, 0, 1);
       weights.value.set(1 - fraction, fraction).multiplyScalar(strength);
     }
@@ -852,6 +855,9 @@
     loader.setDRACOLoader(dracoLoader);
     let rootCar = null;
     const liftSupports = [];
+    let hoodStay = null;
+    const storedStay = new THREE.Quaternion();
+    const raisedStay = new THREE.Quaternion();
     const supportAxis = new THREE.Vector3(0, 1, 0);
     const supportTarget = new THREE.Vector3();
 
@@ -1076,6 +1082,15 @@
           const tube = rootCar.getObjectByName('Civic_Body_Shell_Lift_Support_' + side);
           const rod = rootCar.getObjectByName('Civic_Hatch_Lift_Rod_' + side);
           if (tube && rod) liftSupports.push([tube, rod, tube.quaternion.clone(), rod.quaternion.clone()]);
+        }
+        const bonnet = pivots.Pivot_Hood_Assembly;
+        if (Number.isFinite(bonnet?.userData.openAngleDegrees)) {
+          panels.hood.angle = THREE.MathUtils.degToRad(bonnet.userData.openAngleDegrees);
+        }
+        hoodStay = rootCar.getObjectByName('Civic_Body_Shell_Hood_Stay');
+        if (hoodStay) {
+          storedStay.copy(hoodStay.quaternion);
+          raisedStay.fromArray(hoodStay.userData.raisedRotation);
         }
         rootCar.updateMatrixWorld(true);
         if (pivots.Pivot_Body_Assembly) {
@@ -1464,8 +1479,8 @@
       if (pose.panels) {
         for (const [key, val] of Object.entries(pose.panels)) {
           if (key in panels) {
-            state[key + 'Target'] = Number(val);
-            if (immediate) state[key] = Number(val);
+            state[key + 'Target'] = key === 'hood' ? THREE.MathUtils.clamp(Number(val), 0, 1) : Number(val);
+            if (immediate) state[key] = state[key + 'Target'];
           }
         }
       }
@@ -2166,7 +2181,7 @@
       const availableHeight = assemblyView.availableHeight || 1;
       const rearScale = Math.max(1, 1.56 / camera.aspect, 0.76 / availableHeight);
       const portraitMargin = THREE.MathUtils.clamp(1.5 - camera.aspect, 0, 1);
-      const closeUp = isDetailView(selectedView) || selectedView === 'fuel';
+      const closeUp = isDetailView(selectedView) || selectedView === 'hood' || selectedView === 'fuel';
       const minimumAspect = closeUp ? 1.02 : 1.52 + 0.06 * portraitMargin;
       const exteriorScale = THREE.MathUtils.lerp(Math.max(1, minimumAspect / camera.aspect, 0.76 / availableHeight), rearScale, state.rearLens);
       scene.fog.density = studioFogDensity / THREE.MathUtils.lerp(1, dolly, Math.min(1, state.frontLens + state.rearLens));
@@ -2365,6 +2380,11 @@
           mesh.position.copy(part.home).addScaledVector(part.offset, ex);
         }
         aimLiftSupports(ex > .001);
+        if (hoodStay) {
+          // The stay rests in its clip until the lid has cleared the fender.
+          const raised = THREE.MathUtils.smoothstep(state.hood, .43, 1) * (1-ex);
+          hoodStay.quaternion.copy(storedStay).slerp(raisedStay, raised);
+        }
         for (const [obj, ps] of pullOffsets.entries()) {
           if (obj.isMesh) {
             if (damp >= 1) ps.cur.copy(ps.tgt);
@@ -2653,7 +2673,7 @@
       setPanels: (patch = {}) => {
         stopIntro();
         for (const key of Object.keys(panels)) {
-          if (key in patch) state[key] = state[key + 'Target'] = Number(patch[key]);
+          if (key in patch) state[key] = state[key + 'Target'] = key === 'hood' ? THREE.MathUtils.clamp(Number(patch[key]), 0, 1) : Number(patch[key]);
         }
         if ('explode' in patch) state.explode = state.explodeTarget = Number(patch.explode);
         if ('powertrainCutaway' in patch) state.powertrainCutaway = state.powertrainCutawayTarget = Number(patch.powertrainCutaway);

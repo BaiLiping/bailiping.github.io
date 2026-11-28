@@ -30,8 +30,7 @@ SPLITTER_Y = (0.195, 0.262)    # splitter shelf (its top face is seen by no view
 LENS_RIM, LENS_LOW, LENS_LOW_F = 0.004, 0.022, 0.045   # headlamp: dark rim around the bright LED optics, and the
     # smoked lower band of the lens above the bumper, measured in the side / front view (m; Honda frame 10: the
     # bright LED strip is the upper ~40% of the lens seen from ahead)
-HOOD_LIP_Y = 0.727             # front region 11 above this is the hood's painted front lip (Honda 10/13: blue
-                               # down to 0.73 at |z| 0.15-0.35); below it the dark gap over the brow bar 47
+GARNISH_BASE_Y = 0.727             # bottom of the fixed painted garnish above the grille (front region 11)
 HOOD_FINE_X = 2.03             # hood surface ahead of this is cut from the fine mesh with the fascia
 CHIN_Y = 0.503                 # black grille chin ends here also across plate box 6 (Honda 10/13: dark to 0.506)
 
@@ -112,7 +111,7 @@ def cut_specs():
     G.append({'name': 'Civic_Front_Grille', 'any': [F([10], -0.5, 2.0)], 'face': 'none', 'mat': 'seam'})
     G.append({'name': 'Civic_Front_Grille_Slots', 'any': [F([72, 76, 85, 86], -0.5, 1.95)], 'face': 'none', 'mat': 'seam'})
     G.append({'name': 'Civic_Front_Grille_Frame',
-              'any': [F([19, 47, 41], -0.5, 1.95), F([11, 47], -0.5, 1.95) + [['box', 'y', 0.0, HOOD_LIP_Y]],
+              'any': [F([19, 47, 41], -0.5, 1.95), F([11, 47], -0.5, 1.95) + [['box', 'y', 0.0, GARNISH_BASE_Y]],
                       F([22, 6, 41], -0.5, 1.95) + [['box', 'y', CHIN_Y, 1.0]], S([80, 104, 118]), T([35, 45], BROW_F)],
               'face': 'none', 'mat': 'gloss_black'})
     G.append({'name': 'Civic_Front_Splitter_Red_Line',
@@ -131,26 +130,21 @@ def cut_specs():
     G.append({'name': 'Civic_Front_Fascia_Trim_Fill',
               'any': [[['front', NOT_FASCIA, 'neg'], ['front', FILL_NEAR, 'pos', 0.010], ['face', 'front', -0.6],
                        ['face', 'top', -0.5], ['box', 'x', 1.93, 3.0],
-                       ['box', 'y', 0.19, HOOD_LIP_Y], ['box', 'az', 0.0, 0.87]]],
+                       ['box', 'y', 0.19, GARNISH_BASE_Y], ['box', 'az', 0.0, 0.87]]],
               'face': 'none', 'mat': 'Mat_FK8_Fog_Satin'})
     G.append({'names': lr('Civic_Body_Shell_FrontFender_Tip'), 'any': [F([15], 0.3, 1.75)], 'face': 'none', 'mat': 'paint'})
-    # hood: its plan regions, plus the painted front lip (front region 11 above HOOD_LIP_Y, and the plan's 23
-    # strip ahead of the 3|23 crease)
-    G.append({'name': 'Civic_Hood_Panel_Front', 'mesh': 'fine',
-              'any': [[['front', [11]], ['box', 'y', HOOD_LIP_Y, 1.0], ['face', 'front', -0.3], ['box', 'x', 1.9, 3.0]],
-                      [['top', [23]], ['front', [3, 11]], ['box', 'y', HOOD_LIP_Y, 1.0], ['face', 'top', 0.0],
+    # The blue garnish ahead of the bonnet seam stays with the grille.
+    G.append({'name': 'Civic_Front_Grille_Upper_Garnish', 'mesh': 'fine',
+              'any': [[['front', [11]], ['box', 'y', GARNISH_BASE_Y, 1.0], ['face', 'front', -0.3], ['box', 'x', 1.9, 3.0]],
+                      [['top', [23]], ['front', [3, 11]], ['box', 'y', GARNISH_BASE_Y, 1.0], ['face', 'top', 0.0],
                        ['box', 'x', 1.9, 3.0]]],
-              'face': 'none', 'mat': 'paint', 'pivot': 'Pivot_Hood_Assembly'})
-    G.append({'name': 'Civic_Hood_Panel',
-              'any': [[['top', [3, 9, 13, 24, 25, 106, 123]], ['face', 'top', 0.15]],
-                      [['front', [11]], ['box', 'y', HOOD_LIP_Y, 1.0], ['face', 'front', -0.3], ['box', 'x', 1.9, 3.0]],
-                      [['top', [3, 23]], ['front', [3, 11]], ['box', 'y', HOOD_LIP_Y, 1.0], ['face', 'top', 0.0],
-                       ['box', 'x', 1.9, 3.0]]],
-              'face': 'none', 'mat': 'paint', 'pivot': 'Pivot_Hood_Assembly'})
+              'face': 'none', 'mat': 'paint'})
+    G.append({'name': 'Civic_Hood_Panel', 'surface': 'hood', 'mat': 'paint',
+              'pivot': 'Pivot_Hood_Assembly'})
     for g in G:                      # the fascia is cut from the fine (6 mm) body mesh when the build provides one
         if g.get('name', '') not in COARSE and 'Bumper_Upper' not in str(g.get('names', '')) and \
                 not any(n[:-2] in COARSE for n in g.get('names', [])):
-            g['mesh'] = 'fine'                         # (the hood's front strip is a fine spec of its own)
+            g['mesh'] = 'fine'                         # thin grille and lamp details use the fine mesh
         if 'Bumper_Upper' in str(g.get('names', '')):
             g['close'] = 15          # swallow the small strokes inside the painted bumper (vent and blade outlines)
             g['grow'] = 0.003        # and reach into the strokes it shares with the black trim (even edges)
