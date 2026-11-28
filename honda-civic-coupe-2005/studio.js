@@ -242,8 +242,8 @@ function applyViewport(w,h) {
 }
 function stop() { motion=null; }
 let userOrbit=false;
-function unmatch() {
-  for (const {object, rotation, visible} of photoState.splice(0)) {
+function unmatch(keepParts = false) {
+  for (const {object, rotation, visible} of keepParts ? [] : photoState.splice(0).reverse()) {
     object.rotation.copy(rotation);
     object.visible = visible;
   }
@@ -319,7 +319,7 @@ function resetView() {
 function toggleSpread(){
   const dest=motion ? 1-motion.to : (amount>.5?0:1);
   setModelUrl(null, dest ? 'exploded' : 'model');
-  stop(); if(cabin||matched||inspection||focusedAssembly)reset();userOrbit=false;
+  stop(); if(cabin||matched||inspection||focusedAssembly||photoState.length)reset();userOrbit=false;
   clearActions();
   if(reduced.matches){setSpread(dest);frameCamera();}
   else motion={from:amount,to:dest,start:performance.now(),duration:700};
@@ -332,13 +332,13 @@ function toggleCabin(){
   camera.position.copy(vec(cfg.eye));target.copy(vec(cfg.look));camera.lookAt(target);invalidate();
 }
 function interact(){
-  stop();if(matched){unmatch();setModelUrl();}userOrbit=true;
+  stop();if(matched){unmatch(true);setModelUrl();}userOrbit=true;
 }
 function orbit(dx,dy){
   interact();
   const v=cabin ? target.clone().sub(camera.position) : camera.position.clone().sub(target);
   const r=v.length(), yaw=Math.atan2(v.x,v.z)+(cabin?1:-1)*dx*.007;
-  const pitch=T.MathUtils.clamp(Math.asin(v.y/r)+dy*.006,cabin||inspection||amount>.01?-1.45:.025,1.48);
+  const pitch=T.MathUtils.clamp(Math.asin(v.y/r)+dy*.006,cabin||inspection||!floor.visible||amount>.01?-1.45:.025,1.48);
   v.set(Math.sin(yaw)*Math.cos(pitch),Math.sin(pitch),Math.cos(yaw)*Math.cos(pitch)).multiplyScalar(r);
   if(cabin)target.copy(camera.position).add(v);else camera.position.copy(target).add(v);
   camera.lookAt(target);invalidate();
@@ -439,7 +439,7 @@ async function init(){
     const button=document.createElement('button');button.textContent=a.label;button.setAttribute('aria-pressed','false');$('actions').append(button);
     const nodes=a.nodes.map(n=>{const object=model.getObjectByName(n.node);if(!object)throw Error('Missing pivot '+n.node);return {...n,object,original:object.rotation.clone(),visible:object.visible};});
     const state={...a,nodes,button,active:false};actions.push(state);
-    button.onclick=()=>{stop();if(amount || matched || inspection)resetView();state.active=!state.active;
+    button.onclick=()=>{stop();if(amount || matched || inspection || photoState.length)resetView();state.active=!state.active;
       for(const n of nodes){
         if(n.hidden)n.object.visible=state.active?false:n.visible;
         else n.object.rotation[n.axis]=n.original[n.axis]+(state.active?T.MathUtils.degToRad(n.degrees):0);
