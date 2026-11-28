@@ -1,0 +1,333 @@
+{
+  "vehicle": "2026 Porsche 911 Turbo S Cabriolet (992.2, T-Hybrid)",
+  "model_code": "992652",
+  "pet_catalogue_type": "992T2",
+  "model_year": "MY T (10/2025 EU launch; MY2026 EU/Global; US MY2026/2027)",
+  "coordinate_conventions": {
+    "blender_master": {
+      "units": "meters (1 BU = 1.0 m)",
+      "axes": "+X forward, +Y left (driver side, LHD), +Z up",
+      "origin": "(0, 0, 0) on ground plane Z=0, centerline Y=0, wheelbase midpoint X=0"
+    },
+    "glb_viewer": {
+      "units": "1:18-scale millimeters (1 GLB unit = 18 real mm = 0.018 m; scale factor S = 1000/18 = 55.55555555555556)",
+      "axes": "+X forward, +Y up (ground Y=0), +Z right (-Z left/driver side)",
+      "conversion_from_blender_m": "(x_glb, y_glb, z_glb) = (1000/18) * (x_b, z_b, -y_b)"
+    }
+  },
+  "sources": {
+    "eu_technical_data_pdf": {
+      "title": "TECHNICAL DATA MY T 10/2025 — 911 Turbo S Cabriolet (EU model, Germany)",
+      "local_path": "Car_Photos/Porsche 911 Turbo S Cabriolet/Factory schematics/Porsche - Turbo S Cabriolet technical data.pdf",
+      "source_page": "https://newsroom.porsche.com/en/press-kits/pfv-porsche-911-turbo-s.html",
+      "original_url": "https://newsroom.porsche.com/dam/jcr%3Aba520cc9-70d6-4b3b-91f0-514c4b1aa3c7/pag-911-turbo-s-cabriolet-en.pdf",
+      "sha256": "56b48d9c8d11f8998eed415a02aea80584a6cbbc5a39d200f33275630a6626b9"
+    },
+    "press_kit_en_pdf": {
+      "title": "Porsche Newsroom Press Kit — The new 911 Turbo S (EN)",
+      "local_path": "refs/extra/PAG_Porsche_911_Turbo_S_PressKit_EN.pdf",
+      "source_page": "https://newsroom.porsche.com/en/press-kits/pfv-porsche-911-turbo-s.html",
+      "original_url": "https://newsroom.porsche.com/dam/jcr:fb3bbe09-bf25-4d9b-8a9e-15183ffa36ff/PAG_Porsche_911_Turbo_S_EN_EmpCo.pdf"
+    },
+    "porsche_usa_specs": {
+      "title": "Porsche USA 911 Turbo S Cabriolet (992652) Technical Specifications",
+      "source_page": "https://www.porsche.com/usa/models/911/911-turbo-models/911-turbo-s-cabriolet/"
+    },
+    "official_top_svg": {
+      "title": "Porsche 992652 Technical Top Shot (roof up, 383 vector curves)",
+      "local_path": "Car_Photos/Porsche 911 Turbo S Cabriolet/Factory schematics/Porsche - Turbo S Cabriolet top view.svg",
+      "viewBox": [
+        0.0,
+        0.0,
+        519.58,
+        230.77
+      ],
+      "aspect_L_over_W_mirrors": 2.2515,
+      "official_L_over_W_mirrors": 2.2386,
+      "aspect_delta_pct": 0.58
+    },
+    "official_side_png": {
+      "title": "Porsche 992652 Side Shot (roof down, 5000x1485 transparent PNG)",
+      "local_path": "Car_Photos/Porsche 911 Turbo S Cabriolet/Factory schematics/Porsche - Turbo S Cabriolet side view.png",
+      "image_size_px": [
+        5000,
+        1485
+      ],
+      "opaque_bbox_px": {
+        "x_min": 196,
+        "x_max": 4828,
+        "width": 4632,
+        "y_min": 137,
+        "y_max": 1453,
+        "height": 1316
+      },
+      "aspect_L_over_H_top_down": 3.5198,
+      "implied_windshield_top_height_mm": 1293.0
+    },
+    "pet_parts_catalogue": {
+      "title": "Porsche 911 (992T2) 2026 Parts Catalogue (Centre Service Porsche Poitiers)",
+      "source_page": "https://www.boutiqueporschepoitiers.fr/pieces/911/992T2/2026/"
+    }
+  },
+  "exterior_dimensions": {
+    "length": {
+      "mm": 4551.0,
+      "m": 4.551,
+      "glb_1_18_mm": 252.8333,
+      "source": "eu_technical_data_pdf p.4"
+    },
+    "width_excluding_mirrors": {
+      "mm": 1900.0,
+      "m": 1.9,
+      "glb_1_18_mm": 105.5556,
+      "source": "eu_technical_data_pdf p.4",
+      "note": "Front arches +45 mm, rear arches +20 mm vs 992.2 Carrera"
+    },
+    "width_including_mirrors": {
+      "mm": 2033.0,
+      "m": 2.033,
+      "glb_1_18_mm": 112.9444,
+      "source": "eu_technical_data_pdf p.4"
+    },
+    "height_top_up": {
+      "mm": 1304.0,
+      "m": 1.304,
+      "glb_1_18_mm": 72.4444,
+      "source": "eu_technical_data_pdf p.4"
+    },
+    "height_windshield_top_down_est": {
+      "mm": 1293.0,
+      "m": 1.293,
+      "glb_1_18_mm": 71.8333,
+      "source": "derived from official_side_png ratio 4551 / 3.5198"
+    },
+    "wheelbase": {
+      "mm": 2450.0,
+      "m": 2.45,
+      "glb_1_18_mm": 136.1111,
+      "source": "eu_technical_data_pdf p.4"
+    },
+    "front_overhang": {
+      "mm": 1016.0,
+      "m": 1.016,
+      "glb_1_18_mm": 56.4444,
+      "source": "porsche_usa_specs (1016 + 2450 + 1085 = 4551 mm exact)"
+    },
+    "rear_overhang": {
+      "mm": 1085.0,
+      "m": 1.085,
+      "glb_1_18_mm": 60.2778,
+      "source": "porsche_usa_specs (1016 + 2450 + 1085 = 4551 mm exact)"
+    },
+    "front_track": {
+      "mm": 1583.0,
+      "m": 1.583,
+      "glb_1_18_mm": 87.9444,
+      "source": "eu_technical_data_pdf p.4"
+    },
+    "rear_track": {
+      "mm": 1588.0,
+      "m": 1.588,
+      "glb_1_18_mm": 88.2222,
+      "source": "eu_technical_data_pdf p.4"
+    },
+    "ground_clearance_standard_pasm_max_din": {
+      "mm": 125.0,
+      "m": 0.125,
+      "glb_1_18_mm": 6.9444,
+      "source": "porsche_usa_specs (4.9 in = 124.5 mm / 125 mm DIN standard PASM; PASM Sport -10 mm = 115 mm / 4.5 in)"
+    },
+    "ground_clearance_loaded_min_coupe_ref": {
+      "mm": 103.0,
+      "m": 0.103,
+      "glb_1_18_mm": 5.7222,
+      "source": "porsche.com (standard PASM min clearance under front spoiler/aero lip; PASM Sport = 93 mm)"
+    },
+    "approach_angle_deg": {
+      "standard_pasm": 8.2,
+      "pasm_sport": 7.6,
+      "source": "porsche_usa_specs"
+    },
+    "breakover_angle_deg": {
+      "standard_pasm": 13.0,
+      "pasm_sport": 12.0,
+      "source": "porsche_usa_specs"
+    },
+    "departure_angle_deg": {
+      "standard_pasm": 13.9,
+      "pasm_sport": 13.3,
+      "source": "porsche_usa_specs"
+    },
+    "turning_circle_m": {
+      "value": 10.9,
+      "source": "eu_technical_data_pdf p.3"
+    }
+  },
+  "blender_master_datums_m": {
+    "x_front_axle": 1.225,
+    "x_rear_axle": -1.225,
+    "x_front_bumper_tip": 2.241,
+    "x_rear_bumper_tip": -2.31,
+    "y_body_half_width": 0.95,
+    "y_mirror_half_width": 1.0165,
+    "y_front_track_half": 0.7915,
+    "y_rear_track_half": 0.794,
+    "z_ground": 0.0,
+    "z_roof_crown_top_up": 1.304,
+    "z_windshield_header_top_down_est": 1.293,
+    "z_front_hub_nominal": 0.34325,
+    "z_rear_hub_nominal": 0.3642
+  },
+  "wheels_and_tires": {
+    "front": {
+      "rim_spec": "9.5 J x 20 ET44 (forged center-lock, Turbonite)",
+      "rim_diameter_in": 20.0,
+      "rim_diameter_mm": 508.0,
+      "rim_width_in": 9.5,
+      "rim_width_mm": 241.3,
+      "offset_et_mm": 44.0,
+      "tire_spec": "255/35 ZR 20 (97Y) Pirelli P ZERO R (NA2)",
+      "tire_section_width_mm": 255.0,
+      "tire_aspect_ratio_pct": 35.0,
+      "tire_sidewall_nominal_mm": 89.25,
+      "tire_outer_diameter_nominal_mm": 686.5,
+      "tire_outer_radius_nominal_mm": 343.25,
+      "tire_outer_diameter_m": 0.6865,
+      "tire_outer_radius_m": 0.34325,
+      "tire_outer_radius_glb_1_18_mm": 19.0694,
+      "outer_sidewall_y_m": 0.919,
+      "source": "eu_technical_data_pdf p.3 + studio close-up (50).jpeg sidewall reading"
+    },
+    "rear": {
+      "rim_spec": "12.0 J x 21 ET63 (forged center-lock, Turbonite)",
+      "rim_diameter_in": 21.0,
+      "rim_diameter_mm": 533.4,
+      "rim_width_in": 12.0,
+      "rim_width_mm": 304.8,
+      "offset_et_mm": 63.0,
+      "tire_spec": "325/30 ZR 21 Pirelli P ZERO R (NA2)",
+      "tire_section_width_mm": 325.0,
+      "tire_aspect_ratio_pct": 30.0,
+      "tire_sidewall_nominal_mm": 97.5,
+      "tire_outer_diameter_nominal_mm": 728.4,
+      "tire_outer_radius_nominal_mm": 364.2,
+      "tire_outer_diameter_m": 0.7284,
+      "tire_outer_radius_m": 0.3642,
+      "tire_outer_radius_glb_1_18_mm": 20.2333,
+      "outer_sidewall_y_m": 0.9565,
+      "source": "eu_technical_data_pdf p.3 + studio profiles (04/46/55).jpeg"
+    }
+  },
+  "brakes_pccb": {
+    "system": "Porsche Ceramic Composite Brakes (PCCB), internally vented and cross-drilled carbon-ceramic discs, Yellow calipers",
+    "front": {
+      "caliper": "10-piston aluminum monobloc fixed caliper, Yellow with black PORSCHE script (mounted trailing / rear of axle)",
+      "disc_diameter_mm": 420.0,
+      "disc_thickness_mm": 40.0,
+      "disc_diameter_m": 0.42,
+      "disc_diameter_glb_1_18_mm": 23.3333
+    },
+    "rear": {
+      "caliper": "4-piston aluminum monobloc fixed caliper, Yellow with black PORSCHE script (mounted leading / front of axle)",
+      "disc_diameter_mm": 410.0,
+      "disc_thickness_mm": 32.0,
+      "disc_diameter_m": 0.41,
+      "disc_diameter_glb_1_18_mm": 22.7778
+    },
+    "source": "eu_technical_data_pdf p.3"
+  },
+  "powertrain_t_hybrid": {
+    "system_name": "T-Hybrid Performance Hybrid",
+    "system_power_kw": 523,
+    "system_power_ps": 711,
+    "system_power_rpm": 6500,
+    "system_torque_nm": 800,
+    "system_torque_rpm_range": [
+      2300,
+      6000
+    ],
+    "combustion_engine": {
+      "family_code": "9A3 (992.2 3.6L T-Hybrid twin-eTurbo flat-6)",
+      "configuration": "6-cylinder boxer (horizontally opposed), rear-mounted, water-cooled, beltless front accessory drive",
+      "valves_per_cylinder": 4,
+      "displacement_cc": 3591,
+      "bore_mm": 97.0,
+      "stroke_mm": 81.0,
+      "compression_ratio": 9.2,
+      "max_power_kw": 471,
+      "max_power_ps": 640,
+      "max_power_rpm": 6500,
+      "max_torque_nm": 760,
+      "max_torque_rpm_range": [
+        2750,
+        5000
+      ],
+      "redline_rpm": 7500,
+      "turbochargers": {
+        "count": 2,
+        "type": "Electric exhaust gas turbochargers (eTurbo) with integrated electric motor on shaft between turbine and compressor",
+        "turbine_wheel_diameter_mm": 65.0,
+        "compressor_wheel_diameter_mm": 73.0
+      },
+      "exhaust": "Standard titanium sports exhaust system (rear silencer + twin double-barrel titanium/Turbonite tips, -6.8 kg vs predecessor; GPF fitted)"
+    },
+    "electric_motor_pdk": {
+      "type": "Permanent magnet synchronous motor (PMSM) with internal rotor, integrated in PDK bellhousing",
+      "diameter_mm": 286.0,
+      "length_mm": 55.0,
+      "max_power_kw": 60,
+      "max_torque_nm": 188,
+      "source": "eu_technical_data_pdf p.2 + press_kit_en_pdf"
+    },
+    "hv_battery": {
+      "type": "Liquid-cooled lithium-ion battery (216 round cells), front luggage compartment",
+      "energy_capacity_kwh": 1.9,
+      "nominal_voltage_v": 400
+    },
+    "lv_starter_battery": {
+      "type": "Compact LiFePO4 12V starter battery behind rear seats",
+      "capacity_ah": 40,
+      "height_mm": 90.0,
+      "weight_kg": 7.0
+    },
+    "transmission": {
+      "code": "CDU.50 (2026 992T2 Porsche PET plate 302-000; 8-speed hybrid PDK)",
+      "type": "8-speed Porsche Doppelkupplung (PDK) dual-clutch transaxle reinforced for T-Hybrid",
+      "drive_layout": "PTM all-wheel drive with map-controlled water-cooled front axle differential (up to 500 Nm to front axle) + PTV Plus electronically controlled rear diff lock",
+      "gear_ratios": {
+        "1st": 4.89,
+        "2nd": 3.17,
+        "3rd": 2.15,
+        "4th": 1.56,
+        "5th": 1.18,
+        "6th": 0.94,
+        "7th": 0.76,
+        "8th": 0.61,
+        "reverse": 3.99,
+        "rear_axle_final_drive": 2.79
+      },
+      "source": "eu_technical_data_pdf p.2 + PET plate 302-000"
+    }
+  },
+  "chassis_weights_and_aero": {
+    "front_suspension": "MacPherson strut with wishbones, trailing arms, spring struts, anti-roll bar, standard 400V ehPDCC",
+    "rear_suspension": "Lightweight 5-link multi-link axle, anti-roll bar, standard rear-axle steering, standard 400V ehPDCC",
+    "damping": "PASM electronically controlled damping (NORMAL / SPORT); optional PASM Sport -10 mm",
+    "steering_ratio_on_center": 14.1,
+    "fuel_tank_l": 63,
+    "luggage_volume_l": {
+      "front_frunk": 128,
+      "behind_seats": 163
+    },
+    "unladen_weight_din_kg": 1810,
+    "permissible_gross_weight_kg": 2175,
+    "drag_coefficient_cd": 0.3,
+    "frontal_area_m2": 2.12,
+    "cd_times_a_m2": 0.636,
+    "top_speed_kmh": 322,
+    "accel_0_100_kmh_s": 2.6,
+    "accel_0_60_mph_s": 2.5,
+    "accel_0_200_kmh_s": 8.8,
+    "source": "eu_technical_data_pdf pp.1-4"
+  }
+}

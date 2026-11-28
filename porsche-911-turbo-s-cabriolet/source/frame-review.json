@@ -1,0 +1,1937 @@
+{
+  "vehicle": "2026 Porsche 911 Turbo S Cabriolet · Gentian Blue Metallic",
+  "revision": "736599cb42ae",
+  "glbSha256": "736599cb42ae15906b1bb3c37b65cddaf15005839c22376c76dcf1ea783b937f",
+  "counts": {
+    "verified": 44,
+    "limited": 11,
+    "pending": 0,
+    "fix": 10,
+    "excluded": 4
+  },
+  "nativeComparisons": 62,
+  "measurementScope": "Verified applies to the named, visible checkpoints in the frame. All 62 matched images were rendered in the shipped WebGL viewer at native reference dimensions. Other entries are reference-only. Per-frame silhouette distances use the bidirectional nearest outer boundary on a 1280 × 720 grid and are reported at 3840 px width. The outline overlay also shows geometric normal and depth discontinuities, sampled at 1456 px width and scaled to the native image. Studio lighting and material accuracy are assessed separately.",
+  "geometryValidation": {
+    "exteriorFrames": 52,
+    "geometryFitFrames": 42,
+    "geometryHoldouts": 10,
+    "heldOutMeanIoUBefore": 0.93828,
+    "heldOutFinalMeshOriginalCameraMeanIoU": 0.95613,
+    "all52AfterCameraRegistrationMeanIoU": 0.97467,
+    "typicalMedianNativePx": 6.0,
+    "typical95thPercentileNativePx": 24.0
+  },
+  "fasciaLandmarks": [
+    {
+      "part": "TSC_Nose_Crest",
+      "view": "view-35",
+      "observedPx": [
+        447.3,
+        315.3
+      ],
+      "imageWidth": 880,
+      "previousErrorPx": 21.99,
+      "revisedErrorPx": 0.89
+    },
+    {
+      "part": "TSC_Nose_Crest",
+      "view": "view-41",
+      "observedPx": [
+        764.3,
+        253.7
+      ],
+      "imageWidth": 880,
+      "previousErrorPx": 16.31,
+      "revisedErrorPx": 4.22
+    },
+    {
+      "part": "TSC_License_Plate",
+      "view": "view-12",
+      "observedPx": [
+        441.7,
+        327
+      ],
+      "imageWidth": 880,
+      "previousErrorPx": 11.74,
+      "revisedErrorPx": 1.05
+    },
+    {
+      "part": "TSC_License_Plate",
+      "view": "view-07",
+      "observedPx": [
+        700.3,
+        320.1
+      ],
+      "imageWidth": 880,
+      "previousErrorPx": 16.58,
+      "revisedErrorPx": 7.09
+    },
+    {
+      "part": "TSC_Exhaust_Bezel_L",
+      "view": "view-12",
+      "observedPx": [
+        310,
+        369
+      ],
+      "imageWidth": 880,
+      "previousErrorPx": 20.53,
+      "revisedErrorPx": 6.52
+    },
+    {
+      "part": "TSC_Exhaust_Bezel_L",
+      "view": "view-07",
+      "observedPx": [
+        592,
+        373
+      ],
+      "imageWidth": 880,
+      "previousErrorPx": 28.31,
+      "revisedErrorPx": 13.34
+    }
+  ],
+  "factoryBenchmarks": {
+    "plan": {
+      "reference": "Porsche - Turbo S Cabriolet top view.svg",
+      "contourGrid": [
+        1560,
+        693
+      ],
+      "registration": "Factory length and centreline, roof closed, orthographic",
+      "iou": 0.97139,
+      "p95_px": 18.0
+    },
+    "side": {
+      "reference": "Porsche - Turbo S Cabriolet side view.png",
+      "referenceSize": [
+        5000,
+        1485
+      ],
+      "contourGrid": [
+        1100,
+        327
+      ],
+      "registration": "Both wheel centres held fixed. Fit distance, azimuth and elevation to the press photograph. Exclude translucent studio shadow.",
+      "cameraDistanceM": 19.117,
+      "yawDeg": -0.112,
+      "elevationDeg": 0.464,
+      "iou": 0.95087,
+      "p95_native_px": 58.8,
+      "orthographicInitialIoU": 0.91247,
+      "configuration": "Factory photo shows black bodywork, contrasting top cover and different wheel finish."
+    }
+  },
+  "extentsMetres": {
+    "length": 4.5509,
+    "mirrorSpan": 2.033,
+    "height": 1.3042,
+    "wheelbase": 2.45
+  },
+  "mechanicalMaskChecks": {
+    "detail-mech-engine-rear": {
+      "iou": 0.8554,
+      "width": 1456,
+      "height": 819
+    },
+    "detail-mech-engine-3q": {
+      "iou": 0.87247,
+      "width": 1456,
+      "height": 819
+    },
+    "detail-mech-pdk-emotor": {
+      "iou": 0.84817,
+      "width": 1456,
+      "height": 819
+    },
+    "detail-mech-chassis-front": {
+      "iou": 0.79608,
+      "width": 1456,
+      "height": 768
+    },
+    "detail-mech-chassis-rear": {
+      "iou": 0.80026,
+      "width": 1456,
+      "height": 768
+    }
+  },
+  "frames": [
+    {
+      "id": "view-00",
+      "label": "Front-left three-quarter (~31°)",
+      "source": "https://configurator.porsche.com/en-US/mode/model/992652?options=1A&viz-mode=3d&prs-environment=Whiteroom+Porsche",
+      "credit": "Porsche AG (configurator render)",
+      "original_url": "https://github.com/BaiLiping/Car_Photos/blob/e9c211d5cfdeb8350622092f9de5cbbf69bf5343/Porsche%20911%20Turbo%20S%20Cabriolet/911%20Turbo%20S%20Cabriolet.jpeg",
+      "status": "verified",
+      "note": "Checked the near headlamp position and rake, front wheel, lower intake corners and roof or windscreen outline. The hood reflection and the depth of the painted fascia differ locally. Exterior silhouette overlap 97.3%. Median boundary distance 6.6 px and 95th percentile 21.0 px at 3840 px width.",
+      "photo": "porsche-views/view-00.webp",
+      "render": "comparisons/current/view-00.webp",
+      "outline": "comparisons/current/view-00-outline.png",
+      "camera": "source/cameras.json#view-00",
+      "revision": "736599cb42ae"
+    },
+    {
+      "id": "view-01",
+      "label": "Front-left 45°",
+      "source": "https://configurator.porsche.com/en-US/mode/model/992652?options=1A&viz-mode=3d&prs-environment=Whiteroom+Porsche",
+      "credit": "Porsche AG (configurator render)",
+      "original_url": "https://github.com/BaiLiping/Car_Photos/blob/e9c211d5cfdeb8350622092f9de5cbbf69bf5343/Porsche%20911%20Turbo%20S%20Cabriolet/911%20Turbo%20S%20Cabriolet%20%281%29.jpeg",
+      "status": "verified",
+      "note": "Checked the near headlamp position and rake, front wheel, lower intake corners and roof or windscreen outline. The hood reflection and the depth of the painted fascia differ locally. Exterior silhouette overlap 96.9%. Median boundary distance 6.6 px and 95th percentile 21.6 px at 3840 px width.",
+      "photo": "porsche-views/view-01.webp",
+      "render": "comparisons/current/view-01.webp",
+      "outline": "comparisons/current/view-01-outline.png",
+      "camera": "source/cameras.json#view-01",
+      "revision": "736599cb42ae"
+    },
+    {
+      "id": "view-02",
+      "label": "Front-left 65°",
+      "source": "https://configurator.porsche.com/en-US/mode/model/992652?options=1A&viz-mode=3d&prs-environment=Whiteroom+Porsche",
+      "credit": "Porsche AG (configurator render)",
+      "original_url": "https://github.com/BaiLiping/Car_Photos/blob/e9c211d5cfdeb8350622092f9de5cbbf69bf5343/Porsche%20911%20Turbo%20S%20Cabriolet/911%20Turbo%20S%20Cabriolet%20%282%29.jpeg",
+      "status": "verified",
+      "note": "Checked the near headlamp position and rake, front wheel, lower intake corners and roof or windscreen outline. The hood reflection and the depth of the painted fascia differ locally. Exterior silhouette overlap 97.1%. Median boundary distance 6.0 px and 95th percentile 31.2 px at 3840 px width.",
+      "photo": "porsche-views/view-02.webp",
+      "render": "comparisons/current/view-02.webp",
+      "outline": "comparisons/current/view-02-outline.png",
+      "camera": "source/cameras.json#view-02",
+      "revision": "736599cb42ae"
+    },
+    {
+      "id": "view-03",
+      "label": "Left side front-biased (~84°)",
+      "source": "https://configurator.porsche.com/en-US/mode/model/992652?options=1A&viz-mode=3d&prs-environment=Whiteroom+Porsche",
+      "credit": "Porsche AG (configurator render)",
+      "original_url": "https://github.com/BaiLiping/Car_Photos/blob/e9c211d5cfdeb8350622092f9de5cbbf69bf5343/Porsche%20911%20Turbo%20S%20Cabriolet/911%20Turbo%20S%20Cabriolet%20%283%29.jpeg",
+      "status": "verified",
+      "note": "Checked the near wheel centres, front and rear arches, sill, mirror and direction of the quarter intake. The studio reflection across the door is softer in the model. Exterior silhouette overlap 97.6%. Median boundary distance 4.2 px and 95th percentile 24.0 px at 3840 px width.",
+      "photo": "porsche-views/view-03.webp",
+      "render": "comparisons/current/view-03.webp",
+      "outline": "comparisons/current/view-03-outline.png",
+      "camera": "source/cameras.json#view-03",
+      "revision": "736599cb42ae"
+    },
+    {
+      "id": "view-04",
+      "label": "Left side profile (~96°)",
+      "source": "https://configurator.porsche.com/en-US/mode/model/992652?options=1A&viz-mode=3d&prs-environment=Whiteroom+Porsche",
+      "credit": "Porsche AG (configurator render)",
+      "original_url": "https://github.com/BaiLiping/Car_Photos/blob/e9c211d5cfdeb8350622092f9de5cbbf69bf5343/Porsche%20911%20Turbo%20S%20Cabriolet/911%20Turbo%20S%20Cabriolet%20%284%29.jpeg",
+      "status": "verified",
+      "note": "Checked the near wheel centres, front and rear arches, sill, mirror and direction of the quarter intake. The studio reflection across the door is softer in the model. Exterior silhouette overlap 97.7%. Median boundary distance 3.0 px and 95th percentile 24.6 px at 3840 px width.",
+      "photo": "porsche-views/view-04.webp",
+      "render": "comparisons/current/view-04.webp",
+      "outline": "comparisons/current/view-04-outline.png",
+      "camera": "source/cameras.json#view-04",
+      "revision": "736599cb42ae"
+    },
+    {
+      "id": "view-05",
+      "label": "Rear-left 111°",
+      "source": "https://configurator.porsche.com/en-US/mode/model/992652?options=1A&viz-mode=3d&prs-environment=Whiteroom+Porsche",
+      "credit": "Porsche AG (configurator render)",
+      "original_url": "https://github.com/BaiLiping/Car_Photos/blob/e9c211d5cfdeb8350622092f9de5cbbf69bf5343/Porsche%20911%20Turbo%20S%20Cabriolet/911%20Turbo%20S%20Cabriolet%20%285%29.jpeg",
+      "status": "verified",
+      "note": "Checked the near rear wheel, outside shoulder, quarter intake and end of the spoiler against both neighbouring cameras. The satin wheel finish and the narrow lower-bumper trim are approximate. Exterior silhouette overlap 97.7%. Median boundary distance 4.2 px and 95th percentile 24.0 px at 3840 px width.",
+      "photo": "porsche-views/view-05.webp",
+      "render": "comparisons/current/view-05.webp",
+      "outline": "comparisons/current/view-05-outline.png",
+      "camera": "source/cameras.json#view-05",
+      "revision": "736599cb42ae"
+    },
+    {
+      "id": "view-06",
+      "label": "Rear-left three-quarter (~134°)",
+      "source": "https://configurator.porsche.com/en-US/mode/model/992652?options=1A&viz-mode=3d&prs-environment=Whiteroom+Porsche",
+      "credit": "Porsche AG (configurator render)",
+      "original_url": "https://github.com/BaiLiping/Car_Photos/blob/e9c211d5cfdeb8350622092f9de5cbbf69bf5343/Porsche%20911%20Turbo%20S%20Cabriolet/911%20Turbo%20S%20Cabriolet%20%286%29.jpeg",
+      "status": "verified",
+      "note": "Checked the near rear wheel, outside shoulder, quarter intake and end of the spoiler against both neighbouring cameras. The satin wheel finish and the narrow lower-bumper trim are approximate. Exterior silhouette overlap 97.0%. Median boundary distance 6.0 px and 95th percentile 25.8 px at 3840 px width.",
+      "photo": "porsche-views/view-06.webp",
+      "render": "comparisons/current/view-06.webp",
+      "outline": "comparisons/current/view-06-outline.png",
+      "camera": "source/cameras.json#view-06",
+      "revision": "736599cb42ae"
+    },
+    {
+      "id": "view-07",
+      "label": "Rear-left 143°",
+      "source": "https://configurator.porsche.com/en-US/mode/model/992652?options=1A&viz-mode=3d&prs-environment=Whiteroom+Porsche",
+      "credit": "Porsche AG (configurator render)",
+      "original_url": "https://github.com/BaiLiping/Car_Photos/blob/e9c211d5cfdeb8350622092f9de5cbbf69bf5343/Porsche%20911%20Turbo%20S%20Cabriolet/911%20Turbo%20S%20Cabriolet%20%287%29.jpeg",
+      "status": "fix",
+      "note": "The plate and outlet positions improved in the rear and three-quarter references. The outer valance transitions and spoiler cradle still need sharper definition from this angle. Exterior silhouette overlap 96.7%. Median boundary distance 9.0 px and 95th percentile 36.0 px at 3840 px width.",
+      "photo": "porsche-views/view-07.webp",
+      "render": "comparisons/current/view-07.webp",
+      "outline": "comparisons/current/view-07-outline.png",
+      "camera": "source/cameras.json#view-07",
+      "revision": "736599cb42ae"
+    },
+    {
+      "id": "view-08",
+      "label": "Rear-left 152°",
+      "source": "https://configurator.porsche.com/en-US/mode/model/992652?options=1A&viz-mode=3d&prs-environment=Whiteroom+Porsche",
+      "credit": "Porsche AG (configurator render)",
+      "original_url": "https://github.com/BaiLiping/Car_Photos/blob/e9c211d5cfdeb8350622092f9de5cbbf69bf5343/Porsche%20911%20Turbo%20S%20Cabriolet/911%20Turbo%20S%20Cabriolet%20%288%29.jpeg",
+      "status": "fix",
+      "note": "The plate and outlet positions improved in the rear and three-quarter references. The outer valance transitions and spoiler cradle still need sharper definition from this angle. Exterior silhouette overlap 96.8%. Median boundary distance 6.6 px and 95th percentile 35.4 px at 3840 px width.",
+      "photo": "porsche-views/view-08.webp",
+      "render": "comparisons/current/view-08.webp",
+      "outline": "comparisons/current/view-08-outline.png",
+      "camera": "source/cameras.json#view-08",
+      "revision": "736599cb42ae"
+    },
+    {
+      "id": "view-09",
+      "label": "Rear-left 163°",
+      "source": "https://configurator.porsche.com/en-US/mode/model/992652?options=1A&viz-mode=3d&prs-environment=Whiteroom+Porsche",
+      "credit": "Porsche AG (configurator render)",
+      "original_url": "https://github.com/BaiLiping/Car_Photos/blob/e9c211d5cfdeb8350622092f9de5cbbf69bf5343/Porsche%20911%20Turbo%20S%20Cabriolet/911%20Turbo%20S%20Cabriolet%20%289%29.jpeg",
+      "status": "verified",
+      "note": "Checked the raised plate, continuous rear light strip, paired outlet spacing and the valance at the matched rear camera. The dark lamp surround and spoiler pedestal still have softer edges. Exterior silhouette overlap 97.6%. Median boundary distance 6.0 px and 95th percentile 19.2 px at 3840 px width.",
+      "photo": "porsche-views/view-09.webp",
+      "render": "comparisons/current/view-09.webp",
+      "outline": "comparisons/current/view-09-outline.png",
+      "camera": "source/cameras.json#view-09",
+      "revision": "736599cb42ae"
+    },
+    {
+      "id": "view-10",
+      "label": "Rear-left 170°",
+      "source": "https://configurator.porsche.com/en-US/mode/model/992652?options=1A&viz-mode=3d&prs-environment=Whiteroom+Porsche",
+      "credit": "Porsche AG (configurator render)",
+      "original_url": "https://github.com/BaiLiping/Car_Photos/blob/e9c211d5cfdeb8350622092f9de5cbbf69bf5343/Porsche%20911%20Turbo%20S%20Cabriolet/911%20Turbo%20S%20Cabriolet%20%2810%29.jpeg",
+      "status": "verified",
+      "note": "Checked the raised plate, continuous rear light strip, paired outlet spacing and the valance at the matched rear camera. The dark lamp surround and spoiler pedestal still have softer edges. Exterior silhouette overlap 97.9%. Median boundary distance 4.2 px and 95th percentile 22.2 px at 3840 px width.",
+      "photo": "porsche-views/view-10.webp",
+      "render": "comparisons/current/view-10.webp",
+      "outline": "comparisons/current/view-10-outline.png",
+      "camera": "source/cameras.json#view-10",
+      "revision": "736599cb42ae"
+    },
+    {
+      "id": "view-11",
+      "label": "Rear-left 175°",
+      "source": "https://configurator.porsche.com/en-US/mode/model/992652?options=1A&viz-mode=3d&prs-environment=Whiteroom+Porsche",
+      "credit": "Porsche AG (configurator render)",
+      "original_url": "https://github.com/BaiLiping/Car_Photos/blob/e9c211d5cfdeb8350622092f9de5cbbf69bf5343/Porsche%20911%20Turbo%20S%20Cabriolet/911%20Turbo%20S%20Cabriolet%20%2811%29.jpeg",
+      "status": "verified",
+      "note": "Checked the raised plate, continuous rear light strip, paired outlet spacing and the valance at the matched rear camera. The dark lamp surround and spoiler pedestal still have softer edges. Exterior silhouette overlap 98.0%. Median boundary distance 4.2 px and 95th percentile 19.2 px at 3840 px width.",
+      "photo": "porsche-views/view-11.webp",
+      "render": "comparisons/current/view-11.webp",
+      "outline": "comparisons/current/view-11-outline.png",
+      "camera": "source/cameras.json#view-11",
+      "revision": "736599cb42ae"
+    },
+    {
+      "id": "view-12",
+      "label": "Rear profile (~179°)",
+      "source": "https://configurator.porsche.com/en-US/mode/model/992652?options=1A&viz-mode=3d&prs-environment=Whiteroom+Porsche",
+      "credit": "Porsche AG (configurator render)",
+      "original_url": "https://github.com/BaiLiping/Car_Photos/blob/e9c211d5cfdeb8350622092f9de5cbbf69bf5343/Porsche%20911%20Turbo%20S%20Cabriolet/911%20Turbo%20S%20Cabriolet%20%2812%29.jpeg",
+      "status": "verified",
+      "note": "Checked the raised plate, continuous rear light strip, paired outlet spacing and the valance at the matched rear camera. The dark lamp surround and spoiler pedestal still have softer edges. Exterior silhouette overlap 97.3%. Median boundary distance 6.0 px and 95th percentile 25.2 px at 3840 px width.",
+      "photo": "porsche-views/view-12.webp",
+      "render": "comparisons/current/view-12.webp",
+      "outline": "comparisons/current/view-12-outline.png",
+      "camera": "source/cameras.json#view-12",
+      "revision": "736599cb42ae"
+    },
+    {
+      "id": "view-13",
+      "label": "Rear-right 176°",
+      "source": "https://configurator.porsche.com/en-US/mode/model/992652?options=1A&viz-mode=3d&prs-environment=Whiteroom+Porsche",
+      "credit": "Porsche AG (configurator render)",
+      "original_url": "https://github.com/BaiLiping/Car_Photos/blob/e9c211d5cfdeb8350622092f9de5cbbf69bf5343/Porsche%20911%20Turbo%20S%20Cabriolet/911%20Turbo%20S%20Cabriolet%20%2813%29.jpeg",
+      "status": "verified",
+      "note": "Checked the raised plate, continuous rear light strip, paired outlet spacing and the valance at the matched rear camera. The dark lamp surround and spoiler pedestal still have softer edges. Exterior silhouette overlap 98.0%. Median boundary distance 3.0 px and 95th percentile 19.2 px at 3840 px width.",
+      "photo": "porsche-views/view-13.webp",
+      "render": "comparisons/current/view-13.webp",
+      "outline": "comparisons/current/view-13-outline.png",
+      "camera": "source/cameras.json#view-13",
+      "revision": "736599cb42ae"
+    },
+    {
+      "id": "view-14",
+      "label": "Rear-right 173°",
+      "source": "https://configurator.porsche.com/en-US/mode/model/992652?options=1A&viz-mode=3d&prs-environment=Whiteroom+Porsche",
+      "credit": "Porsche AG (configurator render)",
+      "original_url": "https://github.com/BaiLiping/Car_Photos/blob/e9c211d5cfdeb8350622092f9de5cbbf69bf5343/Porsche%20911%20Turbo%20S%20Cabriolet/911%20Turbo%20S%20Cabriolet%20%2814%29.jpeg",
+      "status": "verified",
+      "note": "Checked the raised plate, continuous rear light strip, paired outlet spacing and the valance at the matched rear camera. The dark lamp surround and spoiler pedestal still have softer edges. Exterior silhouette overlap 97.7%. Median boundary distance 4.2 px and 95th percentile 21.0 px at 3840 px width.",
+      "photo": "porsche-views/view-14.webp",
+      "render": "comparisons/current/view-14.webp",
+      "outline": "comparisons/current/view-14-outline.png",
+      "camera": "source/cameras.json#view-14",
+      "revision": "736599cb42ae"
+    },
+    {
+      "id": "view-15",
+      "label": "Rear-right 169°",
+      "source": "https://configurator.porsche.com/en-US/mode/model/992652?options=1A&viz-mode=3d&prs-environment=Whiteroom+Porsche",
+      "credit": "Porsche AG (configurator render)",
+      "original_url": "https://github.com/BaiLiping/Car_Photos/blob/e9c211d5cfdeb8350622092f9de5cbbf69bf5343/Porsche%20911%20Turbo%20S%20Cabriolet/911%20Turbo%20S%20Cabriolet%20%2815%29.jpeg",
+      "status": "verified",
+      "note": "Checked the raised plate, continuous rear light strip, paired outlet spacing and the valance at the matched rear camera. The dark lamp surround and spoiler pedestal still have softer edges. Exterior silhouette overlap 98.0%. Median boundary distance 3.0 px and 95th percentile 22.8 px at 3840 px width.",
+      "photo": "porsche-views/view-15.webp",
+      "render": "comparisons/current/view-15.webp",
+      "outline": "comparisons/current/view-15-outline.png",
+      "camera": "source/cameras.json#view-15",
+      "revision": "736599cb42ae"
+    },
+    {
+      "id": "view-16",
+      "label": "Rear-right 163°",
+      "source": "https://configurator.porsche.com/en-US/mode/model/992652?options=1A&viz-mode=3d&prs-environment=Whiteroom+Porsche",
+      "credit": "Porsche AG (configurator render)",
+      "original_url": "https://github.com/BaiLiping/Car_Photos/blob/e9c211d5cfdeb8350622092f9de5cbbf69bf5343/Porsche%20911%20Turbo%20S%20Cabriolet/911%20Turbo%20S%20Cabriolet%20%2816%29.jpeg",
+      "status": "verified",
+      "note": "Checked the raised plate, continuous rear light strip, paired outlet spacing and the valance at the matched rear camera. The dark lamp surround and spoiler pedestal still have softer edges. Exterior silhouette overlap 97.8%. Median boundary distance 4.2 px and 95th percentile 21.0 px at 3840 px width.",
+      "photo": "porsche-views/view-16.webp",
+      "render": "comparisons/current/view-16.webp",
+      "outline": "comparisons/current/view-16-outline.png",
+      "camera": "source/cameras.json#view-16",
+      "revision": "736599cb42ae"
+    },
+    {
+      "id": "view-17",
+      "label": "Rear-right 156°",
+      "source": "https://configurator.porsche.com/en-US/mode/model/992652?options=1A&viz-mode=3d&prs-environment=Whiteroom+Porsche",
+      "credit": "Porsche AG (configurator render)",
+      "original_url": "https://github.com/BaiLiping/Car_Photos/blob/e9c211d5cfdeb8350622092f9de5cbbf69bf5343/Porsche%20911%20Turbo%20S%20Cabriolet/911%20Turbo%20S%20Cabriolet%20%2817%29.jpeg",
+      "status": "fix",
+      "note": "The plate and outlet positions improved in the rear and three-quarter references. The outer valance transitions and spoiler cradle still need sharper definition from this angle. Exterior silhouette overlap 97.1%. Median boundary distance 6.0 px and 95th percentile 27.0 px at 3840 px width.",
+      "photo": "porsche-views/view-17.webp",
+      "render": "comparisons/current/view-17.webp",
+      "outline": "comparisons/current/view-17-outline.png",
+      "camera": "source/cameras.json#view-17",
+      "revision": "736599cb42ae"
+    },
+    {
+      "id": "view-18",
+      "label": "Rear-right 150°",
+      "source": "https://configurator.porsche.com/en-US/mode/model/992652?options=1A&viz-mode=3d&prs-environment=Whiteroom+Porsche",
+      "credit": "Porsche AG (configurator render)",
+      "original_url": "https://github.com/BaiLiping/Car_Photos/blob/e9c211d5cfdeb8350622092f9de5cbbf69bf5343/Porsche%20911%20Turbo%20S%20Cabriolet/911%20Turbo%20S%20Cabriolet%20%2818%29.jpeg",
+      "status": "fix",
+      "note": "The plate and outlet positions improved in the rear and three-quarter references. The outer valance transitions and spoiler cradle still need sharper definition from this angle. Exterior silhouette overlap 97.0%. Median boundary distance 6.6 px and 95th percentile 30.0 px at 3840 px width.",
+      "photo": "porsche-views/view-18.webp",
+      "render": "comparisons/current/view-18.webp",
+      "outline": "comparisons/current/view-18-outline.png",
+      "camera": "source/cameras.json#view-18",
+      "revision": "736599cb42ae"
+    },
+    {
+      "id": "view-19",
+      "label": "Rear-right three-quarter (~141°)",
+      "source": "https://configurator.porsche.com/en-US/mode/model/992652?options=1A&viz-mode=3d&prs-environment=Whiteroom+Porsche",
+      "credit": "Porsche AG (configurator render)",
+      "original_url": "https://github.com/BaiLiping/Car_Photos/blob/e9c211d5cfdeb8350622092f9de5cbbf69bf5343/Porsche%20911%20Turbo%20S%20Cabriolet/911%20Turbo%20S%20Cabriolet%20%2819%29.jpeg",
+      "status": "fix",
+      "note": "The plate and outlet positions improved in the rear and three-quarter references. The outer valance transitions and spoiler cradle still need sharper definition from this angle. Exterior silhouette overlap 96.7%. Median boundary distance 6.0 px and 95th percentile 29.4 px at 3840 px width.",
+      "photo": "porsche-views/view-19.webp",
+      "render": "comparisons/current/view-19.webp",
+      "outline": "comparisons/current/view-19-outline.png",
+      "camera": "source/cameras.json#view-19",
+      "revision": "736599cb42ae"
+    },
+    {
+      "id": "view-20",
+      "label": "Rear-right 136°",
+      "source": "https://configurator.porsche.com/en-US/mode/model/992652?options=1A&viz-mode=3d&prs-environment=Whiteroom+Porsche",
+      "credit": "Porsche AG (configurator render)",
+      "original_url": "https://github.com/BaiLiping/Car_Photos/blob/e9c211d5cfdeb8350622092f9de5cbbf69bf5343/Porsche%20911%20Turbo%20S%20Cabriolet/911%20Turbo%20S%20Cabriolet%20%2820%29.jpeg",
+      "status": "verified",
+      "note": "Checked the near rear wheel, outside shoulder, quarter intake and end of the spoiler against both neighbouring cameras. The satin wheel finish and the narrow lower-bumper trim are approximate. Exterior silhouette overlap 96.9%. Median boundary distance 6.0 px and 95th percentile 28.8 px at 3840 px width.",
+      "photo": "porsche-views/view-20.webp",
+      "render": "comparisons/current/view-20.webp",
+      "outline": "comparisons/current/view-20-outline.png",
+      "camera": "source/cameras.json#view-20",
+      "revision": "736599cb42ae"
+    },
+    {
+      "id": "view-21",
+      "label": "Rear-right 130°",
+      "source": "https://configurator.porsche.com/en-US/mode/model/992652?options=1A&viz-mode=3d&prs-environment=Whiteroom+Porsche",
+      "credit": "Porsche AG (configurator render)",
+      "original_url": "https://github.com/BaiLiping/Car_Photos/blob/e9c211d5cfdeb8350622092f9de5cbbf69bf5343/Porsche%20911%20Turbo%20S%20Cabriolet/911%20Turbo%20S%20Cabriolet%20%2821%29.jpeg",
+      "status": "verified",
+      "note": "Checked the near rear wheel, outside shoulder, quarter intake and end of the spoiler against both neighbouring cameras. The satin wheel finish and the narrow lower-bumper trim are approximate. Exterior silhouette overlap 97.0%. Median boundary distance 6.0 px and 95th percentile 27.6 px at 3840 px width.",
+      "photo": "porsche-views/view-21.webp",
+      "render": "comparisons/current/view-21.webp",
+      "outline": "comparisons/current/view-21-outline.png",
+      "camera": "source/cameras.json#view-21",
+      "revision": "736599cb42ae"
+    },
+    {
+      "id": "view-22",
+      "label": "Rear-right 122°",
+      "source": "https://configurator.porsche.com/en-US/mode/model/992652?options=1A&viz-mode=3d&prs-environment=Whiteroom+Porsche",
+      "credit": "Porsche AG (configurator render)",
+      "original_url": "https://github.com/BaiLiping/Car_Photos/blob/e9c211d5cfdeb8350622092f9de5cbbf69bf5343/Porsche%20911%20Turbo%20S%20Cabriolet/911%20Turbo%20S%20Cabriolet%20%2822%29.jpeg",
+      "status": "verified",
+      "note": "Checked the near rear wheel, outside shoulder, quarter intake and end of the spoiler against both neighbouring cameras. The satin wheel finish and the narrow lower-bumper trim are approximate. Exterior silhouette overlap 97.2%. Median boundary distance 6.0 px and 95th percentile 27.0 px at 3840 px width.",
+      "photo": "porsche-views/view-22.webp",
+      "render": "comparisons/current/view-22.webp",
+      "outline": "comparisons/current/view-22-outline.png",
+      "camera": "source/cameras.json#view-22",
+      "revision": "736599cb42ae"
+    },
+    {
+      "id": "view-23",
+      "label": "Rear-right 114°",
+      "source": "https://configurator.porsche.com/en-US/mode/model/992652?options=1A&viz-mode=3d&prs-environment=Whiteroom+Porsche",
+      "credit": "Porsche AG (configurator render)",
+      "original_url": "https://github.com/BaiLiping/Car_Photos/blob/e9c211d5cfdeb8350622092f9de5cbbf69bf5343/Porsche%20911%20Turbo%20S%20Cabriolet/911%20Turbo%20S%20Cabriolet%20%2823%29.jpeg",
+      "status": "verified",
+      "note": "Checked the near rear wheel, outside shoulder, quarter intake and end of the spoiler against both neighbouring cameras. The satin wheel finish and the narrow lower-bumper trim are approximate. Exterior silhouette overlap 97.6%. Median boundary distance 4.2 px and 95th percentile 27.0 px at 3840 px width.",
+      "photo": "porsche-views/view-23.webp",
+      "render": "comparisons/current/view-23.webp",
+      "outline": "comparisons/current/view-23-outline.png",
+      "camera": "source/cameras.json#view-23",
+      "revision": "736599cb42ae"
+    },
+    {
+      "id": "view-24",
+      "label": "Right side rear-biased (~105°)",
+      "source": "https://configurator.porsche.com/en-US/mode/model/992652?options=1A&viz-mode=3d&prs-environment=Whiteroom+Porsche",
+      "credit": "Porsche AG (configurator render)",
+      "original_url": "https://github.com/BaiLiping/Car_Photos/blob/e9c211d5cfdeb8350622092f9de5cbbf69bf5343/Porsche%20911%20Turbo%20S%20Cabriolet/911%20Turbo%20S%20Cabriolet%20%2824%29.jpeg",
+      "status": "verified",
+      "note": "Checked the near wheel centres, front and rear arches, sill, mirror and direction of the quarter intake. The studio reflection across the door is softer in the model. Exterior silhouette overlap 97.9%. Median boundary distance 3.0 px and 95th percentile 21.6 px at 3840 px width.",
+      "photo": "porsche-views/view-24.webp",
+      "render": "comparisons/current/view-24.webp",
+      "outline": "comparisons/current/view-24-outline.png",
+      "camera": "source/cameras.json#view-24",
+      "revision": "736599cb42ae"
+    },
+    {
+      "id": "view-25",
+      "label": "Right side profile (~94°)",
+      "source": "https://configurator.porsche.com/en-US/mode/model/992652?options=1A&viz-mode=3d&prs-environment=Whiteroom+Porsche",
+      "credit": "Porsche AG (configurator render)",
+      "original_url": "https://github.com/BaiLiping/Car_Photos/blob/e9c211d5cfdeb8350622092f9de5cbbf69bf5343/Porsche%20911%20Turbo%20S%20Cabriolet/911%20Turbo%20S%20Cabriolet%20%2825%29.jpeg",
+      "status": "verified",
+      "note": "Checked the near wheel centres, front and rear arches, sill, mirror and direction of the quarter intake. The studio reflection across the door is softer in the model. Exterior silhouette overlap 97.7%. Median boundary distance 4.2 px and 95th percentile 24.6 px at 3840 px width.",
+      "photo": "porsche-views/view-25.webp",
+      "render": "comparisons/current/view-25.webp",
+      "outline": "comparisons/current/view-25-outline.png",
+      "camera": "source/cameras.json#view-25",
+      "revision": "736599cb42ae"
+    },
+    {
+      "id": "view-26",
+      "label": "Front-right 80°",
+      "source": "https://configurator.porsche.com/en-US/mode/model/992652?options=1A&viz-mode=3d&prs-environment=Whiteroom+Porsche",
+      "credit": "Porsche AG (configurator render)",
+      "original_url": "https://github.com/BaiLiping/Car_Photos/blob/e9c211d5cfdeb8350622092f9de5cbbf69bf5343/Porsche%20911%20Turbo%20S%20Cabriolet/911%20Turbo%20S%20Cabriolet%20%2827%29.jpeg",
+      "status": "verified",
+      "note": "Checked the near headlamp position and rake, front wheel, lower intake corners and roof or windscreen outline. The hood reflection and the depth of the painted fascia differ locally. Exterior silhouette overlap 97.4%. Median boundary distance 6.0 px and 95th percentile 24.0 px at 3840 px width.",
+      "photo": "porsche-views/view-26.webp",
+      "render": "comparisons/current/view-26.webp",
+      "outline": "comparisons/current/view-26-outline.png",
+      "camera": "source/cameras.json#view-26",
+      "revision": "736599cb42ae"
+    },
+    {
+      "id": "view-27",
+      "label": "Front-right 68°",
+      "source": "https://configurator.porsche.com/en-US/mode/model/992652?options=1A&viz-mode=3d&prs-environment=Whiteroom+Porsche",
+      "credit": "Porsche AG (configurator render)",
+      "original_url": "https://github.com/BaiLiping/Car_Photos/blob/e9c211d5cfdeb8350622092f9de5cbbf69bf5343/Porsche%20911%20Turbo%20S%20Cabriolet/911%20Turbo%20S%20Cabriolet%20%2828%29.jpeg",
+      "status": "verified",
+      "note": "Checked the near headlamp position and rake, front wheel, lower intake corners and roof or windscreen outline. The hood reflection and the depth of the painted fascia differ locally. Exterior silhouette overlap 97.3%. Median boundary distance 6.0 px and 95th percentile 27.4 px at 3840 px width.",
+      "photo": "porsche-views/view-27.webp",
+      "render": "comparisons/current/view-27.webp",
+      "outline": "comparisons/current/view-27-outline.png",
+      "camera": "source/cameras.json#view-27",
+      "revision": "736599cb42ae"
+    },
+    {
+      "id": "view-28",
+      "label": "Front-right 60°",
+      "source": "https://configurator.porsche.com/en-US/mode/model/992652?options=1A&viz-mode=3d&prs-environment=Whiteroom+Porsche",
+      "credit": "Porsche AG (configurator render)",
+      "original_url": "https://github.com/BaiLiping/Car_Photos/blob/e9c211d5cfdeb8350622092f9de5cbbf69bf5343/Porsche%20911%20Turbo%20S%20Cabriolet/911%20Turbo%20S%20Cabriolet%20%2829%29.jpeg",
+      "status": "verified",
+      "note": "Checked the near headlamp position and rake, front wheel, lower intake corners and roof or windscreen outline. The hood reflection and the depth of the painted fascia differ locally. Exterior silhouette overlap 97.3%. Median boundary distance 6.0 px and 95th percentile 25.2 px at 3840 px width.",
+      "photo": "porsche-views/view-28.webp",
+      "render": "comparisons/current/view-28.webp",
+      "outline": "comparisons/current/view-28-outline.png",
+      "camera": "source/cameras.json#view-28",
+      "revision": "736599cb42ae"
+    },
+    {
+      "id": "view-29",
+      "label": "Front-right 52°",
+      "source": "https://configurator.porsche.com/en-US/mode/model/992652?options=1A&viz-mode=3d&prs-environment=Whiteroom+Porsche",
+      "credit": "Porsche AG (configurator render)",
+      "original_url": "https://github.com/BaiLiping/Car_Photos/blob/e9c211d5cfdeb8350622092f9de5cbbf69bf5343/Porsche%20911%20Turbo%20S%20Cabriolet/911%20Turbo%20S%20Cabriolet%20%2830%29.jpeg",
+      "status": "verified",
+      "note": "Checked the near headlamp position and rake, front wheel, lower intake corners and roof or windscreen outline. The hood reflection and the depth of the painted fascia differ locally. Exterior silhouette overlap 97.5%. Median boundary distance 6.0 px and 95th percentile 22.8 px at 3840 px width.",
+      "photo": "porsche-views/view-29.webp",
+      "render": "comparisons/current/view-29.webp",
+      "outline": "comparisons/current/view-29-outline.png",
+      "camera": "source/cameras.json#view-29",
+      "revision": "736599cb42ae"
+    },
+    {
+      "id": "view-30",
+      "label": "Front-right three-quarter (~43°)",
+      "source": "https://configurator.porsche.com/en-US/mode/model/992652?options=1A&viz-mode=3d&prs-environment=Whiteroom+Porsche",
+      "credit": "Porsche AG (configurator render)",
+      "original_url": "https://github.com/BaiLiping/Car_Photos/blob/e9c211d5cfdeb8350622092f9de5cbbf69bf5343/Porsche%20911%20Turbo%20S%20Cabriolet/911%20Turbo%20S%20Cabriolet%20%2831%29.jpeg",
+      "status": "verified",
+      "note": "Checked the near headlamp position and rake, front wheel, lower intake corners and roof or windscreen outline. The hood reflection and the depth of the painted fascia differ locally. Exterior silhouette overlap 97.4%. Median boundary distance 6.0 px and 95th percentile 21.0 px at 3840 px width.",
+      "photo": "porsche-views/view-30.webp",
+      "render": "comparisons/current/view-30.webp",
+      "outline": "comparisons/current/view-30-outline.png",
+      "camera": "source/cameras.json#view-30",
+      "revision": "736599cb42ae"
+    },
+    {
+      "id": "view-31",
+      "label": "Front-right 34°",
+      "source": "https://configurator.porsche.com/en-US/mode/model/992652?options=1A&viz-mode=3d&prs-environment=Whiteroom+Porsche",
+      "credit": "Porsche AG (configurator render)",
+      "original_url": "https://github.com/BaiLiping/Car_Photos/blob/e9c211d5cfdeb8350622092f9de5cbbf69bf5343/Porsche%20911%20Turbo%20S%20Cabriolet/911%20Turbo%20S%20Cabriolet%20%2832%29.jpeg",
+      "status": "verified",
+      "note": "Checked the near headlamp position and rake, front wheel, lower intake corners and roof or windscreen outline. The hood reflection and the depth of the painted fascia differ locally. Exterior silhouette overlap 97.0%. Median boundary distance 8.4 px and 95th percentile 21.6 px at 3840 px width.",
+      "photo": "porsche-views/view-31.webp",
+      "render": "comparisons/current/view-31.webp",
+      "outline": "comparisons/current/view-31-outline.png",
+      "camera": "source/cameras.json#view-31",
+      "revision": "736599cb42ae"
+    },
+    {
+      "id": "view-32",
+      "label": "Front-right 25°",
+      "source": "https://configurator.porsche.com/en-US/mode/model/992652?options=1A&viz-mode=3d&prs-environment=Whiteroom+Porsche",
+      "credit": "Porsche AG (configurator render)",
+      "original_url": "https://github.com/BaiLiping/Car_Photos/blob/e9c211d5cfdeb8350622092f9de5cbbf69bf5343/Porsche%20911%20Turbo%20S%20Cabriolet/911%20Turbo%20S%20Cabriolet%20%2833%29.jpeg",
+      "status": "verified",
+      "note": "Checked the near headlamp position and rake, front wheel, lower intake corners and roof or windscreen outline. The hood reflection and the depth of the painted fascia differ locally. Exterior silhouette overlap 97.3%. Median boundary distance 6.6 px and 95th percentile 21.0 px at 3840 px width.",
+      "photo": "porsche-views/view-32.webp",
+      "render": "comparisons/current/view-32.webp",
+      "outline": "comparisons/current/view-32-outline.png",
+      "camera": "source/cameras.json#view-32",
+      "revision": "736599cb42ae"
+    },
+    {
+      "id": "view-33",
+      "label": "Front-right 17°",
+      "source": "https://configurator.porsche.com/en-US/mode/model/992652?options=1A&viz-mode=3d&prs-environment=Whiteroom+Porsche",
+      "credit": "Porsche AG (configurator render)",
+      "original_url": "https://github.com/BaiLiping/Car_Photos/blob/e9c211d5cfdeb8350622092f9de5cbbf69bf5343/Porsche%20911%20Turbo%20S%20Cabriolet/911%20Turbo%20S%20Cabriolet%20%2834%29.jpeg",
+      "status": "verified",
+      "note": "Checked the near headlamp position and rake, front wheel, lower intake corners and roof or windscreen outline. The hood reflection and the depth of the painted fascia differ locally. Exterior silhouette overlap 97.6%. Median boundary distance 6.0 px and 95th percentile 24.2 px at 3840 px width.",
+      "photo": "porsche-views/view-33.webp",
+      "render": "comparisons/current/view-33.webp",
+      "outline": "comparisons/current/view-33-outline.png",
+      "camera": "source/cameras.json#view-33",
+      "revision": "736599cb42ae"
+    },
+    {
+      "id": "view-34",
+      "label": "Front-right 8°",
+      "source": "https://configurator.porsche.com/en-US/mode/model/992652?options=1A&viz-mode=3d&prs-environment=Whiteroom+Porsche",
+      "credit": "Porsche AG (configurator render)",
+      "original_url": "https://github.com/BaiLiping/Car_Photos/blob/e9c211d5cfdeb8350622092f9de5cbbf69bf5343/Porsche%20911%20Turbo%20S%20Cabriolet/911%20Turbo%20S%20Cabriolet%20%2835%29.jpeg",
+      "status": "verified",
+      "note": "Checked the front crest, extended bonnet, both headlamp outlines and five-blade intakes. At 880 px width the face-on crest centre is within one pixel of its marked position. The lower bumper lip is softer than the photograph. Exterior silhouette overlap 98.2%. Median boundary distance 3.0 px and 95th percentile 19.2 px at 3840 px width.",
+      "photo": "porsche-views/view-34.webp",
+      "render": "comparisons/current/view-34.webp",
+      "outline": "comparisons/current/view-34-outline.png",
+      "camera": "source/cameras.json#view-34",
+      "revision": "736599cb42ae"
+    },
+    {
+      "id": "view-35",
+      "label": "Front profile (~0°)",
+      "source": "https://configurator.porsche.com/en-US/mode/model/992652?options=1A&viz-mode=3d&prs-environment=Whiteroom+Porsche",
+      "credit": "Porsche AG (configurator render)",
+      "original_url": "https://github.com/BaiLiping/Car_Photos/blob/e9c211d5cfdeb8350622092f9de5cbbf69bf5343/Porsche%20911%20Turbo%20S%20Cabriolet/911%20Turbo%20S%20Cabriolet%20%2836%29.jpeg",
+      "status": "verified",
+      "note": "Checked the front crest, extended bonnet, both headlamp outlines and five-blade intakes. At 880 px width the face-on crest centre is within one pixel of its marked position. The lower bumper lip is softer than the photograph. Exterior silhouette overlap 98.2%. Median boundary distance 3.0 px and 95th percentile 16.2 px at 3840 px width.",
+      "photo": "porsche-views/view-35.webp",
+      "render": "comparisons/current/view-35.webp",
+      "outline": "comparisons/current/view-35-outline.png",
+      "camera": "source/cameras.json#view-35",
+      "revision": "736599cb42ae"
+    },
+    {
+      "id": "view-36",
+      "label": "Front-left 5°",
+      "source": "https://configurator.porsche.com/en-US/mode/model/992652?options=1A&viz-mode=3d&prs-environment=Whiteroom+Porsche",
+      "credit": "Porsche AG (configurator render)",
+      "original_url": "https://github.com/BaiLiping/Car_Photos/blob/e9c211d5cfdeb8350622092f9de5cbbf69bf5343/Porsche%20911%20Turbo%20S%20Cabriolet/911%20Turbo%20S%20Cabriolet%20%2837%29.jpeg",
+      "status": "verified",
+      "note": "Checked the front crest, extended bonnet, both headlamp outlines and five-blade intakes. At 880 px width the face-on crest centre is within one pixel of its marked position. The lower bumper lip is softer than the photograph. Exterior silhouette overlap 98.1%. Median boundary distance 3.0 px and 95th percentile 16.2 px at 3840 px width.",
+      "photo": "porsche-views/view-36.webp",
+      "render": "comparisons/current/view-36.webp",
+      "outline": "comparisons/current/view-36-outline.png",
+      "camera": "source/cameras.json#view-36",
+      "revision": "736599cb42ae"
+    },
+    {
+      "id": "view-37",
+      "label": "Front-left 12°",
+      "source": "https://configurator.porsche.com/en-US/mode/model/992652?options=1A&viz-mode=3d&prs-environment=Whiteroom+Porsche",
+      "credit": "Porsche AG (configurator render)",
+      "original_url": "https://github.com/BaiLiping/Car_Photos/blob/e9c211d5cfdeb8350622092f9de5cbbf69bf5343/Porsche%20911%20Turbo%20S%20Cabriolet/911%20Turbo%20S%20Cabriolet%20%2838%29.jpeg",
+      "status": "verified",
+      "note": "Checked the near headlamp position and rake, front wheel, lower intake corners and roof or windscreen outline. The hood reflection and the depth of the painted fascia differ locally. Exterior silhouette overlap 97.9%. Median boundary distance 3.0 px and 95th percentile 23.4 px at 3840 px width.",
+      "photo": "porsche-views/view-37.webp",
+      "render": "comparisons/current/view-37.webp",
+      "outline": "comparisons/current/view-37-outline.png",
+      "camera": "source/cameras.json#view-37",
+      "revision": "736599cb42ae"
+    },
+    {
+      "id": "view-38",
+      "label": "Front-left 21°",
+      "source": "https://configurator.porsche.com/en-US/mode/model/992652?options=1A&viz-mode=3d&prs-environment=Whiteroom+Porsche",
+      "credit": "Porsche AG (configurator render)",
+      "original_url": "https://github.com/BaiLiping/Car_Photos/blob/e9c211d5cfdeb8350622092f9de5cbbf69bf5343/Porsche%20911%20Turbo%20S%20Cabriolet/911%20Turbo%20S%20Cabriolet%20%2839%29.jpeg",
+      "status": "verified",
+      "note": "Checked the near headlamp position and rake, front wheel, lower intake corners and roof or windscreen outline. The hood reflection and the depth of the painted fascia differ locally. Exterior silhouette overlap 97.4%. Median boundary distance 6.0 px and 95th percentile 24.0 px at 3840 px width.",
+      "photo": "porsche-views/view-38.webp",
+      "render": "comparisons/current/view-38.webp",
+      "outline": "comparisons/current/view-38-outline.png",
+      "camera": "source/cameras.json#view-38",
+      "revision": "736599cb42ae"
+    },
+    {
+      "id": "view-39",
+      "label": "High front-right three-quarter (34° el)",
+      "source": "https://configurator.porsche.com/en-US/mode/model/992652?options=1A&viz-mode=3d&prs-environment=Whiteroom+Porsche",
+      "credit": "Porsche AG (configurator render)",
+      "original_url": "https://github.com/BaiLiping/Car_Photos/blob/e9c211d5cfdeb8350622092f9de5cbbf69bf5343/Porsche%20911%20Turbo%20S%20Cabriolet/911%20Turbo%20S%20Cabriolet%20%2840%29.jpeg",
+      "status": "verified",
+      "note": "Checked the glass or open-cabin footprint, windscreen rake, fender shoulders and mirror positions against adjacent elevated views. Upholstery and material highlights have lower detail. Exterior silhouette overlap 97.5%. Median boundary distance 6.6 px and 95th percentile 31.8 px at 3840 px width.",
+      "photo": "porsche-views/view-39.webp",
+      "render": "comparisons/current/view-39.webp",
+      "outline": "comparisons/current/view-39-outline.png",
+      "camera": "source/cameras.json#view-39",
+      "revision": "736599cb42ae"
+    },
+    {
+      "id": "view-40",
+      "label": "High right side (41° el)",
+      "source": "https://configurator.porsche.com/en-US/mode/model/992652?options=1A&viz-mode=3d&prs-environment=Whiteroom+Porsche",
+      "credit": "Porsche AG (configurator render)",
+      "original_url": "https://github.com/BaiLiping/Car_Photos/blob/e9c211d5cfdeb8350622092f9de5cbbf69bf5343/Porsche%20911%20Turbo%20S%20Cabriolet/911%20Turbo%20S%20Cabriolet%20%2841%29.jpeg",
+      "status": "verified",
+      "note": "Checked the glass or open-cabin footprint, windscreen rake, fender shoulders and mirror positions against adjacent elevated views. Upholstery and material highlights have lower detail. Exterior silhouette overlap 97.7%. Median boundary distance 6.0 px and 95th percentile 30.6 px at 3840 px width.",
+      "photo": "porsche-views/view-40.webp",
+      "render": "comparisons/current/view-40.webp",
+      "outline": "comparisons/current/view-40-outline.png",
+      "camera": "source/cameras.json#view-40",
+      "revision": "736599cb42ae"
+    },
+    {
+      "id": "view-41",
+      "label": "Near-overhead (79° el, roof up)",
+      "source": "https://configurator.porsche.com/en-US/mode/model/992652?options=1A&viz-mode=3d&prs-environment=Whiteroom+Porsche",
+      "credit": "Porsche AG (configurator render)",
+      "original_url": "https://github.com/BaiLiping/Car_Photos/blob/e9c211d5cfdeb8350622092f9de5cbbf69bf5343/Porsche%20911%20Turbo%20S%20Cabriolet/911%20Turbo%20S%20Cabriolet%20%2842%29.jpeg",
+      "status": "limited",
+      "note": "The roof opening, windshield frame and mirror span are visible in plan. The rear window surround and the textile tension lines are simplified. Exterior silhouette overlap 98.3%. Median boundary distance 6.0 px and 95th percentile 23.4 px at 3840 px width.",
+      "photo": "porsche-views/view-41.webp",
+      "render": "comparisons/current/view-41.webp",
+      "outline": "comparisons/current/view-41-outline.png",
+      "camera": "source/cameras.json#view-41",
+      "revision": "736599cb42ae"
+    },
+    {
+      "id": "view-42",
+      "label": "Overhead reference (80° el, roof up)",
+      "source": "https://configurator.porsche.com/en-US/mode/model/992652?options=1A&viz-mode=3d&prs-environment=Whiteroom+Porsche",
+      "credit": "Porsche AG (configurator render)",
+      "original_url": "https://github.com/BaiLiping/Car_Photos/blob/e9c211d5cfdeb8350622092f9de5cbbf69bf5343/Porsche%20911%20Turbo%20S%20Cabriolet/911%20Turbo%20S%20Cabriolet%20%2843%29.jpeg",
+      "status": "limited",
+      "note": "The roof opening, windshield frame and mirror span are visible in plan. The rear window surround and the textile tension lines are simplified. Exterior silhouette overlap 98.5%. Median boundary distance 6.0 px and 95th percentile 21.0 px at 3840 px width.",
+      "photo": "porsche-views/view-42.webp",
+      "render": "comparisons/current/view-42.webp",
+      "outline": "comparisons/current/view-42-outline.png",
+      "camera": "source/cameras.json#view-42",
+      "revision": "736599cb42ae"
+    },
+    {
+      "id": "view-43",
+      "label": "Roof open · Front-left three-quarter (~28°)",
+      "source": "https://configurator.porsche.com/en-US/mode/model/992652?options=1A&viz-mode=3d&prs-environment=Whiteroom+Porsche",
+      "credit": "Porsche AG (configurator render)",
+      "original_url": "https://github.com/BaiLiping/Car_Photos/blob/e9c211d5cfdeb8350622092f9de5cbbf69bf5343/Porsche%20911%20Turbo%20S%20Cabriolet/911%20Turbo%20S%20Cabriolet%20%2856%29.jpeg",
+      "status": "verified",
+      "note": "Checked the near headlamp position and rake, front wheel, lower intake corners and roof or windscreen outline. The hood reflection and the depth of the painted fascia differ locally. Exterior silhouette overlap 96.8%. Median boundary distance 9.0 px and 95th percentile 22.8 px at 3840 px width.",
+      "photo": "porsche-views/view-43.webp",
+      "render": "comparisons/current/view-43.webp",
+      "outline": "comparisons/current/view-43-outline.png",
+      "camera": "source/cameras.json#view-43",
+      "revision": "736599cb42ae"
+    },
+    {
+      "id": "view-44",
+      "label": "Roof open · Left side profile (~-88°)",
+      "source": "https://configurator.porsche.com/en-US/mode/model/992652?options=1A&viz-mode=3d&prs-environment=Whiteroom+Porsche",
+      "credit": "Porsche AG (configurator render)",
+      "original_url": "https://github.com/BaiLiping/Car_Photos/blob/e9c211d5cfdeb8350622092f9de5cbbf69bf5343/Porsche%20911%20Turbo%20S%20Cabriolet/911%20Turbo%20S%20Cabriolet%20%2855%29.jpeg",
+      "status": "fix",
+      "note": "The near wheel centres and open windscreen locate the side camera. The headrest outline and the rear tonneau taper still diverge in the roof-down side elevation. Exterior silhouette overlap 96.6%. Median boundary distance 6.0 px and 95th percentile 24.0 px at 3840 px width.",
+      "photo": "porsche-views/view-44.webp",
+      "render": "comparisons/current/view-44.webp",
+      "outline": "comparisons/current/view-44-outline.png",
+      "camera": "source/cameras.json#view-44",
+      "revision": "736599cb42ae"
+    },
+    {
+      "id": "view-45",
+      "label": "Roof open · Rear-left three-quarter (~-157°)",
+      "source": "https://configurator.porsche.com/en-US/mode/model/992652?options=1A&viz-mode=3d&prs-environment=Whiteroom+Porsche",
+      "credit": "Porsche AG (configurator render)",
+      "original_url": "https://github.com/BaiLiping/Car_Photos/blob/e9c211d5cfdeb8350622092f9de5cbbf69bf5343/Porsche%20911%20Turbo%20S%20Cabriolet/911%20Turbo%20S%20Cabriolet%20%2854%29.jpeg",
+      "status": "fix",
+      "note": "The plate and outlet positions improved in the rear and three-quarter references. The outer valance transitions and spoiler cradle still need sharper definition from this angle. Exterior silhouette overlap 96.7%. Median boundary distance 8.4 px and 95th percentile 27.6 px at 3840 px width.",
+      "photo": "porsche-views/view-45.webp",
+      "render": "comparisons/current/view-45.webp",
+      "outline": "comparisons/current/view-45-outline.png",
+      "camera": "source/cameras.json#view-45",
+      "revision": "736599cb42ae"
+    },
+    {
+      "id": "view-46",
+      "label": "Roof open · Rear (~180°)",
+      "source": "https://configurator.porsche.com/en-US/mode/model/992652?options=1A&viz-mode=3d&prs-environment=Whiteroom+Porsche",
+      "credit": "Porsche AG (configurator render)",
+      "original_url": "https://github.com/BaiLiping/Car_Photos/blob/e9c211d5cfdeb8350622092f9de5cbbf69bf5343/Porsche%20911%20Turbo%20S%20Cabriolet/911%20Turbo%20S%20Cabriolet%20%2851%29.jpeg",
+      "status": "verified",
+      "note": "Checked the raised plate, continuous rear light strip, paired outlet spacing and the valance at the matched rear camera. The dark lamp surround and spoiler pedestal still have softer edges. Exterior silhouette overlap 97.7%. Median boundary distance 3.0 px and 95th percentile 24.0 px at 3840 px width.",
+      "photo": "porsche-views/view-46.webp",
+      "render": "comparisons/current/view-46.webp",
+      "outline": "comparisons/current/view-46-outline.png",
+      "camera": "source/cameras.json#view-46",
+      "revision": "736599cb42ae"
+    },
+    {
+      "id": "view-47",
+      "label": "Roof open · Right side profile (~92°)",
+      "source": "https://configurator.porsche.com/en-US/mode/model/992652?options=1A&viz-mode=3d&prs-environment=Whiteroom+Porsche",
+      "credit": "Porsche AG (configurator render)",
+      "original_url": "https://github.com/BaiLiping/Car_Photos/blob/e9c211d5cfdeb8350622092f9de5cbbf69bf5343/Porsche%20911%20Turbo%20S%20Cabriolet/911%20Turbo%20S%20Cabriolet%20%2846%29.jpeg",
+      "status": "fix",
+      "note": "The near wheel centres and open windscreen locate the side camera. The headrest outline and the rear tonneau taper still diverge in the roof-down side elevation. Exterior silhouette overlap 96.7%. Median boundary distance 6.0 px and 95th percentile 27.6 px at 3840 px width.",
+      "photo": "porsche-views/view-47.webp",
+      "render": "comparisons/current/view-47.webp",
+      "outline": "comparisons/current/view-47-outline.png",
+      "camera": "source/cameras.json#view-47",
+      "revision": "736599cb42ae"
+    },
+    {
+      "id": "view-48",
+      "label": "Roof open · Front (~0°)",
+      "source": "https://configurator.porsche.com/en-US/mode/model/992652?options=1A&viz-mode=3d&prs-environment=Whiteroom+Porsche",
+      "credit": "Porsche AG (configurator render)",
+      "original_url": "https://github.com/BaiLiping/Car_Photos/blob/e9c211d5cfdeb8350622092f9de5cbbf69bf5343/Porsche%20911%20Turbo%20S%20Cabriolet/911%20Turbo%20S%20Cabriolet%20%2852%29.jpeg",
+      "status": "verified",
+      "note": "Checked the front crest, extended bonnet, both headlamp outlines and five-blade intakes. At 880 px width the face-on crest centre is within one pixel of its marked position. The lower bumper lip is softer than the photograph. Exterior silhouette overlap 97.9%. Median boundary distance 4.2 px and 95th percentile 19.8 px at 3840 px width.",
+      "photo": "porsche-views/view-48.webp",
+      "render": "comparisons/current/view-48.webp",
+      "outline": "comparisons/current/view-48-outline.png",
+      "camera": "source/cameras.json#view-48",
+      "revision": "736599cb42ae"
+    },
+    {
+      "id": "view-49",
+      "label": "Roof open · High front-right three-quarter (29° el)",
+      "source": "https://configurator.porsche.com/en-US/mode/model/992652?options=1A&viz-mode=3d&prs-environment=Whiteroom+Porsche",
+      "credit": "Porsche AG (configurator render)",
+      "original_url": "https://github.com/BaiLiping/Car_Photos/blob/e9c211d5cfdeb8350622092f9de5cbbf69bf5343/Porsche%20911%20Turbo%20S%20Cabriolet/911%20Turbo%20S%20Cabriolet%20%2845%29.jpeg",
+      "status": "verified",
+      "note": "Checked the glass or open-cabin footprint, windscreen rake, fender shoulders and mirror positions against adjacent elevated views. Upholstery and material highlights have lower detail. Exterior silhouette overlap 97.0%. Median boundary distance 9.0 px and 95th percentile 39.0 px at 3840 px width.",
+      "photo": "porsche-views/view-49.webp",
+      "render": "comparisons/current/view-49.webp",
+      "outline": "comparisons/current/view-49-outline.png",
+      "camera": "source/cameras.json#view-49",
+      "revision": "736599cb42ae"
+    },
+    {
+      "id": "view-50",
+      "label": "Roof open · High rear-left three-quarter (36° el)",
+      "source": "https://configurator.porsche.com/en-US/mode/model/992652?options=1A&viz-mode=3d&prs-environment=Whiteroom+Porsche",
+      "credit": "Porsche AG (configurator render)",
+      "original_url": "https://github.com/BaiLiping/Car_Photos/blob/e9c211d5cfdeb8350622092f9de5cbbf69bf5343/Porsche%20911%20Turbo%20S%20Cabriolet/911%20Turbo%20S%20Cabriolet%20%2853%29.jpeg",
+      "status": "verified",
+      "note": "Checked the glass or open-cabin footprint, windscreen rake, fender shoulders and mirror positions against adjacent elevated views. Upholstery and material highlights have lower detail. Exterior silhouette overlap 97.6%. Median boundary distance 6.0 px and 95th percentile 24.0 px at 3840 px width.",
+      "photo": "porsche-views/view-50.webp",
+      "render": "comparisons/current/view-50.webp",
+      "outline": "comparisons/current/view-50-outline.png",
+      "camera": "source/cameras.json#view-50",
+      "revision": "736599cb42ae"
+    },
+    {
+      "id": "view-51",
+      "label": "Roof open · Overhead reference (80° el)",
+      "source": "https://configurator.porsche.com/en-US/mode/model/992652?options=1A&viz-mode=3d&prs-environment=Whiteroom+Porsche",
+      "credit": "Porsche AG (configurator render)",
+      "original_url": "https://github.com/BaiLiping/Car_Photos/blob/e9c211d5cfdeb8350622092f9de5cbbf69bf5343/Porsche%20911%20Turbo%20S%20Cabriolet/911%20Turbo%20S%20Cabriolet%20%2844%29.jpeg",
+      "status": "verified",
+      "note": "Checked the glass or open-cabin footprint, windscreen rake, fender shoulders and mirror positions against adjacent elevated views. Upholstery and material highlights have lower detail. Exterior silhouette overlap 98.5%. Median boundary distance 6.0 px and 95th percentile 21.0 px at 3840 px width.",
+      "photo": "porsche-views/view-51.webp",
+      "render": "comparisons/current/view-51.webp",
+      "outline": "comparisons/current/view-51-outline.png",
+      "camera": "source/cameras.json#view-51",
+      "revision": "736599cb42ae"
+    },
+    {
+      "id": "detail-fuel-flap-open",
+      "label": "Right side profile · Fuel filler flap open",
+      "source": "https://configurator.porsche.com/en-US/mode/model/992652?options=1A&viz-mode=3d&prs-environment=Whiteroom+Porsche",
+      "credit": "Porsche AG (configurator render)",
+      "original_url": "https://github.com/BaiLiping/Car_Photos/blob/e9c211d5cfdeb8350622092f9de5cbbf69bf5343/Porsche%20911%20Turbo%20S%20Cabriolet/911%20Turbo%20S%20Cabriolet%20%2826%29.jpeg",
+      "status": "verified",
+      "note": "The right-hand fuel flap opens at its forward hinge. The wheel positions and sill register to the adjacent closed-flap profile. The filler-neck depth is approximate.",
+      "photo": "porsche-views/detail-fuel-flap-open.webp",
+      "render": "comparisons/current/detail-fuel-flap-open.webp",
+      "outline": "comparisons/current/detail-fuel-flap-open-outline.png",
+      "camera": "source/cameras.json#detail-fuel-flap-open",
+      "revision": "736599cb42ae"
+    },
+    {
+      "id": "detail-wheel-pccb-fl",
+      "label": "Front-left wheel, yellow PCCB brake & t-hybrid badge",
+      "source": "https://configurator.porsche.com/en-US/mode/model/992652?options=1A&viz-mode=3d&prs-environment=Whiteroom+Porsche",
+      "credit": "Porsche AG (configurator render)",
+      "original_url": "https://github.com/BaiLiping/Car_Photos/blob/e9c211d5cfdeb8350622092f9de5cbbf69bf5343/Porsche%20911%20Turbo%20S%20Cabriolet/911%20Turbo%20S%20Cabriolet%20%2850%29.jpeg",
+      "status": "fix",
+      "note": "The centre-lock, split-spoke pattern, yellow PCCB caliper and ceramic disc are visible. The spoke roots, brake casting and wheel-arch lip still differ in the native crop.",
+      "photo": "porsche-views/detail-wheel-pccb-fl.webp",
+      "render": "comparisons/current/detail-wheel-pccb-fl.webp",
+      "outline": "comparisons/current/detail-wheel-pccb-fl-outline.png",
+      "camera": "source/cameras.json#detail-wheel-pccb-fl",
+      "revision": "736599cb42ae"
+    },
+    {
+      "id": "detail-mech-engine-rear",
+      "label": "Powertrain · 3.6L twin-eTurbo flat-6 engine (rear view)",
+      "source": "https://newsroom.porsche.com/en/press-kits/pfv-porsche-911-turbo-s/Powertrain.html",
+      "credit": "Porsche AG (factory technical illustration 323524)",
+      "original_url": "https://github.com/BaiLiping/Car_Photos/blob/e9c211d5cfdeb8350622092f9de5cbbf69bf5343/Porsche%20911%20Turbo%20S%20Cabriolet/Factory%20schematics/Turbo%20S%20mechanical%20illustrations/Engine%20and%20exhaust%20-%20rear%20view.jpg",
+      "status": "limited",
+      "note": "The opposed cylinder banks, lower engine carrier and two eTurbo inlets are identifiable. The back of the castings and concealed hose paths are inferred. Surface detail uses Porsche’s rear and three-quarter photographs. Visible assembly mask overlap 85.5%.",
+      "photo": "porsche-views/detail-mech-engine-rear.webp",
+      "render": "comparisons/current/detail-mech-engine-rear.webp",
+      "outline": "comparisons/current/detail-mech-engine-rear-outline.png",
+      "camera": "source/cameras.json#detail-mech-engine-rear",
+      "revision": "736599cb42ae"
+    },
+    {
+      "id": "detail-mech-engine-3q",
+      "label": "Powertrain · 3.6L twin-eTurbo engine & titanium exhaust (rear 3/4)",
+      "source": "https://newsroom.porsche.com/en/press-kits/pfv-porsche-911-turbo-s/Powertrain.html",
+      "credit": "Porsche AG (factory technical illustration 323525)",
+      "original_url": "https://github.com/BaiLiping/Car_Photos/blob/e9c211d5cfdeb8350622092f9de5cbbf69bf5343/Porsche%20911%20Turbo%20S%20Cabriolet/Factory%20schematics/Turbo%20S%20mechanical%20illustrations/Engine%20and%20exhaust%20-%20three-quarter%20view.jpg",
+      "status": "limited",
+      "note": "The engine, outboard exhaust housings and transverse silencer are independent meshes. The ends of the heat shields and the flanges differ from the photographed unit. Visible assembly mask overlap 87.2%.",
+      "photo": "porsche-views/detail-mech-engine-3q.webp",
+      "render": "comparisons/current/detail-mech-engine-3q.webp",
+      "outline": "comparisons/current/detail-mech-engine-3q-outline.png",
+      "camera": "source/cameras.json#detail-mech-engine-3q",
+      "revision": "736599cb42ae"
+    },
+    {
+      "id": "detail-mech-pdk-emotor",
+      "label": "Powertrain · 8-speed hybrid PDK (CDU.50) & 60 kW PMSM electric motor",
+      "source": "https://newsroom.porsche.com/en/press-kits/pfv-porsche-911-turbo-s/Powertrain.html",
+      "credit": "Porsche AG (factory technical illustration 323520)",
+      "original_url": "https://github.com/BaiLiping/Car_Photos/blob/e9c211d5cfdeb8350622092f9de5cbbf69bf5343/Porsche%20911%20Turbo%20S%20Cabriolet/Factory%20schematics/Turbo%20S%20mechanical%20illustrations/Hybrid%20transmission%20and%20electric%20motor.jpg",
+      "status": "limited",
+      "note": "The separated electric motor and ribbed PDK case follow the illustration. Phase leads are modeled and the visible case carries photographic surface detail. Rear motor casing and internal tooth profiles are approximate. Visible assembly mask overlap 84.8%.",
+      "photo": "porsche-views/detail-mech-pdk-emotor.webp",
+      "render": "comparisons/current/detail-mech-pdk-emotor.webp",
+      "outline": "comparisons/current/detail-mech-pdk-emotor-outline.png",
+      "camera": "source/cameras.json#detail-mech-pdk-emotor",
+      "revision": "736599cb42ae"
+    },
+    {
+      "id": "detail-mech-chassis-front",
+      "label": "Powertrain · Rolling chassis, AWD & 400V HV routing (front-left 3/4)",
+      "source": "https://newsroom.porsche.com/en/press-kits/pfv-porsche-911-turbo-s/Powertrain.html",
+      "credit": "Porsche AG (factory technical illustration 323530)",
+      "original_url": "https://github.com/BaiLiping/Car_Photos/blob/e9c211d5cfdeb8350622092f9de5cbbf69bf5343/Porsche%20911%20Turbo%20S%20Cabriolet/Factory%20schematics/Turbo%20S%20mechanical%20illustrations/Rolling%20chassis%20and%20electrical%20routing%20-%20view%201.jpg",
+      "status": "limited",
+      "note": "Wheelbase, powertrain location and the longitudinal electrical route register in this view. The small brackets, hose bundles, battery housing and unpictured faces are simplified. Visible assembly mask overlap 79.6%.",
+      "photo": "porsche-views/detail-mech-chassis-front.webp",
+      "render": "comparisons/current/detail-mech-chassis-front.webp",
+      "outline": "comparisons/current/detail-mech-chassis-front-outline.png",
+      "camera": "source/cameras.json#detail-mech-chassis-front",
+      "revision": "736599cb42ae"
+    },
+    {
+      "id": "detail-mech-chassis-rear",
+      "label": "Powertrain · Rolling chassis, AWD & 400V HV routing (rear-left 3/4)",
+      "source": "https://newsroom.porsche.com/en/press-kits/pfv-porsche-911-turbo-s/Powertrain.html",
+      "credit": "Porsche AG (factory technical illustration 323532)",
+      "original_url": "https://github.com/BaiLiping/Car_Photos/blob/e9c211d5cfdeb8350622092f9de5cbbf69bf5343/Porsche%20911%20Turbo%20S%20Cabriolet/Factory%20schematics/Turbo%20S%20mechanical%20illustrations/Rolling%20chassis%20and%20electrical%20routing%20-%20view%202.jpg",
+      "status": "limited",
+      "note": "Wheelbase, powertrain location and the longitudinal electrical route register in this view. The small brackets, hose bundles, battery housing and unpictured faces are simplified. Visible assembly mask overlap 80.0%.",
+      "photo": "porsche-views/detail-mech-chassis-rear.webp",
+      "render": "comparisons/current/detail-mech-chassis-rear.webp",
+      "outline": "comparisons/current/detail-mech-chassis-rear-outline.png",
+      "camera": "source/cameras.json#detail-mech-chassis-rear",
+      "revision": "736599cb42ae"
+    },
+    {
+      "id": "detail-cabin-dash",
+      "label": "Cabin · Dashboard, curved digital cluster & console",
+      "source": "https://configurator.porsche.com/en-US/mode/model/992652?options=1A&viz-mode=3d&prs-environment=Whiteroom+Porsche",
+      "credit": "Porsche AG (configurator render)",
+      "original_url": "https://github.com/BaiLiping/Car_Photos/blob/e9c211d5cfdeb8350622092f9de5cbbf69bf5343/Porsche%20911%20Turbo%20S%20Cabriolet/911%20Turbo%20S%20Cabriolet%20%2847%29.jpeg",
+      "status": "verified",
+      "note": "Checked the steering hub, dashboard screen, clock and selector. This camera hides the front seats to reproduce the unobstructed factory dashboard view. The rim buttons and switch legends are approximate.",
+      "photo": "porsche-views/detail-cabin-dash.webp",
+      "render": "comparisons/current/detail-cabin-dash.webp",
+      "outline": "comparisons/current/detail-cabin-dash-outline.png",
+      "camera": "source/cameras.json#detail-cabin-dash",
+      "revision": "736599cb42ae"
+    },
+    {
+      "id": "detail-cabin-seats-front",
+      "label": "Cabin · Front 18-way Sport Seats Plus & rear 2+2 seats",
+      "source": "https://configurator.porsche.com/en-US/mode/model/992652?options=1A&viz-mode=3d&prs-environment=Whiteroom+Porsche",
+      "credit": "Porsche AG (configurator render)",
+      "original_url": "https://github.com/BaiLiping/Car_Photos/blob/e9c211d5cfdeb8350622092f9de5cbbf69bf5343/Porsche%20911%20Turbo%20S%20Cabriolet/911%20Turbo%20S%20Cabriolet%20%2848%29.jpeg",
+      "status": "fix",
+      "note": "Both front seat backs, headrests and the central armrest are visible. The shoulders and side-bolster sections are flatter than the photograph.",
+      "photo": "porsche-views/detail-cabin-seats-front.webp",
+      "render": "comparisons/current/detail-cabin-seats-front.webp",
+      "outline": "comparisons/current/detail-cabin-seats-front-outline.png",
+      "camera": "source/cameras.json#detail-cabin-seats-front",
+      "revision": "736599cb42ae"
+    },
+    {
+      "id": "detail-cabin-seats-rear",
+      "label": "Cabin · Rear seats & cockpit from right-rear",
+      "source": "https://configurator.porsche.com/en-US/mode/model/992652?options=1A&viz-mode=3d&prs-environment=Whiteroom+Porsche",
+      "credit": "Porsche AG (configurator render)",
+      "original_url": "https://github.com/BaiLiping/Car_Photos/blob/e9c211d5cfdeb8350622092f9de5cbbf69bf5343/Porsche%20911%20Turbo%20S%20Cabriolet/911%20Turbo%20S%20Cabriolet%20%2849%29.jpeg",
+      "status": "limited",
+      "note": "The rear cushions, front seat back and steering position register. The quilt seams, belts and concealed side trim have partial reference coverage.",
+      "photo": "porsche-views/detail-cabin-seats-rear.webp",
+      "render": "comparisons/current/detail-cabin-seats-rear.webp",
+      "outline": "comparisons/current/detail-cabin-seats-rear-outline.png",
+      "camera": "source/cameras.json#detail-cabin-seats-rear",
+      "revision": "736599cb42ae"
+    },
+    {
+      "id": "studio-57-dup",
+      "label": "Roof open · Front-left three-quarter (near-duplicate of view-43)",
+      "source": "https://configurator.porsche.com/en-US/mode/model/992652?options=1A&viz-mode=3d&prs-environment=Whiteroom+Porsche",
+      "credit": "Porsche AG (configurator render)",
+      "status": "excluded",
+      "note": "Near-duplicate of the roof-down front three-quarter frame view-43.",
+      "original_url": "https://github.com/BaiLiping/Car_Photos/blob/e9c211d5cfdeb8350622092f9de5cbbf69bf5343/Porsche%20911%20Turbo%20S%20Cabriolet/911%20Turbo%20S%20Cabriolet%20%2857%29.jpeg"
+    },
+    {
+      "id": "detail-mech-eturbo-cutaway",
+      "label": "Powertrain · Electric turbocharger (eTurbo) cutaway",
+      "source": "https://newsroom.porsche.com/en/press-kits/pfv-porsche-911-turbo-s/Powertrain.html",
+      "credit": "Porsche AG (factory technical illustration 323523)",
+      "status": "limited",
+      "note": "Factory sectional illustration used for the motor and turbine. The viewer displays the assembled turbocharger. The exact section plane and internal passages are unavailable.",
+      "original_url": "https://github.com/BaiLiping/Car_Photos/blob/e9c211d5cfdeb8350622092f9de5cbbf69bf5343/Porsche%20911%20Turbo%20S%20Cabriolet/Factory%20schematics/Turbo%20S%20mechanical%20illustrations/Electric%20turbocharger%20cutaway.jpg",
+      "photo": "comparisons/current/detail-mech-eturbo-cutaway-reference.webp"
+    },
+    {
+      "id": "detail-mech-chassis-awd",
+      "label": "Powertrain · Rolling chassis mechanical AWD driveline (HV hidden)",
+      "source": "https://newsroom.porsche.com/en/press-kits/pfv-porsche-911-turbo-s/Powertrain.html",
+      "credit": "Porsche AG (factory technical illustration 323531)",
+      "status": "limited",
+      "note": "Supplementary mechanical AWD illustration with electrical components removed. The two rolling-chassis gallery cameras show the complete factory presentation.",
+      "original_url": "https://github.com/BaiLiping/Car_Photos/blob/e9c211d5cfdeb8350622092f9de5cbbf69bf5343/Porsche%20911%20Turbo%20S%20Cabriolet/Mechanical/Drivetrain%20and%20connections/Rolling%20chassis%20-%20mechanical%20driveshaft%20routing.jpg",
+      "photo": "comparisons/current/detail-mech-chassis-awd-reference.webp"
+    },
+    {
+      "id": "detail-mech-cutaway-front",
+      "label": "Powertrain · Full vehicle cutaway (front-left 3/4, Coupe body)",
+      "source": "https://newsroom.porsche.com/en/press-kits/pfv-porsche-911-turbo-s/Powertrain.html",
+      "credit": "Porsche AG (factory technical illustration 323526)",
+      "status": "excluded",
+      "note": "This factory cutaway has a Coupé body. It supplies mechanical context for the shared powertrain.",
+      "original_url": "https://github.com/BaiLiping/Car_Photos/blob/e9c211d5cfdeb8350622092f9de5cbbf69bf5343/Porsche%20911%20Turbo%20S%20Cabriolet/Mechanical/Drivetrain%20and%20connections/Factory%20cutaway%20-%20engine%20to%20front%20axle.jpg"
+    },
+    {
+      "id": "detail-mech-cutaway-rear",
+      "label": "Powertrain · Rear engine bay cutaway (high rear-left 3/4, Coupe body)",
+      "source": "https://newsroom.porsche.com/en/press-kits/pfv-porsche-911-turbo-s/Powertrain.html",
+      "credit": "Porsche AG (factory technical illustration 323527)",
+      "status": "excluded",
+      "note": "The rear cutaway shows the Coupé roof and engine bay. The Cabriolet has a different rear body and hood mechanism.",
+      "original_url": "https://github.com/BaiLiping/Car_Photos/blob/e9c211d5cfdeb8350622092f9de5cbbf69bf5343/Porsche%20911%20Turbo%20S%20Cabriolet/Mechanical/Engine%20and%20turbos/Factory%20cutaway%20-%20rear%20engine%20compartment.jpg"
+    },
+    {
+      "id": "detail-cab-engine-bay",
+      "label": "Engine bay · Open rear service lid & twin cooling fans (real 2026 Cabriolet)",
+      "source": "https://collectingcars.com/for-sale/2026-porsche-911-992-2-turbo-s-cabriolet",
+      "credit": "Collecting Cars / lot 090655 (real 2026 Cabriolet photograph)",
+      "status": "excluded",
+      "note": "Independently photographed Cabriolet service bay. The acquisition record permits a source link and does not grant rehosting rights.",
+      "original_url": "https://github.com/BaiLiping/Car_Photos/blob/e9c211d5cfdeb8350622092f9de5cbbf69bf5343/Porsche%20911%20Turbo%20S%20Cabriolet/Mechanical/Engine%20and%20turbos/Cabriolet%20-%20engine%20bay%20fans%20from%20above.jpg"
+    },
+    {
+      "id": "detail-ortho-side-factory",
+      "label": "Factory orthographic benchmark · Right side profile (roof open, black promo spec)",
+      "source": "https://www.porsche.com/usa/models/911/911-turbo-models/911-turbo-s-cabriolet/",
+      "credit": "Porsche AG (official 992652 side profile render)",
+      "status": "limited",
+      "note": "Factory side profile in alternative trim. With both hubs held fixed, the perspective-fit outline overlap is 95.1%. The windscreen header and outer bumper corners give the largest visible discrepancies.",
+      "original_url": "https://github.com/BaiLiping/Car_Photos/blob/e9c211d5cfdeb8350622092f9de5cbbf69bf5343/Porsche%20911%20Turbo%20S%20Cabriolet/Factory%20schematics/Porsche%20-%20Turbo%20S%20Cabriolet%20side%20view.png",
+      "photo": "comparisons/current/detail-ortho-side-factory-reference.webp"
+    }
+  ],
+  "exteriorMeasurements": [
+    {
+      "id": "view-00",
+      "geometryHoldout": false,
+      "fixedCamera": {
+        "iou": 0.96616,
+        "median_px_4k": 8.4,
+        "p95_px_4k": 30.0,
+        "p95_percent_span": 1.27
+      },
+      "finalCamera": {
+        "iou": 0.97268,
+        "median_px_4k": 6.6,
+        "p95_px_4k": 21.0,
+        "p95_percent_span": 0.89
+      }
+    },
+    {
+      "id": "view-01",
+      "geometryHoldout": false,
+      "fixedCamera": {
+        "iou": 0.96321,
+        "median_px_4k": 9.0,
+        "p95_px_4k": 28.1,
+        "p95_percent_span": 1.03
+      },
+      "finalCamera": {
+        "iou": 0.96909,
+        "median_px_4k": 6.6,
+        "p95_px_4k": 21.6,
+        "p95_percent_span": 0.79
+      }
+    },
+    {
+      "id": "view-02",
+      "geometryHoldout": true,
+      "fixedCamera": {
+        "iou": 0.95677,
+        "median_px_4k": 9.0,
+        "p95_px_4k": 42.0,
+        "p95_percent_span": 1.32
+      },
+      "finalCamera": {
+        "iou": 0.97095,
+        "median_px_4k": 6.0,
+        "p95_px_4k": 31.2,
+        "p95_percent_span": 0.98
+      }
+    },
+    {
+      "id": "view-03",
+      "geometryHoldout": false,
+      "fixedCamera": {
+        "iou": 0.97282,
+        "median_px_4k": 4.2,
+        "p95_px_4k": 30.0,
+        "p95_percent_span": 0.89
+      },
+      "finalCamera": {
+        "iou": 0.97589,
+        "median_px_4k": 4.2,
+        "p95_px_4k": 24.0,
+        "p95_percent_span": 0.71
+      }
+    },
+    {
+      "id": "view-04",
+      "geometryHoldout": false,
+      "fixedCamera": {
+        "iou": 0.97522,
+        "median_px_4k": 3.0,
+        "p95_px_4k": 28.2,
+        "p95_percent_span": 0.84
+      },
+      "finalCamera": {
+        "iou": 0.97715,
+        "median_px_4k": 3.0,
+        "p95_px_4k": 24.6,
+        "p95_percent_span": 0.73
+      }
+    },
+    {
+      "id": "view-05",
+      "geometryHoldout": false,
+      "fixedCamera": {
+        "iou": 0.97343,
+        "median_px_4k": 6.0,
+        "p95_px_4k": 25.2,
+        "p95_percent_span": 0.78
+      },
+      "finalCamera": {
+        "iou": 0.97651,
+        "median_px_4k": 4.2,
+        "p95_px_4k": 24.0,
+        "p95_percent_span": 0.74
+      }
+    },
+    {
+      "id": "view-06",
+      "geometryHoldout": false,
+      "fixedCamera": {
+        "iou": 0.96599,
+        "median_px_4k": 6.6,
+        "p95_px_4k": 36.0,
+        "p95_percent_span": 1.22
+      },
+      "finalCamera": {
+        "iou": 0.97046,
+        "median_px_4k": 6.0,
+        "p95_px_4k": 25.8,
+        "p95_percent_span": 0.87
+      }
+    },
+    {
+      "id": "view-07",
+      "geometryHoldout": true,
+      "fixedCamera": {
+        "iou": 0.94074,
+        "median_px_4k": 15.0,
+        "p95_px_4k": 54.6,
+        "p95_percent_span": 2.09
+      },
+      "finalCamera": {
+        "iou": 0.96705,
+        "median_px_4k": 9.0,
+        "p95_px_4k": 36.0,
+        "p95_percent_span": 1.38
+      }
+    },
+    {
+      "id": "view-08",
+      "geometryHoldout": false,
+      "fixedCamera": {
+        "iou": 0.91716,
+        "median_px_4k": 19.8,
+        "p95_px_4k": 84.0,
+        "p95_percent_span": 3.51
+      },
+      "finalCamera": {
+        "iou": 0.96818,
+        "median_px_4k": 6.6,
+        "p95_px_4k": 35.4,
+        "p95_percent_span": 1.48
+      }
+    },
+    {
+      "id": "view-09",
+      "geometryHoldout": false,
+      "fixedCamera": {
+        "iou": 0.91944,
+        "median_px_4k": 19.2,
+        "p95_px_4k": 83.0,
+        "p95_percent_span": 3.98
+      },
+      "finalCamera": {
+        "iou": 0.97632,
+        "median_px_4k": 6.0,
+        "p95_px_4k": 19.2,
+        "p95_percent_span": 0.92
+      }
+    },
+    {
+      "id": "view-10",
+      "geometryHoldout": false,
+      "fixedCamera": {
+        "iou": 0.96101,
+        "median_px_4k": 9.6,
+        "p95_px_4k": 33.0,
+        "p95_percent_span": 1.74
+      },
+      "finalCamera": {
+        "iou": 0.97949,
+        "median_px_4k": 4.2,
+        "p95_px_4k": 22.2,
+        "p95_percent_span": 1.17
+      }
+    },
+    {
+      "id": "view-11",
+      "geometryHoldout": false,
+      "fixedCamera": {
+        "iou": 0.95905,
+        "median_px_4k": 10.8,
+        "p95_px_4k": 27.0,
+        "p95_percent_span": 1.58
+      },
+      "finalCamera": {
+        "iou": 0.98026,
+        "median_px_4k": 4.2,
+        "p95_px_4k": 19.2,
+        "p95_percent_span": 1.12
+      }
+    },
+    {
+      "id": "view-12",
+      "geometryHoldout": true,
+      "fixedCamera": {
+        "iou": 0.96579,
+        "median_px_4k": 6.0,
+        "p95_px_4k": 24.0,
+        "p95_percent_span": 1.4
+      },
+      "finalCamera": {
+        "iou": 0.97255,
+        "median_px_4k": 6.0,
+        "p95_px_4k": 25.2,
+        "p95_percent_span": 1.47
+      }
+    },
+    {
+      "id": "view-13",
+      "geometryHoldout": false,
+      "fixedCamera": {
+        "iou": 0.92429,
+        "median_px_4k": 21.0,
+        "p95_px_4k": 63.0,
+        "p95_percent_span": 3.68
+      },
+      "finalCamera": {
+        "iou": 0.98046,
+        "median_px_4k": 3.0,
+        "p95_px_4k": 19.2,
+        "p95_percent_span": 1.12
+      }
+    },
+    {
+      "id": "view-14",
+      "geometryHoldout": false,
+      "fixedCamera": {
+        "iou": 0.94399,
+        "median_px_4k": 15.0,
+        "p95_px_4k": 39.5,
+        "p95_percent_span": 2.29
+      },
+      "finalCamera": {
+        "iou": 0.97692,
+        "median_px_4k": 4.2,
+        "p95_px_4k": 21.0,
+        "p95_percent_span": 1.22
+      }
+    },
+    {
+      "id": "view-15",
+      "geometryHoldout": false,
+      "fixedCamera": {
+        "iou": 0.96064,
+        "median_px_4k": 12.0,
+        "p95_px_4k": 29.4,
+        "p95_percent_span": 1.61
+      },
+      "finalCamera": {
+        "iou": 0.97961,
+        "median_px_4k": 3.0,
+        "p95_px_4k": 22.8,
+        "p95_percent_span": 1.25
+      }
+    },
+    {
+      "id": "view-16",
+      "geometryHoldout": false,
+      "fixedCamera": {
+        "iou": 0.97367,
+        "median_px_4k": 6.0,
+        "p95_px_4k": 25.5,
+        "p95_percent_span": 1.29
+      },
+      "finalCamera": {
+        "iou": 0.97765,
+        "median_px_4k": 4.2,
+        "p95_px_4k": 21.0,
+        "p95_percent_span": 1.06
+      }
+    },
+    {
+      "id": "view-17",
+      "geometryHoldout": true,
+      "fixedCamera": {
+        "iou": 0.94274,
+        "median_px_4k": 15.0,
+        "p95_px_4k": 50.3,
+        "p95_percent_span": 2.23
+      },
+      "finalCamera": {
+        "iou": 0.97148,
+        "median_px_4k": 6.0,
+        "p95_px_4k": 27.0,
+        "p95_percent_span": 1.19
+      }
+    },
+    {
+      "id": "view-18",
+      "geometryHoldout": false,
+      "fixedCamera": {
+        "iou": 0.93404,
+        "median_px_4k": 15.0,
+        "p95_px_4k": 62.3,
+        "p95_percent_span": 2.44
+      },
+      "finalCamera": {
+        "iou": 0.96971,
+        "median_px_4k": 6.6,
+        "p95_px_4k": 30.0,
+        "p95_percent_span": 1.18
+      }
+    },
+    {
+      "id": "view-19",
+      "geometryHoldout": false,
+      "fixedCamera": {
+        "iou": 0.93187,
+        "median_px_4k": 15.0,
+        "p95_px_4k": 66.0,
+        "p95_percent_span": 2.34
+      },
+      "finalCamera": {
+        "iou": 0.96739,
+        "median_px_4k": 6.0,
+        "p95_px_4k": 29.4,
+        "p95_percent_span": 1.04
+      }
+    },
+    {
+      "id": "view-20",
+      "geometryHoldout": false,
+      "fixedCamera": {
+        "iou": 0.9642,
+        "median_px_4k": 9.0,
+        "p95_px_4k": 39.0,
+        "p95_percent_span": 1.31
+      },
+      "finalCamera": {
+        "iou": 0.96937,
+        "median_px_4k": 6.0,
+        "p95_px_4k": 28.8,
+        "p95_percent_span": 0.97
+      }
+    },
+    {
+      "id": "view-21",
+      "geometryHoldout": false,
+      "fixedCamera": {
+        "iou": 0.95905,
+        "median_px_4k": 12.0,
+        "p95_px_4k": 37.2,
+        "p95_percent_span": 1.22
+      },
+      "finalCamera": {
+        "iou": 0.97041,
+        "median_px_4k": 6.0,
+        "p95_px_4k": 27.6,
+        "p95_percent_span": 0.91
+      }
+    },
+    {
+      "id": "view-22",
+      "geometryHoldout": true,
+      "fixedCamera": {
+        "iou": 0.95411,
+        "median_px_4k": 12.0,
+        "p95_px_4k": 41.4,
+        "p95_percent_span": 1.32
+      },
+      "finalCamera": {
+        "iou": 0.97174,
+        "median_px_4k": 6.0,
+        "p95_px_4k": 27.0,
+        "p95_percent_span": 0.86
+      }
+    },
+    {
+      "id": "view-23",
+      "geometryHoldout": false,
+      "fixedCamera": {
+        "iou": 0.96475,
+        "median_px_4k": 9.0,
+        "p95_px_4k": 33.0,
+        "p95_percent_span": 1.02
+      },
+      "finalCamera": {
+        "iou": 0.9762,
+        "median_px_4k": 4.2,
+        "p95_px_4k": 27.0,
+        "p95_percent_span": 0.84
+      }
+    },
+    {
+      "id": "view-24",
+      "geometryHoldout": false,
+      "fixedCamera": {
+        "iou": 0.96861,
+        "median_px_4k": 9.0,
+        "p95_px_4k": 24.6,
+        "p95_percent_span": 0.75
+      },
+      "finalCamera": {
+        "iou": 0.97867,
+        "median_px_4k": 3.0,
+        "p95_px_4k": 21.6,
+        "p95_percent_span": 0.66
+      }
+    },
+    {
+      "id": "view-25",
+      "geometryHoldout": false,
+      "fixedCamera": {
+        "iou": 0.96772,
+        "median_px_4k": 8.4,
+        "p95_px_4k": 27.0,
+        "p95_percent_span": 0.8
+      },
+      "finalCamera": {
+        "iou": 0.97692,
+        "median_px_4k": 4.2,
+        "p95_px_4k": 24.6,
+        "p95_percent_span": 0.73
+      }
+    },
+    {
+      "id": "view-26",
+      "geometryHoldout": false,
+      "fixedCamera": {
+        "iou": 0.96266,
+        "median_px_4k": 8.4,
+        "p95_px_4k": 31.8,
+        "p95_percent_span": 0.95
+      },
+      "finalCamera": {
+        "iou": 0.97377,
+        "median_px_4k": 6.0,
+        "p95_px_4k": 24.0,
+        "p95_percent_span": 0.72
+      }
+    },
+    {
+      "id": "view-27",
+      "geometryHoldout": true,
+      "fixedCamera": {
+        "iou": 0.95372,
+        "median_px_4k": 12.0,
+        "p95_px_4k": 42.0,
+        "p95_percent_span": 1.31
+      },
+      "finalCamera": {
+        "iou": 0.97258,
+        "median_px_4k": 6.0,
+        "p95_px_4k": 27.4,
+        "p95_percent_span": 0.85
+      }
+    },
+    {
+      "id": "view-28",
+      "geometryHoldout": false,
+      "fixedCamera": {
+        "iou": 0.95921,
+        "median_px_4k": 12.0,
+        "p95_px_4k": 31.8,
+        "p95_percent_span": 1.03
+      },
+      "finalCamera": {
+        "iou": 0.97312,
+        "median_px_4k": 6.0,
+        "p95_px_4k": 25.2,
+        "p95_percent_span": 0.82
+      }
+    },
+    {
+      "id": "view-29",
+      "geometryHoldout": false,
+      "fixedCamera": {
+        "iou": 0.96724,
+        "median_px_4k": 6.6,
+        "p95_px_4k": 26.4,
+        "p95_percent_span": 0.91
+      },
+      "finalCamera": {
+        "iou": 0.97468,
+        "median_px_4k": 6.0,
+        "p95_px_4k": 22.8,
+        "p95_percent_span": 0.78
+      }
+    },
+    {
+      "id": "view-30",
+      "geometryHoldout": false,
+      "fixedCamera": {
+        "iou": 0.95908,
+        "median_px_4k": 12.0,
+        "p95_px_4k": 37.2,
+        "p95_percent_span": 1.39
+      },
+      "finalCamera": {
+        "iou": 0.97357,
+        "median_px_4k": 6.0,
+        "p95_px_4k": 21.0,
+        "p95_percent_span": 0.79
+      }
+    },
+    {
+      "id": "view-31",
+      "geometryHoldout": false,
+      "fixedCamera": {
+        "iou": 0.94808,
+        "median_px_4k": 12.0,
+        "p95_px_4k": 45.0,
+        "p95_percent_span": 1.79
+      },
+      "finalCamera": {
+        "iou": 0.97017,
+        "median_px_4k": 8.4,
+        "p95_px_4k": 21.6,
+        "p95_percent_span": 0.86
+      }
+    },
+    {
+      "id": "view-32",
+      "geometryHoldout": true,
+      "fixedCamera": {
+        "iou": 0.96943,
+        "median_px_4k": 8.4,
+        "p95_px_4k": 27.0,
+        "p95_percent_span": 1.19
+      },
+      "finalCamera": {
+        "iou": 0.97321,
+        "median_px_4k": 6.6,
+        "p95_px_4k": 21.0,
+        "p95_percent_span": 0.92
+      }
+    },
+    {
+      "id": "view-33",
+      "geometryHoldout": false,
+      "fixedCamera": {
+        "iou": 0.96761,
+        "median_px_4k": 9.0,
+        "p95_px_4k": 28.8,
+        "p95_percent_span": 1.43
+      },
+      "finalCamera": {
+        "iou": 0.9759,
+        "median_px_4k": 6.0,
+        "p95_px_4k": 24.2,
+        "p95_percent_span": 1.2
+      }
+    },
+    {
+      "id": "view-34",
+      "geometryHoldout": false,
+      "fixedCamera": {
+        "iou": 0.96206,
+        "median_px_4k": 12.0,
+        "p95_px_4k": 26.4,
+        "p95_percent_span": 1.54
+      },
+      "finalCamera": {
+        "iou": 0.98212,
+        "median_px_4k": 3.0,
+        "p95_px_4k": 19.2,
+        "p95_percent_span": 1.12
+      }
+    },
+    {
+      "id": "view-35",
+      "geometryHoldout": false,
+      "fixedCamera": {
+        "iou": 0.96751,
+        "median_px_4k": 8.4,
+        "p95_px_4k": 21.6,
+        "p95_percent_span": 1.33
+      },
+      "finalCamera": {
+        "iou": 0.98154,
+        "median_px_4k": 3.0,
+        "p95_px_4k": 16.2,
+        "p95_percent_span": 1.0
+      }
+    },
+    {
+      "id": "view-36",
+      "geometryHoldout": false,
+      "fixedCamera": {
+        "iou": 0.95989,
+        "median_px_4k": 12.0,
+        "p95_px_4k": 27.6,
+        "p95_percent_span": 1.65
+      },
+      "finalCamera": {
+        "iou": 0.9814,
+        "median_px_4k": 3.0,
+        "p95_px_4k": 16.2,
+        "p95_percent_span": 0.97
+      }
+    },
+    {
+      "id": "view-37",
+      "geometryHoldout": true,
+      "fixedCamera": {
+        "iou": 0.96717,
+        "median_px_4k": 9.0,
+        "p95_px_4k": 27.0,
+        "p95_percent_span": 1.49
+      },
+      "finalCamera": {
+        "iou": 0.97915,
+        "median_px_4k": 3.0,
+        "p95_px_4k": 23.4,
+        "p95_percent_span": 1.29
+      }
+    },
+    {
+      "id": "view-38",
+      "geometryHoldout": false,
+      "fixedCamera": {
+        "iou": 0.96441,
+        "median_px_4k": 10.8,
+        "p95_px_4k": 28.8,
+        "p95_percent_span": 1.35
+      },
+      "finalCamera": {
+        "iou": 0.97446,
+        "median_px_4k": 6.0,
+        "p95_px_4k": 24.0,
+        "p95_percent_span": 1.13
+      }
+    },
+    {
+      "id": "view-39",
+      "geometryHoldout": false,
+      "fixedCamera": {
+        "iou": 0.94703,
+        "median_px_4k": 21.0,
+        "p95_px_4k": 54.5,
+        "p95_percent_span": 1.67
+      },
+      "finalCamera": {
+        "iou": 0.9747,
+        "median_px_4k": 6.6,
+        "p95_px_4k": 31.8,
+        "p95_percent_span": 0.97
+      }
+    },
+    {
+      "id": "view-40",
+      "geometryHoldout": false,
+      "fixedCamera": {
+        "iou": 0.9573,
+        "median_px_4k": 13.2,
+        "p95_px_4k": 56.9,
+        "p95_percent_span": 1.73
+      },
+      "finalCamera": {
+        "iou": 0.97715,
+        "median_px_4k": 6.0,
+        "p95_px_4k": 30.6,
+        "p95_percent_span": 0.93
+      }
+    },
+    {
+      "id": "view-41",
+      "geometryHoldout": false,
+      "fixedCamera": {
+        "iou": 0.96482,
+        "median_px_4k": 15.0,
+        "p95_px_4k": 41.1,
+        "p95_percent_span": 1.27
+      },
+      "finalCamera": {
+        "iou": 0.98292,
+        "median_px_4k": 6.0,
+        "p95_px_4k": 23.4,
+        "p95_percent_span": 0.72
+      }
+    },
+    {
+      "id": "view-42",
+      "geometryHoldout": true,
+      "fixedCamera": {
+        "iou": 0.96374,
+        "median_px_4k": 15.0,
+        "p95_px_4k": 40.8,
+        "p95_percent_span": 1.26
+      },
+      "finalCamera": {
+        "iou": 0.98477,
+        "median_px_4k": 6.0,
+        "p95_px_4k": 21.0,
+        "p95_percent_span": 0.65
+      }
+    },
+    {
+      "id": "view-43",
+      "geometryHoldout": false,
+      "fixedCamera": {
+        "iou": 0.96087,
+        "median_px_4k": 10.8,
+        "p95_px_4k": 29.3,
+        "p95_percent_span": 1.24
+      },
+      "finalCamera": {
+        "iou": 0.96787,
+        "median_px_4k": 9.0,
+        "p95_px_4k": 22.8,
+        "p95_percent_span": 0.96
+      }
+    },
+    {
+      "id": "view-44",
+      "geometryHoldout": false,
+      "fixedCamera": {
+        "iou": 0.94722,
+        "median_px_4k": 9.0,
+        "p95_px_4k": 33.6,
+        "p95_percent_span": 1.08
+      },
+      "finalCamera": {
+        "iou": 0.9658,
+        "median_px_4k": 6.0,
+        "p95_px_4k": 24.0,
+        "p95_percent_span": 0.77
+      }
+    },
+    {
+      "id": "view-45",
+      "geometryHoldout": false,
+      "fixedCamera": {
+        "iou": 0.95369,
+        "median_px_4k": 12.6,
+        "p95_px_4k": 32.4,
+        "p95_percent_span": 1.37
+      },
+      "finalCamera": {
+        "iou": 0.96742,
+        "median_px_4k": 8.4,
+        "p95_px_4k": 27.6,
+        "p95_percent_span": 1.17
+      }
+    },
+    {
+      "id": "view-46",
+      "geometryHoldout": false,
+      "fixedCamera": {
+        "iou": 0.96768,
+        "median_px_4k": 8.4,
+        "p95_px_4k": 31.8,
+        "p95_percent_span": 1.61
+      },
+      "finalCamera": {
+        "iou": 0.97707,
+        "median_px_4k": 3.0,
+        "p95_px_4k": 24.0,
+        "p95_percent_span": 1.22
+      }
+    },
+    {
+      "id": "view-47",
+      "geometryHoldout": true,
+      "fixedCamera": {
+        "iou": 0.94707,
+        "median_px_4k": 13.2,
+        "p95_px_4k": 37.2,
+        "p95_percent_span": 1.11
+      },
+      "finalCamera": {
+        "iou": 0.967,
+        "median_px_4k": 6.0,
+        "p95_px_4k": 27.6,
+        "p95_percent_span": 0.82
+      }
+    },
+    {
+      "id": "view-48",
+      "geometryHoldout": false,
+      "fixedCamera": {
+        "iou": 0.97347,
+        "median_px_4k": 6.0,
+        "p95_px_4k": 21.0,
+        "p95_percent_span": 0.99
+      },
+      "finalCamera": {
+        "iou": 0.97894,
+        "median_px_4k": 4.2,
+        "p95_px_4k": 19.8,
+        "p95_percent_span": 0.93
+      }
+    },
+    {
+      "id": "view-49",
+      "geometryHoldout": false,
+      "fixedCamera": {
+        "iou": 0.92997,
+        "median_px_4k": 25.2,
+        "p95_px_4k": 61.8,
+        "p95_percent_span": 1.9
+      },
+      "finalCamera": {
+        "iou": 0.97014,
+        "median_px_4k": 9.0,
+        "p95_px_4k": 39.0,
+        "p95_percent_span": 1.2
+      }
+    },
+    {
+      "id": "view-50",
+      "geometryHoldout": false,
+      "fixedCamera": {
+        "iou": 0.9518,
+        "median_px_4k": 12.0,
+        "p95_px_4k": 40.2,
+        "p95_percent_span": 1.59
+      },
+      "finalCamera": {
+        "iou": 0.97565,
+        "median_px_4k": 6.0,
+        "p95_px_4k": 24.0,
+        "p95_percent_span": 0.95
+      }
+    },
+    {
+      "id": "view-51",
+      "geometryHoldout": false,
+      "fixedCamera": {
+        "iou": 0.96362,
+        "median_px_4k": 15.0,
+        "p95_px_4k": 41.4,
+        "p95_percent_span": 1.28
+      },
+      "finalCamera": {
+        "iou": 0.9846,
+        "median_px_4k": 6.0,
+        "p95_px_4k": 21.0,
+        "p95_percent_span": 0.65
+      }
+    }
+  ],
+  "sourceRebuildVerification": {
+    "sourceArchive": "96c287219aa07e2168ed515c80f2857046b957aaab018c5e8c526416b2759141",
+    "glb": "736599cb42ae15906b1bb3c37b65cddaf15005839c22376c76dcf1ea783b937f",
+    "rebuiltGLB": "736599cb42ae15906b1bb3c37b65cddaf15005839c22376c76dcf1ea783b937f",
+    "maxVertexDifferenceM": 0.0,
+    "meshObjectCount": 633,
+    "namedNodes": 656,
+    "materialCount": 87,
+    "pivotCount": 22,
+    "triangles": 421663
+  }
+}
