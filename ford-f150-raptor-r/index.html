@@ -11,11 +11,11 @@
       if (initParams.get('outline') === '1') {
         document.documentElement.style.background = 'transparent';
       }
-    } else if (location.hash === '#raptor-views') {
+    } else if (['#ford-views', '#raptor-views'].includes(location.hash)) {
       document.documentElement.classList.add('show-photos');
     }
     const overrideModel = initParams.get('model');
-    const modelFile = overrideModel || './ford_f150_raptor_r.glb?v=8';
+    const modelFile = overrideModel || './ford_f150_raptor_r.glb?v=74643b5dde';
     const preload = document.createElement('link');
     preload.rel = 'preload';
     preload.as = 'fetch';
@@ -26,24 +26,31 @@
   <link rel="icon" href="/favicon.ico" />
   <title>2024 Ford F-150 Raptor R — Rapid Red Metallic</title>
   <meta property="og:title" content="2024 Ford F-150 Raptor R in Rapid Red Metallic">
-  <meta property="og:image" content="https://bailiping.com/ford-f150-raptor-r/og-preview.jpg?v=8">
+  <meta property="og:image" content="https://bailiping.com/ford-f150-raptor-r/og-preview.jpg?v=7d34cb94">
   <meta property="og:image:alt" content="Rear three-quarter view of the Rapid Red Raptor R with the flat bed cover closed">
-  <link rel="stylesheet" href="./studio.css">
-  <script type="module" src="./studio.js?v=6"></script>
+  <link rel="stylesheet" href="./studio.css?v=photo-r10">
+  <script type="module" src="./studio.js?v=photo-r10"></script>
 </head>
 <body>
   <noscript><p style="position:fixed;inset:0;z-index:30;background:#eceeef;padding:2em">The interactive 2024 Ford F-150 Raptor R viewer requires JavaScript. <a href="https://www.ford.com/trucks/f150/models/raptor/">View Ford’s F-150 Raptor 360° view</a>.</p></noscript>
   <header id="studio-header">
-    <div class="identity"><h1>F-150 Raptor R</h1><span class="finish"><i aria-hidden="true"></i><span>Rapid Red Metallic</span></span></div>
+    <div class="identity"><h1>2024 F-150 Raptor R</h1><span class="finish"><i aria-hidden="true"></i><span>Rapid Red Metallic</span></span></div>
     <nav class="mode-switch" aria-label="Views">
       <a href="#model" aria-current="true">3D model</a>
-      <a href="#raptor-views">Raptor R views</a>
-      <a id="compare-frames" href="./frame-by-frame/">Compare photos</a>
+      <a href="#ford-views">Ford views</a>
     </nav>
   </header>
-  <section id="photo-room" aria-label="2024 Ford F-150 Raptor R reference photographs" hidden>
+  <section id="photo-room" aria-label="Ford studio renders and 2024 Raptor R reference photographs" hidden>
     <figure>
-      <img id="photo" width="2048" height="1365" alt="">
+      <div class="photo-frame">
+        <img id="photo" width="2160" height="926" alt="">
+        <span class="split-grip" aria-hidden="true"></span>
+      </div>
+      <div id="comparison-controls" hidden>
+        <span id="reference-kind">Reference</span>
+        <input id="comparison-split" type="range" min="0" max="100" value="50" aria-label="Photo and 3D model split" aria-valuetext="50 percent reference">
+        <span>3D model</span>
+      </div>
       <p id="photo-error" role="status" hidden>This view is unavailable. <a class="config-link" href="https://www.ford.com/trucks/f150/models/raptor/">View the image source</a></p>
     </figure>
     <div id="photo-footer">
@@ -51,18 +58,15 @@
         <button id="previous-view" type="button" aria-label="Previous view">‹</button>
         <select id="photo-angle" aria-label="Camera angle"></select>
         <button id="next-view" type="button" aria-label="Next view">›</button>
+        <button id="compare-view" type="button" aria-pressed="false" aria-controls="comparison-controls" disabled>Compare</button>
         <button id="match-view" type="button" disabled>Match in 3D</button>
       </div>
-      <p>3D finish: Rapid Red Metallic (D4) · <span id="photo-credit">Ford.com F-150 Raptor 360° view, frame 04</span> · <a id="photo-source" href="https://www.ford.com/trucks/f150/models/raptor/">Image source</a> · <a id="full-photo" href="#" target="_blank" rel="noopener" hidden>Full-size image</a></p>
+      <p><span id="photo-count"></span> · <span id="photo-finish"></span><span id="photo-credit"></span> · <a id="photo-source" href="https://www.ford.com/trucks/f150/models/raptor/">Image source</a> · <a id="full-photo" href="#" hidden>Full-size image</a><span id="truck-photo-link" hidden> · <a>2024 truck photo by 710HP</a></span></p>
     </div>
   </section>
   <div id="photo-tools-3d">
-    <a href="#raptor-views" id="detail-photo" hidden>Reference photo</a>
-    <button id="overlay-toggle" type="button" aria-pressed="false" hidden>Overlay photo</button>
-    <input id="overlay-opacity" type="range" min="0" max="100" value="50" aria-label="Reference photo opacity" hidden>
-    <span id="overlay-error" role="status" hidden>Photo unavailable</span>
+    <a href="#ford-views" id="detail-photo" hidden>Reference photo</a>
   </div>
-  <img id="reference-overlay" alt="" hidden>
   <canvas id="stage" aria-label="Interactive 3D model of a 2024 Ford F-150 Raptor R"></canvas>
   <div id="callout"><span class="title"></span><span class="sub"></span></div>
   <div id="loader">
@@ -90,13 +94,14 @@
           <div class="view-links">
             <a href="#exterior">Exterior</a>
             <a href="#rear">Rear 3/4</a>
+            <a href="#top">View from directly above</a>
             <a href="#engine">Power Dome &amp; V8 engine bay</a>
             <a href="#drivetrain">4WD drivetrain &amp; gears</a>
             <a href="#cabin">Cabin cockpit</a>
             <a href="#seats">Recaro seats</a>
             <a href="#console">Center stack</a>
             <a href="#underbody">Underbody &amp; FOX shocks</a>
-            <a href="#assembly">Replay assembly animation</a>
+            <a href="#assembly">Play the assembly sequence</a>
           </div>
           <div class="controls-meta">
             <p id="info">2024 F-150 Raptor R · Rapid Red Metallic</p>
@@ -105,13 +110,12 @@
               <kbd>D</kbd> all doors · <kbd>1</kbd>–<kbd>4</kbd> doors · <kbd>F</kbd> hood · <kbd>T</kbd> tailgate · <kbd>B</kbd> fold bed cover · <kbd>G</kbd> fuel · <kbd>I</kbd> cabin · <kbd>E</kbd> explode · <kbd>X</kbd> x-ray · <kbd>S</kbd> steer · <kbd>W</kbd> spin · <kbd>Space</kbd> rev 5.2L V8 · <kbd>M</kbd> sound · <kbd>H</kbd> HUD · <kbd>R</kbd> reset
             </p>
             <details class="refs"><summary>Credits &amp; references</summary><div>
-              <p>2024 Ford F-150 Raptor R (803A, Rapid Red Metallic (D4) over black Recaro leather &amp; Alcantara, solid aluminum roof, 37" BFGoodrich KO2 package, Exterior Graphics, 5.2L supercharged Predator V8 — 720 hp / 640 lb-ft — with full 10R80 &amp; 2-speed 4WD drivetrain). The three-panel hard tonneau sits level with the bed rails. The model uses meters. Ford lists a 3.693 m wheelbase, a 2.210 m width without mirrors and a 5.908 m overall length.</p>
-              <a href="https://www.ford.com/trucks/f150/models/raptor/">Exterior references: Ford.com F-150 Raptor 360° view</a> · <a href="https://bringatrailer.com/listing/2024-ford-f-150-raptor-r-18/">Interior and powertrain photographs: 2024 Raptor R (Shelter Green) · 710HP via Bring a Trailer (Lot #181,611)</a><br>
-              <a href="https://www.fromtheroad.ford.com/content/dam/fordmediasite/us/en/library/2024/specs/2024-Ford-Raptor-and-Raptor-R-Tech-Specs.pdf">Ford dimensions</a><br>
-              <a href="./frame-by-frame/#schematics">View Ford's cab and pickup-box schematics</a> · <a href="https://api-prd.fordpro.com/pro/bbas/download/BBLB/661025b789417d202fd69d4f">2024 Body Builders Layout Book · pages 6–8</a><br>
-              <a href="https://www.ford.mx/content/dam/Ford/website-assets/latam/mx/nameplate/raptor-2018/lobo-raptor-2024/pdfs/ford-lobo-raptor-2024-catalogo-descargable.pdf#page=14">Ford Raptor brochure · dimension diagram on page 14</a>
-              <p>The layout book describes the shared F-150 cab and pickup box. Raptor R width, ride height, tracks and overall dimensions follow Ford's dedicated Raptor R specifications. The exterior body is fitted to Ford's 360° renders, and its details follow close photographs. This is a visual reconstruction, not factory CAD.</p>
-              <a href="#raptor-views">Browse all 26 reference views</a> · <a href="./frame-by-frame/">Frame-by-frame comparison</a> · <a href="./frame-by-frame/#front-panel-fit">Hood and fender fit</a> · <a href="./frame-by-frame/#geometry-audit">Measured model dimensions</a>
+              <p>The model depicts a U.S. 2024 Raptor R SuperCrew in Rapid Red Metallic, with the 803A package, 37-inch BFGoodrich KO2 tires, black Recaro seats, a solid roof and a three-panel tonneau. The production truck pairs a supercharged 5.2-liter V8 with a 10-speed automatic and two-speed transfer case.</p>
+              <p>Ford’s 36 studio renders show a Ruby Red truck from the 2027 configurator with an uncovered bed. The cabin and engine photographs show a Shelter Green 2024 Raptor R with a panoramic roof. The internal gears, hoses and wiring are illustrative.</p>
+              <p><a href="https://www.ford.com/trucks/f150/#360viewer">Ford studio views</a> · <a href="https://bringatrailer.com/listing/2024-ford-f-150-raptor-r-18/">2024 Raptor R photographs by 710HP</a> · <a href="https://www.performanceparts.ford.com/part/M-6007-M52SCA">Ford Racing engine photographs</a></p>
+              <p><a href="https://www.fromtheroad.ford.com/content/dam/fordmediasite/us/en/library/2024/specs/2024-Ford-Raptor-and-Raptor-R-Tech-Specs.pdf">Ford specifications</a> · <a href="./frame-by-frame/#schematics">Cab and pickup-box drawings</a> · <a href="./frame-by-frame/#geometry-audit">Measured model dimensions</a></p>
+              <p><a href="./frame-by-frame/#frame-review">50-frame review</a> · <a href="./inventory.json">Reference inventory</a> · <a href="./exterior-photo-cameras.json">Camera poses</a></p>
+              <p><a href="./model/ford_f150_raptor_r.blend" download>Editable Blender model</a> · <a href="./ford_f150_raptor_r.glb" download>Download GLB</a> · <a href="https://github.com/BaiLiping/bailiping.github.io/tree/main/ford-f150-raptor-r/model">Model build scripts</a></p>
             </div></details>
           </div>
         </section>
@@ -121,7 +125,7 @@
   </div>
   <script type="module">
     import * as THREE from './vendor/three-r170.js';
-    import { createStudioFloor } from './studio-floor.js';
+    import { createStudioFloor } from './studio-floor.js?v=11';
     import { applyStudioVisibility } from './studio-visibility.js';
     import { createPlanarMirror } from './mirror-reflection.js';
 
@@ -137,7 +141,7 @@
     }
 
     const [photoSources, exteriorCameras] = await Promise.all(
-      ['./raptor-views.json?v=6', './exterior-photo-cameras.json?v=8']
+      ['./raptor-views.json?v=photo-r10', './exterior-photo-cameras.json?v=photo-r10']
         .map(url => fetch(url).then(response => response.json()))
     );
     const orbitRadius = pose => pose.distance * Math.tan(pose.fov * Math.PI / 360) / Math.tan(Math.PI / 12);
@@ -173,7 +177,7 @@
       document.getElementById('match-view').disabled = true;
       loadStatus.textContent = 'This viewer requires WebGL 2. Enable graphics acceleration or try another browser.';
       const viewsLink = document.createElement('a');
-      viewsLink.href = '#raptor-views';
+      viewsLink.href = '#ford-views';
       viewsLink.textContent = 'Browse Raptor R reference views';
       loadStatus.append(' ', viewsLink);
       throw error;
@@ -195,7 +199,7 @@
     renderer.toneMappingExposure = 0.96;
 
     const scene = new THREE.Scene();
-    const BG_HEX = 0xf1f2f3;
+    const BG_HEX = 0xf0f0f0;
     const studioFogDensity = 0.0045;
     scene.background = new THREE.Color(BG_HEX);
     scene.fog = new THREE.FogExp2(BG_HEX, studioFogDensity);
@@ -874,45 +878,10 @@
     let lastIsolation;
     let lastVisibilityPose = null;
 
-    const overlay = document.getElementById('reference-overlay');
-    const overlayToggle = document.getElementById('overlay-toggle');
-    const overlayOpacity = document.getElementById('overlay-opacity');
-    const overlayError = document.getElementById('overlay-error');
-    function closeOverlay() {
-      overlay.hidden = overlayOpacity.hidden = overlayError.hidden = true;
-      overlayToggle.setAttribute('aria-pressed', 'false');
-    }
-    overlayToggle.addEventListener('click', () => {
-      if (!overlay.hidden) return closeOverlay();
-      const pose = referenceViews.get(selectedView);
-      if (!pose?.photo) return;
-      matchRaptorView(selectedView);
-      overlay.dataset.fallbackUsed = '';
-      overlay.src = pose.preview || pose.image;
-      overlay.style.opacity = overlayOpacity.value / 100;
-      overlay.hidden = overlayOpacity.hidden = false;
-      overlayError.hidden = true;
-      overlayToggle.setAttribute('aria-pressed', 'true');
-    });
-    overlayOpacity.addEventListener('input', () => { overlay.style.opacity = overlayOpacity.value / 100; });
-    overlay.addEventListener('error', () => {
-      const pose = referenceViews.get(selectedView);
-      if (pose?.image && !overlay.dataset.fallbackUsed && overlay.src !== pose.image) {
-        overlay.dataset.fallbackUsed = '1';
-        overlay.src = pose.image;
-        return;
-      }
-      closeOverlay();
-      overlayError.hidden = false;
-    });
-    canvas.addEventListener('pointerdown', closeOverlay);
-    canvas.addEventListener('wheel', closeOverlay, { passive: true });
-    window.addEventListener('studio-mode-change', closeOverlay);
-
     const explosionButton = document.getElementById('exploded-view');
-    const assemblyView = { theta: -0.68, phi: 1.28, fov: 25.0, compactInset: 0, center: new THREE.Vector3(0, 1.15, 0), points: [] };
-    const introHoldMs = 700;
-    const introAssemblyMs = 2600;
+    const assemblyView = { theta: -0.98, phi: 1.24, fov: 25.0, compactInset: 0, center: new THREE.Vector3(0, 1.15, 0), points: [] };
+    const introHoldMs = 1200;
+    const introAssemblyMs = 2100;
     let intro = null;
 
     function stopIntro() {
@@ -976,7 +945,6 @@
 
     function togglePanel(key, focus = false) {
       if (!panelAvailable(key)) return;
-      closeOverlay();
       stopIntro();
       customCapturePose = null;
       const target = key + 'Target';
@@ -1319,7 +1287,7 @@
         state.loaded = true;
 
         const hashView = captureMode ? (initParams.get('view') || '') : location.hash.slice(1);
-        if (captureMode) {
+        if (captureMode || overrideModel) {
           selectedView = null;
           state.explode = state.explodeTarget = 0;
           state.theta = state.targetTheta = exteriorView.theta;
@@ -1334,7 +1302,7 @@
           showRearView(true);
         } else if (isDetailView(hashView) && !overrideModel) {
           matchRaptorView(hashView);
-        } else if (location.hash === '#raptor-views') {
+        } else if (['#ford-views', '#raptor-views'].includes(location.hash)) {
           // Stay cleanly assembled behind the photo gallery (no wasted intro while hidden)
           selectedView = null;
           state.explode = state.explodeTarget = 0;
@@ -1347,7 +1315,7 @@
         } else {
           // Like the other car pages, the truck opens exploded and assembles itself
           // unless a link or Match in 3D asks for another view.
-          startAssembly();
+          startAssembly(true);
         }
 
         // Reproducible comparison captures use a visible URL rather than injected
@@ -1373,7 +1341,7 @@
         console.error(err);
         loadStatus.textContent = 'The 3D model could not be loaded. ';
         const viewsLink = document.createElement('a');
-        viewsLink.href = '#raptor-views';
+        viewsLink.href = '#ford-views';
         viewsLink.textContent = 'Browse Raptor R reference views';
         loadStatus.append(viewsLink);
       }
@@ -1685,9 +1653,11 @@
       }
       delete document.documentElement.dataset.matchView;
       customCapturePose = null;
+      const linkedDetail = location.hash === '#' + name;
       runCommand('r');
       selectedView = name;
-      if (isDetailView(name) && !captureMode) history.replaceState(null, '', '#' + name);
+      if (pose.photo) galleryFrame.style.setProperty('--photo-aspect', pose.aspect);
+      if (linkedDetail && !captureMode) history.replaceState(null, '', '#' + name);
       state.explode = state.explodeTarget = state.xray = state.xrayTarget = 0;
       for (const key of Object.keys(panels)) state[key] = state[key + 'Target'] = 0;
       for (const offset of pullOffsets.values()) offset.cur.copy(offset.tgt);
@@ -1722,7 +1692,7 @@
     }
 
     detailPhoto.addEventListener('click', () => {
-      if (detailPhoto.hash === '#raptor-views') document.documentElement.dataset.photoPreset = detailPhoto.dataset.preset;
+      if (detailPhoto.hash === '#ford-views') document.documentElement.dataset.photoPreset = detailPhoto.dataset.preset;
     });
     window.addEventListener('match-raptor-view', event => matchRaptorView(event.detail));
 
@@ -1746,29 +1716,21 @@
       wake(true);
     }
 
-    function startAssembly() {
+    function startAssembly(opening = false) {
       if (!pivots.Pivot_Body_Assembly) return;
+      const startTheta = state.theta, startPhi = state.phi;
       runCommand('r');
-      if (reducedMotion.matches || captureMode) {
-        selectedView = null;
-        customCapturePose = null;
-        state.explode = state.explodeTarget = 0;
-        state.theta = state.targetTheta = exteriorView.theta;
-        state.phi = state.targetPhi = exteriorView.phi;
-        state.radius = state.targetRadius = exteriorView.radius;
-        state.targetCenter.copy(FOCUS_EXTERIOR);
-        state.frontLens = 1;
-        state.rearLens = state.cabinBlend = 0;
-        updateHudText();
-        wake(true);
-        return;
-      }
       frameAssembly();
-      // Keep targetCenter anchored at FOCUS_EXTERIOR during intro so cameraExplosion smoothly
-      // interpolates effCenter from assemblyView.center (explode=1) -> FOCUS_EXTERIOR (explode=0).
-      state.targetCenter.copy(FOCUS_EXTERIOR);
-      state.explode = state.explodeTarget = 1;
-      intro = { elapsed: 0, previous: null };
+      state.explodeTarget = 1;
+      if (opening || reducedMotion.matches) state.explode = 1;
+      if (!reducedMotion.matches) {
+        if (!opening) {
+          state.theta = startTheta;
+          state.phi = startPhi;
+        }
+        state.targetCenter.copy(FOCUS_EXTERIOR);
+        intro = { elapsed: 0, previous: null };
+      }
       updateHudText();
       wake(true);
     }
@@ -1797,7 +1759,6 @@
     // Keyboard controls
     function runCommand(k, keepAssemblyCamera = false) {
       if (!state.loaded || k.length !== 1 || !'d1234ftgbiesxwr mh+=-_0'.includes(k)) return;
-      if (k !== 'm' && k !== 'h') closeOverlay();
       stopIntro();
       customCapturePose = null;
 
@@ -1929,7 +1890,8 @@
     reducedMotion.addEventListener('change', () => {
       if (intro && reducedMotion.matches) {
         stopIntro();
-        state.explode = state.explodeTarget = 0;
+        frameAssembly();
+        state.explode = state.explodeTarget = 1;
         updateHudText();
         wake(true);
       }
@@ -1956,17 +1918,11 @@
       const detail = isDetailView(selectedView) ? selectedView : state.interiorView ? 'cabin' : '';
       if (!captureMode && !detail && isDetailView(location.hash.slice(1))) history.replaceState(null, '', '#model');
       const currentPhoto = referenceViews.get(detail);
-      if (!carHidden() && !captureMode) {
-        document.getElementById('compare-frames').href = './frame-by-frame/' + (currentPhoto?.photo ? '#' + detail : '');
-      }
-      overlayToggle.hidden = captureMode || !currentPhoto?.photo || !!overrideModel;
-      if (overlayToggle.hidden || overlayToggle.dataset.view !== detail) closeOverlay();
-      overlayToggle.dataset.view = detail;
       const hasRefPhoto = detail && (currentPhoto?.photo || ['cabin', 'engine', 'seats', 'console', 'underbody'].includes(detail));
       detailPhoto.dataset.preset = detail;
       detailPhoto.hidden = captureMode || !hasRefPhoto || !!overrideModel;
       detailPhoto.textContent = 'Reference photo';
-      detailPhoto.href = '#raptor-views';
+      detailPhoto.href = '#ford-views';
       detailPhoto.target = '_self';
 
       applyInspectionVisibility(customCapturePose || referenceViews.get(selectedView));
@@ -2067,6 +2023,7 @@
     const drivetrainFov = 28;
     const drivetrainRadius = 6.4;
     const referenceViews = new Map([
+      ['top',       { label: 'View from directly above', group: 'Exterior', theta: -Math.PI / 2, phi: 0.001, fov: 30, radius: 8.0, distance: 8.0, center: new THREE.Vector3(-0.14, 0.9, 0) }],
       ['cabin',      { label: 'Cabin cockpit', cabin: true, group: 'Interior' }],
       ['engine',     { label: 'Power Dome & 5.2L Predator V8', group: 'Powertrain', theta: -0.45, phi: 1.02, distance: 2.35, fov: 38, radius: orbitRadius({ distance: 2.35, fov: 38 }), center: new THREE.Vector3(1.85, 1.15, 0.0), panels: { hood: 1 } }],
       ['drivetrain', { label: '4WD drivetrain & meshed gears', group: 'Powertrain', isolate: 'drivetrain', theta: -0.78, phi: 1.02, fov: drivetrainFov, radius: drivetrainRadius, distance: drivetrainRadius * Math.tan(Math.PI / 12) / Math.tan(drivetrainFov * Math.PI / 360), center: new THREE.Vector3(0.15, 0.58, 0.0), hideFloor: false }],
@@ -2089,12 +2046,18 @@
         photo: true,
         image: view.image,
         preview: view.preview,
-        aspect: view.aspect || 1.500366,
+        aspect: view.width && view.height ? view.width / view.height : view.aspect || 1.500366,
         panels: panelOverrides,
         center: new THREE.Vector3(...fit.center),
         radius: orbitRadius(fit),
       };
       referenceViews.set(view.photoView, pose);
+      const aliases = [...(view.aliases || []), view.id];
+      if (view.legacyId) aliases.push(view.legacyId, 'photo-' + view.legacyId);
+      for (const alias of aliases) {
+        referenceViews.set(alias, pose);
+        photoViewById.set(alias, pose);
+      }
       photoViewById.set(view.id, pose);
       photoViewById.set(view.photoView, pose);
       photoViewById.set(view.label, pose);
@@ -2104,18 +2067,22 @@
     const presetPose = cam => cam && ({ ...cam, photo: true, aspect: 1.500366, center: new THREE.Vector3(...cam.center), radius: orbitRadius(cam) });
     const landingPhoto = presetPose(exteriorCameras['front-three-quarter-left']);
     const rearPhoto = presetPose(exteriorCameras['rear-three-quarter-right']);
-    const galleryFigure = document.querySelector('#photo-room figure');
-    let galleryRect = galleryFigure.getBoundingClientRect();
-    new ResizeObserver(() => {
-      galleryRect = galleryFigure.getBoundingClientRect();
-      Object.assign(overlay.style, {
-        top: galleryRect.top + 'px',
-        left: galleryRect.left + 'px',
-        width: galleryRect.width + 'px',
-        height: galleryRect.height + 'px',
-      });
+    window.raptorHasPhotoPose = name => Boolean(referenceViews.get(name)?.photo);
+    const galleryFrame = document.querySelector('.photo-frame');
+    const header = document.getElementById('studio-header');
+    let galleryRect = galleryFrame.getBoundingClientRect();
+    let exteriorRect;
+    function measureFraming() {
+      galleryRect = galleryFrame.getBoundingClientRect();
+      const top = header.getBoundingClientRect().bottom;
+      const bottom = barEl.offsetHeight ? barEl.getBoundingClientRect().top : innerHeight;
+      exteriorRect = { x: 0, y: top, width: innerWidth, height: Math.max(1, bottom - top) };
       wake(true);
-    }).observe(galleryFigure);
+    }
+    const framingObserver = new ResizeObserver(measureFraming);
+    for (const element of [galleryFrame, header, barEl]) framingObserver.observe(element);
+    window.addEventListener('studio-mode-change', measureFraming);
+    measureFraming();
 
     const cabinUp = new THREE.Vector3(0, 1, 0);
     let wasMoving = false;
@@ -2127,28 +2094,29 @@
     function getExplodeOffset(name, ex, vibration, time, out) {
       out.set(0, 0, 0);
       switch (name) {
-        case 'Pivot_Body_Assembly':       out.set( 0.00,  1.88,  0.00); break;
-        case 'Pivot_Hood':                out.set( 0.55,  0.62,  0.00); break;
-        case 'Pivot_Door_FL':             out.set( 0.15,  0.05, -1.15); break;
-        case 'Pivot_Door_FR':             out.set( 0.15,  0.05,  1.15); break;
-        case 'Pivot_Door_RL':             out.set(-0.20,  0.05, -1.15); break;
-        case 'Pivot_Door_RR':             out.set(-0.20,  0.05,  1.15); break;
-        case 'Pivot_Tailgate':            out.set(-0.85,  0.15,  0.00); break;
-        case 'Pivot_Fuel_Door':           out.set( 0.00,  0.06, -0.32); break;
-        case 'Pivot_Interior_Cabin':      out.set( 0.18,  0.86, -0.35); break;
-        case 'Pivot_Engine_Predator':     out.set( 0.28,  0.30,  0.00); break;
-        case 'Pivot_Engine_Supercharger': out.set( 0.32,  0.78,  0.00); break;
-        case 'Pivot_Engine_BayCasing':    out.set(-0.06,  1.56,  0.00); break;
-        case 'Pivot_Engine_Radiator':     out.set( 1.02,  0.26,  0.00); break;
-        case 'Pivot_Engine_Intake':       out.set( 0.36,  0.58, -0.58); break;
-        case 'Pivot_Engine_Auxiliaries':  out.set( 0.40,  0.52,  0.58); break;
-        case 'Pivot_Drivetrain_4WD':      out.set( 0.00,  0.22,  0.00); break;
-        case 'Pivot_Chassis_Frame':       out.set( 0.00, -0.34,  0.00); break;
-        case 'Pivot_Exhaust_System':      out.set(-0.55, -0.44,  0.16); break;
-        case 'Pivot_Corner_FL':           out.set( 0.28,  0.00, -0.62); break;
-        case 'Pivot_Corner_FR':           out.set( 0.28,  0.00,  0.62); break;
-        case 'Pivot_Corner_RL':           out.set(-0.28,  0.00, -0.62); break;
-        case 'Pivot_Corner_RR':           out.set(-0.28,  0.00,  0.62); break;
+        // The frame and the transfer case stay on their mounts. Body children
+        // inherit the shell lift, so the remaining offsets are local to each opening.
+        case 'Pivot_Body_Assembly':       out.set( 0.00,  2.65,  0.00); break;
+        case 'Pivot_Hood':                out.set( 0.92,  0.81,  0.00); break;
+        case 'Pivot_Door_FL':             out.set( 0.35, -0.14, -1.75); break;
+        case 'Pivot_Door_FR':             out.set( 0.42,  0.13,  1.62); break;
+        case 'Pivot_Door_RL':             out.set(-0.33, -0.08, -1.58); break;
+        case 'Pivot_Door_RR':             out.set(-0.30,  0.21,  1.53); break;
+        case 'Pivot_Tailgate':            out.set(-1.12, -0.03,  0.00); break;
+        case 'Pivot_Tonneau_Middle':      out.set(-0.11,  0.59,  0.00); break;
+        case 'Pivot_Fuel_Door':           out.set(-0.29,  0.06, -0.58); break;
+        case 'Pivot_Interior_Cabin':      out.set( 0.52,  1.12, -0.68); break;
+        case 'Pivot_Engine_Predator':     out.set( 0.66,  0.45,  0.00); break;
+        case 'Pivot_Engine_Supercharger': out.set( 0.72,  1.17,  0.00); break;
+        case 'Pivot_Engine_BayCasing':    out.set(-0.10,  2.32,  0.00); break;
+        case 'Pivot_Engine_Radiator':     out.set( 1.55,  0.38,  0.00); break;
+        case 'Pivot_Engine_Intake':       out.set( 0.80,  0.80, -0.83); break;
+        case 'Pivot_Engine_Auxiliaries':  out.set( 0.76,  0.73,  0.88); break;
+        case 'Pivot_Exhaust_System':      out.set(-1.00, -0.08,  0.49); break;
+        case 'Pivot_Corner_FL':           out.set( 0.32,  0.04, -0.83); break;
+        case 'Pivot_Corner_FR':           out.set( 0.32,  0.04,  0.83); break;
+        case 'Pivot_Corner_RL':           out.set(-0.34,  0.04, -0.83); break;
+        case 'Pivot_Corner_RR':           out.set(-0.34,  0.04,  0.83); break;
       }
       out.multiplyScalar(ex);
       if ((name === 'Pivot_Engine_Predator' || (name === 'Pivot_Engine_Supercharger' && ex < 0.05)) && vibration) {
@@ -2158,14 +2126,14 @@
       return out;
     }
 
-    function partOffset(mesh) {
-      const name = mesh.name;
-      const parent = mesh.parent?.name || '';
+    function partOffset(part) {
+      const name = part.name;
+      const parent = part.parent?.name || '';
       const offset = new THREE.Vector3();
       if (parent.startsWith('Pivot_WheelSpin_')) {
         const side = parent.endsWith('L') ? -1 : 1;
-        if (/Tire|Tread|Sidewall|KO2/i.test(name)) offset.z = side * 0.36;
-        else if (/Rim|Wheel|Beadlock/i.test(name)) offset.z = side * 0.16;
+        if (/Tire|Tread|Sidewall|KO2/i.test(name)) offset.z = side * 0.80;
+        else if (/Rim|WheelCap|Beadlock/i.test(name)) offset.z = side * 0.21;
       } else if (parent === 'Pivot_Interior_Cabin') {
         if (/Steering/i.test(name)) offset.set(0.14, 0.14, -0.12);
         else if (/Dash|Cluster|SYNC4|Screen/i.test(name)) offset.set(0.22, 0.12, 0);
@@ -2177,11 +2145,10 @@
         else if (/Battery|Coolant/i.test(name)) offset.set(0.14, 0.20, 0.46);
         else if (/BayStructure|Apron|Firewall/i.test(name)) offset.set(-0.36, 0.66, 0);
       } else if (parent === 'Pivot_Body_Assembly') {
-        if (/Front_Bumper|Bumper_Front|Grille|Skid|TowHook/i.test(name)) offset.x = 0.36;
-        else if (/Rear_Bumper|Bumper_Rear|Taillight|License/i.test(name)) offset.x = -0.34;
-        else if (/Windshield|Wiper/i.test(name)) offset.y = 0.26;
-      } else if (parent.startsWith('Pivot_Door_') && /Glass|Window/i.test(name)) {
-        offset.y = 0.24;
+        if (/RaptorR_Front_Grille_/.test(name)) offset.set(0.79, 0.20, 0);
+        else if (/RaptorR_Front_Bumper/.test(name)) offset.x = 0.56;
+        else if (/RaptorR_Rear_Bumper/.test(name)) offset.x = -0.61;
+        else if (/RaptorR_Tonneau_Front/.test(name)) offset.y = 0.59;
       }
       return offset;
     }
@@ -2190,13 +2157,16 @@
       for (const [name, pivot] of Object.entries(pivots)) {
         pivot.position.copy(restPos.get(pivot)).add(getExplodeOffset(name, 1, 0, 0, _ev));
       }
-      for (const mesh of allPickableMeshes) {
-        const offset = partOffset(mesh);
+      // Multi-material GLB parts load as groups of primitives. Translate the
+      // named wheel, seat or trim node once so its material sections stay joined.
+      rootCar.traverse(part => {
+        if (!part.parent?.name.startsWith('Pivot_') || part.name.startsWith('Pivot_')) return;
+        const offset = partOffset(part);
         if (offset.lengthSq()) {
-          explodedParts.set(mesh, { home: mesh.position.clone(), offset });
-          mesh.position.add(offset);
+          explodedParts.set(part, { home: part.position.clone(), offset });
+          part.position.add(offset);
         }
-      }
+      });
       rootCar.updateMatrixWorld(true);
       for (const mesh of allPickableMeshes) {
         if (!mesh.visible) continue;
@@ -2207,7 +2177,7 @@
         }
       }
       for (const [pivot, home] of restPos) pivot.position.copy(home);
-      for (const [mesh, part] of explodedParts) mesh.position.copy(part.home);
+      for (const [node, part] of explodedParts) node.position.copy(part.home);
       rootCar.updateMatrixWorld(true);
       fitExplodedCamera();
     }
@@ -2263,6 +2233,10 @@
 
     function advanceIntro(now) {
       if (!intro) return;
+      if (intro.elapsed === 0 && state.explode < 0.995) {
+        intro.previous = null;
+        return;
+      }
       const holding = intro.elapsed <= introHoldMs;
       if (intro.previous !== null) intro.elapsed += Math.max(0, now - intro.previous);
       intro.previous = now;
@@ -2369,8 +2343,8 @@
         }
       }
 
-      for (const [mesh, part] of explodedParts) {
-        mesh.position.copy(part.home).addScaledVector(part.offset, ex);
+      for (const [node, part] of explodedParts) {
+        node.position.copy(part.home).addScaledVector(part.offset, ex);
       }
       for (const [obj, ps] of pullOffsets.entries()) {
         if (obj.isMesh) {
@@ -2402,7 +2376,6 @@
     function applyExactPoseNow(pose) {
       if (!state.loaded) return false;
       stopIntro();
-      closeOverlay();
       setHoverMesh(null, 0, 0);
 
       if (typeof pose.outline === 'boolean') {
@@ -2514,7 +2487,7 @@
     // -----------------------------------------------------------------------
     function animate(now) {
       framePending = false;
-      if (carHidden()) return;
+      if (carHidden() && !document.documentElement.classList.contains('compare-photos')) return;
       const frameTime = clock.getDelta();
       const dt = Math.min(frameTime, 0.08);
       const t = clock.elapsedTime;
@@ -2551,7 +2524,7 @@
       const presenting = !!intro;
       if (presenting) {
         advanceIntro(now);
-        if (intro && intro.elapsed <= introHoldMs && !needsRender) {
+        if (intro && state.explode === 1 && intro.elapsed <= introHoldMs && !needsRender) {
           scheduleFrame();
           return;
         }
@@ -2652,13 +2625,16 @@
 
       const match = (!captureMode && photoPose?.photo) ? (1 - state.cabinBlend) * (1 - state.explode) : 0;
       let offsetX = 0, offsetY = 0;
-      if (match > 0 && galleryRect.height && galleryRect.width) {
-        const imageHeight = Math.min(galleryRect.height, galleryRect.width / photoPose.aspect);
+      if (match > 0) {
+        // A matched image and its live projection occupy exactly the same CSS pixels.
+        // Ordinary exterior presets instead fit between the model header and toolbar.
+        const rect = photoPose.id ? galleryRect : exteriorRect;
+        const imageHeight = photoPose.id ? rect.height : Math.min(rect.height, rect.width / photoPose.aspect);
         const screenTan = Math.tan(photoPose.fov * Math.PI / 360) * innerHeight / imageHeight;
         effRadius = THREE.MathUtils.lerp(effRadius, state.radius * photoPose.distance / photoPose.radius, match);
         fov = THREE.MathUtils.lerp(fov, THREE.MathUtils.radToDeg(2 * Math.atan(screenTan)), match);
-        offsetX = (1 - 2 * (galleryRect.x + galleryRect.width / 2) / innerWidth) * match;
-        offsetY = (2 * (galleryRect.y + galleryRect.height / 2) / innerHeight - 1) * match;
+        offsetX = (1 - 2 * (rect.x + rect.width / 2) / innerWidth) * match;
+        offsetY = (2 * (rect.y + rect.height / 2) / innerHeight - 1) * match;
       }
 
       const near = (state.interiorView || (photoPose?.group && photoPose.group !== 'Exterior')) ? 0.02 : 0.05;

@@ -109,12 +109,17 @@ def running_boards(col):
 
 def handles(col):
     out = []
-    S = Surf('side', lambda x, z: D.Y_SIDE(x, z) + 0.016)
     for nm, (x0, x1) in (('F', (0.060, 0.270)), ('R', (-0.965, -0.760))):
-        P = rrect(x0, x1, 1.205, 1.238, 0.014)
-        ob = outline_panel(f'RaptorR_Door_Handle_{nm}', P, S, h=0.01, hem=0.016, roll=0.006, mat=PAINT, collection=col)
-        cup = outline_panel(f'RaptorR_Door_HandleCup_{nm}', rrect(x0 + 0.02, x1 - 0.02, 1.196, 1.246, 0.016),
-                            Surf('side', lambda x, z: D.Y_SIDE(x, z) - 0.006), h=0.01, hem=0.0, hem_outer=False, mat='Mat_Trim_Matte_Black', collection=col)
+        mid = (x0 + x1) / 2
+        def handle_surface(x, z):
+            bow = np.clip(1 - ((x - mid) / ((x1 - x0) / 2)) ** 4, 0, 1)
+            return D.Y_SIDE(x, z) + 0.009 + 0.022 * bow
+        P = rrect(x0, x1, 1.240, 1.277, 0.013)
+        ob = outline_panel(f'RaptorR_Door_Handle_{nm}', P, Surf('side', handle_surface),
+                           h=0.008, hem=0.012, roll=0.005, mat=PAINT, collection=col)
+        cup = outline_panel(f'RaptorR_Door_HandleCup_{nm}', rrect(x0 + 0.014, x1 - 0.020, 1.219, 1.263, 0.020),
+                            Surf('side', lambda x, z: D.Y_SIDE(x, z) + 0.0015), h=0.008, hem=0.002,
+                            mat='Mat_Trim_Matte_Black', collection=col)
         out.append((ob, mirror_y(ob, ob.name + '_R'))); out.append((cup, mirror_y(cup, cup.name + '_R')))
         ob.name += '_L'; cup.name += '_L'
     return out

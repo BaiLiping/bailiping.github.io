@@ -118,12 +118,11 @@ a { color: inherit; text-underline-offset: .2em; }
   display: grid; grid-template-rows: minmax(0, 1fr) auto;
 }
 #photo-room figure {
-  position: relative; min-height: 0; padding: 14px var(--edge) 0;
+  position: relative; min-height: 0; container-type: size; touch-action: pan-y;
   display: grid; place-items: center; overflow: hidden;
 }
 #photo {
-  max-width: 100%; max-height: 100%; width: auto; height: auto;
-  object-fit: contain; user-select: none; border-radius: 3px;
+  position: absolute; inset: 0; display: block; width: 100%; height: 100%; object-fit: contain; user-select: none;
 }
 #photo-error { color: #e2e5e8; font-size: 14px; }
 #photo-footer { display: grid; justify-items: center; gap: 8px; padding: 14px var(--edge) max(16px, env(safe-area-inset-bottom)); }
@@ -193,19 +192,59 @@ a { color: inherit; text-underline-offset: .2em; }
 
 #photo-tools-3d {
   position: fixed; top: calc(var(--header-height) + 12px); left: var(--edge); z-index: 8;
-  display: flex; align-items: center; gap: 6px;
 }
-#photo-tools-3d a, #photo-tools-3d button, #overlay-error {
+#photo-tools-3d a {
   padding: 7px 10px; border: 1px solid var(--line); border-radius: 6px;
   color: var(--ink); background: #fffffff5; font-size: 13px; text-decoration: none;
 }
-#overlay-opacity { width: min(90px, 18vw); accent-color: var(--accent); }
-#overlay-toggle[aria-pressed="true"] { background: var(--ink); color: white; }
-#reference-overlay { position: fixed; pointer-events: none; z-index: 5; object-fit: contain; }
-.show-photos :is(#photo-tools-3d,#reference-overlay), .hide-hud :is(#photo-tools-3d,#reference-overlay) { visibility: hidden; }
-@media (max-width: 480px) {
-  #photo-tools-3d { top: calc(var(--header-height) + 8px); left: 10px; }
-}
+.show-photos #photo-tools-3d, .hide-hud #photo-tools-3d { visibility: hidden; }
 
-/* Keep the gallery image rectangle measurable when fitting the 3D camera. */
+/* Keep the letterboxed photograph and its calibrated camera on the same rectangle. */
 #photo-room[hidden] { display: grid !important; visibility: hidden; pointer-events: none; }
+.photo-frame {
+  --photo-aspect: 2.332362;
+  position: relative;
+  width: min(100cqw, calc(100cqh * var(--photo-aspect)));
+  aspect-ratio: var(--photo-aspect);
+}
+#photo-error { position: absolute; padding: 8px 14px; background: #181b1f; }
+.photo-tools #compare-view { font-family: inherit; line-height: 1.2; font-size: 14px; font-weight: 550; }
+.photo-tools #compare-view[aria-pressed="true"] { background: var(--ink); color: white; }
+.photo-tools #compare-view:disabled { color: #686c71; cursor: default; }
+.compare-photos #stage { visibility: visible; pointer-events: none; }
+.compare-photos #photo-room { background: transparent; }
+.compare-photos .photo-frame { box-shadow: 0 0 0 200vmax #181b1f; }
+.compare-photos #photo { clip-path: inset(0 calc(100% - var(--photo-share, 50%)) 0 0); }
+.compare-photos .photo-frame::after {
+  content: ''; position: absolute; inset-block: 0; left: var(--photo-share, 50%); width: 2px;
+  transform: translateX(-1px); background: white; box-shadow: 0 0 3px #0008; pointer-events: none;
+}
+.split-grip { display: none; }
+.compare-photos .split-grip {
+  display: block; position: absolute; z-index: 1; top: 0; bottom: 0;
+  left: clamp(0px, calc(var(--photo-share, 50%) - 16px), calc(100% - 32px));
+  width: 32px; cursor: ew-resize; touch-action: none;
+}
+#comparison-controls {
+  position: absolute; z-index: 2; bottom: 8px; left: 50%; transform: translateX(-50%);
+  display: flex; align-items: center; gap: 10px; min-height: 36px; padding: 0 12px;
+  border-radius: 7px; background: #191c20eb; color: white; font-size: 13px; white-space: nowrap;
+}
+#comparison-split { width: clamp(95px, 16vw, 190px); min-height: 36px; margin: 0; accent-color: #eb9a9f; }
+#photo-footer { background: #181b1f; }
+#photo-count { font-variant-numeric: tabular-nums; }
+@media (max-width: 640px) {
+  #photo-footer { padding-inline: 6px; }
+  .photo-tools { width: min(100%, 460px); }
+  .photo-tools select { flex: 1; width: 0; min-width: 0; padding-inline: 4px; font-size: 13px; }
+  .photo-tools #compare-view, .photo-tools #match-view { flex: none; padding-inline: 7px; font-size: 12px; }
+  .photo-tools > button { min-width: 32px; padding-inline: 5px; }
+}
+@media (max-width: 440px) {
+  .identity { gap: 9px; }
+  .identity h1 { font-size: clamp(17px, 5.1vw, 21px); }
+  .finish { padding-left: 9px; gap: 5px; font-size: 12px; }
+}
+@media (orientation: landscape) and (max-height: 540px) {
+  #photo-footer { display: grid; gap: 2px; }
+}

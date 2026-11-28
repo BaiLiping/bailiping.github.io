@@ -35,7 +35,7 @@ export function createStudioFloor(scene, renderer, backgroundColor) {
 
   const span = { value: 9.6 };
   const material = new THREE.MeshBasicMaterial({
-    color: 0xc1c2c4, toneMapped: false, fog: false,
+    color: 0xecebea, toneMapped: false, fog: false,
   });
   material.onBeforeCompile = shader => {
     shader.uniforms.footprintMap = { value: target.texture };

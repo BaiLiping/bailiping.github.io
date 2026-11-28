@@ -97,46 +97,59 @@ def hood_nose(col):
 
 # ------------------------------------------------------------------ Power Dome heat extractor (photo 017)
 def hood_extractor(col):
+    # Both visible widths and the fore/aft location are constrained by the
+    # 2024 side and high-front reference photos. The unit sits over the hood
+    # crown. The fixed cowl and the painted Power Dome remain separate.
     out = []
-    x0, x1, yh = 1.296, 1.660, 0.505
-    xs = np.linspace(x0, x1, 92); ys = np.linspace(-yh, yh, 253)
-    X, Y = np.meshgrid(xs, ys, indexing='ij')
-    sm = lambda t: np.clip(t, 0, 1) ** 2 * (3 - 2 * np.clip(t, 0, 1))
-    base = 0.007 * sm((x1 - X) / 0.012) * sm((yh - np.abs(Y)) / 0.012)
-    H = np.zeros_like(X)
-    for yc in (-0.252, 0.0, 0.252):
-        py = sm((0.082 - np.abs(Y - yc)) / 0.022)
-        px = sm((X - x0) / 0.010) * sm((1.585 - X) / 0.070)
-        top = 0.058 - 0.010 * np.clip((X - 1.30) / 0.25, 0, 1)
-        pod = top * px * py
-        # U-shaped scoop on the forward face of each pod
-        sc = sm((0.046 - np.abs(Y - yc)) / 0.012) * sm((X - 1.448) / 0.030) * sm((1.600 - X) / 0.02)
-        pod = pod - 0.044 * sc * px
-        H = np.maximum(H, pod)
-    for s in (1, -1):    # lower end wings carrying the badges
-        py = sm((0.098 - np.abs(Y - s * 0.400)) / 0.025)
-        px = sm((X - x0) / 0.010) * sm((1.560 - X) / 0.060)
-        H = np.maximum(H, 0.024 * px * py)
-    Zh = D.Z_HOOD(X, Y)
-    P = np.stack([X, Y, Zh + base + H], -1)
-    out.append(grid_obj('RaptorR_Hood_Extractor', P, mat='Mat_Hood_Extractor_SatinGray', collection=col, outward=(0, 0, 1)))
-    # perimeter skirt down into the hood surface
-    ring = ([(x0, y) for y in ys] + [(x, yh) for x in xs[1:]] + [(x1, y) for y in ys[::-1][1:]] + [(x, -yh) for x in xs[::-1][1:-1]])
-    R = np.array(ring)
-    zt = D.Z_HOOD(R[:, 0], R[:, 1]) + 0.004; zb = D.Z_HOOD(R[:, 0], R[:, 1]) - 0.004
-    S = np.stack([np.stack([R[:, 0], R[:, 1], zt], 1), np.stack([R[:, 0], R[:, 1], zb], 1)], 1)
-    out.append(grid_obj('RaptorR_Hood_Extractor_Skirt', S, mat='Mat_Hood_Extractor_SatinGray', collection=col, closed_u=True,
-                        outward=lambda p: np.stack([p[:, 0] - 1.48, p[:, 1], np.zeros(len(p))], 1)))
-    # slot rows at the bottom of each scoop (dark), and the end badges
-    for yc in (-0.252, 0.0, 0.252):
-        for k in range(4):
-            yy = yc - 0.027 + k * 0.018
-            xx = 1.566
-            zz = float(D.Z_HOOD(np.array([xx]), np.array([yy]))[0])
-            out.append(box_at(f'RaptorR_Hood_Extractor_Slot', xx, yy, zz + 0.012, 0.010, 0.010, 0.006, 'Mat_Grille_Charcoal_Black', col))
-    for s in (1, -1):
-        zz = float(D.Z_HOOD(np.array([1.43]), np.array([s * 0.40]))[0]) + 0.0325
-        out.append(box_at('RaptorR_Hood_Extractor_Badge', 1.43, s * 0.40, zz, 0.070, 0.016, 0.003, 'Mat_Gloss_Black_Pillar', col))
+    rear, nose, half_width = 1.594, 1.962, 0.505
+    stations = np.linspace(0, 1, 68)
+    lateral = np.linspace(-half_width, half_width, 201)
+    T, Y = np.meshgrid(stations, lateral, indexing='ij')
+    def smooth(x):
+        v = np.clip(x, 0, 1)
+        return v * v * (3 - 2 * v)
+    def tray(t, y):
+        # Round the two forward corners of the moulding in plan.
+        corner = smooth((np.abs(y) - .438) / .067)
+        x = rear + (nose - rear) * t - .035 * corner * t ** 5
+        base = D.Z_HOOD(x, y)
+        # The moulded tray bridges the dome shoulder out to the side badges.
+        deck = D.Z_HOOD(x, np.clip(y, -.392, .392))
+        roll = smooth((half_width - np.abs(y)) / .022)
+        rim = .004 + .008 * np.sin(np.pi * t) + .009 * smooth((.99 - t) / .15)
+        support = base + (deck - base) * roll + rim
+        relief = np.zeros_like(y)
+        for yc in (-.276, 0., .276):
+            offset = np.abs(y - yc)
+            # Forward-facing scoops with a raised left/right rim and recess.
+            side = smooth((.092 - offset) / .024)
+            toe = smooth((.85 - t) / .16)
+            shoulder = smooth(t / .12) * toe
+            peak = np.clip(1.568 - support, .018, .059)
+            cup = smooth((.054 - offset) / .015) * smooth((t - .30) / .18) * smooth((.81 - t) / .16)
+            relief = np.maximum(relief, shoulder * side * peak * (1 - .80 * cup))
+        return x, support + relief
+    X, Z = tray(T, Y)
+    P = np.stack([X, Y, Z], axis=-1)
+    material = 'Mat_Hood_Extractor_SatinGray'
+    out.append(grid_obj('RaptorR_Hood_Extractor', P, mat=material, collection=col, outward=(0, 0, 1)))
+    rim = np.concatenate((P[0], P[1:, -1], P[-1, -2::-1], P[-2:0:-1, 0]))
+    foot = rim.copy()
+    foot[:, 2] = D.Z_HOOD(foot[:, 0], foot[:, 1]) - .002
+    out.append(grid_obj('RaptorR_Hood_Extractor_Skirt', np.stack([rim, foot], axis=1),
+                        mat=material, collection=col, closed_u=True, outward=lambda p:
+                        np.column_stack((p[:, 0] - (rear + nose) / 2, p[:, 1], np.zeros(len(p))))))
+    for yc in (-.276, 0., .276):
+        for dy in (-.028, -.009, .009, .028):
+            y = yc + dy
+            x, z = tray(.70, np.array(y))
+            out.append(box_at('RaptorR_Hood_Extractor_Slot', float(x), y, float(z) + .001,
+                              .013, .012, .002, 'Mat_Grille_Charcoal_Black', col))
+    for side in (-1, 1):
+        y = side * .455
+        x, z = tray(.46, np.array(y))
+        out.append(box_at('RaptorR_Hood_Extractor_Badge', float(x), y, float(z) + .003,
+                          .079, .016, .004, 'Mat_Gloss_Black_Pillar', col))
     return out
 
 def box_at(name, x, y, z, lx, ly, lz, mat, col):
@@ -248,31 +261,55 @@ def headlamps_v3(col):
     lens_front = [(0.565, 0.952), (0.860, 0.952), (0.895, 0.985), (0.905, 1.245), (0.885, 1.292), (0.565, 1.292)]
     out.append(outline_panel('RaptorR_Headlight_Housing_L', sy(lens_front), Surf('front', lambda y, z: XLENS(y, z) - 0.050), h=0.03,
                              hem=0.0, hem_outer=False, mat='Mat_Gloss_Black_Pillar', collection=col))
-    # C-clamp DRL light guides: front top bar, wrap along the side top, slanted leg down the side chamber
-    S = lambda d: Surf('front', lambda y, z: XLENS(y, z) - d)
-    out.append(outline_panel('RaptorR_Headlight_AmberDRL_Top_L', sy(rrect(0.578, 0.858, 1.263, 1.277, 0.006)), S(0.010), h=0.012, bnd=0.003,
-                             hem=0.004, roll=0.003, mat='Mat_Amber_LED_DRL', collection=col))
-    xc = float(XLENS(np.array([0.875 * KY]), np.array([1.27]))[0]) - 0.012
-    path = [(xc, 0.874 * KY, 1.270)]
-    for x in np.linspace(xc - 0.03, 2.300, 12):
-        path.append((x, Y_DEEP + 0.020, 1.270))
-    for t in np.linspace(0, 1, 16)[1:]:
-        ang = t * np.pi / 2
-        # quarter bend at the rear-top then the slanted leg parallel to the lens' rear edge
-        if t < 0.25:
-            path.append((2.300 - 0.012 * np.sin(ang * 4 / 2), Y_DEEP + 0.020, 1.270 - 0.022 * (1 - np.cos(ang * 4 / 2))))
-        else:
-            u = (t - 0.25) / 0.75
-            path.append((2.294 + 0.134 * u, Y_DEEP + 0.020, 1.244 - 0.278 * u))
-    out.append(tube('RaptorR_Headlight_AmberDRL_Leg_L', path, 0.0068, 'Mat_Amber_LED_DRL', col))
+    # The illuminated close-up shows two thick guides in separate bezels.
+    # The upright diffuser faces forward around the outer projector corner.
+    # The narrow amber reflector farther aft is a different component.
+    S = lambda depth: Surf('front', lambda y, z: XLENS(y, z) - depth)
+    top = [(0.545, 1.282), (0.872, 1.282), (0.880, 1.275), (0.880, 1.253),
+           (0.574, 1.253), (0.561, 1.259)]
+    upright = [(0.852, 1.240), (0.879, 1.243), (0.882, 1.232), (0.869, 0.963),
+               (0.862, 0.955), (0.838, 0.956), (0.837, 0.966)]
+    for tag, outline in (('Top', top), ('Leg', upright)):
+        contour = np.array(sy(outline))
+        midpoint = (contour.min(axis=0) + contour.max(axis=0)) / 2
+        extent = np.ptp(contour, axis=0)
+        bezel = midpoint + (contour - midpoint) * (1 + 0.012 / extent)
+        out.append(outline_panel(f'RaptorR_Headlight_DiffuserBezel_{tag}_L', bezel, S(0.013),
+                                 h=0.010, bnd=0.003, hem=0.010, roll=0.002,
+                                 mat='Mat_Headlight_DarkChrome', collection=col))
+        out.append(outline_panel(f'RaptorR_Headlight_AmberDRL_{tag}_L', contour, S(0.008),
+                                 h=0.009, bnd=0.003, hem=0.005, roll=0.002,
+                                 mat='Mat_Amber_LED_DRL', collection=col))
     # reflectors (light satin chrome), projector lenses, LED strips, blade
-    pieces = [('RaptorR_Headlight_Reflector_Upper_L', rrect(0.660, 0.840, 1.128, 1.242, 0.014), 0.034, 'Mat_Taillight_Clear_Accent', 0.012),
-              ('RaptorR_Headlight_Reflector_Lower_L', rrect(0.660, 0.840, 0.972, 1.066, 0.014), 0.034, 'Mat_Taillight_Clear_Accent', 0.012),
-              ('RaptorR_Headlight_Projector_Upper_L', circle(0.785, 1.186, 0.026), 0.024, 'Mat_Headlight_Projector_Lens', 0.008),
-              ('RaptorR_Headlight_Projector_Lower_L', circle(0.785, 1.019, 0.024), 0.024, 'Mat_Headlight_Projector_Lens', 0.008),
-              ('RaptorR_Headlight_LEDStrip_Upper_L', rrect(0.682, 0.742, 1.172, 1.196, 0.006), 0.026, 'Mat_LED_Headlight_White', 0.004),
-              ('RaptorR_Headlight_LEDStrip_Lower_L', rrect(0.690, 0.742, 1.006, 1.032, 0.006), 0.026, 'Mat_LED_Headlight_White', 0.004),
-              ('RaptorR_Headlight_Blade_L', [(0.566, 1.076), (0.806, 1.084), (0.814, 1.104), (0.566, 1.110)], 0.014, 'Mat_Headlight_DarkChrome', 0.010),
+    # Reflector cups around the projectors: transition from the rounded
+    # rectangular opening to the circular projector. The grooved side walls
+    # catch different studio reflections as the camera moves around the nose.
+    angles = np.linspace(0, 2 * np.pi, 48, endpoint=False)
+    for tag, z0 in (('Upper', 1.185), ('Lower', 1.020)):
+        yc = 0.774
+        profiles = []
+        for width, height, exponent, depth, center_y in (
+                (0.087, 0.051, 0.34, 0.014, 0.746),
+                (0.082, 0.047, 0.40, 0.018, 0.746),
+                (0.063, 0.035, 0.57, 0.040, 0.752),
+                (0.034, 0.030, 0.93, 0.038, yc),
+                (0.029, 0.026, 1.00, 0.023, yc)):
+            y = center_y + width * np.sign(np.cos(angles)) * abs(np.cos(angles)) ** exponent
+            z = z0 + height * np.sign(np.sin(angles)) * abs(np.sin(angles)) ** exponent
+            y *= KY
+            profiles.append(np.column_stack((XLENS(y, z) - depth, y, z)))
+        out.append(grid_obj(f'RaptorR_Headlight_Reflector_{tag}_L', np.array(profiles),
+                            mat='Mat_Headlight_DarkChrome', collection=col, closed_v=True, outward=(1, 0, 0)))
+        profiles = []
+        for radius, depth in ((0.029, 0.024), (0.025, 0.020), (0.017, 0.017), (0.003, 0.015)):
+            y = yc * KY + radius * np.cos(angles)
+            z = z0 + radius * 0.91 * np.sin(angles)
+            profiles.append(np.column_stack((XLENS(y, z) - depth, y, z)))
+        out.append(grid_obj(f'RaptorR_Headlight_Projector_{tag}_L', np.array(profiles),
+                            mat='Mat_Mirror_Chrome_Glass', collection=col, closed_v=True, outward=(1, 0, 0)))
+        out.append(outline_panel(f'RaptorR_Headlight_Emitter_{tag}_L', circle(yc * KY, z0, 0.009), S(0.015),
+                                 h=0.005, bnd=0.002, hem=0.002, mat='Mat_LED_Headlight_White', collection=col))
+    pieces = [('RaptorR_Headlight_Blade_L', [(0.566, 1.076), (0.806, 1.084), (0.814, 1.104), (0.566, 1.110)], 0.014, 'Mat_Headlight_DarkChrome', 0.010),
               ('RaptorR_Headlight_InnerBezel_L', [(0.640, 0.956), (0.662, 0.956), (0.662, 1.246), (0.640, 1.246)], 0.006, 'Mat_Grille_Charcoal_Black', 0.040)]
     for name, P, d, mat, hem in pieces:
         out.append(outline_panel(name, sy(P), S(d), h=0.012, bnd=0.003, hem=hem, roll=0.003, mat=mat, collection=col))

@@ -1,13 +1,15 @@
 # Rebuilding the 2024 F-150 Raptor R model
 
-The served model is built in two stages:
+[Download the editable Blender master](ford_f150_raptor_r.blend). It includes the articulated truck in metres, packed textures and 50 cameras named for the Ford orbit frames and detail photographs. Each camera stores its source, reference pixel dimensions and the viewer pose. Set the scene resolution to the camera’s reference dimensions when rendering a detail crop.
+
+The served model is built in two stages.
 
 1. **Rig, running gear, engine bay and cabin.** These come from the assembly-corrected model of commit `a391343`. `build_model.py` built it from the earlier `007d1fc` asset (see [Stage 1](#stage-1-assembly-corrected-baseline)).
 2. **Exterior body.** `exterior/build_raptor.py` removes the baseline's 444 exterior meshes and builds a new body fitted to Ford's official F-150 Raptor 360° renders, Ford's Raptor R specifications and close reference photographs. The doors, hood, tailgate, tonneau and fuel door are reparented to relocated hinge pivots. The cabin trim and the top of the engine are trimmed to clear the new glass and hood.
 
 ## Build
 
-Requirements: Node.js/npm, Blender (the served asset was built with Blender 5.2.2 LTS and Node 24), and this repository's Git history. Blender supplies NumPy. The decoder uses the checked-in `vendor/draco_decoder.js`; compression dependencies are pinned in `package.json`.
+Requirements: Node.js/npm, Blender (the served asset was built with Blender 5.2.1 LTS), and this repository's Git history. Blender supplies NumPy. The decoder uses the checked-in `vendor/draco_decoder.js`; compression dependencies are pinned in `package.json`.
 
 Run from the repository root. The final command replaces the served GLB.
 
@@ -24,7 +26,11 @@ node ford-f150-raptor-r/model/decode_model.cjs \
 
 blender -b --python-exit-code 1 \
   --python ford-f150-raptor-r/model/exterior/build_raptor.py -- \
-  "$raptor_build_dir/baseline-decoded.glb" "$raptor_build_dir/rebuilt.glb"
+  "$raptor_build_dir/baseline-decoded.glb" "$raptor_build_dir/rebuilt.glb" --blend "$raptor_build_dir/editable.blend"
+
+blender -b "$raptor_build_dir/editable.blend" --python-exit-code 1 \
+  --python ford-f150-raptor-r/model/save_reference_master.py -- \
+  ford-f150-raptor-r/model/ford_f150_raptor_r.blend
 
 npm --prefix ford-f150-raptor-r/model install
 
@@ -32,7 +38,7 @@ node ford-f150-raptor-r/model/compress_model.mjs \
   "$raptor_build_dir/rebuilt.glb" ford-f150-raptor-r/ford_f150_raptor_r.glb
 ```
 
-With the versions above, the rebuild reproduces the served file byte for byte (SHA-256 `84558e8e2d0af00621840e4f903ab54c8f7c60e5d5ce991e1ed68b3c579971b2`). Other Blender or dependency versions may produce different bytes but the same geometry.
+The reviewed Draco GLB has SHA-256 `74643b5dde41cf3b4d660a5a6a714b9d83b283cd988a6420188680e6a7de0f88`. Blender and dependency versions can affect the encoded bytes.
 
 `build_raptor.py` also writes `rebuilt.build.json`. It reports the restored `_STUDIO_VISIBILITY` primitives, the removed and added meshes per pivot, the overall dimensions and the wheelbase assertion (3.6932 m).
 
@@ -45,9 +51,19 @@ blender -b --python-exit-code 1 --python ford-f150-raptor-r/model/exterior/check
   ford-f150-raptor-r/ford_f150_raptor_r.glb
 ```
 
-The served asset measures 5,861 × 2,210 × 2,049 mm (2,440 mm with mirrors), with a 3,693 mm wheelbase, 1,887/1,877 mm tracks and 333 mm ground clearance. Its approach, departure and breakover angles are 33.3°, 24.9° and 23.8°; Ford gives 33.1°, 24.9° and 24.4°. No painted panel touches the headlamp lenses or grille frame, and the hood clears the fixed front panels from closed to 48°. The length is 47 mm under Ford's published 5,908 mm. Ford's calibrated side renders place both bumper faces within about 2 cm of the model at their most prominent heights, so the bumpers were not stretched to the published figure.
+The served asset measures 5,878 × 2,210 × 2,049 mm (2,440 mm with mirrors), with a 3,693 mm wheelbase, 1,887/1,877 mm tracks and 333 mm ground clearance. Its approach, departure and breakover angles are 33.3°, 24.9° and 23.8°; Ford gives 33.1°, 24.9° and 24.4°. No painted panel touches the headlamp lenses or grille frame, and the hood clears the fixed front panels from closed to 48°. The length is 30 mm under Ford's published 5,908 mm. Ford's calibrated side renders place both bumper faces within about 2 cm of the model at their most prominent heights, so the bumpers were not stretched to the published figure.
 
 Before publishing, inspect the model from the front, side, rear and above. Exercise the doors, hood, tailgate, tonneau, fuel door, exploded view and suspension controls. Update the model URL's cache version in `index.html`.
+
+## Photo-led refinements
+
+Ford's driver and passenger profiles and the auction truck's three-quarter photographs show a pronounced lower door stamping, a painted window header around the black weatherstrip, and a shadow under each grab handle. The exterior skins and card clearance reproduce those features on all four hinges. The driver's bedside has a cutout for the filler so opening the flap reveals the neck.
+
+The auction truck's illuminated and unlit front close-ups were used for the upright and upper amber diffusers, the two deep projector reflectors, the narrow undulating grille webs and the horizontal orange recovery loops in the bumper notches. The skid plate retains its exposed alloy finish. The auction truck has no tall antenna mast at its passenger fender. Ford's standard Raptor orbit includes one.
+
+The same-year side photograph places the heat extractor 0.30 m farther forward than the earlier mesh. The three pods and their shared tray now clear the graphic-covered crown in the low front view. The elevated auction photograph constrains the deeper cups, four base slots per cup, and the position of the two outboard badges.
+
+The 2024 interior photos guided the contoured front cushions, tapered backrest bolsters, perforated inserts and orange welt stitching. Each original seat frame retains its headrest, badge, switches and belt latch. Both front door cards now have an open lower storage bin, molded middle shoulder, padded armrest and switch bridge. The passenger-side card shape is inferred from the driver-side close-up.
 
 ## Exterior sources (`exterior/`)
 
@@ -60,15 +76,16 @@ Before publishing, inspect the model from the front, side, rear and above. Exerc
 | `parts_rear.py` | Tailgate, rear bumper with exhaust outlets and receiver, bed box. |
 | `parts_misc.py`, `parts_extra.py` | Flares, wheelhouse liners, mirrors, handles, running boards, fuel door, fender vents, wipers, decals, tonneau, bed details, badges. |
 | `parts_detail.py` | Second-pass details from close-ups: headlamps with C-clamp light guides, taillamps, bed rear pillars, hood nose, extractor, CHMSL, roof antenna pods, C-pillar trims, wheel-well aprons. |
+| `seat_trim.py`, `door_trim.py` | Front seat upholstery and front door-card moldings from the 2024 interior photographs. |
 | `build_raptor.py` | Removes the old exterior, builds and parents the new one, fits kept parts inside it and exports the GLB. |
 | `fordcam.py`, `ford360_cameras.json` | Calibrated cameras for Ford's 36 renders, to overlay the model on the official views. |
 | `check_offroad_angles.py` | Approach, departure and breakover angles of an exported GLB. |
 
-The Ford renders are not redistributed here. `fordcam.project(k, points)` maps model coordinates onto frame `k` (01–36, 2160 × 926) of Ford's F-150 Raptor 360° view. Ford renders the body 62 mm lower on its wheels than the published ride height. The cameras compensate, so overlays line up with the body.
+The views tab includes all 36 native 2160 × 926 Ford studio frames. `fordcam.project(k, points)` maps model coordinates onto frame `k` (01–36, 2160 × 926) of Ford's F-150 Raptor 360° view. Ford renders the body 62 mm lower on its wheels than the published ride height. The cameras compensate, so overlays line up with the body.
 
 ## References and limits
 
-- [Ford F-150 Raptor 360° view](https://www.ford.com/trucks/f150/models/raptor/): 36 official studio renders per paint colour. Their cameras were solved from the wheel hubs and lug-pattern hexagons, with the wheelbase fixing the scale, a mirror-symmetric rig and silhouette refinement. They define the body silhouettes and panel lines: cab and tumblehome, windshield rake, hood and fender line, lamp outlines, the bed's plan taper and both bumpers. The renders show the current Raptor body, which shares its panels with the 2024 Raptor R.
+- [Ford F-150 Raptor 360° view](https://www.ford.com/trucks/f150/models/raptor/): 36 official studio renders per paint colour. Their cameras were solved from the wheel hubs and lug-pattern hexagons, with the wheelbase fixing the scale, a mirror-symmetric rig and silhouette refinement. They define the body silhouettes and panel lines: cab and tumblehome, windshield rake, hood and fender line, lamp outlines, the bed's plan taper and both bumpers. The gallery's 2027 visualizer shows an R-badged Ruby Red truck with no tonneau. Compare shared exterior features against that orbit and use the 2024 photographs for year-specific trim. The model retains the 2024 configuration in Rapid Red.
 - [Ford's 2024 Raptor/Raptor R technical specifications](https://www.fromtheroad.ford.com/content/dam/fordmediasite/us/en/library/2024/specs/2024-Ford-Raptor-and-Raptor-R-Tech-Specs.pdf), pages 3–4: overall width and height, tracks, wheelbase, ground clearance, and approach, departure and breakover angles. These Raptor R figures take precedence over generic F-150 dimensions.
 - [Ford Pro 2024 F-150 Body Builders Layout Book](https://api-prd.fordpro.com/pro/bbas/download/BBLB/661025b789417d202fd69d4f), pages 6–8: dimensioned plan and side views, cab layout and cargo-box drawings. It is a **common F-150** drawing and does not cover the Raptor's fenders, bumpers, lamps, hood or ride height. [Ford Pro publication index](https://www.fordpro.com/en-us/upfit/publications/).
 - [Ford Mexico's 2024 Lobo Raptor brochure](https://www.ford.mx/content/dam/Ford/website-assets/latam/mx/nameplate/raptor-2018/lobo-raptor-2024/pdfs/ford-lobo-raptor-2024-catalogo-descargable.pdf), page 14: a generic side and rear outline. Its 2,049 mm width conflicts with the US Raptor R specification of 2,210 mm, so it is not used for body width.

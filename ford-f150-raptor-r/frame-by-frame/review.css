@@ -82,3 +82,15 @@ footer { border-top:1px solid #cdd1d2; padding-block:24px 40px; color:#4b5255; f
   .site nav { gap:10px; }
   article { padding-block:18px 24px; }
 }
+
+#frame-review { max-width: 1080px; }
+#frame-review p { max-width: 82ch; }
+#frame-review th, #frame-review td { text-align: left; vertical-align: top; }
+#frame-review tr > :first-child { width: 22%; }
+#frame-review tr > :nth-child(2) { width: 15%; }
+@media (max-width: 650px) {
+  #frame-review thead { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
+  #frame-review tr { display: grid; grid-template-columns: 1fr auto; gap: 3px 12px; padding: 12px 0; border-bottom: 1px solid #c9cdce; }
+  #frame-review tr > * { width: auto; border: 0; padding: 0; }
+  #frame-review td:last-child { grid-column: 1 / -1; }
+}

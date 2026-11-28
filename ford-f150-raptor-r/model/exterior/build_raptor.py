@@ -120,6 +120,16 @@ def main():
         return np.stack([x, y2, z2], 1)
     for ob in [o for o in bpy.data.objects if o.type == 'MESH' and o.name.startswith('RaptorR_Int_') and o.name not in ('RaptorR_Int_Floor',)]:
         deform(ob, fit_cabin); fitted[ob.name] = 'cabin'
+    # Maintain room between the cabin trim and the lower door pressing.
+    # Shift each complete card with its switches and pull, on its existing hinge.
+    for ob in [o for o in bpy.data.objects if o.type == 'MESH' and o.name.startswith('RaptorR_DoorCard_')]:
+        def move_card(W):
+            W[:, 1] -= np.sign(W[:, 1].mean()) * 0.016
+            return W
+        deform(ob, move_card)
+    import seat_trim, door_trim
+    seat_trim.apply()
+    door_trim.apply()
     def fit_engine(W):
         x, y, z = W[:, 0], W[:, 1], W[:, 2]
         inside = (x > D.HOOD_REAR_X) & (x < 2.64) & (np.abs(y) < 0.84)
@@ -204,6 +214,11 @@ def main():
         'width_with_mirrors': round(1000 * (mirrors[:, 1].max() - mirrors[:, 1].min()), 1),
         'height': round(1000 * body[:, 2].max(), 1), 'wheelbase': round(1000 * wb, 1)}
     report['doorcard_bbox'] = bbox('RaptorR_DoorCard_'); report['interior_bbox'] = bbox('RaptorR_Int_'); report['engine_bbox'] = bbox('RaptorR_Eng_')
+    letter_material = bpy.data.materials.get('Mat_FORD_Letter_Face')
+    if letter_material and letter_material.use_nodes:
+        for node in letter_material.node_tree.nodes:
+            if node.type == 'NORMAL_MAP':
+                node.inputs['Strength'].default_value = 0.15
     # ---- export
     out.parent.mkdir(parents=True, exist_ok=True)
     if blend: bpy.ops.wm.save_as_mainfile(filepath=str(blend))

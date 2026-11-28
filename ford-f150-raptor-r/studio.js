@@ -1,41 +1,123 @@
+const root = document.documentElement;
 const room = document.getElementById('photo-room');
 const photo = document.getElementById('photo');
 const error = document.getElementById('photo-error');
 const angles = document.getElementById('photo-angle');
 const more = document.getElementById('more');
 const nav = document.querySelector('.mode-switch');
-let sourcePromise;
 const matchButton = document.getElementById('match-view');
-matchButton.addEventListener('click', () => {
-  const option = angles.selectedOptions[0];
-  if (!option?.dataset.photoView) return;
-  document.documentElement.dataset.matchView = option.dataset.photoView;
-  location.hash = 'model';
-  window.dispatchEvent(new CustomEvent('match-raptor-view', { detail: option.dataset.photoView }));
+const compareButton = document.getElementById('compare-view');
+const comparison = document.getElementById('comparison-controls');
+const split = document.getElementById('comparison-split');
+const frame = room.querySelector('.photo-frame');
+const params = new URLSearchParams(location.search);
+const galleryOpen = () => ['#ford-views', '#raptor-views'].includes(location.hash);
+let sources;
+const loadedViews = [];
+let initialComparison = false;
+
+function selectedView() {
+  return loadedViews[angles.selectedIndex];
+}
+
+function matchAngle() {
+  const view = selectedView();
+  if (!view || matchButton.disabled) return;
+  root.dataset.matchView = view.photoView;
+  window.dispatchEvent(new CustomEvent('match-raptor-view', { detail: view.photoView }));
+}
+
+function setComparison(enabled) {
+  const active = enabled && !compareButton.disabled && galleryOpen();
+  comparison.hidden = !active;
+  compareButton.setAttribute('aria-pressed', String(active));
+  root.classList.toggle('compare-photos', active);
+  if (active) matchAngle();
+}
+
+function updateButtons() {
+  const view = selectedView();
+  const ready = view && window.raptorHasPhotoPose?.(view.photoView) && root.dataset.modelReady === 'stock';
+  matchButton.disabled = !ready;
+  compareButton.disabled = !ready || !photo.complete || !photo.naturalWidth || error.hidden === false;
+  if (initialComparison && !compareButton.disabled && galleryOpen()) {
+    initialComparison = false;
+    setComparison(true);
+  }
+}
+window.addEventListener('model-ready', updateButtons);
+compareButton.addEventListener('click', () => setComparison(comparison.hidden));
+function setSplit(value) {
+  split.value = value;
+  room.style.setProperty('--photo-share', split.value + '%');
+  split.setAttribute('aria-valuetext', split.value + ' percent reference');
+}
+split.addEventListener('input', () => setSplit(split.value));
+const grip = frame.querySelector('.split-grip');
+function dragSplit(event) {
+  const rect = frame.getBoundingClientRect();
+  setSplit(Math.round(100 * (event.clientX - rect.left) / rect.width));
+}
+grip.addEventListener('pointerdown', event => {
+  if (!event.isPrimary || event.button !== 0) return;
+  grip.setPointerCapture(event.pointerId);
+  dragSplit(event);
+});
+grip.addEventListener('pointermove', event => {
+  if (grip.hasPointerCapture(event.pointerId)) dragSplit(event);
 });
 
-function updateMatch() {
-  const option = angles.selectedOptions[0];
-  matchButton.disabled = !option?.dataset.photoView || document.documentElement.dataset.modelReady !== 'stock';
-  matchButton.textContent = 'Match in 3D';
+matchButton.addEventListener('click', () => {
+  if (matchButton.disabled) return;
+  location.hash = 'model';
+  matchAngle();
+});
+
+const preloaded = new Set();
+function frameURL(view) {
+  // Only the full-size link points away from the studio.
+  return view.image?.startsWith('./') ? view.image : view.preview;
 }
-window.addEventListener('model-ready', updateMatch);
+function preloadNeighbor(index) {
+  const url = frameURL(loadedViews[(index + loadedViews.length) % loadedViews.length]);
+  if (!url || preloaded.has(url)) return;
+  preloaded.add(url);
+  const img = new Image();
+  img.src = url;
+}
 
 function showAngle() {
-  const option = angles.selectedOptions[0];
-  if (!option) return;
+  const view = selectedView();
+  if (!view) return;
   error.hidden = true;
   photo.hidden = false;
-  photo.alt = option.dataset.alt || option.label + ' on a ' + option.dataset.finish + ' 2024 Ford F-150 Raptor R';
-  document.getElementById('photo-credit').textContent = option.dataset.credit;
-  document.getElementById('photo-source').href = option.dataset.source;
-  error.querySelector('a').href = option.dataset.source;
+  photo.alt = view.alt || view.label + ' on a ' + (view.finish || 'Shelter Green') + ' 2024 Ford F-150 Raptor R';
+  if (view.width && view.height) {
+    photo.width = view.width;
+    photo.height = view.height;
+  }
+  frame.style.setProperty('--photo-aspect', view.width && view.height ? view.width / view.height : view.aspect);
+  document.getElementById('reference-kind').textContent = view.sourceType === 'render' ? 'Ford render' : 'Photo';
+  const source = view.source || 'https://bringatrailer.com/listing/2024-ford-f-150-raptor-r-18/';
+  document.getElementById('photo-count').textContent = (angles.selectedIndex + 1) + ' / ' + loadedViews.length;
+  const finish = view.finish ?? (view.credit ? '' : 'Shelter Green');
+  document.getElementById('photo-finish').textContent = finish ? finish + ' · ' : '';
+  document.getElementById('photo-credit').textContent = view.credit || '710HP via Bring a Trailer (Lot #181,611)';
+  document.getElementById('photo-source').href = error.querySelector('a').href = source;
   const fullPhoto = document.getElementById('full-photo');
-  fullPhoto.href = option.dataset.original || option.value;
+  fullPhoto.href = view.original || view.image;
   fullPhoto.hidden = false;
-  updateMatch();
-  document.getElementById('compare-frames').href = './frame-by-frame/#' + option.dataset.photoView;
-  photo.src = option.value;
+  const truckPhotoLink = document.getElementById('truck-photo-link');
+  truckPhotoLink.hidden = !view.truckPhoto;
+  if (view.truckPhoto) truckPhotoLink.querySelector('a').href = view.truckPhoto;
+  photo.src = frameURL(view);
+  updateButtons();
+  if (!comparison.hidden) {
+    if (matchButton.disabled) setComparison(false);
+    else matchAngle();
+  }
+  preloadNeighbor(angles.selectedIndex - 1);
+  preloadNeighbor(angles.selectedIndex + 1);
 }
 
 function moveAngle(delta) {
@@ -43,10 +125,17 @@ function moveAngle(delta) {
   angles.selectedIndex = (angles.selectedIndex + delta + angles.length) % angles.length;
   showAngle();
 }
-
+photo.addEventListener('load', () => {
+  photo.width = photo.naturalWidth;
+  photo.height = photo.naturalHeight;
+  frame.style.setProperty('--photo-aspect', photo.naturalWidth / photo.naturalHeight);
+  updateButtons();
+});
 photo.addEventListener('error', () => {
   photo.hidden = true;
   error.hidden = false;
+  setComparison(false);
+  updateButtons();
 });
 photo.draggable = false;
 angles.addEventListener('change', showAngle);
@@ -54,62 +143,61 @@ document.getElementById('previous-view').addEventListener('click', () => moveAng
 document.getElementById('next-view').addEventListener('click', () => moveAngle(1));
 
 function selectRequestedPhoto() {
-  const preset = document.documentElement.dataset.photoPreset;
+  const preset = root.dataset.photoPreset;
   if (!preset) return;
-  const option = [...angles.options].find(item => item.dataset.photoView === preset || item.dataset.preset === preset);
-  if (option) angles.selectedIndex = option.index;
-  delete document.documentElement.dataset.photoPreset;
+  const index = loadedViews.findIndex(view => view.photoView === preset || view.preset === preset || view.id === preset || view.legacyId === preset || (view.legacyId && 'photo-' + view.legacyId === preset) || view.aliases?.includes(preset));
+  if (index >= 0) angles.selectedIndex = index;
+  delete root.dataset.photoPreset;
 }
 
 async function loadAngles() {
-  if (angles.length) {
-    selectRequestedPhoto();
-    showAngle();
-    return;
-  }
   try {
-    sourcePromise ??= fetch('./raptor-views.json?v=6').then(response => {
-      if (!response.ok) throw new Error('Camera list unavailable');
-      return response.json();
-    });
-    const sources = await sourcePromise;
-    if (angles.length) return;
-    for (const groupName of ['Exterior', 'Interior', 'Powertrain']) {
-      const items = sources.filter(item => item.group === groupName);
-      if (!items.length) continue;
-      const group = document.createElement('optgroup');
-      group.label = groupName;
-      for (const view of items) {
-        const option = new Option(view.label, view.preview || view.image);
-        option.dataset.finish = view.finish || 'Shelter Green';
-        option.dataset.credit = view.credit || '710HP via Bring a Trailer (Lot #181,611)';
-        option.dataset.source = view.source || 'https://bringatrailer.com/listing/2024-ford-f-150-raptor-r-18/';
-        option.dataset.original = view.original || view.image;
-        option.dataset.photoView = view.photoView;
-        option.dataset.preset = view.preset || '';
-        option.dataset.alt = view.alt || '';
-        group.append(option);
+    if (!angles.length) {
+      sources ??= fetch('./raptor-views.json?v=photo-r10').then(response => {
+        if (!response.ok) throw new Error('Camera list unavailable');
+        return response.json();
+      });
+      const views = await sources;
+      if (angles.length) return;
+      for (const groupName of new Set(views.map(view => view.group))) {
+        const group = document.createElement('optgroup');
+        group.label = groupName;
+        for (const view of views.filter(item => item.group === groupName)) {
+          const option = new Option(view.label, view.id);
+          option.dataset.photoView = view.photoView;
+          group.append(option);
+          loadedViews.push(view);
+        }
+        angles.append(group);
       }
-      angles.append(group);
+      const requested = params.get('frame');
+      if (requested !== null && /^\d+$/.test(requested) && Number(requested) < angles.length) {
+        angles.selectedIndex = Number(requested);
+        initialComparison = params.get('compare') === '1' && !params.has('model');
+      }
     }
     selectRequestedPhoto();
     showAngle();
   } catch {
-    sourcePromise = undefined;
+    sources = undefined;
     photo.hidden = true;
     error.hidden = false;
+    setComparison(false);
   }
 }
 
 function updateMode() {
-  const gallery = location.hash === '#raptor-views';
-  const tab = gallery ? '#raptor-views' : '#model';
-  document.documentElement.classList.toggle('show-photos', gallery);
-  document.documentElement.classList.remove('hide-hud');
+  const gallery = galleryOpen() && params.get('capture') !== '1';
+  if (!gallery) {
+    initialComparison = false;
+    setComparison(false);
+  }
+  root.classList.toggle('show-photos', gallery);
+  if (params.get('capture') !== '1') root.classList.remove('hide-hud');
   room.hidden = !gallery;
-  if (more) more.open = false;
+  more.open = false;
   for (const link of nav.querySelectorAll('a')) {
-    if (link.hash === tab) link.setAttribute('aria-current', 'true');
+    if (link.hash === (gallery ? '#ford-views' : '#model')) link.setAttribute('aria-current', 'true');
     else link.removeAttribute('aria-current');
   }
   if (gallery) loadAngles();
@@ -119,9 +207,9 @@ function updateMode() {
 window.addEventListener('hashchange', updateMode);
 updateMode();
 document.addEventListener('pointerdown', event => {
-  if (more?.open && !more.contains(event.target)) more.open = false;
+  if (more.open && !more.contains(event.target)) more.open = false;
 });
-more?.addEventListener('click', event => {
+more.addEventListener('click', event => {
   if (event.target.closest('[data-panel]')) {
     more.open = false;
     more.querySelector('summary').focus({ preventScroll: true });
@@ -129,11 +217,11 @@ more?.addEventListener('click', event => {
 });
 window.addEventListener('keydown', event => {
   if (event.altKey || event.ctrlKey || event.metaKey) return;
-  if (event.key === 'Escape' && more?.open) {
+  if (event.key === 'Escape' && more.open) {
     more.open = false;
     more.querySelector('summary').focus();
   }
-  if (room.hidden || event.target === angles) return;
+  if (room.hidden || event.target === angles || event.target === split) return;
   if (event.key === 'ArrowLeft' || event.key === 'ArrowRight') {
     event.preventDefault();
     moveAngle(event.key === 'ArrowLeft' ? -1 : 1);
@@ -141,7 +229,7 @@ window.addEventListener('keydown', event => {
 });
 let swipe;
 room.querySelector('figure').addEventListener('pointerdown', event => {
-  if (!event.isPrimary || event.button !== 0 || event.target.closest('a, button')) return;
+  if (!event.isPrimary || event.button !== 0 || event.target.closest('a, button, .split-grip, #comparison-controls')) return;
   swipe = { x: event.clientX, y: event.clientY };
   event.currentTarget.setPointerCapture(event.pointerId);
 });

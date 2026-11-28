@@ -36,20 +36,26 @@ def grille(col):
     # recessed backing
     out['back'] = outline_panel('RaptorR_Front_Grille_Backing', sy(gopen(1.02)), FS(-0.075), h=0.05, hem=0.0, hem_outer=False,
                                 mat='Mat_Trim_Matte_Black', collection=col)
-    # three horizontal bars with hexagon-faceted fronts
+    # The two open tiers have narrow wavy horizontal webs ahead of the
+    # vertical radiator fins, visible above and below the FORD wordmark.
+    face_mat = 'Mat_Grille_Charcoal_Black'
+    xs = np.linspace(-0.61, 0.61, 133)
     bars = []
-    for (z0, z1, d) in ((0.935, 1.025, -0.030), (1.055, 1.160, -0.012), (1.185, 1.255, -0.030)):
-        bar = rrect(-0.628, 0.628, z0, z1, 0.022)
-        bars.append(outline_panel(f'RaptorR_Front_Grille_Bar_{len(bars)}', sy(bar), FS(d), h=0.03, hem=0.03, roll=0.008,
-                                  mat='Mat_Grille_Charcoal_Black', collection=col))
+    for level in (0.978, 1.214):
+        phase = np.cos(2 * np.pi * xs / 0.236)
+        centerline = level + 0.010 * np.clip(2.6 * phase, -1, 1)
+        ribbon = list(zip(xs, centerline - 0.005)) + list(zip(xs[::-1], (centerline + 0.005)[::-1]))
+        bars.append(outline_panel('RaptorR_Front_Grille_Bar', sy(ribbon), FS(-0.016),
+                                  h=0.012, bnd=0.005, hem=0.026, roll=0.002, mat=face_mat, collection=col))
+    carrier = rrect(-0.626, 0.626, 1.046, 1.169, 0.028)
+    bars.append(outline_panel('RaptorR_Front_Grille_LetterCarrier', sy(carrier), FS(-0.008),
+                              h=0.026, hem=0.034, roll=0.008, mat=face_mat, collection=col))
     out['bars'] = bars
-    # hexagonal lattice between bars (simple vertical struts)
     struts = []
-    for y in np.linspace(-0.55, 0.55, 12):
-        for (z0, z1) in ((0.895, 0.935), (1.025, 1.055), (1.160, 1.185), (1.255, 1.288)):
-            P = [(y - 0.012, z0), (y + 0.012, z0), (y + 0.006, z1), (y - 0.006, z1)]
-            struts.append(outline_panel('RaptorR_Front_Grille_Strut', sy(P), FS(-0.045), h=0.05, hem=0.03, roll=0.006,
-                                        mat='Mat_Grille_Charcoal_Black', collection=col))
+    for y in np.arange(-0.595, 0.600, 0.118):
+        fin = rrect(y - 0.005, y + 0.005, 0.897, 1.277, 0.002)
+        struts.append(outline_panel('RaptorR_Front_Grille_Strut', sy(fin), FS(-0.046),
+                                    h=0.015, hem=0.018, roll=0.002, mat=face_mat, collection=col))
     out['struts'] = struts
     # FORD letters: chunky block letters standing proud of the middle bar
     letters = []
@@ -74,7 +80,7 @@ def grille(col):
         inner = [(y0 + 0.032, 1.091), (y0 + w - 0.040, 1.091), (y0 + w - 0.040, 1.126), (y0 + 0.032, 1.126)]
         return [outer], [inner]
     # left side of vehicle is +y; seen from the front, F is on the vehicle's right (negative y)
-    for fn, y0 in ((F_, -0.552), (O_, -0.272), (R_, 0.035), (Dl, 0.318)):
+    for fn, y0 in ((F_, -0.552), (O_, -0.272), (R_, 0.005), (Dl, 0.286)):
         outs, ins = fn(y0)
         for o in outs:
             # mirror letters left-right for correct reading from the front (camera right = +y)
@@ -87,6 +93,15 @@ def grille(col):
                 co = me.vertices[me.loops[li].vertex_index].co
                 uvl.data[li].uv = (co.y * 6.0, co.z * 6.0)
     out['letters'] = letters
+    housing = rrect(-0.030, 0.030, 0.975, 1.028, 0.009)
+    out['camera'] = outline_panel('RaptorR_Front_Grille_CameraHousing', housing, FS(0.002),
+                                  h=0.009, bnd=0.003, hem=0.014, roll=0.003,
+                                  mat='Mat_Grille_Charcoal_Black', collection=col)
+    camera_lens = [(0.010 * np.cos(a), 1.003 + 0.010 * np.sin(a))
+                   for a in np.linspace(0, 2 * np.pi, 24, endpoint=False)]
+    out['camera_lens'] = outline_panel('RaptorR_Front_Grille_CameraLens', camera_lens, FS(0.006),
+                                       h=0.004, bnd=0.002, hem=0.003,
+                                       mat='Mat_Gloss_Black_Pillar', collection=col)
     # amber marker lamps on the grille top
     mk_ = []
     for yc in (-0.255, 0.0, 0.255):
@@ -163,7 +178,10 @@ def bumper(col):
         return (2.792 - 0.120 * (ay / 0.85) ** 3.5 - 0.220 * np.clip((ay - 0.80) / 0.20, 0, 1) ** 2
                 - 0.050 * np.clip((z - 0.78) / 0.09, 0, 1) - 0.048 * np.clip((0.70 - z) / 0.12, 0, 1) ** 1.3)
     BS = Surf('front', XB)
-    face = [(-1.000, 0.700), (-0.900, 0.595), (-0.640, 0.546), (0.640, 0.546), (0.900, 0.595), (1.000, 0.700), (1.005, 0.862),
+    face = [(-1.000, 0.700), (-0.900, 0.595), (-0.640, 0.546), (-0.526, 0.546),
+            (-0.522, 0.586), (-0.513, 0.597), (-0.351, 0.597), (-0.343, 0.585), (-0.340, 0.546),
+            (0.340, 0.546), (0.343, 0.585), (0.351, 0.597), (0.513, 0.597), (0.522, 0.586),
+            (0.526, 0.546), (0.640, 0.546), (0.900, 0.595), (1.000, 0.700), (1.005, 0.862),
             (-1.005, 0.862)]
     fogL = rrect(0.680, 0.960, 0.742, 0.828, 0.02); fogR = [(-y, z) for (y, z) in fogL][::-1]
     center = [(-0.430, 0.640), (0.430, 0.640), (0.470, 0.700), (0.440, 0.790), (-0.440, 0.790), (-0.470, 0.700)]
@@ -172,7 +190,7 @@ def bumper(col):
     out['recess'] = outline_panel('RaptorR_Front_Bumper_Recess', [(-0.47, 0.63), (0.47, 0.63), (0.47, 0.80), (-0.47, 0.80)],
                                   Surf('front', lambda y, z: XB(y, z) - 0.050), h=0.04, hem=0.0, hem_outer=False, mat='Mat_Trim_Matte_Black', collection=col)
     slats = []
-    for yc in (-0.30, -0.10, 0.10, 0.30):
+    for yc in (-0.15, 0.15):
         P = [(yc - 0.012, 0.645), (yc + 0.012, 0.645), (yc + 0.012, 0.785), (yc - 0.012, 0.785)]
         slats.append(outline_panel('RaptorR_Front_Bumper_Slat', sy(P), Surf('front', lambda y, z: XB(y, z) - 0.015), h=0.02, hem=0.035,
                                    roll=0.006, mat='Mat_Bumper_Steel_Charcoal', collection=col))
@@ -207,18 +225,23 @@ def bumper(col):
     # Ford side render (frame 13, back-projected): skid lower edge (2.84, 0.50) -> (2.69, 0.457) -> (2.49, 0.417);
     # front render: skid bottom 0.437 at x 2.55. Official 33.1 deg approach angle is then met by the skid's front edge.
     rows = []
-    for y in np.linspace(-0.62, 0.62, 27):
+    for y in np.linspace(-0.62, 0.62, 97):
         k = (y / 0.62) ** 2
-        rows.append([(2.742 - 0.050 * k, y, 0.548), (2.762 - 0.050 * k, y, 0.512), (2.700 - 0.040 * k, y, 0.470), (2.550, y, 0.437),
+        rib = max(0.0, 1.0 - abs((y + 0.050) % 0.103 - 0.052) / 0.028)
+        rows.append([(2.742 - 0.050 * k, y, 0.548 + 0.009 * rib), (2.762 - 0.050 * k, y, 0.512 + 0.006 * rib),
+                     (2.700 - 0.040 * k, y, 0.470 + 0.006 * rib), (2.550, y, 0.437),
                      (2.300, y, 0.425), (2.000, y, 0.422)])
     out['skid'] = grid_obj('RaptorR_Front_SkidPlate', np.array(rows), mat='Mat_Skid_Plate_Silver', collection=col, outward=(0.3, 0, -1))
-    # tow hooks
+    # Flat, U-shaped frame-mounted recovery loops. Seen head-on the coloured
+    # nose reads as a horizontal bar; the opening is visible from above.
     hooks = []
     for yc in (-0.425 * KY, 0.425 * KY):
-        # vertical D-shaped hook plates protruding below the bumper's lower edge (BaT 003/012)
-        a = np.linspace(-np.pi / 2, np.pi / 2, 13)
-        D_ = [(2.700, 0.528)] + [(2.752 + 0.034 * np.cos(t), 0.556 + 0.028 * np.sin(t)) for t in a] + [(2.700, 0.584)]
-        hooks.append(extrude_profile('RaptorR_Front_TowHooks', D_, 'y', 0.026, origin=(0, yc - 0.013, 0),
-                                     mat='Mat_Code_Orange_Accent', bevel=0.005, collection=col))
+        angles = np.linspace(-np.pi / 2, np.pi / 2, 24)
+        def loop_edge(rx, ry):
+            return [(2.665, yc - ry), *[(2.755 + rx * np.cos(t), yc + ry * np.sin(t))
+                                          for t in angles], (2.665, yc + ry)]
+        outline = loop_edge(0.048, 0.076) + loop_edge(0.019, 0.043)[::-1]
+        hooks.append(extrude_profile('RaptorR_Front_TowHooks', outline, 'z', 0.030, origin=(0, 0, 0.540),
+                                     mat='Mat_Code_Orange_Accent', bevel=0.006, segments=3, collection=col))
     out['hooks'] = hooks
     return out

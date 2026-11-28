@@ -68,8 +68,16 @@ def side_panels(col):
                 (-2.480, 0.760)] +
                [(x - 0.012, z + 0.012) for (x, z) in reversed(rout)][::-1][::-1] + [(-1.40, 0.640)])
     # (bedside outline: front edge, roll line, rear edge around the tail lamp, bottom, arch under the flare)
-    ob = outline_panel('RaptorR_Body_BedSide', outline, SIDE, h=0.022, mat=PAINT, collection=col)
-    out['bedside'] = lr(ob, 'RaptorR_Body_BedSide')
+    # Only the driver side carries the fuel filler. Cutting the bedside also
+    # exposes the recessed neck behind the animated flap.
+    fuel_cutout = [(-1.375 + 0.084 * np.cos(a), 1.205 + 0.084 * np.sin(a))
+                   for a in np.linspace(0, 2 * np.pi, 64, endpoint=False)]
+    left = outline_panel('RaptorR_Body_BedSide_L', outline, SIDE, holes=[fuel_cutout],
+                         h=0.022, mat=PAINT, collection=col)
+    solid = outline_panel('BedsideTemplate', outline, SIDE, h=0.022, mat=PAINT, collection=col)
+    right = mirror_y(solid, 'RaptorR_Body_BedSide_R')
+    bpy.data.objects.remove(solid, do_unlink=True)
+    out['bedside'] = (left, right)
     # ---- bed rail roll: from the side roll line over to the rail cap ----
     xs = np.linspace(D.BED_FRONT_X, -2.955, 80)
     rows = []
@@ -103,8 +111,23 @@ def greenhouse(col):
         else:
             outer = [(-0.046, D.Z_BELT), (-1.007, D.Z_BELT), (-1.012, 1.70), (-1.005, 1.90), (-0.985, 1.945),
                      (-0.955, 1.958), (-0.046, 1.958)]
-        ob = outline_panel(f'RaptorR_Door_Frame_{tag}', outer, GS, holes=[dlo], h=0.018, bnd=0.006, hem=0.010,
-                           mat=GLOSS, collection=col, offset=0.004)
+        # Keep the gloss-black B-pillar applique and window weatherstrip, with
+        # body-colour metal across the header and down the curved outer stile.
+        if tag == 'F':
+            outer[:2] = D.FRONT_DOOR[9:19]
+        ob = outline_panel(f'RaptorR_Door_Frame_{tag}', outer, GS, holes=[dlo], h=0.018, bnd=0.006,
+                           hem=0.010, mat=PAINT, collection=col, offset=0.004)
+        ob.data.materials.append(bpy.data.materials[GLOSS])
+        window = np.asarray(dlo)
+        starts = window
+        spans = np.roll(window, -1, axis=0) - window
+        for poly in ob.data.polygons:
+            x, _, z = poly.center
+            relative = [x, z] - starts
+            t = np.clip((relative * spans).sum(axis=1) / (spans * spans).sum(axis=1), 0, 1)
+            distance = np.linalg.norm(relative - t[:, None] * spans, axis=1).min()
+            if distance < 0.014 or (-0.16 < x < 0.068 and z < 1.925):
+                poly.material_index = 1
         out['frame_' + tag] = lr(ob, f'RaptorR_Door_Frame_{tag}')
         g = outline_panel(f'RaptorR_Glass_Door_{tag}', dlo, GS, h=0.03, hem=0.0, hem_outer=False,
                           mat='Mat_Automotive_Glass' if tag == 'F' else 'Mat_Privacy_Glass', collection=col, offset=-0.004)

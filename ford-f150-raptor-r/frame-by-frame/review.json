@@ -1,0 +1,899 @@
+{
+  "vehicle": "2024 Ford F-150 Raptor R, US SuperCrew, 5.5-foot bed, Rapid Red Metallic Tinted Clearcoat (D4), 37-inch tires, black LHD cabin, 5.2L supercharged V8, 10R80 automatic, four-wheel drive",
+  "revision": "74643b5dde41cf3b4d660a5a6a714b9d83b283cd988a6420188680e6a7de0f88",
+  "method": "Upper-body silhouette overlap uses the intersection divided by the union of the projected model and Ford render above the 0.93 m centerline cut. The thin antenna and ground shadows are excluded. Edge distances are symmetric and measured in the native 2160 × 926 images.",
+  "counts": {
+    "verified": 21,
+    "limited": 18,
+    "fix": 11,
+    "pending": 0,
+    "excluded": 0
+  },
+  "frames": [
+    {
+      "id": "view-00",
+      "label": "Front",
+      "status": "verified",
+      "note": "Nearly head-on, the cab crown, A-pillars and mirror-to-mirror width line up. The rounded mirror corners and bumper detailing differ at close scale.",
+      "camera": "../exterior-photo-cameras.json#view-00",
+      "source": "https://www.ford.com/trucks/f150/#360viewer",
+      "credit": "© Ford Motor Company · 2027 F-150 Raptor configurator · frame 04",
+      "revision": "74643b5dde41cf3b4d660a5a6a714b9d83b283cd988a6420188680e6a7de0f88",
+      "frame": 0,
+      "upperContour": {
+        "sourceFrame": 4,
+        "cutoffY": 470,
+        "upperBodyIoU": 0.97689,
+        "medianEdgePx": 2.0,
+        "p95EdgePx": 8.54,
+        "originalCalibrationIoU": 0.97689,
+        "modelSha256": "74643b5dde41cf3b4d660a5a6a714b9d83b283cd988a6420188680e6a7de0f88"
+      }
+    },
+    {
+      "id": "view-01",
+      "label": "Front left · 10°",
+      "status": "limited",
+      "note": "The roof and far bed corner track the outline. The far mirror and the front fender merge in this projection, leaving the local contour just outside the source.",
+      "camera": "../exterior-photo-cameras.json#view-01",
+      "source": "https://www.ford.com/trucks/f150/#360viewer",
+      "credit": "© Ford Motor Company · 2027 F-150 Raptor configurator · frame 05",
+      "revision": "74643b5dde41cf3b4d660a5a6a714b9d83b283cd988a6420188680e6a7de0f88",
+      "frame": 1,
+      "upperContour": {
+        "sourceFrame": 5,
+        "cutoffY": 470,
+        "upperBodyIoU": 0.9706,
+        "medianEdgePx": 3.0,
+        "p95EdgePx": 12.65,
+        "originalCalibrationIoU": 0.9706,
+        "modelSha256": "74643b5dde41cf3b4d660a5a6a714b9d83b283cd988a6420188680e6a7de0f88"
+      }
+    },
+    {
+      "id": "view-02",
+      "label": "Front left · 20°",
+      "status": "fix",
+      "note": "The roof and bed rail follow Ford’s outline. The grille-side corner projects too far forward and squarely beyond the rounded turn into the lamp.",
+      "camera": "../exterior-photo-cameras.json#view-02",
+      "source": "https://www.ford.com/trucks/f150/#360viewer",
+      "credit": "© Ford Motor Company · 2027 F-150 Raptor configurator · frame 06",
+      "revision": "74643b5dde41cf3b4d660a5a6a714b9d83b283cd988a6420188680e6a7de0f88",
+      "frame": 2,
+      "upperContour": {
+        "sourceFrame": 6,
+        "cutoffY": 472,
+        "upperBodyIoU": 0.96241,
+        "medianEdgePx": 4.12,
+        "p95EdgePx": 22.36,
+        "originalCalibrationIoU": 0.96241,
+        "followUp": "Resolve the shape-versus-camera difference against additional calibrated 2024 photographs. The two available real-truck checks disagree on the signed nose residual.",
+        "modelSha256": "74643b5dde41cf3b4d660a5a6a714b9d83b283cd988a6420188680e6a7de0f88"
+      }
+    },
+    {
+      "id": "view-03",
+      "label": "Front left · 30°",
+      "status": "fix",
+      "note": "The roof and windshield rake align. A squared nose projects past the Ford hood and headlamp at the far corner. The same offset persists in the next two angles.",
+      "camera": "../exterior-photo-cameras.json#view-03",
+      "source": "https://www.ford.com/trucks/f150/#360viewer",
+      "credit": "© Ford Motor Company · 2027 F-150 Raptor configurator · frame 07",
+      "revision": "74643b5dde41cf3b4d660a5a6a714b9d83b283cd988a6420188680e6a7de0f88",
+      "frame": 3,
+      "upperContour": {
+        "sourceFrame": 7,
+        "cutoffY": 469,
+        "upperBodyIoU": 0.9633,
+        "medianEdgePx": 2.24,
+        "p95EdgePx": 27.13,
+        "originalCalibrationIoU": 0.9633,
+        "followUp": "Resolve the shape-versus-camera difference against additional calibrated 2024 photographs. The two available real-truck checks disagree on the signed nose residual.",
+        "modelSha256": "74643b5dde41cf3b4d660a5a6a714b9d83b283cd988a6420188680e6a7de0f88"
+      }
+    },
+    {
+      "id": "view-04",
+      "label": "Front left · 40°",
+      "status": "fix",
+      "note": "The cab roof, upper windshield and straight left bed rail are close. The model’s outer hood nose extends beyond Ford’s corner ahead of the headlamp.",
+      "camera": "../exterior-photo-cameras.json#view-04",
+      "source": "https://www.ford.com/trucks/f150/#360viewer",
+      "credit": "© Ford Motor Company · 2027 F-150 Raptor configurator · frame 08",
+      "revision": "74643b5dde41cf3b4d660a5a6a714b9d83b283cd988a6420188680e6a7de0f88",
+      "frame": 4,
+      "upperContour": {
+        "sourceFrame": 8,
+        "cutoffY": 472,
+        "upperBodyIoU": 0.96436,
+        "medianEdgePx": 2.0,
+        "p95EdgePx": 25.88,
+        "originalCalibrationIoU": 0.96436,
+        "followUp": "Resolve the shape-versus-camera difference against additional calibrated 2024 photographs. The two available real-truck checks disagree on the signed nose residual.",
+        "modelSha256": "74643b5dde41cf3b4d660a5a6a714b9d83b283cd988a6420188680e6a7de0f88"
+      }
+    },
+    {
+      "id": "view-05",
+      "label": "Front left · 50°",
+      "status": "fix",
+      "note": "The left windshield and bed run register together. The model still has a projecting squared corner above and ahead of the far-side lamp.",
+      "camera": "../exterior-photo-cameras.json#view-05",
+      "source": "https://www.ford.com/trucks/f150/#360viewer",
+      "credit": "© Ford Motor Company · 2027 F-150 Raptor configurator · frame 09",
+      "revision": "74643b5dde41cf3b4d660a5a6a714b9d83b283cd988a6420188680e6a7de0f88",
+      "frame": 5,
+      "upperContour": {
+        "sourceFrame": 9,
+        "cutoffY": 474,
+        "upperBodyIoU": 0.97027,
+        "medianEdgePx": 2.0,
+        "p95EdgePx": 26.0,
+        "originalCalibrationIoU": 0.97027,
+        "followUp": "Resolve the shape-versus-camera difference against additional calibrated 2024 photographs. The two available real-truck checks disagree on the signed nose residual.",
+        "modelSha256": "74643b5dde41cf3b4d660a5a6a714b9d83b283cd988a6420188680e6a7de0f88"
+      }
+    },
+    {
+      "id": "view-06",
+      "label": "Front left · 60°",
+      "status": "verified",
+      "note": "The A-pillar rake, roof length and bed rail meet the studio contour. The extreme nose shows a small, localized forward projection.",
+      "camera": "../exterior-photo-cameras.json#view-06",
+      "source": "https://www.ford.com/trucks/f150/#360viewer",
+      "credit": "© Ford Motor Company · 2027 F-150 Raptor configurator · frame 10",
+      "revision": "74643b5dde41cf3b4d660a5a6a714b9d83b283cd988a6420188680e6a7de0f88",
+      "frame": 6,
+      "upperContour": {
+        "sourceFrame": 10,
+        "cutoffY": 474,
+        "upperBodyIoU": 0.98049,
+        "medianEdgePx": 2.0,
+        "p95EdgePx": 10.0,
+        "originalCalibrationIoU": 0.98049,
+        "modelSha256": "74643b5dde41cf3b4d660a5a6a714b9d83b283cd988a6420188680e6a7de0f88"
+      }
+    },
+    {
+      "id": "view-07",
+      "label": "Front left · 70°",
+      "status": "verified",
+      "note": "The driver-side roof crown, cab-to-bed step and hood line closely follow the Ford outline. The antenna belongs to the reference truck.",
+      "camera": "../exterior-photo-cameras.json#view-07",
+      "source": "https://www.ford.com/trucks/f150/#360viewer",
+      "credit": "© Ford Motor Company · 2027 F-150 Raptor configurator · frame 11",
+      "revision": "74643b5dde41cf3b4d660a5a6a714b9d83b283cd988a6420188680e6a7de0f88",
+      "frame": 7,
+      "upperContour": {
+        "sourceFrame": 11,
+        "cutoffY": 473,
+        "upperBodyIoU": 0.98516,
+        "medianEdgePx": 1.41,
+        "p95EdgePx": 7.0,
+        "originalCalibrationIoU": 0.98516,
+        "modelSha256": "74643b5dde41cf3b4d660a5a6a714b9d83b283cd988a6420188680e6a7de0f88"
+      }
+    },
+    {
+      "id": "view-08",
+      "label": "Front left · 80°",
+      "status": "limited",
+      "note": "The left bed rail and cab length agree. The top windshield outline is slightly inset along the rake and the near-profile angle gives little depth information.",
+      "camera": "../exterior-photo-cameras.json#view-08",
+      "source": "https://www.ford.com/trucks/f150/#360viewer",
+      "credit": "© Ford Motor Company · 2027 F-150 Raptor configurator · frame 12",
+      "revision": "74643b5dde41cf3b4d660a5a6a714b9d83b283cd988a6420188680e6a7de0f88",
+      "frame": 8,
+      "upperContour": {
+        "sourceFrame": 12,
+        "cutoffY": 475,
+        "upperBodyIoU": 0.9724,
+        "medianEdgePx": 4.0,
+        "p95EdgePx": 13.0,
+        "originalCalibrationIoU": 0.9724,
+        "modelSha256": "74643b5dde41cf3b4d660a5a6a714b9d83b283cd988a6420188680e6a7de0f88"
+      }
+    },
+    {
+      "id": "view-09",
+      "label": "Left profile",
+      "status": "verified",
+      "note": "Broadside, the left cab roof, hood-to-cowl transition and bedside top establish the relative cab and box lengths. The extractor now sits over the forward dome at the position supported by the 2024 side photo. Ford’s mast is excluded.",
+      "camera": "../exterior-photo-cameras.json#view-09",
+      "source": "https://www.ford.com/trucks/f150/#360viewer",
+      "credit": "© Ford Motor Company · 2027 F-150 Raptor configurator · frame 13",
+      "revision": "74643b5dde41cf3b4d660a5a6a714b9d83b283cd988a6420188680e6a7de0f88",
+      "frame": 9,
+      "upperContour": {
+        "sourceFrame": 13,
+        "cutoffY": 478,
+        "upperBodyIoU": 0.98318,
+        "medianEdgePx": 1.41,
+        "p95EdgePx": 8.6,
+        "originalCalibrationIoU": 0.98318,
+        "modelSha256": "74643b5dde41cf3b4d660a5a6a714b9d83b283cd988a6420188680e6a7de0f88"
+      }
+    },
+    {
+      "id": "view-10",
+      "label": "Rear left · 80°",
+      "status": "limited",
+      "note": "The straight bed top and roof height register. The outer edge of the cab back sits aft of the reflected rear glass; this grazing angle gives a weak glass-edge check.",
+      "camera": "../exterior-photo-cameras.json#view-10",
+      "source": "https://www.ford.com/trucks/f150/#360viewer",
+      "credit": "© Ford Motor Company · 2027 F-150 Raptor configurator · frame 14",
+      "revision": "74643b5dde41cf3b4d660a5a6a714b9d83b283cd988a6420188680e6a7de0f88",
+      "frame": 10,
+      "upperContour": {
+        "sourceFrame": 14,
+        "cutoffY": 480,
+        "upperBodyIoU": 0.97409,
+        "medianEdgePx": 2.0,
+        "p95EdgePx": 17.03,
+        "originalCalibrationIoU": 0.97409,
+        "modelSha256": "74643b5dde41cf3b4d660a5a6a714b9d83b283cd988a6420188680e6a7de0f88"
+      }
+    },
+    {
+      "id": "view-11",
+      "label": "Rear left · 70°",
+      "status": "verified",
+      "note": "The rear edge of the left cab, roof crown and top of the outer bed rail follow the reference at this shallow rear angle.",
+      "camera": "../exterior-photo-cameras.json#view-11",
+      "source": "https://www.ford.com/trucks/f150/#360viewer",
+      "credit": "© Ford Motor Company · 2027 F-150 Raptor configurator · frame 15",
+      "revision": "74643b5dde41cf3b4d660a5a6a714b9d83b283cd988a6420188680e6a7de0f88",
+      "frame": 11,
+      "upperContour": {
+        "sourceFrame": 15,
+        "cutoffY": 477,
+        "upperBodyIoU": 0.97493,
+        "medianEdgePx": 3.0,
+        "p95EdgePx": 9.22,
+        "originalCalibrationIoU": 0.97493,
+        "modelSha256": "74643b5dde41cf3b4d660a5a6a714b9d83b283cd988a6420188680e6a7de0f88"
+      }
+    },
+    {
+      "id": "view-12",
+      "label": "Rear left · 60°",
+      "status": "verified",
+      "note": "The hood and bed tops register on opposite sides of the cab. A small residual remains at the upper rear cab corner.",
+      "camera": "../exterior-photo-cameras.json#view-12",
+      "source": "https://www.ford.com/trucks/f150/#360viewer",
+      "credit": "© Ford Motor Company · 2027 F-150 Raptor configurator · frame 16",
+      "revision": "74643b5dde41cf3b4d660a5a6a714b9d83b283cd988a6420188680e6a7de0f88",
+      "frame": 12,
+      "upperContour": {
+        "sourceFrame": 16,
+        "cutoffY": 468,
+        "upperBodyIoU": 0.97623,
+        "medianEdgePx": 2.24,
+        "p95EdgePx": 15.03,
+        "originalCalibrationIoU": 0.97623,
+        "modelSha256": "74643b5dde41cf3b4d660a5a6a714b9d83b283cd988a6420188680e6a7de0f88"
+      }
+    },
+    {
+      "id": "view-13",
+      "label": "Rear left · 50°",
+      "status": "verified",
+      "note": "The roof crown, front A-pillar and outboard bed edge remain aligned from this rear-left angle. The inner box changes with the tonneau.",
+      "camera": "../exterior-photo-cameras.json#view-13",
+      "source": "https://www.ford.com/trucks/f150/#360viewer",
+      "credit": "© Ford Motor Company · 2027 F-150 Raptor configurator · frame 17",
+      "revision": "74643b5dde41cf3b4d660a5a6a714b9d83b283cd988a6420188680e6a7de0f88",
+      "frame": 13,
+      "upperContour": {
+        "sourceFrame": 17,
+        "cutoffY": 465,
+        "upperBodyIoU": 0.97741,
+        "medianEdgePx": 2.0,
+        "p95EdgePx": 13.34,
+        "originalCalibrationIoU": 0.97741,
+        "modelSha256": "74643b5dde41cf3b4d660a5a6a714b9d83b283cd988a6420188680e6a7de0f88"
+      }
+    },
+    {
+      "id": "view-14",
+      "label": "Rear left · 40°",
+      "status": "limited",
+      "note": "The roof top and bed’s near corner agree. The rear-glass margin and receding box rail have a visible offset; the different cover state limits the inner-edge comparison.",
+      "camera": "../exterior-photo-cameras.json#view-14",
+      "source": "https://www.ford.com/trucks/f150/#360viewer",
+      "credit": "© Ford Motor Company · 2027 F-150 Raptor configurator · frame 18",
+      "revision": "74643b5dde41cf3b4d660a5a6a714b9d83b283cd988a6420188680e6a7de0f88",
+      "frame": 14,
+      "upperContour": {
+        "sourceFrame": 18,
+        "cutoffY": 458,
+        "upperBodyIoU": 0.97427,
+        "medianEdgePx": 2.0,
+        "p95EdgePx": 16.0,
+        "originalCalibrationIoU": 0.97427,
+        "modelSha256": "74643b5dde41cf3b4d660a5a6a714b9d83b283cd988a6420188680e6a7de0f88"
+      }
+    },
+    {
+      "id": "view-15",
+      "label": "Rear left · 30°",
+      "status": "limited",
+      "note": "The near C-pillar and roof crown follow the reference. The far-side rail projects above the open box near its tail corner, where the model carries its tonneau.",
+      "camera": "../exterior-photo-cameras.json#view-15",
+      "source": "https://www.ford.com/trucks/f150/#360viewer",
+      "credit": "© Ford Motor Company · 2027 F-150 Raptor configurator · frame 19",
+      "revision": "74643b5dde41cf3b4d660a5a6a714b9d83b283cd988a6420188680e6a7de0f88",
+      "frame": 15,
+      "upperContour": {
+        "sourceFrame": 19,
+        "cutoffY": 451,
+        "upperBodyIoU": 0.95742,
+        "medianEdgePx": 4.12,
+        "p95EdgePx": 17.9,
+        "originalCalibrationIoU": 0.95742,
+        "modelSha256": "74643b5dde41cf3b4d660a5a6a714b9d83b283cd988a6420188680e6a7de0f88"
+      }
+    },
+    {
+      "id": "view-16",
+      "label": "Rear left · 20°",
+      "status": "fix",
+      "note": "The cab roof and rear-glass top are close. At the far end the front fender stands outboard, while the far bed corner projects above Ford’s outside rail.",
+      "camera": "../exterior-photo-cameras.json#view-16",
+      "source": "https://www.ford.com/trucks/f150/#360viewer",
+      "credit": "© Ford Motor Company · 2027 F-150 Raptor configurator · frame 20",
+      "revision": "74643b5dde41cf3b4d660a5a6a714b9d83b283cd988a6420188680e6a7de0f88",
+      "frame": 16,
+      "upperContour": {
+        "sourceFrame": 20,
+        "cutoffY": 446,
+        "upperBodyIoU": 0.94039,
+        "medianEdgePx": 5.83,
+        "p95EdgePx": 24.6,
+        "originalCalibrationIoU": 0.94039,
+        "followUp": "Resolve the shape-versus-camera difference against additional calibrated 2024 photographs. The two available real-truck checks disagree on the signed nose residual.",
+        "modelSha256": "74643b5dde41cf3b4d660a5a6a714b9d83b283cd988a6420188680e6a7de0f88"
+      }
+    },
+    {
+      "id": "view-17",
+      "label": "Rear left · 10°",
+      "status": "limited",
+      "note": "The roof span and rear-glass outline are close. The far rear box corner shows a gap at the rail and tonneau edge. The two trucks have different box closure states.",
+      "camera": "../exterior-photo-cameras.json#view-17",
+      "source": "https://www.ford.com/trucks/f150/#360viewer",
+      "credit": "© Ford Motor Company · 2027 F-150 Raptor configurator · frame 21",
+      "revision": "74643b5dde41cf3b4d660a5a6a714b9d83b283cd988a6420188680e6a7de0f88",
+      "frame": 17,
+      "upperContour": {
+        "sourceFrame": 21,
+        "cutoffY": 442,
+        "upperBodyIoU": 0.96236,
+        "medianEdgePx": 4.0,
+        "p95EdgePx": 14.93,
+        "originalCalibrationIoU": 0.96236,
+        "modelSha256": "74643b5dde41cf3b4d660a5a6a714b9d83b283cd988a6420188680e6a7de0f88"
+      }
+    },
+    {
+      "id": "view-18",
+      "label": "Rear",
+      "status": "verified",
+      "note": "From directly behind, the cab crown, upper glass width and mirror span agree. The raised stance and closed tonneau are visible below the scored roof edge.",
+      "camera": "../exterior-photo-cameras.json#view-18",
+      "source": "https://www.ford.com/trucks/f150/#360viewer",
+      "credit": "© Ford Motor Company · 2027 F-150 Raptor configurator · frame 22",
+      "revision": "74643b5dde41cf3b4d660a5a6a714b9d83b283cd988a6420188680e6a7de0f88",
+      "frame": 18,
+      "upperContour": {
+        "sourceFrame": 22,
+        "cutoffY": 438,
+        "upperBodyIoU": 0.97172,
+        "medianEdgePx": 2.24,
+        "p95EdgePx": 7.21,
+        "originalCalibrationIoU": 0.97172,
+        "modelSha256": "74643b5dde41cf3b4d660a5a6a714b9d83b283cd988a6420188680e6a7de0f88"
+      }
+    },
+    {
+      "id": "view-19",
+      "label": "Rear right · 10°",
+      "status": "limited",
+      "note": "The roof crown and near mirror register. The far rail sits above the open bed in this near-rear view; the covered edge is a different assembly state.",
+      "camera": "../exterior-photo-cameras.json#view-19",
+      "source": "https://www.ford.com/trucks/f150/#360viewer",
+      "credit": "© Ford Motor Company · 2027 F-150 Raptor configurator · frame 23",
+      "revision": "74643b5dde41cf3b4d660a5a6a714b9d83b283cd988a6420188680e6a7de0f88",
+      "frame": 19,
+      "upperContour": {
+        "sourceFrame": 23,
+        "cutoffY": 442,
+        "upperBodyIoU": 0.95882,
+        "medianEdgePx": 5.0,
+        "p95EdgePx": 13.42,
+        "originalCalibrationIoU": 0.95882,
+        "modelSha256": "74643b5dde41cf3b4d660a5a6a714b9d83b283cd988a6420188680e6a7de0f88"
+      }
+    },
+    {
+      "id": "view-20",
+      "label": "Rear right · 20°",
+      "status": "fix",
+      "note": "The cab crown is close in rear-right view. The far front fender extends outward and the far bed corner sits high; this reproduces the discrepancy on the opposite side.",
+      "camera": "../exterior-photo-cameras.json#view-20",
+      "source": "https://www.ford.com/trucks/f150/#360viewer",
+      "credit": "© Ford Motor Company · 2027 F-150 Raptor configurator · frame 24",
+      "revision": "74643b5dde41cf3b4d660a5a6a714b9d83b283cd988a6420188680e6a7de0f88",
+      "frame": 20,
+      "upperContour": {
+        "sourceFrame": 24,
+        "cutoffY": 448,
+        "upperBodyIoU": 0.94192,
+        "medianEdgePx": 7.07,
+        "p95EdgePx": 20.62,
+        "originalCalibrationIoU": 0.94192,
+        "followUp": "Resolve the shape-versus-camera difference against additional calibrated 2024 photographs. The two available real-truck checks disagree on the signed nose residual.",
+        "modelSha256": "74643b5dde41cf3b4d660a5a6a714b9d83b283cd988a6420188680e6a7de0f88"
+      }
+    },
+    {
+      "id": "view-21",
+      "label": "Rear right · 30°",
+      "status": "limited",
+      "note": "The roof flow and near C-pillar align. The rear rail sweep and front corner protrude together at this angle, with different cover states at the back.",
+      "camera": "../exterior-photo-cameras.json#view-21",
+      "source": "https://www.ford.com/trucks/f150/#360viewer",
+      "credit": "© Ford Motor Company · 2027 F-150 Raptor configurator · frame 25",
+      "revision": "74643b5dde41cf3b4d660a5a6a714b9d83b283cd988a6420188680e6a7de0f88",
+      "frame": 21,
+      "upperContour": {
+        "sourceFrame": 25,
+        "cutoffY": 450,
+        "upperBodyIoU": 0.95757,
+        "medianEdgePx": 4.0,
+        "p95EdgePx": 18.15,
+        "originalCalibrationIoU": 0.95757,
+        "modelSha256": "74643b5dde41cf3b4d660a5a6a714b9d83b283cd988a6420188680e6a7de0f88"
+      }
+    },
+    {
+      "id": "view-22",
+      "label": "Rear right · 40°",
+      "status": "verified",
+      "note": "The upper passenger-side windshield and sloping roof-to-cab-back line are supported. The front fender crest has a small outward residual.",
+      "camera": "../exterior-photo-cameras.json#view-22",
+      "source": "https://www.ford.com/trucks/f150/#360viewer",
+      "credit": "© Ford Motor Company · 2027 F-150 Raptor configurator · frame 26",
+      "revision": "74643b5dde41cf3b4d660a5a6a714b9d83b283cd988a6420188680e6a7de0f88",
+      "frame": 22,
+      "upperContour": {
+        "sourceFrame": 26,
+        "cutoffY": 458,
+        "upperBodyIoU": 0.97371,
+        "medianEdgePx": 3.0,
+        "p95EdgePx": 14.32,
+        "originalCalibrationIoU": 0.97371,
+        "modelSha256": "74643b5dde41cf3b4d660a5a6a714b9d83b283cd988a6420188680e6a7de0f88"
+      }
+    },
+    {
+      "id": "view-23",
+      "label": "Rear right · 50°",
+      "status": "verified",
+      "note": "Roof crown, rear cab step and the outer passenger bed rail track the reference. Reflections change how the rear glazing reads.",
+      "camera": "../exterior-photo-cameras.json#view-23",
+      "source": "https://www.ford.com/trucks/f150/#360viewer",
+      "credit": "© Ford Motor Company · 2027 F-150 Raptor configurator · frame 27",
+      "revision": "74643b5dde41cf3b4d660a5a6a714b9d83b283cd988a6420188680e6a7de0f88",
+      "frame": 23,
+      "upperContour": {
+        "sourceFrame": 27,
+        "cutoffY": 465,
+        "upperBodyIoU": 0.97681,
+        "medianEdgePx": 2.24,
+        "p95EdgePx": 13.04,
+        "originalCalibrationIoU": 0.97681,
+        "modelSha256": "74643b5dde41cf3b4d660a5a6a714b9d83b283cd988a6420188680e6a7de0f88"
+      }
+    },
+    {
+      "id": "view-24",
+      "label": "Rear right · 60°",
+      "status": "verified",
+      "note": "The bed rail and roof run align in the shallow rear-right view. The right headlamp corner has a small forward projection.",
+      "camera": "../exterior-photo-cameras.json#view-24",
+      "source": "https://www.ford.com/trucks/f150/#360viewer",
+      "credit": "© Ford Motor Company · 2027 F-150 Raptor configurator · frame 28",
+      "revision": "74643b5dde41cf3b4d660a5a6a714b9d83b283cd988a6420188680e6a7de0f88",
+      "frame": 24,
+      "upperContour": {
+        "sourceFrame": 28,
+        "cutoffY": 470,
+        "upperBodyIoU": 0.97721,
+        "medianEdgePx": 3.0,
+        "p95EdgePx": 10.77,
+        "originalCalibrationIoU": 0.97721,
+        "modelSha256": "74643b5dde41cf3b4d660a5a6a714b9d83b283cd988a6420188680e6a7de0f88"
+      }
+    },
+    {
+      "id": "view-25",
+      "label": "Rear right · 70°",
+      "status": "limited",
+      "note": "The bed top is supported. The outline at the rear-glass corner changes with reflection, and the apparent C-pillar edge remains inset from the body outline.",
+      "camera": "../exterior-photo-cameras.json#view-25",
+      "source": "https://www.ford.com/trucks/f150/#360viewer",
+      "credit": "© Ford Motor Company · 2027 F-150 Raptor configurator · frame 29",
+      "revision": "74643b5dde41cf3b4d660a5a6a714b9d83b283cd988a6420188680e6a7de0f88",
+      "frame": 25,
+      "upperContour": {
+        "sourceFrame": 29,
+        "cutoffY": 478,
+        "upperBodyIoU": 0.96892,
+        "medianEdgePx": 3.0,
+        "p95EdgePx": 15.0,
+        "originalCalibrationIoU": 0.96892,
+        "modelSha256": "74643b5dde41cf3b4d660a5a6a714b9d83b283cd988a6420188680e6a7de0f88"
+      }
+    },
+    {
+      "id": "view-26",
+      "label": "Rear right · 80°",
+      "status": "fix",
+      "note": "The roof and bed top are close in length. The nose extends past the passenger headlamp and the cab’s rear corner projects aft of the reference.",
+      "camera": "../exterior-photo-cameras.json#view-26",
+      "source": "https://www.ford.com/trucks/f150/#360viewer",
+      "credit": "© Ford Motor Company · 2027 F-150 Raptor configurator · frame 30",
+      "revision": "74643b5dde41cf3b4d660a5a6a714b9d83b283cd988a6420188680e6a7de0f88",
+      "frame": 26,
+      "upperContour": {
+        "sourceFrame": 30,
+        "cutoffY": 477,
+        "upperBodyIoU": 0.96693,
+        "medianEdgePx": 2.0,
+        "p95EdgePx": 22.0,
+        "originalCalibrationIoU": 0.96693,
+        "followUp": "Resolve the shape-versus-camera difference against additional calibrated 2024 photographs. The two available real-truck checks disagree on the signed nose residual.",
+        "modelSha256": "74643b5dde41cf3b4d660a5a6a714b9d83b283cd988a6420188680e6a7de0f88"
+      }
+    },
+    {
+      "id": "view-27",
+      "label": "Right profile",
+      "status": "verified",
+      "note": "In right profile, the roof, outer bed length and forward position of the extractor align. The modeled extractor crown rises slightly above the Ford profile. The model’s glazing is lighter in this lighting.",
+      "camera": "../exterior-photo-cameras.json#view-27",
+      "source": "https://www.ford.com/trucks/f150/#360viewer",
+      "credit": "© Ford Motor Company · 2027 F-150 Raptor configurator · frame 31",
+      "revision": "74643b5dde41cf3b4d660a5a6a714b9d83b283cd988a6420188680e6a7de0f88",
+      "frame": 27,
+      "upperContour": {
+        "sourceFrame": 31,
+        "cutoffY": 477,
+        "upperBodyIoU": 0.97933,
+        "medianEdgePx": 2.0,
+        "p95EdgePx": 11.18,
+        "originalCalibrationIoU": 0.97933,
+        "modelSha256": "74643b5dde41cf3b4d660a5a6a714b9d83b283cd988a6420188680e6a7de0f88"
+      }
+    },
+    {
+      "id": "view-28",
+      "label": "Front right · 80°",
+      "status": "verified",
+      "note": "The straight passenger bed top and upper hood line register. There is a small doubled edge on the windshield rake approaching the cowl.",
+      "camera": "../exterior-photo-cameras.json#view-28",
+      "source": "https://www.ford.com/trucks/f150/#360viewer",
+      "credit": "© Ford Motor Company · 2027 F-150 Raptor configurator · frame 32",
+      "revision": "74643b5dde41cf3b4d660a5a6a714b9d83b283cd988a6420188680e6a7de0f88",
+      "frame": 28,
+      "upperContour": {
+        "sourceFrame": 32,
+        "cutoffY": 475,
+        "upperBodyIoU": 0.97751,
+        "medianEdgePx": 2.0,
+        "p95EdgePx": 12.04,
+        "originalCalibrationIoU": 0.97751,
+        "modelSha256": "74643b5dde41cf3b4d660a5a6a714b9d83b283cd988a6420188680e6a7de0f88"
+      }
+    },
+    {
+      "id": "view-29",
+      "label": "Front right · 70°",
+      "status": "verified",
+      "note": "The passenger roof, windshield and outer hood-to-lamp transition register through this shallow front angle.",
+      "camera": "../exterior-photo-cameras.json#view-29",
+      "source": "https://www.ford.com/trucks/f150/#360viewer",
+      "credit": "© Ford Motor Company · 2027 F-150 Raptor configurator · frame 33",
+      "revision": "74643b5dde41cf3b4d660a5a6a714b9d83b283cd988a6420188680e6a7de0f88",
+      "frame": 29,
+      "upperContour": {
+        "sourceFrame": 33,
+        "cutoffY": 474,
+        "upperBodyIoU": 0.98604,
+        "medianEdgePx": 1.0,
+        "p95EdgePx": 7.0,
+        "originalCalibrationIoU": 0.98604,
+        "modelSha256": "74643b5dde41cf3b4d660a5a6a714b9d83b283cd988a6420188680e6a7de0f88"
+      }
+    },
+    {
+      "id": "view-30",
+      "label": "Front right · 60°",
+      "status": "verified",
+      "note": "The passenger roof length and bed step follow the photographed perimeter. A narrow offset remains at the outboard hood tip.",
+      "camera": "../exterior-photo-cameras.json#view-30",
+      "source": "https://www.ford.com/trucks/f150/#360viewer",
+      "credit": "© Ford Motor Company · 2027 F-150 Raptor configurator · frame 34",
+      "revision": "74643b5dde41cf3b4d660a5a6a714b9d83b283cd988a6420188680e6a7de0f88",
+      "frame": 30,
+      "upperContour": {
+        "sourceFrame": 34,
+        "cutoffY": 476,
+        "upperBodyIoU": 0.97772,
+        "medianEdgePx": 2.0,
+        "p95EdgePx": 8.94,
+        "originalCalibrationIoU": 0.97772,
+        "modelSha256": "74643b5dde41cf3b4d660a5a6a714b9d83b283cd988a6420188680e6a7de0f88"
+      }
+    },
+    {
+      "id": "view-31",
+      "label": "Front right · 50°",
+      "status": "fix",
+      "note": "The roofline and cab back are supported. The front hood corner finishes beyond Ford’s rounded tip on the right, repeating the discrepancy seen on the left.",
+      "camera": "../exterior-photo-cameras.json#view-31",
+      "source": "https://www.ford.com/trucks/f150/#360viewer",
+      "credit": "© Ford Motor Company · 2027 F-150 Raptor configurator · frame 35",
+      "revision": "74643b5dde41cf3b4d660a5a6a714b9d83b283cd988a6420188680e6a7de0f88",
+      "frame": 31,
+      "upperContour": {
+        "sourceFrame": 35,
+        "cutoffY": 474,
+        "upperBodyIoU": 0.97057,
+        "medianEdgePx": 2.0,
+        "p95EdgePx": 25.0,
+        "originalCalibrationIoU": 0.97057,
+        "followUp": "Resolve the shape-versus-camera difference against additional calibrated 2024 photographs. The two available real-truck checks disagree on the signed nose residual.",
+        "modelSha256": "74643b5dde41cf3b4d660a5a6a714b9d83b283cd988a6420188680e6a7de0f88"
+      }
+    },
+    {
+      "id": "view-32",
+      "label": "Front right · 40°",
+      "status": "fix",
+      "note": "The windshield and bed side align more closely than the nose. The model’s squared far-side front corner projects past the Ford headlamp.",
+      "camera": "../exterior-photo-cameras.json#view-32",
+      "source": "https://www.ford.com/trucks/f150/#360viewer",
+      "credit": "© Ford Motor Company · 2027 F-150 Raptor configurator · frame 36",
+      "revision": "74643b5dde41cf3b4d660a5a6a714b9d83b283cd988a6420188680e6a7de0f88",
+      "frame": 32,
+      "upperContour": {
+        "sourceFrame": 36,
+        "cutoffY": 472,
+        "upperBodyIoU": 0.96592,
+        "medianEdgePx": 2.24,
+        "p95EdgePx": 26.15,
+        "originalCalibrationIoU": 0.96592,
+        "followUp": "Resolve the shape-versus-camera difference against additional calibrated 2024 photographs. The two available real-truck checks disagree on the signed nose residual.",
+        "modelSha256": "74643b5dde41cf3b4d660a5a6a714b9d83b283cd988a6420188680e6a7de0f88"
+      }
+    },
+    {
+      "id": "view-33",
+      "label": "Front right · 30°",
+      "status": "fix",
+      "note": "The rear roof corner and windshield sweep align. The hood nose and upper grille corner project outside the Ford outline toward the far side.",
+      "camera": "../exterior-photo-cameras.json#view-33",
+      "source": "https://www.ford.com/trucks/f150/#360viewer",
+      "credit": "© Ford Motor Company · 2027 F-150 Raptor configurator · frame 01",
+      "revision": "74643b5dde41cf3b4d660a5a6a714b9d83b283cd988a6420188680e6a7de0f88",
+      "frame": 33,
+      "upperContour": {
+        "sourceFrame": 1,
+        "cutoffY": 470,
+        "upperBodyIoU": 0.96387,
+        "medianEdgePx": 2.83,
+        "p95EdgePx": 26.93,
+        "originalCalibrationIoU": 0.96387,
+        "followUp": "Resolve the shape-versus-camera difference against additional calibrated 2024 photographs. The two available real-truck checks disagree on the signed nose residual.",
+        "modelSha256": "74643b5dde41cf3b4d660a5a6a714b9d83b283cd988a6420188680e6a7de0f88"
+      }
+    },
+    {
+      "id": "view-34",
+      "label": "Front right · 20°",
+      "status": "fix",
+      "note": "The roof crown is supported. A forward and outward projection remains where the hood leads into the far-side lamp.",
+      "camera": "../exterior-photo-cameras.json#view-34",
+      "source": "https://www.ford.com/trucks/f150/#360viewer",
+      "credit": "© Ford Motor Company · 2027 F-150 Raptor configurator · frame 02",
+      "revision": "74643b5dde41cf3b4d660a5a6a714b9d83b283cd988a6420188680e6a7de0f88",
+      "frame": 34,
+      "upperContour": {
+        "sourceFrame": 2,
+        "cutoffY": 468,
+        "upperBodyIoU": 0.96746,
+        "medianEdgePx": 2.24,
+        "p95EdgePx": 19.71,
+        "originalCalibrationIoU": 0.96746,
+        "followUp": "Resolve the shape-versus-camera difference against additional calibrated 2024 photographs. The two available real-truck checks disagree on the signed nose residual.",
+        "modelSha256": "74643b5dde41cf3b4d660a5a6a714b9d83b283cd988a6420188680e6a7de0f88"
+      }
+    },
+    {
+      "id": "view-35",
+      "label": "Front right · 10°",
+      "status": "limited",
+      "note": "The crown and upper windshield register. The far mirror and fender shoulder overlap in this near-front angle and the shoulder projects a little outside the image contour.",
+      "camera": "../exterior-photo-cameras.json#view-35",
+      "source": "https://www.ford.com/trucks/f150/#360viewer",
+      "credit": "© Ford Motor Company · 2027 F-150 Raptor configurator · frame 03",
+      "revision": "74643b5dde41cf3b4d660a5a6a714b9d83b283cd988a6420188680e6a7de0f88",
+      "frame": 35,
+      "upperContour": {
+        "sourceFrame": 3,
+        "cutoffY": 468,
+        "upperBodyIoU": 0.97904,
+        "medianEdgePx": 2.0,
+        "p95EdgePx": 10.0,
+        "originalCalibrationIoU": 0.97904,
+        "modelSha256": "74643b5dde41cf3b4d660a5a6a714b9d83b283cd988a6420188680e6a7de0f88"
+      }
+    },
+    {
+      "id": "front-grille-and-tow-hooks",
+      "label": "Front grille and tow hooks",
+      "status": "verified",
+      "note": "The three amber markers, two grille openings and orange recovery loops register in the front view. The model shows more of the silver skid plate below the bumper.",
+      "camera": "../exterior-photo-cameras.json#front-grille-and-tow-hooks",
+      "source": "https://www.ford.com/trucks/f150/#360viewer",
+      "credit": "© Ford Motor Company · 2027 Raptor, frame 04 (crop)",
+      "revision": "74643b5dde41cf3b4d660a5a6a714b9d83b283cd988a6420188680e6a7de0f88",
+      "frame": 36
+    },
+    {
+      "id": "headlight-and-amber-drl",
+      "label": "Headlight and amber DRL",
+      "status": "limited",
+      "note": "The stacked projectors and the upper and outer amber guides occupy the correct housing. The model’s side chamber reflects a broader strip of light. Ford’s render and the 2024 lamp photograph show different lighting states.",
+      "camera": "../exterior-photo-cameras.json#headlight-and-amber-drl",
+      "source": "https://www.ford.com/trucks/f150/#360viewer",
+      "credit": "© Ford Motor Company · 2027 Raptor, frame 07 (crop)",
+      "revision": "74643b5dde41cf3b4d660a5a6a714b9d83b283cd988a6420188680e6a7de0f88",
+      "frame": 37
+    },
+    {
+      "id": "power-dome-hood-extractor",
+      "label": "Power Dome hood extractor",
+      "status": "verified",
+      "note": "All three extractor crests clear the front hood graphic in this view. The tray moved 0.30 m forward to match its position in the side photograph of the 2024 truck. The orange graphic differs from the studio reference.",
+      "camera": "../exterior-photo-cameras.json#power-dome-hood-extractor",
+      "source": "https://www.ford.com/trucks/f150/#360viewer",
+      "credit": "© Ford Motor Company · 2027 Raptor, frame 04 (crop)",
+      "revision": "74643b5dde41cf3b4d660a5a6a714b9d83b283cd988a6420188680e6a7de0f88",
+      "frame": 38
+    },
+    {
+      "id": "wheel-and-37-ko2-tire",
+      "label": "17\" wheel and 37\" KO2 tire",
+      "status": "limited",
+      "note": "The hub, tire contact patch and flare align in profile. The photographed wheel finish, openings and sidewall relief differ from the model’s 2024 package.",
+      "camera": "../exterior-photo-cameras.json#wheel-and-37-ko2-tire",
+      "source": "https://www.ford.com/trucks/f150/#360viewer",
+      "credit": "© Ford Motor Company · 2027 Raptor, frame 13 (crop)",
+      "revision": "74643b5dde41cf3b4d660a5a6a714b9d83b283cd988a6420188680e6a7de0f88",
+      "frame": 39
+    },
+    {
+      "id": "taillamp-and-bedside-graphic",
+      "label": "Taillamp and bedside graphic",
+      "status": "limited",
+      "note": "The outer lamp and tailgate seam meet across the split. The studio truck has a different bedside graphic and an uncovered bed.",
+      "camera": "../exterior-photo-cameras.json#taillamp-and-bedside-graphic",
+      "source": "https://www.ford.com/trucks/f150/#360viewer",
+      "credit": "© Ford Motor Company · 2027 Raptor, frame 19 (crop)",
+      "revision": "74643b5dde41cf3b4d660a5a6a714b9d83b283cd988a6420188680e6a7de0f88",
+      "frame": 40
+    },
+    {
+      "id": "cockpit-driver-view",
+      "label": "Driver's cockpit",
+      "status": "verified",
+      "note": "The refitted camera puts the steering-wheel rim, SYNC screen and right climate dial in the photographed positions. The steering hub and upper dash retain simpler contours.",
+      "camera": "../exterior-photo-cameras.json#cockpit-driver-view",
+      "source": "https://bringatrailer.com/listing/2024-ford-f-150-raptor-r-18/",
+      "credit": "710HP / Bring a Trailer · lot 181611",
+      "revision": "74643b5dde41cf3b4d660a5a6a714b9d83b283cd988a6420188680e6a7de0f88",
+      "frame": 41
+    },
+    {
+      "id": "steering-wheel-and-cluster",
+      "label": "Steering wheel and 12\" cluster",
+      "status": "verified",
+      "note": "The crown of the rim and the lower spoke sit at the photograph’s height. The center pad is squarer and the stitching is more prominent on the model.",
+      "camera": "../exterior-photo-cameras.json#steering-wheel-and-cluster",
+      "source": "https://bringatrailer.com/listing/2024-ford-f-150-raptor-r-18/",
+      "credit": "710HP / Bring a Trailer · lot 181611",
+      "revision": "74643b5dde41cf3b4d660a5a6a714b9d83b283cd988a6420188680e6a7de0f88",
+      "frame": 42
+    },
+    {
+      "id": "center-stack-sync4",
+      "label": "Center stack and SYNC 4 display",
+      "status": "verified",
+      "note": "The screen corners and both rows of climate knobs align more closely than before the camera refit. The width of the vent surround and the labels remain approximate.",
+      "camera": "../exterior-photo-cameras.json#center-stack-sync4",
+      "source": "https://bringatrailer.com/listing/2024-ford-f-150-raptor-r-18/",
+      "credit": "710HP / Bring a Trailer · lot 181611",
+      "revision": "74643b5dde41cf3b4d660a5a6a714b9d83b283cd988a6420188680e6a7de0f88",
+      "frame": 43
+    },
+    {
+      "id": "front-recaro-seats",
+      "label": "Recaro front bucket seats",
+      "status": "limited",
+      "note": "The curved bolsters and cushion insert are visible on both front seats. The model’s near backrest is partly obscured by the pillar, limiting comparison of the outer contour against the photograph.",
+      "camera": "../exterior-photo-cameras.json#front-recaro-seats",
+      "source": "https://bringatrailer.com/listing/2024-ford-f-150-raptor-r-18/",
+      "credit": "710HP / Bring a Trailer · lot 181611",
+      "revision": "74643b5dde41cf3b4d660a5a6a714b9d83b283cd988a6420188680e6a7de0f88",
+      "frame": 44
+    },
+    {
+      "id": "driver-door-card",
+      "label": "Driver door trim",
+      "status": "verified",
+      "note": "The forward pull, projecting armrest and open map pocket follow the photographed door trim. The speaker surround and the upper window frame retain simpler contours.",
+      "camera": "../exterior-photo-cameras.json#driver-door-card",
+      "source": "https://bringatrailer.com/listing/2024-ford-f-150-raptor-r-18/",
+      "credit": "710HP / Bring a Trailer · lot 181611",
+      "revision": "74643b5dde41cf3b4d660a5a6a714b9d83b283cd988a6420188680e6a7de0f88",
+      "frame": 45
+    },
+    {
+      "id": "rear-supercrew-cabin",
+      "label": "Rear SuperCrew cabin",
+      "status": "limited",
+      "note": "The three rear headrests and two buckle locations register across the bench. The reference has a panoramic roof and the model has the solid roof.",
+      "camera": "../exterior-photo-cameras.json#rear-supercrew-cabin",
+      "source": "https://bringatrailer.com/listing/2024-ford-f-150-raptor-r-18/",
+      "credit": "710HP / Bring a Trailer · lot 181611",
+      "revision": "74643b5dde41cf3b4d660a5a6a714b9d83b283cd988a6420188680e6a7de0f88",
+      "frame": 46
+    },
+    {
+      "id": "predator-52l-v8-engine",
+      "label": "5.2L supercharged Predator V8",
+      "status": "limited",
+      "note": "The blower badge, battery terminal, coolant reservoir and intake locate the installed V8. The photographed hose routing, loom and cowl trim have more detail than the exposed model.",
+      "camera": "../exterior-photo-cameras.json#predator-52l-v8-engine",
+      "source": "https://bringatrailer.com/listing/2024-ford-f-150-raptor-r-18/",
+      "credit": "710HP / Bring a Trailer · lot 181611",
+      "revision": "74643b5dde41cf3b4d660a5a6a714b9d83b283cd988a6420188680e6a7de0f88",
+      "frame": 47
+    },
+    {
+      "id": "predator-v8-three-quarter",
+      "label": "Predator V8 supercharger detail",
+      "status": "limited",
+      "note": "The blower sits between the foreground intake and rear cowl. The reservoir and blower-neck spacing still differs, and the photograph reveals only the installed upper assembly.",
+      "camera": "../exterior-photo-cameras.json#predator-v8-three-quarter",
+      "source": "https://bringatrailer.com/listing/2024-ford-f-150-raptor-r-18/",
+      "credit": "710HP / Bring a Trailer · lot 181611",
+      "revision": "74643b5dde41cf3b4d660a5a6a714b9d83b283cd988a6420188680e6a7de0f88",
+      "frame": 48
+    },
+    {
+      "id": "front-skid-plate-and-chassis",
+      "label": "Front skid plate and underbody",
+      "status": "limited",
+      "note": "Both rear tires are visible below the skid plate. The plate dominates the near edge of this view and obscures much of the driveline. Skid grooves and suspension links remain approximate.",
+      "camera": "../exterior-photo-cameras.json#front-skid-plate-and-chassis",
+      "source": "https://bringatrailer.com/listing/2024-ford-f-150-raptor-r-18/",
+      "credit": "710HP / Bring a Trailer · lot 181611",
+      "revision": "74643b5dde41cf3b4d660a5a6a714b9d83b283cd988a6420188680e6a7de0f88",
+      "frame": 49
+    }
+  ]
+}
