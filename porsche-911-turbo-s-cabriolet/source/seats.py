@@ -69,14 +69,12 @@ def build_sport_seat(side, insert):
         path('Backrest transverse embossed seam',pts,.0013,seal)
         path('Backrest stitch return',[(x,y+.0035,z) for x,y,z in pts],.00065,grey)
     # Headrest emboss and stitch follow the face of the cushion.
-    _,y,z=back(0,.876)
-    curve=bpy.data.curves.new('Embossed Turbo S headrest','FONT')
-    curve.body='turbo S';curve.align_x='CENTER';curve.align_y='CENTER';curve.size=.023;curve.shear=.27;curve.extrude=.00025
-    curve.materials.append(seal);obj=bpy.data.objects.new('Headrest turbo S emboss',curve)
-    bpy.context.scene.collection.objects.link(obj);obj.parent=group(parent);obj.location=cv((cx,y,z+.0009))
-    obj.rotation_euler=(pi/2-.23,0,0)
-    bpy.ops.object.select_all(action='DESELECT');obj.select_set(True);bpy.context.view_layer.objects.active=obj
-    bpy.ops.object.convert(target='MESH');obj.select_set(False)
+    def headrest_face(u,v,d):
+        t=.876+v/.76
+        x,y,z=back(u/width(t),t)
+        return (x,y,z+.0011+d)
+    badge_relief('Headrest turbo S emboss','turbo-s',.102,.0152,headrest_face,
+                 seal,.0007)
 
     # A single seat pan wraps around its cushion. Raised bolsters taper as they
     # approach the front of the thighs, exposing the perforated centre insert.

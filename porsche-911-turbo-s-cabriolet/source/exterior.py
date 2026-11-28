@@ -268,7 +268,12 @@ def body():
         mesh('Quarter intake return',p+inside,[(i,(i+1)%len(p),(i+1)%len(p)+len(p),i+len(p)) for i in range(len(p))],black)
         tube('Quarter intake painted radius',p,.007,blue,10,True)
         path('Induction inner vane',[tuple(Vector(sxyz(s,-.760-.101*v,.601+.186*v))+Vector((-s*.014,0,0))) for v in [i/20 for i in range(21)]],.0075,black)
-        tx,ty,tz=sxyz(s,.495,.249);text_side('t-hybrid',(tx+.003*s,ty,tz),.031,grey,s)
+        parent=side_tag(s)+'_Door'
+        def hybrid_script(u,v,d):
+            x,y,z=sxyz(s,.495-s*u,.249+v)
+            return (x+s*(.0017+d),y,z)
+        badge_relief('t-hybrid door script','t-hybrid',.228,.0336,hybrid_script,turbonite_lettering,.0018)
+        parent='Bodywork'
         patch('Black sill blade',70,8,lambda u,v:(s*(.795+.068*sin(v*pi*.74)+.009*sin(pi*u)),.126+.023*v-.009*sin(pi*u),-.805+1.59*u),black)
     parent='Bodywork'
     patch('Covered undertray',38,16,lambda u,v:((2*u-1)*(.68-.14*abs(2*v-1)**3),.135,-1.93+3.86*v),well)
@@ -281,7 +286,8 @@ def body():
         x,y,z=top(t,z)
         p.append((x,y+.0006,z))
     path('Bonnet leading edge',p,.0018,seal)
-    plate('Hood shield',[(-.022,-.017),(.022,-.017),(.020,.006),(0,.025),(-.020,.006)],lambda x,z:topside(x,2.097+z,.003),grey,brushed,.001)
+    badge_crest('Bonnet Turbonite crest',.051,.061,
+                lambda u,v,d:topside(u,2.090-v,.0015+d),'Bonnet')
     for face in [1,-1]:
         parent='Front_Bumper' if face==1 else 'Rear_Bumper'
         endskin(face)
@@ -410,11 +416,18 @@ def rear_details():
         oval_surface('Rear lamp silver inner optic',side*.527,.700,.191,.0021,9,grey,.001)
     # The badge occupies the dark center of the lamp, below the red guide.
 def rear_badging():
-    for txt,y,size,offset in [('P O R S C H E',.706,.047,.008),('turbo S',.652,.031,.014),('911',.535,.071,.020)]:
-        prev=set(bpy.data.objects)
-        lettering(txt,(0,y,rearz(0,y)-offset),size,brushed)
-        ob=next(o for o in set(bpy.data.objects)-prev if o.type=='MESH')
-        ob.parent=group('Rear_Light_Bar' if txt=='P O R S C H E' else 'Rear_Bumper')
+    global parent
+    plate_print=mat('White display plate print',(.84,.85,.83),.05,.39)
+    for label,profile,assembly,cy,w,h,offset,depth,material in [
+            ('PORSCHE rear light bar letters','porsche','Rear_Light_Bar',.706,.560,.021,.008,.0020,turbonite_lettering),
+            ('turbo S rear script','turbo-s','Rear_Bumper',.652,.184,.0274,.008,.0019,turbonite_lettering),
+            ('911 plate script','911','Rear_Bumper',.535,.162,.042,.020,.0003,plate_print)]:
+        parent=assembly
+        def face(u,v,d):
+            y=cy+v
+            return (-u,y,rearz(-u,y)-offset-d)
+        badge_relief(label,profile,w,h,face,material,depth)
+    parent='Bodywork'
 
 def fit_mirror(src):
     # Register the common 992.2 mirror from the neighbouring editable model.

@@ -12,7 +12,8 @@ const canvas = $('stage');
 const reduced = matchMedia('(prefers-reduced-motion: reduce)');
 const params = new URLSearchParams(location.search);
 let cfg, renderer, scene, camera, floor, model, exploded, assembled, matched, motion, cabin = false;
-let assemblyStudy, assemblyAspect;
+let assemblyStudy, assemblyAspect, gestures, detailFrame;
+const viewRect={left:0,top:0,width:1,height:1};
 let amount = 0, frame = 0, aspect = 1;
 let inspection = null, inspectionPose = null, inspectionNav = null;
 const hiddenMeshes = [];
@@ -55,7 +56,7 @@ function buildInspectionMenu(){
   inspectionNav.id = 'inspection-link';
   inspectionNav.href = '#' + first.id;
   inspectionNav.textContent = label;
-  $('review').before(inspectionNav);
+  $('factory-link').before(inspectionNav);
   const menu=document.createElement('section');menu.id='inspection-strip';menu.hidden=true;
   menu.setAttribute('aria-label',label+' inspection');
   menu.innerHTML='<div><select id="inspection-choice" aria-label="Component view"></select> <a id="inspection-source">Technical reference</a></div><p id="inspection-caption"></p>';
@@ -71,19 +72,22 @@ function buildInspectionMenu(){
   inspectionNav.onclick=e=>{if(location.hash===inspectionNav.hash){e.preventDefault();inspect(first.id);}};
 }
 const target = new T.Vector3(), actions = [];
-const pointers = new Map();
+
 const defaultNear = .012;
 let updateGround,dirtyGround=true;
 const pressed = (id,on) => $(id).setAttribute('aria-pressed',String(on));
 
 function draw() {
   frame = 0;
-  if (motion && Number.isFinite(motion.start)) {
+  if (motion && motion.pausedAt==null && Number.isFinite(motion.start)) {
     const t = T.MathUtils.clamp((performance.now()-motion.start)/motion.duration,0,1);
     const u = t*t*(3-2*t);
     setSpread(motion.from+(motion.to-motion.from)*u);
     frameCamera();
-    if (t >= 1) motion = null;
+    if (t >= 1) {
+      if(motion.opening && location.hash==='#'+assemblyStudy.hash)setModelUrl();
+      motion = null;
+    }
     else invalidate();
   }
   if(dirtyGround && updateGround){updateGround();dirtyGround=false;}
@@ -145,7 +149,7 @@ function layoutAssembly() {
   exploded=measurePose(assemblyStudy.direction); setSpread(spread);
 }
 function selectAssembly(group, piece) {
-  stop(); userOrbit=false;
+  stop(); gestures?.restore(); userOrbit=false;
   assemblyStudy.select(group, piece);
   layoutAssembly(); setSpread(1); frameCamera();
   camera.near=piece!=='' ? Math.min(defaultNear,camera.position.distanceTo(target)/100) : defaultNear;
@@ -156,14 +160,15 @@ function resize() {
   if (!w || !h) return;
   renderer.setSize(w,h,false);
   aspect=w/h;
-  if(!inspection && !matched && !cabin && !actions.some(a=>a.active) && Math.abs(assemblyAspect-aspect)>.02) layoutAssembly();
+  if(!inspection && !matched && !cabin && !gestures?.moved && !actions.some(a=>a.active) && Math.abs(assemblyAspect-aspect)>.02) layoutAssembly();
   applyViewport(w,h);
   if(inspection && !userOrbit){target.copy(inspectionPose.center);camera.position.copy(fit(inspectionPose));camera.lookAt(target);}
   else if(model && !cabin && !matched && !userOrbit) frameCamera();
   invalidate();
 }
 function applyViewport(w,h) {
-  const ar = matched && (matched.aspect || (matched.imageSize && matched.imageSize[0]/matched.imageSize[1]) || (matched.width/matched.height));
+  const framing=matched || detailFrame;
+  const ar = framing && (framing.aspect || (framing.imageSize && framing.imageSize[0]/framing.imageSize[1]) || (framing.width/framing.height));
   let vw=w,vh=h;
   if(ar>0){vw=Math.min(w,h*ar);vh=vw/ar;}
   camera.aspect=vw/vh;
@@ -174,7 +179,8 @@ function applyViewport(w,h) {
     camera.projectionMatrix.elements[9]=2*cy/ih-1;
     camera.projectionMatrixInverse.copy(camera.projectionMatrix).invert();
   }
-  renderer.setViewport((w-vw)/2,(h-vh)/2,vw,vh);
+  Object.assign(viewRect,{left:(w-vw)/2,top:(h-vh)/2,width:vw,height:vh});
+  renderer.setViewport(viewRect.left,viewRect.top,vw,vh);
 }
 function stop() { motion=null; }
 let userOrbit=false;
@@ -184,17 +190,17 @@ function unmatch() {
   steeredForPhoto.clear();
   for (const node of hiddenForPhoto) node.visible=true;
   hiddenForPhoto.length=0;
-  matched=null;camera.near=defaultNear;camera.clearViewOffset();camera.up.set(0,1,0);
+  matched=detailFrame=null;camera.near=defaultNear;camera.clearViewOffset();camera.up.set(0,1,0);
   $('angles').value='';$('ref-line').hidden=true;applyViewport(canvas.clientWidth,canvas.clientHeight);
 }
 function clearActions() {
   for(const a of actions){
-    for(const b of a.nodes){b.object.rotation.copy(b.original);b.object.visible=b.visible;}
+    for(const b of a.nodes){b.object.rotation.copy(b.original);b.object.position.copy(b.position);b.object.visible=b.visible;}
     a.active=false;a.button.setAttribute('aria-pressed','false');
   }
 }
 function reset() {
-  stop();if(inspection)clearInspection();
+  stop();gestures?.restore();if(inspection)clearInspection();
   if(assemblyStudy.detailed){assemblyStudy.select('','');layoutAssembly();}
   unmatch();cabin=false;userOrbit=false;pressed('cabin',false);
   camera.fov=32;camera.updateProjectionMatrix();setSpread(0);clearActions();
@@ -247,7 +253,7 @@ function toggleSpread(){
   const dest=motion ? 1-motion.to : (amount>.5?0:1);
   setModelUrl(null,dest ? assemblyStudy.hash : 'model');
   if(assemblyStudy.detailed)selectAssembly('','');
-  stop(); if(cabin||matched||inspection)reset();userOrbit=false;
+  stop(); gestures.restore(); if(cabin||matched||detailFrame||inspection)reset();userOrbit=false;
   clearActions();
   if(reduced.matches){setSpread(dest);frameCamera();}
   else motion={from:amount,to:dest,start:performance.now(),duration:assemblyStudy.transitionDuration};
@@ -260,13 +266,21 @@ function toggleCabin(){
   camera.position.copy(vec(cfg.eye));target.copy(vec(cfg.look));camera.lookAt(target);invalidate();
 }
 function interact(){
-  stop();if(matched){unmatch();setModelUrl();}userOrbit=true;
+  stop();
+  if(matched){
+    if(matched.id.startsWith('badge-')){
+      // Keep the inspection cutaway and close-focus lens as the visitor moves.
+      detailFrame=matched;matched=null;$('angles').value='';$('ref-line').hidden=true;
+    }else unmatch();
+    setModelUrl();
+  }
+  userOrbit=true;
 }
 function orbit(dx,dy){
   interact();
   const v=cabin ? target.clone().sub(camera.position) : camera.position.clone().sub(target);
   const r=v.length(), yaw=Math.atan2(v.x,v.z)+(cabin?1:-1)*dx*.007;
-  const pitch=T.MathUtils.clamp(Math.asin(v.y/r)+dy*.006,cabin||inspection?-1.45:.025,1.48);
+  const pitch=T.MathUtils.clamp(Math.asin(v.y/r)+dy*.006,cabin||inspection||detailFrame||assemblyStudy.detailed?-1.45:.025,1.48);
   v.set(Math.sin(yaw)*Math.cos(pitch),Math.sin(pitch),Math.cos(yaw)*Math.cos(pitch)).multiplyScalar(r);
   if(cabin)target.copy(camera.position).add(v);else camera.position.copy(target).add(v);
   camera.lookAt(target);invalidate();
@@ -276,25 +290,15 @@ function zoom(factor){
   if(cabin){camera.fov=T.MathUtils.clamp(camera.fov*factor,37,105);camera.updateProjectionMatrix();}
   else{
     const d=camera.position.clone().sub(target);
-    const distance=T.MathUtils.clamp(d.length()*factor,.35,65);
+    let minimum=.35;
+    if(detailFrame)minimum=camera.near*3;
+    else if(assemblyStudy.detailed)minimum=Math.min(.35,fit(exploded).distanceTo(exploded.center)*.1);
+    const distance=T.MathUtils.clamp(d.length()*factor,minimum,65);
     camera.position.copy(target).addScaledVector(d.normalize(),distance);
   }
   invalidate();
 }
 function input(){
-  canvas.onpointerdown=e=>{interact();canvas.setPointerCapture(e.pointerId);pointers.set(e.pointerId,[e.clientX,e.clientY]);};
-  canvas.onpointermove=e=>{
-    if(!pointers.has(e.pointerId))return;
-    const old=pointers.get(e.pointerId), now=[e.clientX,e.clientY];pointers.set(e.pointerId,now);
-    if(pointers.size===1)orbit(now[0]-old[0],now[1]-old[1]);
-    if(pointers.size===2){
-      const other=[...pointers].find(([k])=>k!==e.pointerId)[1];
-      const distance=p=>Math.hypot(p[0]-other[0],p[1]-other[1]);
-      if(distance(now)>1 && distance(old)>1)zoom(distance(old)/distance(now));
-    }
-  };
-  canvas.onlostpointercapture=e=>pointers.delete(e.pointerId);
-  canvas.onwheel=e=>{e.preventDefault();zoom(Math.exp(T.MathUtils.clamp(e.deltaY,-500,500)*.001));};
   canvas.onkeydown=e=>{
     const key=e.key.toLowerCase();
     const op={arrowleft:()=>orbit(8,0),arrowright:()=>orbit(-8,0),arrowup:()=>orbit(0,8),arrowdown:()=>orbit(0,-8),'+':()=>zoom(.9),'=':()=>zoom(.9),'-':()=>zoom(1.1),r:resetView};
@@ -307,6 +311,7 @@ function input(){
   $('angles').onchange=e=>{
     if (e.target.value) { match(e.target.value); setModelUrl(e.target.value); }
     else resetView();
+    $('panel').hidden=true;$('controls').setAttribute('aria-expanded','false');canvas.focus();
   };
   $('model-link').onclick=e=>{e.preventDefault();resetView();};
   window.addEventListener('hashchange',()=>{
@@ -316,7 +321,16 @@ function input(){
   });
 }
 async function init(){
-  cfg=await (await fetch(studioAsset('studio.json'))).json();
+  const readJSON = async name => {
+    const response=await fetch(studioAsset(name));
+    if(!response.ok)throw Error(name+' returned '+response.status);
+    return response.json();
+  };
+  const [config,factoryCameras,badgeViews]=await Promise.all([readJSON('studio.json'),
+    readJSON('factory-360/cameras.json').catch(error=>{console.warn(error);return [];}),readJSON('badge-views.json')]);
+  cfg=config;
+  const referenceViews=cfg.views;
+  cfg.views=[...referenceViews,...badgeViews,...factoryCameras];
   $('review').href=cfg.review;$('spec').textContent=cfg.subtitle;
   renderer=new T.WebGLRenderer({canvas,antialias:true,alpha:true,preserveDrawingBuffer:params.has('capture')});
   renderer.setPixelRatio(params.has('capture')?1:Math.min(devicePixelRatio,2));
@@ -370,20 +384,48 @@ async function init(){
   const draco=new T.DRACOLoader().setDecoderPath('/honda-civic-type-r/vendor/');
   const gltf=await new T.GLTFLoader().setDRACOLoader(draco).loadAsync(studioAsset(cfg.model)).finally(()=>draco.dispose());
   model=gltf.scene;scene.add(model);model.traverse(o=>{if(o.isMesh){o.castShadow=!o.material.transparent;if(o.castShadow)ground.addCaster(o);}});
-  const {createAssemblyStudy}=await import(studioAsset('assembly.js'));
-  assemblyStudy=createAssemblyStudy(T,model,selectAssembly,{canvas,camera,stop});
+  const [{createAssemblyStudy},{bindModelGestures}]=await Promise.all([
+    import(studioAsset('assembly.js')),import(studioAsset('interaction.js'))
+  ]);
+  assemblyStudy=createAssemblyStudy(T,model,selectAssembly,{stop});
+  gestures=bindModelGestures(T,{canvas,camera,model,viewRect,assembly:assemblyStudy,interact,orbit,zoom,
+    cabin:()=>cabin,repaint:()=>{dirtyGround=true;invalidate();},
+    companions:group=>amount===0 ? (actions.find(a=>a.hinge && a.group===group.key)?.nodes.slice(1) || []) : [],
+    activate(owner){
+      if(assemblyStudy.pick(owner))return;
+      if(amount===0 && !inspection){
+        const object=owner.group.nodes[owner.index].object;
+        const action=actions.find(a=>a.group===owner.group.key || a.nodes.some(n=>n.object===object));
+        if(action)action.button.click();
+      }
+    }
+  });
   for(const a of cfg.actions||[]){
     const button=document.createElement('button');button.textContent=a.label;button.setAttribute('aria-pressed','false');$('actions').append(button);
-    const nodes=a.nodes.map(n=>{const object=model.getObjectByName(n.node);if(!object)throw Error('Missing pivot '+n.node);return {...n,object,original:object.rotation.clone(),visible:object.visible};});
+    const nodes=a.nodes.map(n=>{const object=model.getObjectByName(n.node);if(!object)throw Error('Missing pivot '+n.node);return {...n,object,original:object.rotation.clone(),position:object.position.clone(),visible:object.visible};});
     const state={...a,nodes,button,active:false};actions.push(state);
-    button.onclick=()=>{stop();if(amount || matched || inspection)resetView();state.active=!state.active;
+    button.onclick=()=>{stop();gestures.restore();if(amount || matched || detailFrame || inspection)resetView();state.active=!state.active;
       for(const n of nodes){
         if(n.hidden)n.object.visible=state.active?false:n.visible;
-        else n.object.rotation[n.axis]=n.original[n.axis]+(state.active?T.MathUtils.degToRad(n.degrees):0);
+        else {
+          const angle=state.active?T.MathUtils.degToRad(n.degrees):0;
+          n.object.rotation.copy(n.original);
+          n.object.rotation[n.axis]+=angle;
+          if(a.hinge){
+            const pivot=vec(a.hinge), axis=new T.Vector3();
+            axis[n.axis]=1;
+            n.object.position.copy(n.position).sub(pivot).applyAxisAngle(axis,angle).add(pivot);
+          }
+        }
       }
       button.setAttribute('aria-pressed',String(state.active));dirtyGround=true;invalidate();};
   }
-  for(const v of cfg.views||[]){const option=document.createElement('option');option.value=v.id;option.textContent=v.label;$('angles').add(option);}
+  for(const [label,views] of [['Photo comparisons',referenceViews],['Badge details',badgeViews],['Factory 360°',factoryCameras]]){
+    if(!views.length)continue;
+    const group=document.createElement('optgroup');group.label=label;
+    for(const v of views)group.append(new Option(v.label,v.id));
+    $('angles').append(group);
+  }
   buildInspectionMenu();
   assembled=measurePose();
   aspect=canvas.clientWidth/canvas.clientHeight;
@@ -391,23 +433,30 @@ async function init(){
   resize();input();
   ground.update();updateGround=ground.update;
   const componentEntry=cfg.inspections?.some(item=>item.id===location.hash.slice(1));
-  if(location.hash==='#'+assemblyStudy.hash)openSpread();
-  else if(componentEntry)inspect(location.hash.slice(1));
+  if(componentEntry)inspect(location.hash.slice(1));
   else if(!match(params.get('frame')||params.get('view')||'')){
-    if(params.has('capture'))reset();
+    if(params.has('capture') || reduced.matches)reset();
     else {
       setSpread(1);frameCamera();
-      if(!reduced.matches){
-        const hold=assemblyStudy.intro.hold;
-        const intro=motion={from:1,to:0,start:Infinity,duration:assemblyStudy.intro.duration};
-        // Start the hold after the first WebGL frame has reached the screen.
-        requestAnimationFrame(()=>requestAnimationFrame(()=>{
-          if(motion!==intro)return;
-          intro.start=performance.now()+hold;invalidate();
-        }));
-      }
+      const hold=assemblyStudy.intro.hold;
+      const intro=motion={from:1,to:0,start:Infinity,duration:assemblyStudy.intro.duration,opening:true};
+      // Start the hold after the first WebGL frame has reached the screen.
+      requestAnimationFrame(()=>requestAnimationFrame(()=>{
+        if(motion!==intro)return;
+        intro.start=performance.now()+hold;invalidate();
+      }));
     }
   }
+  document.addEventListener('visibilitychange',()=>{
+    if(!motion?.opening || !Number.isFinite(motion.start))return;
+    if(document.hidden)motion.pausedAt=performance.now();
+    else if(motion.pausedAt!=null){
+      motion.start+=performance.now()-motion.pausedAt;delete motion.pausedAt;invalidate();
+    }
+  });
+  reduced.addEventListener('change',()=>{
+    if(reduced.matches && motion){const dest=motion.to;stop();setSpread(dest);frameCamera();invalidate();}
+  });
   $('status').hidden=true;$('tools').inert=false;new ResizeObserver(resize).observe(canvas);draw();return true;
 }
 function capture(width,height,transparent=false){

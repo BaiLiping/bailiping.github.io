@@ -14,16 +14,20 @@
 #porsche-assembly-picker label{display:flex;align-items:center;gap:6px;margin:0;color:#465761;min-width:0}
 #porsche-assembly-picker select{min-width:0;max-width:215px;padding:4px 6px;font-size:13px}
 @media(max-width:600px){#porsche-assembly-picker{gap:8px}#porsche-assembly-picker label{flex:1;max-width:220px;align-items:stretch;flex-direction:column;gap:2px;font-size:11px}}
+#part-label{position:absolute;pointer-events:none;background:#fbfaf7f5;color:#293c47;padding:5px 9px;font-size:12px;border:1px solid #cdd4d4;border-radius:4px;max-width:min(260px,90%)}#stage.over-part{cursor:grab}
+#gesture-help{position:absolute;left:50%;bottom:6px;transform:translateX(-50%);margin:0;color:#465761;font-size:12px;text-align:center;width:max-content;max-width:96%;pointer-events:none}
+#gesture-help .touch{display:none}@media(pointer:coarse){#gesture-help .mouse{display:none}#gesture-help .touch{display:inline}}@media(max-height:490px){#gesture-help{display:none}}
+@media(max-width:550px){nav{gap:10px;font-size:12px}}
 </style>
-<script type="module" src="./studio.js?v=a934ff476588"></script>
+<script type="module" src="./studio.js?v=5db30747cb97"></script>
 </head>
 <body style="--paint:#223750">
 <header>
 <div class="identity"><a class="back" href="/cars/">Cars</a><h1>2027 Porsche 911 Turbo S Cabriolet</h1><span class="paint">Gentian Blue Metallic</span></div>
-<nav aria-label="Studio views"><a id="model-link" href="#model" aria-current="page">3D model</a><a id="review" href="review.html">Photo comparisons</a></nav>
+<nav aria-label="Studio views"><a id="model-link" href="#model" aria-current="page">3D model</a><a href="factory.html" id="factory-link">Factory 360°</a><a id="review" href="review.html">Photo comparisons</a></nav>
 </header>
 <main>
-<div id="room"><canvas id="stage" tabindex="0" aria-label="Interactive 2027 Porsche 911 Turbo S Cabriolet. Use arrow keys to orbit and plus or minus to zoom."></canvas><p id="status" role="status">Loading the model…</p></div>
+<div id="room"><canvas id="stage" tabindex="0" aria-describedby="gesture-help" aria-label="Interactive 2027 Porsche 911 Turbo S Cabriolet. Use arrow keys to orbit and plus or minus to zoom."></canvas><span id="part-label" hidden></span><p id="gesture-help"><span class="mouse">Drag a part to pull it out · Drag the background to orbit · Scroll to zoom</span><span class="touch">Swipe to orbit · Hold and drag a part · Pinch to zoom</span></p><p id="status" role="status">Loading the model…</p></div>
 <div id="porsche-assembly-picker" hidden>
 <label>Assembly <select id="assembly-group"><option value="">All assemblies</option></select></label>
 <label hidden>Part <select id="assembly-piece"><option value="">All parts</option></select></label>
@@ -35,8 +39,8 @@
 <button id="reset">Reset</button>
 </div>
 <section id="panel" aria-label="Inspection controls" hidden><h2>Inspect the model</h2><p id="spec"></p><div id="actions"></div>
-<label for="angles">Reference camera</label><select id="angles"><option value="">Choose a view</option></select><p id="ref-line" hidden><a id="source">Open reference</a></p>
-<p class="help">In exploded view, select an assembly to inspect its parts. Drag or use the arrow keys to look around. Scroll, pinch, or use + and − to zoom. Press R to reset.</p>
+<label for="angles">Camera view</label><select id="angles"><option value="">Choose a view</option></select><p id="ref-line" hidden><a id="source">Open reference</a></p>
+<p class="help">Click a door to open it. Drag an assembly to pull it away, or Alt-drag one part. On touchscreens, hold a part before dragging. Click a part in exploded view to inspect it. Drag the background or use the arrow keys to orbit. Scroll, pinch or use + and − to zoom. Reset puts every part back.</p>
 </section></div>
 </main><noscript><p>Enable JavaScript to explore the 3D model.</p></noscript>
 </body></html>

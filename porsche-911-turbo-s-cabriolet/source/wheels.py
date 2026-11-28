@@ -3,7 +3,9 @@
 Outer diameters follow the specified 255/35 ZR20 and 325/30 ZR21 tires.
 The left-front configurator close-up supplies the spoke openings, center lock,
 caliper bridge profile and surface appearance. Tire shoulder sipes and the
-carbon-ceramic drilling sequence are representative.
+carbon-ceramic drilling sequence are representative. The rectified locking face
+comes from the factory exterior detail:
+https://newsroom.porsche.com/dam/jcr:072c8358-f4dd-4320-93fd-5bbd0e28bf85/911%20Turbo%20S%20Cabrio%20Ice%20Grey%20Metallic%2027.jpg
 """
 
 def wheel_material(name, filename, metal, roughness):
@@ -22,7 +24,9 @@ def wheels():
     recess = mat('Dark satin wheel pockets', (.014,.015,.015), .31,.46)
     hat = mat('PCCB rotor bell', (.046,.048,.052), .49,.43)
     nut = mat('Anthracite center lock', (.048,.049,.046), .59,.39)
-    cap = wheel_material('Center lock and monochrome shield','wheel-cap.png',.49,.35)
+    # Ice Grey Metallic 27 supplies the stamped shield, dual-language locking
+    # legend and torque scale, all upright in the photographed centre.
+    cap = wheel_material('Centerlock III Turbonite crest and legend','wheel-cap.png',.34,.40)
     ceramic = wheel_material('PCCB friction surface','friction-surface.jpg',.32,.55)
     sidewalls = [wheel_material('20-inch embossed tire sidewall','front-sidewall.webp',.01,.70),
                  wheel_material('21-inch embossed tire sidewall','rear-sidewall.webp',.01,.70)]
@@ -37,8 +41,8 @@ def wheels():
             def polar(r, a, depth):
                 return (side*(x+depth), radius+r*sin(a), z+r*cos(a))
 
-            def lathe(name, layers, material, segments=120, texture=None, smooth=True):
-                points = [polar(r,2*pi*i/segments,depth)
+            def lathe(name, layers, material, segments=120, texture=None, smooth=True, emboss=None):
+                points = [polar(r,2*pi*i/segments,depth+(emboss(r,2*pi*i/segments) if emboss else 0))
                           for r,depth in layers for i in range(segments)]
                 faces = [(j*segments+i,j*segments+(i+1)%segments,(j+1)*segments+(i+1)%segments,(j+1)*segments+i)
                          for j in range(len(layers)-1) for i in range(segments)]
@@ -137,14 +141,16 @@ def wheels():
                                       (.058,w*.690),(.049,w*.68)],recess)
             lathe('Machined center shoulder',[(.045,w*.682),(.051,w*.711),(.061,w*.711),
                   (.064,w*.699),(.066,w*.676)],face)
-            lathe('Wheel lock center ring',[(0,w*.70),(.051,w*.70),(.050,w*.731),
-                  (.044,w*.749),(.035,w*.748)],nut)
-            for i in range(16):
-                a=2*pi*i/16
-                blade('Wheel lock castellations',a,[(.029,0,.0025,.756,.003),
-                      (.034,0,.0036,.780,.005),(.038,0,.0034,.745,.004)])
-            lathe('Center lock crest and legend',[(.00005,w*.787),(.025,w*.787),(.035,w*.780),(.0365,w*.780)],
-                  cap,72,texture='radial')
+            lock_radius=.185*rim
+            def lock_relief(r,a):
+                # The stamped gripping collar stands proud of the recessed legend.
+                radial=max(0,1-abs(r/lock_radius-.62)/.13)
+                return .0019*radial*((1+cos(14*a))*.5)**.6
+            profile=[(.0001,.787),(.32,.787),(.466,.782),(.50,.792),(.53,.766),
+                     (.58,.782),(.62,.794),(.69,.788),(.72,.753),(.744,.741),
+                     (.765,.742),(.90,.742),(.971,.745),(.985,.751),(1,.743)]
+            lathe('Center lock Turbonite crest and locking legend',
+                  [(r*lock_radius,w*d) for r,d in profile],cap,168,texture='radial',emboss=lock_relief)
             a=-1.61
             shaft('Tire inflation valve',polar(rim*.91,a,w*.65),polar(rim*.952,a,w*.73),.004,seal)
             shaft('Tire valve cap',polar(rim*.901,a,w*.637),polar(rim*.919,a,w*.674),.005,black)
@@ -225,5 +231,7 @@ def wheels():
                       polar(rz-.050,center_angle+a,front_depth+.020),.006,brushed)
                 shaft('Caliper pin bore',polar(rz-.050,center_angle+a,front_depth+.020),
                       polar(rz-.050,center_angle+a,front_depth+.0205),.003,well)
-            text_side('P O R S C H E',polar(rz-.038,center_angle,front_depth+.023),.0105,black,side,True)
+            bx,by,bz=polar(rz-.038,center_angle,front_depth+.023)
+            badge_relief('PORSCHE caliper lettering','caliper',.086,.0082,
+                         lambda u,v,d:(bx+side*d,by-u,bz-side*v),black,.00025)
     parent='Bodywork'

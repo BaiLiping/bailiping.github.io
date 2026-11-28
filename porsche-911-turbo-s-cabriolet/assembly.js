@@ -1,44 +1,44 @@
-// The coordinates below locate related assemblies around the bodyshell as seen
-// from the front left. All stay at the GLB's metric scale and orientation.
+// Removal paths are measured from each component's installed position in metres.
+// +X is vehicle left, +Y is up, and +Z points toward the front bumper.
 
 const body = 'Body and glazing', interior = 'Interior', chassis = 'Chassis and driveline';
 const running = 'Wheels and brakes', power = 'T-Hybrid powertrain';
 const catalog = {
-  Bodywork: [body, 'Bodyshell', 0, .4],
-  Bonnet: [body, 'Bonnet', -3.4, 2.25],
-  Left_Door: [body, 'Left door', .85, -1.3],
-  Right_Door: [body, 'Right door', -.9, 2.75],
-  Front_Bumper: [body, 'Front bumper', -4.9, .5],
-  Rear_Bumper: [body, 'Rear bumper', 4.65, 1.55],
-  Left_Headlight: [body, 'Left headlamp', -3.95, -.2],
-  Right_Headlight: [body, 'Right headlamp', -4.15, 1.65],
-  Windscreen: [body, 'Windscreen', -1.7, 2.65],
-  Rear_Light_Bar: [body, 'Rear light bar', 4, 2.75],
-  Rear_Spoiler: [body, 'Rear spoiler', 2.45, 3.15],
-  Soft_Top: [body, 'Fabric roof and rear window', .45, 3.7],
-  sideGlass: [body, 'Side glazing', 1.65, 2.45],
-  engineDeck: [body,'Engine deck and grille', 2.65, 2.4],
-  tonneau: [body,'Convertible top compartment lid', 1.15, 2.7],
-  undertray: [chassis, 'Undertray', .15, -2.9],
-  cabinFloor: [interior,'Cabin floor and trim', -.1, -1.05],
-  Driver_Seat: [interior,'Driver seat', .65, 1.65],
-  Passenger_Seat: [interior,'Passenger seat', -.1, 2.2],
-  restraints: [interior,'Seat belts and buckles', .35, 1.95],
-  rearSeats: [interior,'Rear seats', 1.85, 1.5],
-  console: [interior,'Centre console', -.55, 1.6],
-  dash: [interior,'Dashboard and instruments', -1.65, 1.9],
-  wheel: [interior,'Steering wheel', -1.95, 1.2],
-  mirror: [interior,'Interior mirror', -1.65, 3.25],
-  trim: [interior,'Door trim', .25, -1.8],
-  Front_Axle: [chassis,'Front axle', -2.45, -1.45],
-  Rear_Axle: [chassis,'Rear axle', 1.45, -2.05],
-  Propeller_Shaft: [chassis,'Propeller shaft', -.75, -2.2],
-  HV_Battery: [chassis,'High-voltage battery', -.95, -2.9],
-  Boxer_Engine: [power,'Flat-six engine', 3.9, -.9],
-  Left_eTurbo: [power,'Left electric turbocharger', 4.35, -1.95],
-  Right_eTurbo: [power,'Right electric turbocharger', 4.65, -.15],
-  PDK_Hybrid: [power,'PDK transmission', 3.4, -2],
-  PDK_Motor_Envelope: [power,'PDK electric motor envelope', 3.25, -2.75],
+  Bodywork: [body, 'Bodyshell', 0, 1.05, 0],
+  Bonnet: [body, 'Bonnet', 0, 1.135, 0.06],
+  Left_Door: [body, 'Left door', 0.19, 1.06, 0],
+  Right_Door: [body, 'Right door', -0.19, 1.06, 0],
+  Front_Bumper: [body, 'Front bumper', 0, 1.025, 0.13],
+  Rear_Bumper: [body, 'Rear bumper', 0, 1.03, -0.13],
+  Left_Headlight: [body, 'Left headlamp', 0.035, 1.10, 0.07],
+  Right_Headlight: [body, 'Right headlamp', -0.035, 1.10, 0.07],
+  Windscreen: [body, 'Windscreen', 0, 1.12, 0],
+  Rear_Light_Bar: [body, 'Rear light bar', 0, 1.11, -0.10],
+  Rear_Spoiler: [body, 'Rear spoiler', 0, 1.56, -0.24],
+  Soft_Top: [body, 'Fabric roof and rear window', 0, 1.27, -0.02],
+  sideGlass: [body, 'Side glazing', 0, 1.15, 0],
+  engineDeck: [body,'Engine deck and grille', 0, 1.15, -0.06],
+  tonneau: [body,'Convertible top compartment lid', 0, 1.135, -0.02],
+  undertray: [chassis, 'Undertray', 0, -0.08, 0],
+  cabinFloor: [interior,'Cabin floor and trim', 0.15, 0.1, 0],
+  Driver_Seat: [interior,'Driver seat', 0.29, 0.35, 0.01],
+  Passenger_Seat: [interior,'Passenger seat', 0.03, 0.35, 0.01],
+  restraints: [interior,'Seat belts and buckles', 0.13, 0.3, 0],
+  rearSeats: [interior,'Rear seats', 0.16, 0.28, -0.12],
+  console: [interior,'Centre console', 0.15, 0.3, 0.03],
+  dash: [interior,'Dashboard and instruments', 0.15, 0.44, 0.17],
+  wheel: [interior,'Steering wheel', 0.36, 0.36, 0.28],
+  mirror: [interior,'Interior mirror', 0, 1.12, 0],
+  trim: [interior,'Door trim', 0.17, 0.2, 0],
+  Front_Axle: [chassis,'Front axle', 0, 0.03, 0.06],
+  Rear_Axle: [chassis,'Rear axle', 0, 0.03, -0.06],
+  Propeller_Shaft: [chassis,'Propeller shaft', 0, -0.035, 0.04],
+  HV_Battery: [chassis,'High-voltage battery', 0.23, 0.07, 0.28],
+  Boxer_Engine: [power,'Flat-six engine', 0.12, 0.13, -0.56],
+  Left_eTurbo: [power,'Left electric turbocharger', 0.38, 0.13, -0.58],
+  Right_eTurbo: [power,'Right electric turbocharger', -0.18, 0.13, -0.6],
+  PDK_Hybrid: [power,'PDK transmission', 0.15, 0.12, -0.28],
+  PDK_Motor_Envelope: [power,'PDK electric motor envelope', 0.16, 0.14, 0.03],
 };
 const cabinet = [
   [/interior mirror|auto.dimming/, 'mirror'],
@@ -60,8 +60,8 @@ function matchRule(rules, name, fallback) {
   return rules.find(([pattern]) => pattern.test(name))?.[1] || fallback;
 }
 
-export function createAssemblyStudy(T, model, onSelect, {canvas,camera,stop}) {
-  const direction = new T.Vector3(1.32, .88, .85).normalize();
+export function createAssemblyStudy(T, model, onSelect, {stop}) {
+  const direction = new T.Vector3(1.12, .61, 1.32).normalize();
   const right = new T.Vector3(0,1,0).cross(direction).normalize();
   const up = direction.clone().cross(right);
   const origin = new T.Vector3(0, .65, 0);
@@ -74,8 +74,8 @@ export function createAssemblyStudy(T, model, onSelect, {canvas,camera,stop}) {
   const boundsPoint = new T.Vector3();
   const add = (key, object, description) => {
     if (!groups.has(key)) {
-      const [category,label,x,y] = description;
-      groups.set(key,{key,category,label,x,y,nodes:[],bounds:emptyBounds()});
+      const [category,label,x,y,z] = description;
+      groups.set(key,{key,category,label,travel:new T.Vector3(x,y,z),nodes:[],bounds:emptyBounds()});
     }
     const group = groups.get(key);
     const localFromWorld = object.parent.matrixWorld.clone().invert().setPosition(0,0,0);
@@ -99,17 +99,14 @@ export function createAssemblyStudy(T, model, onSelect, {canvas,camera,stop}) {
     const name = root.name;
     if (name.endsWith('_Wheel') || name.endsWith('_Brake')) {
       const side = name.includes('_Left_') ? 1 : -1;
-      const front = name.startsWith('Front');
-      const axleX = front ? -2.25 : 1.8;
-      const axleY = front ? -.75 : -.1;
       const prefix = name.replaceAll('_',' ').replace(/ (Wheel|Brake)$/,'').toLowerCase();
       for (const node of root.children) {
         const n = asWords(node.userData.name || node.name);
         const isBrake = name.endsWith('_Brake');
         const isTyre = /\b(tire|tyre)\b/.test(n) && !n.includes('valve');
         const kind = isBrake ? 'brake' : isTyre ? 'tyre' : 'rim';
-        const shift = isBrake ? 1.35 : isTyre ? 2.65 : 2;
-        add(name+kind, node, [running, prefix[0].toUpperCase()+prefix.slice(1)+' '+kind, axleX+side*shift*.76, axleY-side*shift*1.02]);
+        const shift = isBrake ? .07 : isTyre ? .45 : .40;
+        add(name+kind, node, [running, prefix[0].toUpperCase()+prefix.slice(1)+' '+kind, side*shift, 0, 0]);
       }
     } else if (name==='Bodywork' || name==='Cabin' || name==='Soft_Top') {
       for (const node of root.children) {
@@ -121,20 +118,11 @@ export function createAssemblyStudy(T, model, onSelect, {canvas,camera,stop}) {
         add(key,node,catalog[key]);
       }
     } else {
-      const description=catalog[name] || [body,name.replaceAll('_',' '),2,1];
+      const description=catalog[name] || [body,name.replaceAll('_',' '),0,0,0];
       for(const node of root.children.length ? root.children : [root])add(name,node,description);
     }
   }
   const items = [...groups.values()].filter(g=>!g.bounds.isEmpty());
-  for (const g of items) {
-    g.center=g.bounds.getCenter(new T.Vector3());
-    g.size=g.bounds.getSize(new T.Vector3());
-    // The fixed shell is the visual datum for every removal direction.
-    g.mobility=g.key==='Bodywork' ? 0 : 1/(.6+g.size.x*g.size.y);
-  }
-
-  // Relax overlaps between tight projected mesh bounds. Preserve the order of
-  // neighboring parts while allowing the same plate to fit portrait or landscape.
   function layout(aspect) {
     if (selected) {
       // Lay out the named pieces of one assembly in reading order. Keep their
@@ -164,41 +152,12 @@ export function createAssemblyStudy(T, model, onSelect, {canvas,camera,stop}) {
       }
       return;
     }
-    const stretch = T.MathUtils.clamp(Math.pow(aspect/1.4, aspect>1.4 ? .86 : .26), .69, 2.15);
-    const clearance = .17;
-    // Account for perspective at the outer edge of the plate. Deep pieces near
-    // a corner project farther out than their parallel-projection bounds.
-    const paddedHalf=(center,length,depth)=>length*.53+(Math.abs(center)+1+length/2)*depth/22;
-    for (const g of items) {
-      g.u=g.x*stretch;
-      g.v=g.y/stretch;
-    }
-    for (let iteration=0; iteration<480; iteration++) {
-      let overlaps=0;
-      for (let i=0; i<items.length; i++) {
-        const a=items[i];
-        for (let j=i+1; j<items.length; j++) {
-          const b=items[j], dx=b.u-a.u, dy=b.v-a.v;
-          const ox=paddedHalf(a.u,a.size.x,a.size.z)+paddedHalf(b.u,b.size.x,b.size.z)+clearance-Math.abs(dx);
-          const oy=paddedHalf(a.v,a.size.y,a.size.z)+paddedHalf(b.v,b.size.y,b.size.z)+clearance-Math.abs(dy);
-          if (Math.min(ox,oy)<=.0002) continue;
-          overlaps++;
-          const weight=a.mobility/(a.mobility+b.mobility);
-          if (ox/Math.sqrt(aspect)<oy) {
-            const shift=(Math.sign(dx)||1)*ox*1.01;
-            a.u-=shift*weight; b.u+=shift*(1-weight);
-          } else {
-            const shift=(Math.sign(dy)||1)*oy*1.01;
-            a.v-=shift*weight; b.v+=shift*(1-weight);
-          }
-        }
+    // The shell and its outer panels lift together. Wheels pull along their
+    // axles and the engine withdraws aft; orbit reveals their mounting faces.
+    for (const group of items) {
+      for (const node of group.nodes) {
+        node.delta.copy(group.travel).applyMatrix4(node.localFromWorld);
       }
-      if (!overlaps) break;
-    }
-    for (const g of items) {
-      const delta=origin.clone().addScaledVector(right,g.u-g.center.x)
-        .addScaledVector(up,g.v-g.center.y).addScaledVector(direction,-g.center.z);
-      for (const n of g.nodes) n.delta.copy(delta).applyMatrix4(n.localFromWorld);
     }
   }
 
@@ -241,33 +200,14 @@ export function createAssemblyStudy(T, model, onSelect, {canvas,camera,stop}) {
     groupSelect.value=key;partSelect.value=index;
     partSelect.parentElement.hidden=!selected;
   }
-  // Picking a visible component opens the same hierarchy as the keyboard menus.
-  // A drag, pinch or cancelled touch must never select an assembly.
-  const ray=new T.Raycaster(),pointer=new T.Vector2();
-  let press=null;
-  canvas.addEventListener('pointerdown',event=>{
-    press=event.isPrimary && !menu.hidden ? [event.clientX,event.clientY] : null;
-  });
-  canvas.addEventListener('pointermove',event=>{
-    if(press && Math.hypot(event.clientX-press[0],event.clientY-press[1])>6)press=null;
-  });
-  canvas.addEventListener('pointercancel',()=>{press=null;});
-  canvas.addEventListener('pointerup',event=>{
-    if(!press || menu.hidden || piece)return;
-    press=null;
-    const rect=canvas.getBoundingClientRect();
-    pointer.set((event.clientX-rect.left)*2/rect.width-1,1-(event.clientY-rect.top)*2/rect.height);
-    ray.setFromCamera(pointer,camera);
-    const hits=ray.intersectObject(model);
-    for(const hit of hits){
-      const owner=meshOwner.get(hit.object);
-      if(!owner || (selected && owner.group!==selected))continue;
-      onSelect(owner.group.key,selected ? String(owner.index) : '');
-      break;
-    }
-  });
+  function pick(owner) {
+    if (!owner || menu.hidden || piece || (selected && owner.group!==selected)) return false;
+    onSelect(owner.group.key, selected ? String(owner.index) : '');
+    return true;
+  }
   return {
-    direction:direction.toArray(),layout,select,hash:'exploded',intro:{hold:1700,duration:3100},transitionDuration:1450,
+    direction:direction.toArray(),layout,select,pick,ownerOf:mesh=>meshOwner.get(mesh),
+    hash:'exploded',intro:{hold:1200,duration:2100},transitionDuration:1450,
     // The first body panels reach their targets before the interior. Follow
     // their progress to keep those outer pieces in frame during the transition.
     cameraAmount(amount){return Math.max(amount,T.MathUtils.smoothstep(amount,0,.84));},

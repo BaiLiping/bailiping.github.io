@@ -84,24 +84,7 @@ def shaft(n,a,b,r,m):return tube(n,[a,b],r,m,24)
 # Panel boundaries and body station measurements use the same coordinate system.
 exec(compile((R/'source/exterior.py').read_text(),str(R/'source/exterior.py'),'exec'))
 
-def text_side(label,position,size,m,s,vertical=False):
- from mathutils import Matrix
- cu=bpy.data.curves.new(label,'FONT');cu.body=label;cu.align_x='CENTER';cu.align_y='CENTER';cu.size=size;cu.extrude=.0003;cu.materials.append(m)
- ob=bpy.data.objects.new(label,cu);bpy.context.scene.collection.objects.link(ob);ob.parent=group(parent)
- # Blender text local +Z faces the viewer; use local +Y for the letter height.
- ax=Vector((0,-s,0));ay=Vector((0,0,1));az=ax.cross(ay)
- if az.x*s<0:ax=-ax;az=ax.cross(ay)
- if vertical:ax,ay=ay,-ax
- ob.matrix_world=Matrix.Translation(Vector(cv(position)))@Matrix((ax,ay,az)).transposed().to_4x4()
- if label=='t-hybrid':cu.shear=.32;cu.space_character=1.09
- bpy.context.view_layer.objects.active=ob;ob.select_set(True);bpy.ops.object.convert(target='MESH');ob.select_set(False)
- if label=='t-hybrid':
-  matrix=ob.matrix_world.copy();inverse=matrix.inverted()
-  for v in ob.data.vertices:
-   co=matrix@v.co
-   z=position[2]+(-co.y-position[2])*1.50
-   co.y=-z;co.x=sxyz(s,z,co.z)[0]+s*.005
-   v.co=inverse@co
+exec(compile((R/'source/badges.py').read_text(),str(R/'source/badges.py'),'exec'))
 
 exec(compile((R/'source/wheels.py').read_text(),str(R/'source/wheels.py'),'exec'))
 
@@ -180,8 +163,9 @@ def cabinexterior():
      f=(.625-z)/(.625-.118);q=wsurface(s,f)
     else:q=roof(s,(.118-z)/1.738)
     return blend((s*bx,by,z),q,v)
-   patch('Frameless '+side+' glazing',38,18,window,glass)
-   if side=='door':path('Side glass trailing edge',[window(1,k/10) for k in range(11)],.0044,seal)
+   hand=' left' if s>0 else ' right'
+   patch('Frameless '+side+' glazing'+(hand if side=='door' else ''),38,18,window,glass)
+   if side=='door':path('Side glass trailing edge'+hand,[window(1,k/10) for k in range(11)],.0044,seal)
   left=[roof(s,j/100) for j in range(101)];path('Convertible fabric binding',left,.006,cloth)
  # The flexible rear skirt fits between the bows and the stowage compartment.
  def roof_skirt(u,v,back=False,side=1):
@@ -392,6 +376,11 @@ def fit_common_cockpit():
     if max(v.co.z for v in component)>.989 or min(v.co.z for v in component)<.40 or max(v.co.y for v in component)>.36:drop.extend(component)
    bmesh.ops.delete(bm,geom=drop,context='VERTS');bm.to_mesh(me);bm.free()
    if not len(me.polygons):continue
+  if any(m and 'Steering_Crest' in m.name for m in me.materials):
+   # The GT3 donor has a coloured crest. Fit the Turbo S shield to its airbag.
+   badge_crest('SteeringWheel Turbonite crest',.0357,.0478,
+               lambda u,v,d:(.359-u,.742+v*.96+d*.28,.1294+v*.28-d*.96),'Cabin')
+   continue
   ob=bpy.data.objects.new(name.removeprefix('GT3_').replace('_',' '),me);bpy.context.scene.collection.objects.link(ob);ob.parent=group('Cabin')
   if 'Stitch' in name or 'MicroSuede' in name:
    for idx in range(len(me.materials)):me.materials[idx]=leather
@@ -413,10 +402,6 @@ def fit_common_cockpit():
  ellipse('Auto-dimming mirror frame',(0,1.154,.136),(.116,.039,.016),black)
  ellipse('Auto-dimming glass',(0,1.154,.124),(.109,.033,.006),brushed)
  bpy.ops.outliner.orphans_purge(do_recursive=True)
-def lettering(text,location,size,material):
- cu=bpy.data.curves.new(text,'FONT');cu.body=text;cu.align_x='CENTER';cu.align_y='CENTER';cu.size=size;cu.extrude=.0007;cu.materials.append(material);ob=bpy.data.objects.new(text,cu);bpy.context.scene.collection.objects.link(ob)
- ob.location=cv(location);ob.rotation_euler=(pi/2,0,pi);ob.parent=group('Bodywork')
- bpy.context.view_layer.objects.active=ob;ob.select_set(True);bpy.ops.object.convert(target='MESH');ob.select_set(False)
 exec(compile((R/'source/powertrain.py').read_text(),str(R/'source/powertrain.py'),'exec'))
 body();wheels();cabinexterior();cabin();fit_common_cockpit();build_matrix_headlamps();cut_apertures();finish_outer_skin();fabric_surface();build_hybrid()
 exec(compile((R/'source/chassis.py').read_text(),str(R/'source/chassis.py'),'exec'))
