@@ -229,6 +229,57 @@ def tube(name, pts, r, mat, col, n=10):
         return q - P[np.argmin(d, axis=1)]
     return grid_obj(name, np.array(rows), mat=mat, collection=col, closed_v=True, outward=away)
 
+def radio_antenna(col):
+    """Passenger-fender radio whip measured in Ford's 36 studio views."""
+    deck = bpy.data.objects['RaptorR_Body_FenderDeck_R']
+    # The model's hood seam lies farther out than the photo fit. Keep the
+    # grommet on the fixed fender, clear of the hood throughout its sweep.
+    hit, point, deck_normal, _ = deck.ray_cast((1.392, -0.857, 3.0), (0.0, 0.0, -1.0))
+    if not hit:
+        raise ValueError('Passenger fender surface missing at antenna mount')
+    root = np.array(point)
+    tip = np.array([1.347, -0.806, 2.211])
+    length = np.linalg.norm(tip - root)
+    axis = (tip - root) / length
+
+    # Distances along the mast are measured from the painted deck. The start
+    # of the soft grommet follows its slope, and the wire has a rounded tip.
+    angle = np.linspace(0, 2 * np.pi, 20, endpoint=False)
+    def turned_part(name, profile, material, wind_rib=False):
+        rings = []
+        for distance, radius in profile:
+            normal = np.asarray(deck_normal) if distance < 0.003 else axis
+            u = np.cross([0, 1, 0], normal)
+            u /= np.linalg.norm(u)
+            v = np.cross(normal, u)
+            r = radius
+            if wind_rib:
+                # The exposed shaft has a fine spiral along its dark finish.
+                fade = np.clip(min(distance - 0.171, length - 0.012 - distance) / 0.010, 0, 1)
+                phase = angle - 2 * np.pi * (distance - 0.171) / 0.044
+                r = radius + 0.00048 * fade * ((1 + np.cos(phase)) * 0.5) ** 7
+            radial = np.outer(np.cos(angle), u) + np.outer(np.sin(angle), v)
+            rings.append(root + distance * axis + radial * np.broadcast_to(r, angle.shape)[:, None])
+        sides = len(angle)
+        faces = [tuple(reversed(range(sides)))]
+        for row in range(len(rings) - 1):
+            for i in range(sides):
+                j = (i + 1) % sides
+                a, b = row * sides, (row + 1) * sides
+                faces.append((a + i, a + j, b + j, b + i))
+        faces.append(tuple(range((len(rings) - 1) * sides, len(rings) * sides)))
+        return make_obj(name, np.concatenate(rings), faces, mat=material, collection=col)
+
+    boot = [(-0.0012, 0.0105), (0.0005, 0.0114), (0.0023, 0.0112),
+            (0.0050, 0.0082), (0.013, 0.0075), (0.019, 0.0067),
+            (0.149, 0.0061), (0.162, 0.0053), (0.170, 0.0028)]
+    turned_part('RaptorR_RadioAntenna_Base', boot, 'Mat_Trim_Matte_Black')
+    stations = np.linspace(0.1695, length - 0.009, 161)
+    shaft = list(zip(stations, np.linspace(0.00215, 0.00155, len(stations))))
+    shaft += [(length - 0.008, 0.0024), (length - 0.005, 0.0028),
+              (length - 0.002, 0.0027), (length - 0.0006, 0.0017), (length, 0.0003)]
+    turned_part('RaptorR_RadioAntenna_Mast', shaft, 'Mat_Grille_Charcoal_Black', wind_rib=True)
+
 def headlamps_v3(col):
     out = []
     plan = lamp_plan()

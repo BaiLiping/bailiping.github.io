@@ -84,7 +84,7 @@ def main():
     parts_misc.liner(col, 'RaptorR_Wheelhouse_F', D.FLARE_F_IN, D.WB2); parts_misc.liner(col, 'RaptorR_Wheelhouse_Rr', D.FLARE_R_IN, -D.WB2)
     parts_misc.mirrors(col); parts_misc.running_boards(col); parts_misc.handles(col); fuel = parts_misc.fuel_door(col)
     parts_misc.fender_vents(col); parts_detail.hood_extractor(col); parts_misc.cowl_and_wipers(col); parts_misc.decals(col); parts_misc.hood_decal(col)
-    parts_detail.hood_nose(col)
+    parts_detail.hood_nose(col); parts_detail.radio_antenna(col)
     old = bpy.data.objects.get('RaptorR_Body_CHMSL_Housing')
     if old: bpy.data.objects.remove(old, do_unlink=True)
     parts_detail.chmsl(col); parts_detail.roof_markers(col); parts_detail.cpillar_appliques(col)
@@ -207,12 +207,15 @@ def main():
                      and not re.match(r'RaptorR_(Int_|Eng_|Drivetrain|Susp|FOX|Tire|Rim|Brake|WheelCap|Spare|Chassis|Exhaust|DoorCard|Underbody|Axle|Hub|Steer|Diff|Driveshaft|Rear_Hitch)', o.name)
                      for v in o.data.vertices])
     mirrors = np.array([o.matrix_world @ v.co for o in bpy.data.objects if o.type == 'MESH' and o.name.startswith('RaptorR_Mirror_') and 'Cabin' not in o.name for v in o.data.vertices])
-    nomirror = body[np.abs(body[:, 1]) < 1.12]
+    body_without_mirrors_or_whip = np.array([o.matrix_world @ v.co for o in bpy.data.objects if o.type == 'MESH'
+                                             and not o.name.startswith(('RaptorR_RadioAntenna_', 'RaptorR_Mirror_'))
+                                             for v in o.data.vertices])
     report['dimensions_mm'] = {
         'length': round(1000 * (body[:, 0].max() - body[:, 0].min()), 1),
-        'width_without_mirrors': round(1000 * (nomirror[:, 1].max() - nomirror[:, 1].min()), 1),
+        'width_without_mirrors': round(1000 * np.ptp(body_without_mirrors_or_whip[:, 1]), 1),
         'width_with_mirrors': round(1000 * (mirrors[:, 1].max() - mirrors[:, 1].min()), 1),
-        'height': round(1000 * body[:, 2].max(), 1), 'wheelbase': round(1000 * wb, 1)}
+        'height': round(1000 * body_without_mirrors_or_whip[:, 2].max(), 1), 'height_with_radio_mast': round(1000 * body[:, 2].max(), 1),
+        'wheelbase': round(1000 * wb, 1)}
     report['doorcard_bbox'] = bbox('RaptorR_DoorCard_'); report['interior_bbox'] = bbox('RaptorR_Int_'); report['engine_bbox'] = bbox('RaptorR_Eng_')
     letter_material = bpy.data.materials.get('Mat_FORD_Letter_Face')
     if letter_material and letter_material.use_nodes:

@@ -1,7 +1,7 @@
 {
   "vehicle": "2024 Ford F-150 Raptor R, US SuperCrew, 5.5-foot bed, Rapid Red Metallic Tinted Clearcoat (D4), 37-inch tires, black LHD cabin, 5.2L supercharged V8, 10R80 automatic, four-wheel drive",
-  "revision": "74643b5dde41cf3b4d660a5a6a714b9d83b283cd988a6420188680e6a7de0f88",
-  "method": "Upper-body silhouette overlap uses the intersection divided by the union of the projected model and Ford render above the 0.93 m centerline cut. The thin antenna and ground shadows are excluded. Edge distances are symmetric and measured in the native 2160 × 926 images.",
+  "revision": "2e8e4f2450b521454cef9b952d3d3ae057e01841cde4741fda1f1bcd642d937e",
+  "method": "Upper-body silhouette overlap uses the intersection divided by the union of the projected model and Ford render above the 0.93 m centerline cut. The contour measurement excludes the radio mast and ground shadows. The mast tip is checked separately in each of the 36 studio views. Edge distances are symmetric and measured in the native 2160 × 926 images.",
   "counts": {
     "verified": 21,
     "limited": 18,
@@ -18,7 +18,7 @@
       "camera": "../exterior-photo-cameras.json#view-00",
       "source": "https://www.ford.com/trucks/f150/#360viewer",
       "credit": "© Ford Motor Company · 2027 F-150 Raptor configurator · frame 04",
-      "revision": "74643b5dde41cf3b4d660a5a6a714b9d83b283cd988a6420188680e6a7de0f88",
+      "revision": "2e8e4f2450b521454cef9b952d3d3ae057e01841cde4741fda1f1bcd642d937e",
       "frame": 0,
       "upperContour": {
         "sourceFrame": 4,
@@ -27,7 +27,7 @@
         "medianEdgePx": 2.0,
         "p95EdgePx": 8.54,
         "originalCalibrationIoU": 0.97689,
-        "modelSha256": "74643b5dde41cf3b4d660a5a6a714b9d83b283cd988a6420188680e6a7de0f88"
+        "modelSha256": "2e8e4f2450b521454cef9b952d3d3ae057e01841cde4741fda1f1bcd642d937e"
       }
     },
     {
@@ -38,7 +38,7 @@
       "camera": "../exterior-photo-cameras.json#view-01",
       "source": "https://www.ford.com/trucks/f150/#360viewer",
       "credit": "© Ford Motor Company · 2027 F-150 Raptor configurator · frame 05",
-      "revision": "74643b5dde41cf3b4d660a5a6a714b9d83b283cd988a6420188680e6a7de0f88",
+      "revision": "2e8e4f2450b521454cef9b952d3d3ae057e01841cde4741fda1f1bcd642d937e",
       "frame": 1,
       "upperContour": {
         "sourceFrame": 5,
@@ -47,7 +47,7 @@
         "medianEdgePx": 3.0,
         "p95EdgePx": 12.65,
         "originalCalibrationIoU": 0.9706,
-        "modelSha256": "74643b5dde41cf3b4d660a5a6a714b9d83b283cd988a6420188680e6a7de0f88"
+        "modelSha256": "2e8e4f2450b521454cef9b952d3d3ae057e01841cde4741fda1f1bcd642d937e"
       }
     },
     {
@@ -58,7 +58,7 @@
       "camera": "../exterior-photo-cameras.json#view-02",
       "source": "https://www.ford.com/trucks/f150/#360viewer",
       "credit": "© Ford Motor Company · 2027 F-150 Raptor configurator · frame 06",
-      "revision": "74643b5dde41cf3b4d660a5a6a714b9d83b283cd988a6420188680e6a7de0f88",
+      "revision": "2e8e4f2450b521454cef9b952d3d3ae057e01841cde4741fda1f1bcd642d937e",
       "frame": 2,
       "upperContour": {
         "sourceFrame": 6,
@@ -68,7 +68,7 @@
         "p95EdgePx": 22.36,
         "originalCalibrationIoU": 0.96241,
         "followUp": "Resolve the shape-versus-camera difference against additional calibrated 2024 photographs. The two available real-truck checks disagree on the signed nose residual.",
-        "modelSha256": "74643b5dde41cf3b4d660a5a6a714b9d83b283cd988a6420188680e6a7de0f88"
+        "modelSha256": "2e8e4f2450b521454cef9b952d3d3ae057e01841cde4741fda1f1bcd642d937e"
       }
     },
     {
@@ -79,7 +79,7 @@
       "camera": "../exterior-photo-cameras.json#view-03",
       "source": "https://www.ford.com/trucks/f150/#360viewer",
       "credit": "© Ford Motor Company · 2027 F-150 Raptor configurator · frame 07",
-      "revision": "74643b5dde41cf3b4d660a5a6a714b9d83b283cd988a6420188680e6a7de0f88",
+      "revision": "2e8e4f2450b521454cef9b952d3d3ae057e01841cde4741fda1f1bcd642d937e",
       "frame": 3,
       "upperContour": {
         "sourceFrame": 7,
@@ -89,7 +89,7 @@
         "p95EdgePx": 27.13,
         "originalCalibrationIoU": 0.9633,
         "followUp": "Resolve the shape-versus-camera difference against additional calibrated 2024 photographs. The two available real-truck checks disagree on the signed nose residual.",
-        "modelSha256": "74643b5dde41cf3b4d660a5a6a714b9d83b283cd988a6420188680e6a7de0f88"
+        "modelSha256": "2e8e4f2450b521454cef9b952d3d3ae057e01841cde4741fda1f1bcd642d937e"
       }
     },
     {
@@ -100,7 +100,7 @@
       "camera": "../exterior-photo-cameras.json#view-04",
       "source": "https://www.ford.com/trucks/f150/#360viewer",
       "credit": "© Ford Motor Company · 2027 F-150 Raptor configurator · frame 08",
-      "revision": "74643b5dde41cf3b4d660a5a6a714b9d83b283cd988a6420188680e6a7de0f88",
+      "revision": "2e8e4f2450b521454cef9b952d3d3ae057e01841cde4741fda1f1bcd642d937e",
       "frame": 4,
       "upperContour": {
         "sourceFrame": 8,
@@ -110,7 +110,7 @@
         "p95EdgePx": 25.88,
         "originalCalibrationIoU": 0.96436,
         "followUp": "Resolve the shape-versus-camera difference against additional calibrated 2024 photographs. The two available real-truck checks disagree on the signed nose residual.",
-        "modelSha256": "74643b5dde41cf3b4d660a5a6a714b9d83b283cd988a6420188680e6a7de0f88"
+        "modelSha256": "2e8e4f2450b521454cef9b952d3d3ae057e01841cde4741fda1f1bcd642d937e"
       }
     },
     {
@@ -121,7 +121,7 @@
       "camera": "../exterior-photo-cameras.json#view-05",
       "source": "https://www.ford.com/trucks/f150/#360viewer",
       "credit": "© Ford Motor Company · 2027 F-150 Raptor configurator · frame 09",
-      "revision": "74643b5dde41cf3b4d660a5a6a714b9d83b283cd988a6420188680e6a7de0f88",
+      "revision": "2e8e4f2450b521454cef9b952d3d3ae057e01841cde4741fda1f1bcd642d937e",
       "frame": 5,
       "upperContour": {
         "sourceFrame": 9,
@@ -131,7 +131,7 @@
         "p95EdgePx": 26.0,
         "originalCalibrationIoU": 0.97027,
         "followUp": "Resolve the shape-versus-camera difference against additional calibrated 2024 photographs. The two available real-truck checks disagree on the signed nose residual.",
-        "modelSha256": "74643b5dde41cf3b4d660a5a6a714b9d83b283cd988a6420188680e6a7de0f88"
+        "modelSha256": "2e8e4f2450b521454cef9b952d3d3ae057e01841cde4741fda1f1bcd642d937e"
       }
     },
     {
@@ -142,7 +142,7 @@
       "camera": "../exterior-photo-cameras.json#view-06",
       "source": "https://www.ford.com/trucks/f150/#360viewer",
       "credit": "© Ford Motor Company · 2027 F-150 Raptor configurator · frame 10",
-      "revision": "74643b5dde41cf3b4d660a5a6a714b9d83b283cd988a6420188680e6a7de0f88",
+      "revision": "2e8e4f2450b521454cef9b952d3d3ae057e01841cde4741fda1f1bcd642d937e",
       "frame": 6,
       "upperContour": {
         "sourceFrame": 10,
@@ -151,18 +151,18 @@
         "medianEdgePx": 2.0,
         "p95EdgePx": 10.0,
         "originalCalibrationIoU": 0.98049,
-        "modelSha256": "74643b5dde41cf3b4d660a5a6a714b9d83b283cd988a6420188680e6a7de0f88"
+        "modelSha256": "2e8e4f2450b521454cef9b952d3d3ae057e01841cde4741fda1f1bcd642d937e"
       }
     },
     {
       "id": "view-07",
       "label": "Front left · 70°",
       "status": "verified",
-      "note": "The driver-side roof crown, cab-to-bed step and hood line closely follow the Ford outline. The antenna belongs to the reference truck.",
+      "note": "The driver-side roof crown, cab-to-bed step and hood line closely follow the Ford outline.",
       "camera": "../exterior-photo-cameras.json#view-07",
       "source": "https://www.ford.com/trucks/f150/#360viewer",
       "credit": "© Ford Motor Company · 2027 F-150 Raptor configurator · frame 11",
-      "revision": "74643b5dde41cf3b4d660a5a6a714b9d83b283cd988a6420188680e6a7de0f88",
+      "revision": "2e8e4f2450b521454cef9b952d3d3ae057e01841cde4741fda1f1bcd642d937e",
       "frame": 7,
       "upperContour": {
         "sourceFrame": 11,
@@ -171,7 +171,7 @@
         "medianEdgePx": 1.41,
         "p95EdgePx": 7.0,
         "originalCalibrationIoU": 0.98516,
-        "modelSha256": "74643b5dde41cf3b4d660a5a6a714b9d83b283cd988a6420188680e6a7de0f88"
+        "modelSha256": "2e8e4f2450b521454cef9b952d3d3ae057e01841cde4741fda1f1bcd642d937e"
       }
     },
     {
@@ -182,7 +182,7 @@
       "camera": "../exterior-photo-cameras.json#view-08",
       "source": "https://www.ford.com/trucks/f150/#360viewer",
       "credit": "© Ford Motor Company · 2027 F-150 Raptor configurator · frame 12",
-      "revision": "74643b5dde41cf3b4d660a5a6a714b9d83b283cd988a6420188680e6a7de0f88",
+      "revision": "2e8e4f2450b521454cef9b952d3d3ae057e01841cde4741fda1f1bcd642d937e",
       "frame": 8,
       "upperContour": {
         "sourceFrame": 12,
@@ -191,18 +191,18 @@
         "medianEdgePx": 4.0,
         "p95EdgePx": 13.0,
         "originalCalibrationIoU": 0.9724,
-        "modelSha256": "74643b5dde41cf3b4d660a5a6a714b9d83b283cd988a6420188680e6a7de0f88"
+        "modelSha256": "2e8e4f2450b521454cef9b952d3d3ae057e01841cde4741fda1f1bcd642d937e"
       }
     },
     {
       "id": "view-09",
       "label": "Left profile",
       "status": "verified",
-      "note": "Broadside, the left cab roof, hood-to-cowl transition and bedside top establish the relative cab and box lengths. The extractor now sits over the forward dome at the position supported by the 2024 side photo. Ford’s mast is excluded.",
+      "note": "Broadside, the left cab roof, hood-to-cowl transition and bedside top establish the relative cab and box lengths. The extractor now sits over the forward dome at the position supported by the 2024 side photo.",
       "camera": "../exterior-photo-cameras.json#view-09",
       "source": "https://www.ford.com/trucks/f150/#360viewer",
       "credit": "© Ford Motor Company · 2027 F-150 Raptor configurator · frame 13",
-      "revision": "74643b5dde41cf3b4d660a5a6a714b9d83b283cd988a6420188680e6a7de0f88",
+      "revision": "2e8e4f2450b521454cef9b952d3d3ae057e01841cde4741fda1f1bcd642d937e",
       "frame": 9,
       "upperContour": {
         "sourceFrame": 13,
@@ -211,7 +211,7 @@
         "medianEdgePx": 1.41,
         "p95EdgePx": 8.6,
         "originalCalibrationIoU": 0.98318,
-        "modelSha256": "74643b5dde41cf3b4d660a5a6a714b9d83b283cd988a6420188680e6a7de0f88"
+        "modelSha256": "2e8e4f2450b521454cef9b952d3d3ae057e01841cde4741fda1f1bcd642d937e"
       }
     },
     {
@@ -222,7 +222,7 @@
       "camera": "../exterior-photo-cameras.json#view-10",
       "source": "https://www.ford.com/trucks/f150/#360viewer",
       "credit": "© Ford Motor Company · 2027 F-150 Raptor configurator · frame 14",
-      "revision": "74643b5dde41cf3b4d660a5a6a714b9d83b283cd988a6420188680e6a7de0f88",
+      "revision": "2e8e4f2450b521454cef9b952d3d3ae057e01841cde4741fda1f1bcd642d937e",
       "frame": 10,
       "upperContour": {
         "sourceFrame": 14,
@@ -231,7 +231,7 @@
         "medianEdgePx": 2.0,
         "p95EdgePx": 17.03,
         "originalCalibrationIoU": 0.97409,
-        "modelSha256": "74643b5dde41cf3b4d660a5a6a714b9d83b283cd988a6420188680e6a7de0f88"
+        "modelSha256": "2e8e4f2450b521454cef9b952d3d3ae057e01841cde4741fda1f1bcd642d937e"
       }
     },
     {
@@ -242,7 +242,7 @@
       "camera": "../exterior-photo-cameras.json#view-11",
       "source": "https://www.ford.com/trucks/f150/#360viewer",
       "credit": "© Ford Motor Company · 2027 F-150 Raptor configurator · frame 15",
-      "revision": "74643b5dde41cf3b4d660a5a6a714b9d83b283cd988a6420188680e6a7de0f88",
+      "revision": "2e8e4f2450b521454cef9b952d3d3ae057e01841cde4741fda1f1bcd642d937e",
       "frame": 11,
       "upperContour": {
         "sourceFrame": 15,
@@ -251,7 +251,7 @@
         "medianEdgePx": 3.0,
         "p95EdgePx": 9.22,
         "originalCalibrationIoU": 0.97493,
-        "modelSha256": "74643b5dde41cf3b4d660a5a6a714b9d83b283cd988a6420188680e6a7de0f88"
+        "modelSha256": "2e8e4f2450b521454cef9b952d3d3ae057e01841cde4741fda1f1bcd642d937e"
       }
     },
     {
@@ -262,7 +262,7 @@
       "camera": "../exterior-photo-cameras.json#view-12",
       "source": "https://www.ford.com/trucks/f150/#360viewer",
       "credit": "© Ford Motor Company · 2027 F-150 Raptor configurator · frame 16",
-      "revision": "74643b5dde41cf3b4d660a5a6a714b9d83b283cd988a6420188680e6a7de0f88",
+      "revision": "2e8e4f2450b521454cef9b952d3d3ae057e01841cde4741fda1f1bcd642d937e",
       "frame": 12,
       "upperContour": {
         "sourceFrame": 16,
@@ -271,7 +271,7 @@
         "medianEdgePx": 2.24,
         "p95EdgePx": 15.03,
         "originalCalibrationIoU": 0.97623,
-        "modelSha256": "74643b5dde41cf3b4d660a5a6a714b9d83b283cd988a6420188680e6a7de0f88"
+        "modelSha256": "2e8e4f2450b521454cef9b952d3d3ae057e01841cde4741fda1f1bcd642d937e"
       }
     },
     {
@@ -282,7 +282,7 @@
       "camera": "../exterior-photo-cameras.json#view-13",
       "source": "https://www.ford.com/trucks/f150/#360viewer",
       "credit": "© Ford Motor Company · 2027 F-150 Raptor configurator · frame 17",
-      "revision": "74643b5dde41cf3b4d660a5a6a714b9d83b283cd988a6420188680e6a7de0f88",
+      "revision": "2e8e4f2450b521454cef9b952d3d3ae057e01841cde4741fda1f1bcd642d937e",
       "frame": 13,
       "upperContour": {
         "sourceFrame": 17,
@@ -291,7 +291,7 @@
         "medianEdgePx": 2.0,
         "p95EdgePx": 13.34,
         "originalCalibrationIoU": 0.97741,
-        "modelSha256": "74643b5dde41cf3b4d660a5a6a714b9d83b283cd988a6420188680e6a7de0f88"
+        "modelSha256": "2e8e4f2450b521454cef9b952d3d3ae057e01841cde4741fda1f1bcd642d937e"
       }
     },
     {
@@ -302,7 +302,7 @@
       "camera": "../exterior-photo-cameras.json#view-14",
       "source": "https://www.ford.com/trucks/f150/#360viewer",
       "credit": "© Ford Motor Company · 2027 F-150 Raptor configurator · frame 18",
-      "revision": "74643b5dde41cf3b4d660a5a6a714b9d83b283cd988a6420188680e6a7de0f88",
+      "revision": "2e8e4f2450b521454cef9b952d3d3ae057e01841cde4741fda1f1bcd642d937e",
       "frame": 14,
       "upperContour": {
         "sourceFrame": 18,
@@ -311,7 +311,7 @@
         "medianEdgePx": 2.0,
         "p95EdgePx": 16.0,
         "originalCalibrationIoU": 0.97427,
-        "modelSha256": "74643b5dde41cf3b4d660a5a6a714b9d83b283cd988a6420188680e6a7de0f88"
+        "modelSha256": "2e8e4f2450b521454cef9b952d3d3ae057e01841cde4741fda1f1bcd642d937e"
       }
     },
     {
@@ -322,7 +322,7 @@
       "camera": "../exterior-photo-cameras.json#view-15",
       "source": "https://www.ford.com/trucks/f150/#360viewer",
       "credit": "© Ford Motor Company · 2027 F-150 Raptor configurator · frame 19",
-      "revision": "74643b5dde41cf3b4d660a5a6a714b9d83b283cd988a6420188680e6a7de0f88",
+      "revision": "2e8e4f2450b521454cef9b952d3d3ae057e01841cde4741fda1f1bcd642d937e",
       "frame": 15,
       "upperContour": {
         "sourceFrame": 19,
@@ -331,7 +331,7 @@
         "medianEdgePx": 4.12,
         "p95EdgePx": 17.9,
         "originalCalibrationIoU": 0.95742,
-        "modelSha256": "74643b5dde41cf3b4d660a5a6a714b9d83b283cd988a6420188680e6a7de0f88"
+        "modelSha256": "2e8e4f2450b521454cef9b952d3d3ae057e01841cde4741fda1f1bcd642d937e"
       }
     },
     {
@@ -342,7 +342,7 @@
       "camera": "../exterior-photo-cameras.json#view-16",
       "source": "https://www.ford.com/trucks/f150/#360viewer",
       "credit": "© Ford Motor Company · 2027 F-150 Raptor configurator · frame 20",
-      "revision": "74643b5dde41cf3b4d660a5a6a714b9d83b283cd988a6420188680e6a7de0f88",
+      "revision": "2e8e4f2450b521454cef9b952d3d3ae057e01841cde4741fda1f1bcd642d937e",
       "frame": 16,
       "upperContour": {
         "sourceFrame": 20,
@@ -352,7 +352,7 @@
         "p95EdgePx": 24.6,
         "originalCalibrationIoU": 0.94039,
         "followUp": "Resolve the shape-versus-camera difference against additional calibrated 2024 photographs. The two available real-truck checks disagree on the signed nose residual.",
-        "modelSha256": "74643b5dde41cf3b4d660a5a6a714b9d83b283cd988a6420188680e6a7de0f88"
+        "modelSha256": "2e8e4f2450b521454cef9b952d3d3ae057e01841cde4741fda1f1bcd642d937e"
       }
     },
     {
@@ -363,7 +363,7 @@
       "camera": "../exterior-photo-cameras.json#view-17",
       "source": "https://www.ford.com/trucks/f150/#360viewer",
       "credit": "© Ford Motor Company · 2027 F-150 Raptor configurator · frame 21",
-      "revision": "74643b5dde41cf3b4d660a5a6a714b9d83b283cd988a6420188680e6a7de0f88",
+      "revision": "2e8e4f2450b521454cef9b952d3d3ae057e01841cde4741fda1f1bcd642d937e",
       "frame": 17,
       "upperContour": {
         "sourceFrame": 21,
@@ -372,7 +372,7 @@
         "medianEdgePx": 4.0,
         "p95EdgePx": 14.93,
         "originalCalibrationIoU": 0.96236,
-        "modelSha256": "74643b5dde41cf3b4d660a5a6a714b9d83b283cd988a6420188680e6a7de0f88"
+        "modelSha256": "2e8e4f2450b521454cef9b952d3d3ae057e01841cde4741fda1f1bcd642d937e"
       }
     },
     {
@@ -383,7 +383,7 @@
       "camera": "../exterior-photo-cameras.json#view-18",
       "source": "https://www.ford.com/trucks/f150/#360viewer",
       "credit": "© Ford Motor Company · 2027 F-150 Raptor configurator · frame 22",
-      "revision": "74643b5dde41cf3b4d660a5a6a714b9d83b283cd988a6420188680e6a7de0f88",
+      "revision": "2e8e4f2450b521454cef9b952d3d3ae057e01841cde4741fda1f1bcd642d937e",
       "frame": 18,
       "upperContour": {
         "sourceFrame": 22,
@@ -392,7 +392,7 @@
         "medianEdgePx": 2.24,
         "p95EdgePx": 7.21,
         "originalCalibrationIoU": 0.97172,
-        "modelSha256": "74643b5dde41cf3b4d660a5a6a714b9d83b283cd988a6420188680e6a7de0f88"
+        "modelSha256": "2e8e4f2450b521454cef9b952d3d3ae057e01841cde4741fda1f1bcd642d937e"
       }
     },
     {
@@ -403,7 +403,7 @@
       "camera": "../exterior-photo-cameras.json#view-19",
       "source": "https://www.ford.com/trucks/f150/#360viewer",
       "credit": "© Ford Motor Company · 2027 F-150 Raptor configurator · frame 23",
-      "revision": "74643b5dde41cf3b4d660a5a6a714b9d83b283cd988a6420188680e6a7de0f88",
+      "revision": "2e8e4f2450b521454cef9b952d3d3ae057e01841cde4741fda1f1bcd642d937e",
       "frame": 19,
       "upperContour": {
         "sourceFrame": 23,
@@ -412,7 +412,7 @@
         "medianEdgePx": 5.0,
         "p95EdgePx": 13.42,
         "originalCalibrationIoU": 0.95882,
-        "modelSha256": "74643b5dde41cf3b4d660a5a6a714b9d83b283cd988a6420188680e6a7de0f88"
+        "modelSha256": "2e8e4f2450b521454cef9b952d3d3ae057e01841cde4741fda1f1bcd642d937e"
       }
     },
     {
@@ -423,7 +423,7 @@
       "camera": "../exterior-photo-cameras.json#view-20",
       "source": "https://www.ford.com/trucks/f150/#360viewer",
       "credit": "© Ford Motor Company · 2027 F-150 Raptor configurator · frame 24",
-      "revision": "74643b5dde41cf3b4d660a5a6a714b9d83b283cd988a6420188680e6a7de0f88",
+      "revision": "2e8e4f2450b521454cef9b952d3d3ae057e01841cde4741fda1f1bcd642d937e",
       "frame": 20,
       "upperContour": {
         "sourceFrame": 24,
@@ -433,7 +433,7 @@
         "p95EdgePx": 20.62,
         "originalCalibrationIoU": 0.94192,
         "followUp": "Resolve the shape-versus-camera difference against additional calibrated 2024 photographs. The two available real-truck checks disagree on the signed nose residual.",
-        "modelSha256": "74643b5dde41cf3b4d660a5a6a714b9d83b283cd988a6420188680e6a7de0f88"
+        "modelSha256": "2e8e4f2450b521454cef9b952d3d3ae057e01841cde4741fda1f1bcd642d937e"
       }
     },
     {
@@ -444,7 +444,7 @@
       "camera": "../exterior-photo-cameras.json#view-21",
       "source": "https://www.ford.com/trucks/f150/#360viewer",
       "credit": "© Ford Motor Company · 2027 F-150 Raptor configurator · frame 25",
-      "revision": "74643b5dde41cf3b4d660a5a6a714b9d83b283cd988a6420188680e6a7de0f88",
+      "revision": "2e8e4f2450b521454cef9b952d3d3ae057e01841cde4741fda1f1bcd642d937e",
       "frame": 21,
       "upperContour": {
         "sourceFrame": 25,
@@ -453,7 +453,7 @@
         "medianEdgePx": 4.0,
         "p95EdgePx": 18.15,
         "originalCalibrationIoU": 0.95757,
-        "modelSha256": "74643b5dde41cf3b4d660a5a6a714b9d83b283cd988a6420188680e6a7de0f88"
+        "modelSha256": "2e8e4f2450b521454cef9b952d3d3ae057e01841cde4741fda1f1bcd642d937e"
       }
     },
     {
@@ -464,7 +464,7 @@
       "camera": "../exterior-photo-cameras.json#view-22",
       "source": "https://www.ford.com/trucks/f150/#360viewer",
       "credit": "© Ford Motor Company · 2027 F-150 Raptor configurator · frame 26",
-      "revision": "74643b5dde41cf3b4d660a5a6a714b9d83b283cd988a6420188680e6a7de0f88",
+      "revision": "2e8e4f2450b521454cef9b952d3d3ae057e01841cde4741fda1f1bcd642d937e",
       "frame": 22,
       "upperContour": {
         "sourceFrame": 26,
@@ -473,7 +473,7 @@
         "medianEdgePx": 3.0,
         "p95EdgePx": 14.32,
         "originalCalibrationIoU": 0.97371,
-        "modelSha256": "74643b5dde41cf3b4d660a5a6a714b9d83b283cd988a6420188680e6a7de0f88"
+        "modelSha256": "2e8e4f2450b521454cef9b952d3d3ae057e01841cde4741fda1f1bcd642d937e"
       }
     },
     {
@@ -484,7 +484,7 @@
       "camera": "../exterior-photo-cameras.json#view-23",
       "source": "https://www.ford.com/trucks/f150/#360viewer",
       "credit": "© Ford Motor Company · 2027 F-150 Raptor configurator · frame 27",
-      "revision": "74643b5dde41cf3b4d660a5a6a714b9d83b283cd988a6420188680e6a7de0f88",
+      "revision": "2e8e4f2450b521454cef9b952d3d3ae057e01841cde4741fda1f1bcd642d937e",
       "frame": 23,
       "upperContour": {
         "sourceFrame": 27,
@@ -493,7 +493,7 @@
         "medianEdgePx": 2.24,
         "p95EdgePx": 13.04,
         "originalCalibrationIoU": 0.97681,
-        "modelSha256": "74643b5dde41cf3b4d660a5a6a714b9d83b283cd988a6420188680e6a7de0f88"
+        "modelSha256": "2e8e4f2450b521454cef9b952d3d3ae057e01841cde4741fda1f1bcd642d937e"
       }
     },
     {
@@ -504,7 +504,7 @@
       "camera": "../exterior-photo-cameras.json#view-24",
       "source": "https://www.ford.com/trucks/f150/#360viewer",
       "credit": "© Ford Motor Company · 2027 F-150 Raptor configurator · frame 28",
-      "revision": "74643b5dde41cf3b4d660a5a6a714b9d83b283cd988a6420188680e6a7de0f88",
+      "revision": "2e8e4f2450b521454cef9b952d3d3ae057e01841cde4741fda1f1bcd642d937e",
       "frame": 24,
       "upperContour": {
         "sourceFrame": 28,
@@ -513,7 +513,7 @@
         "medianEdgePx": 3.0,
         "p95EdgePx": 10.77,
         "originalCalibrationIoU": 0.97721,
-        "modelSha256": "74643b5dde41cf3b4d660a5a6a714b9d83b283cd988a6420188680e6a7de0f88"
+        "modelSha256": "2e8e4f2450b521454cef9b952d3d3ae057e01841cde4741fda1f1bcd642d937e"
       }
     },
     {
@@ -524,7 +524,7 @@
       "camera": "../exterior-photo-cameras.json#view-25",
       "source": "https://www.ford.com/trucks/f150/#360viewer",
       "credit": "© Ford Motor Company · 2027 F-150 Raptor configurator · frame 29",
-      "revision": "74643b5dde41cf3b4d660a5a6a714b9d83b283cd988a6420188680e6a7de0f88",
+      "revision": "2e8e4f2450b521454cef9b952d3d3ae057e01841cde4741fda1f1bcd642d937e",
       "frame": 25,
       "upperContour": {
         "sourceFrame": 29,
@@ -533,7 +533,7 @@
         "medianEdgePx": 3.0,
         "p95EdgePx": 15.0,
         "originalCalibrationIoU": 0.96892,
-        "modelSha256": "74643b5dde41cf3b4d660a5a6a714b9d83b283cd988a6420188680e6a7de0f88"
+        "modelSha256": "2e8e4f2450b521454cef9b952d3d3ae057e01841cde4741fda1f1bcd642d937e"
       }
     },
     {
@@ -544,7 +544,7 @@
       "camera": "../exterior-photo-cameras.json#view-26",
       "source": "https://www.ford.com/trucks/f150/#360viewer",
       "credit": "© Ford Motor Company · 2027 F-150 Raptor configurator · frame 30",
-      "revision": "74643b5dde41cf3b4d660a5a6a714b9d83b283cd988a6420188680e6a7de0f88",
+      "revision": "2e8e4f2450b521454cef9b952d3d3ae057e01841cde4741fda1f1bcd642d937e",
       "frame": 26,
       "upperContour": {
         "sourceFrame": 30,
@@ -554,18 +554,18 @@
         "p95EdgePx": 22.0,
         "originalCalibrationIoU": 0.96693,
         "followUp": "Resolve the shape-versus-camera difference against additional calibrated 2024 photographs. The two available real-truck checks disagree on the signed nose residual.",
-        "modelSha256": "74643b5dde41cf3b4d660a5a6a714b9d83b283cd988a6420188680e6a7de0f88"
+        "modelSha256": "2e8e4f2450b521454cef9b952d3d3ae057e01841cde4741fda1f1bcd642d937e"
       }
     },
     {
       "id": "view-27",
       "label": "Right profile",
       "status": "verified",
-      "note": "In right profile, the roof, outer bed length and forward position of the extractor align. The modeled extractor crown rises slightly above the Ford profile. The model’s glazing is lighter in this lighting.",
+      "note": "In right profile, the front fender whip rises above the roof and leans slightly rearward in both views. The model tip falls 2.8 pixels from Ford’s tip in the native 2160 × 926 frame. The extractor crown sits slightly higher and the glazing is lighter in the model.",
       "camera": "../exterior-photo-cameras.json#view-27",
       "source": "https://www.ford.com/trucks/f150/#360viewer",
       "credit": "© Ford Motor Company · 2027 F-150 Raptor configurator · frame 31",
-      "revision": "74643b5dde41cf3b4d660a5a6a714b9d83b283cd988a6420188680e6a7de0f88",
+      "revision": "2e8e4f2450b521454cef9b952d3d3ae057e01841cde4741fda1f1bcd642d937e",
       "frame": 27,
       "upperContour": {
         "sourceFrame": 31,
@@ -574,7 +574,7 @@
         "medianEdgePx": 2.0,
         "p95EdgePx": 11.18,
         "originalCalibrationIoU": 0.97933,
-        "modelSha256": "74643b5dde41cf3b4d660a5a6a714b9d83b283cd988a6420188680e6a7de0f88"
+        "modelSha256": "2e8e4f2450b521454cef9b952d3d3ae057e01841cde4741fda1f1bcd642d937e"
       }
     },
     {
@@ -585,7 +585,7 @@
       "camera": "../exterior-photo-cameras.json#view-28",
       "source": "https://www.ford.com/trucks/f150/#360viewer",
       "credit": "© Ford Motor Company · 2027 F-150 Raptor configurator · frame 32",
-      "revision": "74643b5dde41cf3b4d660a5a6a714b9d83b283cd988a6420188680e6a7de0f88",
+      "revision": "2e8e4f2450b521454cef9b952d3d3ae057e01841cde4741fda1f1bcd642d937e",
       "frame": 28,
       "upperContour": {
         "sourceFrame": 32,
@@ -594,7 +594,7 @@
         "medianEdgePx": 2.0,
         "p95EdgePx": 12.04,
         "originalCalibrationIoU": 0.97751,
-        "modelSha256": "74643b5dde41cf3b4d660a5a6a714b9d83b283cd988a6420188680e6a7de0f88"
+        "modelSha256": "2e8e4f2450b521454cef9b952d3d3ae057e01841cde4741fda1f1bcd642d937e"
       }
     },
     {
@@ -605,7 +605,7 @@
       "camera": "../exterior-photo-cameras.json#view-29",
       "source": "https://www.ford.com/trucks/f150/#360viewer",
       "credit": "© Ford Motor Company · 2027 F-150 Raptor configurator · frame 33",
-      "revision": "74643b5dde41cf3b4d660a5a6a714b9d83b283cd988a6420188680e6a7de0f88",
+      "revision": "2e8e4f2450b521454cef9b952d3d3ae057e01841cde4741fda1f1bcd642d937e",
       "frame": 29,
       "upperContour": {
         "sourceFrame": 33,
@@ -614,7 +614,7 @@
         "medianEdgePx": 1.0,
         "p95EdgePx": 7.0,
         "originalCalibrationIoU": 0.98604,
-        "modelSha256": "74643b5dde41cf3b4d660a5a6a714b9d83b283cd988a6420188680e6a7de0f88"
+        "modelSha256": "2e8e4f2450b521454cef9b952d3d3ae057e01841cde4741fda1f1bcd642d937e"
       }
     },
     {
@@ -625,7 +625,7 @@
       "camera": "../exterior-photo-cameras.json#view-30",
       "source": "https://www.ford.com/trucks/f150/#360viewer",
       "credit": "© Ford Motor Company · 2027 F-150 Raptor configurator · frame 34",
-      "revision": "74643b5dde41cf3b4d660a5a6a714b9d83b283cd988a6420188680e6a7de0f88",
+      "revision": "2e8e4f2450b521454cef9b952d3d3ae057e01841cde4741fda1f1bcd642d937e",
       "frame": 30,
       "upperContour": {
         "sourceFrame": 34,
@@ -634,7 +634,7 @@
         "medianEdgePx": 2.0,
         "p95EdgePx": 8.94,
         "originalCalibrationIoU": 0.97772,
-        "modelSha256": "74643b5dde41cf3b4d660a5a6a714b9d83b283cd988a6420188680e6a7de0f88"
+        "modelSha256": "2e8e4f2450b521454cef9b952d3d3ae057e01841cde4741fda1f1bcd642d937e"
       }
     },
     {
@@ -645,7 +645,7 @@
       "camera": "../exterior-photo-cameras.json#view-31",
       "source": "https://www.ford.com/trucks/f150/#360viewer",
       "credit": "© Ford Motor Company · 2027 F-150 Raptor configurator · frame 35",
-      "revision": "74643b5dde41cf3b4d660a5a6a714b9d83b283cd988a6420188680e6a7de0f88",
+      "revision": "2e8e4f2450b521454cef9b952d3d3ae057e01841cde4741fda1f1bcd642d937e",
       "frame": 31,
       "upperContour": {
         "sourceFrame": 35,
@@ -655,7 +655,7 @@
         "p95EdgePx": 25.0,
         "originalCalibrationIoU": 0.97057,
         "followUp": "Resolve the shape-versus-camera difference against additional calibrated 2024 photographs. The two available real-truck checks disagree on the signed nose residual.",
-        "modelSha256": "74643b5dde41cf3b4d660a5a6a714b9d83b283cd988a6420188680e6a7de0f88"
+        "modelSha256": "2e8e4f2450b521454cef9b952d3d3ae057e01841cde4741fda1f1bcd642d937e"
       }
     },
     {
@@ -666,7 +666,7 @@
       "camera": "../exterior-photo-cameras.json#view-32",
       "source": "https://www.ford.com/trucks/f150/#360viewer",
       "credit": "© Ford Motor Company · 2027 F-150 Raptor configurator · frame 36",
-      "revision": "74643b5dde41cf3b4d660a5a6a714b9d83b283cd988a6420188680e6a7de0f88",
+      "revision": "2e8e4f2450b521454cef9b952d3d3ae057e01841cde4741fda1f1bcd642d937e",
       "frame": 32,
       "upperContour": {
         "sourceFrame": 36,
@@ -676,7 +676,7 @@
         "p95EdgePx": 26.15,
         "originalCalibrationIoU": 0.96592,
         "followUp": "Resolve the shape-versus-camera difference against additional calibrated 2024 photographs. The two available real-truck checks disagree on the signed nose residual.",
-        "modelSha256": "74643b5dde41cf3b4d660a5a6a714b9d83b283cd988a6420188680e6a7de0f88"
+        "modelSha256": "2e8e4f2450b521454cef9b952d3d3ae057e01841cde4741fda1f1bcd642d937e"
       }
     },
     {
@@ -687,7 +687,7 @@
       "camera": "../exterior-photo-cameras.json#view-33",
       "source": "https://www.ford.com/trucks/f150/#360viewer",
       "credit": "© Ford Motor Company · 2027 F-150 Raptor configurator · frame 01",
-      "revision": "74643b5dde41cf3b4d660a5a6a714b9d83b283cd988a6420188680e6a7de0f88",
+      "revision": "2e8e4f2450b521454cef9b952d3d3ae057e01841cde4741fda1f1bcd642d937e",
       "frame": 33,
       "upperContour": {
         "sourceFrame": 1,
@@ -697,7 +697,7 @@
         "p95EdgePx": 26.93,
         "originalCalibrationIoU": 0.96387,
         "followUp": "Resolve the shape-versus-camera difference against additional calibrated 2024 photographs. The two available real-truck checks disagree on the signed nose residual.",
-        "modelSha256": "74643b5dde41cf3b4d660a5a6a714b9d83b283cd988a6420188680e6a7de0f88"
+        "modelSha256": "2e8e4f2450b521454cef9b952d3d3ae057e01841cde4741fda1f1bcd642d937e"
       }
     },
     {
@@ -708,7 +708,7 @@
       "camera": "../exterior-photo-cameras.json#view-34",
       "source": "https://www.ford.com/trucks/f150/#360viewer",
       "credit": "© Ford Motor Company · 2027 F-150 Raptor configurator · frame 02",
-      "revision": "74643b5dde41cf3b4d660a5a6a714b9d83b283cd988a6420188680e6a7de0f88",
+      "revision": "2e8e4f2450b521454cef9b952d3d3ae057e01841cde4741fda1f1bcd642d937e",
       "frame": 34,
       "upperContour": {
         "sourceFrame": 2,
@@ -718,7 +718,7 @@
         "p95EdgePx": 19.71,
         "originalCalibrationIoU": 0.96746,
         "followUp": "Resolve the shape-versus-camera difference against additional calibrated 2024 photographs. The two available real-truck checks disagree on the signed nose residual.",
-        "modelSha256": "74643b5dde41cf3b4d660a5a6a714b9d83b283cd988a6420188680e6a7de0f88"
+        "modelSha256": "2e8e4f2450b521454cef9b952d3d3ae057e01841cde4741fda1f1bcd642d937e"
       }
     },
     {
@@ -729,7 +729,7 @@
       "camera": "../exterior-photo-cameras.json#view-35",
       "source": "https://www.ford.com/trucks/f150/#360viewer",
       "credit": "© Ford Motor Company · 2027 F-150 Raptor configurator · frame 03",
-      "revision": "74643b5dde41cf3b4d660a5a6a714b9d83b283cd988a6420188680e6a7de0f88",
+      "revision": "2e8e4f2450b521454cef9b952d3d3ae057e01841cde4741fda1f1bcd642d937e",
       "frame": 35,
       "upperContour": {
         "sourceFrame": 3,
@@ -738,7 +738,7 @@
         "medianEdgePx": 2.0,
         "p95EdgePx": 10.0,
         "originalCalibrationIoU": 0.97904,
-        "modelSha256": "74643b5dde41cf3b4d660a5a6a714b9d83b283cd988a6420188680e6a7de0f88"
+        "modelSha256": "2e8e4f2450b521454cef9b952d3d3ae057e01841cde4741fda1f1bcd642d937e"
       }
     },
     {
@@ -749,7 +749,7 @@
       "camera": "../exterior-photo-cameras.json#front-grille-and-tow-hooks",
       "source": "https://www.ford.com/trucks/f150/#360viewer",
       "credit": "© Ford Motor Company · 2027 Raptor, frame 04 (crop)",
-      "revision": "74643b5dde41cf3b4d660a5a6a714b9d83b283cd988a6420188680e6a7de0f88",
+      "revision": "2e8e4f2450b521454cef9b952d3d3ae057e01841cde4741fda1f1bcd642d937e",
       "frame": 36
     },
     {
@@ -760,7 +760,7 @@
       "camera": "../exterior-photo-cameras.json#headlight-and-amber-drl",
       "source": "https://www.ford.com/trucks/f150/#360viewer",
       "credit": "© Ford Motor Company · 2027 Raptor, frame 07 (crop)",
-      "revision": "74643b5dde41cf3b4d660a5a6a714b9d83b283cd988a6420188680e6a7de0f88",
+      "revision": "2e8e4f2450b521454cef9b952d3d3ae057e01841cde4741fda1f1bcd642d937e",
       "frame": 37
     },
     {
@@ -771,7 +771,7 @@
       "camera": "../exterior-photo-cameras.json#power-dome-hood-extractor",
       "source": "https://www.ford.com/trucks/f150/#360viewer",
       "credit": "© Ford Motor Company · 2027 Raptor, frame 04 (crop)",
-      "revision": "74643b5dde41cf3b4d660a5a6a714b9d83b283cd988a6420188680e6a7de0f88",
+      "revision": "2e8e4f2450b521454cef9b952d3d3ae057e01841cde4741fda1f1bcd642d937e",
       "frame": 38
     },
     {
@@ -782,7 +782,7 @@
       "camera": "../exterior-photo-cameras.json#wheel-and-37-ko2-tire",
       "source": "https://www.ford.com/trucks/f150/#360viewer",
       "credit": "© Ford Motor Company · 2027 Raptor, frame 13 (crop)",
-      "revision": "74643b5dde41cf3b4d660a5a6a714b9d83b283cd988a6420188680e6a7de0f88",
+      "revision": "2e8e4f2450b521454cef9b952d3d3ae057e01841cde4741fda1f1bcd642d937e",
       "frame": 39
     },
     {
@@ -793,7 +793,7 @@
       "camera": "../exterior-photo-cameras.json#taillamp-and-bedside-graphic",
       "source": "https://www.ford.com/trucks/f150/#360viewer",
       "credit": "© Ford Motor Company · 2027 Raptor, frame 19 (crop)",
-      "revision": "74643b5dde41cf3b4d660a5a6a714b9d83b283cd988a6420188680e6a7de0f88",
+      "revision": "2e8e4f2450b521454cef9b952d3d3ae057e01841cde4741fda1f1bcd642d937e",
       "frame": 40
     },
     {
@@ -804,7 +804,7 @@
       "camera": "../exterior-photo-cameras.json#cockpit-driver-view",
       "source": "https://bringatrailer.com/listing/2024-ford-f-150-raptor-r-18/",
       "credit": "710HP / Bring a Trailer · lot 181611",
-      "revision": "74643b5dde41cf3b4d660a5a6a714b9d83b283cd988a6420188680e6a7de0f88",
+      "revision": "2e8e4f2450b521454cef9b952d3d3ae057e01841cde4741fda1f1bcd642d937e",
       "frame": 41
     },
     {
@@ -815,7 +815,7 @@
       "camera": "../exterior-photo-cameras.json#steering-wheel-and-cluster",
       "source": "https://bringatrailer.com/listing/2024-ford-f-150-raptor-r-18/",
       "credit": "710HP / Bring a Trailer · lot 181611",
-      "revision": "74643b5dde41cf3b4d660a5a6a714b9d83b283cd988a6420188680e6a7de0f88",
+      "revision": "2e8e4f2450b521454cef9b952d3d3ae057e01841cde4741fda1f1bcd642d937e",
       "frame": 42
     },
     {
@@ -826,7 +826,7 @@
       "camera": "../exterior-photo-cameras.json#center-stack-sync4",
       "source": "https://bringatrailer.com/listing/2024-ford-f-150-raptor-r-18/",
       "credit": "710HP / Bring a Trailer · lot 181611",
-      "revision": "74643b5dde41cf3b4d660a5a6a714b9d83b283cd988a6420188680e6a7de0f88",
+      "revision": "2e8e4f2450b521454cef9b952d3d3ae057e01841cde4741fda1f1bcd642d937e",
       "frame": 43
     },
     {
@@ -837,7 +837,7 @@
       "camera": "../exterior-photo-cameras.json#front-recaro-seats",
       "source": "https://bringatrailer.com/listing/2024-ford-f-150-raptor-r-18/",
       "credit": "710HP / Bring a Trailer · lot 181611",
-      "revision": "74643b5dde41cf3b4d660a5a6a714b9d83b283cd988a6420188680e6a7de0f88",
+      "revision": "2e8e4f2450b521454cef9b952d3d3ae057e01841cde4741fda1f1bcd642d937e",
       "frame": 44
     },
     {
@@ -848,7 +848,7 @@
       "camera": "../exterior-photo-cameras.json#driver-door-card",
       "source": "https://bringatrailer.com/listing/2024-ford-f-150-raptor-r-18/",
       "credit": "710HP / Bring a Trailer · lot 181611",
-      "revision": "74643b5dde41cf3b4d660a5a6a714b9d83b283cd988a6420188680e6a7de0f88",
+      "revision": "2e8e4f2450b521454cef9b952d3d3ae057e01841cde4741fda1f1bcd642d937e",
       "frame": 45
     },
     {
@@ -859,7 +859,7 @@
       "camera": "../exterior-photo-cameras.json#rear-supercrew-cabin",
       "source": "https://bringatrailer.com/listing/2024-ford-f-150-raptor-r-18/",
       "credit": "710HP / Bring a Trailer · lot 181611",
-      "revision": "74643b5dde41cf3b4d660a5a6a714b9d83b283cd988a6420188680e6a7de0f88",
+      "revision": "2e8e4f2450b521454cef9b952d3d3ae057e01841cde4741fda1f1bcd642d937e",
       "frame": 46
     },
     {
@@ -870,7 +870,7 @@
       "camera": "../exterior-photo-cameras.json#predator-52l-v8-engine",
       "source": "https://bringatrailer.com/listing/2024-ford-f-150-raptor-r-18/",
       "credit": "710HP / Bring a Trailer · lot 181611",
-      "revision": "74643b5dde41cf3b4d660a5a6a714b9d83b283cd988a6420188680e6a7de0f88",
+      "revision": "2e8e4f2450b521454cef9b952d3d3ae057e01841cde4741fda1f1bcd642d937e",
       "frame": 47
     },
     {
@@ -881,7 +881,7 @@
       "camera": "../exterior-photo-cameras.json#predator-v8-three-quarter",
       "source": "https://bringatrailer.com/listing/2024-ford-f-150-raptor-r-18/",
       "credit": "710HP / Bring a Trailer · lot 181611",
-      "revision": "74643b5dde41cf3b4d660a5a6a714b9d83b283cd988a6420188680e6a7de0f88",
+      "revision": "2e8e4f2450b521454cef9b952d3d3ae057e01841cde4741fda1f1bcd642d937e",
       "frame": 48
     },
     {
@@ -892,8 +892,419 @@
       "camera": "../exterior-photo-cameras.json#front-skid-plate-and-chassis",
       "source": "https://bringatrailer.com/listing/2024-ford-f-150-raptor-r-18/",
       "credit": "710HP / Bring a Trailer · lot 181611",
-      "revision": "74643b5dde41cf3b4d660a5a6a714b9d83b283cd988a6420188680e6a7de0f88",
+      "revision": "2e8e4f2450b521454cef9b952d3d3ae057e01841cde4741fda1f1bcd642d937e",
       "frame": 49
     }
-  ]
+  ],
+  "frontFenderAntenna": {
+    "feature": "Passenger-side front fender radio mast",
+    "reference": "Ford 2027 F-150 Raptor studio orbit, 2160 × 926 pixels per frame.",
+    "method": "The highest point of the exported mast mesh was projected through each saved camera and compared with the visible top of the Ford mast. Pixel coordinates are measured from the top left of the uncropped image.",
+    "modelTipXYZm": [
+      1.347,
+      2.211,
+      0.806
+    ],
+    "tipHeightAboveGroundMm": 2211.03,
+    "medianTipDistancePx": 8.12,
+    "maximumTipDistancePx": 32.12,
+    "frames": {
+      "view-00": {
+        "fordTipPx": [
+          870.46,
+          127.0
+        ],
+        "modelTipPx": [
+          859.38,
+          123.99
+        ],
+        "distancePx": 11.49
+      },
+      "view-01": {
+        "fordTipPx": [
+          852.67,
+          131.0
+        ],
+        "modelTipPx": [
+          843.88,
+          131.27
+        ],
+        "distancePx": 8.8
+      },
+      "view-02": {
+        "fordTipPx": [
+          808.96,
+          135.0
+        ],
+        "modelTipPx": [
+          800.87,
+          137.37
+        ],
+        "distancePx": 8.43
+      },
+      "view-03": {
+        "fordTipPx": [
+          750.42,
+          141.0
+        ],
+        "modelTipPx": [
+          743.88,
+          139.06
+        ],
+        "distancePx": 6.82
+      },
+      "view-04": {
+        "fordTipPx": [
+          701.08,
+          147.0
+        ],
+        "modelTipPx": [
+          695.63,
+          145.98
+        ],
+        "distancePx": 5.54
+      },
+      "view-05": {
+        "fordTipPx": [
+          715.51,
+          153.0
+        ],
+        "modelTipPx": [
+          708.23,
+          153.66
+        ],
+        "distancePx": 7.31
+      },
+      "view-06": {
+        "fordTipPx": [
+          689.58,
+          160.0
+        ],
+        "modelTipPx": [
+          686.81,
+          159.5
+        ],
+        "distancePx": 2.82
+      },
+      "view-07": {
+        "fordTipPx": [
+          700.52,
+          166.0
+        ],
+        "modelTipPx": [
+          704.73,
+          163.24
+        ],
+        "distancePx": 5.03
+      },
+      "view-08": {
+        "fordTipPx": [
+          695.99,
+          171.0
+        ],
+        "modelTipPx": [
+          695.33,
+          164.52
+        ],
+        "distancePx": 6.52
+      },
+      "view-09": {
+        "fordTipPx": [
+          717.59,
+          175.0
+        ],
+        "modelTipPx": [
+          728.53,
+          171.86
+        ],
+        "distancePx": 11.38
+      },
+      "view-10": {
+        "fordTipPx": [
+          758.7,
+          177.0
+        ],
+        "modelTipPx": [
+          769.16,
+          176.93
+        ],
+        "distancePx": 10.47
+      },
+      "view-11": {
+        "fordTipPx": [
+          807.61,
+          173.0
+        ],
+        "modelTipPx": [
+          823.43,
+          181.96
+        ],
+        "distancePx": 18.18
+      },
+      "view-12": {
+        "fordTipPx": [
+          831.11,
+          163.0
+        ],
+        "modelTipPx": [
+          855.5,
+          169.43
+        ],
+        "distancePx": 25.22
+      },
+      "view-13": {
+        "fordTipPx": [
+          861.45,
+          150.0
+        ],
+        "modelTipPx": [
+          883.82,
+          158.37
+        ],
+        "distancePx": 23.89
+      },
+      "view-14": {
+        "fordTipPx": [
+          921.38,
+          135.0
+        ],
+        "modelTipPx": [
+          953.34,
+          138.21
+        ],
+        "distancePx": 32.12
+      },
+      "view-15": {
+        "fordTipPx": [
+          986.71,
+          121.0
+        ],
+        "modelTipPx": [
+          975.07,
+          129.88
+        ],
+        "distancePx": 14.64
+      },
+      "view-16": {
+        "fordTipPx": [
+          1052.64,
+          110.0
+        ],
+        "modelTipPx": [
+          1032.69,
+          119.54
+        ],
+        "distancePx": 22.11
+      },
+      "view-17": {
+        "fordTipPx": [
+          1139.31,
+          105.0
+        ],
+        "modelTipPx": [
+          1135.38,
+          112.41
+        ],
+        "distancePx": 8.39
+      },
+      "view-18": {
+        "fordTipPx": [
+          1252.1,
+          105.0
+        ],
+        "modelTipPx": [
+          1255.65,
+          110.29
+        ],
+        "distancePx": 6.37
+      },
+      "view-19": {
+        "fordTipPx": [
+          1354.01,
+          112.0
+        ],
+        "modelTipPx": [
+          1371.43,
+          118.48
+        ],
+        "distancePx": 18.59
+      },
+      "view-20": {
+        "fordTipPx": [
+          1429.29,
+          122.0
+        ],
+        "modelTipPx": [
+          1451.57,
+          132.7
+        ],
+        "distancePx": 24.72
+      },
+      "view-21": {
+        "fordTipPx": [
+          1497.49,
+          133.0
+        ],
+        "modelTipPx": [
+          1514.3,
+          137.07
+        ],
+        "distancePx": 17.29
+      },
+      "view-22": {
+        "fordTipPx": [
+          1535.96,
+          144.0
+        ],
+        "modelTipPx": [
+          1527.42,
+          136.92
+        ],
+        "distancePx": 11.09
+      },
+      "view-23": {
+        "fordTipPx": [
+          1556.73,
+          152.0
+        ],
+        "modelTipPx": [
+          1551.37,
+          148.52
+        ],
+        "distancePx": 6.4
+      },
+      "view-24": {
+        "fordTipPx": [
+          1558.2,
+          157.0
+        ],
+        "modelTipPx": [
+          1555.45,
+          154.35
+        ],
+        "distancePx": 3.82
+      },
+      "view-25": {
+        "fordTipPx": [
+          1532.69,
+          158.0
+        ],
+        "modelTipPx": [
+          1529.33,
+          159.74
+        ],
+        "distancePx": 3.78
+      },
+      "view-26": {
+        "fordTipPx": [
+          1498.3,
+          155.0
+        ],
+        "modelTipPx": [
+          1502.82,
+          151.11
+        ],
+        "distancePx": 5.96
+      },
+      "view-27": {
+        "fordTipPx": [
+          1465.97,
+          150.0
+        ],
+        "modelTipPx": [
+          1465.05,
+          147.31
+        ],
+        "distancePx": 2.84
+      },
+      "view-28": {
+        "fordTipPx": [
+          1430.51,
+          146.0
+        ],
+        "modelTipPx": [
+          1438.26,
+          142.93
+        ],
+        "distancePx": 8.34
+      },
+      "view-29": {
+        "fordTipPx": [
+          1383.01,
+          141.0
+        ],
+        "modelTipPx": [
+          1388.05,
+          137.88
+        ],
+        "distancePx": 5.93
+      },
+      "view-30": {
+        "fordTipPx": [
+          1302.37,
+          136.0
+        ],
+        "modelTipPx": [
+          1305.93,
+          135.96
+        ],
+        "distancePx": 3.56
+      },
+      "view-31": {
+        "fordTipPx": [
+          1211.5,
+          132.0
+        ],
+        "modelTipPx": [
+          1218.02,
+          130.06
+        ],
+        "distancePx": 6.8
+      },
+      "view-32": {
+        "fordTipPx": [
+          1130.04,
+          128.0
+        ],
+        "modelTipPx": [
+          1130.88,
+          127.65
+        ],
+        "distancePx": 0.91
+      },
+      "view-33": {
+        "fordTipPx": [
+          1050.5,
+          126.0
+        ],
+        "modelTipPx": [
+          1048.57,
+          125.25
+        ],
+        "distancePx": 2.07
+      },
+      "view-34": {
+        "fordTipPx": [
+          970.51,
+          125.0
+        ],
+        "modelTipPx": [
+          962.63,
+          124.25
+        ],
+        "distancePx": 7.91
+      },
+      "view-35": {
+        "fordTipPx": [
+          931.54,
+          125.0
+        ],
+        "modelTipPx": [
+          922.39,
+          126.36
+        ],
+        "distancePx": 9.25
+      }
+    }
+  }
 }

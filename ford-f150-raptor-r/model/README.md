@@ -38,7 +38,7 @@ node ford-f150-raptor-r/model/compress_model.mjs \
   "$raptor_build_dir/rebuilt.glb" ford-f150-raptor-r/ford_f150_raptor_r.glb
 ```
 
-The reviewed Draco GLB has SHA-256 `74643b5dde41cf3b4d660a5a6a714b9d83b283cd988a6420188680e6a7de0f88`. Blender and dependency versions can affect the encoded bytes.
+The reviewed Draco GLB has SHA-256 `2e8e4f2450b521454cef9b952d3d3ae057e01841cde4741fda1f1bcd642d937e`. Blender and dependency versions can affect the encoded bytes.
 
 `build_raptor.py` also writes `rebuilt.build.json`. It reports the restored `_STUDIO_VISIBILITY` primitives, the removed and added meshes per pivot, the overall dimensions and the wheelbase assertion (3.6932 m).
 
@@ -51,7 +51,7 @@ blender -b --python-exit-code 1 --python ford-f150-raptor-r/model/exterior/check
   ford-f150-raptor-r/ford_f150_raptor_r.glb
 ```
 
-The served asset measures 5,878 × 2,210 × 2,049 mm (2,440 mm with mirrors), with a 3,693 mm wheelbase, 1,887/1,877 mm tracks and 333 mm ground clearance. Its approach, departure and breakover angles are 33.3°, 24.9° and 23.8°; Ford gives 33.1°, 24.9° and 24.4°. No painted panel touches the headlamp lenses or grille frame, and the hood clears the fixed front panels from closed to 48°. The length is 30 mm under Ford's published 5,908 mm. Ford's calibrated side renders place both bumper faces within about 2 cm of the model at their most prominent heights, so the bumpers were not stretched to the published figure.
+The served body measures 5,878 × 2,210 × 2,049 mm, or 2,440 mm wide including the mirrors and 2,211 mm high including the radio mast, with a 3,693 mm wheelbase, 1,887/1,877 mm tracks and 333 mm ground clearance. Its approach, departure and breakover angles are 33.3°, 24.9° and 23.8°; Ford gives 33.1°, 24.9° and 24.4°. No painted panel touches the headlamp lenses or grille frame, and the hood clears the fixed front panels from closed to 48°. The length is 30 mm under Ford's published 5,908 mm. Ford's calibrated side renders place both bumper faces within about 2 cm of the model at their most prominent heights, so the bumpers were not stretched to the published figure.
 
 Before publishing, inspect the model from the front, side, rear and above. Exercise the doors, hood, tailgate, tonneau, fuel door, exploded view and suspension controls. Update the model URL's cache version in `index.html`.
 
@@ -59,7 +59,11 @@ Before publishing, inspect the model from the front, side, rear and above. Exerc
 
 Ford's driver and passenger profiles and the auction truck's three-quarter photographs show a pronounced lower door stamping, a painted window header around the black weatherstrip, and a shadow under each grab handle. The exterior skins and card clearance reproduce those features on all four hinges. The driver's bedside has a cutout for the filler so opening the flap reveals the neck.
 
-The auction truck's illuminated and unlit front close-ups were used for the upright and upper amber diffusers, the two deep projector reflectors, the narrow undulating grille webs and the horizontal orange recovery loops in the bumper notches. The skid plate retains its exposed alloy finish. The auction truck has no tall antenna mast at its passenger fender. Ford's standard Raptor orbit includes one.
+The auction truck's illuminated and unlit front close-ups were used for the upright and upper amber diffusers, the two deep projector reflectors, the narrow undulating grille webs and the horizontal orange recovery loops in the bumper notches. The skid plate retains its exposed alloy finish.
+
+The passenger-side fender carries a radio whip. The dark rubber sleeve, spiral on the upper shaft and rounded tip follow Ford’s studio frames. The exposed length on the painted deck is 757 mm. Ford’s red 2024 launch truck also carries the long whip beside the windshield. [Ford’s 2024 Raptor R press photograph](https://hips.hearstapps.com/hmg-prod/images/2024-ford-f150-raptor-r-101-66461c370e912.jpg)
+
+Fourteen clear studio frames constrain the sleeve base and all 36 constrain the tip. The existing hood seam and deck place the model’s grommet 43 mm farther outboard and 51 mm lower than the photographed base. The modeled tip reaches the triangulated height and sits 28 mm farther outboard. The grommet contacts the fixed fender and both antenna meshes clear the complete hood movement from 0° to 48°.
 
 The same-year side photograph places the heat extractor 0.30 m farther forward than the earlier mesh. The three pods and their shared tray now clear the graphic-covered crown in the low front view. The elevated auction photograph constrains the deeper cups, four base slots per cup, and the position of the two outboard badges.
 
@@ -75,7 +79,7 @@ The 2024 interior photos guided the contoured front cushions, tapered backrest b
 | `parts_front.py` | Grille and FORD letters, valance, front bumper, LED fog modules, skid plate and recovery hooks. |
 | `parts_rear.py` | Tailgate, rear bumper with exhaust outlets and receiver, bed box. |
 | `parts_misc.py`, `parts_extra.py` | Flares, wheelhouse liners, mirrors, handles, running boards, fuel door, fender vents, wipers, decals, tonneau, bed details, badges. |
-| `parts_detail.py` | Second-pass details from close-ups: headlamps with C-clamp light guides, taillamps, bed rear pillars, hood nose, extractor, CHMSL, roof antenna pods, C-pillar trims, wheel-well aprons. |
+| `parts_detail.py` | Second-pass details from close-ups: headlamps with C-clamp light guides, taillamps, bed rear pillars, hood nose, extractor, CHMSL, roof antenna pods, passenger-fender radio whip, C-pillar trims, wheel-well aprons. |
 | `seat_trim.py`, `door_trim.py` | Front seat upholstery and front door-card moldings from the 2024 interior photographs. |
 | `build_raptor.py` | Removes the old exterior, builds and parents the new one, fits kept parts inside it and exports the GLB. |
 | `fordcam.py`, `ford360_cameras.json` | Calibrated cameras for Ford's 36 renders, to overlay the model on the official views. |

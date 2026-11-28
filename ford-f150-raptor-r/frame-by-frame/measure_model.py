@@ -146,6 +146,60 @@ def front_panel_fit(meshes, vertices):
     }
 
 
+def radio_antenna_fit(meshes, vertices, contact):
+    """Check the fixed rubber foot and the hood's entire 48-degree travel."""
+    base = "RaptorR_RadioAntenna_Base"
+    mast = "RaptorR_RadioAntenna_Mast"
+    deck = "RaptorR_Body_FenderDeck_R"
+    if mast not in meshes:
+        return {}
+
+    def triangles(name):
+        return vertices[name][[tuple(poly.vertices) for poly in meshes[name].data.polygons]]
+
+    def surface(name):
+        faces = [tuple(poly.vertices) for poly in meshes[name].data.polygons]
+        return BVHTree.FromPolygons(vertices[name].tolist(), faces, all_triangles=True)
+
+    hinge = bpy.data.objects["Pivot_Hood"]
+    moving = np.vstack([triangles(o.name) for o in hinge.children if o.type == "MESH"])
+    pivot = np.array(hinge.matrix_world.translation)
+
+    def sweep_clear(name):
+        fixed = triangles(name)
+        low, high = fixed.min(axis=1), fixed.max(axis=1)
+        bounds_low, bounds_high = low.min(axis=0), high.max(axis=0)
+        # Rotation about Y leaves each vertex's Y coordinate fixed.
+        relevant = (moving[:, :, 1].min(axis=1) <= bounds_high[1]) & (moving[:, :, 1].max(axis=1) >= bounds_low[1])
+        offsets = moving[relevant] - pivot
+        radius = np.linalg.norm(offsets[:, :, [0, 2]], axis=2).max(axis=1)
+        # Expand each moving face's midpoint bounds by the maximum displacement
+        # of any of its vertices throughout the quarter-degree interval.
+        drift = 2 * radius * math.sin(math.radians(0.125) / 2)
+        pad = np.column_stack((drift, np.zeros_like(drift), drift))
+        for step in range(48 * 4):
+            angle = math.radians((step + 0.5) / 4)
+            c, s = math.cos(angle), math.sin(angle)
+            rotation = np.array([[c, 0, -s], [0, 1, 0], [s, 0, c]])
+            turned = offsets @ rotation.T + pivot
+            lo, hi = turned.min(axis=1) - pad, turned.max(axis=1) + pad
+            near = ((lo <= bounds_high) & (hi >= bounds_low)).all(axis=1)
+            for lower, upper in zip(lo[near], hi[near]):
+                if ((low <= upper) & (high >= lower)).all(axis=1).any():
+                    return False  # The conservative bounds cannot certify separation.
+        return True
+
+    return {
+        "height_with_radio_mast_mm": round(float(vertices[mast][:, 2].max() - contact) * 1000, 2),
+        "radio_mast_fit": {
+            "parent": meshes[mast].parent.name,
+            "grommet_parent": meshes[base].parent.name,
+            "grommet_contacts_passenger_fender": bool(surface(base).overlap(surface(deck))),
+            "continuous_hood_sweep_clear_0_to_48_degrees": {name: sweep_clear(name) for name in (base, mast)},
+        },
+    }
+
+
 def measure(path, front_only=False):
     bpy.ops.wm.read_factory_settings(use_empty=True)
     bpy.ops.import_scene.gltf(filepath=str(path.resolve()))
@@ -164,7 +218,7 @@ def measure(path, front_only=False):
         return {"sha256": digest, "front_panel_fit": front}
     points = np.vstack(list(vertices.values()))
     body = np.vstack(
-        [p for name, p in vertices.items() if not name.startswith("RaptorR_Mirror_")]
+        [p for name, p in vertices.items() if not name.startswith(("RaptorR_Mirror_", "RaptorR_RadioAntenna_"))]
     )
     running_gear = (
         "RaptorR_Tire_",
@@ -188,7 +242,7 @@ def measure(path, front_only=False):
         "length": np.ptp(points[:, 0]),
         "width_without_mirrors": np.ptp(body[:, 1]),
         "width_with_mirrors": np.ptp(points[:, 1]),
-        "height": points[:, 2].max() - contact,
+        "height": body[:, 2].max() - contact,
         "wheelbase": np.mean([hubs["F" + s][0] - hubs["R" + s][0] for s in ("L", "R")]),
         "front_track": hubs["FL"][1] - hubs["FR"][1],
         "rear_track": hubs["RL"][1] - hubs["RR"][1],
@@ -213,6 +267,7 @@ def measure(path, front_only=False):
             mm(vertices["RaptorR_Tonneau_" + section + "_Panel"][:, 2].max() - rail_top)
             for section in ("Front", "Middle", "Rear")
         ]
+    geometry.update(radio_antenna_fit(meshes, vertices, contact))
     return {
         "sha256": digest,
         "measured_mm": {key: mm(measured[key]) for key in FORD},

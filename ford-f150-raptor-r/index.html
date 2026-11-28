@@ -15,7 +15,7 @@
       document.documentElement.classList.add('show-photos');
     }
     const overrideModel = initParams.get('model');
-    const modelFile = overrideModel || './ford_f150_raptor_r.glb?v=74643b5dde';
+    const modelFile = overrideModel || './ford_f150_raptor_r.glb?v=2e8e4f2450';
     const preload = document.createElement('link');
     preload.rel = 'preload';
     preload.as = 'fetch';
@@ -26,7 +26,7 @@
   <link rel="icon" href="/favicon.ico" />
   <title>2024 Ford F-150 Raptor R — Rapid Red Metallic</title>
   <meta property="og:title" content="2024 Ford F-150 Raptor R in Rapid Red Metallic">
-  <meta property="og:image" content="https://bailiping.com/ford-f150-raptor-r/og-preview.jpg?v=7d34cb94">
+  <meta property="og:image" content="https://bailiping.com/ford-f150-raptor-r/og-preview.jpg?v=ccd07793">
   <meta property="og:image:alt" content="Rear three-quarter view of the Rapid Red Raptor R with the flat bed cover closed">
   <link rel="stylesheet" href="./studio.css?v=photo-r10">
   <script type="module" src="./studio.js?v=photo-r10"></script>
@@ -659,7 +659,9 @@
         [/Door_RR|Rear_Right_Door/i, 'SuperCrew rear right door', 'Full-size 4-door SuperCrew · click or press 4 to open'],
         [/Mirror_Cabin|Rearview/i, 'Auto-dimming rearview mirror', 'Live planar reflection in Cabin view (I)'],
         [/Mirror/i, 'Power-folding Rapid Red Metallic side mirror', '96.0" overall width incl. mirrors · puddle & spot LEDs'],
-        [/Roof_Antennas|SharkFin|Antenna/i, 'Twin rear roof antenna pods', 'Satellite navigation, SiriusXM & 5G telemetry pods'],
+        [/RadioAntenna_Mast/i, 'AM/FM radio antenna', 'Whip mast on the passenger-side front fender'],
+        [/RadioAntenna_Base/i, 'Radio antenna base', 'Mast mount beside the passenger-side windshield wiper'],
+        [/Roof_Antennas|SharkFin/i, 'Twin rear roof antenna pods', 'Satellite navigation, SiriusXM & 5G telemetry pods'],
         [/Roof_ChannelStrip|RoofRail|RoofTrim|Ditch|Drip/i, 'Roof ditch-channel moldings', 'Satin-black structural roof seam trim strips'],
         [/RoofPanel|Roof_Panel|Cab_Roof/i, 'Solid stamped aluminum cab roof', 'Rapid Red Metallic (D4) · factory longitudinal stiffening ribs'],
         [/Windshield/i, 'Acoustic laminated front windshield', 'Raked F-150 SoundScreen safety glass'],
