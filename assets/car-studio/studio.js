@@ -16,6 +16,18 @@ let assemblyStudy, assemblyAspect;
 let amount = 0, frame = 0, aspect = 1, introTimer = 0;
 let inspection = null, inspectionPose = null, inspectionNav = null;
 const hiddenMeshes = [];
+let drawing, drawingFocus, portraitOffsets;
+function holdDrawing() {
+  if (motion?.intro || amount === 1) { stop(); setModelUrl(null, 'exploded'); }
+}
+function focusDrawing(selected, direction) {
+  userOrbit=false;
+  drawingFocus=selected ? measurePose(direction || cfg.assemblyDrawing.direction) : null;
+  frameCamera();invalidate();
+}
+function enterDrawing() {
+  reset();setSpread(1);frameCamera();invalidate();
+}
 function clearInspection(){
   for(const object of hiddenMeshes)object.visible=true;
   hiddenMeshes.length=0;inspection=null;inspectionPose=null;
@@ -75,7 +87,7 @@ const pressed = (id,on) => $(id).setAttribute('aria-pressed',String(on));
 
 function draw() {
   frame = 0;
-  if (motion && performance.now() < motion.start && assemblyStudy) {
+  if (motion && performance.now() < motion.start && (assemblyStudy || drawing)) {
     if (!introTimer) introTimer=setTimeout(()=>{introTimer=0;invalidate();}, motion.start-performance.now());
   } else if (motion) {
     const t = T.MathUtils.clamp((performance.now()-motion.start)/motion.duration,0,1);
@@ -85,7 +97,7 @@ function draw() {
     if (t >= 1) motion = null;
     else invalidate();
   }
-  if(dirtyGround && updateGround && (!assemblyStudy || floor.visible)){updateGround();dirtyGround=false;}
+  if(dirtyGround && updateGround && (!(assemblyStudy || drawing) || floor.visible)){updateGround();dirtyGround=false;}
   renderer.render(scene,camera);
 }
 function invalidate() { if (!frame) frame=requestAnimationFrame(draw); }
@@ -93,17 +105,26 @@ function setSpread(a) {
   amount=a;dirtyGround=true;
   if(assemblyStudy){assemblyStudy.apply(a);floor.visible=a<.001 && !inspection;}
   for (const p of parts) p.object.position.copy(p.original).addScaledVector(p.offset,a);
+  if(drawing) {
+    drawing.setActive(a >= .999);
+    floor.visible = !inspection && a < .012;
+  }
   pressed('explode',a>.001);
 }
 // Fit the actual corners of each part along the initial direction of view.
-function measurePose(viewDirection) {
+function measurePose(viewDirection, wholeDrawing = false) {
   const direction = viewDirection ? vec(viewDirection).normalize() : vec(cfg.home).sub(vec(cfg.target)).normalize();
   const right = vec([0,1,0]).cross(direction).normalize(), up=direction.clone().cross(right);
   const points = [];
   model.updateMatrixWorld(true);
-  model.traverse(o => {
+  if (drawing && (wholeDrawing || (!inspection && !drawing.separated))) {
+    for (const part of parts) {
+      if (!part.object.visible) continue;
+      const delta=part.object.position.clone().sub(part.original);
+      for (const corner of part.hull) points.push(corner.clone().add(delta));
+    }
+  } else model.traverseVisible(o => {
     if (!o.isMesh) return;
-    for (let p=o; p; p=p.parent) if (!p.visible) return;
     if (!o.geometry.boundingBox) o.geometry.computeBoundingBox();
     const {min,max}=o.geometry.boundingBox;
     for (const x of [min.x,max.x]) for (const y of [min.y,max.y]) for (const z of [min.z,max.z])
@@ -121,7 +142,7 @@ function fit(pose) {
   if (pose.fitAspect === aspect) return pose.eye;
   const {points,center,up,right,direction}=pose;
   const v = new T.Vector3();
-  const tangent=Math.tan(T.MathUtils.degToRad(32)*.5);
+  const tangent=Math.tan(T.MathUtils.degToRad(cfg.exteriorFov || 32)*.5);
   let d=0;
   for(const point of points){
     v.subVectors(point,center);
@@ -132,6 +153,9 @@ function fit(pose) {
   return pose.eye.copy(center).addScaledVector(direction,d);
 }
 function frameCamera() {
+  if(drawingFocus) {
+    target.copy(drawingFocus.center);camera.position.copy(fit(drawingFocus));camera.lookAt(target);return;
+  }
   target.copy(assembled.center).lerp(exploded.center,amount);
   camera.position.copy(fit(assembled)).lerp(fit(exploded),amount);
   if (assemblyStudy) {
@@ -161,6 +185,17 @@ function resize() {
   if (!w || !h) return;
   renderer.setSize(w,h,false);
   aspect=w/h;
+  if (drawing && portraitOffsets !== (aspect < cfg.assemblyDrawing.narrowAspect)) {
+    portraitOffsets=aspect < cfg.assemblyDrawing.narrowAspect;
+    for (const part of parts) part.offset.copy(portraitOffsets ? part.narrow : part.wide);
+    const saved=amount, visibility=parts.map(p=>p.object.visible);
+    for(const part of parts)part.object.visible=true;
+    // Measure the full drawing even when a single part is being inspected.
+    for(const part of parts)part.object.position.copy(part.original).add(part.offset);
+    exploded=measurePose(cfg.assemblyDrawing.direction, true);
+    parts.forEach((part,i)=>{part.object.visible=visibility[i];part.object.position.copy(part.original).addScaledVector(part.offset,saved);});
+    if(drawingFocus)drawingFocus=measurePose(drawingFocus.direction.toArray());
+  }
   if (assemblyStudy && !inspection && Math.abs(assemblyAspect-aspect) > .02) {
     layoutAssembly();
     if (amount && !cabin && !matched) userOrbit=false;
@@ -199,8 +234,10 @@ function clearActions() {
 function reset() {
   stop();if(inspection)clearInspection();
   if(assemblyStudy?.detailed){assemblyStudy.select('','');layoutAssembly();}
+  if(drawing?.selected)drawing.clear();
+  drawingFocus=null;
   unmatch();cabin=false;userOrbit=false;pressed('cabin',false);
-  camera.near=.012;camera.fov=32;camera.updateProjectionMatrix();setSpread(0);clearActions();frameCamera();invalidate();
+  camera.near=.012;camera.fov=cfg.exteriorFov || 32;camera.updateProjectionMatrix();setSpread(0);clearActions();frameCamera();invalidate();
 }
 function match(id){
   const v=cfg.views.find(record=>String(record.id)===String(id));
@@ -230,9 +267,12 @@ function resetView() {
   setModelUrl();
 }
 function toggleSpread(){
-  const dest = motion && !motion.intro ? 1-motion.to : (amount>.5?0:1);
+  let dest = motion && !motion.intro ? 1-motion.to : (amount>.5?0:1);
+  if(drawing && motion?.intro)dest=1;
+  if(drawing?.selected)drawing.clear();
+  drawingFocus=null;
   if(assemblyStudy?.detailed)selectAssembly('','');
-  setModelUrl(null, assemblyStudy && dest ? 'exploded' : 'model');
+  setModelUrl(null, (assemblyStudy || drawing) && dest ? 'exploded' : 'model');
   stop(); if(cabin||matched||inspection)reset();userOrbit=false;
   clearActions();
   if(reduced.matches){setSpread(dest);frameCamera();}
@@ -252,7 +292,7 @@ function orbit(dx,dy){
   interact();
   const v=cabin ? target.clone().sub(camera.position) : camera.position.clone().sub(target);
   const r=v.length(), yaw=Math.atan2(v.x,v.z)+(cabin?1:-1)*dx*.007;
-  const pitch=T.MathUtils.clamp(Math.asin(v.y/r)+dy*.006,cabin||inspection||(assemblyStudy && amount>.001)?-1.45:.025,1.48);
+  const pitch=T.MathUtils.clamp(Math.asin(v.y/r)+dy*.006,cabin||inspection||((assemblyStudy || drawing) && amount>.001)?-1.45:.025,1.48);
   v.set(Math.sin(yaw)*Math.cos(pitch),Math.sin(pitch),Math.cos(yaw)*Math.cos(pitch)).multiplyScalar(r);
   if(cabin)target.copy(camera.position).add(v);else camera.position.copy(target).add(v);
   camera.lookAt(target);invalidate();
@@ -262,7 +302,7 @@ function zoom(factor){
   if(cabin){camera.fov=T.MathUtils.clamp(camera.fov*factor,37,105);camera.updateProjectionMatrix();}
   else{
     const d=camera.position.clone().sub(target);
-    const distance=T.MathUtils.clamp(d.length()*factor,assemblyStudy?.detailed ? .0004 : .35,assemblyStudy && amount ? 260 : 65);
+    const distance=T.MathUtils.clamp(d.length()*factor,assemblyStudy?.detailed ? .0004 : drawingFocus ? .035 : .35,(assemblyStudy || drawing) && amount ? 260 : 65);
     camera.position.copy(target).addScaledVector(d.normalize(),distance);
   }
   invalidate();
@@ -299,7 +339,8 @@ function input(){
     else resetView();
   };
   $('model-link').onclick=e=>{e.preventDefault();resetView();};
-  window.addEventListener('hashchange',()=>{if(assemblyStudy && location.hash==='#exploded'){reset();selectAssembly('','');}
+  window.addEventListener('hashchange',()=>{if(drawing && location.hash==='#exploded')enterDrawing();
+    else if(assemblyStudy && location.hash==='#exploded'){reset();selectAssembly('','');}
     else if(!inspect(location.hash.slice(1)) && location.hash==='#model')reset();});
 }
 async function init(){
@@ -313,38 +354,44 @@ async function init(){
   const assemblyModule=document.querySelector('script[data-assembly]')?.dataset.assembly;
   const studioExtension=assemblyModule ? await import(studioAsset(assemblyModule)) : null;
   const lighting=studioExtension?.lighting;
-  const pmrem=new T.PMREMGenerator(renderer);
-  const panorama=document.createElement('canvas');panorama.width=512;panorama.height=256;
-  const context=panorama.getContext('2d');const pixels=context.createImageData(512,256);
-  const smooth=T.MathUtils.smoothstep;
-  for (let y=0;y<256;y++) {
-    const lat=(.5-(y+.5)/256)*Math.PI;
-    const high=smooth(lat,.24,.40)*(1-smooth(lat,.59,.83));
-    const low=smooth(lat,-.18,-.06)*(1-smooth(lat,.035,.15));
-    for (let x=0;x<512;x++) {
-      const az=((x+.5)/512-.5)*2*Math.PI;
-      const bank=smooth(Math.abs(Math.sin(az+.20)),.27,.85);
-      const endWall = Math.pow(Math.abs(Math.cos(az - .45)), 12) * smooth(lat, -.12, .22);
-      const light=.25+.72*smooth(lat,.64,1.36)+high*(.34+2.45*bank)+low*(.15+.98*bank)+.82*endWall;
-      const k=4*(y*512+x);
-      if(lighting){
-        const intensity=lighting.strip(az,lat,smooth);
-        pixels.data[k]=intensity;pixels.data[k+1]=intensity*.99;pixels.data[k+2]=intensity;
-      }else{pixels.data[k]=light*64;pixels.data[k+1]=light*66;pixels.data[k+2]=light*69;}
-      pixels.data[k+3]=255;
+  if (cfg.lighting) {
+    const {studioEnvironment}=await import(studioAsset('studio-light.js'));
+    scene.environment=await studioEnvironment(renderer,studioAsset(cfg.lighting.image));
+    scene.environmentRotation.y=cfg.lighting.rotation;
+  } else {
+    const pmrem=new T.PMREMGenerator(renderer);
+    const panorama=document.createElement('canvas');panorama.width=512;panorama.height=256;
+    const context=panorama.getContext('2d');const pixels=context.createImageData(512,256);
+    const smooth=T.MathUtils.smoothstep;
+    for (let y=0;y<256;y++) {
+      const lat=(.5-(y+.5)/256)*Math.PI;
+      const high=smooth(lat,.24,.40)*(1-smooth(lat,.59,.83));
+      const low=smooth(lat,-.18,-.06)*(1-smooth(lat,.035,.15));
+      for (let x=0;x<512;x++) {
+        const az=((x+.5)/512-.5)*2*Math.PI;
+        const bank=smooth(Math.abs(Math.sin(az+.20)),.27,.85);
+        const endWall = Math.pow(Math.abs(Math.cos(az - .45)), 12) * smooth(lat, -.12, .22);
+        const light=.25+.72*smooth(lat,.64,1.36)+high*(.34+2.45*bank)+low*(.15+.98*bank)+.82*endWall;
+        const k=4*(y*512+x);
+        if(lighting){
+          const intensity=lighting.strip(az,lat,smooth);
+          pixels.data[k]=intensity;pixels.data[k+1]=intensity*.99;pixels.data[k+2]=intensity;
+        }else{pixels.data[k]=light*64;pixels.data[k+1]=light*66;pixels.data[k+2]=light*69;}
+        pixels.data[k+3]=255;
+      }
     }
+    context.putImageData(pixels,0,0);const studio=new T.CanvasTexture(panorama);
+    scene.environment=pmrem.fromEquirectangular(studio).texture;studio.dispose();pmrem.dispose();
   }
-  context.putImageData(pixels,0,0);const studio=new T.CanvasTexture(panorama);
-  scene.environment=pmrem.fromEquirectangular(studio).texture;studio.dispose();pmrem.dispose();
-  scene.environmentIntensity=lighting?.environment ?? 1.38;
-  scene.add(new T.HemisphereLight(0xf2f6fd,0x53575e,lighting?.hemisphere ?? 1.13));
-  const key=new T.DirectionalLight(0xfff8ef,lighting?.key ?? 1.43);key.position.set(...(lighting?.keyPosition ?? [-3,6,3]));scene.add(key);
+  scene.environmentIntensity=cfg.lighting?.intensity ?? lighting?.environment ?? 1.38;
+  scene.add(new T.HemisphereLight(0xf2f6fd,0x53575e,cfg.lighting?.ambient ?? lighting?.hemisphere ?? 1.13));
+  const key=new T.DirectionalLight(0xfff8ef,cfg.lighting?.key ?? lighting?.key ?? 1.43);key.position.set(...(lighting?.keyPosition ?? [-3,6,3]));scene.add(key);
   renderer.shadowMap.enabled=true;renderer.shadowMap.type=T.PCFSoftShadowMap;
   key.castShadow=true;key.shadow.mapSize.set(1024,1024);Object.assign(key.shadow.camera,{left:-5,right:5,top:5,bottom:-5,near:.1,far:22});key.shadow.camera.updateProjectionMatrix();key.shadow.normalBias=.008;
-  const fill=new T.DirectionalLight(0xeef4ff,lighting?.fill ?? 1.1);fill.position.set(-5,2,-4);scene.add(fill);
+  const fill=new T.DirectionalLight(0xeef4ff,cfg.lighting?.fill ?? lighting?.fill ?? 1.1);fill.position.set(-5,2,-4);scene.add(fill);
   const ground=createStudioFloor(scene,renderer,0xe8ebed);
   floor=ground.floor;
-  camera=new T.PerspectiveCamera(32,1,.012,300);
+  camera=new T.PerspectiveCamera(cfg.exteriorFov || 32,1,.012,300);
   const draco=new T.DRACOLoader().setDecoderPath('/honda-civic-type-r/vendor/');
   const gltf=await new T.GLTFLoader().setDRACOLoader(draco).loadAsync(studioAsset(cfg.model)).finally(()=>draco.dispose());
   model=gltf.scene;scene.add(model);model.traverse(o=>{if(o.isMesh){o.castShadow=!o.material.transparent;if(o.castShadow)ground.addCaster(o);}});
@@ -353,10 +400,17 @@ async function init(){
     assemblyStudy=createAssemblyStudy(T,gltf,camera,selectAssembly);
   }
   else {
-    for (const part of cfg.parts) {
-      const object=model.getObjectByName(part.node);
-      if (!object) throw Error('Missing assembly '+part.node);
-      parts.push({object, original:object.position.clone(), offset:vec(part.offset)});
+    const hulls=cfg.assemblyDrawing ? await (await fetch(studioAsset(cfg.assemblyDrawing.envelopes))).json() : null;
+    for(const p of cfg.parts){
+      const object=model.getObjectByName(p.node);
+      if(!object)throw Error('Missing assembly '+p.node);
+      const part={...p,object,original:object.position.clone(),offset:vec(p.offset)};
+      if(hulls){part.wide=part.offset.clone();part.narrow=vec(p.portraitOffset);part.hull=hulls[p.node].map(vec);}
+      parts.push(part);
+    }
+    if(cfg.assemblyDrawing){
+      const {attachDrawing}=await import(studioAsset('assembly-drawing.js'));
+      drawing=attachDrawing({parts,canvas,camera,focus:focusDrawing,hold:holdDrawing});
     }
   }
   for(const a of cfg.actions||[]){
@@ -374,17 +428,20 @@ async function init(){
   buildInspectionMenu();
   assembled=measurePose();
   if(assemblyStudy){aspect=canvas.clientWidth/canvas.clientHeight;layoutAssembly();}
-  else {setSpread(1);exploded=measurePose();}
+  else {setSpread(1);exploded=measurePose(cfg.assemblyDrawing?.direction);}
   resize();input();
   ground.update();updateGround=ground.update;
   const componentEntry=cfg.inspections?.some(item=>item.id===location.hash.slice(1));
   if(componentEntry)inspect(location.hash.slice(1));
   else if(!match(params.get('frame')||params.get('view')||'')){
-    if(assemblyStudy && location.hash === '#exploded') selectAssembly('', '');
+    if(drawing && location.hash === '#exploded')enterDrawing();
+    else if(assemblyStudy && location.hash === '#exploded') selectAssembly('', '');
     else if(params.has('capture'))reset();
     else {
       if(assemblyStudy){setSpread(1);frameCamera();}
-      if(!reduced.matches)motion={from:1,to:0,start:performance.now()+(assemblyStudy?3200:1200),duration:2100,intro:true};
+      if(!reduced.matches)motion={from:1,to:0,intro:true,
+        start:performance.now()+(cfg.assemblyDrawing?.introHold ?? (assemblyStudy?3200:1200)),
+        duration:cfg.assemblyDrawing?.introDuration ?? 2100};
     }
   }
   $('status').hidden=true;$('tools').inert=false;new ResizeObserver(resize).observe(canvas);draw();return true;
@@ -398,7 +455,7 @@ function capture(width,height,transparent=false){
   renderer.render(scene,camera);const data=canvas.toDataURL('image/png');
   scene.background=bg;floor.visible=floorVisible;renderer.setPixelRatio(oldRatio);resize();return data;
 }
-window.carStudio={match,inspect,reset,capture,get pose(){return {spread:amount,cabin,inspection:inspection?.id,matched:matched?.id,position:camera?.position.toArray(),target:target.toArray()};},ready:init().catch(e=>{
+window.carStudio={match,inspect,reset,capture,get pose(){return {spread:amount,cabin,separated:drawing?.separated,component:drawing?.separated ? $('assembly-component').value : undefined,assembly:drawing?.selected ? $('assembly-part').value || $('assembly-system').value : undefined,inspection:inspection?.id,matched:matched?.id,position:camera?.position.toArray(),target:target.toArray()};},ready:init().catch(e=>{
   console.error(e);
   const poster=document.createElement('img');
   poster.className='fallback-poster';

@@ -6,12 +6,12 @@
   "review": "review.html",
   "home": [
     5.9,
-    2.5,
-    5.5
+    1.91,
+    4.39
   ],
   "target": [
     0,
-    0.72,
+    0.76,
     0
   ],
   "eye": [
@@ -26,179 +26,928 @@
   ],
   "parts": [
     {
-      "node": "Lid",
-      "offset": [
-        0,
-        0.04,
-        0.15
-      ]
-    },
-    {
-      "node": "AncillaryCover",
-      "offset": [
-        0,
-        0.12,
-        0.15
-      ]
-    },
-    {
-      "node": "HighVoltage",
-      "offset": [
-        0,
-        0.01,
-        0.15
-      ]
-    },
-    {
-      "node": "Pack",
-      "offset": [
-        0,
-        0.01,
-        0.15
-      ]
-    },
-    {
-      "node": "FrontDrive",
-      "offset": [
-        0,
-        0.05,
-        0.56
-      ]
-    },
-    {
-      "node": "RearDrive",
-      "offset": [
-        0,
-        0.08,
-        -0.55
-      ]
-    },
-    {
       "node": "Body",
+      "label": "Fixed body shell",
+      "system": "Body and glass",
       "offset": [
-        0,
-        0.84,
-        0
-      ]
-    },
-    {
-      "node": "Cabin",
-      "offset": [
-        0,
-        0.05,
-        -0.48
+        -2.68817,
+        5.36601,
+        -1.92526
+      ],
+      "portraitOffset": [
+        -6.39939,
+        11.49571,
+        -2.63659
       ]
     },
     {
       "node": "Hood",
+      "label": "Hood and inner stamping",
+      "system": "Body and glass",
       "offset": [
-        0,
-        1.45,
-        0.52
+        -5.47972,
+        5.26331,
+        0.38171
+      ],
+      "portraitOffset": [
+        -6.7508,
+        13.24616,
+        -5.22281
+      ]
+    },
+    {
+      "node": "Windshield",
+      "label": "Windshield and cameras",
+      "system": "Body and glass",
+      "offset": [
+        -3.72644,
+        6.77658,
+        -3.01966
+      ],
+      "portraitOffset": [
+        -5.79236,
+        12.87004,
+        -5.86297
+      ]
+    },
+    {
+      "node": "RoofGlass",
+      "label": "Panoramic roof glass",
+      "system": "Body and glass",
+      "offset": [
+        -2.64283,
+        6.47447,
+        -3.40817
+      ],
+      "portraitOffset": [
+        -4.70874,
+        12.56793,
+        -6.25148
       ]
     },
     {
       "node": "Liftgate",
+      "label": "Liftgate and rear glass",
+      "system": "Body and glass",
       "offset": [
-        0,
-        1.3,
-        -0.65
+        0.02791,
+        4.9442,
+        -4.28787
+      ],
+      "portraitOffset": [
+        -3.68331,
+        11.07389,
+        -4.9992
+      ]
+    },
+    {
+      "node": "FrontFascia",
+      "label": "Front bumper fascia",
+      "system": "Body and glass",
+      "offset": [
+        -6.54155,
+        5.68212,
+        1.39543
+      ],
+      "portraitOffset": [
+        -7.81263,
+        13.66496,
+        -4.20909
+      ]
+    },
+    {
+      "node": "RearFascia",
+      "label": "Rear bumper fascia",
+      "system": "Body and glass",
+      "offset": [
+        0.98676,
+        5.35658,
+        -5.52726
+      ],
+      "portraitOffset": [
+        -2.72446,
+        11.48628,
+        -6.2386
+      ]
+    },
+    {
+      "node": "FenderLeft",
+      "label": "Left front fender",
+      "system": "Body and glass",
+      "offset": [
+        -4.91859,
+        3.62596,
+        0.61996
+      ],
+      "portraitOffset": [
+        -5.66565,
+        9.75566,
+        -3.99159
+      ]
+    },
+    {
+      "node": "FenderRight",
+      "label": "Right front fender",
+      "system": "Body and glass",
+      "offset": [
+        -4.85752,
+        7.36794,
+        -1.48363
+      ],
+      "portraitOffset": [
+        -6.98487,
+        14.88193,
+        -5.53581
+      ]
+    },
+    {
+      "node": "HeadlampLeft",
+      "label": "Left headlamp",
+      "system": "Body and glass",
+      "offset": [
+        -5.57221,
+        3.4549,
+        1.25213
+      ],
+      "portraitOffset": [
+        -6.31927,
+        9.5846,
+        -3.35943
+      ]
+    },
+    {
+      "node": "HeadlampRight",
+      "label": "Right headlamp",
+      "system": "Body and glass",
+      "offset": [
+        -5.36431,
+        7.20273,
+        -1.15548
+      ],
+      "portraitOffset": [
+        -7.49166,
+        14.71672,
+        -5.20766
+      ]
+    },
+    {
+      "node": "TailLampLeft",
+      "label": "Left taillight and charge inlet",
+      "system": "Body and glass",
+      "offset": [
+        0.79463,
+        2.96619,
+        -3.93032
+      ],
+      "portraitOffset": [
+        -3.84858,
+        9.09588,
+        -3.41536
+      ]
+    },
+    {
+      "node": "TailLampRight",
+      "label": "Right taillight",
+      "system": "Body and glass",
+      "offset": [
+        -0.62234,
+        6.75228,
+        -4.21323
+      ],
+      "portraitOffset": [
+        -5.13134,
+        14.26626,
+        -5.13164
       ]
     },
     {
       "node": "DoorFrontLeft",
+      "label": "Left front door",
+      "system": "Doors",
       "offset": [
-        1.25,
-        0.92,
-        0
-      ]
-    },
-    {
-      "node": "WheelFrontLeft",
-      "offset": [
-        0.92,
-        0.01,
-        0
-      ]
-    },
-    {
-      "node": "BrakeFrontLeft",
-      "offset": [
-        0.23,
-        0.06,
-        0
+        -4.18949,
+        3.27976,
+        0.67519
+      ],
+      "portraitOffset": [
+        -4.93654,
+        9.40946,
+        -3.93637
       ]
     },
     {
       "node": "DoorFrontRight",
+      "label": "Right front door",
+      "system": "Doors",
       "offset": [
-        -1.25,
-        0.92,
-        0
-      ]
-    },
-    {
-      "node": "WheelFrontRight",
-      "offset": [
-        -0.92,
-        0.01,
-        0
-      ]
-    },
-    {
-      "node": "BrakeFrontRight",
-      "offset": [
-        -0.23,
-        0.06,
-        0
+        -4.06122,
+        7.06628,
+        -1.36797
+      ],
+      "portraitOffset": [
+        -6.18856,
+        14.58027,
+        -5.42014
       ]
     },
     {
       "node": "DoorRearLeft",
+      "label": "Left rear door",
+      "system": "Doors",
       "offset": [
-        1.25,
-        0.92,
-        -0.34
-      ]
-    },
-    {
-      "node": "WheelRearLeft",
-      "offset": [
-        0.92,
-        0.01,
-        0
-      ]
-    },
-    {
-      "node": "BrakeRearLeft",
-      "offset": [
-        0.23,
-        0.06,
-        0
+        0.30858,
+        3.24841,
+        -4.41295
+      ],
+      "portraitOffset": [
+        -4.33462,
+        9.37811,
+        -3.89799
       ]
     },
     {
       "node": "DoorRearRight",
+      "label": "Right rear door",
+      "system": "Doors",
       "offset": [
-        -1.25,
-        0.92,
-        -0.34
+        -1.06468,
+        6.99218,
+        -4.71413
+      ],
+      "portraitOffset": [
+        -5.57369,
+        14.50617,
+        -5.63254
+      ]
+    },
+    {
+      "node": "Frunk",
+      "label": "Front trunk and apron",
+      "system": "Cabin and luggage",
+      "offset": [
+        -4.45551,
+        5.33573,
+        -0.98067
+      ],
+      "portraitOffset": [
+        -8.16674,
+        11.46543,
+        -1.692
+      ]
+    },
+    {
+      "node": "Cabin",
+      "label": "Dashboard and steering column",
+      "system": "Cabin and luggage",
+      "offset": [
+        -2.63672,
+        3.28936,
+        -1.09526
+      ],
+      "portraitOffset": [
+        -5.28177,
+        7.87883,
+        -1.81108
+      ]
+    },
+    {
+      "node": "Console",
+      "label": "Center console",
+      "system": "Cabin and luggage",
+      "offset": [
+        -0.62966,
+        3.4603,
+        -3.11629
+      ],
+      "portraitOffset": [
+        -3.27472,
+        8.04977,
+        -3.83211
+      ]
+    },
+    {
+      "node": "FrontSeatLeft",
+      "label": "Driver seat",
+      "system": "Cabin and luggage",
+      "offset": [
+        -2.16388,
+        3.27791,
+        -1.17149
+      ],
+      "portraitOffset": [
+        -4.80894,
+        7.86738,
+        -1.8873
+      ]
+    },
+    {
+      "node": "FrontSeatRight",
+      "label": "Front passenger seat",
+      "system": "Cabin and luggage",
+      "offset": [
+        -0.90143,
+        3.20454,
+        -2.04936
+      ],
+      "portraitOffset": [
+        -3.54649,
+        7.79401,
+        -2.76518
+      ]
+    },
+    {
+      "node": "RearSeat",
+      "label": "Rear bench",
+      "system": "Cabin and luggage",
+      "offset": [
+        0.20236,
+        3.175,
+        -3.21873
+      ],
+      "portraitOffset": [
+        -2.4427,
+        7.76447,
+        -3.93455
+      ]
+    },
+    {
+      "node": "CabinFloor",
+      "label": "Cabin floor and pedals",
+      "system": "Cabin and luggage",
+      "offset": [
+        -4.49661,
+        -0.10467,
+        5.31892
+      ],
+      "portraitOffset": [
+        -1.87487,
+        3.42853,
+        -1.3679
+      ]
+    },
+    {
+      "node": "Cargo",
+      "label": "Luggage compartment",
+      "system": "Cabin and luggage",
+      "offset": [
+        -1.02515,
+        5.0931,
+        -3.04839
+      ],
+      "portraitOffset": [
+        -4.73638,
+        11.2228,
+        -3.75972
+      ]
+    },
+    {
+      "node": "Underbody",
+      "label": "Underbody and wheel liners",
+      "system": "Wheels and suspension",
+      "offset": [
+        -1.04811,
+        1.69446,
+        -0.80377
+      ],
+      "portraitOffset": [
+        -3.10949,
+        6.41895,
+        -2.41017
+      ]
+    },
+    {
+      "node": "FrontCarrier",
+      "label": "Front suspension and subframe",
+      "system": "Wheels and suspension",
+      "offset": [
+        -3.35679,
+        1.75186,
+        1.14545
+      ],
+      "portraitOffset": [
+        -2.63744,
+        4.78422,
+        -2.58353
+      ]
+    },
+    {
+      "node": "RearCarrier",
+      "label": "Rear suspension and subframe",
+      "system": "Wheels and suspension",
+      "offset": [
+        1.28744,
+        1.54331,
+        -2.66954
+      ],
+      "portraitOffset": [
+        -2.11279,
+        4.57567,
+        -0.97802
+      ]
+    },
+    {
+      "node": "CoverFrontLeft",
+      "label": "Left front Gemini cover",
+      "system": "Wheels and suspension",
+      "offset": [
+        -5.77639,
+        1.93753,
+        3.28064
+      ],
+      "portraitOffset": [
+        -5.05704,
+        4.96989,
+        -0.44834
+      ]
+    },
+    {
+      "node": "WheelFrontLeft",
+      "label": "Left front wheel and tire",
+      "system": "Wheels and suspension",
+      "offset": [
+        -5.18718,
+        1.92634,
+        2.62582
+      ],
+      "portraitOffset": [
+        -4.46783,
+        4.95871,
+        -1.10317
+      ],
+      "detail": {
+        "Tire": [
+          0,
+          0.16,
+          -0.49
+        ],
+        "Alloy": [
+          0.3,
+          0.09,
+          0.45
+        ]
+      }
+    },
+    {
+      "node": "BrakeFrontLeft",
+      "label": "Left front brake and hub",
+      "system": "Wheels and suspension",
+      "offset": [
+        -4.683,
+        1.92377,
+        1.99767
+      ],
+      "portraitOffset": [
+        -3.96365,
+        4.95613,
+        -1.73131
+      ],
+      "detail": {
+        "Caliper": [
+          0.19,
+          0.1,
+          0.24
+        ],
+        "Rotor": [
+          0,
+          0,
+          -0.09
+        ]
+      }
+    },
+    {
+      "node": "CoverFrontRight",
+      "label": "Right front Gemini cover",
+      "system": "Wheels and suspension",
+      "offset": [
+        -6.58495,
+        7.58312,
+        0.9881
+      ],
+      "portraitOffset": [
+        -4.70496,
+        6.48548,
+        -0.51844
+      ]
+    },
+    {
+      "node": "WheelFrontRight",
+      "label": "Right front wheel and tire",
+      "system": "Wheels and suspension",
+      "offset": [
+        -6.19676,
+        7.59456,
+        0.35796
+      ],
+      "portraitOffset": [
+        -4.31677,
+        6.49693,
+        -1.14858
+      ],
+      "detail": {
+        "Tire": [
+          0,
+          0.16,
+          -0.49
+        ],
+        "Alloy": [
+          -0.3,
+          0.09,
+          0.45
+        ]
+      }
+    },
+    {
+      "node": "BrakeFrontRight",
+      "label": "Right front brake and hub",
+      "system": "Wheels and suspension",
+      "offset": [
+        -5.72632,
+        7.59304,
+        -0.27033
+      ],
+      "portraitOffset": [
+        -3.84633,
+        6.49541,
+        -1.77687
+      ],
+      "detail": {
+        "Caliper": [
+          -0.19,
+          0.1,
+          0.24
+        ],
+        "Rotor": [
+          0,
+          0,
+          -0.09
+        ]
+      }
+    },
+    {
+      "node": "CoverRearLeft",
+      "label": "Left rear Gemini cover",
+      "system": "Wheels and suspension",
+      "offset": [
+        2.02256,
+        1.7309,
+        -4.71274
+      ],
+      "portraitOffset": [
+        -1.37767,
+        4.76327,
+        -3.02122
+      ]
+    },
+    {
+      "node": "WheelRearLeft",
+      "label": "Left rear wheel and tire",
+      "system": "Wheels and suspension",
+      "offset": [
+        1.63489,
+        1.71972,
+        -4.0822
+      ],
+      "portraitOffset": [
+        -1.76534,
+        4.75208,
+        -2.39068
+      ],
+      "detail": {
+        "Tire": [
+          0,
+          0.16,
+          -0.49
+        ],
+        "Alloy": [
+          0.3,
+          0.09,
+          0.45
+        ]
+      }
+    },
+    {
+      "node": "BrakeRearLeft",
+      "label": "Left rear brake and hub",
+      "system": "Wheels and suspension",
+      "offset": [
+        1.16006,
+        1.71039,
+        -3.44142
+      ],
+      "portraitOffset": [
+        -2.24017,
+        4.74276,
+        -1.74991
+      ],
+      "detail": {
+        "Caliper": [
+          0.19,
+          0.1,
+          0.24
+        ],
+        "Rotor": [
+          0,
+          0,
+          -0.09
+        ]
+      }
+    },
+    {
+      "node": "CoverRearRight",
+      "label": "Right rear Gemini cover",
+      "system": "Wheels and suspension",
+      "offset": [
+        0.96617,
+        7.37649,
+        -6.6792
+      ],
+      "portraitOffset": [
+        0.018,
+        6.27886,
+        -4.46447
       ]
     },
     {
       "node": "WheelRearRight",
+      "label": "Right rear wheel and tire",
+      "system": "Wheels and suspension",
       "offset": [
-        -0.92,
-        0.01,
-        0
-      ]
+        0.37749,
+        7.38794,
+        -6.02397
+      ],
+      "portraitOffset": [
+        -0.57068,
+        6.2903,
+        -3.80925
+      ],
+      "detail": {
+        "Tire": [
+          0,
+          0.16,
+          -0.49
+        ],
+        "Alloy": [
+          -0.3,
+          0.09,
+          0.45
+        ]
+      }
     },
     {
       "node": "BrakeRearRight",
+      "label": "Right rear brake and hub",
+      "system": "Wheels and suspension",
       "offset": [
-        -0.23,
-        0.06,
-        0
+        -0.10459,
+        7.38705,
+        -5.37639
+      ],
+      "portraitOffset": [
+        -1.05276,
+        6.28941,
+        -3.16167
+      ],
+      "detail": {
+        "Caliper": [
+          -0.19,
+          0.1,
+          0.24
+        ],
+        "Rotor": [
+          0,
+          0,
+          -0.09
+        ]
+      }
+    },
+    {
+      "node": "Pack",
+      "label": "Battery tray",
+      "system": "Battery and drives",
+      "offset": [
+        5.65096,
+        0.06011,
+        -8.02894
+      ],
+      "portraitOffset": [
+        0.11004,
+        -0.00104,
+        -0.71215
+      ]
+    },
+    {
+      "node": "Lid",
+      "label": "Battery lid",
+      "system": "Battery and drives",
+      "offset": [
+        -2.72597,
+        0.00081,
+        3.01202
+      ],
+      "portraitOffset": [
+        -0.81836,
+        2.19586,
+        -1.52027
+      ]
+    },
+    {
+      "node": "AncillaryCover",
+      "label": "Electronics service cover",
+      "system": "Battery and drives",
+      "offset": [
+        -1.54123,
+        -0.19091,
+        2.13129
+      ],
+      "portraitOffset": [
+        0.36638,
+        2.00414,
+        -2.401
+      ]
+    },
+    {
+      "node": "AncillaryBay",
+      "label": "Rear electronics bay",
+      "system": "Battery and drives",
+      "offset": [
+        4.32361,
+        -0.12786,
+        -5.60107
+      ],
+      "portraitOffset": [
+        -1.2173,
+        -0.189,
+        1.71572
+      ]
+    },
+    {
+      "node": "HighVoltage",
+      "label": "High-voltage harness",
+      "system": "Battery and drives",
+      "offset": [
+        -6.14387,
+        -0.1523,
+        7.68303
+      ],
+      "portraitOffset": [
+        -2.42718,
+        2.04275,
+        0.77036
+      ]
+    },
+    {
+      "node": "FrontDrive",
+      "label": "Front induction drive",
+      "system": "Battery and drives",
+      "offset": [
+        -2.61997,
+        1.84961,
+        0.09242
+      ],
+      "portraitOffset": [
+        -2.95804,
+        3.58219,
+        -1.06515
+      ],
+      "detail": {
+        "Motor": [
+          -0.35,
+          0.12,
+          0.04
+        ],
+        "Reduction": [
+          0.12,
+          0.09,
+          0
+        ],
+        "Inverter": [
+          0,
+          0.61,
+          0
+        ],
+        "Cooler": [
+          0.15,
+          0.19,
+          0.44
+        ],
+        "ShaftLeft": [
+          0.77,
+          -0.24,
+          0.025
+        ],
+        "ShaftRight": [
+          -0.77,
+          -0.24,
+          -0.025
+        ]
+      }
+    },
+    {
+      "node": "RearDrive",
+      "label": "Rear permanent-magnet drive",
+      "system": "Battery and drives",
+      "offset": [
+        0.47732,
+        1.64278,
+        -1.71438
+      ],
+      "portraitOffset": [
+        -0.7254,
+        3.37536,
+        -1.73426
+      ],
+      "detail": {
+        "Motor": [
+          0.35,
+          0.12,
+          0.04
+        ],
+        "Reduction": [
+          -0.12,
+          0.09,
+          0
+        ],
+        "Inverter": [
+          0,
+          0.61,
+          0
+        ],
+        "Cooler": [
+          -0.15,
+          0.19,
+          -0.44
+        ],
+        "ShaftLeft": [
+          0.77,
+          -0.24,
+          0.025
+        ],
+        "ShaftRight": [
+          -0.77,
+          -0.24,
+          -0.025
+        ]
+      }
+    },
+    {
+      "node": "Module1",
+      "label": "Battery module 1",
+      "system": "Battery and drives",
+      "offset": [
+        0.02449,
+        -0.0043,
+        -0.06344
+      ],
+      "portraitOffset": [
+        -2.2325,
+        1.08334,
+        1.88942
+      ]
+    },
+    {
+      "node": "Module2",
+      "label": "Battery module 2",
+      "system": "Battery and drives",
+      "offset": [
+        0.97848,
+        0.02957,
+        -1.69049
+      ],
+      "portraitOffset": [
+        -1.27851,
+        1.11721,
+        0.26237
+      ]
+    },
+    {
+      "node": "Module3",
+      "label": "Battery module 3",
+      "system": "Battery and drives",
+      "offset": [
+        1.96619,
+        0.06344,
+        -3.36191
+      ],
+      "portraitOffset": [
+        -0.2908,
+        1.15107,
+        -1.40905
+      ]
+    },
+    {
+      "node": "Module4",
+      "label": "Battery module 4",
+      "system": "Battery and drives",
+      "offset": [
+        2.92018,
+        0.0973,
+        -4.98896
+      ],
+      "portraitOffset": [
+        0.66319,
+        1.18494,
+        -3.0361
       ]
     }
   ],
@@ -239,7 +988,7 @@
         {
           "node": "Hood",
           "axis": "x",
-          "degrees": -48
+          "degrees": -66
         }
       ]
     },
@@ -250,6 +999,21 @@
           "node": "Liftgate",
           "axis": "x",
           "degrees": 63
+        }
+      ]
+    },
+    {
+      "label": "Open charge port",
+      "nodes": [
+        {
+          "node": "ChargeLink",
+          "axis": "z",
+          "degrees": 145
+        },
+        {
+          "node": "ChargeHinge",
+          "axis": "z",
+          "degrees": -59
         }
       ]
     }
@@ -654,6 +1418,520 @@
         1,
         0
       ]
+    },
+    {
+      "id": "ga-01",
+      "label": "Passenger front three-quarter \u00b7 second owner car",
+      "imageSize": [
+        3355,
+        2236
+      ],
+      "source": "https://media.carsandbids.com/c51905b0000b639a185eeb080dd879bf007f5604/photos/rbwpV4d9-F0bTQfUY1k-(edit).jpg",
+      "position": [
+        -4.3338444193901005,
+        1.8242895757626985,
+        3.222958516879814
+      ],
+      "target": [
+        0.0,
+        0.78,
+        0.0
+      ],
+      "up": [
+        0.15394558092774277,
+        0.9818116836691337,
+        -0.11111514713845444
+      ],
+      "fov": 32.67004829054798,
+      "principalPoint": [
+        1470.204173323384,
+        940.6858988584469
+      ],
+      "fitResidualPx": [
+        0.69,
+        31.16
+      ],
+      "registration": "Wheel hubs and visible envelope"
+    },
+    {
+      "id": "ga-02",
+      "label": "Front elevation \u00b7 second owner car",
+      "imageSize": [
+        2227,
+        1484
+      ],
+      "source": "https://media.carsandbids.com/c51905b0000b639a185eeb080dd879bf007f5604/photos/rbwpV4d9-8cM1goPggf-(edit).jpg",
+      "position": [
+        0.05437282654315315,
+        1.4029397095142135,
+        4.700930786065737
+      ],
+      "target": [
+        0.0,
+        0.78,
+        0.0
+      ],
+      "up": [
+        -0.006809430383557483,
+        0.9913212401469419,
+        -0.131285301886313
+      ],
+      "fov": 31.11683172902698,
+      "principalPoint": [
+        1126.4071635780763,
+        537.4512243035413
+      ],
+      "fitResidualPx": [
+        2.58
+      ],
+      "registration": "Wheel hubs and visible envelope"
+    },
+    {
+      "id": "ga-03",
+      "label": "Driver profile \u00b7 second owner car",
+      "imageSize": [
+        3801,
+        2534
+      ],
+      "source": "https://media.carsandbids.com/c51905b0000b639a185eeb080dd879bf007f5604/photos/rbwpV4d9-ElvpsLbqTx-(edit).jpg",
+      "position": [
+        4.632879811447995,
+        1.5045417963720407,
+        0.32046728246402023
+      ],
+      "target": [
+        0.0,
+        0.78,
+        0.0
+      ],
+      "up": [
+        -0.15742692630466662,
+        0.9864800526317926,
+        0.04553974784560301
+      ],
+      "fov": 42.32658407470458,
+      "principalPoint": [
+        1897.9579075993493,
+        1160.231234277453
+      ],
+      "fitResidualPx": [
+        0.56,
+        4.9
+      ],
+      "registration": "Wheel hubs and visible envelope"
+    },
+    {
+      "id": "ga-04",
+      "label": "Passenger rear three-quarter \u00b7 second owner car",
+      "imageSize": [
+        3002,
+        2001
+      ],
+      "source": "https://media.carsandbids.com/c51905b0000b639a185eeb080dd879bf007f5604/photos/rbwpV4d9--AxLKWTPtj-(edit).jpg",
+      "position": [
+        -3.704169211371463,
+        1.7367801968902241,
+        -3.7930563635670644
+      ],
+      "target": [
+        0.0,
+        0.78,
+        0.0
+      ],
+      "up": [
+        0.1861794993138922,
+        0.9803321864517166,
+        0.06546753578702333
+      ],
+      "fov": 33.34658784706507,
+      "principalPoint": [
+        1806.0340127503364,
+        829.9821055778775
+      ],
+      "fitResidualPx": [
+        35.83,
+        1.01
+      ],
+      "registration": "Wheel hubs and visible envelope"
+    },
+    {
+      "id": "ga-05",
+      "label": "Rear elevation \u00b7 second owner car",
+      "imageSize": [
+        2836,
+        1890
+      ],
+      "source": "https://media.carsandbids.com/c51905b0000b639a185eeb080dd879bf007f5604/photos/rbwpV4d9-LZwuHkRUYU-(edit).jpg",
+      "position": [
+        -0.025872065869621052,
+        1.3588118249292278,
+        -4.610544382729007
+      ],
+      "target": [
+        0.0,
+        0.78,
+        0.0
+      ],
+      "up": [
+        0.0011163526521173652,
+        0.9922118399010613,
+        0.12455688867704909
+      ],
+      "fov": 35.31130174709268,
+      "principalPoint": [
+        1411.9793044431578,
+        674.3495960052775
+      ],
+      "fitResidualPx": [
+        43.57
+      ],
+      "registration": "Wheel hubs and visible envelope"
+    },
+    {
+      "id": "iq-13",
+      "label": "Driver headlamp \u00b7 IQautos",
+      "imageSize": [
+        800,
+        600
+      ],
+      "source": "https://imagescdn.dealercarsearch.com/Media/15038/24264501/639240321823619064.jpg",
+      "position": [
+        0.9162982439486738,
+        1.0808888688931266,
+        3.762736951738953
+      ],
+      "target": [
+        0.6623008013624065,
+        0.8133916919932234,
+        1.8764195197529194
+      ],
+      "up": [
+        -0.025385546509892734,
+        0.9902446651011199,
+        -0.13700758105727234
+      ],
+      "fov": 11.142908737536063,
+      "principalPoint": [
+        464.5313801726446,
+        301.0700332463974
+      ],
+      "fitResidualPx": [],
+      "registration": "Visible component contour; pose and focal length estimated"
+    },
+    {
+      "id": "iq-11",
+      "label": "Passenger headlamp \u00b7 IQautos",
+      "imageSize": [
+        800,
+        600
+      ],
+      "source": "https://imagescdn.dealercarsearch.com/Media/15038/24264501/639240321788958127.jpg",
+      "position": [
+        -0.7749656535872198,
+        1.0170945302141896,
+        3.043572828843826
+      ],
+      "target": [
+        -0.6616765945068882,
+        0.8133916919932234,
+        1.8764195197529194
+      ],
+      "up": [
+        -0.018253386104805133,
+        0.984643333910007,
+        -0.1736211936437932
+      ],
+      "fov": 17.26699004862437,
+      "principalPoint": [
+        317.68562149870957,
+        246.8265535965969
+      ],
+      "fitResidualPx": [],
+      "registration": "Visible component contour; pose and focal length estimated"
+    },
+    {
+      "id": "iq-14",
+      "label": "Driver taillight and liftgate seam \u00b7 IQautos",
+      "imageSize": [
+        800,
+        600
+      ],
+      "source": "https://imagescdn.dealercarsearch.com/Media/15038/24264501/639240321844563616.jpg",
+      "position": [
+        0.6577674479655166,
+        1.1923932197235851,
+        -3.5577499289913845
+      ],
+      "target": [
+        0.5487526772621374,
+        1.0054260473170853,
+        -2.114056392974182
+      ],
+      "up": [
+        -0.08302654250957778,
+        0.9890733436558553,
+        0.12182164876708712
+      ],
+      "fov": 16.081723130250346,
+      "principalPoint": [
+        366.2982747982687,
+        267.19799455467495
+      ],
+      "fitResidualPx": [],
+      "registration": "Visible component contour; pose and focal length estimated"
+    },
+    {
+      "id": "iq-16",
+      "label": "Passenger taillight and liftgate seam \u00b7 IQautos",
+      "imageSize": [
+        800,
+        600
+      ],
+      "source": "https://imagescdn.dealercarsearch.com/Media/15038/24264501/639240321881321867.jpg",
+      "position": [
+        -0.5679220877321146,
+        1.3587092583664895,
+        -4.555870381101538
+      ],
+      "target": [
+        -0.5481526163596352,
+        1.0054260473170853,
+        -2.114056392974182
+      ],
+      "up": [
+        0.08093196050833938,
+        0.9865413351982267,
+        0.14207818873274197
+      ],
+      "fov": 8.900036093308884,
+      "principalPoint": [
+        417.55885843909016,
+        305.4165079942318
+      ],
+      "fitResidualPx": [],
+      "registration": "Visible component contour; pose and focal length estimated"
+    },
+    {
+      "id": "iq-03",
+      "label": "Driver front Gemini cover \u00b7 IQautos",
+      "imageSize": [
+        800,
+        600
+      ],
+      "source": "https://imagescdn.dealercarsearch.com/Media/15038/24264501/639240321672591518.jpg",
+      "position": [
+        2.4423452566217017,
+        0.8499105595684484,
+        1.4372587517284459
+      ],
+      "target": [
+        0.954,
+        0.356,
+        1.445
+      ],
+      "up": [
+        -0.3149932286726277,
+        0.9490421458308913,
+        -0.00991318955183921
+      ],
+      "fov": 32.58934131802158,
+      "principalPoint": [
+        376.9468533457008,
+        388.0181622833564
+      ],
+      "fitResidualPx": [],
+      "registration": "Visible component contour; pose and focal length estimated"
+    },
+    {
+      "id": "iq-12",
+      "label": "Front trunk and cowl intake \u00b7 IQautos",
+      "imageSize": [
+        800,
+        600
+      ],
+      "source": "https://imagescdn.dealercarsearch.com/Media/15038/24264501/639240321807837414.jpg",
+      "position": [
+        0.01,
+        1.99,
+        2.3
+      ],
+      "target": [
+        0.0,
+        0.765,
+        1.61
+      ],
+      "up": [
+        0,
+        1,
+        0
+      ],
+      "fov": 48.0,
+      "actions": [
+        "Raise hood"
+      ],
+      "registration": "Visual registration"
+    },
+    {
+      "id": "iq-18",
+      "label": "North American charge inlet \u00b7 IQautos",
+      "imageSize": [
+        800,
+        600
+      ],
+      "source": "https://imagescdn.dealercarsearch.com/Media/15038/24264501/639240321913021772.jpg",
+      "position": [
+        1.245,
+        1.093,
+        -2.209
+      ],
+      "target": [
+        0.735,
+        1.058,
+        -1.995
+      ],
+      "up": [
+        0,
+        1,
+        0
+      ],
+      "fov": 28.0,
+      "actions": [
+        "Open charge port"
+      ],
+      "registration": "Visual registration"
+    },
+    {
+      "id": "iq-19",
+      "label": "Driver fender camera \u00b7 IQautos",
+      "imageSize": [
+        800,
+        600
+      ],
+      "source": "https://imagescdn.dealercarsearch.com/Media/15038/24264501/639240321929905649.jpg",
+      "position": [
+        1.256,
+        0.866,
+        1.104
+      ],
+      "target": [
+        0.922,
+        0.814,
+        1.047
+      ],
+      "up": [
+        0,
+        1,
+        0
+      ],
+      "fov": 22.0,
+      "registration": "Visual registration"
+    },
+    {
+      "id": "ga-06",
+      "label": "Dashboard from the second row \u00b7 five-seat car",
+      "imageSize": [
+        2301,
+        1534
+      ],
+      "source": "https://media.carsandbids.com/c51905b0000b639a185eeb080dd879bf007f5604/photos/rbwpV4d9-8lN-tq2Gwx-(edit).jpg",
+      "position": [
+        0.018,
+        1.2,
+        -0.215
+      ],
+      "target": [
+        0.0,
+        0.99,
+        0.55
+      ],
+      "up": [
+        0,
+        1,
+        0
+      ],
+      "fov": 73.0,
+      "registration": "Visual registration"
+    },
+    {
+      "id": "ga-07",
+      "label": "Front seat bolsters \u00b7 five-seat car",
+      "imageSize": [
+        4032,
+        2688
+      ],
+      "source": "https://media.carsandbids.com/c51905b0000b639a185eeb080dd879bf007f5604/photos/rbwpV4d9-Kh6lvbx2OM-(edit).jpg",
+      "position": [
+        0.596,
+        1.214,
+        0.132
+      ],
+      "target": [
+        -0.083,
+        0.972,
+        -0.37
+      ],
+      "up": [
+        0,
+        1,
+        0
+      ],
+      "fov": 78.0,
+      "registration": "Visual registration"
+    },
+    {
+      "id": "ga-08",
+      "label": "Rear bench \u00b7 five-seat car",
+      "imageSize": [
+        4032,
+        2688
+      ],
+      "source": "https://media.carsandbids.com/c51905b0000b639a185eeb080dd879bf007f5604/photos/rbwpV4d9-_phJMCyh0I-(edit).jpg",
+      "position": [
+        0.006,
+        1.296,
+        -0.445
+      ],
+      "target": [
+        0.0,
+        0.929,
+        -1.09
+      ],
+      "up": [
+        0,
+        1,
+        0
+      ],
+      "fov": 83.0,
+      "registration": "Visual registration"
+    },
+    {
+      "id": "iq-57",
+      "label": "Cargo floor and liftgate \u00b7 IQautos",
+      "imageSize": [
+        800,
+        600
+      ],
+      "source": "https://imagescdn.dealercarsearch.com/Media/15038/24264501/639240322508390417.jpg",
+      "position": [
+        0.012,
+        1.17,
+        -3.18
+      ],
+      "target": [
+        0.0,
+        0.86,
+        -1.52
+      ],
+      "up": [
+        0,
+        1,
+        0
+      ],
+      "fov": 46.0,
+      "actions": [
+        "Open liftgate"
+      ],
+      "registration": "Visual registration"
     }
   ],
   "inspectionLabel": "Electric drive",
@@ -665,17 +1943,28 @@
         "Pack",
         "Lid",
         "AncillaryCover",
+        "AncillaryBay",
+        "Module1",
+        "Module2",
+        "Module3",
+        "Module4",
         "FrontDrive",
         "RearDrive",
         "HighVoltage",
-        "WheelFrontLeft",
-        "BrakeFrontLeft",
-        "WheelFrontRight",
+        "FrontCarrier",
+        "RearCarrier",
         "BrakeFrontRight",
-        "WheelRearLeft",
+        "BrakeRearRight",
         "BrakeRearLeft",
+        "BrakeFrontLeft",
+        "WheelFrontLeft",
+        "CoverFrontLeft",
+        "WheelFrontRight",
+        "CoverFrontRight",
+        "WheelRearLeft",
+        "CoverRearLeft",
         "WheelRearRight",
-        "BrakeRearRight"
+        "CoverRearRight"
       ],
       "direction": [
         0.82,
@@ -691,7 +1980,12 @@
       "show": [
         "Pack",
         "Lid",
-        "AncillaryCover"
+        "AncillaryCover",
+        "AncillaryBay",
+        "Module1",
+        "Module2",
+        "Module3",
+        "Module4"
       ],
       "direction": [
         1.05,
@@ -705,7 +1999,12 @@
       "id": "battery-modules",
       "label": "Battery modules",
       "show": [
-        "Pack"
+        "Pack",
+        "AncillaryBay",
+        "Module1",
+        "Module2",
+        "Module3",
+        "Module4"
       ],
       "direction": [
         0.25,
@@ -743,5 +2042,25 @@
       "note": "A permanent-magnet synchronous motor drives the rear axle through a fixed reduction. The housing, coolant exchanger, high-voltage inlet and halfshafts are represented.",
       "source": "https://service.tesla.com/docs/ModelY/ServiceManual/en-us/GUID-47D29C3A-2BB8-4AAD-8DE9-21CB2C49B930.html"
     }
-  ]
+  ],
+  "assemblyDrawing": {
+    "direction": [
+      0.697801,
+      0.481483,
+      0.530329
+    ],
+    "envelopes": "assembly-hulls.json",
+    "narrowAspect": 1.16,
+    "introHold": 4000,
+    "introDuration": 2800
+  },
+  "exteriorFov": 19,
+  "lighting": {
+    "image": "studio-light.webp",
+    "rotation": 3.2,
+    "intensity": 0.61,
+    "ambient": 0.48,
+    "key": 0.92,
+    "fill": 0.38
+  }
 }

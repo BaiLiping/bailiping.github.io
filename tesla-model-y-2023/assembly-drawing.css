@@ -1,0 +1,16 @@
+#assembly-strip {display:flex;justify-content:center;align-items:center;gap:16px;padding:6px 12px 0}
+#assembly-strip[hidden],#assembly-name[hidden] {display:none}
+#assembly-strip label {display:flex;align-items:center;gap:6px;margin:0;color:#46545c;font-size:12px}
+#assembly-strip select {max-width:195px;color:#192833;padding:5px 7px;font-size:13px}
+#assembly-name {position:absolute;pointer-events:none;z-index:1;display:block;font-size:12px;color:#fff;background:#263642ed;border-radius:4px;padding:4px 8px}
+@media(max-width:540px){#assembly-strip{gap:8px}#assembly-strip label{display:grid;gap:2px;min-width:0}#assembly-strip select{max-width:100%;width:100%}}
+@media(max-height:480px) and (orientation:landscape){#assembly-strip{padding-top:2px}#assembly-strip select{font-size:12px;padding:2px 4px}}
+
+#assembly-detail {border:1px solid #bdc6ca;font-size:13px;padding:5px 8px;color:#273842;background:#fff}
+#assembly-detail[aria-pressed=true]{background:#273842;color:white}
+@media(max-width:540px){#assembly-strip:has(#assembly-detail:not([hidden])){display:grid;grid-template-columns:1fr 1fr}#assembly-detail{grid-column:1/-1;justify-self:center}}
+
+#assembly-strip [hidden] {display:none}
+@media(max-width:540px){
+  #assembly-strip:has(#component-label:not([hidden])) #assembly-detail {grid-column:auto;align-self:end;justify-self:stretch}
+}
