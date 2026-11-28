@@ -1,6 +1,7 @@
 import * as THREE from '../honda-civic-type-r/vendor/three-r170.js?v=31c84364';
 import {createStudioFloor} from '../honda-civic-type-r/studio-floor.js';
-import {bindPartInteraction} from './part-interaction.js?v=8cb3fe9cf2';
+import {receiveDaylight} from './ground-shadow.js?v=45a0842652';
+import {bindPartInteraction} from './part-interaction.js?v=83a794f017';
 
 const $ = selector => document.querySelector(selector);
 const canvas = $('#stage');
@@ -13,16 +14,19 @@ const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)');
 document.body.classList.toggle('capture', capture);
 let frames = [];
 const frameList = $('#photo-angle');
+const photoFrame = $('#photo-frame');
+let comparing = false;
+let framing = null;
 let active = 0;
 let matched = null;
-let scene, renderer, camera, model, floor;
+let scene, renderer, camera, model, floor, windowLight;
 let ready = false;
 let pending = false;
 let floorDirty = false;
 let exteriorOrbit = true;
 let currentView = 'front';
 let lastAspect;
-const exteriorRadius = aspect => Math.max(6.9,1.45+7.5/aspect);
+const exteriorRadius = aspect => Math.max(6.0, 1.30 + 7.4 / aspect);
 const gearboxRadius = aspect => Math.max(.70, .82 / aspect);
 const cabinFov = aspect => THREE.MathUtils.clamp(THREE.MathUtils.radToDeg(2 * Math.atan(.47 / aspect)), 72, 96);
 let radius = 6, yaw = 0, elevation = .23;
@@ -38,7 +42,7 @@ let hingeMotion;
 const pivots = {};
 const original = {};
 const position = new THREE.Vector3();
-const frontCenter = new THREE.Vector3(-.16,.62,0);
+const frontCenter = new THREE.Vector3(-.12,.47,0);
 let partInteraction;
 let detachedCount = 0;
 let steering = false;
@@ -50,14 +54,16 @@ const rollingMeshes = [];
 
 // Move complete GLB assemblies so trim, glass and hinges travel with their panels.
 const assemblyOffsets = {
-  Body: [0, 1.22, 0],
-  Hood: [-.88, 2.12, 0],
-  Liftback: [1.05, 1.92, 0],
+  Chassis: [0, 0, 0],
+  Body: [0, 1.60, 0],
+  Hood: [-1.22, 2.45, 0],
+  Liftback: [1.14, 2.27, 0],
   DoorLeft: [0, .63, 1.40],
   DoorRight: [-.45, .90, -2.05],
   Powertrain: [-1.17, .18, 0],
   Transmission: [-1.10, .32, -1.30],
-  Interior: [1.42, .08, .35],
+  Interior: [.40, .73, .19],
+  FuelDoor: [0, .05, .25],
   WheelFrontLeft: [-.27, 0, 1.05], WheelFrontRight: [-.27, 0, -1.05],
   WheelRearLeft: [.24, 0, 1.05], WheelRearRight: [.24, 0, -1.05],
 };
@@ -80,12 +86,17 @@ function prepareAssembly() {
   model.updateMatrixWorld(true);
   for (const [name, offset] of Object.entries(assemblyOffsets)) {
     const node = model.getObjectByName(name);
+    if (!node) continue;
     const travel = new THREE.Vector3(...offset);
     assemblyParts.push({node, rest: node.position.clone(), travel});
+    const worldTravel = travel.clone();
+    for (let parent = node.parent; parent; parent = parent.parent) {
+      if (assemblyOffsets[parent.name]) worldTravel.add(new THREE.Vector3(...assemblyOffsets[parent.name]));
+    }
     node.traverse(mesh => {
       if (!mesh.isMesh) return;
       if (!mesh.geometry.boundingBox) mesh.geometry.computeBoundingBox();
-      boxes.push(mesh.geometry.boundingBox.clone().applyMatrix4(mesh.matrixWorld).translate(travel));
+      boxes.push(mesh.geometry.boundingBox.clone().applyMatrix4(mesh.matrixWorld).translate(worldTravel));
     });
   }
   const bounds = boxes[0].clone();
@@ -151,7 +162,7 @@ function showExplosion(animate) {
 }
 function draw(now) {
   pending = false;
-  if (document.hidden || gallery()) return;
+  if (document.hidden || (gallery() && !comparing)) return;
   if (intro && !document.hidden) {
     if (intro.previous !== null) {
       const elapsed = now - intro.previous;
@@ -249,12 +260,23 @@ function layout() {
   if (!camera) return;
   const available = room.getBoundingClientRect();
   let width = available.width, height = available.height;
-  if (matched) {
+  camera.clearViewOffset();
+  if (capture && matched) {
     const aspect = matched.width / matched.height;
     width = Math.min(width,height*aspect); height = width/aspect;
   }
   rect.style.width = width+'px'; rect.style.height = height+'px';
   camera.aspect = width/height;
+  if (framing && !capture) {
+    // Preserve the photograph's lens, optical centre and roll in the full viewer.
+    const frame = photoFrame.getBoundingClientRect();
+    if (frame.width > 0 && frame.height > 0) {
+      camera.setViewOffset(frame.width, frame.height, available.left - frame.left,
+        available.top - frame.top, width, height);
+      Object.assign(overlay.style, {left:(frame.left - available.left)+'px',
+        top:(frame.top - available.top)+'px', width:frame.width+'px', height:frame.height+'px'});
+    }
+  }
   renderer.setSize(Math.round(width),Math.round(height),false);
   camera.updateProjectionMatrix();
   invalidate();
@@ -334,8 +356,10 @@ function setView(name) {
   intro = null;
   spreadMotion = null;
   setExplosion(0);
+  framing = null;
   clearMatch();
   currentView = name;
+  windowLight.intensity = name === 'cabin' ? 1.55 : 0;
   showGearboxCutaway(name === 'gearbox');
   $('#bar').classList.toggle('in-cabin', name === 'cabin');
   $('#cabin-view').setAttribute('aria-pressed', String(name === 'cabin'));
@@ -343,6 +367,10 @@ function setView(name) {
   if (name === 'front' || name === 'rear') {
     camera.fov = 32;
     frameExterior(name === 'rear');
+  } else if (name === 'top') {
+    target.set(0, .48, 0);
+    camera.position.set(0, .48 + Math.max(4.8, 9.2 / camera.aspect), .001);
+    camera.fov = 32;
   } else if (name === 'engine') {
     setPanels({hood:true}); target.set(-1.36,.55,.03);camera.position.set(-2.98,2.16,1.06);camera.fov=38;
   } else if (name === 'wheel') {
@@ -358,18 +386,35 @@ function setView(name) {
   camera.up.set(0,1,0);camera.lookAt(target);camera.updateProjectionMatrix();rememberOrbit();layout();
 }
 function gallery() {return location.hash === '#integra-views';}
+function frameIndex(value) {
+  if (value === null) return -1;
+  if (/^\d+$/.test(value)) {
+    const index = Number(value);
+    return index < frames.length ? index : -1;
+  }
+  return frames.findIndex(frame => frame.id === value);
+}
+function updateComparison(on) {
+  comparing = on;
+  document.documentElement.classList.toggle('compare-photos', on);
+  $('#compare-view').setAttribute('aria-pressed', String(on));
+  $('#split-tools').hidden = !on;
+}
+function sizePhoto(frame) {
+  photoFrame.style.setProperty('--photo-aspect', frame.width / frame.height);
+  $('#photo').width = frame.width;
+  $('#photo').height = frame.height;
+}
 async function loadPhotos() {
   try {
-    const response = await fetch('./views.json?v=41069a1d4d');
+    const response = await fetch('./views.json?v=81bd11602e');
     if (!response.ok) throw new Error('Photo catalogue unavailable');
     const photos = await response.json();
     if (!Array.isArray(photos) || !photos.length) throw new Error('Empty photo catalogue');
     frames = photos;
     frames.forEach(frame => frameList.add(new Option(frame.title, frame.id)));
-    const frameId = new URLSearchParams(location.search).get('frame');
-    active = Math.max(0, frames.findIndex(frame => frame.id === frameId));
-    if (gallery()) selectPhoto(active);
-    else if (ready && frameId) match(active);
+    // Catalogue and GLB load independently, including on deep links.
+    if (gallery() || new URLSearchParams(location.search).has('frame')) route();
   } catch {
     $('#photo').hidden = true;
     $('#full-photo').hidden = true;
@@ -379,26 +424,38 @@ async function loadPhotos() {
     $('#photo-error').hidden = false;
   }
   for (const selector of ['#previous-view','#next-view','#photo-angle']) $(selector).disabled = !frames.length;
-  $('#match-view').disabled = !ready || !frames.length;
+  $('#match-view').disabled = $('#compare-view').disabled = !ready || !frames.length;
 }
 function selectPhoto(index) {
   if (!frames.length) return;
   active = (index+frames.length)%frames.length;
   const frame=frames[active];
   frameList.value=frame.id;
+  sizePhoto(frame);
   $('#photo').alt=frame.title+' · Flamenco Black Pearl 2000 Acura Integra GS-R';
   $('#photo-error').hidden=true;
-  $('#photo').src=frame.url;
+  if ($('#photo').src !== frame.url) $('#photo').src=frame.url;
+  else if ($('#photo').complete && !$('#photo').naturalWidth) $('#photo-error').hidden=false;
+  for (const offset of [-1,1]) {
+    const neighbour = new Image();
+    neighbour.referrerPolicy = 'no-referrer';
+    neighbour.src = frames[(active + offset + frames.length) % frames.length].url;
+  }
   $('#full-photo').href=frame.url;
   const credit = $('#photo-credit');
   credit.href = frame.source || 'https://bringatrailer.com/listing/2000-acura-integra-36/';
   credit.textContent = frame.credit || 'rmwcali · Bring a Trailer lot 263,334';
   $('#frame-count').textContent=(active+1)+' / '+frames.length+' · '+frame.width+' × '+frame.height;
 }
-function setURL(index,hash) {
+function setURL(index, hash, compare = comparing) {
   if (!frames.length) return;
   const url=new URL(location.href);
-  url.searchParams.set('frame',frames[index].id);url.hash=hash;history.pushState(null,'',url);route();
+  url.searchParams.set('frame',frames[index].id);
+  if (hash === 'integra-views' && compare) url.searchParams.set('compare','1');
+  else url.searchParams.delete('compare');
+  url.hash=hash;
+  if (location.href !== url.href) history.pushState(null,'',url);
+  route();
 }
 function match(index) {
   if (!ready) return;
@@ -406,9 +463,11 @@ function match(index) {
   intro = null; spreadMotion = null;
   partInteraction?.reset();setWheels(false,false,true);setExplosion(0);
   showGearboxCutaway(false);
-  clearMatch();matched=frame;currentView='photo';exteriorOrbit=false;$('#bar').classList.remove('in-cabin');
+  clearMatch();matched=framing=frame;sizePhoto(frame);currentView='photo';
+  windowLight.intensity = frame.state === 'cabin' ? 1.55 : 0;
+  exteriorOrbit=false;$('#bar').classList.remove('in-cabin');
   $('#cabin-view').setAttribute('aria-pressed', 'false');
-  setPanels({hood:['open','engine'].includes(frame.state),leftDoor:frame.state==='open',rightDoor:['open','cabin'].includes(frame.state),hatch:frame.state==='open'},frame.angles);
+  setPanels({hood:['open','engine'].includes(frame.state),...(panelSpec.fuel ? {fuel:false} : {}),leftDoor:frame.state==='open',rightDoor:['open','cabin'].includes(frame.state),hatch:frame.state==='open'},frame.angles);
   camera.position.fromArray(frame.camera.position);target.fromArray(frame.camera.target);
   camera.up.fromArray(frame.camera.up);camera.lookAt(target);camera.fov=frame.camera.fov;
   rememberOrbit();layout();
@@ -420,10 +479,15 @@ function route() {
   spreadMotion = null;
   const url=new URL(location.href);
   lastRoute = url.href;
-  active=Math.max(0,frames.findIndex(f=>f.id===url.searchParams.get('frame')));
+  const index = frameIndex(url.searchParams.get('frame'));
+  active = Math.max(0,index);
   const photos=gallery();
   document.documentElement.classList.toggle('show-photos',photos);
   $('#photo-room').hidden=!photos;
+  $('#photo-room').inert=!photos;
+  canvas.tabIndex = photos ? -1 : 0;
+  $('#bar').inert = photos || !ready;
+  updateComparison(photos && ready && index >= 0 && url.searchParams.get('compare') === '1' && !url.searchParams.has('model'));
   $('#model-link').setAttribute('aria-current',photos?'false':'page');
   $('#gallery-link').setAttribute('aria-current',photos?'page':'false');
   $('#more').open = false;
@@ -431,16 +495,17 @@ function route() {
     partInteraction?.stopGesture();
     lastSpinTime = undefined;
     selectPhoto(active);
+    if (comparing) match(active);
   }
-  else if (url.searchParams.has('frame')) {
+  else if (index >= 0) {
     firstModelVisit = false;
     if (frames.length) match(active);
   }
   else if (ready) {
     partInteraction.reset(); setWheels(false,false,true);
-    setPanels({hood:false,leftDoor:false,rightDoor:false,hatch:false});
+    setPanels(Object.fromEntries(Object.keys(panelSpec).map(key => [key, false])));
     const view = url.hash.slice(1);
-    setView(['cabin','engine','wheel','rear','gearbox'].includes(view) ? view : 'front');
+    setView(['cabin','engine','wheel','rear','gearbox','top'].includes(view) ? view : 'front');
     if (url.hash === '#exploded') showExplosion(false);
     else if (!capture && (view === 'assembly' || (firstModelVisit && (!view || view === 'model')))) showExplosion(true);
     firstModelVisit = false;
@@ -448,7 +513,7 @@ function route() {
   updateInspectionTools();
 }
 function baseURL(hash = 'model') {
-  const url=new URL(location.href);url.searchParams.delete('frame');url.hash=hash;
+  const url=new URL(location.href);url.searchParams.delete('frame');url.searchParams.delete('compare');url.hash=hash;
   if (url.href!==location.href) history.pushState(null,'',url);
   lastRoute = url.href;
 }
@@ -467,50 +532,65 @@ function leaveCalibration(assemble = false) {
   if (matched || (!frames.length && new URLSearchParams(location.search).has('frame'))) {baseURL();clearMatch();}
   if (assemble && (explosion || location.hash === '#exploded' || currentView === 'gearbox')) { baseURL(); setView('front'); }
 }
+async function loadStudioLight() {
+  // A radiometrically scaled photograph preserves the brightness of the sky
+  // while fitting the same texture loader used by the compressed car.
+  const generator = new THREE.PMREMGenerator(renderer);
+  try {
+    const texture = await new THREE.TextureLoader().loadAsync('./daylight.webp?v=34c0a2d398');
+    texture.colorSpace = THREE.SRGBColorSpace;
+    scene.environment = generator.fromEquirectangular(texture).texture;
+    scene.environmentIntensity = 9.3;
+    scene.environmentRotation.y = .92;
+    texture.dispose();
+  } catch {
+    const roomLight = new THREE.RoomEnvironment();
+    scene.environment = generator.fromScene(roomLight).texture;
+    roomLight.dispose();
+  } finally {
+    generator.dispose();
+  }
+}
 function initGL() {
   renderer=new THREE.WebGLRenderer({canvas,antialias:true,alpha:false,preserveDrawingBuffer:capture,powerPreference:'high-performance'});
   renderer.setPixelRatio(capture?1:Math.min(devicePixelRatio,2));
   renderer.outputColorSpace=THREE.SRGBColorSpace;
-  renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1.11;
+  renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1.03;
   scene=new THREE.Scene();scene.background=new THREE.Color(0xe7e8ea);
-  // Long reflection banks follow the existing car studios and describe the crowned sheet metal.
-  const pmrem=new THREE.PMREMGenerator(renderer);
-  const panorama=document.createElement('canvas');panorama.width=512;panorama.height=256;
-  const context=panorama.getContext('2d');const pixels=context.createImageData(512,256);
-  const smooth=THREE.MathUtils.smoothstep;
-  for (let y=0;y<256;y++) {
-    const lat=(.5-(y+.5)/256)*Math.PI;
-    const high=smooth(lat,.24,.40)*(1-smooth(lat,.59,.83));
-    const low=smooth(lat,-.18,-.06)*(1-smooth(lat,.035,.15));
-    for (let x=0;x<512;x++) {
-      const az=((x+.5)/512-.5)*2*Math.PI;
-      const bank=smooth(Math.abs(Math.sin(az+.20)),.27,.85);
-      const endWall = Math.pow(Math.abs(Math.cos(az - .45)), 12) * smooth(lat, -.12, .22);
-      const light=.25+.72*smooth(lat,.64,1.36)+high*(.34+2.45*bank)+low*(.15+.98*bank)+.82*endWall;
-      const k=4*(y*512+x);pixels.data[k]=light*64;pixels.data[k+1]=light*66;pixels.data[k+2]=light*69;pixels.data[k+3]=255;
-    }
-  }
-  context.putImageData(pixels,0,0);const studio=new THREE.CanvasTexture(panorama);
-  scene.environment=pmrem.fromEquirectangular(studio).texture;studio.dispose();pmrem.dispose();
-  scene.environmentIntensity=1.38;
-  scene.add(new THREE.HemisphereLight(0xf2f6fd,0x53575e,1.13));
-  const key=new THREE.DirectionalLight(0xfff8ef,1.43);key.position.set(-3,6,3);scene.add(key);
+  const lightMap = loadStudioLight();
+  scene.add(new THREE.HemisphereLight(0xe8eff6, 0x60554c, .46));
+  // Diffuse daylight enters the cockpit from the passenger window during inspection.
+  windowLight = new THREE.DirectionalLight(0xfff7ec, 0);
+  windowLight.position.set(1.5, 2.2, -2);
+  scene.add(windowLight);
+  const key = new THREE.DirectionalLight(0xfff5e8, .64);
+  key.position.set(-3, 6, 3);
+  scene.add(key);
   renderer.shadowMap.enabled=true;renderer.shadowMap.type=THREE.PCFSoftShadowMap;
   key.castShadow=true;key.shadow.mapSize.set(2048,2048);
   Object.assign(key.shadow.camera,{left:-3,right:3,top:3,bottom:-3,near:.1,far:16});key.shadow.camera.updateProjectionMatrix();
   key.shadow.bias=-.00024;key.shadow.normalBias=.008;
-  const edge=new THREE.DirectionalLight(0xe3edff,.63);edge.position.set(3,3,-4);scene.add(edge);
+  const edge=new THREE.DirectionalLight(0xe3edff,.30);edge.position.set(3,3,-4);scene.add(edge);
   camera=new THREE.PerspectiveCamera(32,1,.015,140);
   floor=createStudioFloor(scene,renderer,0xe7e8ea);
+  receiveDaylight(floor.floor, key);
   layout();
   const decoder = new THREE.DRACOLoader().setDecoderPath('../honda-civic-type-r/vendor/');
   const loader = new THREE.GLTFLoader().setDRACOLoader(decoder);
-  return loader.loadAsync('./integra.glb?v=851e0b0ce1').finally(() => decoder.dispose());
+  return Promise.all([loader.loadAsync('./integra.glb?v=b22041a007'), lightMap])
+    .then(([asset]) => asset).finally(() => decoder.dispose());
 }
 $('#previous-view').onclick=()=>setURL((active+frames.length-1)%frames.length,'integra-views');
 $('#next-view').onclick=()=>setURL((active+1)%frames.length,'integra-views');
 frameList.onchange=()=>setURL(frameList.selectedIndex,'integra-views');
 $('#match-view').onclick=()=>setURL(active,'model');
+$('#compare-view').onclick=()=>setURL(active,'integra-views',!comparing);
+function slidePhoto(share) {
+  const value = Math.max(0,Math.min(100,Math.round(share)));
+  $('#photo-split').value = value;
+  photoFrame.style.setProperty('--photo-share', value+'%');
+}
+$('#photo-split').oninput=event=>slidePhoto(event.target.value);
 $('#photo').onerror=()=>{$('#photo-error').hidden=false;};
 $('#gallery-link').onclick=event=>{if (frames.length) {event.preventDefault();setURL(active,'integra-views');}};
 $('#model-link').onclick=event=>{event.preventDefault();baseURL();route();};
@@ -555,6 +635,10 @@ $('#replay-assembly').onclick = event => {
 document.querySelectorAll('[data-panel]').forEach(button => button.onclick = () => {
   leaveCalibration(true);
   togglePanel(button.dataset.panel);
+  if ($('#more').open) {
+    $('#more').open = false;
+    $('#more > summary').focus({preventScroll:true});
+  }
 });
 document.querySelectorAll('[data-view]').forEach(button => button.onclick = () => {
   baseURL(button.dataset.view); route();
@@ -581,12 +665,27 @@ function shortcuts(event) {
     partInteraction.stopGesture(); return;
   }
   const key = event.key.toLowerCase();
-  const commands = { e: '#exploded-view', x: '#xray', r: '#reset', f: '[data-panel="hood"]',
+  if (key === 'e') {
+    event.preventDefault();
+    if (event.repeat) return;
+    stopIntro();
+    const next = explosion < .54 ? .55 : explosion < .99 ? 1 : 0;
+    if (currentView !== 'front' || matched) {
+      baseURL();
+      route();
+    }
+    baseURL(next ? 'exploded' : 'model');
+    setExplosion(next);
+    frameExterior();
+    invalidate();
+    return;
+  }
+  const commands = { g: '[data-panel="fuel"]', x: '#xray', r: '#reset', f: '[data-panel="hood"]',
     d: '[data-panel="doors"]', k: '[data-panel="hatch"]', '1': '[data-panel="leftDoor"]',
     '2': '[data-panel="rightDoor"]', s: '#steer', w: '#spin', i: '#cabin-view' };
   if (commands[key]) {
     event.preventDefault();
-    if (!event.repeat) $(commands[key]).click();
+    if (!event.repeat && !$(commands[key]).hidden) $(commands[key]).click();
     return;
   }
   if (event.target !== canvas) return;
@@ -604,14 +703,21 @@ let photoSwipe;
 const photoFigure = $('#photo-room figure');
 photoFigure.addEventListener('pointerdown', event => {
   if (!frames.length || !event.isPrimary || event.button !== 0 || event.target.closest('a')) return;
-  photoSwipe = {id:event.pointerId, x:event.clientX, y:event.clientY};
+  const adjusting = comparing && event.target === $('#split-grip');
+  photoSwipe = {id:event.pointerId, x:event.clientX, y:event.clientY, adjusting};
   photoFigure.setPointerCapture(event.pointerId);
+});
+photoFigure.addEventListener('pointermove', event => {
+  if (!photoSwipe?.adjusting || event.pointerId !== photoSwipe.id) return;
+  const box = photoFrame.getBoundingClientRect();
+  slidePhoto(100 * (event.clientX-box.left) / box.width);
 });
 photoFigure.addEventListener('pointerup', event => {
   if (event.pointerId !== photoSwipe?.id) return;
   const dx = event.clientX - photoSwipe.x, dy = event.clientY - photoSwipe.y;
+  const adjusting = photoSwipe.adjusting;
   photoSwipe = null;
-  if (Math.abs(dx) > Math.max(45, Math.abs(dy))) setURL((active + frames.length + (dx < 0 ? 1 : -1)) % frames.length, 'integra-views');
+  if (!adjusting && Math.abs(dx) > Math.max(45, Math.abs(dy))) setURL((active + frames.length + (dx < 0 ? 1 : -1)) % frames.length, 'integra-views');
 });
 photoFigure.addEventListener('pointercancel', () => { photoSwipe = null; });
 $('#photo').draggable = false;
@@ -641,6 +747,7 @@ const observer=new ResizeObserver(()=>{
   }
   lastAspect=aspect;layout();
 });observer.observe(room);
+new ResizeObserver(() => { if (framing) layout(); }).observe(photoFrame);
 new ResizeObserver(() => {
   document.documentElement.style.setProperty('--toolbar-height', (innerHeight - $('#bar').getBoundingClientRect().top) + 'px');
 }).observe($('#bar'));
@@ -657,7 +764,17 @@ try {
       node.material=node.material.clone();node.material.envMapIntensity=.30;
     }
   });
-  for (const name of ['Hood','Liftback','DoorLeft','DoorRight']) {pivots[name]=model.getObjectByName(name);original[name]=pivots[name].quaternion.clone();}
+  const filler = model.getObjectByName('FuelDoor');
+  if (filler) {
+    panelSpec.fuel = ['FuelDoor', 'y', -1.34];
+    panels.fuel = false;
+    panelAngles.fuel = panelTargets.fuel = 0;
+    $('[data-panel="fuel"]').hidden = false;
+  }
+  for (const [name] of Object.values(panelSpec)) {
+    pivots[name] = model.getObjectByName(name);
+    original[name] = pivots[name].quaternion.clone();
+  }
   prepareAssembly();fitAssembly();
   for (const { node } of assemblyParts) {
     if (!node.name.startsWith('Wheel')) continue;
@@ -670,7 +787,7 @@ try {
     lookAround: () => currentView === 'cabin' || currentView === 'gearbox', panel: togglePanel, isPanelOpen: key => panels[key],
     render: invalidate, moved: geometryChanged, detached: count => { detachedCount = count; updateInspectionTools(); },
   });
-  ready=true;floor.update();$('#loader').hidden=true;$('#bar').inert=false;$('#match-view').disabled=!frames.length;
+  ready=true;floor.update();$('#loader').hidden=true;$('#bar').inert=false;$('#match-view').disabled=$('#compare-view').disabled=!frames.length;
   setView('front');route();renderer.render(scene,camera);
   document.documentElement.dataset.modelReady='true';
 } catch (error) {

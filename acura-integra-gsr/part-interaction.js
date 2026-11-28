@@ -1,12 +1,12 @@
 import * as THREE from '../honda-civic-type-r/vendor/three-r170.js?v=31c84364';
 
 const assemblyNames = {
-  Body: 'Body shell', Hood: 'Hood', Liftback: 'Liftback', DoorLeft: 'Driver’s door',
+  FuelDoor: 'Fuel door', Chassis: 'Chassis and suspension', Body: 'Body shell', Hood: 'Hood', Liftback: 'Liftback', DoorLeft: 'Driver’s door',
   DoorRight: 'Passenger door', Powertrain: 'B18C1 engine', Transmission: 'Five-speed transaxle', Interior: 'Cabin',
   WheelFrontLeft: 'Left front wheel', WheelFrontRight: 'Right front wheel',
   WheelRearLeft: 'Left rear wheel', WheelRearRight: 'Right rear wheel',
 };
-const panelNames = { Hood: 'hood', Liftback: 'hatch', DoorLeft: 'leftDoor', DoorRight: 'rightDoor' };
+const panelNames = { FuelDoor: 'fuel', Hood: 'hood', Liftback: 'hatch', DoorLeft: 'leftDoor', DoorRight: 'rightDoor' };
 const partLabels = [
   [/cast face|polished gs-r alloy/i, 'Six-spoke alloy wheel'], [/lug nuts/i, 'Wheel nuts'],
   [/cap insignia/i, 'Wheel centre cap'], [/carcass|tire sidewall/i, 'Tire'], [/shoulder blocks|tread grooves/i, 'Tire tread'],
@@ -47,13 +47,20 @@ export function bindPartInteraction(canvas, camera, model, assemblies, actions) 
 
   for (const { node, rest } of assemblies) {
     home.set(node, rest);
-    chooser.add(new Option(assemblyNames[node.name], node.name));
+    if (node.name !== 'Chassis') chooser.add(new Option(assemblyNames[node.name], node.name));
     const shell = node.name === 'Body' || Object.hasOwn(panelNames, node.name);
     node.traverse(mesh => {
       if (!mesh.isMesh) return;
       home.set(mesh, mesh.position.clone());
       const meshName = (mesh.userData.name || mesh.name).replaceAll('_', ' ');
-      const label = node.name === 'Transmission' ? (mesh.parent === node ? meshName : mesh.parent.userData.name || meshName) : partLabels.find(([test]) => test.test(meshName))?.[1] || assemblyNames[node.name];
+      const part = mesh.parent === node ? mesh : mesh.parent;
+      const authoredName = (part.userData.name || part.name).replaceAll('_', ' ');
+      // Older meshes batch an entire panel by material; newer meshes name the physical part.
+      const isBatch = authoredName.startsWith(node.name + ' ·') || authoredName === node.name;
+      const readableName = authoredName.replace(/^Door(?:Left|Right) /, '')
+        .replace(/ · ([LR])$/, (_, side) => side === 'L' ? ' (left)' : ' (right)');
+      const label = part.userData.partLabel || partLabels.find(([test]) => test.test(meshName))?.[1]
+        || (isBatch ? assemblyNames[node.name] : readableName.charAt(0).toUpperCase() + readableName.slice(1));
       meshInfo.set(mesh, { assembly: node, label, shell, material: mesh.material, castShadow: mesh.castShadow });
     });
   }
@@ -173,6 +180,7 @@ export function bindPartInteraction(canvas, camera, model, assemblies, actions) 
     const detached = offsets.has(mesh) || offsets.has(assembly);
     const verb = touch ? 'Tap' : 'Click';
     let gesture = actions.lookAround() ? (touch ? 'Swipe to look around' : 'Drag to look around') : (touch ? 'Hold and drag to detach' : 'Drag to detach');
+    if (assembly.name === 'Chassis') gesture = 'Fixed chassis · Drag to orbit';
     if (detached) gesture = verb + ' to reattach';
     else if (panelNames[assembly.name]) gesture = verb + (actions.isPanelOpen(panelNames[assembly.name]) ? ' to close' : ' to open');
     hint.textContent = label === assemblyNames[assembly.name] ? gesture : assemblyNames[assembly.name] + ' · ' + gesture;
@@ -194,6 +202,7 @@ export function bindPartInteraction(canvas, camera, model, assemblies, actions) 
   function preparePull(press) {
     // Leave photographic letterboxing first, then back-project both ends of the gesture
     // onto the same plane. World-to-local also handles a steered or hinged parent.
+    if (press.node.name === 'Chassis') return false;
     actions.leavePhoto();
     const plane = new THREE.Plane().setFromNormalAndCoplanarPoint(camera.getWorldDirection(direction), press.hit.point);
     const intersection = rayAt(press.startX, press.startY).intersectPlane(plane, point);

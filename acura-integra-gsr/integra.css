@@ -44,3 +44,43 @@ body.capture #room { inset:0; }
   #bar.in-gearbox #drag-hint .gearbox-hint.mouse { display:none; }
   #bar.in-gearbox #drag-hint .gearbox-hint.touch { display:inline; }
 }
+
+#photo-room figure { container-type:size; overflow:hidden; }
+#photo-frame {
+  position:relative;
+  aspect-ratio:var(--photo-aspect,1.5);
+  width:min(100cqw,calc(100cqh * var(--photo-aspect,1.5)));
+}
+#photo-footer { position:relative; background:#181a1d; }
+#photo-error { position:absolute; max-width:100%; background:#24272d; border-radius:8px; }
+.photo-tools #compare-view { font-family:inherit; font-weight:550; font-size:14px; line-height:1.2; margin-left:3px; }
+.photo-tools #compare-view[aria-pressed="true"] { background:#40474f; color:white; }
+#split-tools {
+  position:absolute; bottom:calc(100% + 8px); left:50%; transform:translateX(-50%);
+  display:flex; gap:10px; align-items:center; padding:5px 12px;
+  border-radius:6px; background:#181a1dea; font-size:12px; white-space:nowrap;
+}
+#photo-split { width:clamp(90px,20vw,200px); margin:0; accent-color:white; }
+.compare-photos #photo-room { background:transparent; }
+.compare-photos #stage { visibility:visible; pointer-events:none; }
+.compare-photos #photo-frame { box-shadow:0 0 0 200vmax #181a1d; }
+.compare-photos #photo { clip-path:inset(0 calc(100% - var(--photo-share,50%)) 0 0); }
+.compare-photos #photo-frame::after {
+  content:""; position:absolute; top:0; bottom:0; left:var(--photo-share,50%); width:2px;
+  transform:translateX(-50%); background:#fff; box-shadow:0 0 3px #20252a; pointer-events:none;
+}
+@media(max-width:640px) {
+  #photo-footer { padding-inline:6px; }
+  .photo-tools { max-width:100%; }
+  .photo-tools #photo-angle { min-width:0; flex:1; max-width:32vw; }
+  .photo-tools #compare-view, .photo-tools #match-view { margin-left:1px; padding-inline:7px; font-size:12px; }
+}
+#split-grip { display:none; }
+.compare-photos #split-grip {
+  display:grid; place-items:center; position:absolute; top:0; bottom:0; left:var(--photo-share,50%);
+  width:32px; transform:translateX(-50%); z-index:1; touch-action:none; cursor:ew-resize;
+}
+#split-grip::after {
+  content:"‹ ›"; display:grid; place-items:center; width:25px; height:25px; border:1px solid #fffc;
+  border-radius:50%; color:white; background:#21252bcc; font:600 15px/1 system-ui,sans-serif;
+}
